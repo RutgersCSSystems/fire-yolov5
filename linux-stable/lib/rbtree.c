@@ -233,6 +233,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 			break;
 		}
 	}
+	printk("rbtree insert function \n");
+	dump_stack();
 }
 
 /*
@@ -460,6 +462,8 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 					 NULL, &dummy_callbacks);
 	if (rebalance)
 		____rb_erase_color(rebalance, root, dummy_rotate);
+
+	printk("rbtree delete function \n");
 }
 EXPORT_SYMBOL(rb_erase);
 
