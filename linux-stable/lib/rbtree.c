@@ -68,6 +68,8 @@
  * pointers.
  */
 
+int print_rb_insert = 0;
+
 static inline void rb_set_black(struct rb_node *rb)
 {
 	rb->__rb_parent_color |= RB_BLACK;
@@ -234,7 +236,12 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		}
 	}
 	printk("rbtree insert function \n");
-	dump_stack();
+	printk("providing information \n");
+	if (print_rb_insert) {
+		printk("rbtree insert function \n");
+		printk("providing information \n");
+		dump_stack();
+	}
 }
 
 /*
