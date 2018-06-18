@@ -69,6 +69,7 @@
  */
 
 int print_rb_insert = 0;
+int print_rb_delete = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
 {
@@ -235,8 +236,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 			break;
 		}
 	}
-	printk("rbtree insert function \n");
-	printk("providing information \n");
+	//printk("rbtree insert function \n");
+	//printk("providing information \n");
 	if (print_rb_insert) {
 		printk("rbtree insert function \n");
 		printk("providing information \n");
@@ -469,8 +470,9 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 					 NULL, &dummy_callbacks);
 	if (rebalance)
 		____rb_erase_color(rebalance, root, dummy_rotate);
-
-	printk("rbtree delete function \n");
+	
+	if (print_rb_delete)
+		printk("rbtree delete function \n");
 }
 EXPORT_SYMBOL(rb_erase);
 
