@@ -1620,7 +1620,6 @@ SYSCALL_DEFINE1(old_mmap, struct mmap_arg_struct __user *, arg)
 }
 #endif /* __ARCH_WANT_SYS_OLD_MMAP */
 
-
 /*
  * Some shared mappigns will want the pages marked read-only
  * to track write events. If so, we'll downgrade vm_page_prot
@@ -2813,22 +2812,6 @@ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
 {
 	profile_munmap(addr);
 	return vm_munmap(addr, len);
-}
-
-/* flag_set function for rb tree */
-int flag_set(int flag) {
-	return flag;
-}
-EXPORT_SYMBOL(flag_set);
-
-/* start trace system call */
-SYSCALL_DEFINE1(start_trace, int, flag)
-{
-	if (flag == 1) {
-		printk("system call flag set to 1 \n");
-		return flag_set(flag);
-	}
-	return 0;
 }
 
 
