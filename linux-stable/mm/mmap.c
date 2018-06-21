@@ -68,6 +68,8 @@ const int mmap_rnd_compat_bits_max = CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX;
 int mmap_rnd_compat_bits __read_mostly = CONFIG_ARCH_MMAP_RND_COMPAT_BITS;
 #endif
 
+int global_flag = 0;
+
 static bool ignore_rlimit_data;
 core_param(ignore_rlimit_data, ignore_rlimit_data, bool, 0644);
 
@@ -2815,18 +2817,18 @@ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
 	return vm_munmap(addr, len);
 }
 
-/* flag_set function for rb tree */
-int flag_set(int flag) {
-	return flag;
-}
-EXPORT_SYMBOL(flag_set);
-
 /* start trace system call */
 SYSCALL_DEFINE1(start_trace, int, flag)
 {
 	if (flag == 1) {
 		printk("system call flag set to 1 \n");
-		return flag_set(flag);
+		global_flag = 1;
+		return global_flag;
+	}
+	else if (flag == 0) {
+		printk("system call flag set to 0 \n");
+		global_flag = 0;
+		return global_flag;
 	}
 	return 0;
 }
