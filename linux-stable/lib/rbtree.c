@@ -71,8 +71,9 @@
 //int print_rb_insert = 0;
 //int print_rb_delete = 0;
 
-extern int flag_set(int);
-int flag = 0;
+//extern int flag_set(int);
+extern int global_flag;
+//int flag = 0;
 int insert_cnt, erase_cnt, rebalance_cnt = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
@@ -241,11 +242,11 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		}
 	}
 
-	if (flag_set(flag)) {
+	if (global_flag) {
 		printk("rbtree insert function \n");
 		insert_cnt ++;
 	}
-
+	printk("rbtree insert count: %d \n", insert_cnt);
 }
 
 /*
@@ -475,17 +476,19 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 	
 	if (rebalance) {
 		____rb_erase_color(rebalance, root, dummy_rotate);
-		//printk("rbtree rebalance \n");
-		rebalance_cnt++;
+		if (global_flag) {
+			printk("rbtree rebalance \n");
+			rebalance_cnt++;
+		}
 	}
-	//printk("Total rbree rebalance: %d \n", rebalance_cnt);
+	printk("Total rbree rebalance: %d \n", rebalance_cnt);
 
 
-	if (flag_set(flag)) {
+	if (global_flag) {
 		printk("rbtree erase function \n");
 		erase_cnt ++;
 	}
-	//printk("Total rbtree erase: %d \n", erase_cnt);
+	printk("Total rbtree erase: %d \n", erase_cnt);
 }
 EXPORT_SYMBOL(rb_erase);
 

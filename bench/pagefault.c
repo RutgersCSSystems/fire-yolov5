@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/syscall.h>
+#include <errno.h>
+
+#define __NR_start_trace 333
 
 int main(int argc, char** argv) {
+	long int a = syscall(__NR_start_trace, 1);
+	printf("System call returned %ld\n", a);
+
 	if (argc < 2) {
 		printf("Usage error \n");
 		return 0;
@@ -26,7 +33,6 @@ int main(int argc, char** argv) {
 
 	int x = 0;
 	
-	printf("pid = %d \n", getpid());
 	printf("matrix insert \n");
 
 	for (i=0; i<ints_per_page; i++) {
@@ -40,6 +46,9 @@ int main(int argc, char** argv) {
 	for (i=0; i<N; i++)
 		free(arr[i]);
 	free(arr);
+
+	long int b = syscall(__NR_start_trace, 0);
+	printf("System call exit returned %ld\n", b);
 
 	return 0;
 }
