@@ -10,5 +10,5 @@ export PARA="-j40"
 export VER="4.17.0"
 export QEMU_IMG_FILE=$PWD/qemu-image.img
 export MOUNT_DIR=$PWD/mountdir
-
+export LINUX_SCALE_BENCH=$PWD/linux-scalability-benchmark
 set +x

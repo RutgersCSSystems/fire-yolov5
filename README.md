@@ -30,3 +30,14 @@ $  scripts/run_qemu.sh
 $ source scripts/setvars.sh "trusty"
 $ scripts/compile_kern.sh
 ```
+
+### Compiling Linux scalability benchmark
+```
+$ scripts/makes_scale_bench.sh
+```
+
+### Running mmap benchmark
+```
+$ cd linux-scalability-benchmark/mmapbench
+$ ./mmapbench NUMCORES NUMPAGES
+```
