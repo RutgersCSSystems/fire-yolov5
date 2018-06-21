@@ -39,5 +39,7 @@ $ scripts/makes_scale_bench.sh
 ### Running mmap benchmark
 ```
 $ cd linux-scalability-benchmark/mmapbench
+
+//e.g. ./mmapbench 1 500000 
 $ ./mmapbench NUMCORES NUMPAGES
 ```
