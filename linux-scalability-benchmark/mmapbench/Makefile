@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-O2 -Wall -pthread -D_ANONMEM
+CFLAGS=-O2 -Wall -pthread -D_ANONMEM -D_TRACING
 
 default: mmapbench
 

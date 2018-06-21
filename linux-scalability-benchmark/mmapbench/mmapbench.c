@@ -34,6 +34,10 @@
 #define CHUNKID 112
 #define NOPERSIST 1
 
+#ifdef _TRACING
+#define __NR_start_trace 333
+#endif
+
 int npages = 64000;
 char *shared_area = NULL;
 int flag[32];
@@ -124,6 +128,10 @@ int main(int argc, char **argv)
     pthread_t tid[32];
     uint64_t start, end, usec;
 
+#if defined(_TRACING)
+    syscall(__NR_start_trace, 1);
+#endif
+
     for (i = 0; i < ncores; i++) {
         flag[i] = 0;
     }
@@ -166,5 +174,9 @@ int main(int argc, char **argv)
     printf("usec: %ld\t\n", usec);
 
     close(fd);
+
+#if defined(_TRACING)
+    syscall(__NR_start_trace, 0);
+#endif
     return 0;
 }
