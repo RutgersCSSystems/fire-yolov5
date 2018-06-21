@@ -24,3 +24,9 @@ Now launch the QEMU
 ```
 $  scripts/run_qemu.sh
 ```
+
+### Compiling only the kernel
+```
+$ source scripts/setvars.sh "trusty"
+$ scripts/compile_kern.sh
+```
