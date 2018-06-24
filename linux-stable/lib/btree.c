@@ -48,7 +48,7 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define NODESIZE MAX(L1_CACHE_BYTES, 128)
 
-extern global_flag;
+extern int global_flag;
 
 int btree_insert_cnt, btree_remove_cnt, btree_rebalance_cnt = 0;
 
@@ -647,7 +647,7 @@ void *btree_remove(struct btree_head *head, struct btree_geo *geo,
 		return NULL;
 	
 	if (global_flag == 1) {
-		remove_cnt++;
+		btree_remove_cnt++;
 	}
 
 	return btree_remove_level(head, geo, key, 1);

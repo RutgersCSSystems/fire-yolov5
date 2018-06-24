@@ -26,6 +26,9 @@
 #include <linux/page_ref.h>
 #include <linux/memremap.h>
 
+#include <linux/radix-tree.h>
+#include <linux/btree.h>
+
 struct mempolicy;
 struct anon_vma;
 struct anon_vma_chain;

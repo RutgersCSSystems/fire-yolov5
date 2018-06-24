@@ -2833,7 +2833,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			printk("flag is set to clear count \n");
 			global_flag = CLEAR_COUNT;
 			rbtree_reset_counter();
-			//btree_reset_counter();
+			btree_reset_counter();
 			radix_tree_reset_counter();
 			break;
 		case COLLECT_TRACE:
@@ -2845,7 +2845,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			printk("flag is set to print stats \n");
 			global_flag = PRINT_STATS;
 			print_rbtree_stat();
-			//print_btree_stat();
+			print_btree_stat();
 			print_radix_tree_stat();
 			break;
 		default:
