@@ -48,6 +48,10 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define NODESIZE MAX(L1_CACHE_BYTES, 128)
 
+extern global_flag;
+
+int btree_insert_cnt, btree_remove_cnt, btree_rebalance_cnt = 0;
+
 struct btree_geo {
 	int keylen;
 	int no_pairs;
@@ -485,7 +489,9 @@ retry:
 		for (i = 0; i < fill / 2; i++) {
 			setkey(geo, new, i, bkey(geo, node, i));
 			setval(geo, new, i, bval(geo, node, i));
-			setkey(geo, node, i, bkey(geo, node, i + fill / 2));
+			setkey(geo, node, i, bkey(ge
+#include <linux/module.h>
+#include <linux/init.h>o, node, i + fill / 2));
 			setval(geo, node, i, bval(geo, node, i + fill / 2));
 			clearpair(geo, node, i + fill / 2);
 		}
@@ -513,6 +519,10 @@ int btree_insert(struct btree_head *head, struct btree_geo *geo,
 		unsigned long *key, void *val, gfp_t gfp)
 {
 	BUG_ON(!val);
+
+	if (global_flag == 1) {
+		btree_insert_cnt++;
+	}
 	return btree_insert_level(head, geo, key, val, 1, gfp);
 }
 EXPORT_SYMBOL_GPL(btree_insert);
@@ -581,6 +591,10 @@ static void rebalance(struct btree_head *head, struct btree_geo *geo,
 			return;
 		}
 	}
+
+	if (global_flag == 1) {
+		btree_rebalance_cnt++;
+	}
 	/*
 	 * We could also try to steal one entry from the left or right
 	 * neighbor.  By not doing so we changed the invariant from
@@ -633,6 +647,10 @@ void *btree_remove(struct btree_head *head, struct btree_geo *geo,
 {
 	if (head->height == 0)
 		return NULL;
+	
+	if (global_flag == 1) {
+		remove_cnt++;
+	}
 
 	return btree_remove_level(head, geo, key, 1);
 }
@@ -782,6 +800,24 @@ size_t btree_grim_visitor(struct btree_head *head, struct btree_geo *geo,
 }
 EXPORT_SYMBOL_GPL(btree_grim_visitor);
 
+/* printing stats for btree */
+void print_btree_stat(void) {
+	printk("Number of btree insert: %d\n", btree_insert_cnt);
+	printk("Number of btree rebalance: %d\n", btree_rebalance_cnt);
+	printk("Number of btree remove: %d\n", btree_remove_cnt);
+}
+EXPORT_SYMBOL(print_btree_stat);
+
+/* reset the counters */
+void btree_reset_counter(void) {
+	btree_insert_cnt = 0;
+	btree_rebalance_cnt = 0;
+	btree_remove_cnt = 0;
+
+	printk("Reset all btree counters \n");
+}
+EXPORT_SYMBOL(btree_reset_counter);
+
 static int __init btree_module_init(void)
 {
 	btree_cachep = kmem_cache_create("btree_node", NODESIZE, 0,
@@ -793,6 +829,7 @@ static void __exit btree_module_exit(void)
 {
 	kmem_cache_destroy(btree_cachep);
 }
+
 
 /* If core code starts using btree, initialization should happen even earlier */
 module_init(btree_module_init);

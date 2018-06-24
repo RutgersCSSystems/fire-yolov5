@@ -68,13 +68,9 @@
  * pointers.
  */
 
-//int print_rb_insert = 0;
-//int print_rb_delete = 0;
-
-//extern int flag_set(int);
 extern int global_flag;
-//int flag = 0;
-int insert_cnt, erase_cnt, rebalance_cnt = 0;
+
+int rbtree_insert_cnt, rbtree_erase_cnt, rbtree_rebalance_cnt = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
 {
@@ -242,11 +238,10 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		}
 	}
 
-	if (global_flag) {
-		printk("rbtree insert function \n");
-		insert_cnt ++;
+	if (global_flag == 1) {
+		//printk("rbtree insert function \n");
+		rbtree_insert_cnt ++;
 	}
-	printk("rbtree insert count: %d \n", insert_cnt);
 }
 
 /*
@@ -476,19 +471,17 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 	
 	if (rebalance) {
 		____rb_erase_color(rebalance, root, dummy_rotate);
-		if (global_flag) {
-			printk("rbtree rebalance \n");
-			rebalance_cnt++;
+		if (global_flag == 1) {
+			//printk("rbtree rebalance \n");
+			rbtree_rebalance_cnt++;
 		}
 	}
-	printk("Total rbree rebalance: %d \n", rebalance_cnt);
+	
 
-
-	if (global_flag) {
-		printk("rbtree erase function \n");
-		erase_cnt ++;
+	if (global_flag == 1) {
+		//printk("rbtree erase function \n");
+		rbtree_erase_cnt ++;
 	}
-	printk("Total rbtree erase: %d \n", erase_cnt);
 }
 EXPORT_SYMBOL(rb_erase);
 
@@ -703,3 +696,22 @@ struct rb_node *rb_first_postorder(const struct rb_root *root)
 	return rb_left_deepest_node(root->rb_node);
 }
 EXPORT_SYMBOL(rb_first_postorder);
+
+
+/* printing stats for rbtree */
+void print_rbtree_stat(void) {
+	printk("Number of rbtree insert: %d\n", rbtree_insert_cnt);
+	printk("Number of rbtree rebalance: %d\n", rbtree_rebalance_cnt);
+	printk("Number of rbtree erase: %d\n", rbtree_erase_cnt);
+}
+EXPORT_SYMBOL(print_rbtree_stat);
+
+/* reset the counters */
+void rbtree_reset_counter(void) {
+	rbtree_insert_cnt = 0;
+	rbtree_rebalance_cnt = 0;
+	rbtree_erase_cnt = 0;
+
+	printk("Reset all rbtree counters \n");
+}
+EXPORT_SYMBOL(rbtree_reset_counter);

@@ -46,12 +46,21 @@
 #include <linux/pkeys.h>
 #include <linux/oom.h>
 
+#include <linux/btree.h>
+#include <linux/radix-tree.h>
+
 #include <linux/uaccess.h>
 #include <asm/cacheflush.h>
 #include <asm/tlb.h>
 #include <asm/mmu_context.h>
 
 #include "internal.h"
+
+/* start_trace flag option */
+#define CLEAR_COUNT	0
+#define COLLECT_TRACE 1
+#define PRINT_STATS 2
+
 
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
@@ -225,8 +234,7 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
 	 * segment grow beyond its set limit the in case where the limit is
 	 * not page aligned -Ram Gupta
 	 */
-	if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm->start_brk,
-			      mm->end_data, mm->start_data))
+	if (check_data_rlimit(rlimit(RLIMIT_DATA), brk, mm->start_brk, mm->end_data, mm->start_data))
 		goto out;
 
 	newbrk = PAGE_ALIGN(brk);
@@ -2820,6 +2828,30 @@ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
 /* start trace system call */
 SYSCALL_DEFINE1(start_trace, int, flag)
 {
+	switch(flag) {
+		case CLEAR_COUNT:
+			printk("flag is set to clear count \n");
+			global_flag = CLEAR_COUNT;
+			rbtree_reset_counter();
+			//btree_reset_counter();
+			radix_tree_reset_counter();
+			break;
+		case COLLECT_TRACE:
+			printk("flag is set to collect trace \n");
+			global_flag = COLLECT_TRACE;
+			return global_flag;
+			break;
+		case PRINT_STATS:
+			printk("flag is set to print stats \n");
+			global_flag = PRINT_STATS;
+			print_rbtree_stat();
+			//print_btree_stat();
+			print_radix_tree_stat();
+			break;
+		default:
+			break;
+	}
+/*
 	if (flag == 1) {
 		printk("system call flag set to 1 \n");
 		global_flag = 1;
@@ -2830,6 +2862,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 		global_flag = 0;
 		return global_flag;
 	}
+*/
 	return 0;
 }
 

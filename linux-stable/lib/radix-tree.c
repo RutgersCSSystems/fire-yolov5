@@ -39,6 +39,9 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 
+extern int global_flag;
+
+int radix_tree_insert_cnt, radix_tree_delete_cnt, radix_tree_shrink_cnt = 0; 
 
 /* Number of nodes in fully populated tree of given height */
 static unsigned long height_to_maxnodes[RADIX_TREE_MAX_PATH + 1] __read_mostly;
@@ -746,6 +749,9 @@ static inline bool radix_tree_shrink(struct radix_tree_root *root,
 		radix_tree_node_free(node);
 		shrunk = true;
 	}
+	
+	if (global_flag == 1)
+		radix_tree_shrink_cnt++;
 
 	return shrunk;
 }
@@ -1006,6 +1012,10 @@ int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 		BUG_ON(tag_get(node, 2, offset));
 	} else {
 		BUG_ON(root_tags_get(root));
+	}
+
+	if (global_flag == 1) {
+		radix_tree_insert_cnt++;
 	}
 
 	return 0;
@@ -2064,6 +2074,9 @@ EXPORT_SYMBOL(radix_tree_delete_item);
  */
 void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 {
+	if (global_flag == 1)
+		radix_tree_delete_cnt++;
+
 	return radix_tree_delete_item(root, index, NULL);
 }
 EXPORT_SYMBOL(radix_tree_delete);
@@ -2295,3 +2308,19 @@ void __init radix_tree_init(void)
 					NULL, radix_tree_cpu_dead);
 	WARN_ON(ret < 0);
 }
+
+void print_radix_tree_stat(void) {
+	printk("Number of radix tree insert: %d\n", radix_tree_insert_cnt);
+	printk("Number of radix tree delete: %d\n", radix_tree_delete_cnt);
+	printk("Number of radix tree shrink: %d\n", radix_tree_shrink_cnt);
+}
+EXPORT_SYMBOL(print_radix_tree_stat);
+
+void radix_tree_reset_counter(void) {
+	radix_tree_insert_cnt = 0;
+	radix_tree_delete_cnt = 0;
+	radix_tree_shrink_cnt = 0;
+
+	printk("Reset all radix tree counters \n");
+}
+EXPORT_SYMBOL(radix_tree_reset_counter);
