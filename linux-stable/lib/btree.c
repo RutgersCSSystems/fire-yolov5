@@ -489,9 +489,7 @@ retry:
 		for (i = 0; i < fill / 2; i++) {
 			setkey(geo, new, i, bkey(geo, node, i));
 			setval(geo, new, i, bval(geo, node, i));
-			setkey(geo, node, i, bkey(ge
-#include <linux/module.h>
-#include <linux/init.h>o, node, i + fill / 2));
+			setkey(geo, node, i, bkey(geo, node, i + fill / 2));
 			setval(geo, node, i, bval(geo, node, i + fill / 2));
 			clearpair(geo, node, i + fill / 2);
 		}
