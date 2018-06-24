@@ -1,15 +1,4 @@
 #!/bin/bash -x
-
-export CONCURRENCY_LEVEL=40
-export CONCURRENCYLEVEL=40
-#fakeroot make-kpkg clean
-fakeroot make-kpkg --initrd kernel-image kernel-headers
-#dpkg -i ../linux-image-3.9.0_3.9.0-10.00.Custom_amd64.deb
-#dpkg -i ../linux-headers-3.9.0_3.9.0-10.00.Custom_amd64.deb
-#dpkg -i ../linux-headers-2.6.32.49+drm33.21_2.6.32.49+drm33.21-10.00.Custom_amd64.deb
-exit
-
-
 CC=/usr/lib/ccache/bin/gcc make -j40 &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out

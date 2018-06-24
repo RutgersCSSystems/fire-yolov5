@@ -38,7 +38,7 @@
 #define __NR_start_trace 333
 #endif
 
-int npages = 64000;
+size_t npages = 64000;
 char *shared_area = NULL;
 int flag[32];
 int ncores = 1;
@@ -55,13 +55,11 @@ worker(void *args)
     int ret = 0;
     int i;
 
-    affinity_set(id);
-
+    //affinity_set(id);
     for (i = 0; i < npages; i++){
 	shared_area[i *4096]=1;
         ret += shared_area[i *4096];
     }
-    //printf("potato_test: thread#%d done.\n", core);
     return (void *) (long) ret;
 }
 
@@ -114,10 +112,11 @@ void* map_using_mmap(size_t size){
     }else 
 #endif
     if(use_anon) {
+        fprintf(stderr, "size %lu \n", size);
         map = (char *)mmap(0, size, PROT_READ | PROT_WRITE, 
-	      MAP_PRIVATE| MAP_ANONYMOUS |MAP_NORESERVE, 0, 0);
+	      MAP_PRIVATE| MAP_ANONYMOUS, -1, 0);
     }
-    assert(map);
+    assert(map != MAP_FAILED);
     return map;
 }
 
@@ -141,7 +140,7 @@ int main(int argc, char **argv)
     }
 
     if (argc > 2) {
-        npages = atoi(argv[2]);
+        npages = (size_t)atoi(argv[2]);
     }
 
 #if defined(_ANONMEM)
@@ -156,7 +155,7 @@ int main(int argc, char **argv)
       fd = setup_map_file(filename, (npages+1)*4096);
       shared_area = mmap(0, (1 + npages) * 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
     }else if(use_anon || use_nvm) {	
-      shared_area = map_using_mmap((1 + npages) * 4096);
+      shared_area = map_using_mmap((size_t)((1 + npages) * 4096));
     }
     assert(shared_area != MAP_FAILED);
     
