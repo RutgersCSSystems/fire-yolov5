@@ -203,8 +203,8 @@ size_t btree_grim_visitor(struct btree_head *head, struct btree_geo *geo,
 				       size_t index, void *func2),
 			  void *func2);
 
-extern void print_btree_stat(void);
-extern void btree_reset_counter(void);
+void print_btree_stat(void);
+void btree_reset_counter(void);
 
 #include <linux/btree-128.h>
 
