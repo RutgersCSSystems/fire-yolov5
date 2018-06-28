@@ -44,20 +44,26 @@ $ cd linux-scalability-benchmark/mmapbench
 $ ./mmapbench NUMCORES NUMPAGES
 ```
 
-### Tracing an application
+### Automatically Tracing an application
 
-Compile a shared library with methods to handle application launch 
-and exit
+To enable tracing and disable or stop tracing without modifying 
+an application, use the following steps
+
+1. Compile a shared library with methods to handle application launch.
+This is just a one time operation to install the shared library
+
 ```
 $ source scripts/setvars.sh "trusty"
 $ scripts/compile_sharedlib.sh
 ```
-
-Install the shared library in QEMU. Note: Make sure your QEMU is not running
+2. Install the shared library in QEMU. Note: Make sure your QEMU is not running
+Again, this is one time operation.
 ```
 $ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so /usr/lib/
 ```
-When running the application, either do a LD_PRELOAD or link the library when compiling
+
+3. Once you have installed the libraries first time, any time you run an application, 
+either do a LD_PRELOAD or link the library when compiling from inside the QEMU
 ```
 $ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
