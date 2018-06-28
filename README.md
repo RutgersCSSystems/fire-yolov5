@@ -49,21 +49,23 @@ $ ./mmapbench NUMCORES NUMPAGES
 To enable tracing and disable or stop tracing without modifying 
 an application, use the following steps
 
-1. Compile a shared library with methods to handle application launch.
+1. Compile a shared library with methods to handle application launch.<br />
 This is just a one time operation to install the shared library
 
 ```
 $ source scripts/setvars.sh "trusty"
 $ scripts/compile_sharedlib.sh
 ```
-2. Install the shared library in QEMU. Note: Make sure your QEMU is not running
-Again, this is one time operation.
+2. Install the shared library in QEMU. Again, this is one time operation. <br />
+Note: Make sure your QEMU is not running
+
 ```
 $ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so /usr/lib/
 ```
 
-3. Once you have installed the libraries first time, any time you run an application, 
-either do a LD_PRELOAD or link the library when compiling from inside the QEMU
+3. Once you have installed the libraries first time, any time you run  <br />
+an application, either do a LD_PRELOAD or link the library when compiling  <br />
+from inside the QEMU
 ```
 $ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
