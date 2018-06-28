@@ -49,7 +49,7 @@ $ ./mmapbench NUMCORES NUMPAGES
 To enable tracing and disable or stop tracing without modifying 
 an application, use the following steps
 
-1. Compile a shared library with methods to handle application launch.\\
+1. Compile a shared library with methods to handle application launch.
 This is just a one time operation to install the shared library
 
 ```
