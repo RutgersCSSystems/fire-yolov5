@@ -66,6 +66,8 @@ $ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so mountdir/us
 3. Once you have installed the libraries first time, any time you run  <br />
 an application, either do a LD_PRELOAD or link the library when compiling  <br />
 from inside the QEMU
+
 ```
+//RUN this inside QEMU
 $ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
