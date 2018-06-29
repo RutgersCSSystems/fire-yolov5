@@ -2830,22 +2830,22 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 {
 	switch(flag) {
 		case CLEAR_COUNT:
-			printk("flag is set to clear count \n");
+			printk("flag set to clear count %d\n", flag);
 			global_flag = CLEAR_COUNT;
 			rbtree_reset_counter();
-			btree_reset_counter();
+			//btree_reset_counter();
 			radix_tree_reset_counter();
 			break;
 		case COLLECT_TRACE:
-			printk("flag is set to collect trace \n");
+			printk("flag is set to collect trace %d\n", flag);
 			global_flag = COLLECT_TRACE;
 			return global_flag;
 			break;
 		case PRINT_STATS:
-			printk("flag is set to print stats \n");
+			printk("flag is set to print stats  %d\n", flag);
 			global_flag = PRINT_STATS;
 			print_rbtree_stat();
-			print_btree_stat();
+			//print_btree_stat();
 			print_radix_tree_stat();
 			break;
 		default:

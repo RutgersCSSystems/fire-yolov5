@@ -60,7 +60,7 @@ $ scripts/compile_sharedlib.sh
 Note: Make sure your QEMU is not running
 
 ```
-$ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so /usr/lib/
+$ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so mountdir/usr/lib/
 ```
 
 3. Once you have installed the libraries first time, any time you run  <br />

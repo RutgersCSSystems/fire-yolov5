@@ -13,30 +13,51 @@
 #include <inttypes.h>
 #include <pthread.h>
 #include <signal.h>
+#include <string.h>
 
 #define __NR_start_trace 333
+
+#define CLEAR_COUNT     0
+#define COLLECT_TRACE 1
+#define PRINT_STATS 2
+
+static int setinit;
 
 void sig_handler(int);
 
 
+
 static void con() __attribute__((constructor)); 
+static void dest() __attribute__((destructor));
+
+void dest() {
+    int a = 0;
+    fprintf(stderr, "application termination...\n");
+    a = syscall(__NR_start_trace, PRINT_STATS);
+    a = syscall(__NR_start_trace, CLEAR_COUNT);            
+    //sleep(5);
+}
 
 void con() {
-    fprintf(stderr, "initiating tracing...\n");
-    long int a = syscall(__NR_start_trace, 1);
-     //Register sigterm
-     signal(SIGTERM, sig_handler);
+  
+    if(!setinit) {
+        fprintf(stderr, "initiating tracing...\n");
+        long int a = syscall(__NR_start_trace, COLLECT_TRACE);
+
+        //Register KILL
+        struct sigaction action;
+        memset(&action, 0, sizeof(struct sigaction));
+        action.sa_handler = sig_handler;
+        sigaction(SIGKILL, &action, NULL);
+        setinit = 1;
+     }  	
 }
 
 void sig_handler(int sig) {
   
-    long int a = 0;
- 
     switch (sig) {
-        case SIGTERM:
-            fprintf(stderr, "application termination...\n");
-            a = syscall(__NR_start_trace, 2);
-            a = syscall(__NR_start_trace, 0);            
+        case SIGKILL:
+            dest();
         default:
 	    return;
     }
