@@ -3,13 +3,13 @@ set -x
 
 #Pass the release name
 export OS_RELEASE_NAME=$1
-export QEMU_IMG=$PWD
+export QEMU_IMG=/home/joo
 export KERN_SRC=$PWD/linux-stable
 #CPU parallelism
 export PARA="-j40"
 export VER="4.17.0"
-export QEMU_IMG_FILE=$PWD/qemu-image.img
-export MOUNT_DIR=$PWD/mountdir
+export QEMU_IMG_FILE=/home/joo/qemu-image.img
+export MOUNT_DIR=/home/joo/mountdir
 export LINUX_SCALE_BENCH=$PWD/linux-scalability-benchmark
 export QEMUMEM="4096M"
 export CODESRC=$PWD

@@ -241,7 +241,10 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	if (global_flag == 1) {
 		//printk("rbtree insert function \n");
 		rbtree_insert_cnt ++;
+		//dump_stack();
 	}
+
+
 }
 
 /*
@@ -473,15 +476,19 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		____rb_erase_color(rebalance, root, dummy_rotate);
 		if (global_flag == 1) {
 			//printk("rbtree rebalance \n");
-			rbtree_rebalance_cnt++;
+			rbtree_rebalance_cnt++;	
+			dump_stack();
 		}
+
 	}
 	
 
 	if (global_flag == 1) {
 		//printk("rbtree erase function \n");
 		rbtree_erase_cnt ++;
+		//dump_stack();
 	}
+
 }
 EXPORT_SYMBOL(rb_erase);
 

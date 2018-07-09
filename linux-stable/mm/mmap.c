@@ -60,7 +60,7 @@
 #define CLEAR_COUNT	0
 #define COLLECT_TRACE 1
 #define PRINT_STATS 2
-
+#define DUMP_STACK 3
 
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
@@ -2842,27 +2842,21 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			return global_flag;
 			break;
 		case PRINT_STATS:
-			printk("flag is set to print stats  %d\n", flag);
+			printk("flag is set to print stats %d\n", flag);
 			global_flag = PRINT_STATS;
 			print_rbtree_stat();
 			//print_btree_stat();
 			print_radix_tree_stat();
 			break;
+		//case DUMP_STACK:
+		//	printk("flag is set to dump stack %d\n", flag);
+		//	global_flag = DUMP_STACK;
+		//	return global_flag;
+		//	break;
 		default:
 			break;
 	}
-/*
-	if (flag == 1) {
-		printk("system call flag set to 1 \n");
-		global_flag = 1;
-		return global_flag;
-	}
-	else if (flag == 0) {
-		printk("system call flag set to 0 \n");
-		global_flag = 0;
-		return global_flag;
-	}
-*/
+
 	return 0;
 }
 

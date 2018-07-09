@@ -750,8 +750,10 @@ static inline bool radix_tree_shrink(struct radix_tree_root *root,
 		shrunk = true;
 	}
 	
-	if (global_flag == 1)
+	if (global_flag == 1) {
 		radix_tree_shrink_cnt++;
+		//dump_stack();
+	}
 
 	return shrunk;
 }
@@ -1016,6 +1018,7 @@ int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 
 	if (global_flag == 1) {
 		radix_tree_insert_cnt++;
+		//dump_stack();
 	}
 
 	return 0;
@@ -2074,8 +2077,10 @@ EXPORT_SYMBOL(radix_tree_delete_item);
  */
 void *radix_tree_delete(struct radix_tree_root *root, unsigned long index)
 {
-	if (global_flag == 1)
+	if (global_flag == 1) {
 		radix_tree_delete_cnt++;
+		//dump_stack();
+	}
 
 	return radix_tree_delete_item(root, index, NULL);
 }
