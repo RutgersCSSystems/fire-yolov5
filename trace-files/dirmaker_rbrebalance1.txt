@@ -20,4 +20,7 @@ Trace1 2275
 [   72.130178]  do_syscall_64+0x49/0x100
 [   72.130179]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-rmdir system call is called to remove a directory. Then it deletes the dentry and frees the inode from the list. It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. It adds the freed data entry to the group block information using rbtree. And during the erase, rbtree tries to rebalance the tree.
+rmdir system call is called to remove a directory. 
+Then it deletes the dentry and frees the inode from the list. 
+It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. 
+It adds the freed data entry to the group block information using rbtree. And during the erase, rbtree tries to rebalance the tree.

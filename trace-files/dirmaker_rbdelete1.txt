@@ -19,7 +19,9 @@ Trace 1 17410
 [   29.793582]  do_rmdir+0x184/0x1c0
 [   29.793583]  do_syscall_64+0x49/0x100
 
-System call rmdir to remove a directory. Then it deletes the dentry and frees the inode from the list. It removes a space from a extent status tree and this causes rbtree delete from the rbtree.
+System call rmdir to remove a directory. 
+Then it deletes the dentry and frees the inode from the list. 
+It removes a space from a extent status tree and this causes rbtree delete from the rbtree.
 
 Trace 2 8677
 [   29.793593]  dump_stack+0x5c/0x7b
@@ -38,5 +40,8 @@ Trace 2 8677
 [   29.793607]  do_syscall_64+0x49/0x100
 [   29.793608]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-rmdir system call is called to remove a directory. Then it deletes the dentry and frees the inode from the list. It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. Then it tries to merge the freed extent and also it removes the freed entry from the rbtree.
+rmdir system call is called to remove a directory. 
+Then it deletes the dentry and frees the inode from the list. 
+It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. 
+Then it tries to merge the freed extent and also it removes the freed entry from the rbtree.
 

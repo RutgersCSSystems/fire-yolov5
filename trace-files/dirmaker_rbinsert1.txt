@@ -18,7 +18,10 @@ Trace 1 22889
 [   52.304557]  do_syscall_64+0x49/0x100
 [   52.304558]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-It iterates through the directory and reads the directory. Then it fills the rbtree with information from a directory block. If there are no more entires or the inode has changed since the last read was in the cached entries then it adds the information to the rbtree. The directory entry is stored to rbtree.
+It iterates through the directory and reads the directory. 
+Then it fills the rbtree with information from a directory block. 
+If there are no more entires or the inode has changed since the last read was in the cached entries then it adds the information to the rbtree. 
+The directory entry is stored to rbtree.
 
 
 Trace 2 19813
@@ -37,7 +40,9 @@ Trace 2 19813
 [   52.304885]  do_syscall_64+0x49/0x100
 [   52.304886]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-This is for the process wake up and termination. It updates the fair scheduling stats and then it puts the task into the rbtree. (So my guess is this stat isn't actually related to the dirmaker benchmark.)
+This is for the process wake up and termination. 
+It updates the fair scheduling stats and then it puts the task into the rbtree. 
+(So my guess is this stat isn't actually related to the dirmaker benchmark.)
 
 Trace 3 16905
 dump_stack+0x5c/0x7b
@@ -67,7 +72,10 @@ Trace 4 14286
 [   61.106223]  do_syscall_64+0x49/0x100
 [   61.106223]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Doing system call mkdir to create a directory. Creating directory in ext4 file system format. Adding a new entry in ext4. Then it reads the block and tries to look up the requested blocks and returns if the blocks are already mapped. Then it adds information to an inode's extent status tree and this information of extent is stored in rbtree.
+Doing system call mkdir to create a directory. 
+Creating directory in ext4 file system format and Adding a new entry in ext4. 
+Then it reads the block and tries to look up the requested blocks and returns if the blocks are already mapped. 
+Then it adds information to an inode's extent status tree and this information of extent is stored in rbtree.
 
 
 Trace 5 5369
@@ -86,5 +94,8 @@ Trace 5 5369
 [   52.304586]  do_syscall_64+0x49/0x100
 [   52.304587]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-rmdir system call is called to remove a directory. Then it deletes the dentry and frees the inode from the list. It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. It adds the freed data entry to the group block information using rbtree.
+rmdir system call is called to remove a directory. 
+Then it deletes the dentry and frees the inode from the list. 
+It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. 
+It adds the freed data entry to the group block information using rbtree.
 
