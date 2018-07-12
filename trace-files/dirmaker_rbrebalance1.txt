@@ -1,0 +1,23 @@
+./dirmaker 1
+
+Total number of rbrebalance function called: 2275
+
+Trace1 2275
+[   72.130163]  dump_stack+0x5c/0x7b
+[   72.130164]  rb_erase+0x2a5/0x3a0		
+[   72.130165]  ext4_try_merge_freed_extent+0x91/0xb0
+[   72.130166]  ext4_mb_free_metadata+0xeb/0x1c0	
+[   72.130167]  ext4_free_blocks+0x43e/0xb00		
+[   72.130168]  ? __ext4_ext_check+0x2af/0x3a0		
+[   72.130169]  ext4_ext_remove_space+0xa49/0x1240
+[   72.130171]  ext4_truncate+0x346/0x410
+[   72.130172]  ? jbd2__journal_start+0xd4/0x1e0
+[   72.130172]  ext4_evict_inode+0x25f/0x5a0		
+[   72.130174]  evict+0xba/0x180			
+[   72.130175]  d_delete+0x9d/0xa0
+[   72.130176]  vfs_rmdir+0xf6/0x120			
+[   72.130177]  do_rmdir+0x184/0x1c0	
+[   72.130178]  do_syscall_64+0x49/0x100
+[   72.130179]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+rmdir system call is called to remove a directory. Then it deletes the dentry and frees the inode from the list. It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. It adds the freed data entry to the group block information using rbtree. And during the erase, rbtree tries to rebalance the tree.

@@ -1,0 +1,90 @@
+./dirmaker 1
+
+Total number of rbinsert function called: 124181
+
+Trace 1 22889
+[   52.304546]  dump_stack+0x5c/0x7b
+[   52.304546]  ext4_htree_store_dirent+0xcc/0x100	
+[   52.304548]  htree_dirblock_to_tree+0xc8/0x1c0	
+[   52.304549]  ext4_htree_fill_tree+0xa1/0x2e0		
+[   52.304550]  ? _cond_resched+0x11/0x40		
+[   52.304551]  ? kmem_cache_alloc_trace+0x166/0x170
+[   52.304552]  ext4_readdir+0x6e3/0x910		
+[   52.304553]  iterate_dir+0x99/0x180			
+[   52.304554]  __x64_sys_getdents+0xa4/0x130
+[   52.304555]  ? __x64_sys_getdents+0x130/0x130
+[   52.304556]  ? do_syscall_64+0x49/0x100
+[   52.304557]  ? __ia32_sys_getdents+0x130/0x130
+[   52.304557]  do_syscall_64+0x49/0x100
+[   52.304558]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+It iterates through the directory and reads the directory. Then it fills the rbtree with information from a directory block. If there are no more entires or the inode has changed since the last read was in the cached entries then it adds the information to the rbtree. The directory entry is stored to rbtree.
+
+
+Trace 2 19813
+[   52.304871]  dump_stack+0x5c/0x7b
+[   52.304872]  enqueue_task_fair+0x586/0x1300		
+[   52.304873]  ? __slab_free+0x98/0x310
+[   52.304874]  ttwu_do_activate.isra.88+0x3a/0x70
+[   52.304875]  try_to_wake_up+0x319/0x450
+[   52.304876]  __wake_up_common+0x87/0x120
+[   52.304877]  __wake_up_common_lock+0x77/0xb0
+[   52.304878]  do_notify_parent+0x17f/0x250
+[   52.304880]  do_exit+0xaa0/0xb60
+[   52.304881]  ? _copy_from_user+0x31/0x60
+[   52.304883]  do_group_exit+0x35/0xa0
+[   52.304884]  __x64_sys_exit_group+0xf/0x10
+[   52.304885]  do_syscall_64+0x49/0x100
+[   52.304886]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+This is for the process wake up and termination. It updates the fair scheduling stats and then it puts the task into the rbtree. (So my guess is this stat isn't actually related to the dirmaker benchmark.)
+
+Trace 3 16905
+dump_stack+0x5c/0x7b
+[   61.092914]  put_prev_entity+0x52/0x640
+[   61.092917]  pick_next_task_fair+0x48b/0x520
+[   61.092920]  ? __vfs_read+0x31/0x150
+[   61.092923]  __schedule+0xfa/0x6f0
+[   61.092926]  schedule+0x2d/0x80
+[   61.092929]  exit_to_usermode_loop+0x5c/0x90
+[   61.092931]  prepare_exit_to_usermode+0x53/0x80
+[   61.092933]  retint_user+0x8/0x8
+
+Also, this is for process scheduling. (It is similiar to Trace 2)
+
+Trace 4 14286
+[   61.106211]  dump_stack+0x5c/0x7b
+[   61.106212]  __es_insert_extent+0x155/0x300
+[   61.106213]  ext4_es_insert_extent+0xd2/0x1a0
+[   61.106214]  ext4_map_blocks+0x1d1/0x5d0
+[   61.106215]  ? __ext4_new_inode+0x1064/0x12a0
+[   61.106216]  ext4_getblk+0x4b/0x190
+[   61.106217]  ext4_bread+0x1a/0xb0
+[   61.106218]  ext4_append+0x40/0xd0
+[   61.106219]  ext4_mkdir+0x1f3/0x3f0
+[   61.106220]  vfs_mkdir+0xda/0x180
+[   61.106222]  do_mkdirat+0x72/0xe0
+[   61.106223]  do_syscall_64+0x49/0x100
+[   61.106223]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Doing system call mkdir to create a directory. Creating directory in ext4 file system format. Adding a new entry in ext4. Then it reads the block and tries to look up the requested blocks and returns if the blocks are already mapped. Then it adds information to an inode's extent status tree and this information of extent is stored in rbtree.
+
+
+Trace 5 5369
+[   52.304573]  dump_stack+0x5c/0x7b
+[   52.304574]  ext4_mb_free_metadata+0xad/0x1c0	--> fs/ext4/mballoc.c calling rb_insert_color
+[   52.304575]  ext4_free_blocks+0x43e/0xb00		--> fs/ext4/mballoc.c clling ext4_mb_free_metadata
+[   52.304576]  ? __ext4_ext_check+0x2af/0x3a0
+[   52.304577]  ext4_ext_remove_space+0xa49/0x1240
+[   52.304578]  ext4_truncate+0x346/0x410
+[   52.304579]  ? jbd2__journal_start+0xd4/0x1e0
+[   52.304580]  ext4_evict_inode+0x25f/0x5a0		--> fs/ext4/inode.c calling ext_truncate
+[   52.304582]  evict+0xba/0x180			--> fs/inode.c calling evict_inode
+[   52.304583]  d_delete+0x9d/0xa0			-->
+[   52.304584]  vfs_rmdir+0xf6/0x120			--> fs/namei.c calling d_delete
+[   52.304585]  do_rmdir+0x184/0x1c0			--> fs/namei.c calling vfs_rmdir
+[   52.304586]  do_syscall_64+0x49/0x100
+[   52.304587]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+rmdir system call is called to remove a directory. Then it deletes the dentry and frees the inode from the list. It frees the block and removes the block and make sure that we don't reuse the freed block until after the transaction is committed. It adds the freed data entry to the group block information using rbtree.
+
