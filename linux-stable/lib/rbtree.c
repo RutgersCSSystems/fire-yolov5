@@ -477,7 +477,7 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		if (global_flag == 1) {
 			//printk("rbtree rebalance \n");
 			rbtree_rebalance_cnt++;	
-			//dump_stack();
+			dump_stack();
 		}
 
 	}

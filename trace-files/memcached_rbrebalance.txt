@@ -1,0 +1,21 @@
+memcached configuration
+- # of requests per client: 10000
+- # of clients: 10
+- # of threads: 1
+- set:get ratio 1:10
+- data size: 32B
+
+Total number of rbrebalance called: 298
+
+Trace1 298
+[   84.504424]  dump_stack+0x5c/0x7b
+[   84.504425]  rb_erase+0x2a5/0x3a0
+[   84.504427]  timerqueue_del+0x1e/0x40
+[   84.504428]  __remove_hrtimer+0x30/0x70
+[   84.504430]  __hrtimer_run_queues+0xdb/0x270
+[   84.504431]  hrtimer_interrupt+0x11d/0x260
+[   84.504433]  ? update_ts_time_stats+0x4e/0x80
+[   84.504434]  smp_apic_timer_interrupt+0x5d/0x130
+[   84.504435]  apic_timer_interrupt+0xf/0x20
+
+Local APIC timer interrupt for local interrupts. Removes a timer node from the timerqueue in the rbtree.

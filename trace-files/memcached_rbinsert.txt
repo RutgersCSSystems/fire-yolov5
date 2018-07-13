@@ -1,0 +1,140 @@
+memcached configuration
+- # of requests per client: 10000
+- # of clients: 10
+- # of threads: 1
+- set:get ratio 1:10
+- data size: 32B
+
+Total number of rbinsert called: 188832
+
+Trace1 59281
+[   84.000428]  dump_stack+0x5c/0x7b
+[   84.000431]  enqueue_task_fair+0x586/0x1300
+[   84.000433]  ttwu_do_activate.isra.88+0x3a/0x70
+[   84.000436]  try_to_wake_up+0x319/0x450
+[   84.000438]  __wake_up_common+0x87/0x120
+[   84.000442]  ep_poll_callback+0xc2/0x2c0
+[   84.000445]  __wake_up_common+0x87/0x120
+[   84.000447]  __wake_up_common_lock+0x77/0xb0
+[   84.000451]  irq_work_run_list+0x50/0x80
+[   84.000455]  ? tick_sched_do_timer+0x50/0x50
+[   84.000457]  update_process_times+0x36/0x50
+[   84.000460]  tick_sched_handle+0x2f/0x40
+[   84.000463]  tick_sched_timer+0x32/0x70
+[   84.000466]  __hrtimer_run_queues+0xf7/0x270
+[   84.000469]  hrtimer_interrupt+0x11d/0x260
+[   84.000472]  smp_apic_timer_interrupt+0x5d/0x130
+[   84.000474]  apic_timer_interrupt+0xf/0x20
+
+This is for the process wake up and termination.
+It updates the fair scheduling stats and then it puts the task into the rbtree. 
+
+
+Trace2 52150
+[   87.889391]  tcp_event_new_data_sent+0x4a/0x90
+[   87.889392]  tcp_write_xmit+0x270/0x10a0
+[   87.889394]  __tcp_push_pending_frames+0x28/0x90
+[   87.889395]  tcp_sendmsg_locked+0x311/0xce0
+[   87.889396]  ? core_sys_select+0x176/0x270
+[   87.889397]  ? set_fd_set+0x1e/0x30
+[   87.889398]  tcp_sendmsg+0x22/0x40
+[   87.889400]  sock_sendmsg+0x31/0x40
+[   87.889401]  sock_write_iter+0x82/0xf0
+[   87.889403]  __vfs_write+0xfa/0x160
+[   87.889404]  vfs_write+0xae/0x1a0
+[   87.889405]  ksys_write+0x4d/0xb0
+[   87.889406]  do_syscall_64+0x49/0x100
+[   87.889407]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The socket sends message and then tcp sends message. It release a lock from the socket.
+tcp packets are tracked with rbtree in the hierarchical token bucket scheduler.
+If new data has been sent to the network, the data inside the queue is stored in rbtree.
+
+
+Trace3 57501
+[   84.001723]  dump_stack+0x5c/0x7b
+[   84.001726]  put_prev_entity+0x52/0x640
+[   84.001730]  pick_next_task_fair+0x48b/0x520
+[   84.001732]  ? __vfs_read+0x31/0x150
+[   84.001735]  __schedule+0xfa/0x6f0
+[   84.001738]  schedule+0x2d/0x80
+[   84.001741]  exit_to_usermode_loop+0x5c/0x90
+[   84.001743]  do_syscall_64+0xc6/0x100
+
+Also, this is for process scheduling. (It is similiar to Trace 1)
+
+
+Trace4 25480
+[   84.000556]  dump_stack+0x5c/0x7b
+[   84.000560]  timerqueue_add+0x54/0x80
+[   84.000563]  enqueue_hrtimer+0x35/0x90
+[   84.000566]  __hrtimer_run_queues+0x127/0x270
+[   84.000568]  hrtimer_interrupt+0x11d/0x260
+[   84.000571]  smp_apic_timer_interrupt+0x5d/0x130
+[   84.000573]  apic_timer_interrupt+0xf/0x20
+[   84.000574]  </IRQ>
+[   84.000577] RIP: 0010:scsi_request_fn+0xd8/0x530
+[   84.000578] RSP: 0000:ffff9e4240dffb68 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+[   84.000580] RAX: ffff8e5cf5c74330 RBX: ffff8e5cf629c800 RCX: 00000000fffcc85e
+[   84.000582] RDX: ffff8e5cf5c74400 RSI: 0000000000000000 RDI: 00000000fffcc85e
+[   84.000583] RBP: ffff8e5cf5ab7000 R08: 0000000000000000 R09: ffffffffffffffff
+[   84.000584] R10: ffff8e5cf61f4200 R11: 0000000000001000 R12: ffff8e5cf5c74180
+[   84.000585] R13: ffff8e5cf576fc00 R14: ffff8e5cf629c830 R15: ffff8e5cf576fc00
+[   84.000589]  ? scsi_request_fn+0xba/0x530
+[   84.000591]  ? hrtimer_try_to_cancel+0xba/0x110
+[   84.000594]  __blk_run_queue+0x3a/0x60
+[   84.000597]  blk_flush_plug_list+0x237/0x260
+[   84.000599]  blk_finish_plug+0x22/0x30
+[   84.000602]  __do_page_cache_readahead+0x1cb/0x280
+[   84.000606]  ? ondemand_readahead+0x16c/0x2b0
+[   84.000609]  ? find_get_entry+0x14/0xd0
+[   84.000612]  ondemand_readahead+0x16c/0x2b0
+[   84.000615]  ? pagecache_get_page+0x22/0x210
+[   84.000618]  filemap_fault+0x322/0x5a0
+[   84.000621]  ? filemap_map_pages+0x1f7/0x300
+[   84.000623]  ext4_filemap_fault+0x27/0x36
+[   84.000625]  __do_fault+0x18/0x60
+[   84.000628]  __handle_mm_fault+0x66b/0x980
+[   84.000631]  __do_page_fault+0x241/0x4c0
+[   84.000633]  ? async_page_fault+0x8/0x30
+[   84.000635]  async_page_fault+0x1e/0x30
+
+page fault happened. Already holds the mm semaphore. The mmap_semaphore have been released. 
+filemap_fault is invoked via the vma operations vector for a mapped memory region to read in file data during page fault.
+The task ends up in blk_finish_plug and flushes the pending I/O. Adds a timer node from the timerqueue in the rbtree.
+
+
+Trace5 728
+[   84.001002]  dump_stack+0x5c/0x7b
+[   84.001005]  put_prev_entity+0x52/0x640
+[   84.001009]  pick_next_task_fair+0x48b/0x520
+[   84.001013]  __schedule+0xfa/0x6f0
+[   84.001017]  ? find_get_entry+0x14/0xd0
+[   84.001019]  _cond_resched+0x28/0x40
+[   84.001023]  filemap_fault+0xaa/0x5a0
+[   84.001026]  ? filemap_map_pages+0x1f7/0x300
+[   84.001029]  ext4_filemap_fault+0x27/0x36
+[   84.001031]  __do_fault+0x18/0x60
+[   84.001033]  __handle_mm_fault+0x66b/0x980
+[   84.001036]  __do_page_fault+0x241/0x4c0
+[   84.001039]  ? async_page_fault+0x8/0x30
+[   84.001041]  async_page_fault+0x1e/0x30
+
+page fault happened. Already holds the mm semaphore. The mmap_semaphore have been released. 
+filemap_fault is invoked via the vma operations vector for a mapped memory region to read in file data during page fault.
+Then it is used for task scheduling adding the task to rbtree.
+
+Trace6 446
+[   84.034392]  dump_stack+0x5c/0x7b
+[   84.034393]  __vma_adjust+0x2c4/0x7a0
+[   84.034394]  vma_merge+0x1ea/0x2f0
+[   84.034395]  mprotect_fixup+0xa0/0x260
+[   84.034397]  do_mprotect_pkey+0x209/0x380
+[   84.034398]  __x64_sys_mprotect+0x16/0x20
+[   84.034399]  do_syscall_64+0x49/0x100
+[   84.034400]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The mprotect() system call changes the specified pages to have protection.
+It tries to merge with previous and next vma and then put into interval tree.
+
+
