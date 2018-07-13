@@ -1,0 +1,18 @@
+./db_bench
+
+- CPU cache: 4096KB
+- Keys: 16B each
+- Values: 100B each
+- Entries: 1000000
+- Raw size: 110.6MB
+- File size: 62.9MB
+
+Without dump_stack()
+-rbinsert: 		143968
+-rberase: 		83121
+-rbrebalance:	4870
+
+With dump_stack()
+-rbinsert:		1203418
+-rberase: 		229667
+-rbrebalance:	973
