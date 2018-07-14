@@ -1,0 +1,113 @@
+./db_bench
+- CPU cache:	4096KB
+- Keys:			16B each
+- Values:		100B each
+- Entries:		1000000
+- Raw size:		110.6MB
+- File size:	62.9MB
+
+Total rbdelete: 229667
+
+Trace1 217115
+
+[  103.819991]  dump_stack+0x5c/0x7b
+[  103.819993]  timerqueue_del+0x1e/0x40
+[  103.819996]  __remove_hrtimer+0x30/0x70
+[  103.819997]  hrtimer_try_to_cancel+0xaa/0x110
+[  103.820000]  cfq_insert_request+0x30e/0x5d0
+[  103.820003]  blk_flush_plug_list+0x237/0x260
+[  103.820004]  blk_finish_plug+0x22/0x30
+[  103.820007]  __do_page_cache_readahead+0x1cb/0x280
+[  103.820009]  ? try_to_wake_up+0x50/0x450
+[  103.820011]  ? find_get_entry+0x14/0xd0
+[  103.820012]  ? filemap_fault+0x42a/0x5a0
+[  103.820014]  filemap_fault+0x42a/0x5a0
+[  103.820016]  ? __wake_up_common_lock+0x84/0xb0
+[  103.820017]  ? filemap_map_pages+0x1f7/0x300
+[  103.820019]  ext4_filemap_fault+0x27/0x36
+[  103.820021]  __do_fault+0x18/0x60
+[  103.820022]  __handle_mm_fault+0x66b/0x980
+[  103.820025]  __do_page_fault+0x241/0x4c0
+[  103.820027]  ? async_page_fault+0x8/0x30
+[  103.820028]  async_page_fault+0x1e/0x30
+
+page fault happened. Already holds the mm semaphore. The mmap_semaphore have been released. 
+filemap_fault is invoked via the vma operations vector for a mapped memory region to read in file data during page fault.
+The task ends up in blk_finish_plug and flushes the pending I/O. Removes a timer node from the timerqueue in the rbtree.
+
+
+Trace2 9608
+
+[  103.820038]  dump_stack+0x5c/0x7b
+[  103.820041]  elv_rb_del+0x1a/0x30
+[  103.820042]  cfq_remove_request+0x70/0xf0
+[  103.820044]  cfq_dispatch_insert+0x45/0xe0
+[  103.820045]  cfq_dispatch_requests+0x353/0xbb0
+[  103.820047]  blk_peek_request+0x1c2/0x2d0
+[  103.820050]  scsi_request_fn+0x2c/0x530
+[  103.820051]  ? hrtimer_try_to_cancel+0xba/0x110
+[  103.820052]  __blk_run_queue+0x3a/0x60
+[  103.820054]  blk_flush_plug_list+0x237/0x260
+[  103.820055]  blk_finish_plug+0x22/0x30
+[  103.820056]  __do_page_cache_readahead+0x1cb/0x280
+[  103.820057]  ? try_to_wake_up+0x50/0x450
+[  103.820059]  ? find_get_entry+0x14/0xd0
+[  103.820060]  ? filemap_fault+0x42a/0x5a0
+[  103.820061]  filemap_fault+0x42a/0x5a0
+[  103.820062]  ? __wake_up_common_lock+0x84/0xb0
+[  103.820063]  ? filemap_map_pages+0x1f7/0x300
+[  103.820065]  ext4_filemap_fault+0x27/0x36
+[  103.820065]  __do_fault+0x18/0x60
+[  103.820066]  __handle_mm_fault+0x66b/0x980
+[  103.820068]  __do_page_fault+0x241/0x4c0
+[  103.820069]  ? async_page_fault+0x8/0x30
+[  103.820069]  async_page_fault+0x1e/0x30
+
+page fault happened. Already holds the mm semaphore. The mmap_semaphore have been released. 
+filemap_fault is invoked via the vma operations vector for a mapped memory region to read in file data during page fault.
+The task ends up in blk_finish_plug and flushes the pending I/O. Moves the request to the request queue dispatch list.
+Removes the request from the queue and the rbtree node is deleted.
+
+Trace3 1814
+
+[  103.831503]  __es_remove_extent+0x1bf/0x2d0
+[  103.831505]  ext4_es_insert_extent+0x94/0x1a0
+[  103.831507]  ext4_map_blocks+0x1d1/0x5d0
+[  103.831508]  ext4_writepages+0x7fb/0xde0
+[  103.831510]  ? do_writepages+0x15/0x60
+[  103.831512]  do_writepages+0x15/0x60
+[  103.831514]  __filemap_fdatawrite_range+0x7c/0xb0
+[  103.831515]  file_write_and_wait_range+0x2c/0x80
+[  103.831517]  ext4_sync_file+0x10c/0x3f0
+[  103.831519]  do_fsync+0x33/0x60
+[  103.831521]  __x64_sys_fsync+0xb/0x10
+[  103.831522]  do_syscall_64+0x49/0x100
+[  103.831523]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+ext4 write requests are handled. map_block translates an inode and logical block number to a physical blcok number.
+And adds the information to an inode's extent status tree. If write lock happens, the information is removed from the extent tree.
+It is also removed from the rbtree.
+
+
+Trace4 712
+
+[  103.825370]  dump_stack+0x5c/0x7b
+[  103.825371]  tcp_ack+0x614/0x11e0
+[  103.825373]  ? sk_reset_timer+0xf/0x30
+[  103.825374]  tcp_rcv_established+0x199/0x5f0
+[  103.825376]  tcp_v4_do_rcv+0x124/0x1c0
+[  103.825377]  __release_sock+0x77/0xc0
+[  103.825379]  release_sock+0x26/0x90
+[  103.825380]  tcp_sendmsg+0x2c/0x40
+[  103.825381]  sock_sendmsg+0x31/0x40
+[  103.825382]  sock_write_iter+0x82/0xf0
+[  103.825383]  __vfs_write+0xfa/0x160
+[  103.825385]  vfs_write+0xae/0x1a0
+[  103.825386]  ksys_write+0x4d/0xb0
+[  103.825387]  do_syscall_64+0x49/0x100
+[  103.825388]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+   
+
+
+  
+  
