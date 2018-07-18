@@ -24,6 +24,14 @@
 #include <linux/rbtree_augmented.h>
 #include <linux/export.h>
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/hashtable.h>
+#include <linux/slab.h>
+#include <linux/mm.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+
 /*
  * red-black trees properties:  http://en.wikipedia.org/wiki/Rbtree
  *
@@ -68,8 +76,18 @@
  * pointers.
  */
 
-extern int global_flag;
+/*
+#define PFN_BIT 21
 
+DEFINE_HASHTABLE(pfn_table, 3);
+
+struct pfn_node {
+	unsigned long pfn_val;
+	struct hlist_node next;
+};
+*/
+
+extern int global_flag;
 int rbtree_insert_cnt, rbtree_erase_cnt, rbtree_rebalance_cnt = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
@@ -242,6 +260,12 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		//printk("rbtree insert function \n");
 		rbtree_insert_cnt ++;
 		//dump_stack();
+	}
+
+	if (global_flag == 4) {
+		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
+		unsigned long pfn = virt_to_pfn(&node);
+		insert_pfn_hashtable(pfn);
 	}
 
 
@@ -722,3 +746,38 @@ void rbtree_reset_counter(void) {
 	printk("Reset all rbtree counters \n");
 }
 EXPORT_SYMBOL(rbtree_reset_counter);
+
+/*
+void insert_pfn_hashtable(unsigned long pfn) {
+	unsigned long key;
+
+	struct pfn_node *p_node = (struct pfn_node *)kmalloc(sizeof(*p_node), GFP_KERNEL);
+	p_node->pfn_val = pfn;
+	
+	key = pfn % max_pfn;
+	hash_add(pfn_table, &p_node->next, key);
+
+}
+EXPORT_SYMBOL(insert_pfn_hashtable);
+
+void print_pfn_hashtable(void) {
+	unsigned long bkt;
+	struct pfn_node *cur;
+	int cnt;
+
+	//hash_for_each macro
+	for ((bkt) = 0, cur = NULL; cur == NULL && (bkt) < HASH_SIZE(pfn_table); (bkt)++) {
+		cnt = 0;
+		hlist_for_each_entry(cur, &pfn_table[bkt], next) {
+			cnt++;
+		}
+		printk("pfn %lu : %d\n", bkt, cnt);
+	}
+		
+	//hash_for_each(pfn_table, bkt, cur, next) {
+	//	printk("pfn %lu: %d \n", bkt, cur->pfn_cnt);
+	//}
+	
+}
+EXPORT_SYMBOL(print_pfn_hashtable);
+*/

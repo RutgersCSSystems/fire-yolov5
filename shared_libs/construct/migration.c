@@ -20,6 +20,7 @@
 #define CLEAR_COUNT     0
 #define COLLECT_TRACE 1
 #define PRINT_STATS 2
+#define PFN_TRACE 4
 
 static int setinit;
 
@@ -43,6 +44,7 @@ void con() {
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
         long int a = syscall(__NR_start_trace, COLLECT_TRACE);
+		long int b = syscall(__NR_start_trace, PFN_TRACE);
 
         //Register KILL
         struct sigaction action;

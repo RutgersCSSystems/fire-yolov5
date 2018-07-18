@@ -54,6 +54,8 @@
 #include <asm/tlb.h>
 #include <asm/mmu_context.h>
 
+#include <linux/pfn_trace.h>
+
 #include "internal.h"
 
 /* start_trace flag option */
@@ -61,6 +63,8 @@
 #define COLLECT_TRACE 1
 #define PRINT_STATS 2
 #define DUMP_STACK 3
+#define PFN_TRACE 4
+#define PFN_STAT 5
 
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
@@ -2828,6 +2832,7 @@ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
 /* start trace system call */
 SYSCALL_DEFINE1(start_trace, int, flag)
 {
+
 	switch(flag) {
 		case CLEAR_COUNT:
 			printk("flag set to clear count %d\n", flag);
@@ -2853,6 +2858,15 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 		//	global_flag = DUMP_STACK;
 		//	return global_flag;
 		//	break;
+		case PFN_TRACE:
+			printk("flag is set to collect pfn trace %d\n", flag);
+			global_flag = PFN_TRACE;
+			//print_pfn_hashtable();
+			break;
+		case PFN_STAT:
+			printk("flag is set to print pfn stats %d\n", flag);
+			print_pfn_hashtable();
+			break;
 		default:
 			break;
 	}
