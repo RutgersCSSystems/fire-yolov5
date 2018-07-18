@@ -21,6 +21,7 @@
 #define COLLECT_TRACE 1
 #define PRINT_STATS 2
 #define PFN_TRACE 4
+#define PFN_STAT 5
 
 static int setinit;
 
@@ -35,7 +36,8 @@ void dest() {
     int a = 0;
     fprintf(stderr, "application termination...\n");
     a = syscall(__NR_start_trace, PRINT_STATS);
-    a = syscall(__NR_start_trace, CLEAR_COUNT);            
+    a = syscall(__NR_start_trace, CLEAR_COUNT);
+	a = syscall(__NR_start_trace, PFN_STAT);
     //sleep(5);
 }
 
