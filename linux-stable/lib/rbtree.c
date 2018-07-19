@@ -266,18 +266,22 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	
 	if (global_flag == 4) {
 		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
+		
 		/*
-		if (cnt == 1) {
-			unsigned long pfn =virt_to_pfn(&node);
-			printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
-			insert_pfn_hashtable(pfn);
-			printk(KERN_ALERT "hash table insert in rbtree \n");
+		if (cnt < 1000) {
+			unsigned long long pfn = (unsigned long long) (virt_to_pfn(&node));
+			printk(KERN_ALERT "pfn to be inserted : %llu \n", pfn);
+			if (pfn < 2359297)
+				insert_pfn_hashtable(pfn);
+			//printk(KERN_ALERT "hash table insert in rbtree \n");
 		}
+		cnt++;
 		*/
+
 		unsigned long pfn = virt_to_pfn(&node);
-		printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
-		insert_pfn_hashtable(pfn);
-		//cnt++;
+		//printk(KERN_ALERT "pfn to be inserted : %llu \n", pfn);
+		if (pfn <= max_pfn)
+			insert_pfn_hashtable(pfn);
 	}
 
 

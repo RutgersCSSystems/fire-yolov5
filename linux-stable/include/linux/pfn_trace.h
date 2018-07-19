@@ -3,9 +3,6 @@
 
 #include <linux/hashtable.h>
 
-//#define PFN_BIT 21
-
-//DEFINE_HASHTABLE(pfn_table, PFN_BIT);
 
 struct pfn_node {
 	unsigned long pfn_val;
