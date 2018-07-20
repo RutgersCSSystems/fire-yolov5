@@ -2858,10 +2858,11 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 		//	global_flag = DUMP_STACK;
 		//	return global_flag;
 		//	break;
+		
 		case PFN_TRACE:
 			printk("flag is set to collect pfn trace %d\n", flag);
 			global_flag = PFN_TRACE;
-			//print_pfn_hashtable();
+			return global_flag;
 			break;
 		case PFN_STAT:
 			printk("flag is set to print pfn stats %d\n", flag);

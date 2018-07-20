@@ -76,21 +76,9 @@
  * pointers.
  */
 
-/*
-#define PFN_BIT 21
-
-DEFINE_HASHTABLE(pfn_table, 3);
-
-struct pfn_node {
-	unsigned long pfn_val;
-	struct hlist_node next;
-};
-*/
 
 extern int global_flag;
 int rbtree_insert_cnt, rbtree_erase_cnt, rbtree_rebalance_cnt = 0;
-
-//int cnt = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
 {
@@ -263,28 +251,17 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		rbtree_insert_cnt ++;
 		//dump_stack();
 	}
+
 	
 	if (global_flag == 4) {
 		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
-		
-		/*
-		if (cnt < 1000) {
-			unsigned long long pfn = (unsigned long long) (virt_to_pfn(&node));
-			printk(KERN_ALERT "pfn to be inserted : %llu \n", pfn);
-			if (pfn < 2359297)
-				insert_pfn_hashtable(pfn);
-			//printk(KERN_ALERT "hash table insert in rbtree \n");
-		}
-		cnt++;
-		*/
 
 		unsigned long pfn = virt_to_pfn(&node);
-		//printk(KERN_ALERT "pfn to be inserted : %llu \n", pfn);
+		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
 		if (pfn <= max_pfn)
 			insert_pfn_hashtable(pfn);
 	}
-
-
+	
 }
 
 /*
@@ -519,7 +496,16 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 			rbtree_rebalance_cnt++;	
 			//dump_stack();
 		}
+		/*
+		if (global_flag == 4) {
+			//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
 
+			unsigned long pfn = virt_to_pfn(&node);
+			//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
+			if (pfn <= max_pfn)
+				insert_pfn_hashtable(pfn);
+		}
+		*/
 	}
 	
 
@@ -528,6 +514,16 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		rbtree_erase_cnt ++;
 		//dump_stack();
 	}
+	/*
+	if (global_flag == 4) {
+		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
+
+		unsigned long pfn = virt_to_pfn(&node);
+		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
+		if (pfn <= max_pfn)
+			insert_pfn_hashtable(pfn);
+	}
+	*/
 
 }
 EXPORT_SYMBOL(rb_erase);

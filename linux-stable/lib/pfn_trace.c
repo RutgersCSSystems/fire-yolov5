@@ -10,14 +10,14 @@
 #include <linux/kernel.h>
 
 
-#define PFN_BIT 3
+#define PFN_BIT 21
 
 DEFINE_HASHTABLE(pfn_table, PFN_BIT);
 
 void insert_pfn_hashtable(unsigned long pfn) {
 	unsigned long key;
 
-	struct pfn_node *p_node = (struct pfn_node *)kmalloc(sizeof(*p_node), GFP_KERNEL);
+	struct pfn_node *p_node = (struct pfn_node *)kmalloc(sizeof(*p_node), GFP_ATOMIC);
 	if (!p_node)
 		printk("Allocation error! \n");
 
@@ -45,7 +45,8 @@ void print_pfn_hashtable(void) {
 //			printk("data: %lu is in bucket %lu", cur->pfn_val, bkt);
 			cnt++;
 		}
-		printk("pfn %llu: %d\n", bkt, cnt);
+		if (cnt != 0)
+			printk("pfn %lu: %d\n", bkt, cnt);
 	}
 }
 EXPORT_SYMBOL(print_pfn_hashtable);
