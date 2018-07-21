@@ -39,6 +39,12 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/mm.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+
 extern int global_flag;
 
 int radix_tree_insert_cnt, radix_tree_delete_cnt, radix_tree_shrink_cnt = 0; 
@@ -1020,7 +1026,13 @@ int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 		radix_tree_insert_cnt++;
 		//dump_stack();
 	}
-
+	/*
+	if (global_flag == 4) {
+		unsigned long pfn = virt_to_pfn(node);
+		if (pfn <= max_pfn)
+			insert_pfn_hashtable(pfn);
+	}
+	*/
 	return 0;
 }
 EXPORT_SYMBOL(__radix_tree_insert);
@@ -1991,6 +2003,13 @@ void __radix_tree_delete_node(struct radix_tree_root *root,
 			      struct radix_tree_node *node,
 			      radix_tree_update_node_t update_node)
 {
+	/*if (global_flag == 4) {
+		unsigned long pfn = virt_to_pfn(node);
+		if (pfn <= max_pfn)
+			insert_pfn_hashtable(pfn);
+
+	}
+	*/
 	delete_node(root, node, update_node);
 }
 
@@ -2061,7 +2080,7 @@ void *radix_tree_delete_item(struct radix_tree_root *root,
 		return NULL;
 
 	__radix_tree_delete(root, node, slot);
-
+	
 	return entry;
 }
 EXPORT_SYMBOL(radix_tree_delete_item);

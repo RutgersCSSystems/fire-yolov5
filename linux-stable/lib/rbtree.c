@@ -256,7 +256,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	if (global_flag == 4) {
 		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
 
-		unsigned long pfn = virt_to_pfn(&node);
+		unsigned long pfn = virt_to_pfn(node);
 		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
 		if (pfn <= max_pfn)
 			insert_pfn_hashtable(pfn);
@@ -500,7 +500,7 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		if (global_flag == 4) {
 			//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
 
-			unsigned long pfn = virt_to_pfn(&node);
+			unsigned long pfn = virt_to_pfn(node);
 			//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
 			if (pfn <= max_pfn)
 				insert_pfn_hashtable(pfn);
@@ -518,7 +518,7 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 	if (global_flag == 4) {
 		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
 
-		unsigned long pfn = virt_to_pfn(&node);
+		unsigned long pfn = virt_to_pfn(node);
 		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
 		if (pfn <= max_pfn)
 			insert_pfn_hashtable(pfn);
