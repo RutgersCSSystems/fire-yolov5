@@ -105,57 +105,67 @@ __rb_rotate_set_parents(struct rb_node *old, struct rb_node *new,
 	__rb_change_child(old, new, parent, root);
 }
 
+
+/* original rb_insert function */
+
 static __always_inline void
 __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
 {
+	
+	if (global_flag == 4)
+		add_to_hashtable(node);
+	
 	struct rb_node *parent = rb_red_parent(node), *gparent, *tmp;
 
 	if (newleft)
 		*leftmost = node;
 
 	while (true) {
-		/*
-		 * Loop invariant: node is red.
-		 */
+		//
+		// Loop invariant: node is red.
+		//
 		if (unlikely(!parent)) {
-			/*
-			 * The inserted node is root. Either this is the
-			 * first node, or we recursed at Case 1 below and
-			 * are no longer violating 4).
-			 */
+			//
+			// The inserted node is root. Either this is the
+			// first node, or we recursed at Case 1 below and
+			// are no longer violating 4).
+			//
 			rb_set_parent_color(node, NULL, RB_BLACK);
 			break;
 		}
 
-		/*
-		 * If there is a black parent, we are done.
-		 * Otherwise, take some corrective action as,
-		 * per 4), we don't want a red root or two
-		 * consecutive red nodes.
-		 */
+		//
+		// If there is a black parent, we are done.
+		// Otherwise, take some corrective action as,
+		// per 4), we don't want a red root or two
+		// consecutive red nodes.
+		//
+
+		//insert
+
 		if(rb_is_black(parent))
 			break;
 
 		gparent = rb_red_parent(parent);
 
 		tmp = gparent->rb_right;
-		if (parent != tmp) {	/* parent == gparent->rb_left */
+		if (parent != tmp) {	// parent == gparent->rb_left //
 			if (tmp && rb_is_red(tmp)) {
-				/*
-				 * Case 1 - node's uncle is red (color flips).
-				 *
-				 *       G            g
-				 *      / \          / \
-				 *     p   u  -->   P   U
-				 *    /            /
-				 *   n            n
-				 *
-				 * However, since g's parent might be red, and
-				 * 4) does not allow this, we need to recurse
-				 * at g.
-				 */
+				//
+				// Case 1 - node's uncle is red (color flips).
+				//
+				//       G            g
+				//      / \          / \
+				//     p   u  -->   P   U
+				//    /            /
+				//   n            n
+				//
+				// However, since g's parent might be red, and
+				// 4) does not allow this, we need to recurse
+				// at g.
+				//
 				rb_set_parent_color(tmp, gparent, RB_BLACK);
 				rb_set_parent_color(parent, gparent, RB_BLACK);
 				node = gparent;
@@ -166,19 +176,19 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 
 			tmp = parent->rb_right;
 			if (node == tmp) {
-				/*
-				 * Case 2 - node's uncle is black and node is
-				 * the parent's right child (left rotate at parent).
-				 *
-				 *      G             G
-				 *     / \           / \
-				 *    p   U  -->    n   U
-				 *     \           /
-				 *      n         p
-				 *
-				 * This still leaves us in violation of 4), the
-				 * continuation into Case 3 will fix that.
-				 */
+				//
+				// Case 2 - node's uncle is black and node is
+				// the parent's right child (left rotate at parent).
+				//
+				//      G             G
+				//     / \           / \
+				//    p   U  -->    n   U
+				//     \           /
+				//      n         p
+				//
+				// This still leaves us in violation of 4), the
+				// continuation into Case 3 will fix that.
+				//
 				tmp = node->rb_left;
 				WRITE_ONCE(parent->rb_right, tmp);
 				WRITE_ONCE(node->rb_left, parent);
@@ -191,17 +201,17 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 				tmp = node->rb_right;
 			}
 
-			/*
-			 * Case 3 - node's uncle is black and node is
-			 * the parent's left child (right rotate at gparent).
-			 *
-			 *        G           P
-			 *       / \         / \
-			 *      p   U  -->  n   g
-			 *     /                 \
-			 *    n                   U
-			 */
-			WRITE_ONCE(gparent->rb_left, tmp); /* == parent->rb_right */
+			//
+			// Case 3 - node's uncle is black and node is
+			// the parent's left child (right rotate at gparent).
+			//
+			//        G           P
+			//       / \         / \
+			//      p   U  -->  n   g
+			//     /                 \
+			//    n                   U
+			//
+			WRITE_ONCE(gparent->rb_left, tmp); // == parent->rb_right //
 			WRITE_ONCE(parent->rb_right, gparent);
 			if (tmp)
 				rb_set_parent_color(tmp, gparent, RB_BLACK);
@@ -211,7 +221,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		} else {
 			tmp = gparent->rb_left;
 			if (tmp && rb_is_red(tmp)) {
-				/* Case 1 - color flips */
+				// Case 1 - color flips /
 				rb_set_parent_color(tmp, gparent, RB_BLACK);
 				rb_set_parent_color(parent, gparent, RB_BLACK);
 				node = gparent;
@@ -222,7 +232,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 
 			tmp = parent->rb_left;
 			if (node == tmp) {
-				/* Case 2 - right rotate at parent */
+				// Case 2 - right rotate at parent /
 				tmp = node->rb_right;
 				WRITE_ONCE(parent->rb_left, tmp);
 				WRITE_ONCE(node->rb_right, parent);
@@ -235,8 +245,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 				tmp = node->rb_left;
 			}
 
-			/* Case 3 - left rotate at gparent */
-			WRITE_ONCE(gparent->rb_right, tmp); /* == parent->rb_left */
+			// Case 3 - left rotate at gparent /
+			WRITE_ONCE(gparent->rb_right, tmp); // == parent->rb_left /
 			WRITE_ONCE(parent->rb_left, gparent);
 			if (tmp)
 				rb_set_parent_color(tmp, gparent, RB_BLACK);
@@ -251,18 +261,281 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		rbtree_insert_cnt ++;
 		//dump_stack();
 	}
-
 	
-	if (global_flag == 4) {
-		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
+}
 
-		unsigned long pfn = virt_to_pfn(node);
-		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
-		if (pfn <= max_pfn)
-			insert_pfn_hashtable(pfn);
+
+/* modified rb_insert function */
+/*
+static __always_inline void
+__rb_insert(struct rb_node *node, struct rb_root *root,
+	    bool newleft, struct rb_node **leftmost,
+	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
+{
+	//
+	//if (global_flag == 4)
+	//	add_to_hashtable(node);
+	//
+	struct rb_node *parent = rb_red_parent(node), *gparent, *tmp;
+
+	if (newleft)
+		*leftmost = node;
+
+	while (true) {
+		//
+		// Loop invariant: node is red.
+		//
+		if (unlikely(!parent)) {
+			//
+			// The inserted node is root. Either this is the
+			// first node, or we recursed at Case 1 below and
+			// are no longer violating 4).
+			//
+			rb_set_parent_color(node, NULL, RB_BLACK);
+			break;
+		}
+
+		//
+		// If there is a black parent, we are done.
+		// Otherwise, take some corrective action as,
+		// per 4), we don't want a red root or two
+		// consecutive red nodes.
+		///
+
+		//insert
+
+		if(rb_is_black(parent))
+			break;
+
+		if (global_flag == 4)
+			add_to_hashtable(parent);
+
+		gparent = rb_red_parent(parent);
+		if (global_flag == 4)
+			add_to_hashtable(gparent);
+
+		tmp = gparent->rb_right;
+		if (global_flag == 4)
+			add_to_hashtable(tmp);
+
+		if (parent != tmp) {	// parent == gparent->rb_left /
+			if (tmp && rb_is_red(tmp)) {
+				//
+				// Case 1 - node's uncle is red (color flips).
+				//
+				//       G            g
+				//      / \          / \
+				//     p   u  -->   P   U
+				//    /            /
+				//   n            n
+				//
+				// However, since g's parent might be red, and
+				// 4) does not allow this, we need to recurse
+				// at g.
+				//
+				rb_set_parent_color(tmp, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(tmp);
+					add_to_hashtable(gparent);
+				}
+				rb_set_parent_color(parent, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(parent);
+					add_to_hashtable(gparent);
+				}
+				node = gparent;
+				if (global_flag == 4)
+					add_to_hashtable(node);
+				
+				parent = rb_parent(node);
+				if (global_flag == 4)
+					add_to_hashtable(parent);
+
+				rb_set_parent_color(node, parent, RB_RED);
+				if (global_flag == 4) {
+					add_to_hashtable(node);
+					add_to_hashtable(parent);
+				}
+
+				continue;
+			}
+
+			tmp = parent->rb_right;
+			if (global_flag == 4)
+				add_to_hashtable(tmp);
+
+			if (node == tmp) {
+				//
+				// Case 2 - node's uncle is black and node is
+				// the parent's right child (left rotate at parent).
+				//
+				//      G             G
+				//     / \           / \
+				//    p   U  -->    n   U
+				//     \           /
+				//      n         p
+				//
+				// This still leaves us in violation of 4), the
+				// continuation into Case 3 will fix that.
+				//
+				tmp = node->rb_left;
+				if (global_flag == 4)
+					add_to_hashtable(tmp);
+
+				WRITE_ONCE(parent->rb_right, tmp);
+				WRITE_ONCE(node->rb_left, parent);
+				if (tmp) {
+					rb_set_parent_color(tmp, parent,
+							    RB_BLACK);
+					if (global_flag == 4) {
+						add_to_hashtable(tmp);
+						add_to_hashtable(parent);
+					}
+				}
+				rb_set_parent_color(parent, node, RB_RED);
+				if (global_flag == 4) {
+					add_to_hashtable(parent);
+					add_to_hashtable(node);
+				}
+
+				augment_rotate(parent, node);
+				parent = node;
+				if (global_flag == 4)
+					add_to_hashtable(parent);
+
+				tmp = node->rb_right;
+				if (global_flag == 4)
+					add_to_hashtable(tmp);
+			}
+
+			//
+			// Case 3 - node's uncle is black and node is
+			// the parent's left child (right rotate at gparent).
+			//
+			//        G           P
+			//       / \         / \
+			//      p   U  -->  n   g
+			//     /                 \
+			//    n                   U
+			//
+			WRITE_ONCE(gparent->rb_left, tmp); // == parent->rb_right //
+			WRITE_ONCE(parent->rb_right, gparent);
+			if (tmp) {
+				rb_set_parent_color(tmp, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(tmp);
+					add_to_hashtable(gparent);
+				}
+			}
+			
+			__rb_rotate_set_parents(gparent, parent, root, RB_RED);
+			if (global_flag == 4) {
+				add_to_hashtable(gparent);
+				add_to_hashtable(parent);
+			}
+			
+			augment_rotate(gparent, parent);
+			break;
+		} else {
+			tmp = gparent->rb_left;
+			if (global_flag == 4)
+				add_to_hashtable(tmp);
+
+			if (tmp && rb_is_red(tmp)) {
+				// Case 1 - color flips //
+				rb_set_parent_color(tmp, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(tmp);
+					add_to_hashtable(gparent);
+				}
+
+				rb_set_parent_color(parent, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(parent);
+					add_to_hashtable(gparent);
+				}
+
+				node = gparent;
+				if (global_flag == 4)
+					add_to_hashtable(node);
+
+				parent = rb_parent(node);
+				if (global_flag == 4)
+					add_to_hashtable(parent);
+
+				rb_set_parent_color(node, parent, RB_RED);
+				if (global_flag == 4) {
+					add_to_hashtable(node);
+					add_to_hashtable(parent);
+				}
+				continue;
+			}
+
+			tmp = parent->rb_left;
+			if (global_flag == 4)
+				add_to_hashtable(tmp);
+
+			if (node == tmp) {
+				// Case 2 - right rotate at parent //
+				tmp = node->rb_right;
+				if (global_flag == 4)
+					add_to_hashtable(tmp);
+				WRITE_ONCE(parent->rb_left, tmp);
+				WRITE_ONCE(node->rb_right, parent);
+				if (tmp) {
+					rb_set_parent_color(tmp, parent,
+							    RB_BLACK);
+					if (global_flag == 4) {
+						add_to_hashtable(tmp);
+						add_to_hashtable(parent);
+					}
+				}
+
+				rb_set_parent_color(parent, node, RB_RED);
+				if (global_flag == 4) {
+					add_to_hashtable(parent);
+					add_to_hashtable(node);
+				}
+
+				augment_rotate(parent, node);
+				parent = node;
+				if (global_flag == 4)
+					add_to_hashtable(parent);
+
+				tmp = node->rb_left;
+				if (global_flag == 4)
+					add_to_hashtable(parent);
+			}
+
+			// Case 3 - left rotate at gparent //
+			WRITE_ONCE(gparent->rb_right, tmp); // == parent->rb_left //
+			WRITE_ONCE(parent->rb_left, gparent);
+			if (tmp) {
+				rb_set_parent_color(tmp, gparent, RB_BLACK);
+				if (global_flag == 4) {
+					add_to_hashtable(tmp);
+					add_to_hashtable(gparent);
+				}
+			}
+			__rb_rotate_set_parents(gparent, parent, root, RB_RED);
+			if (global_flag == 4) {
+				add_to_hashtable(gparent);
+				add_to_hashtable(parent);
+			}
+
+			augment_rotate(gparent, parent);
+			break;
+		}
+	}
+
+	if (global_flag == 1) {
+		//printk("rbtree insert function \n");
+		rbtree_insert_cnt ++;
+		//dump_stack();
 	}
 	
 }
+*/
 
 /*
  * Inline version for rb_erase() use - we want to be able to inline
@@ -485,6 +758,11 @@ EXPORT_SYMBOL(rb_insert_color);
 
 void rb_erase(struct rb_node *node, struct rb_root *root)
 {
+	/*
+	if (global_flag == 4)
+		add_to_hashtable(node);
+	*/
+
 	struct rb_node *rebalance;
 	rebalance = __rb_erase_augmented(node, root,
 					 NULL, &dummy_callbacks);
@@ -514,16 +792,6 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		rbtree_erase_cnt ++;
 		//dump_stack();
 	}
-	/*
-	if (global_flag == 4) {
-		//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
-
-		unsigned long pfn = virt_to_pfn(node);
-		//printk(KERN_ALERT "pfn to be inserted : %lu \n", pfn);
-		if (pfn <= max_pfn)
-			insert_pfn_hashtable(pfn);
-	}
-	*/
 
 }
 EXPORT_SYMBOL(rb_erase);
@@ -758,6 +1026,12 @@ void rbtree_reset_counter(void) {
 	printk("Reset all rbtree counters \n");
 }
 EXPORT_SYMBOL(rbtree_reset_counter);
+
+void add_to_hashtable(struct rb_node *node) {
+	unsigned long pfn = virt_to_pfn(node);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
 
 /*
 void insert_pfn_hashtable(unsigned long pfn) {

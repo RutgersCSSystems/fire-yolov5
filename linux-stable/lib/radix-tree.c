@@ -999,6 +999,9 @@ static inline int insert_entries(struct radix_tree_node *node,
 int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 			unsigned order, void *item)
 {
+	//if (global_flag == 4)
+	//	add_to_hashtable_radix(item);
+
 	struct radix_tree_node *node;
 	void __rcu **slot;
 	int error;
@@ -1026,13 +1029,7 @@ int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 		radix_tree_insert_cnt++;
 		//dump_stack();
 	}
-	/*
-	if (global_flag == 4) {
-		unsigned long pfn = virt_to_pfn(node);
-		if (pfn <= max_pfn)
-			insert_pfn_hashtable(pfn);
-	}
-	*/
+
 	return 0;
 }
 EXPORT_SYMBOL(__radix_tree_insert);
@@ -2065,6 +2062,9 @@ EXPORT_SYMBOL(radix_tree_iter_delete);
 void *radix_tree_delete_item(struct radix_tree_root *root,
 			     unsigned long index, void *item)
 {
+	//if (global_flag == 4)
+	//	add_to_hashtable_radix(item);
+
 	struct radix_tree_node *node = NULL;
 	void __rcu **slot = NULL;
 	void *entry;
@@ -2348,3 +2348,9 @@ void radix_tree_reset_counter(void) {
 	printk("Reset all radix tree counters \n");
 }
 EXPORT_SYMBOL(radix_tree_reset_counter);
+
+void add_to_hashtable_radix(void *item) {
+	unsigned long pfn = virt_to_pfn(item);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}

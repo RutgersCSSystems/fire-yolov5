@@ -122,6 +122,9 @@ static inline void rb_link_node_rcu(struct rb_node *node, struct rb_node *parent
 
 extern void print_rbtree_stat(void);
 extern void rbtree_reset_counter(void);
+
+void add_to_hashtable(struct rb_node *node);
+
 //extern void insert_pfn_hashtable(unsigned long pfn);
 //extern void print_pfn_hashtable(void);
 

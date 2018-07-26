@@ -570,6 +570,7 @@ static __always_inline void __rcu **radix_tree_next_slot(void __rcu **slot,
 
 extern void print_radix_tree_stat(void);
 extern void radix_tree_reset_counter(void);
+void add_to_hashtable_radix(void *item);
 
 /**
  * radix_tree_for_each_slot - iterate over non-empty slots
