@@ -37,7 +37,7 @@ void dest() {
     fprintf(stderr, "application termination...\n");
     a = syscall(__NR_start_trace, PRINT_STATS);
     a = syscall(__NR_start_trace, CLEAR_COUNT);
-//	a = syscall(__NR_start_trace, PFN_STAT);
+	a = syscall(__NR_start_trace, PFN_STAT);
     //sleep(5);
 }
 
@@ -46,7 +46,7 @@ void con() {
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
         long int a = syscall(__NR_start_trace, COLLECT_TRACE);
-//		long int b = syscall(__NR_start_trace, PFN_TRACE);
+		long int b = syscall(__NR_start_trace, PFN_TRACE);
 
         //Register KILL
         struct sigaction action;
