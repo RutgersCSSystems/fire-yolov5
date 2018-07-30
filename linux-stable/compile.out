@@ -1,0 +1,32 @@
+  CHK     include/config/kernel.release
+/bin/sh: 1: cannot create scripts/basic/modules.order: Permission denied
+scripts/Makefile.build:472: recipe for target 'scripts/basic/modules.order' failed
+make[1]: *** [scripts/basic/modules.order] Error 2
+Makefile:467: recipe for target 'scripts_basic' failed
+make: *** [scripts_basic] Error 2
+make: *** Waiting for unfinished jobs....
+/bin/sh: 1: cannot create include/config/kernel.release.tmp: Permission denied
+Makefile:1071: recipe for target 'include/config/kernel.release' failed
+make: *** [include/config/kernel.release] Error 2
+make: *** wait: No child processes.  Stop.
+  CHK     include/config/kernel.release
+  CHK     include/generated/uapi/linux/version.h
+/bin/sh: 1: cannot create include/generated/uapi/linux/version.h.tmp: Permission denied
+Makefile:1191: recipe for target 'include/generated/uapi/linux/version.h' failed
+make: *** [include/generated/uapi/linux/version.h] Error 2
+make: *** Waiting for unfinished jobs....
+  DESCEND  objtool
+/bin/sh: 1: cannot create include/config/kernel.release.tmp: Permission denied
+Makefile:1071: recipe for target 'include/config/kernel.release' failed
+make: *** [include/config/kernel.release] Error 2
+  CHK     include/config/kernel.release
+/bin/sh: 1: cannot create scripts/basic/modules.order: Permission denied
+scripts/Makefile.build:472: recipe for target 'scripts/basic/modules.order' failed
+make[1]: *** [scripts/basic/modules.order] Error 2
+Makefile:467: recipe for target 'scripts_basic' failed
+make: *** [scripts_basic] Error 2
+make: *** Waiting for unfinished jobs....
+/bin/sh: 1: cannot create include/config/kernel.release.tmp: Permission denied
+Makefile:1071: recipe for target 'include/config/kernel.release' failed
+make: *** [include/config/kernel.release] Error 2
+make: *** wait: No child processes.  Stop.
