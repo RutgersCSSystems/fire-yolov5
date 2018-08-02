@@ -107,7 +107,7 @@ __rb_rotate_set_parents(struct rb_node *old, struct rb_node *new,
 
 
 /* original rb_insert function */
-/*
+
 static __always_inline void
 __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
@@ -263,10 +263,10 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	}
 	
 }
-*/
+
 
 /* modified rb_insert function */
-
+/*
 static __always_inline void
 __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
@@ -535,7 +535,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	}
 	
 }
-
+*/
 
 /*
  * Inline version for rb_erase() use - we want to be able to inline
