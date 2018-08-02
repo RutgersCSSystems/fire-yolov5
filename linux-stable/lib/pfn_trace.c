@@ -10,7 +10,7 @@
 #include <linux/kernel.h>
 
 
-#define PFN_BIT 21
+#define PFN_BIT 24
 
 DEFINE_HASHTABLE(pfn_table, PFN_BIT);
 
