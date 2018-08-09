@@ -32,8 +32,12 @@
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
 #include <linux/time.h>
+#include <linux/time64.h>
 #include <linux/jiffies.h>
 #include <linux/timer.h>
+#include <linux/bench.h>
+
+#define CPUFREQ 2300000000
 
 /*
  * red-black trees properties:  http://en.wikipedia.org/wiki/Rbtree
@@ -82,6 +86,7 @@
 
 extern int global_flag;
 int rbtree_insert_cnt, rbtree_erase_cnt, rbtree_rebalance_cnt = 0;
+uint64_t insert_time, delete_time, rebalance_time = 0;
 
 static inline void rb_set_black(struct rb_node *rb)
 {
@@ -116,8 +121,14 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
 {
-	unsigned long js, je, duration;
-	js = jiffies;
+	struct timespec64 t1, t2;
+	uint64_t insert_duration;
+	getnstimeofday(&t1);
+	
+	//u64 js, je, duration;
+	//js = jiffies;
+	//uint64_t start, end, duration;
+	//start = read_tsc();
 
 	if (global_flag == 4)
 		add_to_hashtable(node);
@@ -260,17 +271,25 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 			break;
 		}
 	}
+	
+	//je = jiffies;
+	//end = read_tsc();
+	//duration = je -js;
+	getnstimeofday(&t2);
+	insert_duration = ((t2.tv_sec - t1.tv_sec) * 1000000000) + (t2.tv_nsec - t1.tv_nsec);
 
-	je = jiffies;
-	duration = je - js;
+	if (global_flag == 6) {
+		//duration = (end - start) * 1000000 / CPUFREQ;
+		//printk("duration: %lld \n", duration);
+		insert_time += insert_duration;
+	}
+
 //	printk("Total time : %d \n", jiffies_to_usecs(je - js));
 
 	if (global_flag == 1) {
 		//printk("rbtree insert function \n");
 		rbtree_insert_cnt ++;
 		//dump_stack();
-		printk("Total time : %d \n", jiffies_to_usecs(duration));
-
 	}
 	
 }
@@ -774,17 +793,39 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		add_to_hashtable(node);
 	*/
 
+	//uint64_t delete_start, delete_end, rebalance_start, rebalance_end, delete_duration, rebalance_duration;
+	//erase_js = jiffies;
+	//delete_start = read_tsc();
+	
+	struct timespec64 del_t1, del_t2, rebal_t1, rebal_t2;
+	uint64_t delete_duration, rebalance_duration;
+	getnstimeofday(&del_t1);
+
 	struct rb_node *rebalance;
 	rebalance = __rb_erase_augmented(node, root,
 					 NULL, &dummy_callbacks);
 	
 	if (rebalance) {
+		//rebalance_start = read_tsc();
+		getnstimeofday(&rebal_t1);
+
 		____rb_erase_color(rebalance, root, dummy_rotate);
+		
+		//rebalance_end = read_tsc();
+		getnstimeofday(&rebal_t2);
+		rebalance_duration = ((rebal_t2.tv_sec - rebal_t1.tv_sec) * 1000000000) + (rebal_t2.tv_nsec - rebal_t1.tv_nsec);
+
 		if (global_flag == 1) {
 			//printk("rbtree rebalance \n");
 			rbtree_rebalance_cnt++;	
 			//dump_stack();
 		}
+		
+		if (global_flag == 6) {
+			//rebalance_duration = (rebalance_end - rebalance_start) * 1000000 / CPUFREQ;
+			rebalance_time += rebalance_duration;
+		}
+
 		/*
 		if (global_flag == 4) {
 			//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
@@ -796,8 +837,17 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		}
 		*/
 	}
-	
 
+	//erase_je = jiffies;
+	//delete_end = read_tsc();
+	getnstimeofday(&del_t2);
+	delete_duration = ((del_t2.tv_sec - del_t1.tv_sec) * 1000000000) + (del_t2.tv_nsec - del_t1.tv_nsec);
+
+	if (global_flag == 6) {
+		//delete_duration = (delete_end - delete_start) * 1000000 / CPUFREQ;
+		delete_time += delete_duration;
+	}
+	
 	if (global_flag == 1) {
 		//printk("rbtree erase function \n");
 		rbtree_erase_cnt ++;
@@ -1044,37 +1094,24 @@ void add_to_hashtable(struct rb_node *node) {
 		insert_pfn_hashtable(pfn);
 }
 
-/*
-void insert_pfn_hashtable(unsigned long pfn) {
-	unsigned long key;
-
-	struct pfn_node *p_node = (struct pfn_node *)kmalloc(sizeof(*p_node), GFP_KERNEL);
-	p_node->pfn_val = pfn;
-	
-	key = pfn % max_pfn;
-	hash_add(pfn_table, &p_node->next, key);
-
+void print_rbtree_time_stat(void) {
+	insert_time = insert_time / 1000;
+	delete_time = delete_time / 1000;
+	rebalance_time = rebalance_time / 1000;
+	printk("rbinsert time: %llu\n", insert_time);
+	//printk("rbtree insert time: %u\n", jiffies_to_msecs(insert_time));
+	printk("rbdelete time: %llu\n", delete_time);
+	//printk("rbtree delete time: %u\n", jiffies_to_msecs(delete_time));
+	printk("rbrebalance time: %llu\n", rebalance_time);
+	//printk("rbtree rebalance time: %u\n", jiffies_to_msecs(rebalance_time));
 }
-EXPORT_SYMBOL(insert_pfn_hashtable);
+EXPORT_SYMBOL(print_rbtree_time_stat);
 
-void print_pfn_hashtable(void) {
-	unsigned long bkt;
-	struct pfn_node *cur;
-	int cnt;
+void rbtree_reset_time(void) {
+	insert_time = 0;
+	delete_time = 0;
+	rebalance_time = 0;
 
-	//hash_for_each macro
-	for ((bkt) = 0, cur = NULL; cur == NULL && (bkt) < HASH_SIZE(pfn_table); (bkt)++) {
-		cnt = 0;
-		hlist_for_each_entry(cur, &pfn_table[bkt], next) {
-			cnt++;
-		}
-		printk("pfn %lu : %d\n", bkt, cnt);
-	}
-		
-	//hash_for_each(pfn_table, bkt, cur, next) {
-	//	printk("pfn %lu: %d \n", bkt, cur->pfn_cnt);
-	//}
-	
+	printk("Reset all rbtree time \n");
 }
-EXPORT_SYMBOL(print_pfn_hashtable);
-*/
+EXPORT_SYMBOL(rbtree_reset_time);
