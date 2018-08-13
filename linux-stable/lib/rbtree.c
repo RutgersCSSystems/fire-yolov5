@@ -31,6 +31,8 @@
 #include <linux/mm.h>
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
+#include <linux/jiffies.h>
+#include <linux/timer.h>
 
 /*
  * red-black trees properties:  http://en.wikipedia.org/wiki/Rbtree
@@ -113,7 +115,9 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
 {
-	
+	unsigned long js, je, duration;
+	js = jiffies;
+
 	if (global_flag == 4)
 		add_to_hashtable(node);
 	
@@ -256,10 +260,14 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		}
 	}
 
+	je = jiffies;
+	duration = je - js;
+
 	if (global_flag == 1) {
 		//printk("rbtree insert function \n");
 		rbtree_insert_cnt ++;
 		//dump_stack();
+		printk("duration: %d \n", jiffies_to_usecs(duration));
 	}
 	
 }
