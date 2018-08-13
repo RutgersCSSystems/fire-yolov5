@@ -6,7 +6,7 @@ sudo apt-get install qemu
 
 #Now create a disk for your virtual machine 
 #for 16GB
-qemu-img create $QEMU_IMG_FILE 16g
+qemu-img create $QEMU_IMG_FILE 200g
 
 #Now format your disk with some file system; 
 #ext4 in this example

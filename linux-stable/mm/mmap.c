@@ -65,6 +65,9 @@
 #define DUMP_STACK 3
 #define PFN_TRACE 4
 #define PFN_STAT 5
+#define TIME_TRACE 6
+#define TIME_STATS 7
+#define TIME_RESET 8
 
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
@@ -2867,6 +2870,21 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 		case PFN_STAT:
 			printk("flag is set to print pfn stats %d\n", flag);
 			print_pfn_hashtable();
+			break;
+		case TIME_TRACE:
+			printk("flag is set to collect time %d \n", flag);
+			global_flag = TIME_TRACE;
+			return global_flag;
+			break;
+		case TIME_STATS:
+			printk("flag is set to print time stats %d \n", flag);
+			global_flag = TIME_STATS;
+			print_rbtree_time_stat();
+			break;
+		case TIME_RESET:
+			printk("flag is set to reset time %d \n", flag);
+			global_flag = TIME_RESET;
+			rbtree_reset_time();
 			break;
 		default:
 			break;

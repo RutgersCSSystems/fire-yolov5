@@ -125,6 +125,9 @@ extern void rbtree_reset_counter(void);
 
 void add_to_hashtable(struct rb_node *node);
 
+extern void print_rbtree_time_stat(void);
+extern void rbtree_reset_time(void);
+
 //extern void insert_pfn_hashtable(unsigned long pfn);
 //extern void print_pfn_hashtable(void);
 

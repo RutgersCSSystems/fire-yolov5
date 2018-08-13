@@ -22,6 +22,9 @@
 #define PRINT_STATS 2
 #define PFN_TRACE 4
 #define PFN_STAT 5
+#define TIME_TRACE 6
+#define TIME_STATS 7
+#define TIME_RESET 8
 
 static int setinit;
 
@@ -35,9 +38,17 @@ static void dest() __attribute__((destructor));
 void dest() {
     int a = 0;
     fprintf(stderr, "application termination...\n");
+<<<<<<< HEAD
     a = syscall(__NR_start_trace, PRINT_STATS);
     a = syscall(__NR_start_trace, CLEAR_COUNT);
 //	a = syscall(__NR_start_trace, PFN_STAT);
+=======
+//    a = syscall(__NR_start_trace, PRINT_STATS);
+//    a = syscall(__NR_start_trace, CLEAR_COUNT);
+//	a = syscall(__NR_start_trace, PFN_STAT);
+	a = syscall(__NR_start_trace, TIME_STATS);
+	a = syscall(__NR_start_trace, TIME_RESET);
+>>>>>>> fc06da52e8af7dcb8e04f6d361005831e6fd9aa3
     //sleep(5);
 }
 
@@ -45,8 +56,14 @@ void con() {
   
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
+<<<<<<< HEAD
         long int a = syscall(__NR_start_trace, COLLECT_TRACE);
 //		long int b = syscall(__NR_start_trace, PFN_TRACE);
+=======
+//        long int a = syscall(__NR_start_trace, COLLECT_TRACE);
+//		long int b = syscall(__NR_start_trace, PFN_TRACE);
+		long int a = syscall(__NR_start_trace, TIME_TRACE);
+>>>>>>> fc06da52e8af7dcb8e04f6d361005831e6fd9aa3
 
         //Register KILL
         struct sigaction action;
