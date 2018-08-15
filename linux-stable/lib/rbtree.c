@@ -31,10 +31,8 @@
 #include <linux/mm.h>
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
-<<<<<<< HEAD
 #include <linux/jiffies.h>
 #include <linux/timer.h>
-=======
 #include <linux/time.h>
 #include <linux/time64.h>
 #include <linux/jiffies.h>
@@ -42,7 +40,6 @@
 #include <linux/bench.h>
 
 #define CPUFREQ 2300000000
->>>>>>> fc06da52e8af7dcb8e04f6d361005831e6fd9aa3
 
 /*
  * red-black trees properties:  http://en.wikipedia.org/wiki/Rbtree
@@ -126,10 +123,9 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
 {
-<<<<<<< HEAD
+
 	unsigned long js, je, duration;
 	js = jiffies;
-=======
 	struct timespec64 t1, t2;
 	uint64_t insert_duration;
 	getnstimeofday(&t1);
@@ -138,10 +134,9 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	//js = jiffies;
 	//uint64_t start, end, duration;
 	//start = read_tsc();
->>>>>>> fc06da52e8af7dcb8e04f6d361005831e6fd9aa3
 
-	if (global_flag == 4)
-		add_to_hashtable(node);
+	//if (global_flag == 4)
+	//	add_to_hashtable(node);
 	
 	struct rb_node *parent = rb_red_parent(node), *gparent, *tmp;
 

@@ -45,6 +45,8 @@
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
 
+#define PFN_TRACE 4
+
 extern int global_flag;
 
 int radix_tree_insert_cnt, radix_tree_delete_cnt, radix_tree_shrink_cnt = 0; 
@@ -999,8 +1001,8 @@ static inline int insert_entries(struct radix_tree_node *node,
 int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 			unsigned order, void *item)
 {
-	//if (global_flag == 4)
-	//	add_to_hashtable_radix(item);
+	if (global_flag == 4)
+		add_to_hashtable_radix(item);
 
 	struct radix_tree_node *node;
 	void __rcu **slot;
@@ -1053,6 +1055,10 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
 			  void __rcu ***slotp)
 {
 	struct radix_tree_node *node, *parent;
+
+	//if (global_flag == 4)
+	//	add_to_hashtable_radix(node);
+
 	unsigned long maxindex;
 	void __rcu **slot;
 
@@ -2062,8 +2068,8 @@ EXPORT_SYMBOL(radix_tree_iter_delete);
 void *radix_tree_delete_item(struct radix_tree_root *root,
 			     unsigned long index, void *item)
 {
-	//if (global_flag == 4)
-	//	add_to_hashtable_radix(item);
+	if (global_flag == 4)
+		add_to_hashtable_radix(item);
 
 	struct radix_tree_node *node = NULL;
 	void __rcu **slot = NULL;
