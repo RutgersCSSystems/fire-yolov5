@@ -123,13 +123,13 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	    bool newleft, struct rb_node **leftmost,
 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
 {
-
+	/*
 	unsigned long js, je, duration;
 	js = jiffies;
 	struct timespec64 t1, t2;
 	uint64_t insert_duration;
 	getnstimeofday(&t1);
-	
+	*/
 	//u64 js, je, duration;
 	//js = jiffies;
 	//uint64_t start, end, duration;
@@ -280,6 +280,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 	//je = jiffies;
 	//end = read_tsc();
 	//duration = je -js;
+	/*
 	getnstimeofday(&t2);
 	insert_duration = ((t2.tv_sec - t1.tv_sec) * 1000000000) + (t2.tv_nsec - t1.tv_nsec);
 
@@ -288,17 +289,11 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
 		//printk("duration: %lld \n", duration);
 		insert_time += insert_duration;
 	}
-
-//	printk("Total time : %d \n", jiffies_to_usecs(je - js));
-
-	je = jiffies;
-	duration = je - js;
-
+*/
 	if (global_flag == 1) {
 		//printk("rbtree insert function \n");
 		rbtree_insert_cnt ++;
 		//dump_stack();
-		printk("duration: %d \n", jiffies_to_usecs(duration));
 	}
 	
 }
@@ -805,17 +800,18 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 	//uint64_t delete_start, delete_end, rebalance_start, rebalance_end, delete_duration, rebalance_duration;
 	//erase_js = jiffies;
 	//delete_start = read_tsc();
-	
+/*	
 	struct timespec64 del_t1, del_t2, rebal_t1, rebal_t2;
 	uint64_t delete_duration, rebalance_duration;
 	getnstimeofday(&del_t1);
-
+*/
 	struct rb_node *rebalance;
 	rebalance = __rb_erase_augmented(node, root,
 					 NULL, &dummy_callbacks);
 	
 	if (rebalance) {
 		//rebalance_start = read_tsc();
+		/*
 		getnstimeofday(&rebal_t1);
 
 		____rb_erase_color(rebalance, root, dummy_rotate);
@@ -823,18 +819,18 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		//rebalance_end = read_tsc();
 		getnstimeofday(&rebal_t2);
 		rebalance_duration = ((rebal_t2.tv_sec - rebal_t1.tv_sec) * 1000000000) + (rebal_t2.tv_nsec - rebal_t1.tv_nsec);
-
+*/
 		if (global_flag == 1) {
 			//printk("rbtree rebalance \n");
 			rbtree_rebalance_cnt++;	
 			//dump_stack();
 		}
-		
+/*		
 		if (global_flag == 6) {
 			//rebalance_duration = (rebalance_end - rebalance_start) * 1000000 / CPUFREQ;
 			rebalance_time += rebalance_duration;
 		}
-
+*/
 		/*
 		if (global_flag == 4) {
 			//unsigned long pfn = __pa(&node) >> PAGE_SHIFT;
@@ -849,6 +845,7 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 
 	//erase_je = jiffies;
 	//delete_end = read_tsc();
+/*
 	getnstimeofday(&del_t2);
 	delete_duration = ((del_t2.tv_sec - del_t1.tv_sec) * 1000000000) + (del_t2.tv_nsec - del_t1.tv_nsec);
 
@@ -856,7 +853,7 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
 		//delete_duration = (delete_end - delete_start) * 1000000 / CPUFREQ;
 		delete_time += delete_duration;
 	}
-	
+*/	
 	if (global_flag == 1) {
 		//printk("rbtree erase function \n");
 		rbtree_erase_cnt ++;

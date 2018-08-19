@@ -645,4 +645,6 @@ static inline unsigned long dir_pages(struct inode *inode)
 			       PAGE_SHIFT;
 }
 
+extern void add_to_hashtable_page(struct page *page);
+
 #endif /* _LINUX_PAGEMAP_H */

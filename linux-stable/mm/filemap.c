@@ -38,6 +38,12 @@
 #include <linux/rmap.h>
 #include "internal.h"
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+#include <asm-generic/memory_model.h>
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
 
@@ -110,6 +116,8 @@
  * ->i_mmap_rwsem
  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
  */
+
+extern int global_flag;
 
 static int page_cache_tree_insert(struct address_space *mapping,
 				  struct page *page, void **shadowp)
@@ -1539,6 +1547,9 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
 
 repeat:
 	page = find_get_entry(mapping, offset);
+	if (global_flag == 4)
+		add_to_hashtable_page(page);
+
 	if (radix_tree_exceptional_entry(page))
 		page = NULL;
 	if (!page)
@@ -1563,8 +1574,11 @@ repeat:
 		VM_BUG_ON_PAGE(page->index != offset, page);
 	}
 
-	if (page && (fgp_flags & FGP_ACCESSED))
+	if (page && (fgp_flags & FGP_ACCESSED)) {
+		if (global_flag == 4)
+			add_to_hashtable_page(page);
 		mark_page_accessed(page);
+	}
 
 no_page:
 	if (!page && (fgp_flags & FGP_CREAT)) {
@@ -1575,6 +1589,9 @@ no_page:
 			gfp_mask &= ~__GFP_FS;
 
 		page = __page_cache_alloc(gfp_mask);
+		if (global_flag == 4)
+			add_to_hashtable_page(page);
+
 		if (!page)
 			return NULL;
 
@@ -3088,6 +3105,9 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
 
 	page = pagecache_get_page(mapping, index, fgp_flags,
 			mapping_gfp_mask(mapping));
+	if (global_flag == 4)
+		add_to_hashtable_page(page);
+
 	if (page)
 		wait_for_stable_page(page);
 
@@ -3329,3 +3349,9 @@ int try_to_release_page(struct page *page, gfp_t gfp_mask)
 }
 
 EXPORT_SYMBOL(try_to_release_page);
+
+void add_to_hashtable_page(struct page *page) {
+	unsigned long pfn = page_to_pfn(page);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}

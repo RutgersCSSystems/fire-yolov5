@@ -168,7 +168,7 @@ static inline void tag_set(struct radix_tree_node *node, unsigned int tag,
 
 static inline void tag_clear(struct radix_tree_node *node, unsigned int tag,
 		int offset)
-{
+{	
 	__clear_bit(offset, node->tags[tag]);
 }
 
@@ -408,8 +408,8 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 */
 		ret = kmem_cache_alloc(radix_tree_node_cachep,
 				       gfp_mask | __GFP_NOWARN);
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(ret);
+		if (global_flag == 4)
+			add_to_hashtable_node(ret);
 
 		if (ret)
 			goto out;
@@ -420,9 +420,17 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * kmem_cache_alloc)
 		 */
 		rtp = this_cpu_ptr(&radix_tree_preloads);
+		//if (global_flag == 4)
+		//	add_to_hashtable_preload(rtp);
+
 		if (rtp->nr) {
 			ret = rtp->nodes;
+			if (global_flag == 4)
+				add_to_hashtable_node(ret);
+
 			rtp->nodes = ret->parent;
+			if (global_flag == 4)
+				add_to_hashtable_node(rtp->nodes);
 			rtp->nr--;
 		}
 		/*
@@ -433,9 +441,14 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		goto out;
 	}
 	ret = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+	if (global_flag == 4)
+		add_to_hashtable_node(ret);
+
 out:
 	BUG_ON(radix_tree_is_internal_node(ret));
 	if (ret) {
+		if (global_flag == 4)
+			add_to_hashtable_node(ret);
 		ret->shift = shift;
 		ret->offset = offset;
 		ret->count = count;
@@ -492,19 +505,28 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 
 	preempt_disable();
 	rtp = this_cpu_ptr(&radix_tree_preloads);
+	//if (global_flag == 4)
+	//	add_to_hashtable_preload(rtp);
+
 	while (rtp->nr < nr) {
 		preempt_enable();
 		node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(node);
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
 
 		if (node == NULL)
 			goto out;
 		preempt_disable();
 		rtp = this_cpu_ptr(&radix_tree_preloads);
+		//if (global_flag == 4)
+		//	add_to_hashtable_preload(rtp);
 		if (rtp->nr < nr) {
 			node->parent = rtp->nodes;
+			if(global_flag == 4)
+				add_to_hashtable_node(node->parent);
 			rtp->nodes = node;
+			if (global_flag == 4)
+				add_to_hashtable_node(rtp->nodes);
 			rtp->nr++;
 		} else {
 			kmem_cache_free(radix_tree_node_cachep, node);
@@ -647,12 +669,18 @@ static int radix_tree_extend(struct radix_tree_root *root, gfp_t gfp,
 		maxshift += RADIX_TREE_MAP_SHIFT;
 
 	entry = rcu_dereference_raw(root->rnode);
+	if (global_flag == 4)
+		add_to_hashtable_radix(entry);
+
 	if (!entry && (!is_idr(root) || root_tag_get(root, IDR_FREE)))
 		goto out;
 
 	do {
 		struct radix_tree_node *node = radix_tree_node_alloc(gfp, NULL,
 							root, shift, 0, 1, 0);
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
+
 		if (!node)
 			return -ENOMEM;
 
@@ -683,6 +711,9 @@ static int radix_tree_extend(struct radix_tree_root *root, gfp_t gfp,
 		 */
 		node->slots[0] = (void __rcu *)entry;
 		entry = node_to_entry(node);
+		if (global_flag == 4)
+			add_to_hashtable_radix(entry);
+
 		rcu_assign_pointer(root->rnode, entry);
 		shift += RADIX_TREE_MAP_SHIFT;
 	} while (shift <= maxshift);
@@ -852,6 +883,8 @@ int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
 			return error;
 		shift = error;
 		child = rcu_dereference_raw(root->rnode);
+		if (global_flag == 4)
+			add_to_hashtable_node(child);
 	}
 
 	while (shift > order) {
@@ -860,22 +893,34 @@ int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
 			/* Have to add a child node.  */
 			child = radix_tree_node_alloc(gfp, node, root, shift,
 							offset, 0, 0);
+			if (global_flag == 4)
+				add_to_hashtable_node(child);
+
 			if (!child)
 				return -ENOMEM;
 			rcu_assign_pointer(*slot, node_to_entry(child));
-			if (node)
+			if (node) {
+				if (global_flag == 4)
+					add_to_hashtable_node(node);
 				node->count++;
+			}
 		} else if (!radix_tree_is_internal_node(child))
 			break;
 
 		/* Go a level down */
 		node = entry_to_node(child);
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
+
 		offset = radix_tree_descend(node, &child, index);
 		slot = &node->slots[offset];
 	}
 
-	if (nodep)
+	if (nodep) {
 		*nodep = node;
+		if (global_flag == 4)
+			add_to_hashtable_node(*nodep);
+	}
 	if (slotp)
 		*slotp = slot;
 	return 0;
@@ -1007,8 +1052,8 @@ static inline int insert_entries(struct radix_tree_node *node,
 int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 			unsigned order, void *item)
 {
-	//if (global_flag == 4)
-	//	add_to_hashtable_radix(item);
+	if (global_flag == 4)
+		add_to_hashtable_radix(item);
 
 	struct radix_tree_node *node;
 	void __rcu **slot;
@@ -1025,6 +1070,9 @@ int __radix_tree_insert(struct radix_tree_root *root, unsigned long index,
 		return error;
 
 	if (node) {
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
+
 		unsigned offset = get_slot_offset(node, slot);
 		BUG_ON(tag_get(node, 0, offset));
 		BUG_ON(tag_get(node, 1, offset));
@@ -1062,9 +1110,6 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
 {
 	struct radix_tree_node *node, *parent;
 
-	//if (global_flag == 4)
-	//	add_to_hashtable_radix(node);
-
 	unsigned long maxindex;
 	void __rcu **slot;
 
@@ -1078,15 +1123,25 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
 	while (radix_tree_is_internal_node(node)) {
 		unsigned offset;
 
-		if (node == RADIX_TREE_RETRY)
+		if (node == RADIX_TREE_RETRY) {
+			if (global_flag == 4)
+				add_to_hashtable_node(node);
+
 			goto restart;
+		}
 		parent = entry_to_node(node);
+		if (global_flag == 4)
+			add_to_hashtable_node(parent);
+
 		offset = radix_tree_descend(parent, &node, index);
 		slot = parent->slots + offset;
 	}
 
-	if (nodep)
+	if (nodep) {
 		*nodep = parent;
+		if (global_flag == 4)
+			add_to_hashtable_node(*nodep);
+	}
 	if (slotp)
 		*slotp = slot;
 	return node;
@@ -1230,8 +1285,11 @@ void __radix_tree_replace(struct radix_tree_root *root,
 			(count || exceptional));
 	replace_slot(slot, item, node, count, exceptional);
 
-	if (!node)
+	if (!node) {
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
 		return;
+	}
 
 	if (update_node)
 		update_node(node);
@@ -1463,9 +1521,14 @@ void *radix_tree_tag_set(struct radix_tree_root *root,
 	BUG_ON(index > maxindex);
 
 	while (radix_tree_is_internal_node(node)) {
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
 		unsigned offset;
 
 		parent = entry_to_node(node);
+		if (global_flag == 4)
+			add_to_hashtable_node(parent);
+
 		offset = radix_tree_descend(parent, &node, index);
 		BUG_ON(!node);
 
@@ -1541,13 +1604,21 @@ void *radix_tree_tag_clear(struct radix_tree_root *root,
 	parent = NULL;
 
 	while (radix_tree_is_internal_node(node)) {
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
+
 		parent = entry_to_node(node);
+		if (global_flag == 4)
+			add_to_hashtable_node(parent);
+
 		offset = radix_tree_descend(parent, &node, index);
 	}
 
-	if (node)
+	if (node) {
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
 		node_tag_clear(root, parent, tag, offset);
-
+	}
 	return node;
 }
 EXPORT_SYMBOL(radix_tree_tag_clear);
@@ -1769,10 +1840,16 @@ void __rcu **radix_tree_next_chunk(const struct radix_tree_root *root,
 	radix_tree_load_root(root, &child, &maxindex);
 	if (index > maxindex)
 		return NULL;
-	if (!child)
+	if (!child) {
+		if (global_flag == 4)
+			add_to_hashtable_node(child);
+
 		return NULL;
+	}
 
 	if (!radix_tree_is_internal_node(child)) {
+		if (global_flag == 4)
+			add_to_hashtable_node(child);
 		/* Single-slot tree */
 		iter->index = index;
 		iter->next_index = maxindex + 1;
@@ -1784,6 +1861,9 @@ void __rcu **radix_tree_next_chunk(const struct radix_tree_root *root,
 
 	do {
 		node = entry_to_node(child);
+		if (global_flag == 4)
+			add_to_hashtable_node(node);
+
 		offset = radix_tree_descend(node, &child, index);
 
 		if ((flags & RADIX_TREE_ITER_TAGGED) ?
@@ -1812,18 +1892,29 @@ void __rcu **radix_tree_next_chunk(const struct radix_tree_root *root,
 			if (offset == RADIX_TREE_MAP_SIZE)
 				goto restart;
 			child = rcu_dereference_raw(node->slots[offset]);
+			if (global_flag == 4)
+				add_to_hashtable_node(child);
 		}
 
-		if (!child)
+		if (!child) {
+			if (global_flag == 4)
+				add_to_hashtable_node(child);
 			goto restart;
-		if (child == RADIX_TREE_RETRY)
+		}
+		if (child == RADIX_TREE_RETRY) {
+			if (global_flag == 4)
+				add_to_hashtable_node(child);
 			break;
+		}
 	} while (radix_tree_is_internal_node(child));
 
 	/* Update the iterator state */
 	iter->index = (index &~ node_maxindex(node)) | (offset << node->shift);
 	iter->next_index = (index | node_maxindex(node)) + 1;
 	iter->node = node;
+	if (global_flag == 4)
+		add_to_hashtable_node(iter->node);
+
 	__set_iter_shift(iter, node->shift);
 
 	if (flags & RADIX_TREE_ITER_TAGGED)
@@ -2074,8 +2165,8 @@ EXPORT_SYMBOL(radix_tree_iter_delete);
 void *radix_tree_delete_item(struct radix_tree_root *root,
 			     unsigned long index, void *item)
 {
-	//if (global_flag == 4)
-	//	add_to_hashtable_radix(item);
+	if (global_flag == 4)
+		add_to_hashtable_radix(item);
 
 	struct radix_tree_node *node = NULL;
 	void __rcu **slot = NULL;
@@ -2122,6 +2213,9 @@ void radix_tree_clear_tags(struct radix_tree_root *root,
 			   void __rcu **slot)
 {
 	if (node) {
+		if (global_flag = 4)
+			add_to_hashtable_node (node);
+
 		unsigned int tag, offset = get_slot_offset(node, slot);
 		for (tag = 0; tag < RADIX_TREE_MAX_TAGS; tag++)
 			node_tag_clear(root, node, tag, offset);
@@ -2283,6 +2377,9 @@ radix_tree_node_ctor(void *arg)
 	struct radix_tree_node *node = arg;
 
 	memset(node, 0, sizeof(*node));
+	if (global_flag == 4)
+		add_to_hashtable_node(node);
+
 	INIT_LIST_HEAD(&node->private_list);
 }
 
@@ -2372,3 +2469,10 @@ void add_to_hashtable_node(struct radix_tree_node *node) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+/*
+void add_to_hashtable_preload(struct radix_tree_preload *preload) {
+	unsigned long pfn = virt_to_pfn(preload);
+	if (pfn <=max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
