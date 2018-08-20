@@ -141,6 +141,8 @@
  *   -- Extent-level locking
  */
 
+extern int global_flag;
+
 static struct kmem_cache *ext4_es_cachep;
 
 static int __es_insert_extent(struct inode *inode, struct extent_status *newes);
@@ -326,12 +328,21 @@ static void ext4_es_list_del(struct inode *inode)
 	spin_unlock(&sbi->s_es_lock);
 }
 
+void add_to_hashtable_extent_status(struct extent_status *es) {
+	unsigned long pfn = virt_to_pfn(es);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 static struct extent_status *
 ext4_es_alloc_extent(struct inode *inode, ext4_lblk_t lblk, ext4_lblk_t len,
 		     ext4_fsblk_t pblk)
 {
 	struct extent_status *es;
 	es = kmem_cache_alloc(ext4_es_cachep, GFP_ATOMIC);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_extent_status(es);
+
 	if (es == NULL)
 		return NULL;
 	es->es_lblk = lblk;

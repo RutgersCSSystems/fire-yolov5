@@ -18,6 +18,14 @@
 #define EXT4_INLINE_DOTDOT_OFFSET	2
 #define EXT4_INLINE_DOTDOT_SIZE		4
 
+extern int global_flag;
+
+static void add_to_hashtable_void(void *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 static int ext4_get_inline_size(struct inode *inode)
 {
 	if (EXT4_I(inode)->i_inline_off)
@@ -333,6 +341,9 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
 
 	len -= EXT4_MIN_INLINE_DATA_SIZE;
 	value = kzalloc(len, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(value);
+	
 	if (!value) {
 		error = -ENOMEM;
 		goto out;
@@ -1170,6 +1181,9 @@ static int ext4_convert_inline_data_nolock(handle_t *handle,
 
 	inline_size = ext4_get_inline_size(inode);
 	buf = kmalloc(inline_size, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(buf);
+
 	if (!buf) {
 		error = -ENOMEM;
 		goto out;
@@ -1344,6 +1358,9 @@ int htree_inlinedir_to_tree(struct file *dir_file,
 
 	inline_size = ext4_get_inline_size(inode);
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(dir_buf);
+
 	if (!dir_buf) {
 		ret = -ENOMEM;
 		up_read(&EXT4_I(inode)->xattr_sem);
@@ -1453,6 +1470,9 @@ int ext4_read_inline_dir(struct file *file,
 
 	inline_size = ext4_get_inline_size(inode);
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(dir_buf);
+
 	if (!dir_buf) {
 		ret = -ENOMEM;
 		up_read(&EXT4_I(inode)->xattr_sem);
@@ -1968,6 +1988,9 @@ int ext4_inline_data_truncate(struct inode *inode, int *has_inline)
 
 			value_len = le32_to_cpu(is.s.here->e_value_size);
 			value = kmalloc(value_len, GFP_NOFS);
+			if (global_flag == PFN_TRACE)
+				add_to_hashtable_void(value);
+
 			if (!value) {
 				err = -ENOMEM;
 				goto out_error;

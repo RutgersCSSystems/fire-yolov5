@@ -12,6 +12,14 @@
 #include <linux/list_sort.h>
 #include <trace/events/ext4.h>
 
+extern int global_flag;
+
+void add_to_hashtable_ext4_fsmap(struct ext4_fsmap *fsm) {
+	unsigned long pfn = virt_to_pfn(fsm);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /* Convert an ext4_fsmap to an fsmap. */
 void ext4_fsmap_from_internal(struct super_block *sb, struct fsmap *dest,
 			      struct ext4_fsmap *src)
@@ -292,6 +300,9 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 	struct ext4_fsmap *fsm;
 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_fsmap(fsm);
+
 	if (!fsm)
 		return -ENOMEM;
 	fsm->fmr_device = 0;

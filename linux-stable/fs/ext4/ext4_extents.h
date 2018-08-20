@@ -253,6 +253,9 @@ static inline void ext4_idx_store_pblock(struct ext4_extent_idx *ix,
 				     0xffff);
 }
 
+void add_to_hashtable_ext4_ext_path(struct ext4_ext_path *path);
+void add_to_hashtable_ext4_fsblk_t(ext4_fsblk_t *fsblk);
+
 #define ext4_ext_dirty(handle, inode, path) \
 		__ext4_ext_dirty(__func__, __LINE__, (handle), (inode), (path))
 int __ext4_ext_dirty(const char *where, unsigned int line, handle_t *handle,

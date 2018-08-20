@@ -1547,8 +1547,8 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
 
 repeat:
 	page = find_get_entry(mapping, offset);
-	if (global_flag == 4)
-		add_to_hashtable_page(page);
+	//if (global_flag == 4)
+	//	add_to_hashtable_page(page);
 
 	if (radix_tree_exceptional_entry(page))
 		page = NULL;
@@ -1575,8 +1575,8 @@ repeat:
 	}
 
 	if (page && (fgp_flags & FGP_ACCESSED)) {
-		if (global_flag == 4)
-			add_to_hashtable_page(page);
+	//	if (global_flag == 4)
+	//		add_to_hashtable_page(page);
 		mark_page_accessed(page);
 	}
 
@@ -1589,8 +1589,8 @@ no_page:
 			gfp_mask &= ~__GFP_FS;
 
 		page = __page_cache_alloc(gfp_mask);
-		if (global_flag == 4)
-			add_to_hashtable_page(page);
+		//if (global_flag == 4)
+		//	add_to_hashtable_page(page);
 
 		if (!page)
 			return NULL;
@@ -3105,8 +3105,8 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
 
 	page = pagecache_get_page(mapping, index, fgp_flags,
 			mapping_gfp_mask(mapping));
-	if (global_flag == 4)
-		add_to_hashtable_page(page);
+	//if (global_flag == 4)
+	//	add_to_hashtable_page(page);
 
 	if (page)
 		wait_for_stable_page(page);

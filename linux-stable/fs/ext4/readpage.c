@@ -47,6 +47,8 @@
 
 #include "ext4.h"
 
+extern int global_flag;
+
 static inline bool ext4_bio_encrypted(struct bio *bio)
 {
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
@@ -54,6 +56,12 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
 #else
 	return false;
 #endif
+}
+
+static void add_to_hashtable_bio (struct bio *bio) {
+	unsigned long pfn = virt_to_pfn(bio);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
 }
 
 /*
@@ -250,6 +258,9 @@ int ext4_mpage_readpages(struct address_space *mapping,
 			}
 			bio = bio_alloc(GFP_KERNEL,
 				min_t(int, nr_pages, BIO_MAX_PAGES));
+			if (global_flag == PFN_TRACE)
+				add_to_hashtable_bio(bio);
+
 			if (!bio) {
 				if (ctx)
 					fscrypt_release_ctx(ctx);

@@ -24,6 +24,9 @@ typedef struct {
 	__le32		a_version;
 } ext4_acl_header;
 
+void add_to_hashtable_ext4_acl_header(ext4_acl_header *ext4_acl_header);
+void add_to_hashtable_char(char *value);
+
 static inline size_t ext4_acl_size(int count)
 {
 	if (count <= 4) {

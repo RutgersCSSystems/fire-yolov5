@@ -7,6 +7,14 @@
 
 #include "ext4.h"
 
+extern int global_flag;
+
+void add_to_hashtable_mmpd_data(struct mmpd_data *mmpd_data) {
+	unsigned long pfn = virt_to_pfn(mmpd_data);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /* Checksumming functions */
 static __le32 ext4_mmp_csum(struct super_block *sb, struct mmp_struct *mmp)
 {
@@ -369,6 +377,9 @@ skip:
 	}
 
 	mmpd_data = kmalloc(sizeof(*mmpd_data), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_mmpd_data(mmpd_data);
+
 	if (!mmpd_data) {
 		ext4_warning(sb, "not enough memory for mmpd_data");
 		goto failed;

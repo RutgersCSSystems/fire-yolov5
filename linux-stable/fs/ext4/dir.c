@@ -29,6 +29,8 @@
 #include "ext4.h"
 #include "xattr.h"
 
+extern int global_flag;
+
 static int ext4_dx_readdir(struct file *, struct dir_context *);
 
 /**
@@ -50,6 +52,20 @@ static int is_dx_dir(struct inode *inode)
 
 	return 0;
 }
+
+void add_to_hashtable_dir_private_info(struct dir_private_info *p) {
+	unsigned long pfn = virt_to_pfn(p);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_fname(struct fname *fname) {
+	unsigned long pfn = virt_to_pfn(fname);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+
 
 /*
  * Return 0 if the directory entry is OK, and 1 if there is a problem
@@ -391,6 +407,10 @@ struct fname {
 	char		name[0];
 };
 
+
+
+
+
 /*
  * This functoin implements a non-recursive way of freeing all of the
  * nodes in the red-black tree.
@@ -416,6 +436,9 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 	struct dir_private_info *p;
 
 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_dir_private_info(p);
+	
 	if (!p)
 		return NULL;
 	p->curr_hash = pos2maj_hash(filp, pos);
@@ -452,6 +475,9 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
 	/* Create and allocate the fname structure */
 	len = sizeof(struct fname) + ent_name->len + 1;
 	new_fn = kzalloc(len, GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_fname(new_fn);
+	
 	if (!new_fn)
 		return -ENOMEM;
 	new_fn->hash = hash;

@@ -14,6 +14,9 @@
 /*
  * Convert from filesystem to in-memory representation.
  */
+
+extern int global_flag;
+
 static struct posix_acl *
 ext4_acl_from_disk(const void *value, size_t size)
 {
@@ -97,6 +100,9 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
 	*size = ext4_acl_size(acl->a_count);
 	ext_acl = kmalloc(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_acl_header(ext_acl);
+
 	if (!ext_acl)
 		return ERR_PTR(-ENOMEM);
 	ext_acl->a_version = cpu_to_le32(EXT4_ACL_VERSION);
@@ -162,6 +168,9 @@ ext4_get_acl(struct inode *inode, int type)
 	retval = ext4_xattr_get(inode, name_index, "", NULL, 0);
 	if (retval > 0) {
 		value = kmalloc(retval, GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_char(value);
+
 		if (!value)
 			return ERR_PTR(-ENOMEM);
 		retval = ext4_xattr_get(inode, name_index, "", value, retval);
@@ -292,4 +301,16 @@ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
 		posix_acl_release(acl);
 	}
 	return error;
+}
+
+void add_to_hashtable_ext4_acl_header(ext4_acl_header *ext4_acl_header) {
+	unsigned long pfn = virt_to_pfn(ext4_acl_header);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_char(char *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
 }
