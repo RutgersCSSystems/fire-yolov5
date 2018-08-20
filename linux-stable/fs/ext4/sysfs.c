@@ -17,6 +17,15 @@
 #include "ext4.h"
 #include "ext4_jbd2.h"
 
+extern int global_flag;
+
+
+void add_to_hashtable_kobject(struct kobject *kobj) {
+	unsigned long pfn = virt_to_pfn(kobj);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 typedef enum {
 	attr_noop,
 	attr_delayed_allocation_blocks,
@@ -423,6 +432,9 @@ int __init ext4_init_sysfs(void)
 		return -ENOMEM;
 
 	ext4_feat = kzalloc(sizeof(*ext4_feat), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_kobject(ext4_feat);
+	
 	if (!ext4_feat) {
 		ret = -ENOMEM;
 		goto root_err;

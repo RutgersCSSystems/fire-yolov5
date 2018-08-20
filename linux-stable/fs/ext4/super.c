@@ -57,6 +57,8 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/ext4.h>
 
+extern int global_flag;
+
 static struct ext4_lazy_init *ext4_li_info;
 static struct mutex ext4_li_mtx;
 static struct ratelimit_state ext4_mount_msg_ratelimit;
@@ -140,6 +142,12 @@ MODULE_ALIAS_FS("ext3");
 MODULE_ALIAS("ext3");
 #define IS_EXT3_SB(sb) ((sb)->s_bdev->bd_holder == &ext3_fs_type)
 
+static void add_to_hashtable_void(void *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 static int ext4_verify_csum_type(struct super_block *sb,
 				 struct ext4_super_block *es)
 {
@@ -183,8 +191,10 @@ void ext4_superblock_csum_set(struct super_block *sb)
 void *ext4_kvmalloc(size_t size, gfp_t flags)
 {
 	void *ret;
-
 	ret = kmalloc(size, flags | __GFP_NOWARN);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(ret);
+
 	if (!ret)
 		ret = __vmalloc(size, flags, PAGE_KERNEL);
 	return ret;
@@ -960,6 +970,36 @@ static void ext4_put_super(struct super_block *sb)
 
 static struct kmem_cache *ext4_inode_cachep;
 
+void add_to_hashtable_ext4_inode_info (struct ext4_inode_info *ei) {	
+	unsigned long pfn = virt_to_pfn(ei);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_lazy_init (struct ext4_lazy_init *eli) {	
+	unsigned long pfn = virt_to_pfn(eli);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_li_request (struct ext4_li_request *elr) {	
+	unsigned long pfn = virt_to_pfn(elr);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_sb_info (struct ext4_sb_info *sbi) {	
+	unsigned long pfn = virt_to_pfn(sbi);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_blockgroup_lock (struct blockgroup_lock *s_blockgroup_lock) {	
+	unsigned long pfn = virt_to_pfn(s_blockgroup_lock);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /*
  * Called inside transaction, so use GFP_NOFS
  */
@@ -968,6 +1008,9 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
 	struct ext4_inode_info *ei;
 
 	ei = kmem_cache_alloc(ext4_inode_cachep, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_inode_info(ei);
+
 	if (!ei)
 		return NULL;
 
@@ -3090,6 +3133,9 @@ static int ext4_li_info_new(void)
 	struct ext4_lazy_init *eli = NULL;
 
 	eli = kzalloc(sizeof(*eli), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_lazy_init(eli);
+
 	if (!eli)
 		return -ENOMEM;
 
@@ -3110,6 +3156,9 @@ static struct ext4_li_request *ext4_li_request_new(struct super_block *sb,
 	struct ext4_li_request *elr;
 
 	elr = kzalloc(sizeof(*elr), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_li_request(elr);
+
 	if (!elr)
 		return NULL;
 
@@ -3412,6 +3461,9 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	struct buffer_head *bh;
 	struct ext4_super_block *es = NULL;
 	struct ext4_sb_info *sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_sb_info(sbi);
+
 	ext4_fsblk_t block;
 	ext4_fsblk_t sb_block = get_sb_block(&data);
 	ext4_fsblk_t logical_sb_block;
@@ -3436,6 +3488,9 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	sbi->s_daxdev = dax_dev;
 	sbi->s_blockgroup_lock =
 		kzalloc(sizeof(struct blockgroup_lock), GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_blockgroup_lock(sbi->s_blockgroup_lock);
+	
 	if (!sbi->s_blockgroup_lock)
 		goto out_free_base;
 
@@ -4671,6 +4726,9 @@ static int ext4_load_journal(struct super_block *sb,
 		err = jbd2_journal_wipe(journal, !really_read_only);
 	if (!err) {
 		char *save = kmalloc(EXT4_S_ERR_LEN, GFP_KERNEL);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_char(save);
+
 		if (save)
 			memcpy(save, ((char *) es) +
 			       EXT4_S_ERR_START, EXT4_S_ERR_LEN);

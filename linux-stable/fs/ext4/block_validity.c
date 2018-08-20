@@ -20,6 +20,8 @@
 #include <linux/slab.h>
 #include "ext4.h"
 
+extern int global_flag;
+
 struct ext4_system_zone {
 	struct rb_node	node;
 	ext4_fsblk_t	start_blk;
@@ -27,6 +29,12 @@ struct ext4_system_zone {
 };
 
 static struct kmem_cache *ext4_system_zone_cachep;
+
+void add_to_hashtable_ext4_system_zone(struct ext4_system_zone *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
 
 int __init ext4_init_system_zone(void)
 {
@@ -84,6 +92,9 @@ static int add_system_zone(struct ext4_sb_info *sbi,
 	if (!new_entry) {
 		new_entry = kmem_cache_alloc(ext4_system_zone_cachep,
 					     GFP_KERNEL);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_system_zone(new_entry);
+
 		if (!new_entry)
 			return -ENOMEM;
 		new_entry->start_blk = start_blk;
@@ -240,4 +251,5 @@ int ext4_check_blockref(const char *function, unsigned int line,
 	}
 	return 0;
 }
+
 

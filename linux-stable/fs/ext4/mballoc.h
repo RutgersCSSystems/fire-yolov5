@@ -198,7 +198,25 @@ static inline ext4_fsblk_t ext4_grp_offs_to_block(struct super_block *sb,
 	return ext4_group_first_block_no(sb, fex->fe_group) +
 		(fex->fe_start << EXT4_SB(sb)->s_cluster_bits);
 }
+/*
+void add_to_hashtable_ext4_prealloc_space(struct ext4_prealloc_space *pa) {
+	unsigned long pfn = virt_to_pfn(pa);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
 
+void add_to_hashtable_ext4_free_data(struct ext4_free_data *new_entry) {
+	unsigned long pfn = virt_to_pfn(new_entry);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_group_info(struct ext4_group_info **meta_group_info) {
+	unsigned long pfn = virt_to_pfn(meta_group_info);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
 typedef int (*ext4_mballoc_query_range_fn)(
 	struct super_block		*sb,
 	ext4_group_t			agno,

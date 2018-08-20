@@ -17,6 +17,8 @@
 
 #include "ext4_jbd2.h"
 
+extern int global_flag;
+
 int ext4_resize_begin(struct super_block *sb)
 {
 	int ret = 0;
@@ -186,6 +188,24 @@ struct ext4_new_flex_group_data {
 						 */
 };
 
+void add_to_hashtable_ext4_new_flex_group_data(struct ext4_new_flex_group_data *flex_gd) {
+	unsigned long pfn = virt_to_pfn(flex_gd);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_new_group_data(struct ext4_new_group_data *group) {
+	unsigned long pfn = virt_to_pfn(group);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_u16(__u16 *bg_flags) {
+	unsigned long pfn = virt_to_pfn(bg_flags);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /*
  * alloc_flex_gd() allocates a ext4_new_flex_group_data with size of
  * @flexbg_size.
@@ -197,6 +217,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	struct ext4_new_flex_group_data *flex_gd;
 
 	flex_gd = kmalloc(sizeof(*flex_gd), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_new_flex_group_data(flex_gd);
+
 	if (flex_gd == NULL)
 		goto out3;
 
@@ -206,10 +229,16 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 
 	flex_gd->groups = kmalloc(sizeof(struct ext4_new_group_data) *
 				  flexbg_size, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_new_group_data(flex_gd->groups);
+
 	if (flex_gd->groups == NULL)
 		goto out2;
 
 	flex_gd->bg_flags = kmalloc(flexbg_size * sizeof(__u16), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_u16(flex_gd->bg_flags);
+	
 	if (flex_gd->bg_flags == NULL)
 		goto out1;
 
@@ -760,6 +789,12 @@ static int verify_reserved_gdb(struct super_block *sb,
 	return gdbackups;
 }
 
+static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
+	unsigned long pfn = virt_to_pfn(bh);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /*
  * Called when we need to bring a reserved group descriptor table block into
  * use from the resize inode.  The primary copy of the new GDT block currently
@@ -841,6 +876,9 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
 				     sizeof(struct buffer_head *),
 				     GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_buffer_head(n_group_desc);
+
 	if (!n_group_desc) {
 		err = -ENOMEM;
 		ext4_warning(sb, "not enough memory for %lu groups",
@@ -920,6 +958,9 @@ static int add_new_gdb_meta_bg(struct super_block *sb,
 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
 				     sizeof(struct buffer_head *),
 				     GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_buffer_head(n_group_desc);
+
 	if (!n_group_desc) {
 		err = -ENOMEM;
 		ext4_warning(sb, "not enough memory for %lu groups",
@@ -970,6 +1011,9 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 	int err;
 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_buffer_head(primary);
+
 	if (!primary)
 		return -ENOMEM;
 
@@ -2047,3 +2091,5 @@ out:
 	ext4_msg(sb, KERN_INFO, "resized filesystem to %llu", n_blocks_count);
 	return err;
 }
+
+

@@ -34,6 +34,8 @@
 
 #include <trace/events/ext4.h>
 
+extern int global_flag;
+
 /*
  * used by extent splitting.
  */
@@ -579,6 +581,9 @@ int ext4_ext_precache(struct inode *inode)
 
 	path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 		       GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_ext_path(path);
+
 	if (path == NULL) {
 		up_read(&ei->i_data_sem);
 		return -ENOMEM;
@@ -881,6 +886,9 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 		/* account possible depth increase */
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 2),
 				GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_ext_path(path);
+
 		if (unlikely(!path))
 			return ERR_PTR(-ENOMEM);
 		path[0].p_maxdepth = depth + 1;
@@ -1064,6 +1072,9 @@ static int ext4_ext_split(handle_t *handle, struct inode *inode,
 	 * upon them.
 	 */
 	ablocks = kzalloc(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_fsblk_t(ablocks);
+
 	if (!ablocks)
 		return -ENOMEM;
 
@@ -2923,6 +2934,9 @@ again:
 	} else {
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 			       GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_ext_path(path);
+
 		if (path == NULL) {
 			ext4_journal_stop(handle);
 			return -ENOMEM;
@@ -5934,4 +5948,16 @@ ext4_swap_extents(handle_t *handle, struct inode *inode1,
 		path1 = path2 = NULL;
 	}
 	return replaced_count;
+}
+
+void add_to_hashtable_ext4_ext_path(struct ext4_ext_path *path) {
+	unsigned long pfn = virt_to_pfn(path);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_fsblk_t(ext4_fsblk_t *fsblk) {
+	unsigned long pfn =virt_to_pfn(fsblk);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
 }

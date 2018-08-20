@@ -74,6 +74,8 @@
 # define ea_bdebug(bh, fmt, ...)	no_printk(fmt, ##__VA_ARGS__)
 #endif
 
+extern int global_flag;
+
 static void ext4_xattr_block_cache_insert(struct mb_cache *,
 					  struct buffer_head *);
 static struct buffer_head *
@@ -124,6 +126,30 @@ void ext4_xattr_inode_set_class(struct inode *ea_inode)
 	lockdep_set_subclass(&ea_inode->i_rwsem, 1);
 }
 #endif
+
+void add_to_hashtable_ext4_xattr_ibody_find(struct ext4_xattr_ibody_find *is) {
+	unsigned long pfn = virt_to_pfn(is);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_xattr_inode_array_double(struct ext4_xattr_inode_array **ea_inode_array) {
+	unsigned long pfn = virt_to_pfn(*ea_inode_array);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_xattr_inode_array_single(struct ext4_xattr_inode_array *ea_inode_array) {
+	unsigned long pfn = virt_to_pfn(ea_inode_array);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+static void add_to_hashtable_void(void *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
 
 static __le32 ext4_xattr_block_csum(struct inode *inode,
 				    sector_t block_nr,
@@ -332,6 +358,12 @@ static void ext4_xattr_inode_set_hash(struct inode *ea_inode, u32 hash)
 	ea_inode->i_atime.tv_sec = hash;
 }
 
+static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
+	unsigned long pfn = virt_to_pfn(bh);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /*
  * Read the EA value from an inode.
  */
@@ -346,6 +378,9 @@ static int ext4_xattr_inode_read(struct inode *ea_inode, void *buf, size_t size)
 
 	if (bh_count > ARRAY_SIZE(bhs_inline)) {
 		bhs = kmalloc_array(bh_count, sizeof(*bhs), GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_buffer_head(bhs);
+
 		if (!bhs)
 			return -ENOMEM;
 	}
@@ -1476,6 +1511,9 @@ ext4_xattr_inode_cache_find(struct inode *inode, const void *value,
 		return NULL;
 
 	ea_data = ext4_kvmalloc(value_len, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_void(ea_data);
+	
 	if (!ea_data) {
 		mb_cache_entry_put(ea_inode_cache, ce);
 		return NULL;
@@ -1799,6 +1837,14 @@ struct ext4_xattr_block_find {
 	struct buffer_head *bh;
 };
 
+void add_to_hashtable_ext4_xattr_block_find(struct ext4_xattr_block_find *bs) {
+	unsigned long pfn = virt_to_pfn(bs);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+
+
 static int
 ext4_xattr_block_find(struct inode *inode, struct ext4_xattr_info *i,
 		      struct ext4_xattr_block_find *bs)
@@ -1895,6 +1941,9 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 			unlock_buffer(bs->bh);
 			ea_bdebug(bs->bh, "cloning");
 			s->base = kmalloc(bs->bh->b_size, GFP_NOFS);
+			if (global_flag == PFN_TRACE)
+				add_to_hashtable_void(s->base);
+
 			error = -ENOMEM;
 			if (s->base == NULL)
 				goto cleanup;
@@ -1937,6 +1986,9 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 	} else {
 		/* Allocate a buffer where we construct the new block. */
 		s->base = kzalloc(sb->s_blocksize, GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_void(s->base);
+
 		/* assert(header == s->base) */
 		error = -ENOMEM;
 		if (s->base == NULL)
@@ -2568,9 +2620,21 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	int error;
 
 	is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_xattr_ibody_find(is);
+
 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_xattr_block_find(bs);
+
 	buffer = kmalloc(value_size, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_char(buffer);
+
 	b_entry_name = kmalloc(entry->e_name_len + 1, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_char(b_entry_name);
+
 	if (!is || !bs || !buffer || !b_entry_name) {
 		error = -ENOMEM;
 		goto out;
@@ -2814,6 +2878,9 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 			kmalloc(offsetof(struct ext4_xattr_inode_array,
 					 inodes[EIA_MASK]),
 				GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_xattr_inode_array_double(ea_inode_array);
+
 		if (*ea_inode_array == NULL)
 			return -ENOMEM;
 		(*ea_inode_array)->count = 0;
@@ -2827,6 +2894,9 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 				offsetof(struct ext4_xattr_inode_array,
 					 inodes[count + EIA_INCR]),
 				GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_xattr_inode_array_single(new_array);
+
 		if (new_array == NULL)
 			return -ENOMEM;
 		memcpy(new_array, *ea_inode_array,

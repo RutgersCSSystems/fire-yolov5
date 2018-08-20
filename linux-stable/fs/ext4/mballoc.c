@@ -50,7 +50,24 @@ MODULE_PARM_DESC(mballoc_debug, "Debugging level for ext4's mballoc");
  *
  * During initialization phase of the allocator we decide to use the
  * group preallocation or inode preallocation depending on the size of
- * the file. The size of the file could be the resulting file size we
+ * the file. The size of the file could be the resulting file size wevoid add_to_hashtable_ext4_prealloc_space(struct ext4_prealloc_space *pa) {
+	unsigned long pfn = virt_to_pfn(pa);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_free_data(struct ext4_free_data *new_entry) {
+	unsigned long pfn = virt_to_pfn(new_entry);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_group_info(struct ext4_group_info **meta_group_info) {
+	unsigned long pfn = virt_to_pfn(meta_group_info);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
  * would have after allocation, or the current file size, which ever
  * is larger. If the size is less than sbi->s_mb_stream_request we
  * select to use the group preallocation. The default value of
@@ -58,7 +75,7 @@ MODULE_PARM_DESC(mballoc_debug, "Debugging level for ext4's mballoc");
  * /sys/fs/ext4/<partition>/mb_stream_req. The value is represented in
  * terms of number of blocks.
  *
- * The main motivation for having small file use group preallocation is to
+ * The main motivation for having small file use group preallocation is to/
  * ensure that we have small files closer together on the disk.
  *
  * First stage the allocator looks at the inode prealloc list,
@@ -335,6 +352,9 @@ MODULE_PARM_DESC(mballoc_debug, "Debugging level for ext4's mballoc");
  *        object
  *
  */
+
+extern int global_flag;
+
 static struct kmem_cache *ext4_pspace_cachep;
 static struct kmem_cache *ext4_ac_cachep;
 static struct kmem_cache *ext4_free_data_cachep;
@@ -355,6 +375,49 @@ static void ext4_mb_generate_from_pa(struct super_block *sb, void *bitmap,
 					ext4_group_t group);
 static void ext4_mb_generate_from_freelist(struct super_block *sb, void *bitmap,
 						ext4_group_t group);
+
+void add_to_hashtable_ext4_allocation_context(struct ext4_allocation_context *ac) {
+	unsigned long pfn = virt_to_pfn(ac);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_unsigned_short(unsigned short *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_unsigned_int(unsigned int *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+static void add_to_hashtable_void(void *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_prealloc_space(struct ext4_prealloc_space *pa) {
+	unsigned long pfn = virt_to_pfn(pa);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_free_data(struct ext4_free_data *new_entry) {
+	unsigned long pfn = virt_to_pfn(new_entry);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_group_info(struct ext4_group_info **meta_group_info) {
+	unsigned long pfn = virt_to_pfn(meta_group_info);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 
 static inline void *mb_correct_addr_and_bit(int *bit, void *addr)
 {
@@ -781,6 +844,12 @@ static void mb_regenerate_buddy(struct ext4_buddy *e4b)
 		e4b->bd_bitmap, e4b->bd_group);
 }
 
+static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
+	unsigned long pfn = virt_to_pfn(bh);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /* The buddy information is attached the buddy cache inode
  * for convenience. The information regarding each group
  * is loaded via ext4_mb_load_buddy. The information involve
@@ -835,6 +904,9 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 	if (groups_per_page > 1) {
 		i = sizeof(struct buffer_head *) * groups_per_page;
 		bh = kzalloc(i, gfp);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_buffer_head(bh);
+
 		if (bh == NULL) {
 			err = -ENOMEM;
 			goto out;
@@ -2419,6 +2491,9 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		metalen = sizeof(*meta_group_info) <<
 			EXT4_DESC_PER_BLOCK_BITS(sb);
 		meta_group_info = kmalloc(metalen, GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_group_info(meta_group_info);
+
 		if (meta_group_info == NULL) {
 			ext4_msg(sb, KERN_ERR, "can't allocate mem "
 				 "for a buddy group");
@@ -2433,6 +2508,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
 
 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
+
 	if (meta_group_info[i] == NULL) {
 		ext4_msg(sb, KERN_ERR, "can't allocate buddy mem");
 		goto exit_group_info;
@@ -2462,6 +2538,9 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		struct buffer_head *bh;
 		meta_group_info[i]->bb_bitmap =
 			kmalloc(sb->s_blocksize, GFP_NOFS);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_void(meta_group_info[i]->bb_bitmap);
+
 		BUG_ON(meta_group_info[i]->bb_bitmap == NULL);
 		bh = ext4_read_block_bitmap(sb, group);
 		BUG_ON(IS_ERR_OR_NULL(bh));
@@ -2593,6 +2672,9 @@ int ext4_mb_init(struct super_block *sb)
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_offsets);
 
 	sbi->s_mb_offsets = kmalloc(i, GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_unsigned_short(sbi->s_mb_offsets);
+
 	if (sbi->s_mb_offsets == NULL) {
 		ret = -ENOMEM;
 		goto out;
@@ -2600,6 +2682,9 @@ int ext4_mb_init(struct super_block *sb)
 
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_maxs);
 	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_unsigned_int(sbi->s_mb_maxs);
+
 	if (sbi->s_mb_maxs == NULL) {
 		ret = -ENOMEM;
 		goto out;
@@ -3652,6 +3737,9 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
 	BUG_ON(!S_ISREG(ac->ac_inode->i_mode));
 
 	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_prealloc_space(pa);
+
 	if (pa == NULL)
 		return -ENOMEM;
 
@@ -3746,6 +3834,9 @@ ext4_mb_new_group_pa(struct ext4_allocation_context *ac)
 
 	BUG_ON(ext4_pspace_cachep == NULL);
 	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_prealloc_space(pa);
+
 	if (pa == NULL)
 		return -ENOMEM;
 
@@ -4536,6 +4627,9 @@ ext4_fsblk_t ext4_mb_new_blocks(handle_t *handle,
 	}
 
 	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_NOFS);
+	if (global_flag == PFN_TRACE)
+		add_to_hashtable_ext4_allocation_context(ac);
+
 	if (!ac) {
 		ar->len = 0;
 		*errp = -ENOMEM;
@@ -4893,6 +4987,9 @@ do_more:
 		 */
 		new_entry = kmem_cache_alloc(ext4_free_data_cachep,
 				GFP_NOFS|__GFP_NOFAIL);
+		if (global_flag == PFN_TRACE)
+			add_to_hashtable_ext4_free_data(new_entry);
+
 		new_entry->efd_start_cluster = bit;
 		new_entry->efd_group = block_group;
 		new_entry->efd_count = count_clusters;
@@ -5372,3 +5469,5 @@ out_unload:
 
 	return error;
 }
+
+

@@ -40,6 +40,15 @@
 #include <linux/compat.h>
 #endif
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/slab.h>
+#include <linux/mm.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+
+#define PFN_TRACE 4
+
 #define __FS_HAS_ENCRYPTION IS_ENABLED(CONFIG_EXT4_FS_ENCRYPTION)
 #include <linux/fscrypt.h>
 
@@ -2356,6 +2365,88 @@ static inline  unsigned char get_dtype(struct super_block *sb, int filetype)
 extern int ext4_check_all_de(struct inode *dir, struct buffer_head *bh,
 			     void *buf, int buf_size);
 
+/*
+void add_to_hashtable_dir_private_info(struct dir_private_info *p) {
+	unsigned long pfn = virt_to_pfn(p);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+void add_to_hashtable_fname(struct fname *fname) {
+	unsigned long pfn = virt_to_pfn(fname);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
+/*mballoc.c */
+/*
+void add_to_hashtable_buffer_head(struct buffer_head **bh) {
+	unsigned long pfn = virt_to_pfn(bh);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
+/*
+void add_to_hashtable_ext4_allocation_context(struct ext4_allocation_context *ac) {
+	unsigned long pfn = virt_to_pfn(ac);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
+/*resize.c */
+//void add_to_hashtable_ext4_new_flex_group_data(struct ext4_new_flex_group_data *flex_gd); 
+
+//void add_to_hashtable_ext4_new_group_data(struct ext4_new_group_data *group); 
+//void add_to_hashtable_u16(__u16 *bg_flags);
+
+
+/* fsmap.h */
+/*
+void add_to_hashtable_ext4_fsmap(struct ext4_fsmap *fsm) {
+	unsigned long pfn = virt_to_pfn(fsm);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
+/* xattr.c */
+/*
+void add_to_hashtable_ext4_xattr_ibody_find(struct ext4_xattr_ibody_find *is) {
+	unsigned long pfn = virt_to_pfn(is);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_xattr_block_find(struct ext4_xattr_block_find *bs) {
+	unsigned long pfn = virt_to_pfn(bs);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_xattr_inode_array_double(struct ext4_xattr_inode_array **ea_inode_array) {
+	unsigned long pfn = virt_to_pfn(*ea_inode_array);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_xattr_inode_array_single(struct ext4_xattr_inode_array *ea_inode_array) {
+	unsigned long pfn = virt_to_pfn(ea_inode_array);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
+/* extents_status.c */
+/*
+void add_to_hashtable_extent_status(struct extent_status *es) {
+	unsigned long pfn = virt_to_pfn(es);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
 /* fsync.c */
 extern int ext4_sync_file(struct file *, loff_t, loff_t, int);
 
@@ -2390,6 +2481,20 @@ extern int ext4_init_inode_table(struct super_block *sb,
 extern void ext4_end_bitmap_read(struct buffer_head *bh, int uptodate);
 
 /* mballoc.c */
+/*
+void add_to_hashtable_unsigned_short(unsigned short *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_unsigned_int(unsigned int *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
 extern const struct file_operations ext4_seq_mb_groups_fops;
 extern long ext4_mb_stats;
 extern long ext4_mb_max_to_scan;
@@ -2521,6 +2626,38 @@ extern int ext4_group_extend(struct super_block *sb,
 extern int ext4_resize_fs(struct super_block *sb, ext4_fsblk_t n_blocks_count);
 
 /* super.c */
+/*
+void add_to_hashtable_ext4_inode_info (struct ext4_inode_info *ei) {	
+	unsigned long pfn = virt_to_pfn(ei);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_lazy_init (struct ext4_lazy_init *eli) {	
+	unsigned long pfn = virt_to_pfn(eli);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_li_request (struct ext4_li_request *elr) {	
+	unsigned long pfn = virt_to_pfn(elr);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_sb_info (struct ext4_sb_info *sbi) {	
+	unsigned long pfn = virt_to_pfn(sbi);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_blockgroup_lock (struct blockgroup_lock *s_blockgroup_lock) {	
+	unsigned long pfn = virt_to_pfn(s_blockgroup_lock);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
 extern int ext4_seq_options_show(struct seq_file *seq, void *offset);
 extern int ext4_calculate_overhead(struct super_block *sb);
 extern void ext4_superblock_csum_set(struct super_block *sb);
@@ -3017,6 +3154,13 @@ static inline int ext4_has_inline_data(struct inode *inode)
 	return ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
 	       EXT4_I(inode)->i_inline_off;
 }
+/*
+void add_to_hashtable_void(void *value) {
+	unsigned long pfn = virt_to_pfn(value);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
 
 /* namei.c */
 extern const struct inode_operations ext4_dir_inode_operations;
@@ -3065,7 +3209,14 @@ extern void ext4_unregister_sysfs(struct super_block *sb);
 extern int __init ext4_init_sysfs(void);
 extern void ext4_exit_sysfs(void);
 
-/* block_validity */
+/*
+void add_to_hashtable_kobject(struct kobject *kobj) {
+	unsigned long pfn = virt_to_pfn(kobj);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
 extern void ext4_release_system_zone(struct super_block *sb);
 extern int ext4_setup_system_zone(struct super_block *sb);
 extern int __init ext4_init_system_zone(void);
@@ -3143,6 +3294,20 @@ extern int ext4_move_extents(struct file *o_filp, struct file *d_filp,
 			     __u64 len, __u64 *moved_len);
 
 /* page-io.c */
+/*
+void add_to_hashtable_bio (struct bio *bio) {
+	unsigned long pfn = virt_to_pfn(bio);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
+void add_to_hashtable_ext4_io_end_t(ext4_io_end_t *io) {
+	unsigned long pfn = virt_to_pfn(io);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
+
 extern int __init ext4_init_pageio(void);
 extern void ext4_exit_pageio(void);
 extern ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags);
@@ -3161,6 +3326,13 @@ extern int ext4_bio_write_page(struct ext4_io_submit *io,
 
 /* mmp.c */
 extern int ext4_multi_mount_protect(struct super_block *, ext4_fsblk_t);
+/*
+void add_to_hashtable_mmpd_data(struct mmpd_data *mmpd_data) {
+	unsigned long pfn = virt_to_pfn(mmpd_data);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+*/
 
 /*
  * Add new method to test whether block and inode bitmaps are properly
