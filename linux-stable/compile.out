@@ -9,67 +9,13 @@ scripts/kconfig/conf  --syncconfig Kconfig
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
-  SKIPPED include/generated/compile.h
-  LDS     arch/x86/realmode/rm/realmode.lds
-  LDS     arch/x86/entry/vdso/vdso.lds
-  LD      arch/x86/realmode/rm/realmode.elf
-  LDS     arch/x86/entry/vdso/vdsox32.lds
-  RELOCS  arch/x86/realmode/rm/realmode.relocs
-  LDS     arch/x86/entry/vdso/vdso32/vdso32.lds
-  OBJCOPY arch/x86/realmode/rm/realmode.bin
-  AS      arch/x86/realmode/rmpiggy.o
-  VDSO    arch/x86/entry/vdso/vdso64.so.dbg
-  VDSO    arch/x86/entry/vdso/vdsox32.so.dbg
-  VDSO    arch/x86/entry/vdso/vdso32.so.dbg
-  AR      arch/x86/realmode/built-in.a
-  OBJCOPY arch/x86/entry/vdso/vdso64.so
-  OBJCOPY arch/x86/entry/vdso/vdsox32.so
-  VDSO2C  arch/x86/entry/vdso/vdso-image-64.c
-  VDSO2C  arch/x86/entry/vdso/vdso-image-x32.c
-  OBJCOPY arch/x86/entry/vdso/vdso32.so
-  CC      arch/x86/entry/vdso/vdso-image-64.o
-  CC      arch/x86/entry/vdso/vdso-image-x32.o
-  VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
-  CC      arch/x86/entry/vdso/vdso-image-32.o
-  AR      arch/x86/entry/vdso/built-in.a
-  AR      arch/x86/entry/built-in.a
-  LDS     arch/x86/kernel/vmlinux.lds
-  AR      arch/x86/built-in.a
-  CC      lib/rbtree.o
-lib/rbtree.c: In function ‘__rb_insert’:
-lib/rbtree.c:125:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-  struct rb_node *parent = rb_red_parent(node), *gparent, *tmp;
-  ^
-lib/rbtree.c:165:5: warning: multi-line comment [-Wcomment]
-     //      / \          / \
-     ^
-lib/rbtree.c:189:5: warning: multi-line comment [-Wcomment]
-     //     / \           / \
-     ^
-lib/rbtree.c:214:4: warning: multi-line comment [-Wcomment]
-    //       / \         / \
-    ^
-lib/rbtree.c:216:4: warning: multi-line comment [-Wcomment]
-    //     /                 \
-    ^
-lib/rbtree.c:165:5: warning: multi-line comment [-Wcomment]
-     //      / \          / \
-     ^
-lib/rbtree.c:189:5: warning: multi-line comment [-Wcomment]
-     //     / \           / \
-     ^
-lib/rbtree.c:214:4: warning: multi-line comment [-Wcomment]
-    //       / \         / \
-    ^
-lib/rbtree.c:216:4: warning: multi-line comment [-Wcomment]
-    //     /                 \
-    ^
-  AR      lib/lib.a
-  EXPORTS lib/lib-ksyms.o
-  AR      lib/built-in.a
+  CC      mm/slub.o
+  AR      mm/built-in.a
   GEN     .version
   CHK     include/generated/compile.h
-  SKIPPED include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  AR      init/built-in.a
   AR      built-in.a
   LD      vmlinux.o
   MODPOST vmlinux.o
@@ -79,10 +25,12 @@ lib/rbtree.c:216:4: warning: multi-line comment [-Wcomment]
   SORTEX  vmlinux
   SYSMAP  System.map
   Building modules, stage 2.
-  LDS     arch/x86/boot/compressed/vmlinux.lds
+  CC      arch/x86/boot/version.o
   VOFFSET arch/x86/boot/compressed/../voffset.h
   OBJCOPY arch/x86/boot/compressed/vmlinux.bin
   RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  MODPOST 20 modules
+  CC      arch/x86/boot/compressed/kaslr.o
   GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
   CC      arch/x86/boot/compressed/misc.o
   MKPIGGY arch/x86/boot/compressed/piggy.S
@@ -95,32 +43,58 @@ lib/rbtree.c:216:4: warning: multi-line comment [-Wcomment]
   LD      arch/x86/boot/setup.elf
   OBJCOPY arch/x86/boot/setup.bin
   BUILD   arch/x86/boot/bzImage
-Setup is 17244 bytes (padded to 17408 bytes).
-System is 8229 kB
-CRC db060f42
-Kernel: arch/x86/boot/bzImage is ready  (#2)
-  MODPOST 4451 modules
+Setup is 15372 bytes (padded to 15872 bytes).
+System is 7866 kB
+CRC f77a3ee7
+Kernel: arch/x86/boot/bzImage is ready  (#7)
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
   CHK     include/generated/utsrelease.h
-  CHK     scripts/mod/devicetable-offsets.h
   CHK     include/generated/bounds.h
   CHK     include/generated/timeconst.h
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  SKIPPED include/generated/compile.h
-  DATAREL arch/x86/boot/compressed/vmlinux
-Kernel: arch/x86/boot/bzImage is ready  (#2)
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
-  CHK     include/generated/utsrelease.h
   CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
   Building modules, stage 2.
-  MODPOST 4451 modules
+  MODPOST 20 modules
+  INSTALL crypto/crypto_engine.ko
+  INSTALL drivers/crypto/virtio/virtio_crypto.ko
+  INSTALL drivers/thermal/x86_pkg_temp_thermal.ko
+  INSTALL fs/efivarfs/efivarfs.ko
+  INSTALL net/ipv4/netfilter/ipt_MASQUERADE.ko
+  INSTALL net/ipv4/netfilter/iptable_nat.ko
+  INSTALL net/ipv4/netfilter/nf_log_arp.ko
+  INSTALL net/ipv4/netfilter/nf_log_ipv4.ko
+  INSTALL net/ipv4/netfilter/nf_nat_ipv4.ko
+  INSTALL net/ipv4/netfilter/nf_nat_masquerade_ipv4.ko
+  INSTALL net/ipv6/netfilter/nf_log_ipv6.ko
+  INSTALL net/netfilter/nf_log_common.ko
+  INSTALL net/netfilter/nf_nat.ko
+  INSTALL net/netfilter/nf_nat_ftp.ko
+  INSTALL net/netfilter/nf_nat_irc.ko
+  INSTALL net/netfilter/nf_nat_sip.ko
+  INSTALL net/netfilter/xt_LOG.ko
+  INSTALL net/netfilter/xt_addrtype.ko
+  INSTALL net/netfilter/xt_mark.ko
+  INSTALL net/netfilter/xt_nat.ko
+  DEPMOD  4.17.0
+sh ./arch/x86/boot/install.sh 4.17.0 arch/x86/boot/bzImage \
+		System.map "/boot"
+run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 4.17.0 /boot/vmlinuz-4.17.0
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 4.17.0 /boot/vmlinuz-4.17.0
+update-initramfs: Generating /boot/initrd.img-4.17.0
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 4.17.0 /boot/vmlinuz-4.17.0
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-4.17.0
+Found initrd image: /boot/initrd.img-4.17.0
+Found linux image: /boot/vmlinuz-4.17.0.old
+Found initrd image: /boot/initrd.img-4.17.0
+Found linux image: /boot/vmlinuz-4.5.4
+Found initrd image: /boot/initrd.img-4.5.4
+Found linux image: /boot/vmlinuz-3.13.0-68-generic
+Found initrd image: /boot/initrd.img-3.13.0-68-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+  No volume groups found
+done

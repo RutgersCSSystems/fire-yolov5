@@ -3,6 +3,7 @@ set -x
 
 #Install Quemu
 sudo apt-get install qemu
+sudo apt-get kernel-package
 
 #Now create a disk for your virtual machine 
 #for 16GB
