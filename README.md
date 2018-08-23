@@ -73,16 +73,20 @@ $ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
 
 ### Changing bandwidth of a NUMA node 
+
+Step 1: Run the throttling script
+
 ```
 $ $APPBENCH/throttle.sh
 ```
 
-For modifying bandwidth of throttled node, open the following file
+Step 2: For modifying bandwidth of throttled node, open the following file
+
 ```
      vim $APPBENCH/shared_libs/quartz/nvmemul.ini
 ```
 
-Change the read and write to same bandwidth values
+Step 3: Change the read and write to same bandwidth values
 ```
         bandwidth:
         {
@@ -92,6 +96,11 @@ Change the read and write to same bandwidth values
             write = 5000;
         };
    ```
+Step 4: Run the throttling script again to check the value
+
+```
+$ $APPBENCH/throttle.sh
+```
 
 
 
