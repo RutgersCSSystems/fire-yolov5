@@ -21,6 +21,3 @@ export SHARED_LIBS=$APPBENCH/shared_libs
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 export 
 set +x
-
-
-git clone https://github.com/SudarsunKannan/appbench

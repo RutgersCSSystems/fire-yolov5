@@ -6,42 +6,42 @@ From the NVM source directory set the environment variables.
 trusty specifies the host systems linux version/codename 
 Pass your own OS version name
 ```
-$ source scripts/setvars.sh "trusty"   
+ source scripts/setvars.sh "trusty"   
 ```
 
 Create the QEMU IMAGE and exit.  If prompted (y,n), enter yes
 ```
-$ scripts/qemu_create.sh  
-$ exit
+ scripts/qemu_create.sh  
+ exit
 ```
 
 Install the 4.17 kernel with QEMU support and copy kernel files to boot directory
 ```
-$  scripts/compile_kern.sh
+  scripts/compile_kern.sh
 ```
 
 Now launch the QEMU
 ```
-$  scripts/run_qemu.sh
+  scripts/run_qemu.sh
 ```
 
 ### Compiling only the kernel
 ```
-$ source scripts/setvars.sh "trusty"
-$ scripts/compile_kern.sh
+ source scripts/setvars.sh "trusty"
+ scripts/compile_kern.sh
 ```
 
 ### Compiling Linux scalability benchmark
 ```
-$ scripts/makes_scale_bench.sh
+ scripts/makes_scale_bench.sh
 ```
 
 ### Running mmap benchmark
 ```
-$ cd linux-scalability-benchmark/mmapbench
+ cd linux-scalability-benchmark/mmapbench
 
 //e.g. ./mmapbench 1 500000 
-$ ./mmapbench NUMCORES NUMPAGES
+ ./mmapbench NUMCORES NUMPAGES
 ```
 
 ### Automatically Tracing an application
@@ -53,14 +53,14 @@ an application, use the following steps
 This is just a one time operation to install the shared library
 
 ```
-$ source scripts/setvars.sh "trusty"
-$ scripts/compile_sharedlib.sh
+ source scripts/setvars.sh "trusty"
+ scripts/compile_sharedlib.sh
 ```
 2. Install the shared library in QEMU. Again, this is one time operation. <br />
 Note: Make sure your QEMU is not running
 
 ```
-$ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so mountdir/usr/lib/
+ scripts/copy_data_to_qemu.sh shared_libs/construct/libmigration.so mountdir/usr/lib/
 ```
 
 3. Once you have installed the libraries first time, any time you run  <br />
@@ -69,15 +69,33 @@ from inside the QEMU
 
 ```
 //RUN this inside QEMU
-$ LD_PRELOAD=/usr/lib/libmigration.so ./APP
+ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
+
+### Installing appbench
+Below are the short steps; for more details, see appbench README
+
+Step 1: First, get the appbench, setup libraries, download datasets
+```
+git clone https://github.com/SudarsunKannan/appbench
+ source scripts/setvars.sh
+ cd $APPBENCHa
+ source setvars.sh
+ $APPBENCH/setup.sh
+ $APPBENCH/compile_all.sh
+```
+Step 2: For running a benchmark, say LevelDB
+
+ $APPBENCH/leveldb/out-static/db_bench
+
 
 ### Changing bandwidth of a NUMA node 
 
 Step 1: Run the throttling script
 
 ```
-$ $APPBENCH/throttle.sh
+ source scripts/setvars.sh "trusty"
+ $APPBENCH/throttle.sh
 ```
 
 Step 2: For modifying bandwidth of throttled node, open the following file
@@ -99,7 +117,7 @@ Step 3: Change the read and write to same bandwidth values
 Step 4: Run the throttling script again to check the value
 
 ```
-$ $APPBENCH/throttle.sh
+ $APPBENCH/throttle.sh
 ```
 
 
