@@ -17,3 +17,6 @@ export LINUX_SCALE_BENCH=$PWD/linux-scalability-benchmark
 export QEMUMEM="4096M"
 export CODESRC=$PWD
 set +x
+
+
+git clone https://github.com/SudarsunKannan/appbench
