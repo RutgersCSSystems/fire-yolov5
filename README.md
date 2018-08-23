@@ -71,3 +71,30 @@ from inside the QEMU
 //RUN this inside QEMU
 $ LD_PRELOAD=/usr/lib/libmigration.so ./APP
 ```
+
+### Changing bandwidth of a NUMA node 
+```
+$ $APPBENCH/throttle.sh
+```
+
+For modifying bandwidth of throttled node, open the following file
+```
+     vim $APPBENCH/shared_libs/quartz/nvmemul.ini
+```
+
+Change the read and write to same bandwidth values
+```
+        bandwidth:
+        {
+            enable = true;
+            model = "/tmp/bandwidth_model";
+            read = 5000;
+            write = 5000;
+        };
+   ```
+
+
+
+
+
+
