@@ -15,7 +15,7 @@
 extern int global_flag;
 
 void add_to_hashtable_ext4_fsmap(struct ext4_fsmap *fsm) {
-	unsigned long pfn = virt_to_pfn(fsm);
+	unsigned long pfn = (__pa(fsm) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

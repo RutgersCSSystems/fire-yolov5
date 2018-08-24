@@ -128,25 +128,25 @@ void ext4_xattr_inode_set_class(struct inode *ea_inode)
 #endif
 
 void add_to_hashtable_ext4_xattr_ibody_find(struct ext4_xattr_ibody_find *is) {
-	unsigned long pfn = virt_to_pfn(is);
+	unsigned long pfn = (__pa(is) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_xattr_inode_array_double(struct ext4_xattr_inode_array **ea_inode_array) {
-	unsigned long pfn = virt_to_pfn(*ea_inode_array);
+	unsigned long pfn = (__pa(*ea_inode_array) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_xattr_inode_array_single(struct ext4_xattr_inode_array *ea_inode_array) {
-	unsigned long pfn = virt_to_pfn(ea_inode_array);
+	unsigned long pfn = (__pa(ea_inode_array) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 static void add_to_hashtable_void(void *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
@@ -359,7 +359,7 @@ static void ext4_xattr_inode_set_hash(struct inode *ea_inode, u32 hash)
 }
 
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
-	unsigned long pfn = virt_to_pfn(bh);
+	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
@@ -1836,7 +1836,7 @@ struct ext4_xattr_block_find {
 };
 
 void add_to_hashtable_ext4_xattr_block_find(struct ext4_xattr_block_find *bs) {
-	unsigned long pfn = virt_to_pfn(bs);
+	unsigned long pfn = (__pa(bs) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

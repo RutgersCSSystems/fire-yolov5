@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-export QEMU_IMG=/users/kannan11/ssd/schedsp/NVM
+export QEMU_IMG=/home/joo
 export BASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 

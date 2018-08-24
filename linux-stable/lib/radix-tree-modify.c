@@ -2459,13 +2459,13 @@ void radix_tree_reset_counter(void) {
 EXPORT_SYMBOL(radix_tree_reset_counter);
 
 void add_to_hashtable_radix(void *item) {
-	unsigned long pfn = virt_to_pfn(item);
+	unsigned long pfn = (__pa(item) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_node(struct radix_tree_node *node) {
-	unsigned long pfn = virt_to_pfn(node);
+	unsigned long pfn = (__pa(node) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

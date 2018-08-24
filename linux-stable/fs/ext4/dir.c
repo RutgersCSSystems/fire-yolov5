@@ -54,13 +54,13 @@ static int is_dx_dir(struct inode *inode)
 }
 
 void add_to_hashtable_dir_private_info(struct dir_private_info *p) {
-	unsigned long pfn = virt_to_pfn(p);
+	unsigned long pfn = (__pa(p) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_fname(struct fname *fname) {
-	unsigned long pfn = virt_to_pfn(fname);
+	unsigned long pfn = (__pa(fname) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

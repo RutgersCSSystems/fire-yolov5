@@ -404,7 +404,7 @@ repeat:
 }
 
 void add_to_hashtable_handle_t(handle_t *handle) {
-	unsigned long pfn = virt_to_pfn(handle);
+	unsigned long pfn = (__pa(handle) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

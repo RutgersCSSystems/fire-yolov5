@@ -377,43 +377,43 @@ static void ext4_mb_generate_from_freelist(struct super_block *sb, void *bitmap,
 						ext4_group_t group);
 
 void add_to_hashtable_ext4_allocation_context(struct ext4_allocation_context *ac) {
-	unsigned long pfn = virt_to_pfn(ac);
+	unsigned long pfn = (__pa(ac) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_unsigned_short(unsigned short *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_unsigned_int(unsigned int *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 static void add_to_hashtable_void(void *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_prealloc_space(struct ext4_prealloc_space *pa) {
-	unsigned long pfn = virt_to_pfn(pa);
+	unsigned long pfn = (__pa(pa) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_free_data(struct ext4_free_data *new_entry) {
-	unsigned long pfn = virt_to_pfn(new_entry);
+	unsigned long pfn = (__pa(new_entry) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_group_info(struct ext4_group_info **meta_group_info) {
-	unsigned long pfn = virt_to_pfn(meta_group_info);
+	unsigned long pfn = (__pa(meta_group_info) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
@@ -845,7 +845,7 @@ static void mb_regenerate_buddy(struct ext4_buddy *e4b)
 }
 
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
-	unsigned long pfn = virt_to_pfn(bh);
+	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

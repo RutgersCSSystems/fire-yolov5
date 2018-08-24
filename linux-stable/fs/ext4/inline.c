@@ -21,7 +21,7 @@
 extern int global_flag;
 
 static void add_to_hashtable_void(void *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

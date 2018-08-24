@@ -10,7 +10,7 @@
 extern int global_flag;
 
 void add_to_hashtable_mmpd_data(struct mmpd_data *mmpd_data) {
-	unsigned long pfn = virt_to_pfn(mmpd_data);
+	unsigned long pfn = (__pa(mmpd_data) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

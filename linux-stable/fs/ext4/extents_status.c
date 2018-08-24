@@ -329,7 +329,7 @@ static void ext4_es_list_del(struct inode *inode)
 }
 
 void add_to_hashtable_extent_status(struct extent_status *es) {
-	unsigned long pfn = virt_to_pfn(es);
+	unsigned long pfn = (__pa(es) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

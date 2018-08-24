@@ -21,7 +21,7 @@ extern int global_flag;
 
 
 void add_to_hashtable_kobject(struct kobject *kobj) {
-	unsigned long pfn = virt_to_pfn(kobj);
+	unsigned long pfn = (__pa(kobj) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

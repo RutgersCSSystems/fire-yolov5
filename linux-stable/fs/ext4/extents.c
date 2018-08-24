@@ -5951,13 +5951,13 @@ ext4_swap_extents(handle_t *handle, struct inode *inode1,
 }
 
 void add_to_hashtable_ext4_ext_path(struct ext4_ext_path *path) {
-	unsigned long pfn = virt_to_pfn(path);
+	unsigned long pfn = (__pa(path) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_fsblk_t(ext4_fsblk_t *fsblk) {
-	unsigned long pfn =virt_to_pfn(fsblk);
+	unsigned long pfn = (__pa(fsblk) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

@@ -189,19 +189,19 @@ struct ext4_new_flex_group_data {
 };
 
 void add_to_hashtable_ext4_new_flex_group_data(struct ext4_new_flex_group_data *flex_gd) {
-	unsigned long pfn = virt_to_pfn(flex_gd);
+	unsigned long pfn = (__pa(flex_gd) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_new_group_data(struct ext4_new_group_data *group) {
-	unsigned long pfn = virt_to_pfn(group);
+	unsigned long pfn = (__pa(group) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_u16(__u16 *bg_flags) {
-	unsigned long pfn = virt_to_pfn(bg_flags);
+	unsigned long pfn = (__pa(bg_flags) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
@@ -790,7 +790,7 @@ static int verify_reserved_gdb(struct super_block *sb,
 }
 
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
-	unsigned long pfn = virt_to_pfn(bh);
+	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

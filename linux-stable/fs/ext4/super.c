@@ -143,7 +143,7 @@ MODULE_ALIAS("ext3");
 #define IS_EXT3_SB(sb) ((sb)->s_bdev->bd_holder == &ext3_fs_type)
 
 static void add_to_hashtable_void(void *value) {
-	unsigned long pfn = virt_to_pfn(value);
+	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
@@ -974,31 +974,31 @@ static void ext4_put_super(struct super_block *sb)
 static struct kmem_cache *ext4_inode_cachep;
 
 void add_to_hashtable_ext4_inode_info (struct ext4_inode_info *ei) {	
-	unsigned long pfn = virt_to_pfn(ei);
+	unsigned long pfn = (__pa(ei) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_lazy_init (struct ext4_lazy_init *eli) {	
-	unsigned long pfn = virt_to_pfn(eli);
+	unsigned long pfn = (__pa(eli) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_li_request (struct ext4_li_request *elr) {	
-	unsigned long pfn = virt_to_pfn(elr);
+	unsigned long pfn = (__pa(elr) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_sb_info (struct ext4_sb_info *sbi) {	
-	unsigned long pfn = virt_to_pfn(sbi);
+	unsigned long pfn = (__pa(sbi) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_blockgroup_lock (struct blockgroup_lock *s_blockgroup_lock) {	
-	unsigned long pfn = virt_to_pfn(s_blockgroup_lock);
+	unsigned long pfn = (__pa(s_blockgroup_lock) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

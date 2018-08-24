@@ -1095,7 +1095,7 @@ void rbtree_reset_counter(void) {
 EXPORT_SYMBOL(rbtree_reset_counter);
 
 void add_to_hashtable(struct rb_node *node) {
-	unsigned long pfn = virt_to_pfn(node);
+	unsigned long pfn = (__pa(node) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

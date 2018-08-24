@@ -59,7 +59,7 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
 }
 
 static void add_to_hashtable_bio (struct bio *bio) {
-	unsigned long pfn = virt_to_pfn(bio);
+	unsigned long pfn = (__pa(bio) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

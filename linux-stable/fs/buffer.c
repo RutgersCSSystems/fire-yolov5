@@ -3361,7 +3361,7 @@ static void recalc_bh_state(void)
 }
 
 static void add_to_hashtable_buffer_head(struct buffer_head *bh) {
-	unsigned long pfn = virt_to_pfn(bh);
+	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }

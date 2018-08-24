@@ -35,13 +35,13 @@ extern int global_flag;
 static struct kmem_cache *io_end_cachep;
 
 static void add_to_hashtable_bio (struct bio *bio) {
-	unsigned long pfn = virt_to_pfn(bio);
+	unsigned long pfn = (__pa(bio) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
 
 void add_to_hashtable_ext4_io_end_t(ext4_io_end_t *io) {
-	unsigned long pfn = virt_to_pfn(io);
+	unsigned long pfn = (__pa(io) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
