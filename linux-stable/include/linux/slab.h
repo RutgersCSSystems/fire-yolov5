@@ -15,7 +15,7 @@
 #include <linux/gfp.h>
 #include <linux/types.h>
 #include <linux/workqueue.h>
-
+#include <linux/numa.h>
 
 /*
  * Flags to pass to kmem_cache_create().
@@ -355,6 +355,12 @@ void *__kmalloc(size_t size, gfp_t flags) __assume_kmalloc_alignment __malloc;
 void *kmem_cache_alloc(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
 void kmem_cache_free(struct kmem_cache *, void *);
 
+/* HeteroOS code : Customized Heterogeneous memory allocation*/
+#ifdef _ENABLE_HETERO
+void *kmem_cache_hetero_alloc(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
+#endif
+
+
 /*
  * Bulk allocation and freeing operations. These are accelerated in an
  * allocator specific way to avoid taking locks repeatedly or building
@@ -690,6 +696,14 @@ static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 {
 	return kmem_cache_alloc(k, flags | __GFP_ZERO);
 }
+
+/* HeteroOS code */
+#ifdef  _ENABLE_HETERO
+static inline void *kmem_cache_hetero_zalloc(struct kmem_cache *k, gfp_t flags)
+{
+        return kmem_cache_hetero_alloc(k, flags | __GFP_ZERO);
+}
+#endif
 
 /**
  * kzalloc - allocate memory. The memory is set to zero.

@@ -77,7 +77,7 @@ Below are the short steps; for more details, see appbench README
 
 Step 1: First, get the appbench, setup libraries, download datasets
 ```
-git clone https://github.com/SudarsunKannan/appbench
+ git clone https://github.com/SudarsunKannan/appbench
  source scripts/setvars.sh
  cd $APPBENCHa
  source setvars.sh
@@ -95,6 +95,7 @@ Step 1: Run the throttling script
 
 ```
  source scripts/setvars.sh "trusty"
+ $APPBENCH/install_quartz.sh
  $APPBENCH/throttle.sh
 ```
 

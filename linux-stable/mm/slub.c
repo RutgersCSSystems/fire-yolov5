@@ -2745,12 +2745,29 @@ redo:
 static __always_inline void *slab_alloc(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
-	/* HeteroOS code */
-#ifdef _ENABLE_HETERO
-        return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);	
-#endif
 	return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
 }
+
+ /* HeteroOS code */
+#ifdef _ENABLE_HETERO
+static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
+		gfp_t gfpflags, unsigned long addr)
+{
+	return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);
+	//return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
+}
+
+void *kmem_cache_hetero_alloc(struct kmem_cache *s, gfp_t gfpflags)
+{
+	//printk(KERN_ALERT "Calling kmem_cache_hetero_alloc \n");
+	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
+	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
+				s->size, gfpflags);
+	return ret;
+}
+EXPORT_SYMBOL(kmem_cache_hetero_alloc);
+#endif
+
 
 void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 {
