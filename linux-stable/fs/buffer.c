@@ -833,7 +833,12 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	head = NULL;
 	offset = PAGE_SIZE;
 	while ((offset -= size) >= 0) {
+
+#ifdef _ENABLE_HETERO
+		bh = alloc_buffer_hetero_head(gfp);
+#else
 		bh = alloc_buffer_head(gfp);
+#endif
 		if (!bh)
 			goto no_grow;
 
@@ -3378,6 +3383,26 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags)
 	return ret;
 }
 EXPORT_SYMBOL(alloc_buffer_head);
+
+
+/* HeteroOS code */
+#ifdef _ENABLE_HETERO
+struct buffer_head *alloc_buffer_hetero_head(gfp_t gfp_flags)
+{
+        //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
+        struct buffer_head *ret = kmem_cache_hetero_zalloc(bh_cachep, gfp_flags);
+        if (ret) {
+                INIT_LIST_HEAD(&ret->b_assoc_buffers);
+                preempt_disable();
+                __this_cpu_inc(bh_accounting.nr);
+                recalc_bh_state();
+                preempt_enable();
+        }
+        return ret;
+}
+EXPORT_SYMBOL(alloc_buffer_hetero_head);
+#endif
+
 
 void free_buffer_head(struct buffer_head *bh)
 {

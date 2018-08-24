@@ -14,6 +14,7 @@
 #include <linux/pagemap.h>
 #include <linux/wait.h>
 #include <linux/atomic.h>
+#include <linux/numa.h>
 
 #ifdef CONFIG_BLOCK
 
@@ -193,6 +194,12 @@ struct buffer_head *__bread_gfp(struct block_device *,
 				sector_t block, unsigned size, gfp_t gfp);
 void invalidate_bh_lrus(void);
 struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
+
+/* HeteroOS code */
+#ifdef _ENABLE_HETERO
+struct buffer_head *alloc_buffer_hetero_head(gfp_t gfp_flags);
+#endif
+
 void free_buffer_head(struct buffer_head * bh);
 void unlock_buffer(struct buffer_head *bh);
 void __lock_buffer(struct buffer_head *bh);

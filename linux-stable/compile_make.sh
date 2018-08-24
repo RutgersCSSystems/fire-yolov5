@@ -1,4 +1,5 @@
 #!/bin/bash -x
+set -x
 CC=/usr/lib/ccache/bin/gcc make -j40 &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
@@ -7,6 +8,7 @@ grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
 CC=/usr/lib/ccache/bin/gcc make  modules -j40 &>>compile.out
 CC=/usr/lib/ccache/bin/gcc make  modules_install -j40
+CC=/usr/lib/ccache/bin/gcc make  modules install -j40
 
  y="4.17.0"	
    if [[ x$ == x ]];
@@ -24,3 +26,4 @@ update-initramfs -c -k $y
 grep -r "warning:" compile.out &> warnings.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
+set +x

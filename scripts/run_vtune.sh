@@ -1,7 +1,7 @@
 set -x
 
-VTUNECL=~/ssd//vtune/vtune_amplifier_2018/bin64/amplxe-cl
-APPDIR=/users/skannan/ssd/schedsp/NVM/linux-scalability-benchmark/fio
+VTUNECL=~/ssd/vtune/vtune_amplifier_xe_2017/bin64/amplxe-cl
+APPDIR=/users/kannan11/ssd/schedsp/NVM/linux-scalability-benchmark/fio
 APP=fio
 WORKLOAD=$PWD/fio-rand-RW_dup.job
 OUTPUT=fio_randrw

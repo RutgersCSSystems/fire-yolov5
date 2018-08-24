@@ -11,6 +11,7 @@
 \usepackage[normalem]{ulem}
 \usepackage[hyphens]{url}
 \usepackage{microtype}
+\usepackage{epsfig}
 
 % Always include hyperref last
 \usepackage[bookmarks=true,breaklinks=true,letterpaper=true,colorlinks,linkcolor=black,citecolor=blue,urlcolor=black]{hyperref}
@@ -86,7 +87,14 @@ Bandwidth        & 4$\times$ - 8$\times$  & 1$\times$        \\ \hline
 
 (Additional paragraph) In large memory systems, not only the data from the application but also the kernel data structures should be allocated to certain memory (e.g., DRAM, NVM). When the application has different memory access patterns, it could touch the same page multiple times or it could touch different pages. Hence, placing the kernel data structures in an appropriate place in heterogeneous memory systems is critical. We extract the information from the OS-level how kernel data structures use different memory pages. 
 
+\section{Motivation}
 
+
+\begin{figure}
+  \includegraphics[width=85mm]{cputime.pdf}
+  \caption{CPU time spent on major functions in applications}
+  \label{cputime}
+\end{figure}
 \section{Related Work}
 Agarwal et al. \cite{Agarwal:2015:PPS:2694344.2694381} proposed a new page placement policy that improves GPU performance in heterogeneous memory systems which differs the memory bandwidth capabilities. The proposed page placement policy places the critical data in the appropriate memory which improves the GPU performance. They use the profiling mechanism to collect the information of GPU application data structure memory access patterns and the size of the data structures allocated in the program. 
 
