@@ -340,8 +340,8 @@ ext4_es_alloc_extent(struct inode *inode, ext4_lblk_t lblk, ext4_lblk_t len,
 {
 	struct extent_status *es;
 	es = kmem_cache_alloc(ext4_es_cachep, GFP_ATOMIC);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_extent_status(es);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_extent_status(es);
 
 	if (es == NULL)
 		return NULL;

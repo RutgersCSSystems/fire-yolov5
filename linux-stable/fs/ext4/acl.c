@@ -100,8 +100,8 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
 	*size = ext4_acl_size(acl->a_count);
 	ext_acl = kmalloc(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_acl_header(ext_acl);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_acl_header(ext_acl);
 
 	if (!ext_acl)
 		return ERR_PTR(-ENOMEM);
@@ -168,8 +168,8 @@ ext4_get_acl(struct inode *inode, int type)
 	retval = ext4_xattr_get(inode, name_index, "", NULL, 0);
 	if (retval > 0) {
 		value = kmalloc(retval, GFP_NOFS);
-		if (global_flag == PFN_TRACE)
-			add_to_hashtable_char(value);
+		//if (global_flag == PFN_TRACE)
+		//	add_to_hashtable_char(value);
 
 		if (!value)
 			return ERR_PTR(-ENOMEM);

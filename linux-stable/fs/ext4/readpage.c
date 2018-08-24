@@ -258,8 +258,8 @@ int ext4_mpage_readpages(struct address_space *mapping,
 			}
 			bio = bio_alloc(GFP_KERNEL,
 				min_t(int, nr_pages, BIO_MAX_PAGES));
-			if (global_flag == PFN_TRACE)
-				add_to_hashtable_bio(bio);
+			//if (global_flag == PFN_TRACE)
+			//	add_to_hashtable_bio(bio);
 
 			if (!bio) {
 				if (ctx)

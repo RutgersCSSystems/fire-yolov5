@@ -436,8 +436,8 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 	struct dir_private_info *p;
 
 	p = kzalloc(sizeof(*p), GFP_KERNEL);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_dir_private_info(p);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_dir_private_info(p);
 	
 	if (!p)
 		return NULL;
@@ -475,8 +475,8 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
 	/* Create and allocate the fname structure */
 	len = sizeof(struct fname) + ent_name->len + 1;
 	new_fn = kzalloc(len, GFP_KERNEL);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_fname(new_fn);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_fname(new_fn);
 	
 	if (!new_fn)
 		return -ENOMEM;

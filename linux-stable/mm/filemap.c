@@ -44,6 +44,8 @@
 #include <linux/pfn_trace.h>
 #include <asm-generic/memory_model.h>
 
+#define PFN_TRACE 4
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
 
@@ -939,7 +941,7 @@ EXPORT_SYMBOL_GPL(add_to_page_cache_lru);
 struct page *__page_cache_alloc(gfp_t gfp)
 {
 	int n;
-	struct page *page;
+	struct page *page, *allocpage;
 
 	if (cpuset_do_page_mem_spread()) {
 		unsigned int cpuset_mems_cookie;
@@ -951,7 +953,11 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 		return page;
 	}
-	return alloc_pages(gfp, 0);
+	allocpage = alloc_pages(gfp, 0);
+	//if (global_flag == 4)
+	//	add_to_hashtable_page(allocpage);
+
+	return allocpage;
 }
 EXPORT_SYMBOL(__page_cache_alloc);
 #endif
@@ -1547,9 +1553,7 @@ struct page *pagecache_get_page(struct address_space *mapping, pgoff_t offset,
 
 repeat:
 	page = find_get_entry(mapping, offset);
-	//if (global_flag == 4)
-	//	add_to_hashtable_page(page);
-
+	
 	if (radix_tree_exceptional_entry(page))
 		page = NULL;
 	if (!page)
@@ -1575,8 +1579,6 @@ repeat:
 	}
 
 	if (page && (fgp_flags & FGP_ACCESSED)) {
-	//	if (global_flag == 4)
-	//		add_to_hashtable_page(page);
 		mark_page_accessed(page);
 	}
 
@@ -1589,7 +1591,7 @@ no_page:
 			gfp_mask &= ~__GFP_FS;
 
 		page = __page_cache_alloc(gfp_mask);
-		//if (global_flag == 4)
+		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_page(page);
 
 		if (!page)

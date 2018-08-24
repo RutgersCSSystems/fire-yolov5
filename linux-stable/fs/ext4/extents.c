@@ -581,8 +581,8 @@ int ext4_ext_precache(struct inode *inode)
 
 	path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 		       GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_ext_path(path);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_ext_path(path);
 
 	if (path == NULL) {
 		up_read(&ei->i_data_sem);
@@ -886,8 +886,8 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 		/* account possible depth increase */
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 2),
 				GFP_NOFS);
-		if (global_flag == PFN_TRACE)
-			add_to_hashtable_ext4_ext_path(path);
+		//if (global_flag == PFN_TRACE)
+		//	add_to_hashtable_ext4_ext_path(path);
 
 		if (unlikely(!path))
 			return ERR_PTR(-ENOMEM);
@@ -1072,8 +1072,8 @@ static int ext4_ext_split(handle_t *handle, struct inode *inode,
 	 * upon them.
 	 */
 	ablocks = kzalloc(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_fsblk_t(ablocks);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_fsblk_t(ablocks);
 
 	if (!ablocks)
 		return -ENOMEM;
@@ -2934,8 +2934,8 @@ again:
 	} else {
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 			       GFP_NOFS);
-		if (global_flag == PFN_TRACE)
-			add_to_hashtable_ext4_ext_path(path);
+		//if (global_flag == PFN_TRACE)
+		//	add_to_hashtable_ext4_ext_path(path);
 
 		if (path == NULL) {
 			ext4_journal_stop(handle);

@@ -47,6 +47,17 @@
 #include <linux/pagevec.h>
 #include <trace/events/block.h>
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/slab.h>
+#include <linux/mm.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+
+#define PFN_TRACE 4
+
+extern int global_flag;
+
 static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
 static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
 			 enum rw_hint hint, struct writeback_control *wbc);
@@ -3344,9 +3355,19 @@ static void recalc_bh_state(void)
 	buffer_heads_over_limit = (tot > max_buffer_heads);
 }
 
+static void add_to_hashtable_buffer_head(struct buffer_head *bh) {
+	unsigned long pfn = virt_to_pfn(bh);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 struct buffer_head *alloc_buffer_head(gfp_t gfp_flags)
 {
 	struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
+	
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_buffer_head(ret);
+
 	if (ret) {
 		INIT_LIST_HEAD(&ret->b_assoc_buffers);
 		preempt_disable();

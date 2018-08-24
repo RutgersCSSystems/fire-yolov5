@@ -300,8 +300,8 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 	struct ext4_fsmap *fsm;
 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_fsmap(fsm);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_fsmap(fsm);
 
 	if (!fsm)
 		return -ENOMEM;

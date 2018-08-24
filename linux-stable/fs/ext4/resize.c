@@ -217,8 +217,8 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	struct ext4_new_flex_group_data *flex_gd;
 
 	flex_gd = kmalloc(sizeof(*flex_gd), GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_new_flex_group_data(flex_gd);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_new_flex_group_data(flex_gd);
 
 	if (flex_gd == NULL)
 		goto out3;
@@ -229,15 +229,15 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 
 	flex_gd->groups = kmalloc(sizeof(struct ext4_new_group_data) *
 				  flexbg_size, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_new_group_data(flex_gd->groups);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_new_group_data(flex_gd->groups);
 
 	if (flex_gd->groups == NULL)
 		goto out2;
 
 	flex_gd->bg_flags = kmalloc(flexbg_size * sizeof(__u16), GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_u16(flex_gd->bg_flags);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_u16(flex_gd->bg_flags);
 	
 	if (flex_gd->bg_flags == NULL)
 		goto out1;
@@ -876,9 +876,7 @@ static int add_new_gdb(handle_t *handle, struct inode *inode,
 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
 				     sizeof(struct buffer_head *),
 				     GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_buffer_head(n_group_desc);
-
+	
 	if (!n_group_desc) {
 		err = -ENOMEM;
 		ext4_warning(sb, "not enough memory for %lu groups",
@@ -958,9 +956,7 @@ static int add_new_gdb_meta_bg(struct super_block *sb,
 	n_group_desc = ext4_kvmalloc((gdb_num + 1) *
 				     sizeof(struct buffer_head *),
 				     GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_buffer_head(n_group_desc);
-
+	
 	if (!n_group_desc) {
 		err = -ENOMEM;
 		ext4_warning(sb, "not enough memory for %lu groups",
@@ -1011,8 +1007,8 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 	int err;
 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_buffer_head(primary);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_buffer_head(primary);
 
 	if (!primary)
 		return -ENOMEM;

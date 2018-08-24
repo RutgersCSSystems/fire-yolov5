@@ -266,8 +266,8 @@ void ext4_end_io_rsv_work(struct work_struct *work)
 ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
 {
 	ext4_io_end_t *io = kmem_cache_zalloc(io_end_cachep, flags);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_ext4_io_end_t(io);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_ext4_io_end_t(io);
 
 	if (io) {
 		io->inode = inode;
@@ -390,8 +390,8 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
 	struct bio *bio;
 
 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_bio(bio);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_bio(bio);
 
 	if (!bio)
 		return -ENOMEM;

@@ -377,8 +377,8 @@ skip:
 	}
 
 	mmpd_data = kmalloc(sizeof(*mmpd_data), GFP_KERNEL);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_mmpd_data(mmpd_data);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_mmpd_data(mmpd_data);
 
 	if (!mmpd_data) {
 		ext4_warning(sb, "not enough memory for mmpd_data");

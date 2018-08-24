@@ -341,8 +341,8 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
 
 	len -= EXT4_MIN_INLINE_DATA_SIZE;
 	value = kzalloc(len, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_void(value);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_void(value);
 	
 	if (!value) {
 		error = -ENOMEM;
@@ -1181,8 +1181,8 @@ static int ext4_convert_inline_data_nolock(handle_t *handle,
 
 	inline_size = ext4_get_inline_size(inode);
 	buf = kmalloc(inline_size, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_void(buf);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_void(buf);
 
 	if (!buf) {
 		error = -ENOMEM;
@@ -1358,8 +1358,8 @@ int htree_inlinedir_to_tree(struct file *dir_file,
 
 	inline_size = ext4_get_inline_size(inode);
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_void(dir_buf);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_void(dir_buf);
 
 	if (!dir_buf) {
 		ret = -ENOMEM;
@@ -1470,8 +1470,8 @@ int ext4_read_inline_dir(struct file *file,
 
 	inline_size = ext4_get_inline_size(inode);
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_void(dir_buf);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_void(dir_buf);
 
 	if (!dir_buf) {
 		ret = -ENOMEM;
@@ -1988,8 +1988,8 @@ int ext4_inline_data_truncate(struct inode *inode, int *has_inline)
 
 			value_len = le32_to_cpu(is.s.here->e_value_size);
 			value = kmalloc(value_len, GFP_NOFS);
-			if (global_flag == PFN_TRACE)
-				add_to_hashtable_void(value);
+			//if (global_flag == PFN_TRACE)
+			//	add_to_hashtable_void(value);
 
 			if (!value) {
 				err = -ENOMEM;

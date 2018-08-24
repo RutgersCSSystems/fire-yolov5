@@ -92,8 +92,8 @@ static int add_system_zone(struct ext4_sb_info *sbi,
 	if (!new_entry) {
 		new_entry = kmem_cache_alloc(ext4_system_zone_cachep,
 					     GFP_KERNEL);
-		if (global_flag == PFN_TRACE)
-			add_to_hashtable_ext4_system_zone(new_entry);
+		//if (global_flag == PFN_TRACE)
+		//	add_to_hashtable_ext4_system_zone(new_entry);
 
 		if (!new_entry)
 			return -ENOMEM;

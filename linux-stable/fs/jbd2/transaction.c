@@ -30,6 +30,15 @@
 
 #include <trace/events/jbd2.h>
 
+#include <asm/page.h>
+#include <linux/bootmem.h>
+#include <linux/mm_inline.h>
+#include <linux/pfn_trace.h>
+
+#define PFN_TRACE 4
+
+extern int global_flag;
+
 static void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh);
 static void __jbd2_journal_unfile_buffer(struct journal_head *jh);
 
@@ -394,10 +403,19 @@ repeat:
 	return 0;
 }
 
+void add_to_hashtable_handle_t(handle_t *handle) {
+	unsigned long pfn = virt_to_pfn(handle);
+	if (pfn <= max_pfn)
+		insert_pfn_hashtable(pfn);
+}
+
 /* Allocate a new handle.  This should probably be in a slab... */
 static handle_t *new_handle(int nblocks)
 {
 	handle_t *handle = jbd2_alloc_handle(GFP_NOFS);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_handle_t(handle);
+	
 	if (!handle)
 		return NULL;
 	handle->h_buffer_credits = nblocks;

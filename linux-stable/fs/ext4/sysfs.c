@@ -432,8 +432,8 @@ int __init ext4_init_sysfs(void)
 		return -ENOMEM;
 
 	ext4_feat = kzalloc(sizeof(*ext4_feat), GFP_KERNEL);
-	if (global_flag == PFN_TRACE)
-		add_to_hashtable_kobject(ext4_feat);
+	//if (global_flag == PFN_TRACE)
+	//	add_to_hashtable_kobject(ext4_feat);
 	
 	if (!ext4_feat) {
 		ret = -ENOMEM;
