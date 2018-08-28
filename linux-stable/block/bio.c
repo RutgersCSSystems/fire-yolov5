@@ -32,6 +32,8 @@
 #include <trace/events/block.h>
 #include "blk.h"
 
+#include <linux/numa.h>
+
 /*
  * Test patch to inline a certain number of bi_io_vec's inside the bio
  * itself, to shrink a bio data allocation from two mempool calls to one
@@ -446,10 +448,15 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 	if (!bs) {
 		if (nr_iovecs > UIO_MAXIOV)
 			return NULL;
-
+#ifdef _ENABLE_HETERO
+		p = kmalloc_hetero(sizeof(struct bio) +
+			    nr_iovecs * sizeof(struct bio_vec),
+			    gfp_mask);
+#else 
 		p = kmalloc(sizeof(struct bio) +
 			    nr_iovecs * sizeof(struct bio_vec),
 			    gfp_mask);
+#endif 
 		front_pad = 0;
 		inline_vecs = nr_iovecs;
 	} else {

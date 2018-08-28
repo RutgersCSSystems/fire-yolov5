@@ -2753,8 +2753,8 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
-	//return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);
-	return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
+	return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);
+	//return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
 }
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
