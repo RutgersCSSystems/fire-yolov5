@@ -34,6 +34,8 @@
 
 #include <trace/events/ext4.h>
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 /*
@@ -578,9 +580,13 @@ int ext4_ext_precache(struct inode *inode)
 
 	down_read(&ei->i_data_sem);
 	depth = ext_depth(inode);
-
+#ifdef _ENABLE_HETERO
+	path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1),
+		       GFP_NOFS);
+#else 
 	path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 		       GFP_NOFS);
+#endif 
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_ext_path(path);
 
@@ -884,8 +890,13 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 	}
 	if (!path) {
 		/* account possible depth increase */
+#ifdef _ENABLE_HETERO 
+		path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 2),
+				GFP_NOFS);
+#else 
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 2),
 				GFP_NOFS);
+#endif 
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_ext4_ext_path(path);
 
@@ -1071,7 +1082,11 @@ static int ext4_ext_split(handle_t *handle, struct inode *inode,
 	 * We need this to handle errors and free blocks
 	 * upon them.
 	 */
+#ifdef _ENABLE_HETERO 
+	ablocks = kzalloc_hetero(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
+#else 
 	ablocks = kzalloc(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_fsblk_t(ablocks);
 
@@ -2932,8 +2947,13 @@ again:
 			path[k].p_block =
 				le16_to_cpu(path[k].p_hdr->eh_entries)+1;
 	} else {
+#ifdef _ENABLE_HETERO
+		path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1),
+			       GFP_NOFS);
+#else 
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
 			       GFP_NOFS);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_ext4_ext_path(path);
 

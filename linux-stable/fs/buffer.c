@@ -54,6 +54,8 @@
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
 
+#include <linux/numa.h>
+
 #define PFN_TRACE 4
 
 extern int global_flag;
@@ -835,10 +837,11 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	while ((offset -= size) >= 0) {
 
 #ifdef _ENABLE_HETERO
-		bh = alloc_buffer_hetero_head(gfp);
+		bh = alloc_buffer_head_hetero(gfp);
 #else
 		bh = alloc_buffer_head(gfp);
 #endif
+
 		if (!bh)
 			goto no_grow;
 
@@ -3387,10 +3390,10 @@ EXPORT_SYMBOL(alloc_buffer_head);
 
 /* HeteroOS code */
 #ifdef _ENABLE_HETERO
-struct buffer_head *alloc_buffer_hetero_head(gfp_t gfp_flags)
+struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
 {
         //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
-        struct buffer_head *ret = kmem_cache_hetero_zalloc(bh_cachep, gfp_flags);
+        struct buffer_head *ret = kmem_cache_zalloc_hetero(bh_cachep, gfp_flags);
         if (ret) {
                 INIT_LIST_HEAD(&ret->b_assoc_buffers);
                 preempt_disable();
@@ -3400,7 +3403,7 @@ struct buffer_head *alloc_buffer_hetero_head(gfp_t gfp_flags)
         }
         return ret;
 }
-EXPORT_SYMBOL(alloc_buffer_hetero_head);
+EXPORT_SYMBOL(alloc_buffer_head_hetero);
 #endif
 
 

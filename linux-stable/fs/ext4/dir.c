@@ -29,6 +29,8 @@
 #include "ext4.h"
 #include "xattr.h"
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 static int ext4_dx_readdir(struct file *, struct dir_context *);
@@ -435,7 +437,11 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 {
 	struct dir_private_info *p;
 
+#ifdef _ENABLE_HETERO
+	p = kzalloc_hetero(sizeof(*p), GFP_KERNEL);
+#else
 	p = kzalloc(sizeof(*p), GFP_KERNEL);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_dir_private_info(p);
 	
@@ -474,7 +480,11 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
 
 	/* Create and allocate the fname structure */
 	len = sizeof(struct fname) + ent_name->len + 1;
+#ifdef _ENABLE_HETERO
+	new_fn = kzalloc_hetero(len, GFP_KERNEL);
+#else
 	new_fn = kzalloc(len, GFP_KERNEL);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_fname(new_fn);
 	

@@ -466,9 +466,23 @@ __do_kmalloc_node(size_t size, gfp_t gfp, int node, unsigned long caller)
 
 void *__kmalloc(size_t size, gfp_t gfp)
 {
+//	printk(KERN_ALERT "mm slob.c __kmalloc \n");
 	return __do_kmalloc_node(size, gfp, NUMA_NO_NODE, _RET_IP_);
 }
 EXPORT_SYMBOL(__kmalloc);
+
+/* heteroOS code */
+/*
+#ifdef _ENABLE_HETERO
+void *__kmalloc_hetero(size_t size, gfp_t gfp)
+{
+	//return __do_kmalloc_node(size, gfp, NUMA_NO_NODE, _RET_IP_);
+	return __do_kmalloc_node(size, gfp, NUMA_HETERO_NODE, _RET_IP_);
+
+}
+EXPORT_SYMBOL(__kmalloc_hetero);
+#endif
+*/
 
 void *__kmalloc_track_caller(size_t size, gfp_t gfp, unsigned long caller)
 {
@@ -564,6 +578,7 @@ static void *slob_alloc_node(struct kmem_cache *c, gfp_t flags, int node)
 
 void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 {
+//	printk(KERN_ALERT "mm slob.c kmem cache alloc \n");
 	return slob_alloc_node(cachep, flags, NUMA_NO_NODE);
 }
 EXPORT_SYMBOL(kmem_cache_alloc);

@@ -2753,19 +2753,19 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
-	return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);
-	//return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
+	//return slab_alloc_node(s, gfpflags, NUMA_HETERO_NODE, addr);
+	return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
 }
 
-void *kmem_cache_hetero_alloc(struct kmem_cache *s, gfp_t gfpflags)
+void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
 {
-	//printk(KERN_ALERT "Calling kmem_cache_hetero_alloc \n");
+	//printk(KERN_ALERT "Calling kmem_cache_alloc_hetero \n");
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);
 	return ret;
 }
-EXPORT_SYMBOL(kmem_cache_hetero_alloc);
+EXPORT_SYMBOL(kmem_cache_alloc_hetero);
 #endif
 
 
@@ -2775,7 +2775,8 @@ void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);
-
+	
+//	printk(KERN_ALERT "mm slub.c kmem cache alloc \n");
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc);
@@ -3808,9 +3809,37 @@ void *__kmalloc(size_t size, gfp_t flags)
 
 	kasan_kmalloc(s, ret, size, flags);
 
+//	printk(KERN_ALERT "mm slub.c __kmalloc \n");
 	return ret;
 }
 EXPORT_SYMBOL(__kmalloc);
+
+/* heteroOS code */
+#ifdef _ENABLE_HETERO
+void *__kmalloc_hetero(size_t size, gfp_t flags)
+{
+	struct kmem_cache *s;
+	void *ret;
+
+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
+		return kmalloc_large(size, flags);
+
+	s = kmalloc_slab(size, flags);
+
+	if (unlikely(ZERO_OR_NULL_PTR(s)))
+		return s;
+
+	ret = slab_alloc_hetero(s, flags, _RET_IP_);
+
+	trace_kmalloc(_RET_IP_, ret, size, s->size, flags);
+
+	kasan_kmalloc(s, ret, size, flags);
+
+	return ret;
+}
+EXPORT_SYMBOL(__kmalloc_hetero);
+#endif
+
 
 #ifdef CONFIG_NUMA
 static void *kmalloc_large_node(size_t size, gfp_t flags, int node)

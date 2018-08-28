@@ -62,6 +62,8 @@
 #include "xattr.h"
 #include "acl.h"
 
+#include <linux/numa.h>
+
 #ifdef EXT4_XATTR_DEBUG
 # define ea_idebug(inode, fmt, ...)					\
 	printk(KERN_DEBUG "inode %s:%lu: " fmt "\n",			\
@@ -1938,7 +1940,11 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 
 			unlock_buffer(bs->bh);
 			ea_bdebug(bs->bh, "cloning");
+#ifdef _ENABLE_HETERO 
+			s->base = kmalloc_hetero(bs->bh->b_size, GFP_NOFS);
+#else 
 			s->base = kmalloc(bs->bh->b_size, GFP_NOFS);
+#endif
 			//if (global_flag == PFN_TRACE)
 			//	add_to_hashtable_void(s->base);
 
@@ -1983,7 +1989,11 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 		}
 	} else {
 		/* Allocate a buffer where we construct the new block. */
+#ifdef _ENABLE_HETERO
+		s->base = kzalloc_hetero(sb->s_blocksize, GFP_NOFS);
+#else 
 		s->base = kzalloc(sb->s_blocksize, GFP_NOFS);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_void(s->base);
 
@@ -2616,20 +2626,34 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	};
 	struct ext4_xattr_ibody_header *header = IHDR(inode, raw_inode);
 	int error;
-
+#ifdef _ENABLE_HETERO 
+	is = kzalloc_hetero(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
+#else 
 	is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_xattr_ibody_find(is);
-
+#ifdef _ENABLE_HETERO
+	bs = kzalloc_hetero(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
+#else 
 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_xattr_block_find(bs);
 
+#ifdef _ENABLE_HETERO
+	buffer = kmalloc_hetero(value_size, GFP_NOFS);
+#else 
 	buffer = kmalloc(value_size, GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_char(buffer);
 
+#ifdef _ENABLE_HETERO
+	b_entry_name = kmalloc_hetero(entry->e_name_len + 1, GFP_NOFS);
+#else 
 	b_entry_name = kmalloc(entry->e_name_len + 1, GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_char(b_entry_name);
 
@@ -2872,10 +2896,17 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 		 * Start with 15 inodes, so it fits into a power-of-two size.
 		 * If *ea_inode_array is NULL, this is essentially offsetof()
 		 */
+#ifdef _ENABLE_HETERO
+		(*ea_inode_array) =
+			kmalloc_hetero(offsetof(struct ext4_xattr_inode_array,
+					 inodes[EIA_MASK]),
+				GFP_NOFS);
+#else 
 		(*ea_inode_array) =
 			kmalloc(offsetof(struct ext4_xattr_inode_array,
 					 inodes[EIA_MASK]),
 				GFP_NOFS);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_ext4_xattr_inode_array_double(ea_inode_array);
 
@@ -2888,10 +2919,17 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 		int count = (*ea_inode_array)->count;
 
 		/* if new_array is NULL, this is essentially offsetof() */
+#ifdef _ENABLE_HETERO
+		new_array = kmalloc_hetero(
+				offsetof(struct ext4_xattr_inode_array,
+					 inodes[count + EIA_INCR]),
+				GFP_NOFS);
+#else 
 		new_array = kmalloc(
 				offsetof(struct ext4_xattr_inode_array,
 					 inodes[count + EIA_INCR]),
 				GFP_NOFS);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_ext4_xattr_inode_array_single(new_array);
 

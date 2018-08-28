@@ -30,6 +30,8 @@
 #include "xattr.h"
 #include "acl.h"
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 static struct kmem_cache *io_end_cachep;
@@ -265,7 +267,11 @@ void ext4_end_io_rsv_work(struct work_struct *work)
 
 ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
 {
+#ifdef _ENABLE_HETERO
+	ext4_io_end_t *io = kmem_cache_zalloc_hetero(io_end_cachep, flags);
+#else 
 	ext4_io_end_t *io = kmem_cache_zalloc(io_end_cachep, flags);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_io_end_t(io);
 

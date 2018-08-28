@@ -7,6 +7,8 @@
 
 #include "ext4.h"
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 void add_to_hashtable_mmpd_data(struct mmpd_data *mmpd_data) {
@@ -376,7 +378,11 @@ skip:
 		goto failed;
 	}
 
+#ifdef ENABLE_HETERO 
+	mmpd_data = kmalloc_hetero(sizeof(*mmpd_data), GFP_KERNEL);
+#else 
 	mmpd_data = kmalloc(sizeof(*mmpd_data), GFP_KERNEL);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_mmpd_data(mmpd_data);
 

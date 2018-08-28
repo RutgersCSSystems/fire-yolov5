@@ -197,7 +197,7 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
 
 /* HeteroOS code */
 #ifdef _ENABLE_HETERO
-struct buffer_head *alloc_buffer_hetero_head(gfp_t gfp_flags);
+struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags);
 #endif
 
 void free_buffer_head(struct buffer_head * bh);

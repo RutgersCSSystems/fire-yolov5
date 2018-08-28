@@ -357,7 +357,8 @@ void kmem_cache_free(struct kmem_cache *, void *);
 
 /* HeteroOS code : Customized Heterogeneous memory allocation*/
 #ifdef _ENABLE_HETERO
-void *kmem_cache_hetero_alloc(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
+void *__kmalloc_hetero(size_t size, gfp_t flags) __assume_kmalloc_alignment __malloc;
+void *kmem_cache_alloc_hetero(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
 #endif
 
 
@@ -522,6 +523,30 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
 	}
 	return __kmalloc(size, flags);
 }
+
+/* heteroOS code */
+#ifdef _ENABLE_HETERO
+static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
+{
+	if (__builtin_constant_p(size)) {
+		if (size > KMALLOC_MAX_CACHE_SIZE)
+			return kmalloc_large(size, flags);
+#ifndef CONFIG_SLOB
+		if (!(flags & GFP_DMA)) {
+			unsigned int index = kmalloc_index(size);
+
+			if (!index)
+				return ZERO_SIZE_PTR;
+
+			return kmem_cache_alloc_trace(kmalloc_caches[index],
+					flags, size);
+		}
+#endif
+	}
+	return __kmalloc_hetero(size, flags);
+}
+#endif
+
 
 /*
  * Determine size used for the nth kmalloc cache.
@@ -699,11 +724,12 @@ static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 
 /* HeteroOS code */
 #ifdef  _ENABLE_HETERO
-static inline void *kmem_cache_hetero_zalloc(struct kmem_cache *k, gfp_t flags)
+static inline void *kmem_cache_zalloc_hetero(struct kmem_cache *k, gfp_t flags)
 {
-        return kmem_cache_hetero_alloc(k, flags | __GFP_ZERO);
+        return kmem_cache_alloc_hetero(k, flags | __GFP_ZERO);
 }
 #endif
+
 
 /**
  * kzalloc - allocate memory. The memory is set to zero.
@@ -712,8 +738,17 @@ static inline void *kmem_cache_hetero_zalloc(struct kmem_cache *k, gfp_t flags)
  */
 static inline void *kzalloc(size_t size, gfp_t flags)
 {
+//	printk(KERN_ALERT "slab.h kzalloc\n");
 	return kmalloc(size, flags | __GFP_ZERO);
 }
+
+/* heteroOS code */
+#ifdef _ENABLE_HETERO
+static inline void *kzalloc_hetero(size_t size, gfp_t flags)
+{
+	return kmalloc_hetero(size, flags | __GFP_ZERO);
+}
+#endif
 
 /**
  * kzalloc_node - allocate zeroed memory from a particular memory node.

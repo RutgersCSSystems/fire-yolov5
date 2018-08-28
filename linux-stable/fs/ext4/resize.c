@@ -17,6 +17,8 @@
 
 #include "ext4_jbd2.h"
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 int ext4_resize_begin(struct super_block *sb)
@@ -216,7 +218,11 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 {
 	struct ext4_new_flex_group_data *flex_gd;
 
+#ifdef _ENABLE_HETERO
+	flex_gd = kmalloc_hetero(sizeof(*flex_gd), GFP_NOFS);
+#else 
 	flex_gd = kmalloc(sizeof(*flex_gd), GFP_NOFS);
+#endif 
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_new_flex_group_data(flex_gd);
 
@@ -227,15 +233,24 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 		goto out2;
 	flex_gd->count = flexbg_size;
 
+#ifdef _ENABLE_HETERO
+	flex_gd->groups = kmalloc_hetero(sizeof(struct ext4_new_group_data) *
+				  flexbg_size, GFP_NOFS);
+#else 
 	flex_gd->groups = kmalloc(sizeof(struct ext4_new_group_data) *
 				  flexbg_size, GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_new_group_data(flex_gd->groups);
 
 	if (flex_gd->groups == NULL)
 		goto out2;
 
+#ifdef _ENABLE_HETERO
+	flex_gd->bg_flags = kmalloc_hetero(flexbg_size * sizeof(__u16), GFP_NOFS);
+#else 
 	flex_gd->bg_flags = kmalloc(flexbg_size * sizeof(__u16), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_u16(flex_gd->bg_flags);
 	
@@ -1006,7 +1021,11 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 	int res, i;
 	int err;
 
+#ifdef _ENABLE_HETERO
+	primary = kmalloc_hetero(reserved_gdb * sizeof(*primary), GFP_NOFS);
+#else 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_buffer_head(primary);
 

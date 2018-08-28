@@ -949,6 +949,8 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
 			page = __alloc_pages_node(n, gfp, 0);
+			//if (global_flag == PFN_TRACE)
+			//	add_to_hashtable_page(page);
 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
 
 		return page;

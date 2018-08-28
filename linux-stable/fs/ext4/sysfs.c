@@ -17,6 +17,8 @@
 #include "ext4.h"
 #include "ext4_jbd2.h"
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 
@@ -430,8 +432,11 @@ int __init ext4_init_sysfs(void)
 	ext4_root = kobject_create_and_add("ext4", fs_kobj);
 	if (!ext4_root)
 		return -ENOMEM;
-
+#ifdef _ENABLE_HETERO
+	ext4_feat = kzalloc_hetero(sizeof(*ext4_feat), GFP_KERNEL);
+#else 
 	ext4_feat = kzalloc(sizeof(*ext4_feat), GFP_KERNEL);
+#endif 
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_kobject(ext4_feat);
 	

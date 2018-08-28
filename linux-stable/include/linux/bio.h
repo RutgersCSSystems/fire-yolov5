@@ -23,6 +23,8 @@
 #include <linux/ioprio.h>
 #include <linux/bug.h>
 
+#include <linux/numa.h>
+
 #ifdef CONFIG_BLOCK
 
 #include <asm/io.h>
@@ -427,6 +429,16 @@ static inline struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 {
 	return bio_alloc_bioset(gfp_mask, nr_iovecs, fs_bio_set);
 }
+
+/* heteroOS code */
+/*
+#ifdef _ENABLE_HETERO
+static inline struct bio *bio_alloc_hetero(gfp_t gfp_mask, unsigned int nr_iovecs)
+{
+	return bio_alloc_bioset_hetero(gfp_mask, nr_iovecs, fs_bio_set);
+}
+#endif
+*/
 
 static inline struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 {

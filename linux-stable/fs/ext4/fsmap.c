@@ -12,6 +12,8 @@
 #include <linux/list_sort.h>
 #include <trace/events/ext4.h>
 
+#include <linux/numa.h>
+
 extern int global_flag;
 
 void add_to_hashtable_ext4_fsmap(struct ext4_fsmap *fsm) {
@@ -298,8 +300,11 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 				     uint64_t owner)
 {
 	struct ext4_fsmap *fsm;
-
+#ifdef ENABLE_HETERO
+	fsm = kmalloc_hetero(sizeof(*fsm), GFP_NOFS);
+#else 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_fsmap(fsm);
 

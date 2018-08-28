@@ -124,6 +124,8 @@
 #include	<asm/tlbflush.h>
 #include	<asm/page.h>
 
+#include 	<linux/numa.h>
+
 #include <trace/events/kmem.h>
 
 #include	"internal.h"
@@ -3358,14 +3360,51 @@ __do_cache_alloc(struct kmem_cache *cache, gfp_t flags)
   out:
 	return objp;
 }
-#else
 
+/*heteroOS code */
+/*
+#ifdef _ENABLE_HETERO 
+static __always_inline void *
+__do_cache_alloc_hetero(struct kmem_cache *cache, gfp_t flags)
+{
+	void *objp;
+
+	if (current->mempolicy || cpuset_do_slab_mem_spread()) {
+		objp = alternate_node_alloc(cache, flags);
+		if (objp)
+			goto out;
+	}
+	objp = ____cache_alloc(cache, flags);
+*/
+	/*
+	 * We may just have run out of memory on the local node.
+	 * ____cache_alloc_node() knows how to locate memory on other nodes
+	 */
+/*
+	if (!objp)
+		objp = ____cache_alloc_node(cache, flags, numa_mem_id());
+
+  out:
+	return objp;
+}
+#endif
+*/
+
+#else
 static __always_inline void *
 __do_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 {
 	return ____cache_alloc(cachep, flags);
 }
-
+/*
+#ifdef _ENABLE_HETERO
+static __always_inline void *
+__do_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
+{
+	return ____cache_alloc(cachep, flags);
+}
+#endif
+*/
 #endif /* CONFIG_NUMA */
 
 static __always_inline void *
@@ -3392,6 +3431,37 @@ slab_alloc(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
 	slab_post_alloc_hook(cachep, flags, 1, &objp);
 	return objp;
 }
+
+/* heteroOS code */
+/*
+#ifdef _ENABLE_HETERO
+static __always_inline void *
+slab_alloc_hetero(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
+{
+	unsigned long save_flags;
+	void *objp;
+
+	flags &= gfp_allowed_mask;
+	cachep = slab_pre_alloc_hook(cachep, flags);
+	if (unlikely(!cachep))
+		return NULL;
+
+	cache_alloc_debugcheck_before(cachep, flags);
+	local_irq_save(save_flags);
+	//objp = __do_cache_alloc(cachep, flags);
+	objp = __do_cache_alloc(cachep, flags);
+	local_irq_restore(save_flags);
+	objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
+	prefetchw(objp);
+
+	if (unlikely(flags & __GFP_ZERO) && objp)
+		memset(objp, 0, cachep->object_size);
+
+	slab_post_alloc_hook(cachep, flags, 1, &objp);
+	return objp;
+}
+#endif
+*/
 
 /*
  * Caller needs to acquire correct kmem_cache_node's list_lock
@@ -3554,10 +3624,28 @@ void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 	kasan_slab_alloc(cachep, ret, flags);
 	trace_kmem_cache_alloc(_RET_IP_, ret,
 			       cachep->object_size, cachep->size, flags);
-
+	
+//	printk(KERN_ALERT "mm slab.c kmem cache alloc \n");
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc);
+
+/* HeteroOS code */
+/*
+#ifdef _ENABLE_HETERO
+void *kmem_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
+{
+	void *ret = slab_alloc_hetero(cachep, flags, _RET_IP_);
+
+	kasan_slab_alloc(cachep, ret, flags);
+	trace_kmem_cache_alloc(_RET_IP_, ret,
+			       cachep->object_size, cachep->size, flags);
+
+	return ret;
+}
+EXPORT_SYMBOL(kmem_cache_alloc_hetero);
+#endif
+*/
 
 static __always_inline void
 cache_alloc_debugcheck_after_bulk(struct kmem_cache *s, gfp_t flags,
@@ -3724,9 +3812,39 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
 
 void *__kmalloc(size_t size, gfp_t flags)
 {
+//	printk(KERN_ALERT "mm slab.c __kmalloc \n");
 	return __do_kmalloc(size, flags, _RET_IP_);
 }
 EXPORT_SYMBOL(__kmalloc);
+
+/* heteroOS code */
+/*
+#ifdef _ENABLE_HETERO
+void *__kmalloc_hetero(size_t size, gfp_t flags)
+{
+	return __do_kmalloc_hetero(size, flags, _RET_IP_);
+}
+EXPORT_SYMBOL(__kmalloc_hetero);
+
+static __always_inline void *__do_kmalloc_hetero(size_t size, gfp_t flags,
+					  unsigned long caller)
+{
+	struct kmem_cache *cachep;
+	void *ret;
+
+	cachep = kmalloc_slab(size, flags);
+	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+		return cachep;
+	ret = slab_alloc_hetero(cachep, flags, caller);
+
+	kasan_kmalloc(cachep, ret, size, flags);
+	trace_kmalloc(caller, ret,
+		      size, cachep->size, flags);
+
+	return ret;
+}
+#endif
+*/
 
 void *__kmalloc_track_caller(size_t size, gfp_t flags, unsigned long caller)
 {

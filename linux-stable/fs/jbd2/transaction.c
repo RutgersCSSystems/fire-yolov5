@@ -35,6 +35,8 @@
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
 
+#include <linux/numa.h>
+
 #define PFN_TRACE 4
 
 extern int global_flag;
@@ -412,7 +414,13 @@ void add_to_hashtable_handle_t(handle_t *handle) {
 /* Allocate a new handle.  This should probably be in a slab... */
 static handle_t *new_handle(int nblocks)
 {
+
+#ifdef _ENABLE_HETERO
+	handle_t *handle = jbd2_alloc_handle_hetero(GFP_NOFS);
+#else
 	handle_t *handle = jbd2_alloc_handle(GFP_NOFS);
+#endif
+
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_handle_t(handle);
 	

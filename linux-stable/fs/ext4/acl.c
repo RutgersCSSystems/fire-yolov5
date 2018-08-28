@@ -11,6 +11,7 @@
 #include "xattr.h"
 #include "acl.h"
 
+#include <linux/numa.h>
 /*
  * Convert from filesystem to in-memory representation.
  */
@@ -98,8 +99,13 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
 	size_t n;
 
 	*size = ext4_acl_size(acl->a_count);
+#ifdef _ENABLE_HETERO
+	ext_acl = kmalloc_hetero(sizeof(ext4_acl_header) + acl->a_count *
+			sizeof(ext4_acl_entry), GFP_NOFS);
+#else 
 	ext_acl = kmalloc(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_acl_header(ext_acl);
 
@@ -167,7 +173,11 @@ ext4_get_acl(struct inode *inode, int type)
 	}
 	retval = ext4_xattr_get(inode, name_index, "", NULL, 0);
 	if (retval > 0) {
+#ifdef _ENABLE_HETERO
+		value = kmalloc_hetero(retval, GFP_NOFS);
+#else 
 		value = kmalloc(retval, GFP_NOFS);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_char(value);
 

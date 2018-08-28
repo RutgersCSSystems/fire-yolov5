@@ -46,6 +46,8 @@
 #include <linux/kthread.h>
 #include <linux/freezer.h>
 
+#include <linux/numa.h>
+
 #include "ext4.h"
 #include "ext4_extents.h"	/* Needed for trace points definition */
 #include "ext4_jbd2.h"
@@ -191,7 +193,11 @@ void ext4_superblock_csum_set(struct super_block *sb)
 void *ext4_kvmalloc(size_t size, gfp_t flags)
 {
 	void *ret;
+#ifdef _ENABLE_HETERO
+	ret = kmalloc_hetero(size, flags | __GFP_NOWARN);
+#else 
 	ret = kmalloc(size, flags | __GFP_NOWARN);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_void(ret);
 
@@ -203,8 +209,11 @@ void *ext4_kvmalloc(size_t size, gfp_t flags)
 void *ext4_kvzalloc(size_t size, gfp_t flags)
 {
 	void *ret;
-
+#ifdef _ENABLE_HETERO
+	ret = kzalloc_hetero(size, flags | __GFP_NOWARN);
+#else 
 	ret = kzalloc(size, flags | __GFP_NOWARN);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_void(ret);
 	
@@ -1010,7 +1019,11 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
 {
 	struct ext4_inode_info *ei;
 
+#ifdef _ENABLE_HETERO
+	ei = kmem_cache_alloc_hetero(ext4_inode_cachep, GFP_NOFS);
+#else 
 	ei = kmem_cache_alloc(ext4_inode_cachep, GFP_NOFS);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_inode_info(ei);
 
@@ -3135,7 +3148,11 @@ static int ext4_li_info_new(void)
 {
 	struct ext4_lazy_init *eli = NULL;
 
+#ifdef _ENABLE_HETERO 
+	eli = kzalloc_hetero(sizeof(*eli), GFP_KERNEL);
+#else 
 	eli = kzalloc(sizeof(*eli), GFP_KERNEL);
+#endif 
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_lazy_init(eli);
 
@@ -3157,8 +3174,11 @@ static struct ext4_li_request *ext4_li_request_new(struct super_block *sb,
 {
 	struct ext4_sb_info *sbi = EXT4_SB(sb);
 	struct ext4_li_request *elr;
-
+#ifdef _ENABLE_HETERO 
+	elr = kzalloc_hetero(sizeof(*elr), GFP_KERNEL);
+#else 
 	elr = kzalloc(sizeof(*elr), GFP_KERNEL);
+#endif
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_li_request(elr);
 
@@ -3463,7 +3483,12 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	char *orig_data = kstrdup(data, GFP_KERNEL);
 	struct buffer_head *bh;
 	struct ext4_super_block *es = NULL;
+#ifdef _ENABLE_HETERO 
+	struct ext4_sb_info *sbi = kzalloc_hetero(sizeof(*sbi), GFP_KERNEL);
+#else 
 	struct ext4_sb_info *sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
+#endif
+
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_sb_info(sbi);
 
@@ -3489,8 +3514,13 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 		goto out_free_base;
 
 	sbi->s_daxdev = dax_dev;
+#ifdef _ENABLE_HETERO 
+	sbi->s_blockgroup_lock =
+		kzalloc_hetero(sizeof(struct blockgroup_lock), GFP_KERNEL);
+#else 
 	sbi->s_blockgroup_lock =
 		kzalloc(sizeof(struct blockgroup_lock), GFP_KERNEL);
+#endif 
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_blockgroup_lock(sbi->s_blockgroup_lock);
 	
@@ -4728,7 +4758,11 @@ static int ext4_load_journal(struct super_block *sb,
 	if (!ext4_has_feature_journal_needs_recovery(sb))
 		err = jbd2_journal_wipe(journal, !really_read_only);
 	if (!err) {
+#ifdef _ENABLE_HETERO
+		char *save = kmalloc_hetero(EXT4_S_ERR_LEN, GFP_KERNEL);
+#else 
 		char *save = kmalloc(EXT4_S_ERR_LEN, GFP_KERNEL);
+#endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_char(save);
 
