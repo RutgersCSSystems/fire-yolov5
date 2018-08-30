@@ -68,6 +68,8 @@
 #define TIME_TRACE 6
 #define TIME_STATS 7
 #define TIME_RESET 8
+#define COLLECT_ALLOCATE 9
+#define PRINT_ALLOCATE 10
 
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
@@ -2840,9 +2842,11 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 		case CLEAR_COUNT:
 			printk("flag set to clear count %d\n", flag);
 			global_flag = CLEAR_COUNT;
-			rbtree_reset_counter();
+			//rbtree_reset_counter();
 			//btree_reset_counter();
-			radix_tree_reset_counter();
+			//radix_tree_reset_counter();
+			reset_allocate_counter_page_cache_alloc();
+			reset_allocate_counter_alloc_pages_current();
 			break;
 		case COLLECT_TRACE:
 			printk("flag is set to collect trace %d\n", flag);
@@ -2885,6 +2889,17 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			printk("flag is set to reset time %d \n", flag);
 			global_flag = TIME_RESET;
 			rbtree_reset_time();
+			break;
+		case COLLECT_ALLOCATE:
+			printk("flag is set to collect hetero allocate  %d \n", flag);
+			global_flag = COLLECT_ALLOCATE;
+			return global_flag;
+			break;
+		case PRINT_ALLOCATE:
+			printk("flag is set to print hetero allocate stat %d \n", flag);
+			global_flag = PRINT_ALLOCATE;
+			print_allocation_stat_page_cache_alloc();
+			print_allocation_stat_alloc_pages_current();
 			break;
 		default:
 			break;

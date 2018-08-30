@@ -62,6 +62,10 @@ struct mempolicy {
  * The default fast path of a NULL MPOL_DEFAULT policy is always inlined.
  */
 
+extern void print_allocation_stat_alloc_pages_current(void);
+extern void reset_allocate_counter_alloc_pages_current(void);
+
+
 extern void __mpol_put(struct mempolicy *pol);
 static inline void mpol_put(struct mempolicy *pol)
 {
@@ -216,7 +220,9 @@ static inline bool mpol_equal(struct mempolicy *a, struct mempolicy *b)
 
 static inline void mpol_put(struct mempolicy *p)
 {
-}
+}extern void print_allocation_stat_alloc_pages_current(void);
+extern void reset_allocate_counter_alloc_pages_current(void);
+
 
 static inline void mpol_cond_put(struct mempolicy *pol)
 {

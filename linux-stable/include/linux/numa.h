@@ -15,6 +15,6 @@
 
 /* HeteroOS code */
 #define _ENABLE_HETERO
-#define NUMA_HETERO_NODE   1
+#define NUMA_HETERO_NODE   0
 
 #endif /* _LINUX_NUMA_H */

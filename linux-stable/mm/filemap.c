@@ -47,6 +47,7 @@
 #include <linux/numa.h>
 
 #define PFN_TRACE 4
+#define COLLECT_ALLOCATE 9
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
@@ -122,6 +123,7 @@
  */
 
 extern int global_flag;
+int allocate_cnt = 0;
 
 static int page_cache_tree_insert(struct address_space *mapping,
 				  struct page *page, void **shadowp)
@@ -952,6 +954,12 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			n = cpuset_mem_spread_node();
 #ifdef _ENABLE_HETERO
 			page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+			if (global_flag == COLLECT_ALLOCATE) {
+				if(page_to_nid(page) == NUMA_HETERO_NODE) {
+					allocate_cnt++;
+					printk(KERN_ALERT "page allocated at numa hetero node (__page_cache_alloc) \n");
+				}
+			}
 #else 
 			page = __alloc_pages_node(n, gfp, 0);
 #endif
@@ -3365,3 +3373,14 @@ void add_to_hashtable_page(struct page *page) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+
+void print_allocation_stat_page_cache_alloc(void) {
+	printk("Total hetero allocation page cache alloc: %d\n", allocate_cnt);
+}
+EXPORT_SYMBOL(print_allocation_stat_page_cache_alloc);
+
+void reset_allocate_counter_page_cache_alloc(void) {
+	allocate_cnt = 0;
+	printk("Reset counter page cache alloc \n");
+}
+EXPORT_SYMBOL(reset_allocate_counter_page_cache_alloc);

@@ -105,9 +105,16 @@
 
 #include "internal.h"
 
+#include <linux/numa.h>
+
+#define COLLECT_ALLOCATE 9
+
 /* Internal flags */
 #define MPOL_MF_DISCONTIG_OK (MPOL_MF_INTERNAL << 0)	/* Skip checks for continuous vmas */
 #define MPOL_MF_INVERT (MPOL_MF_INTERNAL << 1)		/* Invert check for nodemask */
+
+extern int global_flag;
+int allocate_counter = 0;
 
 static struct kmem_cache *policy_cache;
 static struct kmem_cache *sn_cache;
@@ -2090,10 +2097,21 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 	if (pol->mode == MPOL_INTERLEAVE)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
 	else
+#ifdef _ENABLE_HETERO
+		page = __alloc_pages_nodemask(gfp, order,
+				NUMA_HETERO_NODE,
+				policy_nodemask(gfp, pol));
+		if (global_flag == COLLECT_ALLOCATE) {
+			if (page_to_nid(page) == NUMA_HETERO_NODE) {
+				allocate_counter++;
+				printk(KERN_ALERT "page allocated at numa hetero node (alloc_pages_current)\n");
+			}
+		}
+#else 
 		page = __alloc_pages_nodemask(gfp, order,
 				policy_node(gfp, pol, numa_node_id()),
 				policy_nodemask(gfp, pol));
-
+#endif 
 	return page;
 }
 EXPORT_SYMBOL(alloc_pages_current);
@@ -2876,3 +2894,14 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
 		p += scnprintf(p, buffer + maxlen - p, ":%*pbl",
 			       nodemask_pr_args(&nodes));
 }
+
+void print_allocation_stat_alloc_pages_current(void) {
+	printk("Total hetero allocation alloc_pages_current: %d\n", allocate_counter);
+}
+EXPORT_SYMBOL(print_allocation_stat_alloc_pages_current);
+
+void reset_allocate_counter_alloc_pages_current(void) {
+	allocate_counter = 0;
+	printk("Reset counter alloc_pages_current \n");
+}
+EXPORT_SYMBOL(reset_allocate_counter_alloc_pages_current);
