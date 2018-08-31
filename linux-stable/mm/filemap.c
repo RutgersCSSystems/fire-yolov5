@@ -952,14 +952,13 @@ struct page *__page_cache_alloc(gfp_t gfp)
 		do {
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
-#ifdef _ENABLE_HETERO
-			page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+#ifdef _ENABLE_PAGECACHE
 			if (global_flag == COLLECT_ALLOCATE) {
-				if(page_to_nid(page) == NUMA_HETERO_NODE) {
-					allocate_cnt++;
-					//printk(KERN_ALERT "page allocated at numa hetero node (__page_cache_alloc) \n");
-				}
+				page = __alloc_pages_node(NUMA_PAGECACHE_HETERO_NODE, gfp, 0);
+				allocate_cnt++;
 			}
+			else 
+				page = __alloc_pages_node(n, gfp, 0);
 #else 
 			page = __alloc_pages_node(n, gfp, 0);
 #endif

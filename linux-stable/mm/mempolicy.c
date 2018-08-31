@@ -2096,22 +2096,24 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 	 */
 	if (pol->mode == MPOL_INTERLEAVE)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
-	else
-#ifdef _ENABLE_HETERO
-		page = __alloc_pages_nodemask(gfp, order,
-				NUMA_HETERO_NODE,
-				policy_nodemask(gfp, pol));
+	else {
+#ifdef _ENABLE_PAGECACHE
 		if (global_flag == COLLECT_ALLOCATE) {
-			if (page_to_nid(page) == NUMA_HETERO_NODE) {
-				allocate_counter++;
-				//printk(KERN_ALERT "page allocated at numa hetero node (alloc_pages_current)\n");
-			}
+			page = __alloc_pages_nodemask(gfp, order,
+				NUMA_PAGECACHE_HETERO_NODE,
+				policy_nodemask(gfp, pol));
+			allocate_counter++;
 		}
+		else
+			page = __alloc_pages_nodemask(gfp, order,
+				policy_node(gfp, pol, numa_node_id()),
+				policy_nodemask(gfp, pol));
 #else 
 		page = __alloc_pages_nodemask(gfp, order,
 				policy_node(gfp, pol, numa_node_id()),
 				policy_nodemask(gfp, pol));
 #endif 
+	}
 	return page;
 }
 EXPORT_SYMBOL(alloc_pages_current);
