@@ -2104,7 +2104,7 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 		if (global_flag == COLLECT_ALLOCATE) {
 			if (page_to_nid(page) == NUMA_HETERO_NODE) {
 				allocate_counter++;
-				printk(KERN_ALERT "page allocated at numa hetero node (alloc_pages_current)\n");
+				//printk(KERN_ALERT "page allocated at numa hetero node (alloc_pages_current)\n");
 			}
 		}
 #else 

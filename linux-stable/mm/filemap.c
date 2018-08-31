@@ -957,7 +957,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			if (global_flag == COLLECT_ALLOCATE) {
 				if(page_to_nid(page) == NUMA_HETERO_NODE) {
 					allocate_cnt++;
-					printk(KERN_ALERT "page allocated at numa hetero node (__page_cache_alloc) \n");
+					//printk(KERN_ALERT "page allocated at numa hetero node (__page_cache_alloc) \n");
 				}
 			}
 #else 
