@@ -57,8 +57,10 @@
 #include <linux/numa.h>
 
 #define PFN_TRACE 4
+#define COLLECT_ALLOCATE 9
 
 extern int global_flag;
+int cnt = 0;
 
 static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
 static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
@@ -836,8 +838,13 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	offset = PAGE_SIZE;
 	while ((offset -= size) >= 0) {
 
-#ifdef _ENABLE_HETERO
-		bh = alloc_buffer_head_hetero(gfp);
+#ifdef _ENABLE_BUFFER
+		if (global_flag == COLLECT_ALLOCATE) {
+			bh = alloc_buffer_head_hetero(gfp);
+			cnt++;
+		}
+		else
+			bh = alloc_buffer_head(gfp);
 #else
 		bh = alloc_buffer_head(gfp);
 #endif
@@ -3389,7 +3396,7 @@ EXPORT_SYMBOL(alloc_buffer_head);
 
 
 /* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef _ENABLE_BUFFER
 struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
 {
         //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
@@ -3610,3 +3617,14 @@ void __init buffer_init(void)
 					NULL, buffer_exit_cpu_dead);
 	WARN_ON(ret < 0);
 }
+
+void print_allocation_stat_alloc_page_buffers(void) {
+	printk("Total hetero allocation alloc page buffers: %d \n", cnt);
+}
+EXPORT_SYMBOL(print_allocation_stat_alloc_page_buffers);
+
+void reset_allocate_counter_alloc_page_buffers(void) {
+	cnt = 0;
+	printk("Reset counter alloc page buffers \n");
+}
+EXPORT_SYMBOL(reset_allocate_counter_alloc_page_buffers);

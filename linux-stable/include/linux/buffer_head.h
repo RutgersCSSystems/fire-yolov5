@@ -161,6 +161,11 @@ void set_bh_page(struct buffer_head *bh,
 int try_to_free_buffers(struct page *);
 struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 		bool retry);
+
+/* hetero allocation functions needed */
+extern void print_allocation_stat_alloc_page_buffers(void);
+extern void reset_allocate_counter_alloc_page_buffers(void);
+
 void create_empty_buffers(struct page *, unsigned long,
 			unsigned long b_state);
 void end_buffer_read_sync(struct buffer_head *bh, int uptodate);
@@ -196,7 +201,7 @@ void invalidate_bh_lrus(void);
 struct buffer_head *alloc_buffer_head(gfp_t gfp_flags);
 
 /* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef _ENABLE_BUFFER
 struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags);
 #endif
 
