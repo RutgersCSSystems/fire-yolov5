@@ -50,6 +50,7 @@
 #include <linux/radix-tree.h>
 
 #include <linux/buffer_head.h>
+#include <linux/jbd2.h>
 
 #include <linux/uaccess.h>
 #include <asm/cacheflush.h>
@@ -2850,6 +2851,8 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			reset_allocate_counter_page_cache_alloc();
 			reset_allocate_counter_alloc_pages_current();
 			reset_allocate_counter_alloc_page_buffers();
+			//reset_allocate_counter_new_handle();
+			reset_allocate_radix_alloc();
 			break;
 		case COLLECT_TRACE:
 			printk("flag is set to collect trace %d\n", flag);
@@ -2904,6 +2907,8 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 			print_allocation_stat_page_cache_alloc();
 			print_allocation_stat_alloc_pages_current();
 			print_allocation_stat_alloc_page_buffers();
+			//print_allocation_stat_new_handle();
+			print_allocation_stat_radix_alloc();
 			break;
 		default:
 			break;

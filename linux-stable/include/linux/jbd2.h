@@ -71,6 +71,11 @@ void __jbd2_debug(int level, const char *file, const char *func,
 extern void *jbd2_alloc(size_t size, gfp_t flags);
 extern void jbd2_free(void *ptr, size_t size);
 
+/*
+extern void print_allocation_stat_new_handle(void);
+extern void reset_allocate_counter_new_handle(void);
+*/
+
 #define JBD2_MIN_JOURNAL_BLOCKS 1024
 
 #ifdef __KERNEL__
@@ -1424,7 +1429,7 @@ static inline handle_t *jbd2_alloc_handle(gfp_t gfp_flags)
 }
 
 /* heteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef _ENABLE_JOURNAL
 static inline handle_t *jbd2_alloc_handle_hetero(gfp_t gfp_flags)
 {
 	return kmem_cache_zalloc_hetero(jbd2_handle_cache, gfp_flags);

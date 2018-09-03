@@ -26,8 +26,10 @@
 */
 
 /* Buffer allocation */
+/*
 #define _ENABLE_BUFFER
 #define NUMA_HETERO_NODE   1
+*/
 
 /* Journal allocation */
 /*
@@ -36,9 +38,9 @@
 */
 
 /* Radix tree allocation */
-/*
+
 #define _ENABLE_RADIXTREE
 #define NUMA_HETERO_NODE   1
-*/
+
 
 #endif /* _LINUX_NUMA_H */

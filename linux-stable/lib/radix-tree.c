@@ -48,9 +48,10 @@
 #include <linux/numa.h>
 
 #define PFN_TRACE 4
+#define COLLECT_ALLOCATE 9
 
 extern int global_flag;
-
+int radix_cnt = 0;
 int radix_tree_insert_cnt, radix_tree_delete_cnt, radix_tree_shrink_cnt = 0; 
 
 /* Number of nodes in fully populated tree of given height */
@@ -408,9 +409,16 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * cache first for the new node to get accounted to the memory
 		 * cgroup.
 		 */
-#ifdef _ENABLE_HETERO
-		ret = kmem_cache_alloc_hetero(radix_tree_node_cachep,
+#ifdef _ENABLE_RADIXTREE
+		if (global_flag == COLLECT_ALLOCATE) {
+			radix_cnt++;
+			ret = kmem_cache_alloc_hetero(radix_tree_node_cachep,
+					       gfp_mask | __GFP_NOWARN);
+		}
+		else
+			ret = kmem_cache_alloc(radix_tree_node_cachep,
 				       gfp_mask | __GFP_NOWARN);
+
 #else 
 		ret = kmem_cache_alloc(radix_tree_node_cachep,
 				       gfp_mask | __GFP_NOWARN);
@@ -447,8 +455,13 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		kmemleak_update_trace(ret);
 		goto out;
 	}
-#ifdef _ENABLE_HETERO 
-	ret = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
+#ifdef _ENABLE_RADIXTREE
+	if (global_flag == COLLECT_ALLOCATE) {
+		radix_cnt++;
+		ret = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
+	}
+	else
+		ret = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
 #else 
 	ret = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
 #endif 
@@ -458,7 +471,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 out:
 	BUG_ON(radix_tree_is_internal_node(ret));
 	if (ret) {
-	//	if (global_flag == 4)
+	//	if (int radix_cnt = 0;global_flag == 4)
 	//		add_to_hashtable_node(ret);
 		ret->shift = shift;
 		ret->offset = offset;
@@ -521,8 +534,14 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 
 	while (rtp->nr < nr) {
 		preempt_enable();
-#ifdef _ENABLE_HETERO 
-		node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+#ifdef _ENABLE_RADIXTREE
+		if (global_flag == COLLECT_ALLOCATE) {
+ 			radix_cnt++;
+			node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+		}
+		else
+			node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+
 #else 
 		node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
 #endif
@@ -2491,3 +2510,14 @@ void add_to_hashtable_preload(struct radix_tree_preload *preload) {
 		insert_pfn_hashtable(pfn);
 }
 */
+
+void print_allocation_stat_radix_alloc(void) {
+	printk("Total hetero allocation radix tree: %d\n", radix_cnt);
+}
+EXPORT_SYMBOL(print_allocation_stat_radix_alloc);
+
+void reset_allocate_radix_alloc(void) {
+	radix_cnt = 0;
+	printk("Reset radix alloc \n");
+}
+EXPORT_SYMBOL(reset_allocate_radix_alloc);

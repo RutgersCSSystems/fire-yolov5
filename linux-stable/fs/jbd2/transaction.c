@@ -40,6 +40,7 @@
 #define PFN_TRACE 4
 
 extern int global_flag;
+//int journal_cnt = 0;
 
 static void __jbd2_journal_temp_unlink_buffer(struct journal_head *jh);
 static void __jbd2_journal_unfile_buffer(struct journal_head *jh);
@@ -414,7 +415,7 @@ void add_to_hashtable_handle_t(handle_t *handle) {
 /* Allocate a new handle.  This should probably be in a slab... */
 static handle_t *new_handle(int nblocks)
 {
-
+	
 #ifdef _ENABLE_HETERO
 	handle_t *handle = jbd2_alloc_handle_hetero(GFP_NOFS);
 #else
@@ -2634,3 +2635,16 @@ int jbd2_journal_begin_ordered_truncate(journal_t *journal,
 out:
 	return ret;
 }
+
+/*
+void print_allocation_stat_new_handle(void) {
+	printk("Total hetero allocation new handle: %d\n", journal_cnt);
+}
+EXPORT_SYMBOL(print_allocation_stat_new_handle);
+
+void reset_allocate_counter_new_handle(void) {
+	journal_cnt = 0;
+	printk("Reset counter alloc new handle \n");
+}
+EXPORT_SYMBOL(reset_allocate_counter_new_handle);
+*/
