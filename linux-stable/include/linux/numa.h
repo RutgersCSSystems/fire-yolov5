@@ -38,9 +38,9 @@
 */
 
 /* Radix tree allocation */
-
+/*
 #define _ENABLE_RADIXTREE
 #define NUMA_HETERO_NODE   1
-
+*/
 
 #endif /* _LINUX_NUMA_H */

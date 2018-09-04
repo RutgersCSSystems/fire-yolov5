@@ -952,9 +952,9 @@ struct page *__page_cache_alloc(gfp_t gfp)
 		do {
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
-#ifdef _ENABLE_PAGECACHE
+#ifdef _ENABLE_HETERO
 			if (global_flag == COLLECT_ALLOCATE) {
-				page = __alloc_pages_node(NUMA_PAGECACHE_HETERO_NODE, gfp, 0);
+				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
 				allocate_cnt++;
 			}
 			else 

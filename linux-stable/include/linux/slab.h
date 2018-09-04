@@ -356,7 +356,7 @@ void *kmem_cache_alloc(struct kmem_cache *, gfp_t flags) __assume_slab_alignment
 void kmem_cache_free(struct kmem_cache *, void *);
 
 /* HeteroOS code : Customized Heterogeneous memory allocation*/
-#ifdef _ENABLE_RADIXTREE
+#ifdef _ENABLE_HETERO
 void *__kmalloc_hetero(size_t size, gfp_t flags) __assume_kmalloc_alignment __malloc;
 void *kmem_cache_alloc_hetero(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
 #endif

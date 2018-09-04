@@ -409,7 +409,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * cache first for the new node to get accounted to the memory
 		 * cgroup.
 		 */
-#ifdef _ENABLE_RADIXTREE
+#ifdef _ENABLE_HETERO
 		if (global_flag == COLLECT_ALLOCATE) {
 			radix_cnt++;
 			ret = kmem_cache_alloc_hetero(radix_tree_node_cachep,
@@ -455,7 +455,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		kmemleak_update_trace(ret);
 		goto out;
 	}
-#ifdef _ENABLE_RADIXTREE
+#ifdef _ENABLE_HETERO
 	if (global_flag == COLLECT_ALLOCATE) {
 		radix_cnt++;
 		ret = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
@@ -534,7 +534,7 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 
 	while (rtp->nr < nr) {
 		preempt_enable();
-#ifdef _ENABLE_RADIXTREE
+#ifdef _ENABLE_HETERO
 		if (global_flag == COLLECT_ALLOCATE) {
  			radix_cnt++;
 			node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);

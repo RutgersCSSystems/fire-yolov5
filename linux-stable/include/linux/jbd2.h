@@ -1429,7 +1429,7 @@ static inline handle_t *jbd2_alloc_handle(gfp_t gfp_flags)
 }
 
 /* heteroOS code */
-#ifdef _ENABLE_JOURNAL
+#ifdef _ENABLE_HETERO
 static inline handle_t *jbd2_alloc_handle_hetero(gfp_t gfp_flags)
 {
 	return kmem_cache_zalloc_hetero(jbd2_handle_cache, gfp_flags);
