@@ -2097,7 +2097,7 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 	if (pol->mode == MPOL_INTERLEAVE)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
 	else {
-#ifdef _ENABLE_HETERO
+#ifdef _ENABLE_PAGECACHE
 		if (global_flag == COLLECT_ALLOCATE) {
 			page = __alloc_pages_nodemask(gfp, order,
 				NUMA_HETERO_NODE,
