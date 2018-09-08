@@ -125,6 +125,7 @@
 #include	<asm/page.h>
 
 #include 	<linux/numa.h>
+#include        <linux/hetero.h>
 
 #include <trace/events/kmem.h>
 

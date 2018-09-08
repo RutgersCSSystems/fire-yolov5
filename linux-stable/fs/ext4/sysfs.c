@@ -17,7 +17,7 @@
 #include "ext4.h"
 #include "ext4_jbd2.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 extern int global_flag;
 

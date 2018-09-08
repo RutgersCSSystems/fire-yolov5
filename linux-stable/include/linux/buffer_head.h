@@ -14,7 +14,7 @@
 #include <linux/pagemap.h>
 #include <linux/wait.h>
 #include <linux/atomic.h>
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #ifdef CONFIG_BLOCK
 

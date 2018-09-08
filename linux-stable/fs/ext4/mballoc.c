@@ -17,7 +17,7 @@
 #include <linux/backing-dev.h>
 #include <trace/events/ext4.h>
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #ifdef CONFIG_EXT4_DEBUG
 ushort ext4_mballoc_debug __read_mostly;

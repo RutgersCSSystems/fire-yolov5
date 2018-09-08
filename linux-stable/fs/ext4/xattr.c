@@ -62,7 +62,7 @@
 #include "xattr.h"
 #include "acl.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #ifdef EXT4_XATTR_DEBUG
 # define ea_idebug(inode, fmt, ...)					\

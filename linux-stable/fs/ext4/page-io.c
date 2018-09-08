@@ -30,7 +30,7 @@
 #include "xattr.h"
 #include "acl.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 extern int global_flag;
 

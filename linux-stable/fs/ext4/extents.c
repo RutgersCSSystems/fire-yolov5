@@ -34,7 +34,7 @@
 
 #include <trace/events/ext4.h>
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 extern int global_flag;
 

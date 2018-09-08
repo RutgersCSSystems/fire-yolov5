@@ -12,20 +12,4 @@
 #define MAX_NUMNODES    (1 << NODES_SHIFT)
 
 #define	NUMA_NO_NODE	(-1)
-
-/* HeteroOS code */
-#define _ENABLE_HETERO
-
-#ifdef _ENABLE_HETERO
-#define NUMA_HETERO_NODE 1
-/* Page cache allocation */
-#define _ENABLE_PAGECACHE
-/* Buffer allocation */
-#define _ENABLE_BUFFER
-/* Journal allocation */
-#define _ENABLE_JOURNAL
-/* Radix tree allocation */
-#define _ENABLE_RADIXTREE
-#endif
-
 #endif /* _LINUX_NUMA_H */

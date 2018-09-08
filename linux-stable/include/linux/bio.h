@@ -23,7 +23,7 @@
 #include <linux/ioprio.h>
 #include <linux/bug.h>
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #ifdef CONFIG_BLOCK
 

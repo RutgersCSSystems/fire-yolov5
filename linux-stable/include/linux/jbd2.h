@@ -33,7 +33,7 @@
 #include <crypto/hash.h>
 #endif
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #define journal_oom_retry 1
 

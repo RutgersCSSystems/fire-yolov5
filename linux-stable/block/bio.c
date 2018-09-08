@@ -32,7 +32,7 @@
 #include <trace/events/block.h>
 #include "blk.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 /*
  * Test patch to inline a certain number of bi_io_vec's inside the bio

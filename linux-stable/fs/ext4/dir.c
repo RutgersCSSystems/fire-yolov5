@@ -29,7 +29,7 @@
 #include "ext4.h"
 #include "xattr.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 extern int global_flag;
 

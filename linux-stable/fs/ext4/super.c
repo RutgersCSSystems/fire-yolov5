@@ -46,7 +46,7 @@
 #include <linux/kthread.h>
 #include <linux/freezer.h>
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #include "ext4.h"
 #include "ext4_extents.h"	/* Needed for trace points definition */

@@ -54,7 +54,7 @@
 #include <linux/mm_inline.h>
 #include <linux/pfn_trace.h>
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 #define PFN_TRACE 4
 #define COLLECT_ALLOCATE 9

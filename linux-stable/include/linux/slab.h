@@ -15,7 +15,7 @@
 #include <linux/gfp.h>
 #include <linux/types.h>
 #include <linux/workqueue.h>
-#include <linux/numa.h>
+#include <linux/hetero.h>
 
 /*
  * Flags to pass to kmem_cache_create().

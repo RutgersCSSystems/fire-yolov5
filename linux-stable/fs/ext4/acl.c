@@ -11,7 +11,7 @@
 #include "xattr.h"
 #include "acl.h"
 
-#include <linux/numa.h>
+#include <linux/hetero.h>
 /*
  * Convert from filesystem to in-memory representation.
  */
