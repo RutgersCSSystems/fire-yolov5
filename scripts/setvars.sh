@@ -1,6 +1,4 @@
 #!/bin/bash
-set -x
-
 export QEMU_IMG=/home/joo
 export BASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
@@ -16,8 +14,10 @@ export MOUNT_DIR=$QEMU_IMG/mountdir
 export LINUX_SCALE_BENCH=$BASE/linux-scalability-benchmark
 export QEMUMEM="4096M"
 export CODESRC=$BASE
+export SCRIPTS=$CODESRC/scripts
+export INPUTXML=$SCRIPTS/input.xml
 export APPBENCH=$BASE/appbench
+export OUTPUTDIR=$APPBENCH/output
 export SHARED_LIBS=$APPBENCH/shared_libs
+export QUARTZ=$SHARED_LIBS/quartz
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
-export 
-set +x
