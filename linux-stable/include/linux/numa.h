@@ -14,33 +14,18 @@
 #define	NUMA_NO_NODE	(-1)
 
 /* HeteroOS code */
-/*
 #define _ENABLE_HETERO
-#define NUMA_HETERO_NODE   1
-*/
 
+#ifdef _ENABLE_HETERO
+#define NUMA_HETERO_NODE 1
 /* Page cache allocation */
-/*
 #define _ENABLE_PAGECACHE
-#define NUMA_HETERO_NODE   1
-*/
-
 /* Buffer allocation */
-/*
 #define _ENABLE_BUFFER
-#define NUMA_HETERO_NODE   1
-*/
-
 /* Journal allocation */
-/*
 #define _ENABLE_JOURNAL
-#define NUMA_HETERO_NODE   1
-*/
-
 /* Radix tree allocation */
-/*
 #define _ENABLE_RADIXTREE
-#define NUMA_HETERO_NODE   1
-*/
+#endif
 
 #endif /* _LINUX_NUMA_H */
