@@ -79,7 +79,7 @@ Step 1: First, get the appbench, setup libraries, download datasets
 ```
  git clone https://github.com/SudarsunKannan/appbench
  source scripts/setvars.sh
- cd $APPBENCHa
+ cd $APPBENCH
  source setvars.sh
  $APPBENCH/setup.sh
  $APPBENCH/compile_all.sh
