@@ -1,21 +1,5 @@
 #!/bin/bash
 
-# Set variable, setup packages and generate data
-$SCRIPTS/compile_sharedlib.sh
-git clone https://github.com/SudarsunKannan/appbench
-cd $APPBENCH
-source $APPBENCH/setvars.sh
-$APPBENCH/setup.sh
-$APPBENCH/compile_all.sh
-
-#Compile Linux Kernel
-#$SCRIPTS/compile_deb.sh
-
-#Changing bandwidth of a NUMA node
-$APPBENCH/install_quartz.sh
-$APPBENCH/throttle.sh
-$APPBENCH/throttle.sh
-
 INSTALL_SYSTEM_LIBS(){
 sudo apt-get install -y git
 sudo apt-get install -y software-properties-common
@@ -48,6 +32,32 @@ sudo apt-get -y install build-essential
 sudo apt-get -y install libssl-dev
 }
 
+
+
+#Get Other Apps not in out Repo
+GETAPPS(){
+mkdir $APPBENCH
+cd $APPBENCH
+git clone https://github.com/SudarsunKannan/leveldb
+mkdir $APPBENCH/apps
+cd $APPBENCH/apps
+git clone https://github.com/SudarsunKannan/fio
+}
+
 INSTALL_SYSTEM_LIBS
+GETAPPS
+# Set variable, setup packages and generate data
+$SCRIPTS/compile_sharedlib.sh
+$APPBENCH/setup.sh
+$APPBENCH/compile_all.sh
+
+#Compile Linux Kernel
+#$SCRIPTS/compile_deb.sh
+
+#Changing bandwidth of a NUMA node
+$APPBENCH/install_quartz.sh
+$APPBENCH/throttle.sh
+$APPBENCH/throttle.sh
+
 
 

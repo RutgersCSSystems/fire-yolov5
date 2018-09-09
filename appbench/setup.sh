@@ -11,6 +11,10 @@ git clone https://github.com/SudarsunKannan/fio
 }
 
 GETAPPS
+
+#Compile libs
+$SCRIPTS/compile_sharedlib.sh
+
 # Set variable, setup packages and generate data
 #. ./setvars.sh
 $APPBENCH/createdata.sh

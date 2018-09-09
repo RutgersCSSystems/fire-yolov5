@@ -14,7 +14,7 @@ tree = ET.parse(INFILE)
 root = tree.getroot()
 
 def setup():
-    os.system(APPBENCH + "/setup.sh")
+    os.system("scripts/set_appbench.sh")
 
 def makedb():
     os.chdir(APPBENCH)
