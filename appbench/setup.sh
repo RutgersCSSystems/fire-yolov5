@@ -3,14 +3,15 @@
 #Get Other Apps not in out Repo
 GETAPPS(){
 git clone https://github.com/SudarsunKannan/leveldb
+mkdir $APPBENCH/apps
 cd $APPBENCH/apps
 git clone https://github.com/SudarsunKannan/fio
 }
 
 GETAPPS
 # Set variable, setup packages and generate data
-. ./setvars.sh
-./createdata.sh
+#. ./setvars.sh
+$APPBENCH//createdata.sh
 
 INSTALL_SYSTEM_LIBS(){
 sudo apt-get install -y libaio-dev
@@ -46,5 +47,6 @@ sudo apt-get -y install libssl-dev
 }
 
 INSTALL_SYSTEM_LIBS
+$APPBENCH/compile_all.sh
 
 

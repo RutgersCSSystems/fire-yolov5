@@ -3,7 +3,7 @@ set -x
 DATA=com-orkut.ungraph.txt
 #DATA=soc-LiveJournal1.txt
 INPUT=$SHARED_DATA/$DATA
-APPBASE=$CODEBASE/graphchi/graphchi-cpp/bin/example_apps
+APPBASE=$APPBENCH/graphchi/graphchi-cpp/bin/example_apps
 APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
@@ -23,7 +23,7 @@ echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 8
 export LD_PRELOAD=""
 }
 
-cd $CODEBASE/graphchi 
+cd $APPBENCH/graphchi 
 FlushDisk
 RUN
 set +x

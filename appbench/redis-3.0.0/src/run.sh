@@ -1,5 +1,5 @@
 #!/bin/bash
-APPBASE=$CODEBASE/redis-3.0.0/src
+APPBASE=$APPBENCH/redis-3.0.0/src
 APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2

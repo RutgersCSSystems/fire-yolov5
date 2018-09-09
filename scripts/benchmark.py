@@ -13,6 +13,9 @@ OUTDIR=os.environ['OUTPUTDIR']
 tree = ET.parse(INFILE)
 root = tree.getroot()
 
+def setup():
+    os.system(APPBENCH + "/setup.sh")
+
 def makedb():
     os.chdir(APPBENCH)
     #os.system("make -j4")
@@ -152,7 +155,7 @@ class ParamTest:
             output = OUTDIR + "/membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
-	    throttle(count)	
+	    #throttle(count)	
             self.runapp(APP, count)
             count = count + int(self.xincr) 
             print count;     
@@ -172,6 +175,7 @@ def main():
     print " "   
 
 # MAke database 
+setup()
 makedb()
 main()
 exit()

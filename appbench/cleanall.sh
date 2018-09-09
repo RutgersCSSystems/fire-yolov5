@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-BASE=$CODEBASE
+BASE=$APPBENCH
 
 
 #create empty file

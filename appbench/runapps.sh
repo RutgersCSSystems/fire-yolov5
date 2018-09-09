@@ -1,8 +1,6 @@
 #!/bin/bash
 #set -x
 
-BASE=$CODEBASE
-cd $BASE
 RUNNOW=1
 mkdir $OUTPUTDIR
 rm $OUTPUTDIR/*
@@ -30,39 +28,39 @@ RUNAPP(){
 if [ -z "$4" ]
   then
 
-	APPBASE=$BASE/Metis
+	APPBASE=$APPBENCH/Metis
 	APP=Metis
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$BASE/graphchi
+	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
 	echo "running $APP ..."
 	RUNAPP
 	/bin/rm -rf com-orkut.ungraph.txt.*
 
-	APPBASE=$BASE/redis-3.0.0/src
+	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$BASE/leveldb
+	APPBASE=$APPBENCH/leveldb
 	APP=leveldb
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$BASE/apps/fio
+	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
 	exit
 
-	#APPBASE=$BASE/memcached
+	#APPBASE=$APPBENCH/memcached
 	#APP=memcached
 	#echo "running $APP ..."
 	#RUNAPP
 
-	APPBASE=$BASE/xstream_release
+	APPBASE=$APPBENCH/xstream_release
 	APP=xstream_release
 	scp -r $HOSTIP:$SHARED_DATA*.ini $APPBASE
         cp $APPBASE/*.ini $SHARED_DATA
@@ -71,7 +69,7 @@ if [ -z "$4" ]
 
 fi
 	
-#APPBASE=$BASE/$4
+#APPBASE=$APPBENCH/$4
 #APP=$4
 #RUNAPP
 set +x

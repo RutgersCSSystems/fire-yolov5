@@ -1,7 +1,7 @@
 #!/bin/sh
 set -x
 DATA=$SHARED_DATA/crime.data
-BASE=$CODEBASE/Metis
+BASE=$APPBENCH/Metis
 APPBASE=$BASE/obj
 APP=$APPBASE/wc
 PARAM=$1

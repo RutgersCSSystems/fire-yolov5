@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-BASE=$CODEBASE
+BASE=$APPBENCH
 cd $SHARED_LIBS
 sudo apt-get install cmake libconfig-dev uthash-dev libmpich-dev
 git clone https://github.com/SudarsunKannan/quartz
