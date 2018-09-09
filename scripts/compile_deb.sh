@@ -1,4 +1,5 @@
 #!/bin/bash -x
+cd $KERN_SRC
 sudo apt-get install libdpkg-dev kernel-package
 export CONCURRENCY_LEVEL=32
 export CONCURRENCYLEVEL=32

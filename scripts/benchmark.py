@@ -155,7 +155,7 @@ class ParamTest:
             output = OUTDIR + "/membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
-	    #throttle(count)	
+	    throttle(count)	
             self.runapp(APP, count)
             count = count + int(self.xincr) 
             print count;     
@@ -175,7 +175,7 @@ def main():
     print " "   
 
 # MAke database 
-setup()
+#setup()
 makedb()
 main()
 exit()

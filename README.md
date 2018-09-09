@@ -17,7 +17,7 @@ Create the QEMU IMAGE and exit.  If prompted (y,n), enter yes
 
 Install the 4.17 kernel with QEMU support and copy kernel files to boot directory
 ```
-  scripts/compile_kern.sh
+  scripts/compile_kern_kvm.sh
 ```
 
 Now launch the QEMU
