@@ -52,8 +52,8 @@ $APPBENCH/setup.sh
 $APPBENCH/compile_all.sh
 
 #Compile Linux Kernel
-cd 
-$SCRIPTS/compile_deb.sh
+#cd $KERN_SRC
+#$SCRIPTS/compile_deb.sh
 
 #Changing bandwidth of a NUMA node
 $APPBENCH/install_quartz.sh

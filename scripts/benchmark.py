@@ -175,7 +175,7 @@ def main():
     print " "   
 
 # MAke database 
-#setup()
+setup()
 makedb()
 main()
 exit()
