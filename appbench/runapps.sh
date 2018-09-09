@@ -16,6 +16,20 @@ RUNAPP(){
   export LD_PRELOAD=""
 }
 
+intexit() {
+    # Kill all subprocesses (all processes in the current process group)
+    kill -HUP -$$
+}
+
+hupexit() {
+    # HUP'd (probably by intexit)
+    echo
+    echo "Interrupted"
+    exit
+}
+
+trap hupexit HUP
+trap intexit INT
 
 #if [ -z "$1" ]
 # then	
@@ -27,6 +41,11 @@ RUNAPP(){
 
 if [ -z "$4" ]
   then
+
+	APPBASE=$APPBENCH/apps/fio
+	APP=fio
+	echo "running $APP ..."
+	RUNAPP
 
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
@@ -49,10 +68,6 @@ if [ -z "$4" ]
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$APPBENCH/apps/fio
-	APP=fio
-	echo "running $APP ..."
-	RUNAPP
 	exit
 
 	#APPBASE=$APPBENCH/memcached

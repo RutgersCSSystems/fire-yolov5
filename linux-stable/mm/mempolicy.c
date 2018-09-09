@@ -2103,7 +2103,7 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 			page = __alloc_pages_nodemask(gfp, order,
 				NUMA_HETERO_NODE,
 				policy_nodemask(gfp, pol));
-			allocate_counter++;
+			        allocate_counter++;
 		}
 		else
 			page = __alloc_pages_nodemask(gfp, order,

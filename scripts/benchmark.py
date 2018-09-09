@@ -22,6 +22,41 @@ def makedb():
     os.chdir(APPBENCH)
     APP = APPBENCH + "/runapps.sh"
 
+    os.system("killall -9 fio")
+    os.system("killall -9 run.sh") 
+    os.system("killall -9 runapps.sh") 
+    os.system("killall -9 pagerank") 
+    os.system("killall -9 db_bench")
+    os.system("killall -9 redis-server")
+    os.system("killall -9 redis-benchmark")
+    os.system("killall -9 wc")
+    os.system("sleep 5")
+
+    os.system("killall -9 fio")
+    os.system("killall -9 run.sh") 
+    os.system("killall -9 runapps.sh") 
+    os.system("killall -9 pagerank") 
+    os.system("killall -9 db_bench")
+    os.system("killall -9 redis-server")
+    os.system("killall -9 redis-benchmark")
+    os.system("killall -9 wc")
+    os.system("sleep 5")
+
+    
+    #Set up interrupt
+    os.system("trap hupexit HUP")
+    os.system("trap intexit INT")
+    os.system("trap"  + " " + "killall -9 fio && killall -9 run.sh && killall -9 runapps.sh && killall -9 pagerank " + "SIGINT")
+
+def intexit():
+    # Kill all subprocesses (all processes in the current process group)
+    os.system("kill -HUP -$$")
+
+def hupexit():
+    # HUP'd (probably by intexit)
+    print("Interrupted")
+    intexit()
+
 
 def throttle(membw):
     print "throttling bandwidth to: " + str(membw)
@@ -155,6 +190,7 @@ class ParamTest:
             output = OUTDIR + "/membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
+	    print os.environ['OUTPUTDIR']
 	    throttle(count)	
             self.runapp(APP, count)
             count = count + int(self.xincr) 
@@ -175,7 +211,7 @@ def main():
     print " "   
 
 # MAke database 
-setup()
+#setup()
 makedb()
 main()
 exit()

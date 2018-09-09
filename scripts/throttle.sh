@@ -35,8 +35,8 @@ apply='0x2'
 RUNSTREAM() {
   #Compile stream
   cd stream && make && cd ..
-  numactl --membind=0 stream/stream_c.exe &> throttle.out
-  numactl --membind=1 stream/stream_c.exe &>> throttle.out
+  numactl --membind=0 stream/stream_c.exe &> $OUTPUTDIR/throttle.out
+  numactl --membind=1 stream/stream_c.exe &>> $OUTPUTDIR/throttle.out
 }
 
 #Throttle Values. Modify values specific to your platforms using 
@@ -130,7 +130,7 @@ echo "-----------------"
 echo "BEFORE THROTTLING"
 echo "-----------------"
 echo "BANDWIDTH NODE 1 and NODE 2 (MB/s)"
-grep -r "Copy:" throttle.out | awk '{print $2}'
+grep -r "Copy:" $OUTPUTDIR/throttle.out | awk '{print $2}'
 echo "-----------------"
 echo " "
 
@@ -147,7 +147,7 @@ echo "-----------------"
 echo "AFTER THROTTLING"
 echo "-----------------"
 echo "BANDWIDTH NODE 1 and NODE 2 (MB/s)"
-grep -r "Copy:" throttle.out | awk '{print $2}'
+grep -r "Copy:" $OUTPUTDIR/throttle.out | awk '{print $2}'
 echo "-----------------"
 echo " "
 set +x
