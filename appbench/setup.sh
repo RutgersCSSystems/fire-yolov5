@@ -2,6 +2,8 @@
 
 #Get Other Apps not in out Repo
 GETAPPS(){
+mkdir $APPBENCH
+cd $APPBENCH
 git clone https://github.com/SudarsunKannan/leveldb
 mkdir $APPBENCH/apps
 cd $APPBENCH/apps
@@ -11,7 +13,7 @@ git clone https://github.com/SudarsunKannan/fio
 GETAPPS
 # Set variable, setup packages and generate data
 #. ./setvars.sh
-$APPBENCH//createdata.sh
+$APPBENCH/createdata.sh
 
 INSTALL_SYSTEM_LIBS(){
 sudo apt-get install -y libaio-dev

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #get data
-mkdir $APPBASE/$SHARED_DATA
-cd $APPBASE/$SHARED_DATA
+mkdir $APPBENCH/$SHARED_DATA
+cd $APPBENCH/$SHARED_DATA
 
 if [ ! -f com-orkut.ungraph.txt ]; then
         wget https://snap.stanford.edu/data/bigdata/communities/com-orkut.ungraph.txt
