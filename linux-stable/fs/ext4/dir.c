@@ -438,7 +438,7 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 	struct dir_private_info *p;
 
 #ifdef _ENABLE_HETERO
-	p = kzalloc_hetero(sizeof(*p), GFP_KERNEL);
+	p = kzalloc_hetero_buf(sizeof(*p), GFP_KERNEL);
 #else
 	p = kzalloc(sizeof(*p), GFP_KERNEL);
 #endif
@@ -481,7 +481,7 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
 	/* Create and allocate the fname structure */
 	len = sizeof(struct fname) + ent_name->len + 1;
 #ifdef _ENABLE_HETERO
-	new_fn = kzalloc_hetero(len, GFP_KERNEL);
+	new_fn = kzalloc_hetero_buf(len, GFP_KERNEL);
 #else
 	new_fn = kzalloc(len, GFP_KERNEL);
 #endif

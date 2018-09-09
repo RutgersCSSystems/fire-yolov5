@@ -48,7 +48,6 @@
 #include <linux/hetero.h>
 
 #define PFN_TRACE 4
-#define COLLECT_ALLOCATE 9
 
 extern int global_flag;
 int radix_cnt = 0;
@@ -410,7 +409,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * cgroup.
 		 */
 #ifdef _ENABLE_HETERO
-		if (global_flag == COLLECT_ALLOCATE) {
+		if (is_hetero_radix_set()) {
 			radix_cnt++;
 			ret = kmem_cache_alloc_hetero(radix_tree_node_cachep,
 					       gfp_mask | __GFP_NOWARN);
@@ -456,7 +455,7 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		goto out;
 	}
 #ifdef _ENABLE_HETERO
-	if (global_flag == COLLECT_ALLOCATE) {
+	if (is_hetero_radix_set()) {
 		radix_cnt++;
 		ret = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
 	}
@@ -535,9 +534,9 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 	while (rtp->nr < nr) {
 		preempt_enable();
 #ifdef _ENABLE_HETERO
-		if (global_flag == COLLECT_ALLOCATE) {
+		if (is_hetero_radix_set()) {
  			radix_cnt++;
-			node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
+			node = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
 		}
 		else
 			node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);

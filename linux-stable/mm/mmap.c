@@ -61,19 +61,6 @@
 
 #include "internal.h"
 
-/* start_trace flag option */
-#define CLEAR_COUNT	0
-#define COLLECT_TRACE 1
-#define PRINT_STATS 2
-#define DUMP_STACK 3
-#define PFN_TRACE 4
-#define PFN_STAT 5
-#define TIME_TRACE 6
-#define TIME_STATS 7
-#define TIME_RESET 8
-#define COLLECT_ALLOCATE 9
-#define PRINT_ALLOCATE 10
-
 #ifndef arch_mmap_check
 #define arch_mmap_check(addr, len, flags)	(0)
 #endif
@@ -88,8 +75,6 @@ const int mmap_rnd_compat_bits_min = CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN;
 const int mmap_rnd_compat_bits_max = CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX;
 int mmap_rnd_compat_bits __read_mostly = CONFIG_ARCH_MMAP_RND_COMPAT_BITS;
 #endif
-
-int global_flag = 0;
 
 static bool ignore_rlimit_data;
 core_param(ignore_rlimit_data, ignore_rlimit_data, bool, 0644);
@@ -2835,86 +2820,6 @@ SYSCALL_DEFINE2(munmap, unsigned long, addr, size_t, len)
 {
 	profile_munmap(addr);
 	return vm_munmap(addr, len);
-}
-
-/* start trace system call */
-SYSCALL_DEFINE1(start_trace, int, flag)
-{
-
-	switch(flag) {
-		case CLEAR_COUNT:
-			printk("flag set to clear count %d\n", flag);
-			global_flag = CLEAR_COUNT;
-			//rbtree_reset_counter();
-			//btree_reset_counter();
-			//radix_tree_reset_counter();
-			reset_allocate_counter_page_cache_alloc();
-			reset_allocate_counter_alloc_pages_current();
-			reset_allocate_counter_alloc_page_buffers();
-			//reset_allocate_counter_new_handle();
-			reset_allocate_radix_alloc();
-			break;
-		case COLLECT_TRACE:
-			printk("flag is set to collect trace %d\n", flag);
-			global_flag = COLLECT_TRACE;
-			return global_flag;
-			break;
-		case PRINT_STATS:
-			printk("flag is set to print stats %d\n", flag);
-			global_flag = PRINT_STATS;
-			print_rbtree_stat();
-			//print_btree_stat();
-			print_radix_tree_stat();
-			break;
-		//case DUMP_STACK:
-		//	printk("flag is set to dump stack %d\n", flag);
-		//	global_flag = DUMP_STACK;
-		//	return global_flag;
-		//	break;
-		
-		case PFN_TRACE:
-			printk("flag is set to collect pfn trace %d\n", flag);
-			global_flag = PFN_TRACE;
-			return global_flag;
-			break;
-		case PFN_STAT:
-			printk("flag is set to print pfn stats %d\n", flag);
-			print_pfn_hashtable();
-			break;
-		case TIME_TRACE:
-			printk("flag is set to collect time %d \n", flag);
-			global_flag = TIME_TRACE;
-			return global_flag;
-			break;
-		case TIME_STATS:
-			printk("flag is set to print time stats %d \n", flag);
-			global_flag = TIME_STATS;
-			print_rbtree_time_stat();
-			break;
-		case TIME_RESET:
-			printk("flag is set to reset time %d \n", flag);
-			global_flag = TIME_RESET;
-			rbtree_reset_time();
-			break;
-		case COLLECT_ALLOCATE:
-			printk("flag is set to collect hetero allocate  %d \n", flag);
-			global_flag = COLLECT_ALLOCATE;
-			return global_flag;
-			break;
-		case PRINT_ALLOCATE:
-			printk("flag is set to print hetero allocate stat %d \n", flag);
-			global_flag = PRINT_ALLOCATE;
-			print_allocation_stat_page_cache_alloc();
-			print_allocation_stat_alloc_pages_current();
-			print_allocation_stat_alloc_page_buffers();
-			//print_allocation_stat_new_handle();
-			print_allocation_stat_radix_alloc();
-			break;
-		default:
-			break;
-	}
-
-	return 0;
 }
 
 

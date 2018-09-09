@@ -9,40 +9,22 @@
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
   SKIPPED include/generated/compile.h
-  Building modules, stage 2.
-  LD      arch/x86/boot/compressed/vmlinux
-  ZOFFSET arch/x86/boot/zoffset.h
-  OBJCOPY arch/x86/boot/vmlinux.bin
-  AS      arch/x86/boot/header.o
-  LD      arch/x86/boot/setup.elf
-  OBJCOPY arch/x86/boot/setup.bin
-  BUILD   arch/x86/boot/bzImage
-Setup is 17068 bytes (padded to 17408 bytes).
-System is 8764 kB
-CRC f6403789
-Kernel: arch/x86/boot/bzImage is ready  (#3)
-  MODPOST 3720 modules
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
-  CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
+  CC      mm/mmap.o
+  AR      mm/built-in.a
+  GEN     .version
   CHK     include/generated/compile.h
   SKIPPED include/generated/compile.h
-  DATAREL arch/x86/boot/compressed/vmlinux
-Kernel: arch/x86/boot/bzImage is ready  (#3)
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
-  CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
+  AR      built-in.a
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+  KSYM    .tmp_kallsyms1.o
+  KSYM    .tmp_kallsyms2.o
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
   Building modules, stage 2.
-  MODPOST 3720 modules
+  VOFFSET arch/x86/boot/compressed/../voffset.h
+  OBJCOPY arch/x86/boot/compressed/vmlinux.bin
+  CC      arch/x86/boot/compressed/eboot.o
+  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
+  CC      arch/x86/boot/compressed/misc.o

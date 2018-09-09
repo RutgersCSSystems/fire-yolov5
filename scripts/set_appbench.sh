@@ -14,6 +14,7 @@ $APPBENCH/compile_all.sh
 #Changing bandwidth of a NUMA node
 $APPBENCH/install_quartz.sh
 $APPBENCH/throttle.sh
+$APPBENCH/throttle.sh
 
 INSTALL_SYSTEM_LIBS(){
 sudo apt-get install -y git

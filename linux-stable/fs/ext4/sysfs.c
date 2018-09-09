@@ -433,7 +433,7 @@ int __init ext4_init_sysfs(void)
 	if (!ext4_root)
 		return -ENOMEM;
 #ifdef _ENABLE_HETERO
-	ext4_feat = kzalloc_hetero(sizeof(*ext4_feat), GFP_KERNEL);
+	ext4_feat = kzalloc_hetero_buf(sizeof(*ext4_feat), GFP_KERNEL);
 #else 
 	ext4_feat = kzalloc(sizeof(*ext4_feat), GFP_KERNEL);
 #endif 

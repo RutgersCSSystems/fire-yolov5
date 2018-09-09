@@ -301,7 +301,7 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 {
 	struct ext4_fsmap *fsm;
 #ifdef ENABLE_HETERO
-	fsm = kmalloc_hetero(sizeof(*fsm), GFP_NOFS);
+	fsm = kmalloc_hetero_buf(sizeof(*fsm), GFP_NOFS);
 #else 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);
 #endif

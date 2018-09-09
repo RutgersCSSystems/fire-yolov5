@@ -107,7 +107,6 @@
 
 #include <linux/numa.h>
 
-#define COLLECT_ALLOCATE 9
 
 /* Internal flags */
 #define MPOL_MF_DISCONTIG_OK (MPOL_MF_INTERNAL << 0)	/* Skip checks for continuous vmas */
@@ -2098,7 +2097,9 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
 	else {
 #ifdef _ENABLE_PAGECACHE
-		if (global_flag == COLLECT_ALLOCATE) {
+                /*Check if we have enable customized HETERO allocation for
+                page cache*/
+		if (is_hetero_pgcache_set()) {
 			page = __alloc_pages_nodemask(gfp, order,
 				NUMA_HETERO_NODE,
 				policy_nodemask(gfp, pol));

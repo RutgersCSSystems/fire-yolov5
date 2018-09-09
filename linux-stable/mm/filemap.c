@@ -47,7 +47,6 @@
 #include <linux/numa.h>
 
 #define PFN_TRACE 4
-#define COLLECT_ALLOCATE 9
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/filemap.h>
@@ -953,7 +952,9 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
 #ifdef _ENABLE_PAGECACHE
-			if (global_flag == COLLECT_ALLOCATE) {
+			/*Check if we have enable customized HETERO allocation for 
+			page cache*/
+			if (is_hetero_pgcache_set()) {
 				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
 				allocate_cnt++;
 			}

@@ -219,7 +219,7 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	struct ext4_new_flex_group_data *flex_gd;
 
 #ifdef _ENABLE_HETERO
-	flex_gd = kmalloc_hetero(sizeof(*flex_gd), GFP_NOFS);
+	flex_gd = kmalloc_hetero_buf(sizeof(*flex_gd), GFP_NOFS);
 #else 
 	flex_gd = kmalloc(sizeof(*flex_gd), GFP_NOFS);
 #endif 
@@ -234,7 +234,7 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	flex_gd->count = flexbg_size;
 
 #ifdef _ENABLE_HETERO
-	flex_gd->groups = kmalloc_hetero(sizeof(struct ext4_new_group_data) *
+	flex_gd->groups = kmalloc_hetero_buf(sizeof(struct ext4_new_group_data) *
 				  flexbg_size, GFP_NOFS);
 #else 
 	flex_gd->groups = kmalloc(sizeof(struct ext4_new_group_data) *
@@ -247,7 +247,7 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 		goto out2;
 
 #ifdef _ENABLE_HETERO
-	flex_gd->bg_flags = kmalloc_hetero(flexbg_size * sizeof(__u16), GFP_NOFS);
+	flex_gd->bg_flags = kmalloc_hetero_buf(flexbg_size * sizeof(__u16), GFP_NOFS);
 #else 
 	flex_gd->bg_flags = kmalloc(flexbg_size * sizeof(__u16), GFP_NOFS);
 #endif
@@ -1022,7 +1022,7 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 	int err;
 
 #ifdef _ENABLE_HETERO
-	primary = kmalloc_hetero(reserved_gdb * sizeof(*primary), GFP_NOFS);
+	primary = kmalloc_hetero_buf(reserved_gdb * sizeof(*primary), GFP_NOFS);
 #else 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);
 #endif

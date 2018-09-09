@@ -581,7 +581,7 @@ int ext4_ext_precache(struct inode *inode)
 	down_read(&ei->i_data_sem);
 	depth = ext_depth(inode);
 #ifdef _ENABLE_HETERO
-	path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1),
+	path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
 		       GFP_NOFS);
 #else 
 	path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),
@@ -891,7 +891,7 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 	if (!path) {
 		/* account possible depth increase */
 #ifdef _ENABLE_HETERO 
-		path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 2),
+		path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 2),
 				GFP_NOFS);
 #else 
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 2),
@@ -1083,7 +1083,7 @@ static int ext4_ext_split(handle_t *handle, struct inode *inode,
 	 * upon them.
 	 */
 #ifdef _ENABLE_HETERO 
-	ablocks = kzalloc_hetero(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
+	ablocks = kzalloc_hetero_buf(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
 #else 
 	ablocks = kzalloc(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
 #endif
@@ -2948,7 +2948,7 @@ again:
 				le16_to_cpu(path[k].p_hdr->eh_entries)+1;
 	} else {
 #ifdef _ENABLE_HETERO
-		path = kzalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1),
+		path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
 			       GFP_NOFS);
 #else 
 		path = kzalloc(sizeof(struct ext4_ext_path) * (depth + 1),

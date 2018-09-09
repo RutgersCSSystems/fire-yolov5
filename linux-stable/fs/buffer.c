@@ -57,7 +57,6 @@
 #include <linux/hetero.h>
 
 #define PFN_TRACE 4
-#define COLLECT_ALLOCATE 9
 
 extern int global_flag;
 int cnt = 0;
@@ -839,7 +838,7 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	while ((offset -= size) >= 0) {
 
 #ifdef _ENABLE_HETERO
-		if (global_flag == COLLECT_ALLOCATE) {
+		if (is_hetero_buffer_set()) {
 			bh = alloc_buffer_head_hetero(gfp);
 			cnt++;
 		}
@@ -3400,7 +3399,7 @@ EXPORT_SYMBOL(alloc_buffer_head);
 struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
 {
         //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
-        struct buffer_head *ret = kmem_cache_zalloc_hetero(bh_cachep, gfp_flags);
+        struct buffer_head *ret = kmem_cache_zalloc_hetero_buf(bh_cachep, gfp_flags);
         if (ret) {
                 INIT_LIST_HEAD(&ret->b_assoc_buffers);
                 preempt_disable();

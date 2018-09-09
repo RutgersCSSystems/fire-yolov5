@@ -17,4 +17,10 @@
 #define _ENABLE_RADIXTREE
 #endif
 
+
+int is_hetero_pgcache_set(void);
+int is_hetero_buffer_set(void);
+int is_hetero_journ_set(void);
+int is_hetero_radix_set(void);
+
 #endif /* _LINUX_NUMA_H */

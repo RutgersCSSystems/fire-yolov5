@@ -340,7 +340,7 @@ ext4_es_alloc_extent(struct inode *inode, ext4_lblk_t lblk, ext4_lblk_t len,
 {
 	struct extent_status *es;
 #ifdef _ENABLE_HETERO
-	es = kmem_cache_alloc_hetero(ext4_es_cachep, GFP_ATOMIC);
+	es = kmem_cache_alloc_hetero_buf(ext4_es_cachep, GFP_ATOMIC);
 #else 
 	es = kmem_cache_alloc(ext4_es_cachep, GFP_ATOMIC);
 #endif 

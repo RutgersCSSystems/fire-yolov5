@@ -194,7 +194,7 @@ void *ext4_kvmalloc(size_t size, gfp_t flags)
 {
 	void *ret;
 #ifdef _ENABLE_HETERO
-	ret = kmalloc_hetero(size, flags | __GFP_NOWARN);
+	ret = kmalloc_hetero_buf(size, flags | __GFP_NOWARN);
 #else 
 	ret = kmalloc(size, flags | __GFP_NOWARN);
 #endif
@@ -210,7 +210,7 @@ void *ext4_kvzalloc(size_t size, gfp_t flags)
 {
 	void *ret;
 #ifdef _ENABLE_HETERO
-	ret = kzalloc_hetero(size, flags | __GFP_NOWARN);
+	ret = kzalloc_hetero_buf(size, flags | __GFP_NOWARN);
 #else 
 	ret = kzalloc(size, flags | __GFP_NOWARN);
 #endif
@@ -1020,7 +1020,7 @@ static struct inode *ext4_alloc_inode(struct super_block *sb)
 	struct ext4_inode_info *ei;
 
 #ifdef _ENABLE_HETERO
-	ei = kmem_cache_alloc_hetero(ext4_inode_cachep, GFP_NOFS);
+	ei = kmem_cache_alloc_hetero_buf(ext4_inode_cachep, GFP_NOFS);
 #else 
 	ei = kmem_cache_alloc(ext4_inode_cachep, GFP_NOFS);
 #endif
@@ -3149,7 +3149,7 @@ static int ext4_li_info_new(void)
 	struct ext4_lazy_init *eli = NULL;
 
 #ifdef _ENABLE_HETERO 
-	eli = kzalloc_hetero(sizeof(*eli), GFP_KERNEL);
+	eli = kzalloc_hetero_buf(sizeof(*eli), GFP_KERNEL);
 #else 
 	eli = kzalloc(sizeof(*eli), GFP_KERNEL);
 #endif 
@@ -3175,7 +3175,7 @@ static struct ext4_li_request *ext4_li_request_new(struct super_block *sb,
 	struct ext4_sb_info *sbi = EXT4_SB(sb);
 	struct ext4_li_request *elr;
 #ifdef _ENABLE_HETERO 
-	elr = kzalloc_hetero(sizeof(*elr), GFP_KERNEL);
+	elr = kzalloc_hetero_buf(sizeof(*elr), GFP_KERNEL);
 #else 
 	elr = kzalloc(sizeof(*elr), GFP_KERNEL);
 #endif
@@ -3484,7 +3484,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	struct buffer_head *bh;
 	struct ext4_super_block *es = NULL;
 #ifdef _ENABLE_HETERO 
-	struct ext4_sb_info *sbi = kzalloc_hetero(sizeof(*sbi), GFP_KERNEL);
+	struct ext4_sb_info *sbi = kzalloc_hetero_buf(sizeof(*sbi), GFP_KERNEL);
 #else 
 	struct ext4_sb_info *sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
 #endif
@@ -3516,7 +3516,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	sbi->s_daxdev = dax_dev;
 #ifdef _ENABLE_HETERO 
 	sbi->s_blockgroup_lock =
-		kzalloc_hetero(sizeof(struct blockgroup_lock), GFP_KERNEL);
+		kzalloc_hetero_buf(sizeof(struct blockgroup_lock), GFP_KERNEL);
 #else 
 	sbi->s_blockgroup_lock =
 		kzalloc(sizeof(struct blockgroup_lock), GFP_KERNEL);
@@ -4759,7 +4759,7 @@ static int ext4_load_journal(struct super_block *sb,
 		err = jbd2_journal_wipe(journal, !really_read_only);
 	if (!err) {
 #ifdef _ENABLE_HETERO
-		char *save = kmalloc_hetero(EXT4_S_ERR_LEN, GFP_KERNEL);
+		char *save = kmalloc_hetero_buf(EXT4_S_ERR_LEN, GFP_KERNEL);
 #else 
 		char *save = kmalloc(EXT4_S_ERR_LEN, GFP_KERNEL);
 #endif
