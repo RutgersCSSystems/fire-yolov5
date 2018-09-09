@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
-#DATA=com-orkut.ungraph.txt
-DATA=soc-LiveJournal1.txt
+DATA=com-orkut.ungraph.txt
+#DATA=soc-LiveJournal1.txt
 INPUT=$SHARED_DATA/$DATA
 APPBASE=$CODEBASE/graphchi/graphchi-cpp/bin/example_apps
 APP=$APPBASE/pagerank

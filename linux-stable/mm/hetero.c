@@ -114,95 +114,102 @@ EXPORT_SYMBOL(is_hetero_radix_set);
 SYSCALL_DEFINE1(start_trace, int, flag)
 {
 
-	switch(flag) {
-		case CLEAR_COUNT:
-			printk("flag set to clear count %d\n", flag);
-			global_flag = CLEAR_COUNT;
-			//rbtree_reset_counter();
-			//btree_reset_counter();
-			//radix_tree_reset_counter();
-			reset_allocate_counter_page_cache_alloc();
-			reset_allocate_counter_alloc_pages_current();
-			reset_allocate_counter_alloc_page_buffers();
-			//reset_allocate_counter_new_handle();
-			reset_allocate_radix_alloc();
-			break;
-		case COLLECT_TRACE:
-			printk("flag is set to collect trace %d\n", flag);
-			global_flag = COLLECT_TRACE;
-			return global_flag;
-			break;
-		case PRINT_STATS:
-			printk("flag is set to print stats %d\n", flag);
-			global_flag = PRINT_STATS;
-			print_rbtree_stat();
-			//print_btree_stat();
-			print_radix_tree_stat();
-			break;
-		//case DUMP_STACK:
-		//	printk("flag is set to dump stack %d\n", flag);
-		//	global_flag = DUMP_STACK;
-		//	return global_flag;
-		//	break;
-		
-		case PFN_TRACE:
-			printk("flag is set to collect pfn trace %d\n", flag);
-			global_flag = PFN_TRACE;
-			return global_flag;
-			break;
-		case PFN_STAT:
-			printk("flag is set to print pfn stats %d\n", flag);
-			print_pfn_hashtable();
-			break;
-		case TIME_TRACE:
-			printk("flag is set to collect time %d \n", flag);
-			global_flag = TIME_TRACE;
-			return global_flag;
-			break;
-		case TIME_STATS:
-			printk("flag is set to print time stats %d \n", flag);
-			global_flag = TIME_STATS;
-			print_rbtree_time_stat();
-			break;
-		case TIME_RESET:
-			printk("flag is set to reset time %d \n", flag);
-			global_flag = TIME_RESET;
-			rbtree_reset_time();
-			break;
-		case COLLECT_ALLOCATE:
-			printk("flag is set to collect hetero allocate  %d \n", flag);
-			global_flag = COLLECT_ALLOCATE;
-			return global_flag;
-			break;
-		case PRINT_ALLOCATE:
-			printk("flag is set to print hetero allocate stat %d \n", flag);
-			global_flag = PRINT_ALLOCATE;
-			print_allocation_stat_page_cache_alloc();
-			print_allocation_stat_alloc_pages_current();
-			print_allocation_stat_alloc_page_buffers();
-			//print_allocation_stat_new_handle();
-			print_allocation_stat_radix_alloc();
-			break;
-		case HETERO_PGCACHE:
-			printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
-			enbl_hetero_pgcache = 1;
-			break;
-		case HETERO_BUFFER:
-			printk("flag is set to enable HETERO_BUFFER %d \n", flag);
-			enbl_hetero_buffer = 1;
-			break;
-		case HETERO_JOURNAL:
-			printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
-			enbl_hetero_journal = 1;
-			break;
-		case HETERO_RADIX:
-			printk("flag is set to enable HETERO_RADIX %d \n", flag);
-			enbl_hetero_radix = 1;
-			break;
-		default:
-			break;
-	}
-	return 0;
+    switch(flag) {
+	case CLEAR_COUNT:
+	    printk("flag set to clear count %d\n", flag);
+	    global_flag = CLEAR_COUNT;
+	    //rbtree_reset_counter();
+	    //btree_reset_counter();
+	    //radix_tree_reset_counter();
+	    reset_allocate_counter_page_cache_alloc();
+	    reset_allocate_counter_alloc_pages_current();
+	    reset_allocate_counter_alloc_page_buffers();
+	    //reset_allocate_counter_new_handle();
+	    reset_allocate_radix_alloc();
+
+	    /*reset hetero allocate flags */
+	    enbl_hetero_pgcache = 0;
+	    enbl_hetero_buffer = 0; 
+	    enbl_hetero_radix = 0;
+	    enbl_hetero_journal = 0; 
+	    break;
+
+	case COLLECT_TRACE:
+	    printk("flag is set to collect trace %d\n", flag);
+	    global_flag = COLLECT_TRACE;
+	    return global_flag;
+	    break;
+	case PRINT_STATS:
+	    printk("flag is set to print stats %d\n", flag);
+	    global_flag = PRINT_STATS;
+	    print_rbtree_stat();
+	    //print_btree_stat();
+	    print_radix_tree_stat();
+	    break;
+	//case DUMP_STACK:
+	//	printk("flag is set to dump stack %d\n", flag);
+	//	global_flag = DUMP_STACK;
+	//	return global_flag;
+	//	break;
+	
+	case PFN_TRACE:
+	    printk("flag is set to collect pfn trace %d\n", flag);
+	    global_flag = PFN_TRACE;
+	    return global_flag;
+	    break;
+	case PFN_STAT:
+	    printk("flag is set to print pfn stats %d\n", flag);
+	    print_pfn_hashtable();
+	    break;
+	case TIME_TRACE:
+	    printk("flag is set to collect time %d \n", flag);
+	    global_flag = TIME_TRACE;
+	    return global_flag;
+	    break;
+	case TIME_STATS:
+	    printk("flag is set to print time stats %d \n", flag);
+	    global_flag = TIME_STATS;
+	    print_rbtree_time_stat();
+	    break;
+	case TIME_RESET:
+	    printk("flag is set to reset time %d \n", flag);
+	    global_flag = TIME_RESET;
+	    rbtree_reset_time();
+	    break;
+	case COLLECT_ALLOCATE:
+	    printk("flag is set to collect hetero allocate  %d \n", flag);
+	    global_flag = COLLECT_ALLOCATE;
+	    return global_flag;
+	    break;
+	case PRINT_ALLOCATE:
+	    printk("flag is set to print hetero allocate stat %d \n", flag);
+	    global_flag = PRINT_ALLOCATE;
+	    print_allocation_stat_page_cache_alloc();
+	    print_allocation_stat_alloc_pages_current();
+	    print_allocation_stat_alloc_page_buffers();
+	    //print_allocation_stat_new_handle();
+	    print_allocation_stat_radix_alloc();
+	    break;
+	case HETERO_PGCACHE:
+	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
+	    enbl_hetero_pgcache = 1;
+	    break;
+	case HETERO_BUFFER:
+	    printk("flag is set to enable HETERO_BUFFER %d \n", flag);
+	    enbl_hetero_buffer = 1;
+	    break;
+	case HETERO_JOURNAL:
+	    printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
+	    enbl_hetero_journal = 1;
+	    break;
+	case HETERO_RADIX:
+	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
+	    enbl_hetero_radix = 1;
+	    break;
+	default:
+	    break;
+    }
+    return 0;
 }
 
 

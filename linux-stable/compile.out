@@ -9,7 +9,7 @@
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
   SKIPPED include/generated/compile.h
-  CC      mm/mmap.o
+  CC      mm/hetero.o
   AR      mm/built-in.a
   GEN     .version
   CHK     include/generated/compile.h
@@ -25,23 +25,22 @@
   Building modules, stage 2.
   VOFFSET arch/x86/boot/compressed/../voffset.h
   OBJCOPY arch/x86/boot/compressed/vmlinux.bin
-  CC      arch/x86/boot/compressed/eboot.o
   GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
   CC      arch/x86/boot/compressed/misc.o
   MKPIGGY arch/x86/boot/compressed/piggy.S
   AS      arch/x86/boot/compressed/piggy.o
   DATAREL arch/x86/boot/compressed/vmlinux
   LD      arch/x86/boot/compressed/vmlinux
-  ZOFFSET arch/x86/boot/zoffset.h
   OBJCOPY arch/x86/boot/vmlinux.bin
+  ZOFFSET arch/x86/boot/zoffset.h
   AS      arch/x86/boot/header.o
   LD      arch/x86/boot/setup.elf
   OBJCOPY arch/x86/boot/setup.bin
   BUILD   arch/x86/boot/bzImage
 Setup is 17068 bytes (padded to 17408 bytes).
 System is 8758 kB
-CRC 3886a1d2
-Kernel: arch/x86/boot/bzImage is ready  (#6)
+CRC a50b625a
+Kernel: arch/x86/boot/bzImage is ready  (#7)
   MODPOST 3720 modules
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
@@ -55,7 +54,7 @@ Kernel: arch/x86/boot/bzImage is ready  (#6)
   CHK     include/generated/compile.h
   SKIPPED include/generated/compile.h
   DATAREL arch/x86/boot/compressed/vmlinux
-Kernel: arch/x86/boot/bzImage is ready  (#6)
+Kernel: arch/x86/boot/bzImage is ready  (#7)
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
