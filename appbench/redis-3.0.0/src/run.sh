@@ -4,6 +4,11 @@ APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
 
+/bin/rm *.rdb
+killall redis-server
+sleep 5
+
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -18,14 +23,11 @@ $APPPREFIX $APPBASE/redis-server &
 export LD_PRELOAD=""
 }
 
-
 alias rm=rm
-/bin/rm *.rdb
-killall redis-server
-sleep 5
 RUN
 sleep 5
-$APPPREFIX $APPBASE/redis-benchmark -r 500000 -n 2000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -p 6379 -d 2048 &> $OUTPUT
+$APPPREFIX $APPBASE/redis-benchmark -r 1000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -p 6379 -d 4096
+#&> $OUTPUT
 killall redis-server
 
 
