@@ -41,8 +41,11 @@ git clone https://gflags.github.io/gflags/
 export CXXFLAGS="-fPIC" && cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
 cd $APPBENCH/apps
 git clone https://github.com/facebook/rocksdb
+cp $APPBENCH/apps/db_bench_tool.cc $APPBENCH/apps/rocksdb/tools/
+cp $APPBENCH/apps/run_rocksdb.sh $APPBENCH/apps/rocksdb/build/run.sh
 cd rocksdb
-mkdir build && cd build
+mkdir build 
+cd build
 cmake ..
 make -j16
 }

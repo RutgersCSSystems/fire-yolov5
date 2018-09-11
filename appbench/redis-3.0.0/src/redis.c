@@ -3574,7 +3574,7 @@ int main(int argc, char **argv) {
     struct timeval tv;
 
 #ifdef HETEROMEM
-	init_allocs();
+	//init_allocs();
 #endif
 
     /* We need to initialize our libraries, and the server configuration. */

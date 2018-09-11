@@ -86,19 +86,19 @@ DEFINE_string(
     benchmarks,
     "fillseq,"
     //"fillseqdeterministic,"
-    "fillsync,"
+    //"fillsync,"
     "fillrandom,"
     //"filluniquerandomdeterministic,"
     "overwrite,"
     "readrandom,"
     //"newiterator,"
     //"newiteratorwhilewriting,"
-    "seekrandom,"
-    "seekrandomwhilewriting,"
+    //"seekrandom,"
+    //"seekrandomwhilewriting,"
     //"seekrandomwhilemerging,"
     "readseq,"
-    "readreverse,"
-    "compact,"
+    "readreverse",
+    //"compact,"
     //"compactall,"
     //"multireadrandom,"
     //"readseq,"
@@ -111,7 +111,7 @@ DEFINE_string(
     //"updaterandom,"
     //"xorupdaterandom,"
     //"randomwithverify,"
-    "fill100K",
+    //"fill100K",
     //"crc32c,"
     //"xxhash,"
     //"compress,"

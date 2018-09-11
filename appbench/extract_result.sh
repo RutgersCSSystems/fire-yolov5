@@ -22,6 +22,12 @@ awk 'BEGIN {SUM=0}; {SUM=SUM+$3}; END {printf "%.3f\n", SUM}' $OUTPUTDIR/$APP
 echo "________________________"
 APP=fio
 echo "   "
-cat $OUTPUTDIR/$APP | grep "bw=" | awk '{print $2}'| grep -o '[0-9]*' | awk '{sum += $1} END {print sum}'
+cat $OUTPUTDIR/$APP | grep "bw=" | awk '{print $2}'| grep -o '[0-9]*' | awk '{sum += $1} END {print "FIO: " sum}'
+echo "________________________"
+echo "______ ROCKSDB_________"
+APP=db_bench
+echo "   "
+cat $OUTPUTDIR/$APP | grep "MB/s" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}'
+#awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {printf "%.3f\n", SUM}' $OUTPUTDIR/$APP
 echo "________________________"
 

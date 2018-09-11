@@ -187,15 +187,23 @@ class ParamTest:
             self.num_str = "--num=" + str(count)
 
 	    #Set the output director
-            output = OUTDIR + "/kernbuff_membw_" + str(count)
+            output = OUTDIR + "/membw_fullkernel_slowdown_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']
 	    throttle(count)	
             self.runapp(APP, count)
-            count = count + int(self.xincr) 
+            count = count * int(self.xincr) 
             print count;     
 
+
+	count = 10000
+        output = OUTDIR + "/membw_fullkernel_slowdown_" + str(count)
+        os.environ['OUTPUTDIR'] = output
+        print os.environ['OUTPUTDIR']
+        throttle(count)
+        self.runapp(APP, count)
+        print count;
 
 def main():
 

@@ -3,13 +3,13 @@
 
 RUNNOW=1
 mkdir $OUTPUTDIR
-rm $OUTPUTDIR/*
 
 USAGE(){
 echo "./app \$maxhotpage \$BW \$outputdir \$app"
 }
 
 RUNAPP(){
+  rm $OUTPUTDIR/$APP
   export LD_PRELOAD=/usr/lib/libmigration.so
   cd $APPBASE
   $APPBASE/run.sh $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
@@ -42,26 +42,37 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
-	APPBASE=$APPBENCH/apps/fio
-	APP=fio
-	echo "running $APP ..."
-	RUNAPP
-
-	APPBASE=$APPBENCH/Metis
-	APP=Metis
+	APPBASE=$APPBENCH/redis-3.0.0/src
+	APP=redis
 	echo "running $APP..."
 	RUNAPP
+        exit
+
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+        exit
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
 	echo "running $APP ..."
 	RUNAPP
-	/bin/rm -rf com-orkut.ungraph.txt.*
+	rm $SHARED_DATA/com-orkut.ungraph.txt.*
+        exit
 
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
+	APPBASE=$APPBENCH/Metis
+	APP=Metis
 	echo "running $APP..."
 	RUNAPP
+        exit
+
+	APPBASE=$APPBENCH/apps/fio
+	APP=fio
+	echo "running $APP ..."
+	RUNAPP
+
+
 
 	APPBASE=$APPBENCH/leveldb
 	APP=leveldb
