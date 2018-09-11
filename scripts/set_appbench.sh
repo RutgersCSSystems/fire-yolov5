@@ -30,8 +30,22 @@ sudo pip install psutil
 #INSTALL_JAVA
 sudo apt-get -y install build-essential
 sudo apt-get -y install libssl-dev
+sudo apt-get install -y libgflags-dev
+sudo apt-get install -y zlib1g-dev
+sudo apt-get install -y libbz2-dev
 }
 
+INSTALL_GFLAGS(){
+cd $SHARED_LIBS
+git clone https://gflags.github.io/gflags/
+export CXXFLAGS="-fPIC" && cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
+cd $APPBENCH/apps
+git clone https://github.com/facebook/rocksdb
+cd rocksdb
+mkdir build && cd build
+cmake ..
+make -j16
+}
 
 
 #Get Other Apps not in out Repo
@@ -45,6 +59,9 @@ git clone https://github.com/SudarsunKannan/fio
 }
 
 INSTALL_SYSTEM_LIBS
+INSTALL_GFLAGS
+exit
+
 GETAPPS
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh

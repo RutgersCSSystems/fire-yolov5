@@ -2104,6 +2104,7 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 				NUMA_HETERO_NODE,
 				policy_nodemask(gfp, pol));
 			        allocate_counter++;
+		                //printk(KERN_ALERT "alloc_pages_current %d \n", page_to_nid(page));
 		}
 		else
 			page = __alloc_pages_nodemask(gfp, order,

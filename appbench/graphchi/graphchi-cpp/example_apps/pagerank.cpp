@@ -161,7 +161,7 @@ int main(int argc, const char ** argv) {
 	fprintf(stderr,"calling init_allocs for migration \n");
 #endif
 
-    init_allocs();
+    //init_allocs();
     graphchi_init(argc, argv);
     metrics m("pagerank");
     global_logger().set_log_level(LOG_DEBUG);

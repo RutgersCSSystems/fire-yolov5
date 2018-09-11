@@ -187,7 +187,7 @@ class ParamTest:
             self.num_str = "--num=" + str(count)
 
 	    #Set the output director
-            output = OUTDIR + "/membw_" + str(count)
+            output = OUTDIR + "/kernbuff_membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']

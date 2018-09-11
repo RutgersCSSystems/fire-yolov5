@@ -45,6 +45,7 @@
 #include <asm-generic/memory_model.h>
 
 #include <linux/numa.h>
+#include <linux/hetero.h>
 
 #define PFN_TRACE 4
 
@@ -956,10 +957,12 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			page cache*/
 			if (is_hetero_pgcache_set()) {
 				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+			        //printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));	
 				allocate_cnt++;
 			}
-			else 
+			else {
 				page = __alloc_pages_node(n, gfp, 0);
+	                }
 #else 
 			page = __alloc_pages_node(n, gfp, 0);
 #endif
@@ -969,10 +972,10 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 		return page;
 	}
+
 	allocpage = alloc_pages(gfp, 0);
 	//if (global_flag == 4)
 	//	add_to_hashtable_page(allocpage);
-
 	return allocpage;
 }
 EXPORT_SYMBOL(__page_cache_alloc);
