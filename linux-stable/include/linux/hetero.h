@@ -10,11 +10,13 @@
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
 /* Buffer allocation */
-#define _ENABLE_BUFFER
+#define _ENABLE_HETERO_BUFFER
 /* Journal allocation */
 #define _ENABLE_JOURNAL
 /* Radix tree allocation */
-#define _ENABLE_RADIXTREE
+#define _ENABLE_HETERO_RADIX
+/* Page table allocation */
+#define _ENABLE_HETERO_PGTBL
 #endif
 
 
@@ -22,5 +24,6 @@ int is_hetero_pgcache_set(void);
 int is_hetero_buffer_set(void);
 int is_hetero_journ_set(void);
 int is_hetero_radix_set(void);
-
+int is_hetero_kernel_set(void);
+int is_hetero_pgtbl_set(void);
 #endif /* _LINUX_NUMA_H */

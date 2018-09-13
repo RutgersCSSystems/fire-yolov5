@@ -46,33 +46,28 @@ if [ -z "$4" ]
 	APP=redis
 	echo "running $APP..."
 	RUNAPP
-        exit
 
 	APPBASE=$APPBENCH/apps/rocksdb/build
 	APP=db_bench
 	echo "running $APP ..."
 	RUNAPP
-        exit
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
 	echo "running $APP ..."
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
-        exit
 
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
 	echo "running $APP..."
 	RUNAPP
-        exit
 
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
-
-
+        exit
 
 	APPBASE=$APPBENCH/leveldb
 	APP=leveldb

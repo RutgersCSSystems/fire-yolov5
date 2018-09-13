@@ -2783,12 +2783,15 @@ EXPORT_SYMBOL(kmem_cache_alloc_hetero_buf);
 
 void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 {
+
+#ifdef _ENABLE_HETERO
+        if(is_hetero_kernel_set())
+            return kmem_cache_alloc_hetero(s, gfpflags);
+#endif
 	void *ret = slab_alloc(s, gfpflags, _RET_IP_);
 
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);
-	
-//	printk(KERN_ALERT "mm slub.c kmem cache alloc \n");
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc);

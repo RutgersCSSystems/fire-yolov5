@@ -26,8 +26,7 @@ export LD_PRELOAD=""
 alias rm=rm
 RUN
 sleep 5
-$APPPREFIX $APPBASE/redis-benchmark -r 1000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -p 6379 -d 4096
-#&> $OUTPUT
+$APPPREFIX $APPBASE/redis-benchmark -r 1000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -p 6379 -d 4096 &> $OUTPUT
 killall redis-server
 
 

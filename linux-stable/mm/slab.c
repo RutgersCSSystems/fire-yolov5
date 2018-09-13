@@ -3625,14 +3625,11 @@ void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 	kasan_slab_alloc(cachep, ret, flags);
 	trace_kmem_cache_alloc(_RET_IP_, ret,
 			       cachep->object_size, cachep->size, flags);
-	
-//	printk(KERN_ALERT "mm slab.c kmem cache alloc \n");
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc);
 
 /* HeteroOS code */
-/*
 #ifdef _ENABLE_HETERO
 void *kmem_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
 {
@@ -3646,7 +3643,7 @@ void *kmem_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
 }
 EXPORT_SYMBOL(kmem_cache_alloc_hetero);
 #endif
-*/
+
 
 static __always_inline void
 cache_alloc_debugcheck_after_bulk(struct kmem_cache *s, gfp_t flags,

@@ -80,13 +80,14 @@
 #define HETERO_BUFFER 12
 #define HETERO_JOURNAL 13
 #define HETERO_RADIX 14
+#define HETERO_FULLKERN 15
 
 int global_flag = 0;
 int enbl_hetero_pgcache=0;
 int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
-
+int enbl_hetero_kernel=0;
 
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
@@ -108,6 +109,11 @@ int is_hetero_radix_set(void){
     return enbl_hetero_radix;
 }
 EXPORT_SYMBOL(is_hetero_radix_set);
+
+int is_hetero_kernel_set(void){
+    return enbl_hetero_kernel;
+}
+EXPORT_SYMBOL(is_hetero_kernel_set);
 
 
 /* start trace system call */
@@ -132,6 +138,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_buffer = 0; 
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
+            enbl_hetero_kernel = 0;
 	    break;
 
 	case COLLECT_TRACE:
@@ -205,6 +212,10 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	case HETERO_RADIX:
 	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
 	    enbl_hetero_radix = 1;
+	    break;
+	case HETERO_FULLKERN:
+	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
+	    enbl_hetero_kernel = 1;
 	    break;
 	default:
 	    break;
