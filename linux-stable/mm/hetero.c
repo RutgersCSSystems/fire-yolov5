@@ -214,7 +214,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_radix = 1;
 	    break;
 	case HETERO_FULLKERN:
-	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
+	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
 	    enbl_hetero_kernel = 1;
 	    break;
 	default:

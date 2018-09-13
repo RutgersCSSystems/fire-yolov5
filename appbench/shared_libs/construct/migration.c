@@ -32,6 +32,7 @@
 #define HETERO_BUFFER 12
 #define HETERO_JOURNAL 13
 #define HETERO_RADIX 14
+#define HETERO_FULLKERN 15
 
 static int setinit;
 
@@ -72,6 +73,7 @@ void con() {
         a = syscall(__NR_start_trace, HETERO_BUFFER);
         a = syscall(__NR_start_trace, HETERO_JOURNAL);
         a = syscall(__NR_start_trace, HETERO_RADIX);
+        a = syscall(__NR_start_trace, HETERO_FULLKERN);
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
