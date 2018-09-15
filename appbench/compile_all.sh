@@ -42,12 +42,22 @@ cd leveldb
 make clean
 make -j8
 
-cd $BASE
 cd $BASE/apps
 cd fio
 ./configure
 make clean && make -j4 && sudo make install
 
+cd $BASE/apps
+cd memcached
+./autogen.sh
+./configure
+make clean && make -j4 && sudo make install
+
+cd $BASE/apps
+cd memcached_client
+make
+
+cd $BASE
 exit
 
 

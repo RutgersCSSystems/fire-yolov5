@@ -806,6 +806,9 @@ static __always_inline void *kmalloc_hetero_buf(size_t size, gfp_t flags)
 
 static inline void *kmem_cache_zalloc_hetero(struct kmem_cache *k, gfp_t flags)
 {
+	if(!is_hetero_buffer_set()) {
+                return kmem_cache_zalloc(k, flags | __GFP_ZERO);
+        }	
         return kmem_cache_alloc_hetero(k, flags | __GFP_ZERO);
 }
 

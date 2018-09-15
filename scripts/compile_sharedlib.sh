@@ -1,8 +1,7 @@
-#!/bin/bash
-set -x
+FILE=$1
 
-#Compile and install shared library
-cd $CODESRC/shared_libs/construct
-make clean && make
+cd $SHARED_LIBS/construct
+cp "migration_"$1".c" migration.c
+make clean 
+make
 sudo make install
-

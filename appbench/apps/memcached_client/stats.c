@@ -107,16 +107,24 @@ void printGlobalStats(struct config* config) {
   double q95 = findQuantile(&global_stats.response_time, .95);
   double q99 = findQuantile(&global_stats.response_time, .99);
 
+   fprintf(stderr,"SETS:\t %10d \t GETS: \t %10d \r", global_stats.sets, global_stats.gets);
+
+#ifdef _ENABLE_DETAILED
   printf("%10s,%8s,%16s, %8s,%11s,%10s,%13s,%10s,%10s,%10s,%12s,%10s,%10s,%11s,%14s\n", "timeDiff", "rps", "requests", "gets", "sets",  "hits", "misses", "avg_lat", "90th", "95th", "99th", "std", "min", "max", "avgGetSize");
   printf("%10f, %9.1f,  %10d, %10d, %10d, %10d, %10d, %10f, %10f, %10f, %10f, %10f, %10f, %10f, %10f\n", 
 		timeDiff, rps, global_stats.requests, global_stats.gets, global_stats.sets, global_stats.hits, global_stats.misses,
 		1000*getAvg(&global_stats.response_time), 1000*q90, 1000*q95, 1000*q99, 1000*std, 1000*global_stats.response_time.min, 1000*global_stats.response_time.max, getAvg(&global_stats.get_size));
+#endif
+
   int i;
+
+#ifdef _ENABLE_DETAILED
   printf("Outstanding requests per worker:\n");
   for(i=0; i<config->n_workers; i++){
     printf("%d ", config->workers[i]->n_requests);
   } 
   printf("\n");
+#endif
   //Reset stats
   //memset(&global_stats, 0, sizeof(struct memcached_stats));
   //global_stats.response_time.min = 1000000;
@@ -130,6 +138,8 @@ void printGlobalStats(struct config* config) {
 
 //Print out statistics every second
 void statsLoop(struct config* config) {
+
+  fprintf(stderr, "\n\n"); 
 
   pthread_mutex_lock(&stats_lock);
   gettimeofday(&start_time, NULL);

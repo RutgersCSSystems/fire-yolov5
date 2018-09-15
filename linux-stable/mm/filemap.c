@@ -952,10 +952,10 @@ struct page *__page_cache_alloc(gfp_t gfp)
 		do {
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
-#ifdef _ENABLE_PAGECACHE
+#ifdef _ENABLE_HETERO
 			/*Check if we have enable customized HETERO allocation for 
 			page cache*/
-			if (is_hetero_pgcache_set()) {
+			if (is_hetero_kernel_set()) {
 				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
 			        //printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));	
 				allocate_cnt++;
@@ -972,14 +972,55 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 		return page;
 	}
-
 	allocpage = alloc_pages(gfp, 0);
+	//if (global_flag == 4)
+	//	add_to_hashtable_page(allocpage);
+
+	return allocpage;
+}
+EXPORT_SYMBOL(__page_cache_alloc);
+
+
+struct page *__page_cache_alloc_hetero(gfp_t gfp)
+{
+	int n;
+	struct page *page, *allocpage = NULL;
+
+	if (cpuset_do_page_mem_spread()) {
+		unsigned int cpuset_mems_cookie;
+		do {
+			cpuset_mems_cookie = read_mems_allowed_begin();
+			n = cpuset_mem_spread_node();
+			/*Check if we have enable customized HETERO allocation for 
+			page cache*/
+			if (is_hetero_pgcache_set()) {
+				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+			        //printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));	
+				allocate_cnt++;
+			}
+			else {
+				page = __alloc_pages_node(n, gfp, 0);
+	                }
+			//if (global_flag == PFN_TRACE)
+			//	add_to_hashtable_page(page);
+		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
+
+		return page;
+	}
+
+        if(!allocpage && is_hetero_pgcache_set()) 
+	        allocpage = alloc_pages_hetero(gfp, 0);
+
+        if(!allocpage) {
+              allocpage = __page_cache_alloc(gfp);
+        }
 	//if (global_flag == 4)
 	//	add_to_hashtable_page(allocpage);
 	return allocpage;
 }
-EXPORT_SYMBOL(__page_cache_alloc);
+EXPORT_SYMBOL(__page_cache_alloc_hetero);
 #endif
+
 
 /*
  * In order to wait for pages to become available there must be
@@ -1608,6 +1649,14 @@ no_page:
 			gfp_mask |= __GFP_WRITE;
 		if (fgp_flags & FGP_NOFS)
 			gfp_mask &= ~__GFP_FS;
+
+#ifdef _ENABLE_HETERO
+                page = NULL;
+                if (is_hetero_pgcache_set()) {
+                        page = __page_cache_alloc_hetero(gfp_mask);
+                }
+                if(!page)
+#endif
 
 		page = __page_cache_alloc(gfp_mask);
 		//if (global_flag == PFN_TRACE)
@@ -2420,6 +2469,12 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
 	int ret;
 
 	do {
+#ifdef _ENABLE_HETERO
+                if (is_hetero_pgcache_set()) {
+                        page = __page_cache_alloc_hetero(gfp_mask);
+                }
+                if(!page)
+#endif
 		page = __page_cache_alloc(gfp_mask);
 		if (!page)
 			return -ENOMEM;
@@ -2827,6 +2882,13 @@ static struct page *do_read_cache_page(struct address_space *mapping,
 repeat:
 	page = find_get_page(mapping, index);
 	if (!page) {
+#ifdef _ENABLE_HETERO
+                page = NULL;
+                if (is_hetero_pgcache_set()) {
+                        page = __page_cache_alloc_hetero(gfp);
+                }
+                if(!page)
+#endif
 		page = __page_cache_alloc(gfp);
 		if (!page)
 			return ERR_PTR(-ENOMEM);

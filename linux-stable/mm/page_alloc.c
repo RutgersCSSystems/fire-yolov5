@@ -73,6 +73,8 @@
 #include <asm/div64.h>
 #include "internal.h"
 
+#include <linux/hetero.h>
+
 extern int global_flag;
 
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */

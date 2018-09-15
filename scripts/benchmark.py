@@ -10,8 +10,17 @@ SCRIPTS=os.environ['SCRIPTS']
 INFILE=os.environ['INPUTXML']
 QUARTZ=os.environ['QUARTZ']
 OUTDIR=os.environ['OUTPUTDIR']
+SHAREDLIB=os.environ['SHARED_LIBS']
 tree = ET.parse(INFILE)
 root = tree.getroot()
+
+############# Check the tests that are enabled #############
+benchmarks = []
+for child in root.findall('benchmarks'):
+    for subchild in child:
+        benchmarks.append(subchild.text)
+
+
 
 def setup():
     os.system("scripts/set_appbench.sh")
@@ -30,17 +39,17 @@ def makedb():
     os.system("killall -9 redis-server")
     os.system("killall -9 redis-benchmark")
     os.system("killall -9 wc")
-    os.system("sleep 5")
+    #os.system("sleep 5")
 
-    os.system("killall -9 fio")
-    os.system("killall -9 run.sh") 
-    os.system("killall -9 runapps.sh") 
-    os.system("killall -9 pagerank") 
-    os.system("killall -9 db_bench")
-    os.system("killall -9 redis-server")
-    os.system("killall -9 redis-benchmark")
-    os.system("killall -9 wc")
-    os.system("sleep 5")
+    #os.system("killall -9 fio")
+    #os.system("killall -9 run.sh") 
+    #os.system("killall -9 runapps.sh") 
+    #os.system("killall -9 pagerank") 
+    #os.system("killall -9 db_bench")
+    #os.system("killall -9 redis-server")
+    #os.system("killall -9 redis-benchmark")
+    #os.system("killall -9 wc")
+    #os.system("sleep 5")
 
     
     #Set up interrupt
@@ -179,31 +188,37 @@ class ParamTest:
         """
 
     # Vary num elements (keys) from base num-elements to num-elements * 2 * num_tests
-    def run_membw_test(self, params):
+    def run_membw_test(self, params, bench):
 
         count=int(self.membw)      
              
         for loop in range(0, int(self.num_tests)):
             self.num_str = "--num=" + str(count)
-
 	    #Set the output director
-            output = OUTDIR + "/membw_allkernalloc_slowdown_" + str(count)
+            output = OUTDIR + "/" + bench + "_membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']
 	    throttle(count)	
             self.runapp(APP, count)
             count = count * int(self.xincr) 
-            print count;     
+            print output;     
 
 
+    def run_max_bw_test(self, params, bench): 
 	count = 10000
-        output = OUTDIR + "/membw_fullkernel_slowdown_" + str(count)
+        output = OUTDIR + "/" + bench + "_membw_" + str(count)
         os.environ['OUTPUTDIR'] = output
         print os.environ['OUTPUTDIR']
         throttle(count)
         self.runapp(APP, count)
         print count;
+
+
+    def compile_sharedlib(self, bench):
+        SHARED_LIB_APP=SCRIPTS + "/compile_sharedlib.sh"
+        print SHARED_LIB_APP + " " + bench
+        os.system(SHARED_LIB_APP + " " + bench)
 
 def main():
 
@@ -214,9 +229,12 @@ def main():
 
     if is_membw_test:
         p.setvals(membw_test)
-        p.run_membw_test(membw_test)
 
-    print " "   
+        for i in range(0, len(benchmarks)):
+            p.compile_sharedlib(str(benchmarks[i]))
+            p.run_membw_test(membw_test, str(benchmarks[i]))
+            #p.run_max_bw_test(membw_test, str(benchmarks[i]))
+      
 
 # MAke database 
 #setup()

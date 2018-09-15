@@ -42,6 +42,7 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
 	echo "running $APP..."
@@ -67,14 +68,19 @@ if [ -z "$4" ]
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
-        exit
 
 	APPBASE=$APPBENCH/leveldb
 	APP=leveldb
 	echo "running $APP..."
 	RUNAPP
 
-	exit
+	APPBASE=$APPBENCH/apps/memcached_client
+	APP=memcached
+	echo "running $APP..."
+	RUNAPP
+
+
+        exit
 
 	#APPBASE=$APPBENCH/memcached
 	#APP=memcached

@@ -33,6 +33,7 @@ sudo apt-get -y install libssl-dev
 sudo apt-get install -y libgflags-dev
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y libbz2-dev
+sudo apt-get install -y libevent-dev
 }
 
 INSTALL_GFLAGS(){
@@ -59,6 +60,8 @@ git clone https://github.com/SudarsunKannan/leveldb
 mkdir $APPBENCH/apps
 cd $APPBENCH/apps
 git clone https://github.com/SudarsunKannan/fio
+cd $APPBENCH/apps
+git clone https://github.com/memcached/memcached.git
 }
 
 INSTALL_SYSTEM_LIBS

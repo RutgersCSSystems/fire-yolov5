@@ -2096,10 +2096,35 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 	if (pol->mode == MPOL_INTERLEAVE)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
 	else {
-#ifdef _ENABLE_PAGECACHE
+		page = __alloc_pages_nodemask(gfp, order,
+				policy_node(gfp, pol, numa_node_id()),
+				policy_nodemask(gfp, pol));
+	}
+	return page;
+}
+EXPORT_SYMBOL(alloc_pages_current);
+
+
+#ifdef _ENABLE_HETERO
+/*Heterogeneous Memory allocation. Use it only for kernel data structures*/
+struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
+{
+	struct mempolicy *pol = &default_policy;
+	struct page *page;
+
+	if (!in_interrupt() && !(gfp & __GFP_THISNODE))
+		pol = get_task_policy(current);
+
+	/*
+	 * No reference counting needed for current->mempolicy
+	 * nor system default_policy
+	 */
+	if (pol->mode == MPOL_INTERLEAVE)
+		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
+	else {
                 /*Check if we have enable customized HETERO allocation for
                 page cache*/
-		if (is_hetero_pgcache_set()) {
+		if (is_hetero_kernel_set()) {
 			page = __alloc_pages_nodemask(gfp, order,
 				NUMA_HETERO_NODE,
 				policy_nodemask(gfp, pol));
@@ -2110,15 +2135,12 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 			page = __alloc_pages_nodemask(gfp, order,
 				policy_node(gfp, pol, numa_node_id()),
 				policy_nodemask(gfp, pol));
-#else 
-		page = __alloc_pages_nodemask(gfp, order,
-				policy_node(gfp, pol, numa_node_id()),
-				policy_nodemask(gfp, pol));
-#endif 
 	}
 	return page;
 }
-EXPORT_SYMBOL(alloc_pages_current);
+EXPORT_SYMBOL(alloc_pages_current_hetero);
+#endif
+
 
 int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)
 {
