@@ -449,7 +449,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		if (nr_iovecs > UIO_MAXIOV)
 			return NULL;
 #ifdef _ENABLE_HETERO
-		p = kmalloc_hetero_buf(sizeof(struct bio) +
+		p = kmalloc_hetero(sizeof(struct bio) +
 			    nr_iovecs * sizeof(struct bio_vec),
 			    gfp_mask);
 #else 

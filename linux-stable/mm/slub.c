@@ -2760,24 +2760,16 @@ static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
 {
-	printk(KERN_ALERT "Calling kmem_cache_alloc_hetero \n");
+        if(!is_hetero_buffer_set()) {
+                return kmem_cache_alloc(s, gfpflags); 
+        }
+	//printk(KERN_ALERT "kmem_cache_alloc_hetero \n");
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc_hetero);
-
-
-void *kmem_cache_alloc_hetero_buf(struct kmem_cache *s, gfp_t gfpflags)
-{
-	//printk(KERN_ALERT "Calling kmem_cache_alloc_hetero \n");
-	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
-	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
-				s->size, gfpflags);
-	return ret;
-}
-EXPORT_SYMBOL(kmem_cache_alloc_hetero_buf);
 #endif
 
 
@@ -2785,7 +2777,7 @@ void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 {
 
 #ifdef _ENABLE_HETERO
-        if(is_hetero_kernel_set())
+        if(is_hetero_buffer_set())
             return kmem_cache_alloc_hetero(s, gfpflags);
 #endif
 	void *ret = slab_alloc(s, gfpflags, _RET_IP_);
@@ -3843,6 +3835,8 @@ void *__kmalloc_hetero(size_t size, gfp_t flags)
 
 	if (unlikely(ZERO_OR_NULL_PTR(s)))
 		return s;
+
+        //printk(KERN_ALERT "__kmalloc_hetero called \n");
 
 	ret = slab_alloc_hetero(s, flags, _RET_IP_);
 

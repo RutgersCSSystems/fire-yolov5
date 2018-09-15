@@ -513,7 +513,7 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
 {
 
 #ifdef _ENABLE_HETERO
-        if(is_hetero_kernel_set())
+        if(is_hetero_buffer_set())
             return kmalloc_hetero(size, flags);
 #endif
 
@@ -710,7 +710,7 @@ extern void *__kmalloc_node_track_caller(size_t, gfp_t, int, unsigned long);
 static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 {
 #ifdef _ENABLE_HETERO
-        if(is_hetero_kernel_set())
+        if(is_hetero_buffer_set())
             return kmem_cache_zalloc_hetero(k, flags);
 #endif
 	return kmem_cache_alloc(k, flags | __GFP_ZERO);
@@ -726,7 +726,7 @@ static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 static inline void *kzalloc(size_t size, gfp_t flags)
 {
 #ifdef _ENABLE_HETERO
-        if(is_hetero_kernel_set())
+        if(is_hetero_buffer_set())
             return kzalloc_hetero(size, flags);
 #endif
 	return kmalloc(size, flags | __GFP_ZERO);
@@ -759,6 +759,12 @@ int slab_dead_cpu(unsigned int cpu);
 
 static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 {
+
+	/* If hetero_buffer not set, then continue in the default path*/
+       if(!is_hetero_buffer_set()) {
+           return kmalloc(size, flags);
+	}
+
 	if (__builtin_constant_p(size)) {
 		if (size > KMALLOC_MAX_CACHE_SIZE)
 			return kmalloc_large(size, flags);
@@ -778,11 +784,11 @@ static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 }
 
 /* This function is used for kernel structures and data structures buffer memory*/
-static __always_inline void *kmalloc_hetero_buf(size_t size, gfp_t flags)
+static __always_inline void *kmalloc_hetero_buff(size_t size, gfp_t flags)
 {
 
 	/* If hetero_buffer not set, then continue in the default path*/
-       if(!is_hetero_buffer_set()) {
+       if(is_hetero_buffer_set()) {
            return kmalloc_hetero(size, flags);
 	}
 
@@ -801,26 +807,19 @@ static __always_inline void *kmalloc_hetero_buf(size_t size, gfp_t flags)
 		}
 #endif
 	}
+        //printk(KERN_ALERT "kmalloc_hetero \n");
 	return __kmalloc_hetero(size, flags);
 }
 
-static inline void *kmem_cache_zalloc_hetero(struct kmem_cache *k, gfp_t flags)
-{
-	if(!is_hetero_buffer_set()) {
-                return kmem_cache_zalloc(k, flags | __GFP_ZERO);
-        }	
-        return kmem_cache_alloc_hetero(k, flags | __GFP_ZERO);
-}
-
 /*Allocations specifically used for kernel structures and data structure buffers */
-static inline void *kmem_cache_zalloc_hetero_buf(struct kmem_cache *k, gfp_t flags)
+static inline void *kmem_cache_zalloc_hetero(struct kmem_cache *k, gfp_t flags)
 {
         /* If hetero_buffer not set, then continue in the default path*/
        if(!is_hetero_buffer_set()) {
            return kmem_cache_zalloc(k, flags | __GFP_ZERO);
         }
-
-        return kmem_cache_alloc_hetero_buf(k, flags | __GFP_ZERO);
+        //printk(KERN_ALERT "kmem_cache_zalloc_hetero \n");
+        return kmem_cache_alloc_hetero(k, flags | __GFP_ZERO);
 }
 
 static inline void *kzalloc_hetero(size_t size, gfp_t flags)
@@ -834,8 +833,8 @@ static inline void *kzalloc_hetero_buf(size_t size, gfp_t flags)
        if(!is_hetero_buffer_set()) {
            return kzalloc(size, flags | __GFP_ZERO);
         }
-
-	return kmalloc_hetero_buf(size, flags | __GFP_ZERO);
+        //printk(KERN_ALERT "kzalloc_hetero_buf \n");
+	return kmalloc_hetero(size, flags | __GFP_ZERO);
 }
 #endif
 

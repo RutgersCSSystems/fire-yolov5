@@ -92,26 +92,31 @@ int enbl_hetero_kernel=0;
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
     return enbl_hetero_pgcache;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
     return enbl_hetero_buffer;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
 int is_hetero_journ_set(void){
     return enbl_hetero_journal;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_journ_set);
 
 int is_hetero_radix_set(void){
     return enbl_hetero_radix;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_radix_set);
 
 int is_hetero_kernel_set(void){
     return enbl_hetero_kernel;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_kernel_set);
 

@@ -379,7 +379,7 @@ skip:
 	}
 
 #ifdef ENABLE_HETERO 
-	mmpd_data = kmalloc_hetero_buf(sizeof(*mmpd_data), GFP_KERNEL);
+	mmpd_data = kmalloc_hetero(sizeof(*mmpd_data), GFP_KERNEL);
 #else 
 	mmpd_data = kmalloc(sizeof(*mmpd_data), GFP_KERNEL);
 #endif

@@ -11,7 +11,7 @@ export PARA="-j40"
 export VER="4.17.0"
 
 #QEMU
-export QEMU_IMG=/home/joo
+export QEMU_IMG=$PWD
 export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="4096M"

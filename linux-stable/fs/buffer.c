@@ -3399,7 +3399,7 @@ EXPORT_SYMBOL(alloc_buffer_head);
 struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
 {
         //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
-        struct buffer_head *ret = kmem_cache_zalloc_hetero_buf(bh_cachep, gfp_flags);
+        struct buffer_head *ret = kmem_cache_zalloc_hetero(bh_cachep, gfp_flags);
         if (ret) {
                 INIT_LIST_HEAD(&ret->b_assoc_buffers);
                 preempt_disable();
