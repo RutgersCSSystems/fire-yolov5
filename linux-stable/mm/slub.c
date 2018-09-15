@@ -2760,7 +2760,7 @@ static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
 {
-	//printk(KERN_ALERT "Calling kmem_cache_alloc_hetero \n");
+	printk(KERN_ALERT "Calling kmem_cache_alloc_hetero \n");
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);
