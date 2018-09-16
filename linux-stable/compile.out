@@ -1,341 +1,66 @@
+scripts/kconfig/conf  --syncconfig Kconfig
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
+  CHK     include/generated/utsrelease.h
   CHK     scripts/mod/devicetable-offsets.h
+  CHK     include/generated/bounds.h
+  CHK     include/generated/timeconst.h
+  CHK     include/generated/asm-offsets.h
+  CALL    scripts/checksyscalls.sh
+  CHK     include/generated/compile.h
+  Building modules, stage 2.
+  MODPOST 20 modules
+  DATAREL arch/x86/boot/compressed/vmlinux
+Kernel: arch/x86/boot/bzImage is ready  (#38)
+  CHK     include/config/kernel.release
+  CHK     include/generated/uapi/linux/version.h
   CHK     include/generated/utsrelease.h
   CHK     include/generated/bounds.h
   CHK     include/generated/timeconst.h
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
-  CC      arch/x86/events/msr.o
-  CHK     include/generated/compile.h
-  CC      init/do_mounts_initrd.o
-  CC      init/do_mounts_md.o
-  CC      init/initramfs.o
-  CC      init/init_task.o
-  CC      ipc/shm.o
-  AR      arch/x86/crypto/built-in.a
-  CC      arch/x86/mm/ioremap.o
-  LD [M]  arch/x86/crypto/aes-x86_64.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
-  CC [M]  sound/sound_core.o
-  CC      arch/x86/xen/enlighten.o
-  LD [M]  arch/x86/crypto/camellia-x86_64.o
-  CC [M]  drivers/auxdisplay/charlcd.o
-  LD [M]  arch/x86/crypto/blowfish-x86_64.o
-  CC      arch/x86/mm/extable.o
-  CC [M]  drivers/block/paride/paride.o
-  CC [M]  drivers/block/aoe/aoeblk.o
-  CC [M]  drivers/atm/zatm.o
-  CC [M]  drivers/block/paride/aten.o
-  LD [M]  arch/x86/crypto/twofish-x86_64.o
-  CC      security/keys/key.o
-  CC      drivers/base/component.o
-  CC      arch/x86/events/intel/lbr.o
-  LD [M]  arch/x86/crypto/twofish-x86_64-3way.o
-  CC      fs/char_dev.o
-  CC      kernel/sysctl.o
-  CC      drivers/acpi/tables.o
-  CC [M]  arch/x86/crypto/salsa20_glue.o
-  CC      mm/page_alloc.o
-  CC      drivers/block/brd.o
-  CC [M]  drivers/bcma/main.o
-  CC      security/integrity/evm/evm_crypto.o
-  CC      drivers/ata/libata-core.o
-  CC      block/bio.o
-  CC      security/apparmor/capability.o
-  CC      arch/x86/kernel/dumpstack.o
-  CC      crypto/api.o
-  CC [M]  sound/ac97_bus.o
-mm/page_alloc.c: In function ‘__alloc_pages_nodemask_hetero’:
-mm/page_alloc.c:4448:1: warning: label ‘out’ defined but not used [-Wunused-label]
- out:
- ^
-  CC      crypto/cipher.o
-  CC      drivers/acpi/blacklist.o
-  CC      arch/x86/events/intel/p4.o
-  CC      crypto/compress.o
-  CC      drivers/base/core.o
-  CC [M]  drivers/auxdisplay/ks0108.o
-  CC [M]  drivers/block/aoe/aoechr.o
-  CC      ipc/syscall.o
-  CC      security/keys/keyring.o
-  CC      drivers/acpi/osi.o
-  CC      fs/stat.o
-  CC      arch/x86/kernel/nmi.o
-  CC      fs/exec.o
-  CC [M]  drivers/auxdisplay/cfag12864b.o
-  CC [M]  drivers/auxdisplay/cfag12864bfb.o
-  CC      ipc/ipc_sysctl.o
-  CC [M]  sound/core/sound.o
-  CC      ipc/mqueue.o
-  CC [M]  drivers/block/aoe/aoecmd.o
-  CC [M]  drivers/block/paride/bpck.o
-  CC      drivers/acpi/osl.o
-  CC      security/integrity/evm/evm_secfs.o
-  CC      kernel/sysctl_binary.o
-  CC      security/keys/keyctl.o
-  CC      security/keys/permission.o
-  CC      security/integrity/evm/evm_posix_acl.o
-  CC      arch/x86/kernel/ldt.o
-  CC      drivers/base/bus.o
-  CC [M]  drivers/block/paride/comm.o
-  CC      drivers/base/dd.o
-  CC [M]  arch/x86/crypto/serpent_sse2_glue.o
-  AR      security/integrity/evm/built-in.a
-  CC [M]  drivers/auxdisplay/panel.o
-  CC      security/integrity/ima/ima_fs.o
-  CC      arch/x86/mm/pageattr.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/irqchip.o
-  CC [M]  sound/drivers/dummy.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/vfio.o
-  CC [M]  sound/firewire/lib.o
-  CC [M]  arch/x86/crypto/aesni-intel_glue.o
-  CC      security/integrity/ima/ima_queue.o
-  CC [M]  sound/firewire/iso-resources.o
-  CC [M]  drivers/block/paride/dstr.o
-  CC      ipc/namespace.o
-  CC [M]  drivers/block/paride/kbic.o
-  CC      drivers/block/loop.o
-  CC [M]  drivers/bcma/scan.o
-  CC [M]  drivers/block/paride/epat.o
-  CC      arch/x86/events/intel/p6.o
-  CC      fs/pipe.o
-  CC [M]  drivers/block/paride/epia.o
-  CC      fs/namei.o
-  CC      security/integrity/ima/ima_init.o
-  CC [M]  drivers/block/aoe/aoedev.o
-  CC      drivers/base/syscore.o
-  CC      drivers/base/driver.o
-  CC [M]  drivers/bcma/core.o
-  AR      init/built-in.a
-  CC [M]  drivers/bcma/sprom.o
-  CC      fs/fcntl.o
-  CC      arch/x86/events/intel/pt.o
-  CC      security/integrity/ima/ima_main.o
-  CC [M]  sound/drivers/aloop.o
-  CC [M]  sound/drivers/virmidi.o
-  CC      drivers/base/class.o
-  CC      arch/x86/xen/multicalls.o
-  CC [M]  sound/firewire/packets-buffer.o
-  CC [M]  sound/core/init.o
-  CC [M]  drivers/block/aoe/aoemain.o
-  CC [M]  drivers/block/paride/frpw.o
-  CC      drivers/ata/libata-scsi.o
-  CC      mm/page-writeback.o
-  CC [M]  drivers/block/paride/friq.o
-  CC      crypto/memneq.o
-  CC [M]  drivers/block/paride/fit2.o
-  CC [M]  drivers/bcma/driver_chipcommon.o
-  CC      arch/x86/mm/mmap.o
-  CC      ipc/mq_sysctl.o
-  CC [M]  drivers/block/aoe/aoenet.o
-  CC      security/apparmor/task.o
-  CC      arch/x86/events/intel/rapl.o
-  CC [M]  sound/drivers/serial-u16550.o
-  CC [M]  sound/drivers/mtpav.o
-  CC      drivers/acpi/utils.o
-  CC [M]  sound/firewire/fcp.o
-  CC      drivers/acpi/reboot.o
-  CC      arch/x86/mm/pat.o
-  CC      security/keys/process_keys.o
-  CC [M]  drivers/bcma/driver_chipcommon_pmu.o
-  CC      arch/x86/kernel/setup.o
-  CC      arch/x86/mm/pgtable.o
-  CC      arch/x86/kernel/x86_init.o
-  LD [M]  drivers/block/aoe/aoe.o
-  AR      ipc/built-in.a
-  CC      arch/x86/kernel/i8259.o
-  CC      arch/x86/kernel/irqinit.o
-  CC      arch/x86/kernel/jump_label.o
-  CC      arch/x86/xen/mmu.o
-  CC      security/apparmor/lib.o
-  CC      security/integrity/ima/ima_crypto.o
-  CC      arch/x86/xen/irq.o
-  CC      crypto/crypto_wq.o
-  CC [M]  sound/firewire/cmp.o
-  CC      drivers/acpi/nvs.o
-  CC      arch/x86/events/intel/uncore.o
-  CC      arch/x86/events/intel/uncore_nhmex.o
-  CC      arch/x86/events/intel/uncore_snb.o
-  CC      mm/readahead.o
-  CC [M]  drivers/bcma/driver_chipcommon_b.o
-  CC      crypto/algapi.o
-  CC      drivers/acpi/wakeup.o
-  CC [M]  drivers/atm/uPD98402.o
-  CC      security/integrity/ima/ima_api.o
-  CC      arch/x86/mm/physaddr.o
-  CC      security/apparmor/match.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/async_pf.o
-  CC      drivers/ata/libata-eh.o
-  CC      drivers/ata/libata-transport.o
-  CC      drivers/acpi/sleep.o
-  CC      block/elevator.o
-  CC      drivers/ata/libata-trace.o
-  CC [M]  sound/firewire/amdtp-stream.o
-  CC      block/blk-core.o
-  CC [M]  drivers/block/paride/fit3.o
-  CC      block/blk-tag.o
-  CC      block/blk-sysfs.o
-  CC [M]  drivers/bcma/driver_chipcommon_sflash.o
-  CC      mm/swap.o
-  CC      arch/x86/mm/tlb.o
-  CC [M]  drivers/bcma/driver_pci.o
-  CC      kernel/capability.o
-  CC      security/integrity/ima/ima_policy.o
-  CC      security/keys/request_key.o
-  CC [M]  drivers/block/paride/on20.o
-  CC [M]  drivers/block/paride/on26.o
-  CC [M]  sound/core/memory.o
-  CC [M]  arch/x86/crypto/fpu.o
-  CC [M]  sound/drivers/mts64.o
-  CC [M]  drivers/atm/nicstar.o
-  CC [M]  drivers/atm/ambassador.o
-  CC      kernel/ptrace.o
-  CC      kernel/user.o
-  CC [M]  arch/x86/kvm/x86.o
-  CC [M]  arch/x86/crypto/ghash-clmulni-intel_glue.o
-  CC      arch/x86/kernel/irq_work.o
-  CC [M]  sound/drivers/portman2x4.o
-  CC      security/integrity/ima/ima_template.o
-  CC      crypto/scatterwalk.o
-  CC [M]  drivers/bcma/driver_pcie2.o
-  CC      arch/x86/xen/time.o
-  CC [M]  drivers/bcma/driver_gmac_cmn.o
-  CC [M]  drivers/block/paride/ktti.o
-  CC [M]  drivers/block/paride/pd.o
-  CC      security/integrity/ima/ima_template_lib.o
-  CC [M]  sound/drivers/mpu401/mpu401_uart.o
-  CC      security/integrity/ima/ima_appraise.o
-  CC [M]  arch/x86/crypto/sha1_ssse3_glue.o
-  CC      drivers/base/platform.o
-  CC      security/selinux/avc.o
-  CC [M]  sound/core/control.o
-  CC      arch/x86/kernel/probe_roms.o
-  CC      arch/x86/pci/i386.o
-  CC      security/apparmor/path.o
-  CC      arch/x86/pci/init.o
-  CC      crypto/proc.o
-  CC      security/apparmor/domain.o
-  CC      drivers/ata/libata-sff.o
-  CC [M]  sound/firewire/amdtp-am824.o
-  CC      drivers/ata/libata-pmp.o
-  AR      security/integrity/ima/built-in.a
-  AR      security/integrity/built-in.a
-  CC [M]  drivers/bcma/driver_gpio.o
-  CC      security/keys/request_key_auth.o
-  CC      security/keys/user_defined.o
-  CC      security/keys/compat.o
-  CC [M]  sound/drivers/mpu401/mpu401.o
-  CC      crypto/aead.o
-  CC      crypto/ablkcipher.o
-  CC [M]  drivers/block/paride/pcd.o
-  CC [M]  drivers/block/paride/pf.o
-  CC      drivers/block/virtio_blk.o
-  CC      arch/x86/events/intel/uncore_snbep.o
-  CC [M]  arch/x86/crypto/crc32-pclmul_glue.o
-  LD [M]  sound/drivers/mpu401/snd-mpu401-uart.o
-  CC      crypto/blkcipher.o
-  LD [M]  sound/drivers/mpu401/snd-mpu401.o
-  CC [M]  sound/drivers/opl3/opl3_lib.o
-  CC [M]  sound/drivers/opl3/opl3_synth.o
-  CC [M]  sound/firewire/isight.o
-  CC [M]  sound/hda/hda_bus_type.o
-  CC [M]  sound/hda/hdac_bus.o
-  CC [M]  sound/hda/hdac_device.o
-  CC [M]  arch/x86/crypto/sha256_ssse3_glue.o
-  CC      security/keys/proc.o
-  CC [M]  sound/core/misc.o
-  CC      fs/ioctl.o
-  CC      fs/readdir.o
-  CC [M]  arch/x86/crypto/sha512_ssse3_glue.o
-  CC      kernel/signal.o
-  CC [M]  sound/firewire/dice/dice-transaction.o
-  CC      arch/x86/xen/grant-table.o
-  CC      arch/x86/xen/suspend.o
-  CC      security/apparmor/policy.o
-  CC      security/apparmor/policy_unpack.o
-  CC      mm/truncate.o
-  CC      mm/vmscan.o
-  CC      arch/x86/mm/pat_rbtree.o
-  CC [M]  arch/x86/crypto/crct10dif-pclmul_glue.o
-  CC      drivers/ata/libata-acpi.o
-  CC      drivers/ata/libata-zpodd.o
-  CC [M]  sound/firewire/dice/dice-stream.o
-  CC [M]  sound/hda/hdac_sysfs.o
-  CC [M]  sound/i2c/cs8427.o
-  CC      crypto/skcipher.o
-  CC      drivers/acpi/device_sysfs.o
-  CC      drivers/acpi/device_pm.o
-  CC      arch/x86/events/intel/cstate.o
-  CC      fs/select.o
-  CC [M]  drivers/block/paride/pt.o
-  CC      arch/x86/mm/hugetlbpage.o
-  CC [M]  sound/hda/hdac_regmap.o
-  CC      security/keys/sysctl.o
-  CC [M]  sound/hda/hdac_controller.o
-  CC [M]  sound/hda/hdac_stream.o
-  CC      arch/x86/xen/platform-pci-unplug.o
-  AR      arch/x86/events/intel/built-in.a
-  CC      arch/x86/mm/kmmio.o
-  AR      arch/x86/events/built-in.a
-  CC      drivers/ata/ata_piix.o
-  CC      drivers/ata/pata_sis.o
-  CC      drivers/ata/ata_generic.o
-  CC [M]  sound/drivers/opl3/opl3_seq.o
-  CC [M]  arch/x86/crypto/camellia_aesni_avx_glue.o
-  CC [M]  sound/firewire/dice/dice-proc.o
-  CC [M]  drivers/bcma/host_pci.o
-  CC      crypto/seqiv.o
-  CC      arch/x86/kernel/sys_x86_64.o
-  CC [M]  sound/firewire/dice/dice-midi.o
-  CC [M]  sound/firewire/dice/dice-pcm.o
-  CC      arch/x86/pci/mmconfig_64.o
-  CC [M]  sound/firewire/dice/dice-hwdep.o
-  CC      arch/x86/xen/enlighten_hvm.o
-  CC      arch/x86/xen/mmu_hvm.o
-  CC [M]  sound/drivers/opl3/opl3_midi.o
-  CC [M]  sound/drivers/opl3/opl3_drums.o
-  CC [M]  sound/hda/array.o
-  CC [M]  arch/x86/crypto/cast5_avx_glue.o
-  CC      drivers/block/xen-blkfront.o
-  CC      security/smack/smack_lsm.o
-  CC      drivers/acpi/proc.o
-  CC      arch/x86/kernel/espfix_64.o
-  CC      drivers/base/cpu.o
-  CC [M]  sound/isa/sb/sb_common.o
-  CC      arch/x86/pci/direct.o
-  CC      arch/x86/mm/pf_in.o
-  CC      arch/x86/pci/mmconfig-shared.o
-  CC      arch/x86/pci/xen.o
-  CC [M]  sound/hda/hdmi_chmap.o
-  CC      arch/x86/pci/fixup.o
-  CC      arch/x86/pci/acpi.o
-  CC [M]  sound/core/device.o
-  LD [M]  sound/drivers/opl3/snd-opl3-lib.o
-  LD [M]  sound/drivers/opl3/snd-opl3-synth.o
-  CC      fs/dcache.o
-  CC      security/keys/persistent.o
-  CC [M]  arch/x86/crypto/cast6_avx_glue.o
-  CC [M]  sound/drivers/pcsp/pcsp.o
-  CC      drivers/acpi/bus.o
-  CC      crypto/ahash.o
-  CC      crypto/shash.o
-  CC      security/keys/big_key.o
-  CC [M]  drivers/bcma/host_soc.o
-  CC      block/blk-flush.o
-  CC [M]  sound/isa/sb/sb_mixer.o
-  CC [M]  arch/x86/crypto/twofish_avx_glue.o
-  CC [M]  sound/drivers/pcsp/pcsp_lib.o
-  CC      arch/x86/power/cpu.o
-  CC [M]  drivers/block/paride/pg.o
-  LD [M]  drivers/bcma/bcma.o
-  CC [M]  arch/x86/crypto/serpent_avx_glue.o
-  CC      security/keys/trusted.o
-  CC      drivers/acpi/glue.o
-  CC [M]  drivers/atm/horizon.o
-  CC [M]  drivers/atm/iphase.o
-  CC [M]  sound/drivers/pcsp/pcsp_mixer.o
-  CC      security/smack/smack_access.o
-  LD [M]  sound/isa/sb/snd-sb-common.o
-  CC [M]  sound/firewire/dice/dice.o
+  DESCEND  objtool
+  CHK     scripts/mod/devicetable-offsets.h
+  Building modules, stage 2.
+  MODPOST 20 modules
+  INSTALL crypto/crypto_engine.ko
+  INSTALL drivers/crypto/virtio/virtio_crypto.ko
+  INSTALL drivers/thermal/x86_pkg_temp_thermal.ko
+  INSTALL fs/efivarfs/efivarfs.ko
+  INSTALL net/ipv4/netfilter/ipt_MASQUERADE.ko
+  INSTALL net/ipv4/netfilter/iptable_nat.ko
+  INSTALL net/ipv4/netfilter/nf_log_arp.ko
+  INSTALL net/ipv4/netfilter/nf_log_ipv4.ko
+  INSTALL net/ipv4/netfilter/nf_nat_ipv4.ko
+  INSTALL net/ipv4/netfilter/nf_nat_masquerade_ipv4.ko
+  INSTALL net/ipv6/netfilter/nf_log_ipv6.ko
+  INSTALL net/netfilter/nf_log_common.ko
+  INSTALL net/netfilter/nf_nat.ko
+  INSTALL net/netfilter/nf_nat_ftp.ko
+  INSTALL net/netfilter/nf_nat_irc.ko
+  INSTALL net/netfilter/nf_nat_sip.ko
+  INSTALL net/netfilter/xt_LOG.ko
+  INSTALL net/netfilter/xt_addrtype.ko
+  INSTALL net/netfilter/xt_mark.ko
+  INSTALL net/netfilter/xt_nat.ko
+  DEPMOD  4.17.0
+sh ./arch/x86/boot/install.sh 4.17.0 arch/x86/boot/bzImage \
+		System.map "/boot"
+run-parts: executing /etc/kernel/postinst.d/apt-auto-removal 4.17.0 /boot/vmlinuz-4.17.0
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 4.17.0 /boot/vmlinuz-4.17.0
+update-initramfs: Generating /boot/initrd.img-4.17.0
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 4.17.0 /boot/vmlinuz-4.17.0
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-4.17.0
+Found initrd image: /boot/initrd.img-4.17.0
+Found linux image: /boot/vmlinuz-4.17.0.old
+Found initrd image: /boot/initrd.img-4.17.0
+Found linux image: /boot/vmlinuz-4.5.4
+Found initrd image: /boot/initrd.img-4.5.4
+Found linux image: /boot/vmlinuz-3.13.0-68-generic
+Found initrd image: /boot/initrd.img-3.13.0-68-generic
+Found memtest86+ image: /boot/memtest86+.elf
+Found memtest86+ image: /boot/memtest86+.bin
+  No volume groups found
+done

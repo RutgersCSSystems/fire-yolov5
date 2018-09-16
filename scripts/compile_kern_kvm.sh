@@ -11,14 +11,14 @@ sudo make x86_64_defconfig
 sudo make kvmconfig 
 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
-sudo make $PARA &> compile.out
-grep -r "error:" compile.out &> errors.out
-sudo make modules &>> compile.out
-grep -r "error:" compile.out &>> errors.out
-sudo make modules_install &>> compile.out
-grep -r "error:" compile.out &>> errors.out
-sudo make install &>> compile.out
-grep -r "error:" compile.out &>> errors.out
+sudo make $PARA &> $KERN_SRC/compile.out
+grep -r "error:" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
+sudo make modules &>> $KERN_SRC/compile.out
+grep -r "error:" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
+sudo make modules_install &>> $KERN_SRC/compile.out
+grep -r "error:" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
+sudo make install &>> $KERN_SRC/compile.out
+grep -r "error:" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 
  y="4.17.0"
    if [[ x$ == x ]];

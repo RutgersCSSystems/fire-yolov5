@@ -2119,17 +2119,24 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 	 * No reference counting needed for current->mempolicy
 	 * nor system default_policy
 	 */
-	if (pol->mode == MPOL_INTERLEAVE)
+	if (pol->mode == MPOL_INTERLEAVE) {
+                printk(KERN_ALERT "%s : %d HETERO \n", __func__, __LINE__);
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
+        }
 	else {
                 /*Check if we have enable customized HETERO allocation for
                 page cache*/
 		if (is_hetero_kernel_set()) {
-			page = __alloc_pages_nodemask(gfp, order,
+			page = __alloc_pages_nodemask_hetero(gfp, order,
 				NUMA_HETERO_NODE,
 				policy_nodemask(gfp, pol));
 			        allocate_counter++;
-		                //printk(KERN_ALERT "alloc_pages_current %d \n", page_to_nid(page));
+				if(!page)
+                                        printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
+						"\n", __func__, __LINE__);
+			        if(page)	
+                                        printk(KERN_ALERT "%s : %d NODE: %d \n",
+						__func__, __LINE__, page_to_nid(page));
 		}
 		else
 			page = __alloc_pages_nodemask(gfp, order,

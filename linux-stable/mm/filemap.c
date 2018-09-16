@@ -958,7 +958,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			page cache*/
 			if (is_hetero_kernel_set()) {
 				page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
-			        printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));	
+                                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
 				allocate_cnt++;
 			}
 			else {
@@ -996,7 +996,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp)
 			page cache*/
 			if (is_hetero_pgcache_set()) {
                                 page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
-			        printk(KERN_ALERT "__page_cache_alloc_hetero PAGECACHE PAGE %d \n", page_to_nid(page));	
+                                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page)); 
 				allocate_cnt++;
 			}
 			else {
@@ -1655,7 +1655,8 @@ no_page:
                 page = NULL;
                 if (is_hetero_pgcache_set()) {
                         page = __page_cache_alloc_hetero(gfp_mask);
-                        printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));
+		        printk(KERN_ALERT "%s : %d Node: %d \n", 
+				__func__, __LINE__, page_to_nid(page)); 
                 }
                 if(!page)
 #endif
@@ -2474,7 +2475,7 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
 #ifdef _ENABLE_HETERO
                 if (is_hetero_pgcache_set()) {
                         page = __page_cache_alloc_hetero(gfp_mask);
-                        printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));
+	                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
                 }
                 if(!page)
 #endif
