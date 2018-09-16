@@ -450,6 +450,7 @@ struct page *
 __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask);
 
+
 static inline struct page *
 __alloc_pages(gfp_t gfp_mask, unsigned int order, int preferred_nid)
 {
@@ -468,6 +469,33 @@ __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
 
 	return __alloc_pages(gfp_mask, order, nid);
 }
+
+
+#ifdef _ENABLE_HETERO
+struct page *
+__alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+							nodemask_t *nodemask);
+
+static inline struct page *
+__alloc_pages_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid)
+{
+        printk(KERN_ALERT "__alloc_pages_hetero preferred_nid %d \n", preferred_nid);
+	return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, NULL);
+}
+
+
+static inline struct page *
+__alloc_pages_hetero_node(int nid, gfp_t gfp_mask, unsigned int order)
+{
+        nid = NUMA_HETERO_NODE;
+        VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
+        VM_WARN_ON((gfp_mask & __GFP_THISNODE) && !node_online(nid));
+
+        printk(KERN_ALERT "__alloc_pages_hetero_node nid %d \n", nid);
+        return __alloc_pages_hetero(gfp_mask, order, nid);
+}
+#endif
+
 
 /*
  * Allocate pages, preferring the node given as nid. When nid == NUMA_NO_NODE,

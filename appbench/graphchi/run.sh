@@ -19,7 +19,7 @@ FlushDisk()
 RUN(){
 rm -rf $SHARED_DATA/$DATA.*
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 8
+echo "edgelist" | numactl --membind=0 /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 8
 export LD_PRELOAD=""
 }
 
