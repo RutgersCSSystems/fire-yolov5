@@ -957,7 +957,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			/*Check if we have enable customized HETERO allocation for 
 			page cache*/
 			if (is_hetero_kernel_set()) {
-				page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+				page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
 			        printk(KERN_ALERT "__page_cache_alloc PAGECACHE PAGE %d \n", page_to_nid(page));	
 				allocate_cnt++;
 			}
@@ -995,7 +995,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp)
 			/*Check if we have enable customized HETERO allocation for 
 			page cache*/
 			if (is_hetero_pgcache_set()) {
-                                page = __alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+                                page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
 			        printk(KERN_ALERT "__page_cache_alloc_hetero PAGECACHE PAGE %d \n", page_to_nid(page));	
 				allocate_cnt++;
 			}

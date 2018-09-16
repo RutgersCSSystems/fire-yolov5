@@ -8,6 +8,9 @@
 #include <linux/linkage.h>
 #include <linux/topology.h>
 
+//HETERO Changes
+#include <linux/hetero.h>
+
 struct vm_area_struct;
 
 /*
@@ -471,7 +474,7 @@ __alloc_pages_node(int nid, gfp_t gfp_mask, unsigned int order)
 }
 
 
-#ifdef _ENABLE_HETERO
+//#ifdef _ENABLE_HETERO
 struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask);
@@ -494,7 +497,7 @@ __alloc_pages_hetero_node(int nid, gfp_t gfp_mask, unsigned int order)
         printk(KERN_ALERT "__alloc_pages_hetero_node nid %d \n", nid);
         return __alloc_pages_hetero(gfp_mask, order, nid);
 }
-#endif
+//#endif
 
 
 /*
