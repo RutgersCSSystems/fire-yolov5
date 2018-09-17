@@ -6,7 +6,7 @@
 #define _ENABLE_HETERO
 
 #ifdef _ENABLE_HETERO
-#define NUMA_HETERO_NODE 0
+#define NUMA_HETERO_NODE 1
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
 /* Buffer allocation */
