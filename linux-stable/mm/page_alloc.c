@@ -4484,9 +4484,9 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         if(!page) {
                 printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
                 return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, nodemask);
-        }else {
+        }/*else {
                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__,page_to_nid(page));
-        }
+        }*/
 out:
 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
 	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {

@@ -41,8 +41,6 @@ trap intexit INT
 
 if [ -z "$4" ]
   then
-
-
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
 	echo "running $APP..."

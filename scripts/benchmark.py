@@ -233,7 +233,7 @@ def main():
         for i in range(0, len(benchmarks)):
             p.compile_sharedlib(str(benchmarks[i]))
             p.run_membw_test(membw_test, str(benchmarks[i]))
-            #p.run_max_bw_test(membw_test, str(benchmarks[i]))
+            p.run_max_bw_test(membw_test, str(benchmarks[i]))
       
 
 # MAke database 

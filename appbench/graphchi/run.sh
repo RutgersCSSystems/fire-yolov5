@@ -4,7 +4,8 @@ DATA=com-orkut.ungraph.txt
 #DATA=soc-LiveJournal1.txt
 INPUT=$SHARED_DATA/$DATA
 APPBASE=$APPBENCH/graphchi/graphchi-cpp/bin/example_apps
-APP=$APPBASE/pagerank
+#APP=$APPBASE/pagerank
+APP=$APPBASE/randomwalks
 PARAM=$1
 OUTPUT=$2
 
@@ -19,7 +20,8 @@ FlushDisk()
 RUN(){
 rm -rf $SHARED_DATA/$DATA.*
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-echo "edgelist" | numactl --membind=0 /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 8
+#/usr/bin/time -v
+echo "edgelist" | numactl --membind=0 $APPPREFIX $APP file $INPUT niters 8
 export LD_PRELOAD=""
 }
 

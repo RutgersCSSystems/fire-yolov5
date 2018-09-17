@@ -956,7 +956,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 #ifdef _ENABLE_HETERO
 			/*Check if we have enable customized HETERO allocation for 
 			page cache*/
-			if (is_hetero_kernel_set()) {
+			if (is_hetero_pgcache_set()) {
 				page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
 				allocate_cnt++;
@@ -1655,8 +1655,8 @@ no_page:
                 page = NULL;
                 if (is_hetero_pgcache_set()) {
                         page = __page_cache_alloc_hetero(gfp_mask);
-		        printk(KERN_ALERT "%s : %d Node: %d \n", 
-				__func__, __LINE__, page_to_nid(page)); 
+		        //printk(KERN_ALERT "%s : %d Node: %d \n", 
+			//	__func__, __LINE__, page_to_nid(page)); 
                 }
                 if(!page)
 #endif
