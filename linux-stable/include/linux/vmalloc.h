@@ -68,6 +68,9 @@ static inline void vmalloc_init(void)
 }
 #endif
 
+extern void *vmalloc_hetero(unsigned long size);
+extern void vfree_hetero(const void *addr);
+
 extern void *vmalloc(unsigned long size);
 extern void *vzalloc(unsigned long size);
 extern void *vmalloc_user(unsigned long size);

@@ -4055,6 +4055,21 @@ void *__kmalloc(size_t size, gfp_t flags)
 }
 EXPORT_SYMBOL(__kmalloc);
 
+/*
+int g_val=0;
+#ifdef _HETERO_MIGRATE
+        void *ret;
+
+        if(!g_val) {
+            ret = vmalloc(size);
+            printk(KERN_ALERT "%s : %d vmalloc: %lu \n",
+                __func__, __LINE__, (unsigned long)ret);
+            g_val = 1;
+            return ret;
+       }
+#endif
+*/
+
 /* heteroOS code */
 #ifdef _ENABLE_HETERO
 void *__kmalloc_hetero(size_t size, gfp_t flags)
@@ -4070,10 +4085,16 @@ void *__kmalloc_hetero(size_t size, gfp_t flags)
 	if (unlikely(ZERO_OR_NULL_PTR(s)))
 		return s;
 
-        //printk(KERN_ALERT "__kmalloc_hetero called \n");
-
 	ret = slab_alloc_hetero(s, flags, _RET_IP_);
 
+//#ifdef _HETERO_MIGRATE
+#if 0
+        struct page *page = virt_to_page(ret);
+        if(page) {
+                printk(KERN_ALERT "%s : %d __kmalloc_hetero: %lu \n",
+	             __func__, __LINE__, (unsigned long)ret);
+        }
+#endif
 	trace_kmalloc(_RET_IP_, ret, size, s->size, flags);
 
 	kasan_kmalloc(s, ret, size, flags);

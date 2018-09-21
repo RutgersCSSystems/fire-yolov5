@@ -1607,6 +1607,24 @@ void vfree(const void *addr)
 }
 EXPORT_SYMBOL(vfree);
 
+
+#ifdef _ENABLE_HETERO
+void vfree_hetero(const void *addr)
+{
+	BUG_ON(in_nmi());
+
+	kmemleak_free(addr);
+
+	if (!addr)
+		return;
+	if (unlikely(in_interrupt()))
+		__vfree_deferred(addr);
+	else
+		__vunmap(addr, 1);
+}
+EXPORT_SYMBOL(vfree_hetero);
+#endif
+
 /**
  *	vunmap  -  release virtual mapping obtained by vmap()
  *	@addr:		memory base address
@@ -1841,6 +1859,17 @@ void *vmalloc(unsigned long size)
 				    GFP_KERNEL);
 }
 EXPORT_SYMBOL(vmalloc);
+
+
+#ifdef _ENABLE_HETERO
+void *vmalloc_hetero(unsigned long size)
+{
+	return __vmalloc_node_flags(size, NUMA_HETERO_NODE,
+				    GFP_KERNEL);
+}
+EXPORT_SYMBOL(vmalloc_hetero);
+#endif
+
 
 /**
  *	vzalloc - allocate virtually contiguous memory with zero fill

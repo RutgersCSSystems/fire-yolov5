@@ -2,8 +2,11 @@
 #ifndef _LINUX_HETERO_H
 #define _LINUX_HETERO_H
 
+#include <linux/vmalloc.h>
+
 /* HeteroOS code */
 #define _ENABLE_HETERO
+#define _HETERO_MIGRATE
 
 #ifdef _ENABLE_HETERO
 #define NUMA_HETERO_NODE 1

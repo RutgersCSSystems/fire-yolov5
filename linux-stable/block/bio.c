@@ -266,8 +266,18 @@ static void bio_free(struct bio *bio)
 
 		mempool_free(p, bs->bio_pool);
 	} else {
-		/* Bio was allocated by bio_kmalloc() */
-		kfree(bio);
+#ifdef _ENABLE_HETERO       
+                if(is_hetero_buffer_set()) {
+#ifdef _HETERO_MIGRATE
+		        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			vfree_hetero(bio);
+#else
+			kfree(bio);
+#endif
+		}else
+#endif
+		        /* Bio was allocated by bio_kmalloc() */
+		        kfree(bio);
 	}
 }
 
@@ -449,14 +459,26 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		if (nr_iovecs > UIO_MAXIOV)
 			return NULL;
 #ifdef _ENABLE_HETERO
-		p = kmalloc_hetero(sizeof(struct bio) +
+                p = NULL;
+		if(is_hetero_buffer_set()) {
+
+#ifdef _HETERO_MIGRATE
+		        printk(KERN_ALERT "%s : %d size %d \n",
+				 __func__, __LINE__, sizeof(struct bio) + 
+				nr_iovecs * sizeof(struct bio_vec));
+                        p = vmalloc_hetero(sizeof(struct bio) + nr_iovecs * sizeof(struct bio_vec)); 
+			if(!p)
+#endif
+		        p = kmalloc_hetero(sizeof(struct bio) +
 			    nr_iovecs * sizeof(struct bio_vec),
 			    gfp_mask);
-#else 
+		}
+	      	if(!p)
+#endif
 		p = kmalloc(sizeof(struct bio) +
 			    nr_iovecs * sizeof(struct bio_vec),
 			    gfp_mask);
-#endif 
+
 		front_pad = 0;
 		inline_vecs = nr_iovecs;
 	} else {

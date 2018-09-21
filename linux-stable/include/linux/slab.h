@@ -780,6 +780,7 @@ static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 		}
 #endif
 	}
+
 	return __kmalloc_hetero(size, flags);
 }
 
@@ -807,7 +808,6 @@ static __always_inline void *kmalloc_hetero_buff(size_t size, gfp_t flags)
 		}
 #endif
 	}
-        //printk(KERN_ALERT "kmalloc_hetero \n");
 	return __kmalloc_hetero(size, flags);
 }
 
@@ -818,7 +818,6 @@ static inline void *kmem_cache_zalloc_hetero(struct kmem_cache *k, gfp_t flags)
        if(!is_hetero_buffer_set()) {
            return kmem_cache_zalloc(k, flags | __GFP_ZERO);
         }
-        //printk(KERN_ALERT "kmem_cache_zalloc_hetero \n");
         return kmem_cache_alloc_hetero(k, flags | __GFP_ZERO);
 }
 
@@ -833,7 +832,6 @@ static inline void *kzalloc_hetero_buf(size_t size, gfp_t flags)
        if(!is_hetero_buffer_set()) {
            return kzalloc(size, flags | __GFP_ZERO);
         }
-        //printk(KERN_ALERT "kzalloc_hetero_buf \n");
 	return kmalloc_hetero(size, flags | __GFP_ZERO);
 }
 #endif
