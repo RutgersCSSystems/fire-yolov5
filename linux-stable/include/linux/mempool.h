@@ -7,6 +7,7 @@
 
 #include <linux/wait.h>
 #include <linux/compiler.h>
+#include <linux/hetero.h>
 
 struct kmem_cache;
 
@@ -43,12 +44,40 @@ extern void mempool_free(void *element, mempool_t *pool);
  */
 void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data);
 void mempool_free_slab(void *element, void *pool_data);
+
+
+
 static inline mempool_t *
 mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
 {
 	return mempool_create(min_nr, mempool_alloc_slab, mempool_free_slab,
 			      (void *) kc);
 }
+
+#ifdef _ENABLE_HETERO
+//Hetero mempool alloc
+extern void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask) __malloc;
+extern void mempool_free_hetero(void *element, mempool_t *pool);
+
+void *mempool_alloc_slab_hetero(gfp_t gfp_mask, void *pool_data);
+void mempool_free_slab_hetero(void *element, void *pool_data);
+
+void *mempool_kmalloc_hetero(gfp_t gfp_mask, void *pool_data);
+void mempool_kfree_hetero(void *element, void *pool_data);
+
+static inline mempool_t *
+mempool_create_slab_pool_hetero(int min_nr, struct kmem_cache *kc)
+{
+	return mempool_create(min_nr, mempool_alloc_slab_hetero, mempool_free_slab_hetero,
+			      (void *) kc);
+}
+
+static inline mempool_t *mempool_create_kmalloc_pool_hetero(int min_nr, size_t size)
+{
+	return mempool_create(min_nr, mempool_kmalloc_hetero, mempool_kfree_hetero,
+			      (void *) size);
+}
+#endif
 
 /*
  * a mempool_alloc_t and a mempool_free_t to kmalloc and kfree the

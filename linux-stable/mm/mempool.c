@@ -21,6 +21,8 @@
 #include <linux/writeback.h>
 #include "slab.h"
 
+#include <linux/hetero.h>
+
 #if defined(CONFIG_DEBUG_SLAB) || defined(CONFIG_SLUB_DEBUG_ON)
 static void poison_error(mempool_t *pool, void *element, size_t size,
 			 size_t byte)
@@ -474,6 +476,191 @@ void mempool_kfree(void *element, void *pool_data)
 	kfree(element);
 }
 EXPORT_SYMBOL(mempool_kfree);
+
+
+#ifdef _ENABLE_HETERO
+
+/**
+ * mempool_alloc - allocate an element from a specific memory pool
+ * @pool:      pointer to the memory pool which was allocated via
+ *             mempool_create().
+ * @gfp_mask:  the usual allocation bitmask.
+ *
+ * this function only sleeps if the alloc_fn() function sleeps or
+ * returns NULL. Note that due to preallocation, this function
+ * *never* fails when called from process contexts. (it might
+ * fail if called from an IRQ context.)
+ * Note: using __GFP_ZERO is not supported.
+ */
+void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask)
+{
+	void *element;
+	unsigned long flags;
+	wait_queue_entry_t wait;
+	gfp_t gfp_temp;
+
+	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
+	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
+
+	gfp_mask |= __GFP_NOMEMALLOC;	/* don't allocate emergency reserves */
+	gfp_mask |= __GFP_NORETRY;	/* don't loop in __alloc_pages */
+	gfp_mask |= __GFP_NOWARN;	/* failures are OK */
+
+	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
+
+repeat_alloc:
+
+	element = pool->alloc(gfp_temp, pool->pool_data);
+
+	if (likely(element != NULL))
+		return element;
+
+	spin_lock_irqsave(&pool->lock, flags);
+	if (likely(pool->curr_nr)) {
+		element = remove_element(pool, gfp_temp);
+		spin_unlock_irqrestore(&pool->lock, flags);
+		/* paired with rmb in mempool_free(), read comment there */
+		smp_wmb();
+		/*
+		 * Update the allocation stack trace as this is more useful
+		 * for debugging.
+		 */
+		kmemleak_update_trace(element);
+		return element;
+	}
+
+	/*
+	 * We use gfp mask w/o direct reclaim or IO for the first round.  If
+	 * alloc failed with that and @pool was empty, retry immediately.
+	 */
+	if (gfp_temp != gfp_mask) {
+		spin_unlock_irqrestore(&pool->lock, flags);
+		gfp_temp = gfp_mask;
+		goto repeat_alloc;
+	}
+
+	/* We must not sleep if !__GFP_DIRECT_RECLAIM */
+	if (!(gfp_mask & __GFP_DIRECT_RECLAIM)) {
+		spin_unlock_irqrestore(&pool->lock, flags);
+		return NULL;
+	}
+
+	/* Let's wait for someone else to return an element to @pool */
+	init_wait(&wait);
+	prepare_to_wait(&pool->wait, &wait, TASK_UNINTERRUPTIBLE);
+
+	spin_unlock_irqrestore(&pool->lock, flags);
+
+	/*
+	 * FIXME: this should be io_schedule().  The timeout is there as a
+	 * workaround for some DM problems in 2.6.18.
+	 */
+	io_schedule_timeout(5*HZ);
+
+	finish_wait(&pool->wait, &wait);
+	goto repeat_alloc;
+}
+EXPORT_SYMBOL(mempool_alloc_hetero);
+
+/**
+ * mempool_free - return an element to the pool.
+ * @element:   pool element pointer.
+ * @pool:      pointer to the memory pool which was allocated via
+ *             mempool_create().
+ *
+ * this function only sleeps if the free_fn() function sleeps.
+ */
+void mempool_free_hetero(void *element, mempool_t *pool)
+{
+	unsigned long flags;
+
+	if (unlikely(element == NULL))
+		return;
+
+	/*
+	 * Paired with the wmb in mempool_alloc().  The preceding read is
+	 * for @element and the following @pool->curr_nr.  This ensures
+	 * that the visible value of @pool->curr_nr is from after the
+	 * allocation of @element.  This is necessary for fringe cases
+	 * where @element was passed to this task without going through
+	 * barriers.
+	 *
+	 * For example, assume @p is %NULL at the beginning and one task
+	 * performs "p = mempool_alloc(...);" while another task is doing
+	 * "while (!p) cpu_relax(); mempool_free(p, ...);".  This function
+	 * may end up using curr_nr value which is from before allocation
+	 * of @p without the following rmb.
+	 */
+	smp_rmb();
+
+	/*
+	 * For correctness, we need a test which is guaranteed to trigger
+	 * if curr_nr + #allocated == min_nr.  Testing curr_nr < min_nr
+	 * without locking achieves that and refilling as soon as possible
+	 * is desirable.
+	 *
+	 * Because curr_nr visible here is always a value after the
+	 * allocation of @element, any task which decremented curr_nr below
+	 * min_nr is guaranteed to see curr_nr < min_nr unless curr_nr gets
+	 * incremented to min_nr afterwards.  If curr_nr gets incremented
+	 * to min_nr after the allocation of @element, the elements
+	 * allocated after that are subject to the same guarantee.
+	 *
+	 * Waiters happen iff curr_nr is 0 and the above guarantee also
+	 * ensures that there will be frees which return elements to the
+	 * pool waking up the waiters.
+	 */
+	if (unlikely(pool->curr_nr < pool->min_nr)) {
+		spin_lock_irqsave(&pool->lock, flags);
+		if (likely(pool->curr_nr < pool->min_nr)) {
+			add_element(pool, element);
+			spin_unlock_irqrestore(&pool->lock, flags);
+			wake_up(&pool->wait);
+			return;
+		}
+		spin_unlock_irqrestore(&pool->lock, flags);
+	}
+	pool->free(element, pool->pool_data);
+}
+EXPORT_SYMBOL(mempool_free_hetero);
+
+
+
+/*
+ * A commonly used alloc and free fn.
+ */
+void *mempool_alloc_slab_hetero(gfp_t gfp_mask, void *pool_data)
+{
+	struct kmem_cache *mem = pool_data;
+	VM_BUG_ON(mem->ctor);
+	return kmem_cache_alloc_hetero(mem, gfp_mask);
+}
+EXPORT_SYMBOL(mempool_alloc_slab_hetero);
+
+void mempool_free_slab_hetero(void *element, void *pool_data)
+{
+	struct kmem_cache *mem = pool_data;
+	kmem_cache_free(mem, element);
+}
+EXPORT_SYMBOL(mempool_free_slab_hetero);
+
+
+void *mempool_kmalloc_hetero(gfp_t gfp_mask, void *pool_data)
+{
+	size_t size = (size_t)pool_data;
+        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	return kmalloc_hetero(size, gfp_mask);
+}
+EXPORT_SYMBOL(mempool_kmalloc_hetero);
+
+void mempool_kfree_hetero(void *element, void *pool_data)
+{
+        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);	
+	kfree(element);
+}
+EXPORT_SYMBOL(mempool_kfree_hetero);
+#endif
+
 
 /*
  * A simple mempool-backed page allocator that allocates pages

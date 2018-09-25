@@ -27,7 +27,7 @@ grep -r "error:" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
       exit 1
    fi
 
-sudo cp ./arch/x86/boot/bzImage /boot/vmlinuz-$y
-sudo cp System.map /boot/System.map-$y
-sudo cp .config /boot/config-$y
-sudo update-initramfs -c -k $y
+sudo cp ./arch/x86/boot/bzImage $KERNEL/vmlinuz-$y
+sudo cp System.map $KERNEL/System.map-$y
+sudo cp .config $KERNEL/config-$y
+#sudo update-initramfs -c -k $y

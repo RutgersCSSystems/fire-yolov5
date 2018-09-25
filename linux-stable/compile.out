@@ -1,3 +1,4 @@
+scripts/kconfig/conf  --syncconfig Kconfig
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
@@ -8,12 +9,8 @@
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
-  CC      block/bio.o
-block/bio.c: In function ‘bio_alloc_bioset’:
-block/bio.c:468:31: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘long unsigned int’ [-Wformat=]
-     nr_iovecs * sizeof(struct bio_vec));
-                               ^
-  AR      block/built-in.a
+  CC      fs/namei.o
+  AR      fs/built-in.a
   GEN     .version
   CHK     include/generated/compile.h
   UPD     include/generated/compile.h
@@ -30,9 +27,9 @@ block/bio.c:468:31: warning: format ‘%d’ expects argument of type ‘int’,
   Building modules, stage 2.
   CC      arch/x86/boot/version.o
   VOFFSET arch/x86/boot/compressed/../voffset.h
-  MODPOST 20 modules
   OBJCOPY arch/x86/boot/compressed/vmlinux.bin
   RELOCS  arch/x86/boot/compressed/vmlinux.relocs
+  MODPOST 20 modules
   CC      arch/x86/boot/compressed/kaslr.o
   GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
   CC      arch/x86/boot/compressed/misc.o
@@ -47,30 +44,18 @@ block/bio.c:468:31: warning: format ‘%d’ expects argument of type ‘int’,
   OBJCOPY arch/x86/boot/setup.bin
   BUILD   arch/x86/boot/bzImage
 Setup is 15388 bytes (padded to 15872 bytes).
-System is 8006 kB
-CRC c0e61345
-Kernel: arch/x86/boot/bzImage is ready  (#68)
+System is 7949 kB
+CRC 463f2df7
+Kernel: arch/x86/boot/bzImage is ready  (#25)
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
-  DESCEND  objtool
   CHK     include/generated/utsrelease.h
-  CHK     scripts/mod/devicetable-offsets.h
   CHK     include/generated/bounds.h
   CHK     include/generated/timeconst.h
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  DATAREL arch/x86/boot/compressed/vmlinux
-Kernel: arch/x86/boot/bzImage is ready  (#68)
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
-  CHK     include/generated/utsrelease.h
   CHK     scripts/mod/devicetable-offsets.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
   Building modules, stage 2.
   MODPOST 20 modules
   INSTALL crypto/crypto_engine.ko

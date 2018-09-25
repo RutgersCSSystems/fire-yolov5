@@ -906,6 +906,10 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 	if (groups_per_page > 1) {
 		i = sizeof(struct buffer_head *) * groups_per_page;
 #ifdef _ENABLE_HETERO
+
+                if(is_hetero_buffer_set()) {
+                        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+                }
 		bh = kzalloc_hetero_buf(i, gfp);
 #else 
 		bh = kzalloc(i, gfp);
@@ -2497,6 +2501,9 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		metalen = sizeof(*meta_group_info) <<
 			EXT4_DESC_PER_BLOCK_BITS(sb);
 #ifdef _ENABLE_HETERO
+		if(is_hetero_buffer_set()) {
+			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		}
 		meta_group_info = kmalloc_hetero(metalen, GFP_NOFS);
 #else 
 		meta_group_info = kmalloc(metalen, GFP_NOFS);
@@ -2550,6 +2557,9 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	{
 		struct buffer_head *bh;
 #ifdef _ENABLE_HETERO
+                if(is_hetero_buffer_set()) {
+                        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+                }
 		meta_group_info[i]->bb_bitmap =
 			kmalloc_hetero(sb->s_blocksize, GFP_NOFS);
 #else 
@@ -2558,7 +2568,6 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 #endif
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_void(meta_group_info[i]->bb_bitmap);
-
 		BUG_ON(meta_group_info[i]->bb_bitmap == NULL);
 		bh = ext4_read_block_bitmap(sb, group);
 		BUG_ON(IS_ERR_OR_NULL(bh));
@@ -2690,6 +2699,9 @@ int ext4_mb_init(struct super_block *sb)
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_offsets);
 
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	sbi->s_mb_offsets = kmalloc_hetero(i, GFP_KERNEL);
 #else 
 	sbi->s_mb_offsets = kmalloc(i, GFP_KERNEL);
@@ -2704,6 +2716,9 @@ int ext4_mb_init(struct super_block *sb)
 
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_maxs);
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	sbi->s_mb_maxs = kmalloc_hetero(i, GFP_KERNEL);
 #else 
 	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);

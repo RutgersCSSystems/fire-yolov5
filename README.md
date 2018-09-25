@@ -8,11 +8,14 @@ Pass your own OS version name
 ```
  source scripts/setvars.sh "trusty"   
 ```
+Create the QEMU IMAGE only for the first time. You should 
+not create an image (which is your disk now) every time you will be 
+compiling and testing your kernel.
 
-Create the QEMU IMAGE and exit.  If prompted (y,n), enter yes
+During installation, if prompted (y,n), enter yes
+
 ```
  scripts/qemu_create.sh  
- exit
 ```
 
 Install the 4.17 kernel with QEMU support and copy kernel files to boot directory
