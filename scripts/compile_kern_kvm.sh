@@ -7,8 +7,8 @@ sudo umount $MOUNT_DIR
 cd $KERN_SRC
 
 #Enable the KVM mode in your kernel config file
-sudo make x86_64_defconfig
-sudo make kvmconfig 
+#sudo make x86_64_defconfig
+#sudo make kvmconfig 
 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA &> $KERN_SRC/compile.out

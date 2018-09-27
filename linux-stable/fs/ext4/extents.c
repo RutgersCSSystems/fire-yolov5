@@ -884,7 +884,18 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 	if (path) {
 		ext4_ext_drop_refs(path);
 		if (depth > path[0].p_maxdepth) {
+
+#ifdef _ENABLE_HETERO 
+			if(is_hetero_buffer_set()) {
+#ifdef _HETERO_MIGRATE
+				vfree_hetero(path);
+#else
+				kfree(path);
+#endif
+			}
+#else
 			kfree(path);
+#endif
 			*orig_path = path = NULL;
 		}
 	}
@@ -4649,6 +4660,13 @@ out:
 	map->m_len = allocated;
 out2:
 	ext4_ext_drop_refs(path);
+
+#ifdef _HETERO_MIGRATE
+         if(is_hetero_buffer_set()) 
+          	//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+                vfree_hetero(path);
+	else
+#endif
 	kfree(path);
 
 	trace_ext4_ext_map_blocks_exit(inode, flags, map,

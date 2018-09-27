@@ -4329,7 +4329,7 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
 	return true;
 }
 
-#ifdef _ENABLE_HETERO
+//#ifdef _ENABLE_HETERO
 static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order,
                 int preferred_nid, nodemask_t *nodemask,
                 struct alloc_context *ac, gfp_t *alloc_mask,
@@ -4364,7 +4364,7 @@ static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order
 
         return true;
 }
-#endif
+//#endif
 
 /* Determine whether to spread dirty pages and what the first usable zone */
 static inline void finalise_ac(gfp_t gfp_mask,
@@ -4437,7 +4437,7 @@ out:
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask);
 
-#ifdef _ENABLE_HETERO
+//#ifdef _ENABLE_HETERO
 struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask)
@@ -4499,7 +4499,7 @@ out:
 	return page;
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask_hetero);
-#endif
+//#endif
 
 /*
  * Common helper functions.

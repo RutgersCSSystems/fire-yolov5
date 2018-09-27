@@ -1,4 +1,3 @@
-scripts/kconfig/conf  --syncconfig Kconfig
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   DESCEND  objtool
@@ -9,7 +8,8 @@ scripts/kconfig/conf  --syncconfig Kconfig
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
-  CC      fs/namei.o
+  CC      fs/ext4/extents.o
+  AR      fs/ext4/built-in.a
   AR      fs/built-in.a
   GEN     .version
   CHK     include/generated/compile.h
@@ -31,8 +31,8 @@ scripts/kconfig/conf  --syncconfig Kconfig
   RELOCS  arch/x86/boot/compressed/vmlinux.relocs
   MODPOST 20 modules
   CC      arch/x86/boot/compressed/kaslr.o
-  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
   CC      arch/x86/boot/compressed/misc.o
+  GZIP    arch/x86/boot/compressed/vmlinux.bin.gz
   MKPIGGY arch/x86/boot/compressed/piggy.S
   AS      arch/x86/boot/compressed/piggy.o
   DATAREL arch/x86/boot/compressed/vmlinux
@@ -44,9 +44,9 @@ scripts/kconfig/conf  --syncconfig Kconfig
   OBJCOPY arch/x86/boot/setup.bin
   BUILD   arch/x86/boot/bzImage
 Setup is 15388 bytes (padded to 15872 bytes).
-System is 7949 kB
-CRC 463f2df7
-Kernel: arch/x86/boot/bzImage is ready  (#25)
+System is 7950 kB
+CRC def75a8a
+Kernel: arch/x86/boot/bzImage is ready  (#35)
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   CHK     include/generated/utsrelease.h
