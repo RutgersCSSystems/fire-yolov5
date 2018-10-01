@@ -439,7 +439,7 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 
 #ifdef _ENABLE_HETERO
 	if(is_hetero_buffer_set()) {
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
 	p = kzalloc_hetero_buf(sizeof(*p), GFP_KERNEL);
 #else

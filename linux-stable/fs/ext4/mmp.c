@@ -381,7 +381,7 @@ skip:
 #ifdef ENABLE_HETERO 
 	mmpd_data = kmalloc_hetero(sizeof(*mmpd_data), GFP_KERNEL);
         if(is_hetero_buffer_set()) {
-                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
         }
 #else 
 	mmpd_data = kmalloc(sizeof(*mmpd_data), GFP_KERNEL);
