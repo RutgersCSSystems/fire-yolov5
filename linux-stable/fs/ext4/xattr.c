@@ -1941,6 +1941,9 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 			unlock_buffer(bs->bh);
 			ea_bdebug(bs->bh, "cloning");
 #ifdef _ENABLE_HETERO 
+			if(is_hetero_buffer_set()) {
+				printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			}
 			s->base = kmalloc_hetero(bs->bh->b_size, GFP_NOFS);
 #else 
 			s->base = kmalloc(bs->bh->b_size, GFP_NOFS);
@@ -2627,6 +2630,9 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	struct ext4_xattr_ibody_header *header = IHDR(inode, raw_inode);
 	int error;
 #ifdef _ENABLE_HETERO 
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	is = kzalloc_hetero_buf(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
 #else 
 	is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
@@ -2634,6 +2640,9 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_xattr_ibody_find(is);
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	bs = kzalloc_hetero_buf(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
 #else 
 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
@@ -2642,6 +2651,9 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//	add_to_hashtable_ext4_xattr_block_find(bs);
 
 #ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	buffer = kmalloc_hetero(value_size, GFP_NOFS);
 #else 
 	buffer = kmalloc(value_size, GFP_NOFS);
@@ -2650,6 +2662,9 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//	add_to_hashtable_char(buffer);
 
 #ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	b_entry_name = kmalloc_hetero(entry->e_name_len + 1, GFP_NOFS);
 #else 
 	b_entry_name = kmalloc(entry->e_name_len + 1, GFP_NOFS);

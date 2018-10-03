@@ -1187,6 +1187,9 @@ static int ext4_convert_inline_data_nolock(handle_t *handle,
 
 	inline_size = ext4_get_inline_size(inode);
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	buf = kmalloc_hetero(inline_size, GFP_NOFS);
 #else 
 	buf = kmalloc(inline_size, GFP_NOFS);
@@ -1368,6 +1371,9 @@ int htree_inlinedir_to_tree(struct file *dir_file,
 
 	inline_size = ext4_get_inline_size(inode);
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	dir_buf = kmalloc_hetero(inline_size, GFP_NOFS);
 #else 
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
@@ -1484,6 +1490,9 @@ int ext4_read_inline_dir(struct file *file,
 
 	inline_size = ext4_get_inline_size(inode);
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	dir_buf = kmalloc_hetero(inline_size, GFP_NOFS);
 #else 
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
@@ -2006,6 +2015,9 @@ int ext4_inline_data_truncate(struct inode *inode, int *has_inline)
 
 			value_len = le32_to_cpu(is.s.here->e_value_size);
 #ifdef _ENABLE_HETERO
+			if(is_hetero_buffer_set()) {
+				printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			}
 			value = kmalloc_hetero(value_len, GFP_NOFS);
 #else 
 			value = kmalloc(value_len, GFP_NOFS);

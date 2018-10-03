@@ -513,8 +513,10 @@ static __always_inline void *kmalloc(size_t size, gfp_t flags)
 {
 
 #ifdef _ENABLE_HETERO
-        if(is_hetero_buffer_set())
+        if(is_hetero_buffer_set()) {
+	    printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);	
             return kmalloc_hetero(size, flags);
+	}
 #endif
 
 	if (__builtin_constant_p(size)) {

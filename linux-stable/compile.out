@@ -8,9 +8,8 @@
   CHK     include/generated/asm-offsets.h
   CALL    scripts/checksyscalls.sh
   CHK     include/generated/compile.h
-  CC      fs/ext4/extents.o
-  AR      fs/ext4/built-in.a
-  AR      fs/built-in.a
+  CC      mm/hetero.o
+  AR      mm/built-in.a
   GEN     .version
   CHK     include/generated/compile.h
   UPD     include/generated/compile.h
@@ -44,9 +43,9 @@
   OBJCOPY arch/x86/boot/setup.bin
   BUILD   arch/x86/boot/bzImage
 Setup is 15388 bytes (padded to 15872 bytes).
-System is 7950 kB
-CRC def75a8a
-Kernel: arch/x86/boot/bzImage is ready  (#35)
+System is 8014 kB
+CRC 42e0efce
+Kernel: arch/x86/boot/bzImage is ready  (#117)
   CHK     include/config/kernel.release
   CHK     include/generated/uapi/linux/version.h
   CHK     include/generated/utsrelease.h

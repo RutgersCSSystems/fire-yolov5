@@ -219,6 +219,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	struct ext4_new_flex_group_data *flex_gd;
 
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	flex_gd = kmalloc_hetero(sizeof(*flex_gd), GFP_NOFS);
 #else 
 	flex_gd = kmalloc(sizeof(*flex_gd), GFP_NOFS);
@@ -234,6 +237,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 	flex_gd->count = flexbg_size;
 
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	flex_gd->groups = kmalloc_hetero(sizeof(struct ext4_new_group_data) *
 				  flexbg_size, GFP_NOFS);
 #else 

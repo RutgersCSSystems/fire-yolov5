@@ -38,6 +38,10 @@
 
 #include "internal.h"
 
+#include <linux/zsmalloc.h>
+#include <linux/zpool.h>
+#include <linux/hetero.h>
+
 struct vfree_deferred {
 	struct llist_head list;
 	struct work_struct wq;
@@ -1369,6 +1373,10 @@ static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
 	vm->caller = caller;
 	va->vm = vm;
 	va->flags |= VM_VM_AREA;
+#ifdef _ENABLE_HETERO
+	//setting hetero flag
+	va->is_hetero = 1;
+#endif
 	spin_unlock(&vmap_area_lock);
 }
 
@@ -1608,22 +1616,6 @@ void vfree(const void *addr)
 EXPORT_SYMBOL(vfree);
 
 
-#ifdef _ENABLE_HETERO
-void vfree_hetero(const void *addr)
-{
-	BUG_ON(in_nmi());
-
-	kmemleak_free(addr);
-
-	if (!addr)
-		return;
-	if (unlikely(in_interrupt()))
-		__vfree_deferred(addr);
-	else
-		__vunmap(addr, 1);
-}
-EXPORT_SYMBOL(vfree_hetero);
-#endif
 
 /**
  *	vunmap  -  release virtual mapping obtained by vmap()
@@ -1742,6 +1734,147 @@ fail:
 }
 
 #ifdef _ENABLE_HETERO
+
+#define NUMPAGES 500
+
+struct zs_pool *hetero_pool;
+int init_hetero_zspool = 0;
+struct rb_root pool_root;
+
+
+/*NVpage to be added to RB tree*/
+struct zsobj {
+        unsigned long handle; 
+        void *obj;
+	size_t size;
+        struct rb_node rbnode;
+};
+
+
+/*add pages to rbtree node */
+int insert_obj_rbtree(struct rb_root *root, unsigned long handle, void *obj){
+
+	struct rb_node **new = &(root->rb_node), *parent = NULL;
+	struct zsobj *zsobj = NULL;
+
+	zsobj = kmalloc(sizeof(struct zsobj) , GFP_KERNEL);
+	if(!zsobj) {
+		printk("%s : %d zsobj alloc failed \n", __func__, __LINE__);
+		goto insert_fail_nvpg;
+	}
+        zsobj->obj = obj;
+        zsobj->handle = handle;
+
+	/* Figure out where to put new node */
+	while (*new) {
+
+		struct zsobj *this = rb_entry(*new, struct zsobj, rbnode);
+		parent = *new;
+
+		if(!this) {
+			printk("%s : %d zsobj alloc failed \n", __func__, __LINE__);
+			goto insert_fail_nvpg;
+		}
+
+		if (zsobj->obj < this->obj) {
+			new = &((*new)->rb_left);
+		}else if (zsobj->obj > this->obj){
+			new = &((*new)->rb_right);
+		}else{
+			goto insert_success_nvpg;
+		}
+	}
+	/* Add new node and rebalance tree. */
+	rb_link_node(&zsobj->rbnode, parent, new);
+	rb_insert_color(&zsobj->rbnode, root);
+insert_success_nvpg:
+	//printk("%s : %d zsobj alloc SUCCESS \n", __func__, __LINE__);
+	return 0;
+
+insert_fail_nvpg:
+	return -1;
+}
+
+
+/*Search for handle. BUGGY currently */
+unsigned long search_obj_rbtree(struct rb_root *root, const void *addr){
+
+        struct rb_node *node = root->rb_node;
+        //unsigned int offset;
+        struct zsobj *zs = NULL;
+	unsigned long srcobj = (unsigned long)addr;
+
+        while (node) {
+                struct zsobj *this = rb_entry(node, struct zsobj, rbnode);
+                if(!this || this->obj == NULL) {
+			printk("%s : %d zsobj search failed \n", __func__, __LINE__);
+                        return 0;
+                }
+                if( srcobj == (unsigned long)this->obj) {
+                        zs = this;
+			if(!zs) {
+				printk("%s : %d zsobj found, but NULL\n", __func__, __LINE__);
+			}
+                        goto ret_search_page;
+
+                }
+                if ( srcobj < (unsigned long)this->obj)
+                	node = node->rb_left;
+                else if (srcobj > (unsigned long)this->obj)
+                	node = node->rb_right;
+        }
+        return 0;
+ret_search_page:
+	//printk("%s : %d zsobj search SUCCESS \n", __func__, __LINE__);
+        return zs->handle;
+}
+
+
+static struct vm_struct *__get_vm_area_node_hetero(unsigned long size,
+		unsigned long align, unsigned long flags, unsigned long start,
+		unsigned long end, int node, gfp_t gfp_mask, const void *caller)
+{
+	struct vmap_area *va;
+	struct vm_struct *area;
+
+	BUG_ON(in_interrupt());
+	size = PAGE_ALIGN(size);
+	if (unlikely(!size))
+		return NULL;
+
+	if (flags & VM_IOREMAP)
+		align = 1ul << clamp_t(int, get_count_order_long(size),
+				       PAGE_SHIFT, IOREMAP_MAX_ORDER);
+
+	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
+	if (unlikely(!area))
+		return NULL;
+
+	//setting hetero flag
+	area->is_hetero = 1;
+
+	if (!(flags & VM_NO_GUARD))
+		size += PAGE_SIZE;
+
+        //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	va = alloc_vmap_area(size, align, start, end, node, gfp_mask);
+	if (IS_ERR(va)) {
+		kfree(area);
+		return NULL;
+	}
+	setup_vmalloc_vm(area, va, flags, caller);
+	return area;
+}
+
+struct vm_struct *__get_vm_area_hetero(unsigned long size, unsigned long flags,
+				unsigned long start, unsigned long end)
+{
+	return __get_vm_area_node_hetero(size, 1, flags, start, end, NUMA_HETERO_NODE,
+				  GFP_KERNEL, __builtin_return_address(0));
+}
+EXPORT_SYMBOL_GPL(__get_vm_area_hetero);
+
+
 static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 				 pgprot_t prot, int node)
 {
@@ -1776,9 +1909,10 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 
 		if (node == NUMA_NO_NODE)
 			page = alloc_page(alloc_mask|highmem_mask);
-		else
-			page = alloc_pages_node(node, alloc_mask|highmem_mask, 0);
-
+		else {
+			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			page = alloc_pages_hetero_node(node, alloc_mask|highmem_mask, 0);
+		}
 		if (unlikely(!page)) {
 			/* Successfully allocated i pages, free them in __vunmap() */
 			area->nr_pages = i;
@@ -1830,7 +1964,7 @@ void *__vmalloc_node_range_hetero(unsigned long size, unsigned long align,
 	if (!size || (size >> PAGE_SHIFT) > totalram_pages)
 		goto fail;
 
-	area = __get_vm_area_node(size, align, VM_ALLOC | VM_UNINITIALIZED |
+	area = __get_vm_area_node_hetero(size, align, VM_ALLOC | VM_UNINITIALIZED |
 				vm_flags, start, end, node, gfp_mask, caller);
 	if (!area)
 		goto fail;
@@ -1858,7 +1992,7 @@ fail:
 
 
 /**
- *	__vmalloc_node  -  allocate virtually contiguous memory
+ *	__vmalloc_node_hetero  -  allocate virtually contiguous memory
  *	@size:		allocation size
  *	@align:		desired alignment
  *	@gfp_mask:	flags for the page level allocator
@@ -1881,19 +2015,163 @@ static void *__vmalloc_node_hetero(unsigned long size, unsigned long align,
 			    gfp_t gfp_mask, pgprot_t prot,
 			    int node, const void *caller)
 {
-	return __vmalloc_node_range(size, align, VMALLOC_START, VMALLOC_END,
+	return __vmalloc_node_range_hetero(size, align, VMALLOC_START, VMALLOC_END,
 				gfp_mask, prot, 0, node, caller);
 }
 
-void *__vmalloc(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
+void *__vmalloc_hetero(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
 {
-	return __vmalloc_node(size, 1, gfp_mask, prot, NUMA_NO_NODE,
+	return __vmalloc_node_hetero(size, 1, gfp_mask, prot, NUMA_HETERO_NODE,
 				__builtin_return_address(0));
 }
-EXPORT_SYMBOL(__vmalloc);
+EXPORT_SYMBOL(__vmalloc_hetero);
 
 
+static inline void *__vmalloc_node_flags_hetero(unsigned long size,
+					int node, gfp_t flags)
+{
+	return __vmalloc_node_hetero(size, 1, flags, PAGE_KERNEL,
+					node, __builtin_return_address(0));
+}
+
+
+void *__vmalloc_node_flags_caller_hetero(unsigned long size, int node, gfp_t flags,
+				  void *caller)
+{
+	return __vmalloc_node_hetero(size, 1, flags, PAGE_KERNEL, node, caller);
+}
+
+
+
+void *vmalloc_hetero(unsigned long size)
+{
+#ifdef _HETERO_ZSMALLOC
+	unsigned long handle = 0; 
+ 	void *dst = NULL;
+
+	if(!init_hetero_zspool) {
+		hetero_pool = zs_create_pool("hetero_pool");
+		init_hetero_zspool = 1;
+		pool_root = RB_ROOT;
+
+		if (zs_fill_hetero_pages(hetero_pool, GFP_KERNEL, NUMPAGES) == NULL)
+			printk(KERN_ALERT "%s:%d zspage NULL \n",
+				 __func__, __LINE__);
+	}
+
+	handle = zs_malloc(hetero_pool, size, GFP_KERNEL);
+        if(!handle) {
+		printk(KERN_ALERT "%s : %d ZS handle NULL \n", __func__, __LINE__);
+		return NULL;
+	}
+	dst = zs_map_object(hetero_pool, handle, ZPOOL_MM_RW);
+	insert_obj_rbtree(&pool_root, handle, dst);
+	return dst;
+#else
+	return __vmalloc_node_flags_hetero(size, NUMA_HETERO_NODE,
+				    GFP_KERNEL);
 #endif
+}
+EXPORT_SYMBOL(vmalloc_hetero);
+
+static void __vunmap_hetero(const void *addr, int deallocate_pages)
+{
+	struct vm_struct *area;
+
+	if (!addr)
+		return;
+
+	if (WARN(!PAGE_ALIGNED(addr), "Trying to vfree() bad address (%p)\n",
+			addr))
+		return;
+
+	area = remove_vm_area(addr);
+	if (unlikely(!area)) {
+		WARN(1, KERN_ERR "Trying to vfree() nonexistent vm area (%p)\n",
+				addr);
+		return;
+	}
+
+	debug_check_no_locks_freed(addr, get_vm_area_size(area));
+	debug_check_no_obj_freed(addr, get_vm_area_size(area));
+
+	if (deallocate_pages) {
+		int i;
+
+		for (i = 0; i < area->nr_pages; i++) {
+			struct page *page = area->pages[i];
+			//printk(KERN_ALERT "%s : %d trying to free page\n", 
+			//	__func__, __LINE__);		
+			BUG_ON(!page);
+			__free_pages(page, 0);
+		}
+
+		kvfree(area->pages);
+	}
+
+	kfree(area);
+	return;
+}
+
+
+static inline void __vfree_deferred_hetero(const void *addr)
+{
+	/*
+	 * Use raw_cpu_ptr() because this can be called from preemptible
+	 * context. Preemption is absolutely fine here, because the llist_add()
+	 * implementation is lockless, so it works even if we are adding to
+	 * nother cpu's list.  schedule_work() should be fine with this too.
+	 */
+	struct vfree_deferred *p = raw_cpu_ptr(&vfree_deferred);
+
+	if (llist_add((struct llist_node *)addr, &p->list))
+		schedule_work(&p->wq);
+}
+
+/**
+ *	vfree  -  release memory allocated by vmalloc()
+ *	@addr:		memory base address
+ *
+ *	Free the virtually continuous memory area starting at @addr, as
+ *	obtained from vmalloc(), vmalloc_32() or __vmalloc(). If @addr is
+ *	NULL, no operation is performed.
+ *
+ *	Must not be called in NMI context (strictly speaking, only if we don't
+ *	have CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG, but making the calling
+ *	conventions for vfree() arch-depenedent would be a really bad idea)
+ *
+ *	NOTE: assumes that the object at @addr has a size >= sizeof(llist_node)
+ */
+void vfree_hetero(const void *addr)
+{
+
+#ifdef _HETERO_ZSMALLOC
+	unsigned long srch_handle = 0;
+#endif
+
+	BUG_ON(in_nmi());
+
+	if (!addr)
+		return;
+
+#ifdef _HETERO_ZSMALLOC
+        srch_handle = search_obj_rbtree(&pool_root, addr);
+        //printk(KERN_ALERT "%s : %d ZS handle %lu \n", __func__, __LINE__, srch_handle);
+        zs_unmap_object(hetero_pool, srch_handle);
+        zs_free(hetero_pool, srch_handle);
+	zs_migrate_hetero(hetero_pool);
+#else
+	kmemleak_free(addr);
+
+	if (unlikely(in_interrupt()))
+		__vfree_deferred_hetero(addr);
+	else
+		__vunmap_hetero(addr, 1);
+#endif
+}
+EXPORT_SYMBOL(vfree_hetero);
+
+#endif //HETERO
 
 
 /**
@@ -2017,14 +2295,6 @@ void *vmalloc(unsigned long size)
 EXPORT_SYMBOL(vmalloc);
 
 
-#ifdef _ENABLE_HETERO
-void *vmalloc_hetero(unsigned long size)
-{
-	return __vmalloc_node_flags(size, NUMA_HETERO_NODE,
-				    GFP_KERNEL);
-}
-EXPORT_SYMBOL(vmalloc_hetero);
-#endif
 
 
 /**

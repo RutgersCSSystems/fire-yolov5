@@ -177,6 +177,9 @@ ext4_get_acl(struct inode *inode, int type)
 	retval = ext4_xattr_get(inode, name_index, "", NULL, 0);
 	if (retval > 0) {
 #ifdef _ENABLE_HETERO
+		if(is_hetero_buffer_set()) {
+			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		}
 		value = kmalloc_hetero(retval, GFP_NOFS);
 #else 
 		value = kmalloc(retval, GFP_NOFS);

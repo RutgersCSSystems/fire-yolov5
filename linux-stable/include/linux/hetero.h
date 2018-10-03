@@ -7,6 +7,7 @@
 /* HeteroOS code */
 #define _ENABLE_HETERO
 #define _HETERO_MIGRATE
+#define _HETERO_ZSMALLOC
 
 #ifdef _ENABLE_HETERO
 #define NUMA_HETERO_NODE 0

@@ -57,4 +57,11 @@ unsigned long zs_get_total_pages(struct zs_pool *pool);
 unsigned long zs_compact(struct zs_pool *pool);
 
 void zs_pool_stats(struct zs_pool *pool, struct zs_pool_stats *stats);
+
+
+struct zspage *zs_fill_hetero_pages(struct zs_pool *pool, 
+					gfp_t gfp,
+					unsigned int pages);
+unsigned long zs_migrate_hetero(struct zs_pool *pool);
+
 #endif

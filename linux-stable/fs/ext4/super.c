@@ -194,6 +194,9 @@ void *ext4_kvmalloc(size_t size, gfp_t flags)
 {
 	void *ret;
 #ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
 	ret = kmalloc_hetero(size, flags | __GFP_NOWARN);
 #else 
 	ret = kmalloc(size, flags | __GFP_NOWARN);
