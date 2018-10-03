@@ -1122,9 +1122,9 @@ static struct bio_map_data *bio_alloc_map_data(struct iov_iter *data,
 #ifdef _ENABLE_HETERO
 	bmd = NULL;
 	if(is_hetero_buffer_set()) {
-		printk(KERN_ALERT "%s : %d size %d \n",
-			__func__, __LINE__, sizeof(struct bio_map_data) +
-			sizeof(struct iovec) * data->nr_segs);
+		//printk(KERN_ALERT "%s : %d size %d \n",
+		//	__func__, __LINE__, sizeof(struct bio_map_data) +
+		//	sizeof(struct iovec) * data->nr_segs);
 		bmd = vmalloc_hetero(sizeof(struct bio_map_data) + sizeof(struct iovec) * data->nr_segs);
         }
         if(!bmd)
@@ -1950,7 +1950,7 @@ mempool_t *biovec_create_pool(int pool_entries)
 
 #ifdef _ENABLE_HETERO
 	if(is_hetero_buffer_set()) {
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		return mempool_create_slab_pool_hetero(pool_entries, bp->slab);
 	}
 #endif
@@ -2019,7 +2019,7 @@ struct bio_set *bioset_create(unsigned int pool_size,
 #ifdef _ENABLE_HETERO
 	bs->bio_pool = NULL;
         if(is_hetero_buffer_set()) {
-                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 bs->bio_pool = mempool_create_slab_pool_hetero(pool_size, bs->bio_slab);
         }
 	if(!bs->bio_pool)

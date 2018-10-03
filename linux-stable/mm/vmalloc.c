@@ -2019,11 +2019,17 @@ static void *__vmalloc_node_hetero(unsigned long size, unsigned long align,
 				gfp_mask, prot, 0, node, caller);
 }
 
+<<<<<<< HEAD
 void *__vmalloc_hetero(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
+=======
+/*
+void *__vmalloc(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
+>>>>>>> 2f8a0db195efd36bc5342c79eba133e03a58d8f3
 {
 	return __vmalloc_node_hetero(size, 1, gfp_mask, prot, NUMA_HETERO_NODE,
 				__builtin_return_address(0));
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(__vmalloc_hetero);
 
 
@@ -2040,6 +2046,10 @@ void *__vmalloc_node_flags_caller_hetero(unsigned long size, int node, gfp_t fla
 {
 	return __vmalloc_node_hetero(size, 1, flags, PAGE_KERNEL, node, caller);
 }
+=======
+EXPORT_SYMBOL(__vmalloc);
+*/
+>>>>>>> 2f8a0db195efd36bc5342c79eba133e03a58d8f3
 
 
 

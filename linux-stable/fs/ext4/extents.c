@@ -903,7 +903,11 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 		/* account possible depth increase */
 #ifdef _ENABLE_HETERO 
 		if(is_hetero_buffer_set()) {
+<<<<<<< HEAD
 			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+=======
+		//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+>>>>>>> 2f8a0db195efd36bc5342c79eba133e03a58d8f3
 #ifdef _HETERO_MIGRATE
 			path = vmalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 2));
 #else
@@ -2974,8 +2978,14 @@ again:
 
 #ifdef _ENABLE_HETERO
                 if(is_hetero_buffer_set()) {
+<<<<<<< HEAD
                         //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
+=======
+                //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+                }
+		path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
+>>>>>>> 2f8a0db195efd36bc5342c79eba133e03a58d8f3
 			       GFP_NOFS);
                 }else
 #endif
