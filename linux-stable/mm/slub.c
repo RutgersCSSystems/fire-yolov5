@@ -2997,7 +2997,6 @@ void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
         if(!is_hetero_buffer_set()) {
                 return kmem_cache_alloc(s, gfpflags); 
         }
-        //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);

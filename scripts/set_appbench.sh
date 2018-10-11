@@ -66,7 +66,6 @@ git clone https://github.com/memcached/memcached.git
 
 INSTALL_SYSTEM_LIBS
 INSTALL_GFLAGS
-exit
 
 GETAPPS
 # Set variable, setup packages and generate data

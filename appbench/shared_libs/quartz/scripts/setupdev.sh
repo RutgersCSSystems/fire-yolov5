@@ -14,7 +14,7 @@
 #!/bin/bash
 
 NVM_EMUL_PATH="`dirname $0`/.."
-
+echo "NVM emulator path...." $NVM_EMUL_PATH
 device_name="nvmemul"
 device_module_name=${device_name}".ko"
 device_path="/dev/${device_name}"
@@ -22,12 +22,16 @@ device_module_path=`find ${NVM_EMUL_PATH}/build -name ${device_module_name}`
 
 
 function loaddev {
+   
+    echo ${device_module_path}
+
     if [ -z "${device_module_path}" ]; then
         echo "Module not found. Compile the emulator's source code first."
         exit -1
     fi
 
     /sbin/insmod ${device_module_path} 2> /dev/null
+    echo ${device_module_path}
 
     if [ $? -ne 0 ]; then
         lsmod | grep ${device_name} > /dev/null
@@ -40,6 +44,9 @@ function loaddev {
     fi
 
     device_major=`grep ${device_name} /proc/devices | awk '{ print $1 }'`
+
+    echo $device_major
+
     if [ $? -ne 0 -o -z "${device_major}" ]; then
         echo "Failed to detect module major"
         exit 1

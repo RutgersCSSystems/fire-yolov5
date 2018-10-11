@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <test>
     <membw-main enable='1'> <!--enables a experiemnt to vary the value size for the dbbench-->
-        <seed-count>2</seed-count>  <!--specifies factor by which value size for a KV pair should be incremented-->
-        <num-tests>2</num-tests> <!-- number of tests to run -->
+        <seed-count>1</seed-count>  <!--specifies factor by which value size for a KV pair should be incremented-->
+        <num-tests>1</num-tests> <!-- number of tests to run -->
         <membw>500</membw>  <!--Memory bandwidth default value-->
     </membw-main>
     <benchmarks> <!-- tags specify type of DBbench's benchmark -->
 	<test>nopgcache</test>
-	<!--test>nokernbuff</test>
-        <test>fullkernel</test-->
+	<test>nokernbuff</test>
+        <!--test>fullkernel</test-->
     </benchmarks>
 </test>
 

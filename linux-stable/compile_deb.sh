@@ -7,6 +7,6 @@ touch REPORTING-BUGS
 #make distclean
 #make menuconfig
 #fakeroot make-kpkg clean
-fakeroot make-kpkg --initrd kernel-image kernel-headers
-dpkg -i ../*image*.deb ../*header*.deb
+sudo fakeroot make-kpkg --initrd kernel-image kernel-headers
+sudo dpkg -i ../*image*.deb ../*header*.deb
 exit
