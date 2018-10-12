@@ -108,7 +108,8 @@ class system(object):
       self.init = 1
       self.diskspace = 0
       self.system_schema = root.find('./system-main')
-
+      os.environ['APPPREFIX'] = "numactl --membind=0"
+      os.environ['APP_PREFIX'] = "numactl --membind=0"
 
   def cleandb(self):
      os.system("")    
@@ -233,7 +234,7 @@ def main():
         for i in range(0, len(benchmarks)):
             p.compile_sharedlib(str(benchmarks[i]))
             p.run_membw_test(membw_test, str(benchmarks[i]))
-            #p.run_max_bw_test(membw_test, str(benchmarks[i]))
+            p.run_max_bw_test(membw_test, str(benchmarks[i]))
       
 
 # MAke database 

@@ -21,7 +21,7 @@ RUN(){
 rm -rf $SHARED_DATA/$DATA.*
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 #/usr/bin/time -v
-echo "edgelist" | numactl --membind=0 $APPPREFIX $APP file $INPUT niters 8
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 8
 export LD_PRELOAD=""
 }
 

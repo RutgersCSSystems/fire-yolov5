@@ -10,10 +10,8 @@ echo "./app \$maxhotpage \$BW \$outputdir \$app"
 
 RUNAPP(){
   rm $OUTPUTDIR/$APP
-  export LD_PRELOAD=/usr/lib/libmigration.so
   cd $APPBASE
   $APPBASE/run.sh $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
-  export LD_PRELOAD=""
 }
 
 intexit() {
@@ -42,18 +40,24 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
-	APPBASE=$APPBENCH/Metis
-	APP=Metis
-	echo "running $APP..."
-	RUNAPP
-	exit
-
-
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
 	echo "running $APP ..."
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
+
+	APPBASE=$APPBENCH/memcached/memcached_client
+	APP=memcached
+	echo "running $APP ..."
+	RUNAPP
+	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+	/bin/ls
+	export LD_PRELOAD=""
+
+	APPBASE=$APPBENCH/Metis
+	APP=Metis
+	echo "running $APP..."
+	RUNAPP
 
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
@@ -65,10 +69,10 @@ if [ -z "$4" ]
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$APPBENCH/apps/memcached_client
-	APP=memcached
-	echo "running $APP..."
-	RUNAPP
+	#APPBASE=$APPBENCH/apps/memcached_client
+	#APP=memcached
+	#echo "running $APP..."
+	#RUNAPP
 
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
@@ -80,13 +84,7 @@ if [ -z "$4" ]
 	echo "running $APP ..."
 	RUNAPP
 
-
-        exit
-
-	#APPBASE=$APPBENCH/memcached
-	#APP=memcached
-	#echo "running $APP ..."
-	#RUNAPP
+	exit
 
 	APPBASE=$APPBENCH/xstream_release
 	APP=xstream_release

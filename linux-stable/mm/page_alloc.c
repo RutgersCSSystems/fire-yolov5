@@ -4569,11 +4569,24 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
 	gfp_mask |= __GFP_COMP | __GFP_NOWARN | __GFP_NORETRY |
 		    __GFP_NOMEMALLOC;
+
+#ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set())
+		page = alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp_mask,
+				PAGE_FRAG_CACHE_MAX_ORDER);
+	if(!page)
+#endif
 	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
 	nc->size = page ? PAGE_FRAG_CACHE_MAX_SIZE : PAGE_SIZE;
 #endif
+
 	if (unlikely(!page))
+#ifdef _ENABLE_HETERO
+		if(is_hetero_buffer_set())
+			page = alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+		if(!page)
+#endif
 		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
 
 	nc->va = page ? page_address(page) : NULL;
