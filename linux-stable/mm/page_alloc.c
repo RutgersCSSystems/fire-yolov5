@@ -4342,7 +4342,7 @@ static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order
 
         if (cpusets_enabled()) {
          
-                printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+                //printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 
                 *alloc_mask |= __GFP_HARDWALL;
                 if (!ac->nodemask)

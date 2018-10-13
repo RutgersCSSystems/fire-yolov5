@@ -1,110 +1,72 @@
 <html><head><title>GraphCHI Metrics Report</title><style>
-table {  border: 1px solid #999999; font: normal 80%/140% arial, helvetica, sans-serif; color: #555; background: #fff;}  td, th {border: 1px dotted #bbb; padding: .5em; width:100px}   </style></head><body><h3>randomwalk:</h3>
+table {  border: 1px solid #999999; font: normal 80%/140% arial, helvetica, sans-serif; color: #555; background: #fff;}  td, th {border: 1px dotted #bbb; padding: .5em; width:100px}   </style></head><body><h3>pagerank:</h3>
 <!-- Round 0 -->
 
 <p><table><tr><th>Key</th><th>Value</th><th>Count</th><th>Min</th><th>Max</th><th>Average</th></tr><tr><td>cachesize_mb</td>
 <td>8192</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>compression</td>
-<td>1</td>
+<td>0</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>execthreads</td>
-<td>8</td>
+<td>16</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>loadthreads</td>
-<td>4</td>
+<td>8</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>membudget_mb</td>
 <td>8192</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>niothreads</td>
-<td>2</td>
-<td colspan=4>&nbsp;</td></tr><tr><td>niters</td>
-<td>8</td>
-<td colspan=4>&nbsp;</td></tr><tr><td>nshards</td>
 <td>4</td>
+<td colspan=4>&nbsp;</td></tr><tr><td>niters</td>
+<td>32</td>
+<td colspan=4>&nbsp;</td></tr><tr><td>nshards</td>
+<td>1</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>nvertices</td>
 <td>3072627</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>scheduler</td>
-<td>1</td>
+<td>0</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>serialized-updates</td>
-<td>6771979.000000</td>
+<td>98318112.000000</td>
 <td>32</td>
-<td>22.000</td>
-<td>998546.000</td>
-<td>211624.344</td>
+<td>3072441.000</td>
+<td>3072441.000</td>
+<td>3072441.000</td>
 </tr><tr><td>stripesize</td>
 <td>1073741824</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>updates</td>
-<td>7110148</td>
+<td>98324064</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>work</td>
-<td>581227412</td>
+<td>0</td>
 <td colspan=4>&nbsp;</td></tr></table> </p><!-- Round 1 -->
 
 <p><table><tr><th>Key</th><th>Value (sec)</th><th>Count</th><th>Min (sec)</th><th>Max (sec)</th><th>Average (sec)</th></tr>
-<tr><td>blockload</td>
-<td>0.589646</td>
-<td>2088</td>
-<td>0.000</td>
-<td>0.003</td>
-<td>0.000</td>
-</tr><tr><td>commit</td>
-<td>26.648242</td>
-<td>841</td>
-<td>0.012</td>
-<td>0.067</td>
-<td>0.032</td>
-</tr><tr><td>execute-updates</td>
-<td>14.303872</td>
+<tr><td>execute-updates</td>
+<td>25.856011</td>
 <td>32</td>
-<td>0.021</td>
-<td>2.449</td>
-<td>0.447</td>
+<td>0.369</td>
+<td>1.199</td>
+<td>0.808</td>
 </tr><tr><td>iomgr_init</td>
-<td>0.000118</td>
+<td>0.000197</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>memoryshard_create_edges</td>
-<td>100.285156</td>
-<td>32</td>
-<td>1.135</td>
-<td>7.965</td>
-<td>3.134</td>
-</tr><tr><td>memshard_commit</td>
-<td>84.038716</td>
-<td>32</td>
-<td>1.542</td>
-<td>4.543</td>
-<td>2.626</td>
-</tr><tr><td>preada_now</td>
-<td>33.457164</td>
-<td>7448</td>
-<td>0.000</td>
-<td>0.026</td>
-<td>0.004</td>
-</tr><tr><td>pwritea_now</td>
-<td>113.343878</td>
-<td>5152</td>
-<td>0.008</td>
-<td>0.083</td>
-<td>0.022</td>
-</tr><tr><td>read_next_vertices</td>
-<td>30.300912</td>
-<td>96</td>
-<td>0.000</td>
-<td>1.614</td>
-<td>0.316</td>
+<td>3.455826</td>
+<td colspan=4>&nbsp;</td></tr><tr><td>preada_now</td>
+<td>0.445668</td>
+<td>29</td>
+<td>0.002</td>
+<td>0.019</td>
+<td>0.015</td>
 </tr><tr><td>runtime</td>
-<td>251.047798</td>
+<td>29.703069</td>
 <td colspan=4>&nbsp;</td></tr><tr><td>stripedio_wait_for_reads</td>
-<td>0.000013</td>
-<td>32</td>
-<td>0.000</td>
-<td>0.000</td>
-<td>0.000</td>
-</tr><tr><td>stripedio_wait_for_writes</td>
-<td>0.000044</td>
-<td>40</td>
+<td>0.000001</td>
+<td colspan=4>&nbsp;</td></tr><tr><td>stripedio_wait_for_writes</td>
+<td>0.000004</td>
+<td>2</td>
 <td>0.000</td>
 <td>0.000</td>
 <td>0.000</td>
 </tr></table> </p><!-- Round 2 -->
 
 <p><table><tr><th>Key</th><th>Value</th></tr>
-<tr><td>app</td><td width=400>randomwalk</td>
+<tr><td>app</td><td width=400>pagerank</td>
 </tr><tr><td>engine</td><td width=400>default</td>
 </tr><tr><td>file</td><td width=400>/users/skannan/ssd/NVM/appbench/shared_data/com-orkut.ungraph.txt</td>
 </tr></table> </p><!-- Round 3 -->

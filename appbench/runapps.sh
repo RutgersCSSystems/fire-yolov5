@@ -40,13 +40,19 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+	exit
+
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
 	echo "running $APP ..."
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
 
-	APPBASE=$APPBENCH/memcached/memcached_client
+	APPBASE=$APPBENCH/memcached/memtier_benchmark
 	APP=memcached
 	echo "running $APP ..."
 	RUNAPP
@@ -79,10 +85,6 @@ if [ -z "$4" ]
 	echo "running $APP..."
 	RUNAPP
 
-	APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
 
 	exit
 

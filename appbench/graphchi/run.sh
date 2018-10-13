@@ -1,6 +1,7 @@
 #!/bin/bash
 set -x
 DATA=com-orkut.ungraph.txt
+#DATA=sx-stackoverflow.txt
 #DATA=soc-LiveJournal1.txt
 INPUT=$SHARED_DATA/$DATA
 APPBASE=$APPBENCH/graphchi/graphchi-cpp/bin/example_apps
@@ -21,7 +22,7 @@ RUN(){
 rm -rf $SHARED_DATA/$DATA.*
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 #/usr/bin/time -v
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 8
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 32
 export LD_PRELOAD=""
 }
 

@@ -9,7 +9,7 @@ mkdir $STORAGE
 OTHERPARAMS=" --num_levels=2 --compression_type=none --disable_auto_compactions --threads=16"
 
 #YCSBTRACE=" --run_trace_path=/mnt/ramdisk/workloade_run_trace.out --load_trace_path=/mnt/ramdisk/workloade_load_trace.out"
-#BENCHMARK=" --benchmarks=fillrandom,readrandom"
+BENCHMARK=" --benchmarks=fillrandom,readrandom,fillseq,fillseq,readseq,overwrite"
 #BENCHMARK=" --benchmarks=loadycsb,runycsb"
 rm $STORAGE/*
 NUMVALS=" --num=100000"
@@ -19,6 +19,6 @@ VALSIZE=" --value_size=4096"
 rm -rf $STORAGE/rocksdb
 
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$ROCKSDB/db_bench --db=$STORAGE/rocksdb $OTHERPARAMS $NUMVALS $VALSIZE #$BENCHMARK $YCSBTRACE
+$ROCKSDB/db_bench --db=$STORAGE/rocksdb $OTHERPARAMS $NUMVALS $VALSIZE $BENCHMARK #$YCSBTRACE
 export LD_PRELOAD=""
 exit
