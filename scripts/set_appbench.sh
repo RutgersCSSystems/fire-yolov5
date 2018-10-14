@@ -36,6 +36,20 @@ sudo apt-get install -y libbz2-dev
 sudo apt-get install -y libevent-dev
 }
 
+INSTALL_SPARK(){
+sudo service docker stop
+sudo apt-get remove docker docker.io
+sudo rm -rf /var/lib/docker
+sudo rm -rf $APPBENCH/docker
+mkdir $APPBENCH/docker
+sudo apt-get install docker docker.io
+sudo service docker stop
+sudo cp $SCRIPTS/daemon.json /etc/docker/daemon.json
+sudo service docker start
+sudo docker pull cloudsuite/graph-analytics
+sudo docker pull cloudsuite/twitter-dataset-graph
+}
+
 INSTALL_GFLAGS(){
 cd $SHARED_LIBS
 git clone https://github.com/gflags/gflags.git
@@ -67,6 +81,7 @@ git clone https://github.com/memcached/memcached.git
 
 INSTALL_SYSTEM_LIBS
 INSTALL_GFLAGS
+INSTALL_SPARK
 
 GETAPPS
 # Set variable, setup packages and generate data
