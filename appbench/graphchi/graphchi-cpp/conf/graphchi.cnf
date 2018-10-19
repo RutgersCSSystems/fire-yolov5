@@ -10,8 +10,8 @@ niothreads =4
 #cachesize_mb = 1000
 
 # Good for 4 gigs
-membudget_mb = 8192
-cachesize_mb = 8192
+membudget_mb = 16384
+cachesize_mb = 16384
 #
 #membudget_mb = 1024
 #cachesize_mb = 1000
@@ -19,8 +19,8 @@ cachesize_mb = 8192
 
 # I/O settings
 #io.blocksize = 64000
-io.blocksize = 1048576
-mmap = 1  # Use mmaped files where applicable
+io.blocksize = 2097152
+mmap = 0  # Use mmaped files where applicable
 
 
 # Comma-delimited list of metrics output reporters.

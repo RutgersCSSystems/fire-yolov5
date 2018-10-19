@@ -20,7 +20,9 @@ FlushDisk()
 
 RUN(){
 #LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-sudo LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP run --rm --volumes-from data cloudsuite/graph-analytics --driver-memory 16g --executor-memory 32g
+#sudo LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP run --rm --volumes-from data cloudsuite/graph-analytics --driver-memory 16g --executor-memory 32g
+#sudo LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
+sudo /usr/bin/time -v $APP run --cpuset-mems="0" --rm --volumes-from data cloudsuite/graph-analytics --driver-memory 16g --executor-memory 32g 
 export LD_PRELOAD=""
 }
 

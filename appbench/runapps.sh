@@ -44,7 +44,6 @@ if [ -z "$4" ]
 	APP=db_bench
 	echo "running $APP ..."
 	RUNAPP
-	exit
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
@@ -70,8 +69,8 @@ if [ -z "$4" ]
 	echo "running $APP ..."
 	RUNAPP
 
-	APPBASE=$APPBENCH/leveldb
-	APP=leveldb
+	APPBASE=$APPBENCH/apps/mongo-perf
+	APP=mongodb
 	echo "running $APP..."
 	RUNAPP
 

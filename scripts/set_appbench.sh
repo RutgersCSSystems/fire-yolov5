@@ -38,13 +38,13 @@ sudo apt-get install -y libevent-dev
 
 INSTALL_SPARK(){
 sudo service docker stop
-sudo apt-get remove docker docker.io
-sudo rm -rf /var/lib/docker
-sudo rm -rf $APPBENCH/docker
+sudo apt-get -y remove docker docker.io
+sudo rm -rf /var/lib/docker $APPBENCH/docker
 mkdir $APPBENCH/docker
-sudo apt-get install docker docker.io
+sudo apt-get -y install docker docker.io
 sudo service docker stop
-sudo cp $SCRIPTS/daemon.json /etc/docker/daemon.json
+sudo cp scripts/docker_new.service /lib/systemd/system/docker.service
+sudo systemctl daemon-reload
 sudo service docker start
 sudo docker pull cloudsuite/graph-analytics
 sudo docker pull cloudsuite/twitter-dataset-graph
@@ -79,9 +79,11 @@ cd $APPBENCH/apps
 git clone https://github.com/memcached/memcached.git
 }
 
+INSTALL_SPARK
+exit
+
 INSTALL_SYSTEM_LIBS
 INSTALL_GFLAGS
-INSTALL_SPARK
 
 GETAPPS
 # Set variable, setup packages and generate data

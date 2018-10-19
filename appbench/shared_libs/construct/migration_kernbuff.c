@@ -71,9 +71,9 @@ void con() {
         a = syscall(__NR_start_trace, COLLECT_ALLOCATE);
         //a = syscall(__NR_start_trace, HETERO_PGCACHE);
         a = syscall(__NR_start_trace, HETERO_BUFFER);
-        /*a = syscall(__NR_start_trace, HETERO_JOURNAL);
+        a = syscall(__NR_start_trace, HETERO_JOURNAL);
         a = syscall(__NR_start_trace, HETERO_RADIX);
-        a = syscall(__NR_start_trace, HETERO_FULLKERN);*/
+        //a = syscall(__NR_start_trace, HETERO_FULLKERN);*/
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
