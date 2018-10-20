@@ -88,34 +88,46 @@ int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
+int hetero_pid = 0;
 
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
-    return enbl_hetero_pgcache;
+
+    if(hetero_pid && current->pid == hetero_pid) {
+	    //printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
+	    return enbl_hetero_pgcache;
+    }
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
-    return enbl_hetero_buffer;
+    if(hetero_pid  && current->pid == hetero_pid) {
+	printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
+    	return enbl_hetero_buffer;
+    }
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
 int is_hetero_journ_set(void){
-    return enbl_hetero_journal;
+
+    if(hetero_pid && current->pid == hetero_pid)
+    	return enbl_hetero_journal;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_journ_set);
 
 int is_hetero_radix_set(void){
-    return enbl_hetero_radix;
+    if(hetero_pid && current->pid == hetero_pid)
+    	return enbl_hetero_radix;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_radix_set);
 
 int is_hetero_kernel_set(void){
-    return enbl_hetero_kernel;
+    if(hetero_pid && current->pid == hetero_pid)
+    	return enbl_hetero_kernel;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_kernel_set);
@@ -144,6 +156,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
+	    hetero_pid = 0;
 	    break;
 
 	case COLLECT_TRACE:
@@ -223,6 +236,8 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_kernel = 1;
 	    break;
 	default:
+	    hetero_pid = flag;
+	    printk("hetero_pid set to %d %d\n", hetero_pid, current->pid);			
 	    break;
     }
     return 0;

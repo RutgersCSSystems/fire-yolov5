@@ -60,6 +60,7 @@ void con() {
   
     int a = 0;
     struct sigaction action;
+    pid_t pid = getpid();
 
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
@@ -70,10 +71,11 @@ void con() {
         a = syscall(__NR_start_trace, TIME_TRACE);*/
         a = syscall(__NR_start_trace, COLLECT_ALLOCATE);
         a = syscall(__NR_start_trace, HETERO_PGCACHE);
-        /*a = syscall(__NR_start_trace, HETERO_BUFFER);
+        a = syscall(__NR_start_trace, HETERO_BUFFER);
         a = syscall(__NR_start_trace, HETERO_JOURNAL);
         a = syscall(__NR_start_trace, HETERO_RADIX);
-        a = syscall(__NR_start_trace, HETERO_FULLKERN);*/
+        a = syscall(__NR_start_trace, HETERO_FULLKERN);
+	a = syscall(__NR_start_trace, (int)pid);
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));

@@ -21,6 +21,7 @@ CC=/usr/lib/ccache/bin/gcc make install &>> compile.out
 cp ./arch/x86/boot/bzImage /boot/vmlinuz-$y
 cp System.map /boot/System.map-$y
 cp .config /boot/config-$y
+rm -rf /boot/initrd.img-$y
 update-initramfs -c -k $y
 #echo Now edit menu.lst or run /sbin/update-grub
 
