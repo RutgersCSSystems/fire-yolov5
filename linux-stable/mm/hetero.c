@@ -103,7 +103,7 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
     if(hetero_pid  && current->pid == hetero_pid) {
-	printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
+	//printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
     	return enbl_hetero_buffer;
     }
     return 0;
