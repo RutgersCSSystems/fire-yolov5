@@ -3006,3 +3006,91 @@ int migrate_vma(const struct migrate_vma_ops *ops,
 }
 EXPORT_SYMBOL(migrate_vma);
 #endif /* defined(MIGRATE_VMA_HELPER) */
+
+int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
+	struct page *dst_page)
+{
+	struct page *src_page;
+	unsigned long addr = vmap_start;
+	pgd_t *pgd;
+	p4d_t *p4d;
+	pud_t *pud;
+	pmd_t *pmd;
+	pte_t *pte;
+	pte_t ptent;
+
+	pgd = pgd_offset_k(addr);
+	if (!pgd || pgd_none_or_clear_bad(pgd))
+		return -ENODEV;
+	p4d = p4d_offset(pgd, addr);
+	if (!p4d || p4d_none_or_clear_bad(p4d))
+		return -ENODEV;
+	pud = pud_offset(p4d, addr);
+	if (!pud || pud_none_or_clear_bad(pud))
+		return -ENODEV;
+	pmd = pmd_offset(pud, addr);
+	if (!pmd || pmd_none_or_clear_bad(pmd))
+		return -ENODEV;
+	pte = pte_offset_map(pmd, addr);
+
+	ptent = ptep_get_and_clear(&init_mm, addr, pte);
+	flush_tlb_kernel_range(vmap_start, vmap_end);
+
+	if (!pte_present(ptent))
+		return -ENODEV;
+
+	src_page = pte_page(ptent);
+
+	copy_highpage(dst_page, src_page);
+
+	set_pte_at(&init_mm, addr, pte, mk_pte(dst_page, PAGE_KERNEL));
+
+	pte_unmap(pte);
+
+	return 0;
+}
+
+int remove_vmap_migration_entry(unsigned long vmap_start, unsigned long vmap_end)
+{
+	return 0;
+}
+
+int migrate_vmalloc_pages(const void *addr, struct page *dst_page)
+{
+	struct vm_struct *area;
+	struct vmap_area *va;
+	unsigned long vmap_start = PAGE_ALIGN((unsigned long)addr);
+	unsigned long vmap_end = PAGE_ALIGN(vmap_start + PAGE_SIZE);
+	int status;
+
+	if (!is_vmalloc_addr((void *)vmap_start))
+		return -ENODEV;
+
+	va = find_vmap_area((unsigned long)vmap_start);
+	if (unlikely(!va)) {
+		WARN(1, KERN_ERR "Trying to migrate nonexistent vmap (%p)\n",
+				addr);
+		return -ENODEV;
+	}
+	area = va->vm;
+	if (unlikely(!area)) {
+		WARN(1, KERN_ERR "Trying to migrate nonexistent vm area (%p)\n",
+				addr);
+		return -ENODEV;
+	}
+
+	/* make sure to-be-migrated pages are vmapped */
+	vmap_end = clamp_t(unsigned long, vmap_end, va->va_start, va->va_end);
+
+	if (vmap_end - vmap_start < PAGE_SIZE)
+		return -EINVAL;
+
+	status = unmap_and_move_vmap_page(vmap_start, vmap_end, dst_page);
+	if (status)
+		return -ENODEV;
+
+	remove_vmap_migration_entry(vmap_start, vmap_end);
+
+	return 0;
+}
+EXPORT_SYMBOL(migrate_vmalloc_pages);

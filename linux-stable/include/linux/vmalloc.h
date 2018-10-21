@@ -216,4 +216,8 @@ pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms)
 int register_vmap_purge_notifier(struct notifier_block *nb);
 int unregister_vmap_purge_notifier(struct notifier_block *nb);
 
+#ifdef CONFIG_MMU
+extern struct vmap_area *find_vmap_area(unsigned long addr);
+#endif
+
 #endif /* _LINUX_VMALLOC_H */
