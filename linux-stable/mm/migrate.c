@@ -3007,6 +3007,36 @@ int migrate_vma(const struct migrate_vma_ops *ops,
 EXPORT_SYMBOL(migrate_vma);
 #endif /* defined(MIGRATE_VMA_HELPER) */
 
+extern spinlock_t vmap_area_lock;
+
+int change_vmap_struct(unsigned long addr, struct page *newpage)
+{
+	struct vm_struct *area;
+	int page_index;
+
+	WARN(!PAGE_ALIGNED(addr), "Trying to migrate() bad address (%lx)\n",
+			addr);
+
+	area = find_vmap_area(addr)->vm;
+	if (unlikely(!area)) {
+		WARN(1, KERN_ERR "Trying to vfree() nonexistent vm area (%lx)\n",
+				addr);
+		return -1;
+	}
+
+	if (addr < (unsigned long)area->addr)
+		return -1;
+
+	page_index = (addr - (unsigned long)area->addr)>>PAGE_SHIFT;
+
+	if (page_index >= area->nr_pages)
+		return -1;
+
+	area->pages[page_index] = newpage;
+
+	return 0;
+}
+
 int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
 	struct page *dst_page)
 {
@@ -3052,6 +3082,8 @@ int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
 	}
 
 	copy_highpage(dst_page, src_page);
+
+	change_vmap_struct(addr, dst_page);
 
 	unlock_page(src_page);
 
