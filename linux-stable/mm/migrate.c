@@ -3050,6 +3050,9 @@ int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
 	spinlock_t *ptl;
 	pte_t ptent;
 
+	swp_entry_t entry;
+	pte_t swp_pte;
+
 	pgd = pgd_offset_k(addr);
 	if (!pgd || pgd_none_or_clear_bad(pgd))
 		return -ENODEV;
@@ -3070,31 +3073,38 @@ int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
 		return -ENODEV;
 	}
 
-	ptent = ptep_get_and_clear(&init_mm, addr, pte);
-	flush_tlb_kernel_range(vmap_start, vmap_end);
-
-	spin_unlock(ptl);
-
-	src_page = pte_page(ptent);
+	src_page = pte_page(*pte);
 
 	if (!trylock_page(src_page)) {
 		goto exit;
 	}
 
+	ptent = ptep_get_and_clear(&init_mm, addr, pte);
+
+	/* set migration entry */
+	entry = make_migration_entry(src_page, pte_write(ptent));
+	swp_pte = swp_entry_to_pte(entry);
+
+	set_pte_at(&init_mm, addr, pte, swp_pte);
+	flush_tlb_kernel_range(vmap_start, vmap_end);
+
+	spin_unlock(ptl);
+
+
+
 	copy_highpage(dst_page, src_page);
 
 	change_vmap_struct(addr, dst_page);
 
-	unlock_page(src_page);
 
 	ptent = mk_pte(dst_page, PAGE_KERNEL);
-exit:
 	spin_lock(ptl);
-
 	set_pte_at(&init_mm, addr, pte, ptent);
-
 	pte_unmap_unlock(pte, ptl);
 
+	unlock_page(src_page);
+
+exit:
 	return 0;
 }
 
