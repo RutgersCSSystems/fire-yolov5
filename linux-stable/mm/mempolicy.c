@@ -113,7 +113,7 @@
 #define MPOL_MF_INVERT (MPOL_MF_INTERNAL << 1)		/* Invert check for nodemask */
 
 extern int global_flag;
-int allocate_counter = 0;
+extern int allocate_counter;
 
 static struct kmem_cache *policy_cache;
 static struct kmem_cache *sn_cache;
@@ -2096,6 +2096,7 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 	if (pol->mode == MPOL_INTERLEAVE)
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
 	else {
+
 		page = __alloc_pages_nodemask(gfp, order,
 				policy_node(gfp, pol, numa_node_id()),
 				policy_nodemask(gfp, pol));
@@ -2134,6 +2135,8 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 				"\n", __func__, __LINE__);
                 }else {
                         allocate_counter++;
+			//printk(KERN_ALERT "%s : %d NODE: %d \n", 
+			//	__func__, __LINE__, page_to_nid(page));
                 }
 		//if(page)	
 		  //      printk(KERN_ALERT "%s : %d NODE: %d \n",

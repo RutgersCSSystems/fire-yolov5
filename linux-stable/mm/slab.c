@@ -1409,6 +1409,9 @@ static struct page *kmem_getpages(struct kmem_cache *cachep, gfp_t flags,
 	struct page *page;
 	int nr_pages;
 
+         printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+
+
 	flags |= cachep->allocflags;
 
 	page = __alloc_pages_node(nodeid, flags, cachep->gfporder);

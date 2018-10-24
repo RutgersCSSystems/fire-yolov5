@@ -3124,6 +3124,9 @@ void exit_mmap(struct mm_struct *mm)
 		vma = remove_vma(vma);
 	}
 	vm_unacct_memory(nr_accounted);
+#ifdef _ENABLE_HETERO
+	//is_hetero_exit();
+#endif
 }
 
 /* Insert vm structure into process list sorted by address

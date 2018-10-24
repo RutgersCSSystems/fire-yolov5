@@ -130,6 +130,12 @@ static void *__kmalloc_reserve(size_t size, gfp_t flags, int node,
 	void *obj;
 	bool ret_pfmemalloc = false;
 
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+                node = NUMA_HETERO_NODE;
+        }
+#endif
+
 	/*
 	 * Try a regular allocation, when that fails and we're not entitled
 	 * to the reserves, fail.
@@ -194,7 +200,6 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 		node = NUMA_HETERO_NODE;
 	}
 #endif
-
 	/* Get the HEAD */
 	skb = kmem_cache_alloc_node(cache, gfp_mask & ~__GFP_DMA, node);
 	if (!skb)

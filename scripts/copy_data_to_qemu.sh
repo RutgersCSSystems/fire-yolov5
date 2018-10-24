@@ -15,7 +15,7 @@ if [ -z "$DESTPATH" ]
 then
     sudo cp -r $DIRPATH $MOUNT_DIR/root/
 else
-    sudo cp $DIRPATH $MOUNT_DIR/$DESTPATH
+    sudo cp -r $DIRPATH $MOUNT_DIR/$DESTPATH
 fi
 
 sudo umount $MOUNT_DIR

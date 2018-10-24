@@ -76,6 +76,8 @@
 #include <linux/hetero.h>
 
 extern int global_flag;
+extern int hetero_usrpg_cnt;
+extern int hetero_kernpg_cnt;
 
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
@@ -4342,8 +4344,7 @@ static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order
 
         if (cpusets_enabled()) {
          
-                //printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
-
+                printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
                 *alloc_mask |= __GFP_HARDWALL;
                 if (!ac->nodemask)
                         ac->nodemask = &cpuset_current_mems_allowed;
@@ -4424,6 +4425,15 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
 
+        if(is_hetero_buffer_set()) {
+                if ((alloc_mask & __GFP_NOFAIL)) {
+                        hetero_usrpg_cnt++;
+                }else {
+			dump_stack();
+                         hetero_kernpg_cnt++;
+                }
+        }
+
 out:
 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
 	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
@@ -4451,6 +4461,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	alloc_mask = gfp_mask;
 
         preferred_nid = NUMA_HETERO_NODE;
+
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
 		return NULL;
@@ -4482,17 +4493,27 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
         if(!page) {
-                printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+                //printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
                 return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, nodemask);
         }/*else {
                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__,page_to_nid(page));
         }*/
+
+        if(is_hetero_buffer_set()) {
+                if ((alloc_mask & __GFP_MOVABLE)) {
+                        hetero_usrpg_cnt++;
+                }else {
+			 //dump_stack();
+                         hetero_kernpg_cnt++;
+                }
+        }
 out:
 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
 	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
 		__free_pages(page, order);
 		page = NULL;
 	}
+	
 
 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
 
@@ -4571,9 +4592,15 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 		    __GFP_NOMEMALLOC;
 
 #ifdef _ENABLE_HETERO
-	if(is_hetero_buffer_set())
+	if(is_hetero_buffer_set()) {
+		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
+	}else if(is_hetero_kernel_set()) {
+
+		printk(KERN_ALERT "%s:%d Current %d taskname %s  \n", 
+			__func__, __LINE__, current->pid, current->comm);
+	}
 	if(!page)
 #endif
 	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
@@ -4583,8 +4610,10 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 
 	if (unlikely(!page))
 #ifdef _ENABLE_HETERO
-		if(is_hetero_buffer_set())
+		if(is_hetero_buffer_set()) {
+			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			page = alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);
+		}
 		if(!page)
 #endif
 		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
@@ -4615,6 +4644,11 @@ void *page_frag_alloc(struct page_frag_cache *nc,
 	unsigned int size = PAGE_SIZE;
 	struct page *page;
 	int offset;
+
+	if(is_hetero_kernel_set()) {
+                printk(KERN_ALERT "%s:%d Current %d taskname %s  \n",
+                        __func__, __LINE__, current->pid, current->comm);
+        }
 
 	if (unlikely(!nc->va)) {
 refill:

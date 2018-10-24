@@ -1673,6 +1673,7 @@ static struct page *new_slab(struct kmem_cache *s, gfp_t flags, int node)
 		flags & (GFP_RECLAIM_MASK | GFP_CONSTRAINT_MASK), node);
 }
 
+
 static void __free_slab(struct kmem_cache *s, struct page *page)
 {
 	int order = compound_order(page);
@@ -2743,14 +2744,149 @@ redo:
 	return object;
 }
 
-static __always_inline void *slab_alloc(struct kmem_cache *s,
-		gfp_t gfpflags, unsigned long addr)
-{
-	return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
-}
-
  /* HeteroOS code */
 #ifdef _ENABLE_HETERO
+
+static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
+{
+	struct page *page;
+	struct kmem_cache_order_objects oo = s->oo;
+	gfp_t alloc_gfp;
+	void *start, *p;
+	int idx, order;
+	bool shuffle;
+
+	flags &= gfp_allowed_mask;
+
+	if (gfpflags_allow_blocking(flags))
+		local_irq_enable();
+
+	flags |= s->allocflags;
+
+	/*
+	 * Let the initial higher-order allocation fail under memory pressure
+	 * so we fall-back to the minimum order allocation.
+	 */
+	alloc_gfp = (flags | __GFP_NOWARN | __GFP_NORETRY) & ~__GFP_NOFAIL;
+	if ((alloc_gfp & __GFP_DIRECT_RECLAIM) && oo_order(oo) > oo_order(s->min))
+		alloc_gfp = (alloc_gfp | __GFP_NOMEMALLOC) & ~(__GFP_RECLAIM|__GFP_NOFAIL);
+
+
+	page = alloc_slab_page(s, alloc_gfp, node, oo);
+
+        //printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n", 
+	//		__func__, __LINE__, node, page_to_nid(page));
+
+	if (unlikely(!page)) {
+		oo = s->min;
+		alloc_gfp = flags;
+		/*
+		 * Allocation may have failed due to fragmentation.
+		 * Try a lower order alloc if possible
+		 */
+		page = alloc_slab_page(s, alloc_gfp, node, oo);
+		if (unlikely(!page))
+			goto out;
+		stat(s, ORDER_FALLBACK);
+	}
+
+	page->objects = oo_objects(oo);
+
+	order = compound_order(page);
+	page->slab_cache = s;
+	__SetPageSlab(page);
+	if (page_is_pfmemalloc(page))
+		SetPageSlabPfmemalloc(page);
+
+	start = page_address(page);
+
+	if (unlikely(s->flags & SLAB_POISON))
+		memset(start, POISON_INUSE, PAGE_SIZE << order);
+
+	kasan_poison_slab(page);
+
+	shuffle = shuffle_freelist(s, page);
+
+	if (!shuffle) {
+		for_each_object_idx(p, idx, s, start, page->objects) {
+			setup_object(s, page, p);
+			if (likely(idx < page->objects))
+				set_freepointer(s, p, p + s->size);
+			else
+				set_freepointer(s, p, NULL);
+		}
+		page->freelist = fixup_red_left(s, start);
+	}
+
+	page->inuse = page->objects;
+	page->frozen = 1;
+
+out:
+	if (gfpflags_allow_blocking(flags))
+		local_irq_disable();
+	if (!page)
+		return NULL;
+
+	mod_lruvec_page_state(page,
+		(s->flags & SLAB_RECLAIM_ACCOUNT) ?
+		NR_SLAB_RECLAIMABLE : NR_SLAB_UNRECLAIMABLE,
+		1 << oo_order(oo));
+
+	inc_slabs_node(s, page_to_nid(page), page->objects);
+
+	return page;
+}
+
+static struct page *new_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
+{
+	if (unlikely(flags & GFP_SLAB_BUG_MASK)) {
+		gfp_t invalid_mask = flags & GFP_SLAB_BUG_MASK;
+		flags &= ~GFP_SLAB_BUG_MASK;
+		pr_warn("Unexpected gfp: %#x (%pGg). Fixing up to gfp: %#x (%pGg). Fix your code!\n",
+				invalid_mask, &invalid_mask, flags, &flags);
+		dump_stack();
+	}
+
+	return allocate_slab_hetero(s,
+		flags & (GFP_RECLAIM_MASK | GFP_CONSTRAINT_MASK), node);
+}
+
+
+
+static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
+                        int node, struct kmem_cache_cpu **pc)
+{
+        void *freelist;
+        struct kmem_cache_cpu *c = *pc;
+        struct page *page;
+
+        freelist = get_partial(s, flags, node, c);
+
+        if (freelist)
+                return freelist;
+
+        page = new_slab_hetero(s, flags, node);
+        if (page) {
+                c = raw_cpu_ptr(s->cpu_slab);
+                if (c->page)
+                        flush_slab(s, c);
+
+                /*
+                 * No other reference to the page yet so we can
+                 * muck around with it freely without cmpxchg
+                 */
+                freelist = page->freelist;
+                page->freelist = NULL;
+
+                stat(s, ALLOC_SLAB);
+                c->page = page;
+                *pc = c;
+        } else
+                freelist = NULL;
+
+        return freelist;
+}
+
 /*
  * Slow path. The lockless freelist is empty or we need to perform
  * debugging duties.
@@ -2780,8 +2916,6 @@ static void *___slab_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags, int node
 	if (!page)
 		goto new_slab;
 
-	//printk(KERN_ALERT "%s : %d page node %d \n", 
-	//		__func__, __LINE__, page_to_nid(page));
 redo:
 	if (unlikely(!node_match(page, node))) {
 		int searchnode = node;
@@ -2790,10 +2924,16 @@ redo:
 			searchnode = node_to_mem_node(node);
 
 		if (unlikely(!node_match(page, searchnode))) {
+
+			//printk(KERN_ALERT "%s : %d page node %d target %d\n", 
+			//	__func__, __LINE__, page_to_nid(page), node);
 			stat(s, ALLOC_NODE_MISMATCH);
 			deactivate_slab(s, page, c->freelist, c);
 			goto new_slab;
-		}
+		}//else {
+			//printk(KERN_ALERT "%s : %d page node %d target %d\n", 
+			//	__func__, __LINE__, page_to_nid(page), node);
+		//}
 	}
 
 	/*
@@ -2841,7 +2981,7 @@ new_slab:
 		goto redo;
 	}
 
-	freelist = new_slab_objects(s, gfpflags, node, &c);
+	freelist = new_slab_objects_hetero(s, gfpflags, node, &c);
 
 	if (unlikely(!freelist)) {
 		slab_out_of_memory(s, gfpflags, node);
@@ -2849,6 +2989,7 @@ new_slab:
 	}
 
 	page = c->page;
+
 	if (likely(!kmem_cache_debug(s) && pfmemalloc_match(page, gfpflags)))
 		goto load_freelist;
 
@@ -2943,6 +3084,14 @@ redo:
 
 	object = c->freelist;
 	page = c->page;
+
+        //if(is_hetero_buffer_set()) {
+	/*if (gfpflags & GFP_KERNEL_ACCOUNT)
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	else {
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}*/
+        //}
 	if (unlikely(!object || !node_match(page, node))) {
 		object = __slab_alloc_hetero(s, gfpflags, node, addr, c);
 		stat(s, ALLOC_SLOWPATH);
@@ -2987,9 +3136,7 @@ redo:
 static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
-        //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	return slab_alloc_node_hetero(s, gfpflags, NUMA_HETERO_NODE, addr);
-	//return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
 }
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
@@ -3003,7 +3150,24 @@ void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc_hetero);
+
 #endif
+
+
+static __always_inline void *slab_alloc(struct kmem_cache *s,
+		gfp_t gfpflags, unsigned long addr)
+{
+
+#ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()) {
+		return slab_alloc_node_hetero(s, gfpflags, NUMA_HETERO_NODE, addr);
+	}
+	return slab_alloc_node(s, gfpflags, NUMA_FAST_NODE, addr);
+#else
+	return slab_alloc_node(s, gfpflags, NUMA_NO_NODE, addr);
+#endif
+}
+
 
 
 void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
@@ -3665,6 +3829,7 @@ static int init_kmem_cache_nodes(struct kmem_cache *s)
 	int node;
 
 	for_each_node_state(node, N_NORMAL_MEMORY) {
+
 		struct kmem_cache_node *n;
 
 		if (slab_state == DOWN) {
@@ -4049,7 +4214,9 @@ void *__kmalloc(size_t size, gfp_t flags)
 
 	kasan_kmalloc(s, ret, size, flags);
 
-//	printk(KERN_ALERT "mm slub.c __kmalloc \n");
+	if(is_hetero_buffer_set())
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+
 	return ret;
 }
 EXPORT_SYMBOL(__kmalloc);
@@ -4086,14 +4253,6 @@ void *__kmalloc_hetero(size_t size, gfp_t flags)
 
 	ret = slab_alloc_hetero(s, flags, _RET_IP_);
 
-//#ifdef _HETERO_MIGRATE
-#if 0
-        struct page *page = virt_to_page(ret);
-        if(page) {
-                printk(KERN_ALERT "%s : %d __kmalloc_hetero: %lu \n",
-	             __func__, __LINE__, (unsigned long)ret);
-        }
-#endif
 	trace_kmalloc(_RET_IP_, ret, size, s->size, flags);
 
 	kasan_kmalloc(s, ret, size, flags);

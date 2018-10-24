@@ -89,24 +89,40 @@ int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 int hetero_pid = 0;
+int allocate_counter = 0;
+int hetero_usrpg_cnt = 0;
+int hetero_kernpg_cnt = 0;
+
+int is_hetero_exit() {
+    if(hetero_pid && current->pid == hetero_pid) {
+	printk("hetero_pid %d Curr %d user pages %d kern pages %d\n",
+		hetero_pid, current->pid, hetero_usrpg_cnt, 
+		hetero_kernpg_cnt);
+    }
+}
+EXPORT_SYMBOL(is_hetero_exit);
 
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
 
-    if(hetero_pid && current->pid == hetero_pid) {
-	    //printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
-	    return enbl_hetero_pgcache;
-    }
+    if(hetero_pid && current->pid == hetero_pid) 
+	if(enbl_hetero_pgcache) { 	
+	    	return enbl_hetero_pgcache;
+    	}		
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
+
     if(hetero_pid  && current->pid == hetero_pid) {
-	//printk(KERN_ALERT "hetero_pid %d \n", hetero_pid);
-    	return enbl_hetero_buffer;
-    }
-    return 0;
+	if(enbl_hetero_buffer) { 	
+	        //printk("hetero_pid %d Curr %d buff counter %d\n", 
+	        //	hetero_pid, current->pid, hetero_usrpg_cnt);
+	    	return enbl_hetero_buffer;
+    	}
+    } 
+   return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
@@ -126,9 +142,9 @@ int is_hetero_radix_set(void){
 EXPORT_SYMBOL(is_hetero_radix_set);
 
 int is_hetero_kernel_set(void){
-    if(hetero_pid && current->pid == hetero_pid)
-    	return enbl_hetero_kernel;
-    return 0;
+    //if(hetero_pid && current->pid == hetero_pid)
+    	//return enbl_hetero_kernel;
+    return 1;
 }
 EXPORT_SYMBOL(is_hetero_kernel_set);
 
@@ -156,7 +172,10 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
+	    is_hetero_exit();
 	    hetero_pid = 0;
+	    hetero_kernpg_cnt = 0;
+	    hetero_usrpg_cnt = 0;
 	    break;
 
 	case COLLECT_TRACE:

@@ -10,6 +10,7 @@
 //#define _HETERO_ZSMALLOC
 
 #ifdef _ENABLE_HETERO
+#define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
@@ -32,4 +33,5 @@ int is_hetero_journ_set(void);
 int is_hetero_radix_set(void);
 int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
+int is_hetero_exit(void);
 #endif /* _LINUX_NUMA_H */

@@ -644,6 +644,11 @@ int memcg_update_all_caches(int num_memcgs);
  */
 static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
 {
+
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+        }
+#endif
 	if (size != 0 && n > SIZE_MAX / size)
 		return NULL;
 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
@@ -659,6 +664,10 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
  */
 static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
 {
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+        }
+#endif
 	return kmalloc_array(n, size, flags | __GFP_ZERO);
 }
 
@@ -677,6 +686,10 @@ extern void *__kmalloc_track_caller(size_t, gfp_t, unsigned long);
 static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
 				       int node)
 {
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+        }
+#endif
 	if (size != 0 && n > SIZE_MAX / size)
 		return NULL;
 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
@@ -686,6 +699,10 @@ static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
 
 static inline void *kcalloc_node(size_t n, size_t size, gfp_t flags, int node)
 {
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+        }
+#endif
 	return kmalloc_array_node(n, size, flags | __GFP_ZERO, node);
 }
 
@@ -740,6 +757,10 @@ static inline void *kzalloc(size_t size, gfp_t flags)
  */
 static inline void *kzalloc_node(size_t size, gfp_t flags, int node)
 {
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+        }
+#endif
 	return kmalloc_node(size, flags | __GFP_ZERO, node);
 }
 
