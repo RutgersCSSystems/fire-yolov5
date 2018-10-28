@@ -3013,6 +3013,8 @@ int change_vmap_struct(unsigned long addr, struct page *newpage)
 {
 	struct vm_struct *area;
 	int page_index;
+	int nr_pages = hpage_nr_pages(newpage);
+	int i;
 
 	WARN(!PAGE_ALIGNED(addr), "Trying to migrate() bad address (%lx)\n",
 			addr);
@@ -3029,19 +3031,20 @@ int change_vmap_struct(unsigned long addr, struct page *newpage)
 
 	page_index = (addr - (unsigned long)area->addr)>>PAGE_SHIFT;
 
-	if (page_index >= area->nr_pages)
+	if (page_index + nr_pages > area->nr_pages)
 		return -1;
 
-	area->pages[page_index] = newpage;
+	for (i = 0; i < nr_pages; i++)
+		area->pages[page_index + i] = newpage + i;
 
 	return 0;
 }
 
 int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
-	struct page *dst_page)
+	struct page *src_page, struct page *dst_page)
 {
-	struct page *src_page;
 	unsigned long addr = vmap_start;
+	int i;
 	pgd_t *pgd;
 	p4d_t *p4d;
 	pud_t *pud;
@@ -3053,70 +3056,110 @@ int unmap_and_move_vmap_page(unsigned long vmap_start, unsigned long vmap_end,
 	swp_entry_t entry;
 	pte_t swp_pte;
 
-	pgd = pgd_offset_k(addr);
-	if (!pgd || pgd_none_or_clear_bad(pgd))
-		return -ENODEV;
-	p4d = p4d_offset(pgd, addr);
-	if (!p4d || p4d_none_or_clear_bad(p4d))
-		return -ENODEV;
-	pud = pud_offset(p4d, addr);
-	if (!pud || pud_none_or_clear_bad(pud))
-		return -ENODEV;
-	pmd = pmd_offset(pud, addr);
-	if (!pmd || pmd_none_or_clear_bad(pmd))
-		return -ENODEV;
-
-	pte = pte_offset_map_lock(&init_mm, pmd, addr, &ptl);
-
-	if (!pte_present(*pte)) {
-		spin_unlock(ptl);
-		return -ENODEV;
-	}
-
-	src_page = pte_page(*pte);
-
 	if (!trylock_page(src_page)) {
 		goto exit;
 	}
 
-	ptent = ptep_get_and_clear(&init_mm, addr, pte);
+	lock_page(dst_page);
 
-	/* set migration entry */
-	entry = make_migration_entry(src_page, pte_write(ptent));
-	swp_pte = swp_entry_to_pte(entry);
+	for (i = 0; addr < vmap_end; addr += PAGE_SIZE, i++) {
 
-	set_pte_at(&init_mm, addr, pte, swp_pte);
-	flush_tlb_kernel_range(vmap_start, vmap_end);
+		pgd = pgd_offset_k(addr);
+		if (!pgd || pgd_none_or_clear_bad(pgd))
+			return -ENODEV;
+		p4d = p4d_offset(pgd, addr);
+		if (!p4d || p4d_none_or_clear_bad(p4d))
+			return -ENODEV;
+		pud = pud_offset(p4d, addr);
+		if (!pud || pud_none_or_clear_bad(pud))
+			return -ENODEV;
+		pmd = pmd_offset(pud, addr);
+		if (!pmd || pmd_none_or_clear_bad(pmd))
+			return -ENODEV;
 
-	spin_unlock(ptl);
+		pte = pte_offset_map_lock(&init_mm, pmd, addr, &ptl);
 
+		if (!pte_present(*pte)) {
+			spin_unlock(ptl);
+			return -ENODEV;
+		}
 
+		ptent = ptep_get_and_clear(&init_mm, addr, pte);
 
-	copy_highpage(dst_page, src_page);
+		/* set migration entry */
+		entry = make_migration_entry(src_page + i, pte_write(ptent));
+		swp_pte = swp_entry_to_pte(entry);
+
+		set_pte_at(&init_mm, addr, pte, swp_pte);
+		flush_tlb_kernel_range(vmap_start, vmap_end);
+
+		pte_unmap_unlock(pte, ptl);
+	}
+
+	for (i = 0; i < hpage_nr_pages(src_page); i++)
+		copy_highpage(dst_page + i, src_page + i);
 
 	change_vmap_struct(addr, dst_page);
-
-
-	ptent = mk_pte(dst_page, PAGE_KERNEL);
-	spin_lock(ptl);
-	set_pte_at(&init_mm, addr, pte, ptent);
-	pte_unmap_unlock(pte, ptl);
-
-	unlock_page(src_page);
 
 exit:
 	return 0;
 }
 
-int remove_vmap_migration_entry(unsigned long vmap_start, unsigned long vmap_end)
+int remove_vmap_migration_entry(unsigned long vmap_start, unsigned long vmap_end,
+	struct page *src_page, struct page *dst_page)
 {
+	unsigned long addr = vmap_start;
+	int i;
+	pgd_t *pgd;
+	p4d_t *p4d;
+	pud_t *pud;
+	pmd_t *pmd;
+	pte_t *pte;
+	spinlock_t *ptl;
+	pte_t ptent;
+
+	for (i = 0; addr < vmap_end; addr += PAGE_SIZE, i++) {
+
+		pgd = pgd_offset_k(addr);
+		if (!pgd || pgd_none_or_clear_bad(pgd))
+			return -ENODEV;
+		p4d = p4d_offset(pgd, addr);
+		if (!p4d || p4d_none_or_clear_bad(p4d))
+			return -ENODEV;
+		pud = pud_offset(p4d, addr);
+		if (!pud || pud_none_or_clear_bad(pud))
+			return -ENODEV;
+		pmd = pmd_offset(pud, addr);
+		if (!pmd || pmd_none_or_clear_bad(pmd))
+			return -ENODEV;
+
+		pte = pte_offset_map_lock(&init_mm, pmd, addr, &ptl);
+
+		if (!is_migration_entry(pte_to_swp_entry(*pte))) {
+			spin_unlock(ptl);
+			return -ENODEV;
+		}
+
+		ptent = mk_pte(dst_page + i, PAGE_KERNEL);
+		set_pte_at(&init_mm, addr, pte, ptent);
+		pte_unmap_unlock(pte, ptl);
+	}
+
+	unlock_page(dst_page);
+	unlock_page(src_page);
+	__free_pages(src_page, compound_order(src_page));
 	return 0;
 }
 
-int migrate_vmalloc_pages(const void *addr, struct page *dst_page)
+int migrate_vmalloc_pages(const void *addr)
 {
 	struct vm_struct *area;
 	struct vmap_area *va;
+	struct page *src_page;
+	struct page *src_head;
+	struct page *dst_page;
+	int nr_pages;
+	int additional_gfp = 0;
 	unsigned long vmap_start = PAGE_ALIGN((unsigned long)addr);
 	unsigned long vmap_end = PAGE_ALIGN(vmap_start + PAGE_SIZE);
 	int status;
@@ -3124,7 +3167,19 @@ int migrate_vmalloc_pages(const void *addr, struct page *dst_page)
 	if (!is_vmalloc_addr((void *)vmap_start))
 		return -ENODEV;
 
-	va = find_vmap_area((unsigned long)vmap_start);
+	src_page = vmalloc_to_page((void *)vmap_start);
+	src_head = compound_head(src_page);
+	nr_pages = hpage_nr_pages(src_head);
+
+	if (nr_pages > 1)
+		additional_gfp = __GFP_COMP;
+
+	if (src_head != src_page) {
+		vmap_start = vmap_start - (src_page - src_head) * PAGE_SIZE;
+		vmap_end = vmap_start + nr_pages * PAGE_SIZE;
+	}
+
+	va = find_vmap_area(vmap_start);
 	if (unlikely(!va)) {
 		WARN(1, KERN_ERR "Trying to migrate nonexistent vmap (%p)\n",
 				addr);
@@ -3143,12 +3198,17 @@ int migrate_vmalloc_pages(const void *addr, struct page *dst_page)
 	if (vmap_end - vmap_start < PAGE_SIZE)
 		return -EINVAL;
 
-	status = unmap_and_move_vmap_page(vmap_start, vmap_end, dst_page);
+	dst_page = alloc_pages(GFP_KERNEL|additional_gfp, compound_order(src_head));
+
+	if (!dst_page)
+		return -ENOMEM;
+
+	status = unmap_and_move_vmap_page(vmap_start, vmap_end, src_head, dst_page);
 	if (status)
 		return -ENODEV;
 
-	remove_vmap_migration_entry(vmap_start, vmap_end);
+	status = remove_vmap_migration_entry(vmap_start, vmap_end, src_head, dst_page);
 
-	return 0;
+	return status;
 }
 EXPORT_SYMBOL(migrate_vmalloc_pages);
