@@ -3147,11 +3147,27 @@ int remove_vmap_migration_entry(unsigned long vmap_start, unsigned long vmap_end
 
 	unlock_page(dst_page);
 	unlock_page(src_page);
-	__free_pages(src_page, compound_order(src_page));
+	put_page(src_page);
 	return 0;
 }
 
-int migrate_vmalloc_pages(const void *addr)
+static struct page *alloc_new_vmap_page(struct page *page, unsigned long node)
+{
+	if (PageCompound(page)) {
+		struct page *dst;
+
+		dst = alloc_pages_node(node,
+			GFP_KERNEL | __GFP_COMP,
+			compound_order(page));
+		if (!dst)
+			return NULL;
+		return dst;
+	} else
+		return alloc_pages_node(node, GFP_KERNEL, 0);
+}
+
+int migrate_vmalloc_pages(const void *addr, new_page_t get_new_page,
+	free_page_t put_new_page, unsigned long private)
 {
 	struct vm_struct *area;
 	struct vmap_area *va;
@@ -3159,7 +3175,6 @@ int migrate_vmalloc_pages(const void *addr)
 	struct page *src_head;
 	struct page *dst_page;
 	int nr_pages;
-	int additional_gfp = 0;
 	unsigned long vmap_start = PAGE_ALIGN((unsigned long)addr);
 	unsigned long vmap_end = PAGE_ALIGN(vmap_start + PAGE_SIZE);
 	int status;
@@ -3170,9 +3185,6 @@ int migrate_vmalloc_pages(const void *addr)
 	src_page = vmalloc_to_page((void *)vmap_start);
 	src_head = compound_head(src_page);
 	nr_pages = hpage_nr_pages(src_head);
-
-	if (nr_pages > 1)
-		additional_gfp = __GFP_COMP;
 
 	if (src_head != src_page) {
 		vmap_start = vmap_start - (src_page - src_head) * PAGE_SIZE;
@@ -3198,7 +3210,10 @@ int migrate_vmalloc_pages(const void *addr)
 	if (vmap_end - vmap_start < PAGE_SIZE)
 		return -EINVAL;
 
-	dst_page = alloc_pages(GFP_KERNEL|additional_gfp, compound_order(src_head));
+	if (!get_new_page)
+		get_new_page = alloc_new_vmap_page;
+
+	dst_page = get_new_page(src_head, private);
 
 	if (!dst_page)
 		return -ENOMEM;
