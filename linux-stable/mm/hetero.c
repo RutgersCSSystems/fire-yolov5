@@ -115,10 +115,12 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
 
-    if(hetero_pid  && current->pid == hetero_pid) {
-	if(enbl_hetero_buffer) { 	
-	        //printk("hetero_pid %d Curr %d buff counter %d\n", 
-	        //	hetero_pid, current->pid, hetero_usrpg_cnt);
+    if(hetero_pid  && current->pid == hetero_pid) 
+    {
+	//if(enbl_hetero_buffer && !strstr(current->comm,"dmesg") && !strstr(current->comm, "rs:main Q:Reg")) { 	
+	if(enbl_hetero_buffer) {
+	        //printk("hetero_pid %d, Curr %d, proc name %s, buff counter %d\n", 
+	        //	hetero_pid, current->pid, current->comm, hetero_usrpg_cnt);
 	    	return enbl_hetero_buffer;
     	}
     } 
@@ -126,13 +128,15 @@ int is_hetero_buffer_set(void){
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
+
 int is_hetero_journ_set(void){
 
-    if(hetero_pid && current->pid == hetero_pid)
-    	return enbl_hetero_journal;
+    //if(hetero_pid && current->pid == hetero_pid)
+    return enbl_hetero_journal;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_journ_set);
+
 
 int is_hetero_radix_set(void){
     if(hetero_pid && current->pid == hetero_pid)
@@ -140,6 +144,7 @@ int is_hetero_radix_set(void){
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_radix_set);
+
 
 int is_hetero_kernel_set(void){
     //if(hetero_pid && current->pid == hetero_pid)

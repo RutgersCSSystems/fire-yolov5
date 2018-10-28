@@ -2360,6 +2360,13 @@ no_cached_page:
 		 * Ok, it wasn't cached, so we need to create a new
 		 * page..
 		 */
+#ifdef _ENABLE_HETERO
+                if (is_hetero_pgcache_set()) {
+                        page = page_cache_alloc_hetero(mapping);
+                        printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
+                }
+                if(!page)
+#endif
 		page = page_cache_alloc(mapping);
 		if (!page) {
 			error = -ENOMEM;

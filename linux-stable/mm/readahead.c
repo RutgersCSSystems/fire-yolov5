@@ -180,6 +180,13 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 		if (page && !radix_tree_exceptional_entry(page))
 			continue;
 
+#ifdef _ENABLE_HETERO
+                if (is_hetero_pgcache_set()) {
+                        page = __page_cache_alloc_hetero(gfp_mask);
+                        //printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
+                }
+                if(!page)
+#endif
 		page = __page_cache_alloc(gfp_mask);
 		if (!page)
 			break;
