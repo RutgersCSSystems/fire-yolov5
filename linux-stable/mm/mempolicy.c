@@ -2138,11 +2138,6 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 			//printk(KERN_ALERT "%s : %d NODE: %d \n", 
 			//	__func__, __LINE__, page_to_nid(page));
                 }
-		//if(page)	
-		  //      printk(KERN_ALERT "%s : %d NODE: %d \n",
-		  //		__func__, __LINE__, page_to_nid(page));
-		//}
-		//else
                 if(!page)
   		         page = __alloc_pages_nodemask(gfp, order,
 				policy_node(gfp, pol, numa_node_id()),

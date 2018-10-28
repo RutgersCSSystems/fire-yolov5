@@ -2,6 +2,7 @@
 #set -x
 
 RUNNOW=1
+RUNSCRIPT=run.sh
 mkdir $OUTPUTDIR
 
 USAGE(){
@@ -11,7 +12,7 @@ echo "./app \$maxhotpage \$BW \$outputdir \$app"
 RUNAPP(){
   rm $OUTPUTDIR/$APP
   cd $APPBASE
-  $APPBASE/run.sh $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
+  $APPBASE/$RUNSCRIPT $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
 }
 
 intexit() {
@@ -40,6 +41,29 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/Metis
+	APP=Metis
+	echo "running $APP..."
+	RUNAPP
+
+	APPBASE=$APPBENCH/apps/fio
+	APP=fio
+	echo "running $APP ..."
+	RUNAPP
+
+	RUNSCRIPT="runfcreate.sh"
+        APP=fcreate
+        echo "running $APP ..."
+        RUNAPP
+        RUNSCRIPT=run.sh
+
+
+	APPBASE=$APPBENCH/redis-3.0.0/src
+	APP=redis
+	echo "running $APP..."
+	RUNAPP
+
+
 	APPBASE=$APPBENCH/apps/rocksdb/build
 	APP=db_bench
 	echo "running $APP ..."
@@ -51,41 +75,26 @@ if [ -z "$4" ]
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
 
-	APPBASE=$APPBENCH/memcached/memtier_benchmark
+	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
-	echo "running $APP ..."
+	echo "running $APP..."
 	RUNAPP
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	/bin/ls
 	export LD_PRELOAD=""
 
-	APPBASE=$APPBENCH/Metis
-	APP=Metis
-	echo "running $APP..."
-	RUNAPP
+	#APPBASE=$APPBENCH/memcached/memtier_benchmark
+	#APP=memcached
+	#echo "running $APP ..."
+	#RUNAPP
 
-	APPBASE=$APPBENCH/apps/fio
-	APP=fio
-	echo "running $APP ..."
-	RUNAPP
+	exit
 
 	APPBASE=$APPBENCH/apps/mongo-perf
 	APP=mongodb
 	echo "running $APP..."
 	RUNAPP
 
-	#APPBASE=$APPBENCH/apps/memcached_client
-	#APP=memcached
-	#echo "running $APP..."
-	#RUNAPP
-
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
-	echo "running $APP..."
-	RUNAPP
-
-
-	exit
 
 	APPBASE=$APPBENCH/xstream_release
 	APP=xstream_release

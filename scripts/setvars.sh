@@ -31,8 +31,8 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 #APP SPECIFIC and APPBENCH
 export GRAPHCHI_ROOT=$APPBENCH/graphchi/graphchi-cpp
 export SHARED_DATA=$APPBENCH/shared_data
-export APPPREFIX="numactl --membind=0 --cpunodebind=0"
-export APP_PREFIX="numactl --membind=0 --cpunodebind=0"
+export APPPREFIX="numactl --membind=0"
+export APP_PREFIX="numactl --membind=0"
 export OUTPUTDIR=$APPBENCH/output
 
 #Commands

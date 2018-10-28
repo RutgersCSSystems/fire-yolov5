@@ -1,6 +1,8 @@
 #!/bin/sh
 set -x
-DATA=$SHARED_DATA/crime.data
+#DATA=$SHARED_DATA/crime.data
+#DATA=$SHARED_DATA/com-friendster.ungraph.txt
+DATA=$SHARED_DATA/com-orkut.ungraph.txt
 BASE=$APPBENCH/Metis
 APPBASE=$BASE/obj
 APP=$APPBASE/wc
@@ -26,8 +28,7 @@ LoadtoRamDisk()
 }
 
 RUN(){
-export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$APPPREFIX $APP $DATA 
+LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP $DATA 
 export LD_PRELOAD=""
 }
 

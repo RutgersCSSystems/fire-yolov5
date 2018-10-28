@@ -28,13 +28,12 @@ killall sleep
 }
 
 RUNMEMCACHED() {
-$APP -t 4 -m 4096 -n 200 -u kannan11 &
+LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -t 16 -m 8192 -n 200 -u skannan &
 }
 
 RUN_WARMUP() {
-sleep 5
 cd $CLIENTBASE
-RUNMEMCACHED
+sleep 5
 #$CLIENTBASE/killer_load.sh &
 $CLIENTBASE/loader -a $INPUT -o $DATASET -s $CLIENTBASE/servers.txt -w 32 -S 40 -D 256 -j -T 1
 }
@@ -42,15 +41,15 @@ $CLIENTBASE/loader -a $INPUT -o $DATASET -s $CLIENTBASE/servers.txt -w 32 -S 40 
 RUN(){
 cd $CLIENTBASE
 $CLIENTBASE/killer.sh &
-export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32
+#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+$APPPREFIX $CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32 -d
 export LD_PRELOAD=""
 }
 
 
 FLUSH_DISK
-RUN_WARMUP
-#RUNMEMCACHED
+RUNMEMCACHED
+#RUN_WARMUP
 sleep 5
 RUN
 FINISH

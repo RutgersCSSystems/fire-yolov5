@@ -2,13 +2,13 @@
 <test>
     <membw-main enable='1'> <!--enables a experiemnt to vary the value size for the dbbench-->
         <seed-count>2</seed-count>  <!--specifies factor by which value size for a KV pair should be incremented-->
-        <num-tests>2</num-tests> <!-- number of tests to run -->
+        <num-tests>1</num-tests> <!-- number of tests to run -->
         <membw>500</membw>  <!--Memory bandwidth default value-->
     </membw-main>
     <benchmarks> <!-- tags specify type of DBbench's benchmark -->
 	<test>cachekernbuff</test>
-	<test>kernbuff</test>
-        <test>pgcache</test>
+	<!--test>kernbuff</test>
+        <test>pgcache</test-->
     </benchmarks>
 </test>
 

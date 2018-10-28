@@ -21,14 +21,15 @@ FlushDisk()
 
 RUN(){
 rm -rf $SHARED_DATA/$DATA.*
-export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 #/usr/bin/time -v
-echo "edgelist" | $APPPREFIX /usr/bin/time -v $APP file $INPUT niters 32
+echo "edgelist" | LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX /usr/bin/time -v $APP file $INPUT niters 32
+#echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 32
 export LD_PRELOAD=""
 }
 
 cd $APPBENCH/graphchi 
-FlushDisk
 RUN
+FlushDisk
 set +x
 

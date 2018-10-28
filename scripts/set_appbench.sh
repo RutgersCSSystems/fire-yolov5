@@ -79,12 +79,9 @@ cd $APPBENCH/apps
 git clone https://github.com/memcached/memcached.git
 }
 
-INSTALL_SPARK
-exit
 
 INSTALL_SYSTEM_LIBS
 INSTALL_GFLAGS
-
 GETAPPS
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh
@@ -99,6 +96,8 @@ $APPBENCH/compile_all.sh
 $APPBENCH/install_quartz.sh
 $APPBENCH/throttle.sh
 $APPBENCH/throttle.sh
+exit
 
-
+INSTALL_SPARK
+exit
 

@@ -107,7 +107,7 @@ void printGlobalStats(struct config* config) {
   double q95 = findQuantile(&global_stats.response_time, .95);
   double q99 = findQuantile(&global_stats.response_time, .99);
 
-   fprintf(stderr,"SETS:\t %10d \t GETS: \t %10d \r", global_stats.sets, global_stats.gets);
+   fprintf(stderr,"SETS:\t %10d \t GETS: \t %10d \n", global_stats.sets, global_stats.gets);
 
 #ifdef _ENABLE_DETAILED
   printf("%10s,%8s,%16s, %8s,%11s,%10s,%13s,%10s,%10s,%10s,%12s,%10s,%10s,%11s,%14s\n", "timeDiff", "rps", "requests", "gets", "sets",  "hits", "misses", "avg_lat", "90th", "95th", "99th", "std", "min", "max", "avgGetSize");
