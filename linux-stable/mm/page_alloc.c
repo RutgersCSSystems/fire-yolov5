@@ -4429,7 +4429,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
                 if ((alloc_mask & __GFP_NOFAIL)) {
                         hetero_usrpg_cnt++;
                 }else {
-			dump_stack();
+			 //dump_stack();
                          hetero_kernpg_cnt++;
                 }
         }

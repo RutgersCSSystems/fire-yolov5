@@ -1598,7 +1598,13 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
 	if ((alloc_gfp & __GFP_DIRECT_RECLAIM) && oo_order(oo) > oo_order(s->min))
 		alloc_gfp = (alloc_gfp | __GFP_NOMEMALLOC) & ~(__GFP_RECLAIM|__GFP_NOFAIL);
 
+
 	page = alloc_slab_page(s, alloc_gfp, node, oo);
+
+	if(is_hetero_buffer_set())
+	        printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n",
+                        __func__, __LINE__, node, page_to_nid(page));
+
 	if (unlikely(!page)) {
 		oo = s->min;
 		alloc_gfp = flags;
