@@ -92,12 +92,13 @@ int hetero_pid = 0;
 int allocate_counter = 0;
 int hetero_usrpg_cnt = 0;
 int hetero_kernpg_cnt = 0;
+char procname[TASK_COMM_LEN];
 
 int is_hetero_exit() {
-    if(hetero_pid && current->pid == hetero_pid) {
-	printk("hetero_pid %d Curr %d user pages %d kern pages %d\n",
-		hetero_pid, current->pid, hetero_usrpg_cnt, 
-		hetero_kernpg_cnt);
+    //if(hetero_pid && current->pid == hetero_pid) {
+    if(strstr(current->comm, procname)) {
+	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
+		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
 }
 EXPORT_SYMBOL(is_hetero_exit);
@@ -105,7 +106,8 @@ EXPORT_SYMBOL(is_hetero_exit);
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
 
-    if(hetero_pid && current->pid == hetero_pid) 
+    //if(hetero_pid && current->pid == hetero_pid) 
+      if(strstr(current->comm, procname)) 
 	if(enbl_hetero_pgcache) { 	
 	    	return enbl_hetero_pgcache;
     	}		
@@ -115,9 +117,9 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
 
-    if(hetero_pid  && current->pid == hetero_pid) 
+    //if(hetero_pid  && current->pid == hetero_pid) 
+    if(strstr(current->comm, procname))
     {
-	//if(enbl_hetero_buffer && !strstr(current->comm,"dmesg") && !strstr(current->comm, "rs:main Q:Reg")) { 	
 	if(enbl_hetero_buffer) {
 	        //printk("hetero_pid %d, Curr %d, proc name %s, buff counter %d\n", 
 	        //	hetero_pid, current->pid, current->comm, hetero_usrpg_cnt);
@@ -139,7 +141,8 @@ EXPORT_SYMBOL(is_hetero_journ_set);
 
 
 int is_hetero_radix_set(void){
-    if(hetero_pid && current->pid == hetero_pid)
+    //if(hetero_pid && current->pid == hetero_pid)
+    if(strstr(current->comm, procname))
     	return enbl_hetero_radix;
     return 0;
 }
@@ -148,7 +151,7 @@ EXPORT_SYMBOL(is_hetero_radix_set);
 
 int is_hetero_kernel_set(void){
     //if(hetero_pid && current->pid == hetero_pid)
-    	//return enbl_hetero_kernel;
+    return enbl_hetero_kernel;
     return 1;
 }
 EXPORT_SYMBOL(is_hetero_kernel_set);
@@ -181,6 +184,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
 	    hetero_usrpg_cnt = 0;
+            memset(procname,'0', TASK_COMM_LEN);
 	    break;
 
 	case COLLECT_TRACE:
@@ -261,7 +265,8 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    break;
 	default:
 	    hetero_pid = flag;
-	    printk("hetero_pid set to %d %d\n", hetero_pid, current->pid);			
+            memcpy(procname, current->comm, TASK_COMM_LEN);
+	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;
     }
     return 0;
