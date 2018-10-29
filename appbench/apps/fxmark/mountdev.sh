@@ -1,0 +1,1 @@
+losetup /dev/loop0
