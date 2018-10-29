@@ -1637,6 +1637,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 	int err;
 
 #ifdef _ENABLE_HETERO
+        dentry = NULL;
         if(is_hetero_buffer_set()){
                 dentry = kmem_cache_alloc_hetero(dentry_cache, GFP_KERNEL);
         }
@@ -1659,6 +1660,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 	} else if (name->len > DNAME_INLINE_LEN-1) {
 		size_t size = offsetof(struct external_name, name[1]);
 #ifdef _ENABLE_HETERO
+		ext = NULL;
                 if(is_hetero_buffer_set()){
                         ext = kmalloc_hetero(size + name->len, GFP_KERNEL_ACCOUNT);
                 }
