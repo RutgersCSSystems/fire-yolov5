@@ -4,7 +4,7 @@ APPBASE=$APPBENCH/apps/fxmark
 APP=$APPBASE/bin/fxmark
 DATA=$APPBASE/DATA
 SIZE=" --size=10G"
-PARAM=" --type DWOL --ncore 32 --nbg 1 --duration 30 --directio 0 --root=$DATA"
+PARAM=" --type DRBL --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 OUTPUT=$2
 mkdir $DATA
 
@@ -18,6 +18,7 @@ FlushDisk()
 
 RANDOM_READ(){
 echo "Running Random Read"
+rm -rf $DATA/*
 #$APPPREFIX $APP $PARAM
 LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP $PARAM
 }

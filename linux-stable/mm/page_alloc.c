@@ -4474,7 +4474,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	if (likely(page))
 		goto out;
 #endif
-
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
 	 * resp. GFP_NOIO which has to be inherited for all allocation requests
@@ -4493,17 +4492,13 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
         if(!page) {
-                //printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
                 return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, nodemask);
-        }/*else {
-                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__,page_to_nid(page));
-        }*/
+        }
 
         if(is_hetero_buffer_set()) {
                 if ((alloc_mask & __GFP_MOVABLE)) {
                         hetero_usrpg_cnt++;
                 }else {
-			 //dump_stack();
                          hetero_kernpg_cnt++;
                 }
         }
@@ -4513,8 +4508,6 @@ out:
 		__free_pages(page, order);
 		page = NULL;
 	}
-	
-
 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
 
 	return page;

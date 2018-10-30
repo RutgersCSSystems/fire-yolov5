@@ -123,7 +123,7 @@
  */
 
 extern int global_flag;
-int allocate_cnt = 0;
+extern int pgcache_cnt;
 struct page *__page_cache_alloc_hetero(gfp_t gfp);
 
 static int page_cache_tree_insert(struct address_space *mapping,
@@ -959,7 +959,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			if (is_hetero_pgcache_set()) {
 				page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
-				allocate_cnt++;
+				pgcache_cnt++;
 			}
 			else {
 				page = __alloc_pages_node(n, gfp, 0);
@@ -997,7 +997,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp)
 			if (is_hetero_pgcache_set()) {
                                 page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page)); 
-				allocate_cnt++;
+				pgcache_cnt++;
 			}
 			else {
 				page = __alloc_pages_node(n, gfp, 0);
@@ -3452,12 +3452,12 @@ void add_to_hashtable_page(struct page *page) {
 }
 
 void print_allocation_stat_page_cache_alloc(void) {
-	printk("Total hetero allocation page cache alloc: %d\n", allocate_cnt);
+	printk("Total hetero allocation page cache alloc: %d\n", pgcache_cnt);
 }
 EXPORT_SYMBOL(print_allocation_stat_page_cache_alloc);
 
 void reset_allocate_counter_page_cache_alloc(void) {
-	allocate_cnt = 0;
+	pgcache_cnt = 0;
 	printk("Reset counter page cache alloc \n");
 }
 EXPORT_SYMBOL(reset_allocate_counter_page_cache_alloc);

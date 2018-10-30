@@ -185,7 +185,7 @@ void run_bench(struct bench *bench)
 			exit(0);
 		}
 	}
-#endif
+#else
 
 	 /* this variable is our reference to the second thread */
 	 pthread_t inc_x_thread[64];
@@ -198,6 +198,7 @@ void run_bench(struct bench *bench)
 		}
 		fprintf(stderr, "Starting benchmark thread \n");		
 	}
+#endif
 	worker_main(&bench->workers[0]);
 	wait(bench);
 }

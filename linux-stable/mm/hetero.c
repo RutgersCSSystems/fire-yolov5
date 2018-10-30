@@ -83,11 +83,14 @@
 #define HETERO_FULLKERN 15
 
 int global_flag = 0;
+int pgcache_cnt = 0;
+
 int enbl_hetero_pgcache=0;
 int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
+
 int hetero_pid = 0;
 int allocate_counter = 0;
 int hetero_usrpg_cnt = 0;
@@ -95,8 +98,8 @@ int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
 
 int is_hetero_exit() {
-    //if(hetero_pid && current->pid == hetero_pid) {
-    if(strstr(current->comm, procname)) {
+    if(hetero_pid && current->pid == hetero_pid) {
+    //if(strstr(current->comm, procname)) {
 	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
@@ -106,8 +109,8 @@ EXPORT_SYMBOL(is_hetero_exit);
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
 
-    //if(hetero_pid && current->pid == hetero_pid) 
-      if(strstr(current->comm, procname)) 
+      if(hetero_pid && current->pid == hetero_pid) 
+      //if(strstr(current->comm, procname)) 
 	if(enbl_hetero_pgcache) { 	
 	    	return enbl_hetero_pgcache;
     	}		
@@ -117,8 +120,8 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
 
-    //if(hetero_pid  && current->pid == hetero_pid) 
-    if(strstr(current->comm, procname))
+    if(hetero_pid  && current->pid == hetero_pid) 
+    //if(strstr(current->comm, procname))
     {
 	if(enbl_hetero_buffer) {
 	        //printk("hetero_pid %d, Curr %d, proc name %s, buff counter %d\n", 
@@ -141,8 +144,8 @@ EXPORT_SYMBOL(is_hetero_journ_set);
 
 
 int is_hetero_radix_set(void){
-    //if(hetero_pid && current->pid == hetero_pid)
-    if(strstr(current->comm, procname))
+    if(hetero_pid && current->pid == hetero_pid)
+    //if(strstr(current->comm, procname))
     	return enbl_hetero_radix;
     return 0;
 }
