@@ -996,10 +996,13 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp)
 			page cache*/
 			if (is_hetero_pgcache_set()) {
                                 page = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
-                                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page)); 
+				printk(KERN_ALERT "%s : %d Node: %d TASK %s \n", 
+					__func__, __LINE__, page_to_nid(page), current->comm);
 				pgcache_cnt++;
 			}
 			else {
+				printk(KERN_ALERT "%s : %d Node: %d TASK %s \n", 
+					__func__, __LINE__, page_to_nid(page), current->comm);
 				page = __alloc_pages_node(n, gfp, 0);
 	                }
 			//if (global_flag == PFN_TRACE)
@@ -1010,7 +1013,8 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp)
 	}
 
         if(!allocpage && is_hetero_pgcache_set()) 
-	        allocpage = alloc_pages_hetero(gfp, 0);
+	        //allocpage = alloc_pages_hetero(gfp, 0);
+		allocpage = __alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp, 0);
 
         if(!allocpage) {
               allocpage = __page_cache_alloc(gfp);
@@ -1660,7 +1664,6 @@ no_page:
                 }
                 if(!page)
 #endif
-
 		page = __page_cache_alloc(gfp_mask);
 		//if (global_flag == PFN_TRACE)
 		//	add_to_hashtable_page(page);
