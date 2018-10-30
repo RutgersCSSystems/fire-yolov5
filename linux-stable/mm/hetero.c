@@ -112,6 +112,10 @@ int is_hetero_pgcache_set(void){
       if(hetero_pid && current->pid == hetero_pid) 
       //if(strstr(current->comm, procname)) 
 	if(enbl_hetero_pgcache) { 	
+	        //printk("hetero_pid %d, Curr %d, proc name %s, pgcache cnt %d\n", 
+	        //	hetero_pid, current->pid, current->comm, pgcache_cnt);
+		if(pgcache_cnt % 1000 == 0)
+			print_allocation_stat_page_cache_alloc();
 	    	return enbl_hetero_pgcache;
     	}		
     return 0;
