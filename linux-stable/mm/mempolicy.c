@@ -113,7 +113,7 @@
 #define MPOL_MF_INVERT (MPOL_MF_INTERNAL << 1)		/* Invert check for nodemask */
 
 extern int global_flag;
-extern int allocate_counter;
+extern int heterobuff_pgs;
 
 static struct kmem_cache *policy_cache;
 static struct kmem_cache *sn_cache;
@@ -2120,11 +2120,11 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 	 * No reference counting needed for current->mempolicy
 	 * nor system default_policy
 	 */
-	if (pol->mode == MPOL_INTERLEAVE) {
+	/*if (pol->mode == MPOL_INTERLEAVE) {
                 //printk(KERN_ALERT "%s : %d HETERO \n", __func__, __LINE__);
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
         }
-	else {
+	else*/ {
                 /*Check if we have enable customized HETERO allocation for
                 page cache*/
 		//if (is_hetero_kernel_set()) {
@@ -2134,9 +2134,9 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
 				"\n", __func__, __LINE__);
                 }else {
-                        allocate_counter++;
-			//printk(KERN_ALERT "%s : %d NODE: %d \n", 
-			//	__func__, __LINE__, page_to_nid(page));
+			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
+					"\n", __func__, __LINE__);
+                        heterobuff_pgs++;
                 }
                 if(!page)
   		         page = __alloc_pages_nodemask(gfp, order,
@@ -2927,14 +2927,3 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
 		p += scnprintf(p, buffer + maxlen - p, ":%*pbl",
 			       nodemask_pr_args(&nodes));
 }
-
-void print_allocation_stat_alloc_pages_current(void) {
-	printk("Total hetero allocation alloc_pages_current: %d\n", allocate_counter);
-}
-EXPORT_SYMBOL(print_allocation_stat_alloc_pages_current);
-
-void reset_allocate_counter_alloc_pages_current(void) {
-	allocate_counter = 0;
-	printk("Reset counter alloc_pages_current \n");
-}
-EXPORT_SYMBOL(reset_allocate_counter_alloc_pages_current);

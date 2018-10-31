@@ -536,9 +536,6 @@ alloc_pages_hetero(gfp_t gfp_mask, unsigned int order)
 }
 //#endif
 
-//extern void print_allocation_stat_alloc_pages_current(void);
-//extern void reset_allocate_counter_alloc_pages_current(void);
-
 static inline struct page *
 alloc_pages(gfp_t gfp_mask, unsigned int order)
 {
@@ -554,7 +551,7 @@ extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
 		alloc_pages_node(numa_node_id(), gfp_mask, order)
 
 #define alloc_pages_hetero(gfp_mask, order) \
-		alloc_pages_node(NUMA_HETERO_NODE, gfp_mask, order)
+		alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp_mask, order)
 
 #define alloc_pages_vma(gfp_mask, order, vma, addr, node, false)\
 	alloc_pages(gfp_mask, order)

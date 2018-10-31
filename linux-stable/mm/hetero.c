@@ -82,8 +82,12 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 
+/* Hetero Stats information*/
 int global_flag = 0;
 int pgcache_cnt = 0;
+int radix_cnt = 0;
+int heterobuff_pgs = 0;
+
 
 int enbl_hetero_pgcache=0;
 int enbl_hetero_buffer=0;
@@ -92,14 +96,26 @@ int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 
 int hetero_pid = 0;
-int allocate_counter = 0;
 int hetero_usrpg_cnt = 0;
 int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
 
+
+void print_hetero_stats(void) {
+       printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s "
+		"page cache %d page buffer %d \n", hetero_pid, current->pid, 
+		current->comm, procname, pgcache_cnt, heterobuff_pgs);
+}
+EXPORT_SYMBOL(print_hetero_stats);
+
+void reset_hetero_stats(void) {
+        pgcache_cnt = 0;
+        heterobuff_pgs = 0;
+}
+EXPORT_SYMBOL(reset_hetero_stats);
+
 int is_hetero_exit() {
     if(hetero_pid && current->pid == hetero_pid) {
-    //if(strstr(current->comm, procname)) {
 	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
@@ -110,12 +126,9 @@ EXPORT_SYMBOL(is_hetero_exit);
 int is_hetero_pgcache_set(void){
 
       if(hetero_pid && current->pid == hetero_pid) 
-      //if(strstr(current->comm, procname)) 
 	if(enbl_hetero_pgcache) { 	
-	        //printk("hetero_pid %d, Curr %d, proc name %s, pgcache cnt %d\n", 
-	        //	hetero_pid, current->pid, current->comm, pgcache_cnt);
 		if(pgcache_cnt % 1000 == 0)
-			print_allocation_stat_page_cache_alloc();
+			print_hetero_stats();
 	    	return enbl_hetero_pgcache;
     	}		
     return 0;
@@ -125,11 +138,8 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 int is_hetero_buffer_set(void){
 
     if(hetero_pid  && current->pid == hetero_pid) 
-    //if(strstr(current->comm, procname))
     {
 	if(enbl_hetero_buffer) {
-	        //printk("hetero_pid %d, Curr %d, proc name %s, buff counter %d\n", 
-	        //	hetero_pid, current->pid, current->comm, hetero_usrpg_cnt);
 	    	return enbl_hetero_buffer;
     	}
     } 
@@ -175,11 +185,6 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    //rbtree_reset_counter();
 	    //btree_reset_counter();
 	    //radix_tree_reset_counter();
-	    reset_allocate_counter_page_cache_alloc();
-	    reset_allocate_counter_alloc_pages_current();
-	    reset_allocate_counter_alloc_page_buffers();
-	    //reset_allocate_counter_new_handle();
-	    reset_allocate_radix_alloc();
 
 	    /*reset hetero allocate flags */
 	    enbl_hetero_pgcache = 0;
@@ -244,11 +249,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	case PRINT_ALLOCATE:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
-	    print_allocation_stat_page_cache_alloc();
-	    print_allocation_stat_alloc_pages_current();
-	    print_allocation_stat_alloc_page_buffers();
-	    //print_allocation_stat_new_handle();
-	    print_allocation_stat_radix_alloc();
+	    print_hetero_stats();
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);

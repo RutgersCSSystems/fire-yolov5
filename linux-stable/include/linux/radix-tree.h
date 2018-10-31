@@ -574,9 +574,6 @@ void add_to_hashtable_radix(void *item);
 void add_to_hashtable_node(struct radix_tree_node *node);
 //void add_to_hashtable_preload(struct radix_tree_preload *preload);
 
-extern void print_allocation_stat_radix_alloc(void);
-extern void reset_allocate_radix_alloc(void);
-
 /**
  * radix_tree_for_each_slot - iterate over non-empty slots
  *

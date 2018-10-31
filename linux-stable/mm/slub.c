@@ -41,6 +41,8 @@
 
 #include "internal.h"
 
+extern int heterobuff_pgs;
+
 /*
  * Lock order:
  *   1. slab_mutex (Global Mutex)
@@ -2779,7 +2781,9 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 
 
 	page = alloc_slab_page(s, alloc_gfp, node, oo);
-
+	if(page_to_nid(page) == NUMA_HETERO_NODE) {
+		heterobuff_pgs++;	
+	}
         //printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n", 
 	//		__func__, __LINE__, node, page_to_nid(page));
 
@@ -2852,7 +2856,6 @@ static struct page *new_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
 				invalid_mask, &invalid_mask, flags, &flags);
 		dump_stack();
 	}
-
 	return allocate_slab_hetero(s,
 		flags & (GFP_RECLAIM_MASK | GFP_CONSTRAINT_MASK), node);
 }
@@ -3019,6 +3022,10 @@ static void *__slab_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags, int node,
         void *p;
         unsigned long flags;
 
+        /*if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }*/
+
         local_irq_save(flags);
 #ifdef CONFIG_PREEMPT
         /*
@@ -3094,11 +3101,13 @@ redo:
         //if(is_hetero_buffer_set()) {
 	/*if (gfpflags & GFP_KERNEL_ACCOUNT)
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-	else {
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-	}*/
+	else {*/
+	//}
         //}
 	if (unlikely(!object || !node_match(page, node))) {
+		//if(page)
+		//	printk(KERN_ALERT "%s:%d, target %d, dest %d \n", 
+		//		__func__, __LINE__, node, page_to_nid(page));
 		object = __slab_alloc_hetero(s, gfpflags, node, addr, c);
 		stat(s, ALLOC_SLOWPATH);
 	} else {

@@ -449,6 +449,12 @@ void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data)
 {
 	struct kmem_cache *mem = pool_data;
 	VM_BUG_ON(mem->ctor);
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+                //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		return kmem_cache_alloc_hetero(mem, gfp_mask);
+        }
+#endif
 	return kmem_cache_alloc(mem, gfp_mask);
 }
 EXPORT_SYMBOL(mempool_alloc_slab);
@@ -467,9 +473,16 @@ EXPORT_SYMBOL(mempool_free_slab);
 void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
 {
 	size_t size = (size_t)pool_data;
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+                //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		return kmalloc_hetero(size, gfp_mask);
+        }
+#endif
 	return kmalloc(size, gfp_mask);
 }
 EXPORT_SYMBOL(mempool_kmalloc);
+
 
 void mempool_kfree(void *element, void *pool_data)
 {
@@ -669,6 +682,12 @@ EXPORT_SYMBOL(mempool_kfree_hetero);
 void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data)
 {
 	int order = (int)(long)pool_data;
+#ifdef _ENABLE_HETERO
+	if(is_hetero_buffer_set()){
+		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		return alloc_pages_hetero(gfp_mask, order);
+	}
+#endif
 	return alloc_pages(gfp_mask, order);
 }
 EXPORT_SYMBOL(mempool_alloc_pages);

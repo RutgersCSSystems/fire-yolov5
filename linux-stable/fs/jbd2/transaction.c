@@ -2635,16 +2635,3 @@ int jbd2_journal_begin_ordered_truncate(journal_t *journal,
 out:
 	return ret;
 }
-
-/*
-void print_allocation_stat_new_handle(void) {
-	printk("Total hetero allocation new handle: %d\n", journal_cnt);
-}
-EXPORT_SYMBOL(print_allocation_stat_new_handle);
-
-void reset_allocate_counter_new_handle(void) {
-	journal_cnt = 0;
-	printk("Reset counter alloc new handle \n");
-}
-EXPORT_SYMBOL(reset_allocate_counter_new_handle);
-*/

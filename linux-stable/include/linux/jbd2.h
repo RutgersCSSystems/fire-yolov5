@@ -71,11 +71,6 @@ void __jbd2_debug(int level, const char *file, const char *func,
 extern void *jbd2_alloc(size_t size, gfp_t flags);
 extern void jbd2_free(void *ptr, size_t size);
 
-/*
-extern void print_allocation_stat_new_handle(void);
-extern void reset_allocate_counter_new_handle(void);
-*/
-
 #define JBD2_MIN_JOURNAL_BLOCKS 1024
 
 #ifdef __KERNEL__

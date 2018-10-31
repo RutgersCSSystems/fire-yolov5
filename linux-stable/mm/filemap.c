@@ -3455,14 +3455,3 @@ void add_to_hashtable_page(struct page *page) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
-
-void print_allocation_stat_page_cache_alloc(void) {
-	printk("Total hetero allocation page cache alloc: %d\n", pgcache_cnt);
-}
-EXPORT_SYMBOL(print_allocation_stat_page_cache_alloc);
-
-void reset_allocate_counter_page_cache_alloc(void) {
-	pgcache_cnt = 0;
-	printk("Reset counter page cache alloc \n");
-}
-EXPORT_SYMBOL(reset_allocate_counter_page_cache_alloc);

@@ -3616,14 +3616,3 @@ void __init buffer_init(void)
 					NULL, buffer_exit_cpu_dead);
 	WARN_ON(ret < 0);
 }
-
-void print_allocation_stat_alloc_page_buffers(void) {
-	printk("Total hetero allocation alloc page buffers: %d \n", cnt);
-}
-EXPORT_SYMBOL(print_allocation_stat_alloc_page_buffers);
-
-void reset_allocate_counter_alloc_page_buffers(void) {
-	cnt = 0;
-	printk("Reset counter alloc page buffers \n");
-}
-EXPORT_SYMBOL(reset_allocate_counter_alloc_page_buffers);

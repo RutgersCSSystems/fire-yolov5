@@ -236,10 +236,6 @@ static inline struct page *__page_cache_alloc_hetero(gfp_t gfp)
 #endif
 #endif
 
-
-extern void print_allocation_stat_page_cache_alloc(void);
-extern void reset_allocate_counter_page_cache_alloc(void);
-
 static inline struct page *page_cache_alloc(struct address_space *x)
 {
 	return __page_cache_alloc(mapping_gfp_mask(x));

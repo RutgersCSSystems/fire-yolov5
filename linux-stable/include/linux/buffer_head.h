@@ -162,10 +162,6 @@ int try_to_free_buffers(struct page *);
 struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 		bool retry);
 
-/* hetero allocation functions needed */
-extern void print_allocation_stat_alloc_page_buffers(void);
-extern void reset_allocate_counter_alloc_page_buffers(void);
-
 void create_empty_buffers(struct page *, unsigned long,
 			unsigned long b_state);
 void end_buffer_read_sync(struct buffer_head *bh, int uptodate);

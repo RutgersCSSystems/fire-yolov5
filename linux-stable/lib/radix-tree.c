@@ -50,7 +50,7 @@
 #define PFN_TRACE 4
 
 extern int global_flag;
-int radix_cnt = 0;
+extern int radix_cnt;
 int radix_tree_insert_cnt, radix_tree_delete_cnt, radix_tree_shrink_cnt = 0; 
 
 /* Number of nodes in fully populated tree of given height */
@@ -2509,14 +2509,3 @@ void add_to_hashtable_preload(struct radix_tree_preload *preload) {
 		insert_pfn_hashtable(pfn);
 }
 */
-
-void print_allocation_stat_radix_alloc(void) {
-	printk("Total hetero allocation radix tree: %d\n", radix_cnt);
-}
-EXPORT_SYMBOL(print_allocation_stat_radix_alloc);
-
-void reset_allocate_radix_alloc(void) {
-	radix_cnt = 0;
-	printk("Reset radix alloc \n");
-}
-EXPORT_SYMBOL(reset_allocate_radix_alloc);

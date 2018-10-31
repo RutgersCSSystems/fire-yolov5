@@ -242,7 +242,15 @@ fallback:
 		 */
 		__gfp_mask |= __GFP_NOMEMALLOC | __GFP_NORETRY | __GFP_NOWARN;
 
-		/*
+#ifdef _ENABLE_HETERO
+		bvl = NULL;
+	        if(is_hetero_buffer_set()) {
+			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			bvl = kmem_cache_alloc_hetero(bvs->slab, __gfp_mask);
+		}
+	        if(!bvl)
+#endif
+		/*	
 		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
 		 * is set, retry with the 1-entry mempool
 		 */
