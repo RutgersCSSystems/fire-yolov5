@@ -245,7 +245,7 @@ fallback:
 #ifdef _ENABLE_HETERO
 		bvl = NULL;
 	        if(is_hetero_buffer_set()) {
-			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			bvl = kmem_cache_alloc_hetero(bvs->slab, __gfp_mask);
 		}
 	        if(!bvl)
