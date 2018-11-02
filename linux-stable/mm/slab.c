@@ -3712,6 +3712,20 @@ kmem_cache_alloc_trace(struct kmem_cache *cachep, gfp_t flags, size_t size)
 	return ret;
 }
 EXPORT_SYMBOL(kmem_cache_alloc_trace);
+
+void *
+kmem_cache_alloc_trace_hetero(struct kmem_cache *cachep, gfp_t flags, size_t size)
+{
+	void *ret;
+
+	ret = slab_alloc_hetero(cachep, flags, _RET_IP_);
+
+	kasan_kmalloc(cachep, ret, size, flags);
+	trace_kmalloc(_RET_IP_, ret,
+		      size, cachep->size, flags);
+	return ret;
+}
+EXPORT_SYMBOL(kmem_cache_alloc_trace_hetero);
 #endif
 
 #ifdef CONFIG_NUMA

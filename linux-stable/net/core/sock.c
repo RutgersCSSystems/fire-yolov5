@@ -1465,12 +1465,24 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
 
 	slab = prot->slab;
 	if (slab != NULL) {
+#ifdef _ENABLE_HETERO
+               sk = NULL;
+               if(is_hetero_buffer_set())
+                   sk =  kmem_cache_alloc_hetero(slab, priority & ~__GFP_ZERO);
+               if(!sk)
+#endif
 		sk = kmem_cache_alloc(slab, priority & ~__GFP_ZERO);
 		if (!sk)
 			return sk;
 		if (priority & __GFP_ZERO)
 			sk_prot_clear_nulls(sk, prot->obj_size);
 	} else
+#ifdef _ENABLE_HETERO
+               sk = NULL;
+               if(is_hetero_buffer_set())
+                   sk = kmalloc_hetero(prot->obj_size, priority);
+               if(!sk)
+#endif
 		sk = kmalloc(prot->obj_size, priority);
 
 	if (sk != NULL) {
@@ -1986,6 +1998,13 @@ void *sock_kmalloc(struct sock *sk, int size, gfp_t priority)
 		 * might sleep.
 		 */
 		atomic_add(size, &sk->sk_omem_alloc);
+
+#ifdef _ENABLE_HETERO
+	       mem = NULL;
+               if(is_hetero_buffer_set())
+                   mem = kmalloc_hetero(size, priority);
+               if(!mem)
+#endif
 		mem = kmalloc(size, priority);
 		if (mem)
 			return mem;

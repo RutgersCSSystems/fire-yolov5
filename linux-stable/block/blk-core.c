@@ -832,6 +832,11 @@ static void *alloc_request_simple(gfp_t gfp_mask, void *data)
 {
 	struct request_queue *q = data;
 
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()) {
+		return kmem_cache_alloc_node_hetero(request_cachep, gfp_mask, q->node);
+        }
+#endif
 	return kmem_cache_alloc_node(request_cachep, gfp_mask, q->node);
 }
 
@@ -845,6 +850,14 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 	struct request_queue *q = data;
 	struct request *rq;
 
+#ifdef _ENABLE_HETERO
+	rq = NULL;
+        if(is_hetero_buffer_set()) {
+		rq = kmalloc_node_hetero(sizeof(struct request) + q->cmd_size, gfp_mask,
+				q->node);
+        }
+	if(!rq)
+#endif
 	rq = kmalloc_node(sizeof(struct request) + q->cmd_size, gfp_mask,
 			q->node);
 	if (rq && q->init_rq_fn && q->init_rq_fn(q, rq, gfp_mask) < 0) {

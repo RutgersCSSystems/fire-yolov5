@@ -2553,6 +2553,13 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	void *freelist;
 	struct page *page;
 
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
+#endif
+
+
 	page = c->page;
 	if (!page)
 		goto new_slab;
@@ -2646,6 +2653,13 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	void *p;
 	unsigned long flags;
 
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
+#endif
+
+
 	local_irq_save(flags);
 #ifdef CONFIG_PREEMPT
 	/*
@@ -2677,6 +2691,14 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
 	struct kmem_cache_cpu *c;
 	struct page *page;
 	unsigned long tid;
+
+#ifdef _ENABLE_HETERO
+        //if(is_hetero_buffer_set()){
+	//	dump_stack();
+	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//}
+#endif
+
 
 	s = slab_pre_alloc_hook(s, gfpflags);
 	if (!s)
@@ -3206,8 +3228,27 @@ void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 EXPORT_SYMBOL(kmem_cache_alloc);
 
 #ifdef CONFIG_TRACING
+
+void *kmem_cache_alloc_trace_hetero(struct kmem_cache *s, gfp_t gfpflags, size_t size)
+{
+	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
+	trace_kmalloc(_RET_IP_, ret, size, s->size, gfpflags);
+	kasan_kmalloc(s, ret, size, gfpflags);
+	return ret;
+}
+EXPORT_SYMBOL(kmem_cache_alloc_trace_hetero);
+
+
 void *kmem_cache_alloc_trace(struct kmem_cache *s, gfp_t gfpflags, size_t size)
 {
+
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+		dump_stack();
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
+#endif
+
 	void *ret = slab_alloc(s, gfpflags, _RET_IP_);
 	trace_kmalloc(_RET_IP_, ret, size, s->size, gfpflags);
 	kasan_kmalloc(s, ret, size, gfpflags);
@@ -3217,10 +3258,28 @@ EXPORT_SYMBOL(kmem_cache_alloc_trace);
 #endif
 
 #ifdef CONFIG_NUMA
+
+void *kmem_cache_alloc_node_hetero(struct kmem_cache *s, gfp_t gfpflags, int node)
+{
+        void *ret = slab_alloc_node_hetero(s, gfpflags, node, _RET_IP_);
+
+        trace_kmem_cache_alloc_node(_RET_IP_, ret,
+                                    s->object_size, s->size, gfpflags, node);
+
+        return ret;
+}
+EXPORT_SYMBOL(kmem_cache_alloc_node_hetero);
+
+
 void *kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags, int node)
 {
 	void *ret = slab_alloc_node(s, gfpflags, node, _RET_IP_);
 
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
+#endif
 	trace_kmem_cache_alloc_node(_RET_IP_, ret,
 				    s->object_size, s->size, gfpflags, node);
 
@@ -3233,6 +3292,13 @@ void *kmem_cache_alloc_node_trace(struct kmem_cache *s,
 				    gfp_t gfpflags,
 				    int node, size_t size)
 {
+
+#ifdef _ENABLE_HETERO
+        //if(is_hetero_buffer_set()){
+	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//}
+#endif
+
 	void *ret = slab_alloc_node(s, gfpflags, node, _RET_IP_);
 
 	trace_kmalloc_node(_RET_IP_, ret,
@@ -3566,6 +3632,12 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
 {
 	struct kmem_cache_cpu *c;
 	int i;
+
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	}
+#endif
 
 	/* memcg and kmem_cache debug support */
 	s = slab_pre_alloc_hook(s, flags);
@@ -4298,6 +4370,37 @@ static void *kmalloc_large_node(size_t size, gfp_t flags, int node)
 	return ptr;
 }
 
+void *__kmalloc_node_hetero(size_t size, gfp_t flags, int node)
+{
+	struct kmem_cache *s;
+	void *ret;
+
+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
+		ret = kmalloc_large_node(size, flags, node);
+
+		trace_kmalloc_node(_RET_IP_, ret,
+				   size, PAGE_SIZE << get_order(size),
+				   flags, node);
+
+		return ret;
+	}
+
+	s = kmalloc_slab(size, flags);
+
+	if (unlikely(ZERO_OR_NULL_PTR(s)))
+		return s;
+
+	ret = slab_alloc_node_hetero(s, flags, node, _RET_IP_);
+
+	trace_kmalloc_node(_RET_IP_, ret, size, s->size, flags, node);
+
+	kasan_kmalloc(s, ret, size, flags);
+
+	return ret;
+}
+EXPORT_SYMBOL(__kmalloc_node_hetero);
+
+
 void *__kmalloc_node(size_t size, gfp_t flags, int node)
 {
 	struct kmem_cache *s;
@@ -4830,6 +4933,26 @@ void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
 	return ret;
 }
 
+void *__kmalloc_track_caller_hetero(size_t size, gfp_t gfpflags, unsigned long caller)
+{
+	struct kmem_cache *s;
+	void *ret;
+
+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
+		return kmalloc_large(size, gfpflags);
+
+	s = kmalloc_slab(size, gfpflags);
+
+	if (unlikely(ZERO_OR_NULL_PTR(s)))
+		return s;
+
+	ret = slab_alloc_hetero(s, gfpflags, caller);
+	/* Honor the call site pointer we received. */
+	trace_kmalloc(caller, ret, size, s->size, gfpflags);
+	return ret;
+}
+
+
 #ifdef CONFIG_NUMA
 void *__kmalloc_node_track_caller(size_t size, gfp_t gfpflags,
 					int node, unsigned long caller)
@@ -4859,6 +4982,36 @@ void *__kmalloc_node_track_caller(size_t size, gfp_t gfpflags,
 
 	return ret;
 }
+
+void *__kmalloc_node_track_caller_hetero(size_t size, gfp_t gfpflags,
+					int node, unsigned long caller)
+{
+	struct kmem_cache *s;
+	void *ret;
+
+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
+		ret = kmalloc_large_node(size, gfpflags, node);
+
+		trace_kmalloc_node(caller, ret,
+				   size, PAGE_SIZE << get_order(size),
+				   gfpflags, node);
+
+		return ret;
+	}
+
+	s = kmalloc_slab(size, gfpflags);
+
+	if (unlikely(ZERO_OR_NULL_PTR(s)))
+		return s;
+
+	ret = slab_alloc_node_hetero(s, gfpflags, node, caller);
+
+	/* Honor the call site pointer we received. */
+	trace_kmalloc_node(caller, ret, size, s->size, gfpflags, node);
+
+	return ret;
+}
+
 #endif
 
 #ifdef CONFIG_SYSFS

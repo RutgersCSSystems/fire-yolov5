@@ -124,6 +124,43 @@ static void skb_under_panic(struct sk_buff *skb, unsigned int sz, void *addr)
 #define kmalloc_reserve(size, gfp, node, pfmemalloc) \
 	 __kmalloc_reserve(size, gfp, node, _RET_IP_, pfmemalloc)
 
+#define kmalloc_reserve_hetero(size, gfp, node, pfmemalloc) \
+	 __kmalloc_reserve_hetero(size, gfp, node, _RET_IP_, pfmemalloc)
+
+
+static void *__kmalloc_reserve_hetero(size_t size, gfp_t flags, int node,
+			       unsigned long ip, bool *pfmemalloc)
+{
+	void *obj;
+	bool ret_pfmemalloc = false;
+
+#ifdef _ENABLE_HETERO
+        if(is_hetero_buffer_set()){
+                node = NUMA_HETERO_NODE;
+        }
+#endif
+	/*
+	 * Try a regular allocation, when that fails and we're not entitled
+	 * to the reserves, fail.
+	 */
+	obj = kmalloc_node_track_caller_hetero(size,
+					flags | __GFP_NOMEMALLOC | __GFP_NOWARN,
+					node);
+	if (obj || !(gfp_pfmemalloc_allowed(flags)))
+		goto out;
+
+	/* Try again but now we are using pfmemalloc reserves */
+	ret_pfmemalloc = true;
+	obj = kmalloc_node_track_caller_hetero(size, flags, node);
+
+out:
+	if (pfmemalloc)
+		*pfmemalloc = ret_pfmemalloc;
+
+	return obj;
+}
+
+
 static void *__kmalloc_reserve(size_t size, gfp_t flags, int node,
 			       unsigned long ip, bool *pfmemalloc)
 {
@@ -132,6 +169,7 @@ static void *__kmalloc_reserve(size_t size, gfp_t flags, int node,
 
 #ifdef _ENABLE_HETERO
         if(is_hetero_buffer_set()){
+		 printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 node = NUMA_HETERO_NODE;
         }
 #endif
@@ -196,9 +234,12 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 		gfp_mask |= __GFP_MEMALLOC;
 
 #ifdef _ENABLE_HETERO
+        skb = NULL;
 	if(is_hetero_buffer_set()){
 		node = NUMA_HETERO_NODE;
+     	        skb = kmem_cache_alloc_node_hetero(cache, gfp_mask & ~__GFP_DMA, node);
 	}
+	if(!skb)
 #endif
 	/* Get the HEAD */
 	skb = kmem_cache_alloc_node(cache, gfp_mask & ~__GFP_DMA, node);
@@ -213,6 +254,14 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 	 */
 	size = SKB_DATA_ALIGN(size);
 	size += SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+#ifdef _ENABLE_HETERO
+        data = NULL;
+	if(is_hetero_buffer_set()){
+		node = NUMA_HETERO_NODE;
+     	        data = kmalloc_reserve_hetero(size, gfp_mask, node, &pfmemalloc);
+	}
+	if(!data)
+#endif
 	data = kmalloc_reserve(size, gfp_mask, node, &pfmemalloc);
 	if (!data)
 		goto nodata;
@@ -1468,6 +1517,15 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
 
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
+
+#ifdef _ENABLE_HETERO
+        data = NULL;
+        if(is_hetero_buffer_set()){
+		data = kmalloc_reserve_hetero(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+			       gfp_mask, NUMA_HETERO_NODE, NULL);
+        }
+        if(!data)
+#endif
 	data = kmalloc_reserve(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_NO_NODE, NULL);
 	if (!data)
@@ -5312,6 +5370,15 @@ static int pskb_carve_inside_header(struct sk_buff *skb, const u32 off,
 
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
+#ifdef _ENABLE_HETERO
+        data = NULL;
+        if(is_hetero_buffer_set()){
+		data = kmalloc_reserve_hetero(size +
+			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+			       gfp_mask, NUMA_HETERO_NODE, NULL);
+        }
+        if(!data)
+#endif
 	data = kmalloc_reserve(size +
 			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_NO_NODE, NULL);
@@ -5436,6 +5503,15 @@ static int pskb_carve_inside_nonlinear(struct sk_buff *skb, const u32 off,
 
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
+#ifdef _ENABLE_HETERO
+        data = NULL;
+        if(is_hetero_buffer_set()){
+		data = kmalloc_reserve_hetero(size +
+			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
+			       gfp_mask, NUMA_HETERO_NODE, NULL);
+        }
+        if(!data)
+#endif
 	data = kmalloc_reserve(size +
 			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_NO_NODE, NULL);

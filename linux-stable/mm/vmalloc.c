@@ -420,6 +420,15 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
 
 	might_sleep();
 
+#ifdef _ENABLE_HETERO
+        va = NULL;
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		va = kmalloc_node_hetero(sizeof(struct vmap_area),
+				gfp_mask & GFP_RECLAIM_MASK, node);
+        }
+	if(!va)
+#endif
 	va = kmalloc_node(sizeof(struct vmap_area),
 			gfp_mask & GFP_RECLAIM_MASK, node);
 	if (unlikely(!va))
@@ -1406,7 +1415,14 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
 	if (flags & VM_IOREMAP)
 		align = 1ul << clamp_t(int, get_count_order_long(size),
 				       PAGE_SHIFT, IOREMAP_MAX_ORDER);
-
+#ifdef _ENABLE_HETERO
+	area = NULL;
+        if(is_hetero_buffer_set()) {
+		 area = kzalloc_node_hetero(sizeof(*area), 
+				gfp_mask & GFP_RECLAIM_MASK, NUMA_HETERO_NODE);
+        }
+	if(!area)
+#endif
 	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
 	if (unlikely(!area))
 		return NULL;
