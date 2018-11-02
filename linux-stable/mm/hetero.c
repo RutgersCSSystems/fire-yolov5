@@ -114,8 +114,17 @@ void reset_hetero_stats(void) {
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
+inline int check_hetero_proc (void) {
+ 
+    //f(current->pid == hetero_pid && hetero_pid){
+    if (current->hetero_task == HETERO_PROC){
+	return 1;
+    }
+    return 0; 	
+}
+
 int is_hetero_exit() {
-    if(hetero_pid && current->pid == hetero_pid) {
+    if(check_hetero_proc()) {
 	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
@@ -125,7 +134,7 @@ EXPORT_SYMBOL(is_hetero_exit);
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
 
-      if(hetero_pid && current->pid == hetero_pid) 
+      if(check_hetero_proc()) 
 	if(enbl_hetero_pgcache) { 	
 		//if(pgcache_cnt % 10000 == 0)
 		//	print_hetero_stats();
@@ -137,7 +146,7 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void){
 
-    if(hetero_pid  && current->pid == hetero_pid) 
+    if(check_hetero_proc()) 
     {
 	if(enbl_hetero_buffer) {
 	    	return enbl_hetero_buffer;
@@ -158,8 +167,7 @@ EXPORT_SYMBOL(is_hetero_journ_set);
 
 
 int is_hetero_radix_set(void){
-    if(hetero_pid && current->pid == hetero_pid)
-    //if(strstr(current->comm, procname))
+    if(check_hetero_proc())
     	return enbl_hetero_radix;
     return 0;
 }
@@ -167,7 +175,6 @@ EXPORT_SYMBOL(is_hetero_radix_set);
 
 
 int is_hetero_kernel_set(void){
-    //if(hetero_pid && current->pid == hetero_pid)
     return enbl_hetero_kernel;
     return 1;
 }
@@ -276,6 +283,7 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    break;
 	default:
 	    hetero_pid = flag;
+	    current->hetero_task = HETERO_PROC;
             memcpy(procname, current->comm, TASK_COMM_LEN);
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;

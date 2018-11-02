@@ -590,6 +590,7 @@ struct wake_q_node {
 };
 
 struct task_struct {
+
 #ifdef CONFIG_THREAD_INFO_IN_TASK
 	/*
 	 * For reasons of header soup (see current_thread_info()), this
@@ -709,6 +710,10 @@ struct task_struct {
 	unsigned			sched_contributes_to_load:1;
 	unsigned			sched_migrated:1;
 	unsigned			sched_remote_wakeup:1;
+
+      
+        unsigned 			hetero_task:1;  
+
 	/* Force alignment to the next boundary: */
 	unsigned			:0;
 
