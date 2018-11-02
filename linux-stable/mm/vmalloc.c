@@ -423,7 +423,6 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
 #ifdef _ENABLE_HETERO
         va = NULL;
         if(is_hetero_buffer_set()) {
-                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		va = kmalloc_node_hetero(sizeof(struct vmap_area),
 				gfp_mask & GFP_RECLAIM_MASK, node);
         }

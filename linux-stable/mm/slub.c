@@ -2655,6 +2655,7 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 
 #ifdef _ENABLE_HETERO
         if(is_hetero_buffer_set()){
+		dump_stack();
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
 #endif
@@ -3276,9 +3277,10 @@ void *kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags, int node)
 	void *ret = slab_alloc_node(s, gfpflags, node, _RET_IP_);
 
 #ifdef _ENABLE_HETERO
-        if(is_hetero_buffer_set()){
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-	}
+        //if(is_hetero_buffer_set()){
+		//dump_stack();
+		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//}
 #endif
 	trace_kmem_cache_alloc_node(_RET_IP_, ret,
 				    s->object_size, s->size, gfpflags, node);
