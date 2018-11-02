@@ -127,8 +127,8 @@ int is_hetero_pgcache_set(void){
 
       if(hetero_pid && current->pid == hetero_pid) 
 	if(enbl_hetero_pgcache) { 	
-		if(pgcache_cnt % 1000 == 0)
-			print_hetero_stats();
+		//if(pgcache_cnt % 10000 == 0)
+		//	print_hetero_stats();
 	    	return enbl_hetero_pgcache;
     	}		
     return 0;
@@ -192,7 +192,10 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
+
+	    reset_hetero_stats();	
 	    is_hetero_exit();
+
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
 	    hetero_usrpg_cnt = 0;
