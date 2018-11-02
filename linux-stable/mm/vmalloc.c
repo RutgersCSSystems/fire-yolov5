@@ -882,6 +882,15 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
 
 	node = numa_node_id();
 
+#ifdef _ENABLE_HETERO
+        vb = NULL;
+        if(is_hetero_buffer_set()) {
+                 vb = kmalloc_node_hetero(sizeof(struct vmap_block),
+                                gfp_mask & GFP_RECLAIM_MASK, NUMA_HETERO_NODE);
+        }
+        if(!vb)
+#endif
+
 	vb = kmalloc_node(sizeof(struct vmap_block),
 			gfp_mask & GFP_RECLAIM_MASK, node);
 	if (unlikely(!vb))

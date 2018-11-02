@@ -2655,8 +2655,8 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 
 #ifdef _ENABLE_HETERO
         if(is_hetero_buffer_set()){
-		dump_stack();
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		//dump_stack();
+		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
 #endif
 
