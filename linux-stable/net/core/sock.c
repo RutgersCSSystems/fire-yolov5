@@ -1476,7 +1476,7 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
 			return sk;
 		if (priority & __GFP_ZERO)
 			sk_prot_clear_nulls(sk, prot->obj_size);
-	} else
+	} else {
 #ifdef _ENABLE_HETERO
                sk = NULL;
                if(is_hetero_buffer_set())
@@ -1484,6 +1484,7 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
                if(!sk)
 #endif
 		sk = kmalloc(prot->obj_size, priority);
+	}
 
 	if (sk != NULL) {
 		if (security_sk_alloc(sk, family, priority))
