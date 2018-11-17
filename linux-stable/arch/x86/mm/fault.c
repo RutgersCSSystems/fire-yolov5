@@ -16,6 +16,8 @@
 #include <linux/prefetch.h>		/* prefetchw			*/
 #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
 #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
+#include <linux/swap.h>
+#include <linux/swapops.h>
 
 #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
 #include <asm/traps.h>			/* dotraplinkage, ...		*/
@@ -410,6 +412,7 @@ void vmalloc_sync_all(void)
 	sync_global_pgds(VMALLOC_START & PGDIR_MASK, VMALLOC_END);
 }
 
+static void dump_pagetable(unsigned long address);
 /*
  * 64-bit:
  *
@@ -478,8 +481,31 @@ static noinline int vmalloc_fault(unsigned long address)
 		return 0;
 
 	pte = pte_offset_kernel(pmd, address);
-	if (!pte_present(*pte))
-		return -1;
+	if (!pte_present(*pte)) {
+		spinlock_t *ptl = pte_lockptr(&init_mm, pmd);
+		spin_lock(ptl);
+
+		if (!pte_present(*pte)) {
+			swp_entry_t entry = pte_to_swp_entry(*pte);
+
+			if (is_migration_entry(entry)) {
+				spin_unlock(ptl);
+
+				migration_entry_wait(&init_mm, pmd,
+							 address);
+
+				return 1;
+			} else {
+				spin_unlock(ptl);
+				return -1;
+			}
+
+		}
+
+		spin_unlock(ptl);
+		return 0;
+
+	}
 
 	return 0;
 }
