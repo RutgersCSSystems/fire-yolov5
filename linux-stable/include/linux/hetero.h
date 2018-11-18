@@ -6,10 +6,11 @@
 
 /* HeteroOS code */
 #define _ENABLE_HETERO
-//#define _HETERO_MIGRATE
+#define _HETERO_MIGRATE
 //#define _HETERO_ZSMALLOC
 
 #ifdef _ENABLE_HETERO
+#define HETERO_PG_FLAG 1
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
 #define HETERO_PROC 1

@@ -1769,11 +1769,10 @@ struct rb_root pool_root;
 /*NVpage to be added to RB tree*/
 struct zsobj {
         unsigned long handle; 
-        void *obj;
 	size_t size;
+        void *obj;
         struct rb_node rbnode;
 };
-
 
 /*add pages to rbtree node */
 int insert_obj_rbtree(struct rb_root *root, unsigned long handle, void *obj){
@@ -1851,6 +1850,43 @@ unsigned long search_obj_rbtree(struct rb_root *root, const void *addr){
 ret_search_page:
 	//printk("%s : %d zsobj search SUCCESS \n", __func__, __LINE__);
         return zs->handle;
+}
+
+
+
+/*add pages to rbtree node */
+int insert_pg_rbtree(struct rb_root *root, struct page *page){
+
+	struct rb_node **new = &(root->rb_node), *parent = NULL;
+
+	/* Figure out where to put new node */
+	while (*new) {
+		struct page *this = rb_entry(*new, struct page, rb_node);
+		parent = *new;
+
+		if(!this) {
+			printk("%s : %d page NULL \n", __func__, __LINE__);
+			goto insert_fail_pg;
+		}
+
+		if ((unsigned long)page < (unsigned long)this) {
+			new = &((*new)->rb_left);
+		}else if ((unsigned long)page > (unsigned long)this){
+			new = &((*new)->rb_right);
+		}else{
+			goto insert_success_pg;
+		}
+	}
+	/* Add new node and rebalance tree. */
+	rb_link_node(&page->rb_node, parent, new);
+	rb_insert_color(&page->rb_node, root);
+insert_success_pg:
+	//printk("%s : %d SUCCESS \n", __func__, __LINE__);
+	return 0;
+
+insert_fail_pg:
+	printk("%s : %d FAIL \n", __func__, __LINE__);
+	return -1;
 }
 
 
@@ -1936,6 +1972,20 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 		else {
 			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			page = alloc_pages_hetero_node(node, alloc_mask|highmem_mask, 0);
+#ifdef _HETERO_MIGRATE
+			if(page) {	
+				page->hetero = HETERO_PG_FLAG;
+				if(!init_hetero_zspool) {
+					pool_root = RB_ROOT;
+					init_hetero_zspool = 1;
+				}
+				//Try migration of existing pages
+				migrate_vmalloc_pages(page, NULL, NULL, 0);
+	
+				/* Hetero handle 0 when not using zsmalloc */
+				insert_pg_rbtree(&pool_root, (void *)page);
+			}
+#endif
 		}
 		if (unlikely(!page)) {
 			/* Successfully allocated i pages, free them in __vunmap() */
@@ -2122,8 +2172,10 @@ static void __vunmap_hetero(const void *addr, int deallocate_pages)
 
 		for (i = 0; i < area->nr_pages; i++) {
 			struct page *page = area->pages[i];
-			//printk(KERN_ALERT "%s : %d trying to free page\n", 
-			//	__func__, __LINE__);		
+#ifdef _HETERO_MIGRATE
+			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+			rb_erase(&page->rb_node, &pool_root);
+#endif
 			BUG_ON(!page);
 			__free_pages(page, 0);
 		}

@@ -494,9 +494,9 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		if(is_hetero_buffer_set()) {
 
 #ifdef _HETERO_MIGRATE
-		        //printk(KERN_ALERT "%s : %d size %d \n",
-			//	 __func__, __LINE__, sizeof(struct bio) + 
-			//	nr_iovecs * sizeof(struct bio_vec));
+		        printk(KERN_ALERT "%s : %d size %d \n",
+				 __func__, __LINE__, sizeof(struct bio) + 
+				nr_iovecs * sizeof(struct bio_vec));
                         p = vmalloc_hetero(sizeof(struct bio) + nr_iovecs * sizeof(struct bio_vec)); 
 			if(!p)
 #endif
@@ -1130,9 +1130,9 @@ static struct bio_map_data *bio_alloc_map_data(struct iov_iter *data,
 #ifdef _ENABLE_HETERO
 	bmd = NULL;
 	if(is_hetero_buffer_set()) {
-		//printk(KERN_ALERT "%s : %d size %d \n",
-		//	__func__, __LINE__, sizeof(struct bio_map_data) +
-		//	sizeof(struct iovec) * data->nr_segs);
+		printk(KERN_ALERT "%s : %d size %d \n",
+			__func__, __LINE__, sizeof(struct bio_map_data) +
+			sizeof(struct iovec) * data->nr_segs);
 		bmd = vmalloc_hetero(sizeof(struct bio_map_data) + sizeof(struct iovec) * data->nr_segs);
         }
         if(!bmd)

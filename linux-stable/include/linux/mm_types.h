@@ -17,6 +17,9 @@
 
 #include <asm/mmu.h>
 
+/* HeteroOS code */
+#include <linux/hetero.h>
+
 #ifndef AT_VECTOR_SIZE_ARCH
 #define AT_VECTOR_SIZE_ARCH 0
 #endif
@@ -76,6 +79,7 @@ struct hmm;
 #endif /* !CONFIG_HAVE_ALIGNED_STRUCT_PAGE */
 
 struct page {
+
 	/* First double word block */
 	unsigned long flags;		/* Atomic flags, some possibly
 					 * updated asynchronously */
@@ -198,6 +202,12 @@ struct page {
 	struct mem_cgroup *mem_cgroup;
 #endif
 
+	/* HeteroOS code */
+#ifdef _ENABLE_HETERO
+	int hetero;
+        /* group service_tree member */
+        struct rb_node rb_node;
+#endif
 	/*
 	 * On machines where all RAM is mapped into kernel address space,
 	 * we can simply calculate the virtual address. On machines with
