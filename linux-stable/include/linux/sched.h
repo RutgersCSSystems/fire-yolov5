@@ -691,6 +691,8 @@ struct task_struct {
 	/* Per-thread vma caching: */
 	struct vmacache			vmacache;
 
+
+
 #ifdef SPLIT_RSS_COUNTING
 	struct task_rss_stat		rss_stat;
 #endif
@@ -711,8 +713,10 @@ struct task_struct {
 	unsigned			sched_migrated:1;
 	unsigned			sched_remote_wakeup:1;
 
-      
+#ifdef CONFIG_ENABLE_HETERO
         unsigned 			hetero_task:1;  
+	void 				*hetero_obj;
+#endif
 
 	/* Force alignment to the next boundary: */
 	unsigned			:0;

@@ -133,6 +133,10 @@ static int page_cache_tree_insert(struct address_space *mapping,
 	void **slot;
 	int error;
 
+	/* Set page to Hetero Object */
+	if (IS_ENABLED(CONFIG_HETERO_ENABLE) && is_hetero_target_obj(mapping->host)) {
+		page->hetero_obj = current->hetero_obj;	
+	}
 	error = __radix_tree_create(&mapping->i_pages, page->index, 0,
 				    &node, &slot);
 	if (error)

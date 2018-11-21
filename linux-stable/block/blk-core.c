@@ -853,6 +853,11 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 #ifdef _ENABLE_HETERO
 	rq = NULL;
         if(is_hetero_buffer_set()) {
+#ifdef _HETERO_MIGRATE
+		//rq = vmalloc_hetero(sizeof(struct request) + q->cmd_size);
+		if(!rq)
+#endif
+		//printk(KERN_ALERT "%s:%d size %zu \n", __func__, __LINE__, sizeof(struct request) + q->cmd_size);
 		rq = kmalloc_node_hetero(sizeof(struct request) + q->cmd_size, gfp_mask,
 				q->node);
         }
@@ -860,12 +865,23 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 #endif
 	rq = kmalloc_node(sizeof(struct request) + q->cmd_size, gfp_mask,
 			q->node);
+
 	if (rq && q->init_rq_fn && q->init_rq_fn(q, rq, gfp_mask) < 0) {
+#ifdef _ENABLE_HETERO
+		if(is_hetero_buffer_set()){
+#ifdef _HETERO_MIGRATE
+			//vfree_hetero(rq);
+			//rq = NULL;
+			//return rq;
+#endif
+		}
+#endif
 		kfree(rq);
 		rq = NULL;
 	}
 	return rq;
 }
+
 
 static void free_request_size(void *element, void *data)
 {
@@ -873,8 +889,21 @@ static void free_request_size(void *element, void *data)
 
 	if (q->exit_rq_fn)
 		q->exit_rq_fn(q, element);
-	kfree(element);
+
+#ifdef _ENABLE_HETERO
+#ifdef _HETERO_MIGRATE
+	if(is_hetero_buffer_set()){
+		//vfree_hetero(element);
+	        //element = NULL;
+		//kfree(element);
+		//return;
+	}
+#endif
+#endif
+	if(element)
+		kfree(element);
 }
+
 
 int blk_init_rl(struct request_list *rl, struct request_queue *q,
 		gfp_t gfp_mask)
@@ -888,11 +917,20 @@ int blk_init_rl(struct request_list *rl, struct request_queue *q,
 	init_waitqueue_head(&rl->wait[BLK_RW_SYNC]);
 	init_waitqueue_head(&rl->wait[BLK_RW_ASYNC]);
 
+	void *fn = &free_request_size;
+
 	if (q->cmd_size) {
+
+		//return 0;
+		printk(KERN_ALERT "******blk_init_rl***** %s:%d \n", __func__, __LINE__);
+
 		rl->rq_pool = mempool_create_node(BLKDEV_MIN_RQ,
 				alloc_request_size, free_request_size,
 				q, gfp_mask, q->node);
 	} else {
+		return 0;
+		printk(KERN_ALERT "******blk_init_rl***** %s:%d \n", __func__, __LINE__);		
+
 		rl->rq_pool = mempool_create_node(BLKDEV_MIN_RQ,
 				alloc_request_simple, free_request_simple,
 				q, gfp_mask, q->node);

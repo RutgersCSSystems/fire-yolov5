@@ -36,4 +36,5 @@ int is_hetero_radix_set(void);
 int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
 int is_hetero_exit(void);
+inline int is_hetero_target_obj(void *obj);
 #endif /* _LINUX_NUMA_H */

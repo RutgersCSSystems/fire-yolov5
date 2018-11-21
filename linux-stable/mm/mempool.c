@@ -523,6 +523,8 @@ void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask)
 
 repeat_alloc:
 
+	printk(KERN_ALERT "%s:%d Function %pF \n", __func__, __LINE__, pool->alloc);
+
 	element = pool->alloc(gfp_temp, pool->pool_data);
 
 	if (likely(element != NULL))

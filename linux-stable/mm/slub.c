@@ -2555,11 +2555,8 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 
 #ifdef _ENABLE_HETERO
         if(is_hetero_buffer_set()){
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
 #endif
-
-
 	page = c->page;
 	if (!page)
 		goto new_slab;
@@ -2812,6 +2809,8 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 	if(page_to_nid(page) == NUMA_HETERO_NODE) {
 		heterobuff_pgs++;	
 	}
+	
+	dump_stack();
         //printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n", 
 	//		__func__, __LINE__, node, page_to_nid(page));
 
@@ -2961,7 +2960,6 @@ redo:
 			searchnode = node_to_mem_node(node);
 
 		if (unlikely(!node_match(page, searchnode))) {
-
 			//printk(KERN_ALERT "%s : %d page node %d target %d\n", 
 			//	__func__, __LINE__, page_to_nid(page), node);
 			stat(s, ALLOC_NODE_MISMATCH);
@@ -3245,8 +3243,8 @@ void *kmem_cache_alloc_trace(struct kmem_cache *s, gfp_t gfpflags, size_t size)
 
 #ifdef _ENABLE_HETERO
         if(is_hetero_buffer_set()){
-		dump_stack();
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		//dump_stack();
+		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
 #endif
 

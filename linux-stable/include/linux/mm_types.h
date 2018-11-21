@@ -205,6 +205,7 @@ struct page {
 	/* HeteroOS code */
 #ifdef _ENABLE_HETERO
 	int hetero;
+	void *hetero_obj;
         /* group service_tree member */
         struct rb_node rb_node;
 #endif

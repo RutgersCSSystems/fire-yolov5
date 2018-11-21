@@ -109,6 +109,11 @@ struct kmem_cache {
 	struct kobject kobj;	/* For sysfs */
 	struct work_struct kobj_remove_work;
 #endif
+
+#ifdef CONFIG_ENABLE_HETERO
+        void                            *hetero_obj; /* Hetero Object*/
+#endif
+
 #ifdef CONFIG_MEMCG
 	struct memcg_cache_params memcg_params;
 	/* for propagation, maximum size of a stored attr */

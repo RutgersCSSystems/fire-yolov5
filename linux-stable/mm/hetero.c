@@ -131,6 +131,16 @@ int is_hetero_exit() {
 }
 EXPORT_SYMBOL(is_hetero_exit);
 
+inline int is_hetero_target_obj(void *obj) {
+
+	if(obj && current->hetero_obj && current->hetero_obj == obj){
+		return 1;
+	}
+	return 0;
+}
+EXPORT_SYMBOL(is_hetero_target_obj);
+
+
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void){
 

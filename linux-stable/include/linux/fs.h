@@ -407,6 +407,9 @@ struct address_space {
 	struct list_head	private_list;	/* for use by the address_space */
 	void			*private_data;	/* ditto */
 	errseq_t		wb_err;
+#ifdef CONFIG_HETERO_ENABLE
+	int 			hetero_obj;    /* Heterogeneous memory target object */
+#endif
 } __attribute__((aligned(sizeof(long)))) __randomize_layout;
 	/*
 	 * On most architectures that alignment is already the case; but

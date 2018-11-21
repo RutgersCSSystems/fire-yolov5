@@ -916,8 +916,6 @@ int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
 			return error;
 		shift = error;
 		child = rcu_dereference_raw(root->rnode);
-	//	if (global_flag == 4)
-	//		add_to_hashtable_node(child);
 	}
 
 	while (shift > order) {
@@ -926,9 +924,6 @@ int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
 			/* Have to add a child node.  */
 			child = radix_tree_node_alloc(gfp, node, root, shift,
 							offset, 0, 0);
-			//if (global_flag == 4)
-			//	add_to_hashtable_node(child);
-
 			if (!child)
 				return -ENOMEM;
 			rcu_assign_pointer(*slot, node_to_entry(child));
@@ -958,6 +953,95 @@ int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
 		*slotp = slot;
 	return 0;
 }
+
+
+
+#ifdef CONFIG_HETERO_ENABLE
+/**
+ *	__radix_tree_create_hetero - create a slot in a radix tree
+ *	@root:		radix tree root
+ *	@index:		index key
+ *	@order:		index occupies 2^order aligned slots
+ *	@nodep:		returns node
+ *	@slotp:		returns slot
+ *
+ *	Create, if necessary, and return the node and slot for an item
+ *	at position @index in the radix tree @root.
+ *
+ *	Until there is more than one item in the tree, no nodes are
+ *	allocated and @root->rnode is used as a direct slot instead of
+ *	pointing to a node, in which case *@nodep will be NULL.
+ *
+ *	Returns -ENOMEM, or 0 for success.
+ */
+int __radix_tree_create_hetero(struct radix_tree_root *root, unsigned long index,
+			unsigned order, struct radix_tree_node **nodep,
+			void __rcu ***slotp, void *hetero_obj)
+{
+	struct radix_tree_node *node = NULL, *child;
+	void __rcu **slot = (void __rcu **)&root->rnode;
+	unsigned long maxindex;
+	unsigned int shift, offset = 0;
+	unsigned long max = index | ((1UL << order) - 1);
+	gfp_t gfp = root_gfp_mask(root);
+
+
+	/*Mark the cache that it belongs to Hetero targe object*/
+	if (IS_ENABLED(CONFIG_HETERO_ENABLE)){
+		radix_tree_node_cachep->hetero_obj = hetero_obj;
+	}
+
+	shift = radix_tree_load_root(root, &child, &maxindex);
+
+	/* Make sure the tree is high enough.  */
+	if (order > 0 && max == ((1UL << order) - 1))
+		max++;
+	if (max > maxindex) {
+		int error = radix_tree_extend(root, gfp, max, shift);
+		if (error < 0)
+			return error;
+		shift = error;
+		child = rcu_dereference_raw(root->rnode);
+	}
+
+	while (shift > order) {
+		shift -= RADIX_TREE_MAP_SHIFT;
+		if (child == NULL) {
+			/* Have to add a child node.  */
+			child = radix_tree_node_alloc(gfp, node, root, shift,
+							offset, 0, 0);
+			if (!child)
+				return -ENOMEM;
+			rcu_assign_pointer(*slot, node_to_entry(child));
+			if (node) {
+				//if (global_flag == 4)
+				//	add_to_hashtable_node(node);
+				node->count++;
+			}
+		} else if (!radix_tree_is_internal_node(child))
+			break;
+
+		/* Go a level down */
+		node = entry_to_node(child);
+	//	if (global_flag == 4)
+	//		add_to_hashtable_node(node);
+
+		offset = radix_tree_descend(node, &child, index);
+		slot = &node->slots[offset];
+	}
+
+	if (nodep) {
+		*nodep = node;
+	//	if (global_flag == 4)
+	//		add_to_hashtable_node(*nodep);
+	}
+	if (slotp)
+		*slotp = slot;
+	return 0;
+}
+#endif //CONFIG_HETERO_ENABLE
+
+
 
 /*
  * Free any nodes below this node.  The tree is presumed to not need

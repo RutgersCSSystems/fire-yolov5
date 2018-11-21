@@ -1980,7 +1980,7 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 					init_hetero_zspool = 1;
 				}
 				//Try migration of existing pages
-				migrate_vmalloc_pages(page, NULL, NULL, 0);
+				//migrate_vmalloc_pages(page, NULL, NULL, 0);
 	
 				/* Hetero handle 0 when not using zsmalloc */
 				insert_pg_rbtree(&pool_root, (void *)page);
@@ -2173,7 +2173,6 @@ static void __vunmap_hetero(const void *addr, int deallocate_pages)
 		for (i = 0; i < area->nr_pages; i++) {
 			struct page *page = area->pages[i];
 #ifdef _HETERO_MIGRATE
-			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 			rb_erase(&page->rb_node, &pool_root);
 #endif
 			BUG_ON(!page);
