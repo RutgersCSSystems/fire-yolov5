@@ -52,4 +52,11 @@ int is_hetero_exit(void);
 inline int is_hetero_obj(void *obj);
 void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);
+
+#ifdef CONFIG_HETERO_STATS
+void update_hetero_pgcache(int node, struct page *);
+#endif
+
 #endif /* _LINUX_NUMA_H */
+
+
