@@ -18,6 +18,9 @@
  * SLUB is no longer needed.
  */
 struct kmem_cache {
+//#ifdef CONFIG_HETERO_ENABLE
+        unsigned int hetero_obj; /* Hetero Object*/
+//#endif
 	unsigned int object_size;/* The original size of the object */
 	unsigned int size;	/* The aligned/padded/added on size  */
 	unsigned int align;	/* Alignment as calculated */
@@ -80,6 +83,7 @@ extern const struct kmalloc_info_struct {
 	unsigned int size;
 } kmalloc_info[];
 
+
 #ifndef CONFIG_SLOB
 /* Kmalloc array related functions */
 void setup_kmalloc_cache_index_table(void);
@@ -124,7 +128,6 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
 	return flags;
 }
 #endif
-
 
 /* Legal flag mask for kmem_cache_create(), for various configurations */
 #define SLAB_CORE_FLAGS (SLAB_HWCACHE_ALIGN | SLAB_CACHE_DMA | SLAB_PANIC | \

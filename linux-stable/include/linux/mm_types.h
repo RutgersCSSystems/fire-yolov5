@@ -203,7 +203,7 @@ struct page {
 #endif
 
 	/* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	int hetero;
 	void *hetero_obj;
         /* group service_tree member */

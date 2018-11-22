@@ -837,7 +837,7 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	offset = PAGE_SIZE;
 	while ((offset -= size) >= 0) {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		if (is_hetero_buffer_set()) {
 			bh = alloc_buffer_head_hetero(gfp);
 			cnt++;
@@ -3395,7 +3395,7 @@ EXPORT_SYMBOL(alloc_buffer_head);
 
 
 /* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
 {
         //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);

@@ -11,6 +11,10 @@
 struct kmem_cache {
 	struct array_cache __percpu *cpu_cache;
 
+//#ifdef CONFIG_HETERO_ENABLE
+        unsigned int hetero_obj; /* Hetero Object*/
+//#endif
+
 /* 1) Cache tunables. Protected by slab_mutex */
 	unsigned int batchcount;
 	unsigned int limit;
@@ -64,6 +68,7 @@ struct kmem_cache {
 #ifdef CONFIG_DEBUG_SLAB_LEAK
 	atomic_t store_user_clean;
 #endif
+
 
 	/*
 	 * If debugging is enabled, then the allocator can add additional

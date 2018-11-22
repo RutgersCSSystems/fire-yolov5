@@ -4331,7 +4331,7 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
 	return true;
 }
 
-//#ifdef _ENABLE_HETERO
+//#ifdef CONFIG_HETERO_ENABLE
 static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order,
                 int preferred_nid, nodemask_t *nodemask,
                 struct alloc_context *ac, gfp_t *alloc_mask,
@@ -4447,7 +4447,7 @@ out:
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask);
 
-//#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask)
@@ -4460,15 +4460,13 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
-        preferred_nid = NUMA_HETERO_NODE;
-
-
-	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
+	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
+				nodemask, &ac, &alloc_mask, &alloc_flags))
 		return NULL;
 
 	finalise_ac(gfp_mask, order, &ac);
 
-#ifndef _ENABLE_HETERO
+#ifndef CONFIG_HETERO_ENABLE
 	/* First allocation attempt */
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page))
@@ -4492,8 +4490,11 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
         if(!page) {
-                return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, nodemask);
+                return __alloc_pages_nodemask_hetero(gfp_mask, order, 
+						     preferred_nid, nodemask);
         }
+	//hetero_info("%s:%d node:%d pref node:%d\n",
+	//	__func__,__LINE__, page_to_nid(page), preferred_nid);
 
         if(is_hetero_buffer_set()) {
                 if ((alloc_mask & __GFP_MOVABLE)) {
@@ -4513,7 +4514,7 @@ out:
 	return page;
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask_hetero);
-//#endif
+#endif
 
 /*
  * Common helper functions.
@@ -4584,7 +4585,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 	gfp_mask |= __GFP_COMP | __GFP_NOWARN | __GFP_NORETRY |
 		    __GFP_NOMEMALLOC;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp_mask,
@@ -4602,7 +4603,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 #endif
 
 	if (unlikely(!page))
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()) {
 			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			page = alloc_pages_node(NUMA_HETERO_NODE, gfp, 0);

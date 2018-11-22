@@ -170,7 +170,7 @@ void bvec_free(mempool_t *pool, struct bio_vec *bv, unsigned int idx)
 	BIO_BUG_ON(idx >= BVEC_POOL_NR);
 
 	if (idx == BVEC_POOL_MAX) {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
                 //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 mempool_free_hetero(bv, pool);
@@ -223,7 +223,7 @@ struct bio_vec *bvec_alloc(gfp_t gfp_mask, int nr, unsigned long *idx,
 	if (*idx == BVEC_POOL_MAX) {
 fallback:
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		bvl = NULL;
 	        if(is_hetero_buffer_set()) {
 			bvl = mempool_alloc_hetero(pool, gfp_mask);
@@ -242,7 +242,7 @@ fallback:
 		 */
 		__gfp_mask |= __GFP_NOMEMALLOC | __GFP_NORETRY | __GFP_NOWARN;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		bvl = NULL;
 	        if(is_hetero_buffer_set()) {
 			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -287,7 +287,7 @@ static void bio_free(struct bio *bio)
 		p = bio;
 		p -= bs->front_pad;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
                 if(is_hetero_buffer_set()) {
 			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			mempool_free_hetero(p, bs->bio_pool);
@@ -297,7 +297,7 @@ static void bio_free(struct bio *bio)
 #endif
 
 	} else {
-#ifdef _ENABLE_HETERO       
+#ifdef CONFIG_HETERO_ENABLE       
                 if(is_hetero_buffer_set()) {
 #ifdef _HETERO_MIGRATE
 		        //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -489,7 +489,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 	if (!bs) {
 		if (nr_iovecs > UIO_MAXIOV)
 			return NULL;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
                 p = NULL;
 		if(is_hetero_buffer_set()) {
 
@@ -543,7 +543,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		    bs->rescue_workqueue)
 			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
                 p = NULL;
                 if(is_hetero_buffer_set()) {
                         //printk(KERN_ALERT "%s : %d \n", 
@@ -556,7 +556,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		if (!p && gfp_mask != saved_gfp) {
 			punt_bios_to_rescuer(bs);
 			gfp_mask = saved_gfp;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 			p = NULL;
 			if(is_hetero_buffer_set()) {
 				//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -601,7 +601,7 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 	return bio;
 
 err_free:
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		mempool_free_hetero(p, bs->bio_pool);
@@ -1127,7 +1127,7 @@ static struct bio_map_data *bio_alloc_map_data(struct iov_iter *data,
 	if (data->nr_segs > UIO_MAXIOV)
 		return NULL;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	bmd = NULL;
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d size %d \n",
@@ -1245,7 +1245,7 @@ int bio_uncopy_user(struct bio *bio)
 			bio_free_pages(bio);
 	}
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
                 //printk(KERN_ALERT "%s : %d \n",__func__, __LINE__);
                 vfree_hetero(bmd);
@@ -1956,7 +1956,7 @@ mempool_t *biovec_create_pool(int pool_entries)
 {
 	struct biovec_slab *bp = bvec_slabs + BVEC_POOL_MAX;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		return mempool_create_slab_pool_hetero(pool_entries, bp->slab);
@@ -2024,7 +2024,7 @@ struct bio_set *bioset_create(unsigned int pool_size,
 		return NULL;
 	}
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	bs->bio_pool = NULL;
         if(is_hetero_buffer_set()) {
         //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);

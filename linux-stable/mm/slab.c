@@ -3367,7 +3367,7 @@ __do_cache_alloc(struct kmem_cache *cache, gfp_t flags)
 
 /*heteroOS code */
 /*
-#ifdef _ENABLE_HETERO 
+#ifdef CONFIG_HETERO_ENABLE 
 static __always_inline void *
 __do_cache_alloc_hetero(struct kmem_cache *cache, gfp_t flags)
 {
@@ -3401,7 +3401,7 @@ __do_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 	return ____cache_alloc(cachep, flags);
 }
 /*
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 static __always_inline void *
 __do_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
 {
@@ -3438,7 +3438,7 @@ slab_alloc(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
 
 /* heteroOS code */
 /*
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 static __always_inline void *
 slab_alloc_hetero(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
 {
@@ -3633,7 +3633,7 @@ void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
 EXPORT_SYMBOL(kmem_cache_alloc);
 
 /* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 void *kmem_cache_alloc_hetero(struct kmem_cache *cachep, gfp_t flags)
 {
 	void *ret = slab_alloc_hetero(cachep, flags, _RET_IP_);
@@ -3834,7 +3834,7 @@ EXPORT_SYMBOL(__kmalloc);
 
 /* heteroOS code */
 /*
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_hetero(size_t size, gfp_t flags)
 {
 	return __do_kmalloc_hetero(size, flags, _RET_IP_);

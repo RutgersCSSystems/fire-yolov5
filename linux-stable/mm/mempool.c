@@ -449,7 +449,7 @@ void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data)
 {
 	struct kmem_cache *mem = pool_data;
 	VM_BUG_ON(mem->ctor);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
                 //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		return kmem_cache_alloc_hetero(mem, gfp_mask);
@@ -473,7 +473,7 @@ EXPORT_SYMBOL(mempool_free_slab);
 void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
 {
 	size_t size = (size_t)pool_data;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
                 //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		return kmalloc_hetero(size, gfp_mask);
@@ -491,7 +491,7 @@ void mempool_kfree(void *element, void *pool_data)
 EXPORT_SYMBOL(mempool_kfree);
 
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 
 /**
  * mempool_alloc - allocate an element from a specific memory pool
@@ -523,8 +523,7 @@ void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask)
 
 repeat_alloc:
 
-	printk(KERN_ALERT "%s:%d Function %pF \n", __func__, __LINE__, pool->alloc);
-
+	//printk(KERN_ALERT "%s:%d Function %pF \n", __func__, __LINE__, pool->alloc);
 	element = pool->alloc(gfp_temp, pool->pool_data);
 
 	if (likely(element != NULL))
@@ -684,10 +683,10 @@ EXPORT_SYMBOL(mempool_kfree_hetero);
 void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data)
 {
 	int order = (int)(long)pool_data;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()){
 		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		return alloc_pages_hetero(gfp_mask, order);
+		return alloc_pages_hetero(gfp_mask, order, 0);
 	}
 #endif
 	return alloc_pages(gfp_mask, order);

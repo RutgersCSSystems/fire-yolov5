@@ -222,14 +222,15 @@ static inline int page_cache_add_speculative(struct page *page, int count)
 
 #ifdef CONFIG_NUMA
 extern struct page *__page_cache_alloc(gfp_t gfp);
-extern struct page *__page_cache_alloc_hetero(gfp_t gfp);
+extern struct page *__page_cache_alloc_hetero(gfp_t gfp, struct address_space *x);
 #else
 static inline struct page *__page_cache_alloc(gfp_t gfp)
 {
 	return alloc_pages(gfp, 0);
 }
-#ifdef _ENABLE_HETERO
-static inline struct page *__page_cache_alloc_hetero(gfp_t gfp)
+#ifdef CONFIG_HETERO_ENABLE
+static inline struct page *__page_cache_alloc_hetero(gfp_t gfp,
+					struct address_space *x)
 {
 	return alloc_pages_hetero(gfp, 0);
 }
@@ -240,10 +241,10 @@ static inline struct page *page_cache_alloc(struct address_space *x)
 {
 	return __page_cache_alloc(mapping_gfp_mask(x));
 }
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 static inline struct page *page_cache_alloc_hetero(struct address_space *x)
 {
-        return __page_cache_alloc_hetero(mapping_gfp_mask(x));
+        return __page_cache_alloc_hetero(mapping_gfp_mask(x), x);
 }
 #endif
 

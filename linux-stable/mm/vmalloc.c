@@ -420,7 +420,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
 
 	might_sleep();
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         va = NULL;
         if(is_hetero_buffer_set()) {
 		va = kmalloc_node_hetero(sizeof(struct vmap_area),
@@ -882,7 +882,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
 
 	node = numa_node_id();
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         vb = NULL;
         if(is_hetero_buffer_set()) {
                  vb = kmalloc_node_hetero(sizeof(struct vmap_block),
@@ -1390,7 +1390,7 @@ static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
 	vm->caller = caller;
 	va->vm = vm;
 	va->flags |= VM_VM_AREA;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	//setting hetero flag
 	va->is_hetero = 1;
 #endif
@@ -1423,7 +1423,7 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
 	if (flags & VM_IOREMAP)
 		align = 1ul << clamp_t(int, get_count_order_long(size),
 				       PAGE_SHIFT, IOREMAP_MAX_ORDER);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	area = NULL;
         if(is_hetero_buffer_set()) {
 		 area = kzalloc_node_hetero(sizeof(*area), 
@@ -1757,7 +1757,7 @@ fail:
 	return NULL;
 }
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 
 #define NUMPAGES 500
 

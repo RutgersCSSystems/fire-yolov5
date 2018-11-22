@@ -416,7 +416,7 @@ void add_to_hashtable_handle_t(handle_t *handle) {
 static handle_t *new_handle(int nblocks)
 {
 	
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	handle_t *handle = jbd2_alloc_handle_hetero(GFP_NOFS);
 #else
 	handle_t *handle = jbd2_alloc_handle(GFP_NOFS);

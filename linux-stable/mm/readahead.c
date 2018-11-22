@@ -180,11 +180,10 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 		if (page && !radix_tree_exceptional_entry(page))
 			continue;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		page = NULL;
                 if (is_hetero_pgcache_set()) {
-                        page = __page_cache_alloc_hetero(gfp_mask);
-                        //printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
+                        page = __page_cache_alloc_hetero(gfp_mask, mapping);
                 }
                 if(!page)
 #endif

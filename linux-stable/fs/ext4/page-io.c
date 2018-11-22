@@ -267,7 +267,7 @@ void ext4_end_io_rsv_work(struct work_struct *work)
 
 ext4_io_end_t *ext4_init_io_end(struct inode *inode, gfp_t flags)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	ext4_io_end_t *io = kmem_cache_zalloc_hetero(io_end_cachep, flags);
 #else 
 	ext4_io_end_t *io = kmem_cache_zalloc(io_end_cachep, flags);

@@ -136,6 +136,11 @@ bool slab_is_available(void);
 
 extern bool usercopy_fallback;
 
+#ifdef CONFIG_HETERO_ENABLE
+void update_hetero_obj(struct kmem_cache *s, void *obj);
+#endif
+
+
 struct kmem_cache *kmem_cache_create(const char *name, unsigned int size,
 			unsigned int align, slab_flags_t flags,
 			void (*ctor)(void *));
@@ -301,7 +306,7 @@ extern struct kmem_cache *kmalloc_caches[KMALLOC_SHIFT_HIGH + 1];
 extern struct kmem_cache *kmalloc_dma_caches[KMALLOC_SHIFT_HIGH + 1];
 #endif
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_hetero(size_t size, gfp_t flags) __assume_kmalloc_alignment __malloc;
 void *kmem_cache_alloc_hetero(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
 void *kmem_cache_alloc_hetero_buf(struct kmem_cache *, gfp_t flags) __assume_slab_alignment __malloc;
@@ -543,7 +548,7 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
 static __always_inline void *kmalloc(size_t size, gfp_t flags)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
             return kmalloc_hetero(size, flags);
 	}
@@ -694,7 +699,7 @@ int memcg_update_all_caches(int num_memcgs);
 static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
         }
 #endif
@@ -713,7 +718,7 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
  */
 static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
         }
 #endif
@@ -740,7 +745,7 @@ extern void *__kmalloc_track_caller_hetero(size_t, gfp_t, unsigned long);
 static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
 				       int node)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		 printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
         }
@@ -754,7 +759,7 @@ static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
 
 static inline void *kcalloc_node(size_t n, size_t size, gfp_t flags, int node)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
         }
@@ -793,7 +798,7 @@ extern void *__kmalloc_node_track_caller_hetero(size_t, gfp_t, int, unsigned lon
 
 static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set())
             return kmem_cache_zalloc_hetero(k, flags);
 #endif
@@ -809,7 +814,7 @@ static inline void *kmem_cache_zalloc(struct kmem_cache *k, gfp_t flags)
 
 static inline void *kzalloc(size_t size, gfp_t flags)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set())
             return kzalloc_hetero(size, flags);
 #endif
@@ -824,7 +829,7 @@ static inline void *kzalloc(size_t size, gfp_t flags)
  */
 static inline void *kzalloc_node(size_t size, gfp_t flags, int node)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
         }
 #endif
@@ -839,7 +844,7 @@ static inline void *kzalloc_node(size_t size, gfp_t flags, int node)
  */
 static inline void *kzalloc_node_hetero(size_t size, gfp_t flags, int node)
 {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		return kmalloc_node_hetero(size, flags | __GFP_ZERO, node);
         }
@@ -860,7 +865,7 @@ int slab_dead_cpu(unsigned int cpu);
 #endif
 
 /* HeteroOS code : Customized Heterogeneous memory allocation*/
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 
 static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 {

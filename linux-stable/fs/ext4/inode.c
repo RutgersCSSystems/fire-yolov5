@@ -1250,6 +1250,10 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
 	pgoff_t index;
 	unsigned from, to;
 
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(mapping);
+#endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 
@@ -3321,6 +3325,10 @@ static int ext4_readpage(struct file *file, struct page *page)
 	int ret = -EAGAIN;
 	struct inode *inode = page->mapping->host;
 
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(page->mapping);
+#endif
 	trace_ext4_readpage(page);
 
 	if (ext4_has_inline_data(inode))

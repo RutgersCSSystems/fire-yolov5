@@ -3,13 +3,12 @@
 #define _LINUX_HETERO_H
 
 #include <linux/vmalloc.h>
-
 /* HeteroOS code */
-#define _ENABLE_HETERO
-#define _HETERO_MIGRATE
+//#define CONFIG_HETERO_ENABLE
+//#define _HETERO_MIGRATE
 //#define _HETERO_ZSMALLOC
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 #define HETERO_PG_FLAG 1
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
@@ -17,16 +16,30 @@
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
 /* Buffer allocation */
-#define _ENABLE_HETERO_BUFFER
+#define CONFIG_HETERO_ENABLE_BUFFER
 /* Journal allocation */
 #define _ENABLE_JOURNAL
 /* Radix tree allocation */
-#define _ENABLE_HETERO_RADIX
+#define CONFIG_HETERO_ENABLE_RADIX
 /* Page table allocation */
-#define _ENABLE_HETERO_PGTBL
+#define CONFIG_HETERO_ENABLE_PGTBL
 #else
 #define NUMA_HETERO_NODE 0
 #endif
+
+/*
+ * Debug code
+ */
+#ifdef pr_fmt
+#undef pr_fmt
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+#endif
+
+/* #define pmfs_dbg(s, args...)         pr_debug(s, ## args) */
+#define hetero_dbg(s, args ...)           pr_warning(s, ## args)
+#define hetero_err(sb, s, args ...)       pmfs_error_mng(sb, s, ## args)
+#define hetero_warn(s, args ...)          pr_warning(s, ## args)
+#define hetero_info(s, args ...)          pr_info(s, ## args)
 
 
 int is_hetero_pgcache_set(void);
@@ -36,5 +49,7 @@ int is_hetero_radix_set(void);
 int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
 int is_hetero_exit(void);
-inline int is_hetero_target_obj(void *obj);
+inline int is_hetero_obj(void *obj);
+void set_curr_hetero_obj(void *obj);
+void set_fsmap_hetero_obj(void *mapobj);
 #endif /* _LINUX_NUMA_H */

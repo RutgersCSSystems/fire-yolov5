@@ -87,6 +87,10 @@ struct kmem_cache {
 	unsigned int size;	/* The size of an object including meta data */
 	unsigned int object_size;/* The size of an object without meta data */
 	unsigned int offset;	/* Free pointer offset. */
+#ifdef CONFIG_HETERO_ENABLE
+	void *hetero_obj;
+#endif
+
 #ifdef CONFIG_SLUB_CPU_PARTIAL
 	/* Number of per cpu partial objects to keep around */
 	unsigned int cpu_partial;
@@ -108,10 +112,6 @@ struct kmem_cache {
 #ifdef CONFIG_SYSFS
 	struct kobject kobj;	/* For sysfs */
 	struct work_struct kobj_remove_work;
-#endif
-
-#ifdef CONFIG_ENABLE_HETERO
-        void                            *hetero_obj; /* Hetero Object*/
 #endif
 
 #ifdef CONFIG_MEMCG

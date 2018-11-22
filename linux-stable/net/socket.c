@@ -240,7 +240,7 @@ static struct inode *sock_alloc_inode(struct super_block *sb)
 	struct socket_alloc *ei;
 	struct socket_wq *wq;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	ei = NULL;
         if(is_hetero_buffer_set()){
 		ei = kmem_cache_alloc_hetero(sock_inode_cachep, GFP_KERNEL);	
@@ -251,7 +251,7 @@ static struct inode *sock_alloc_inode(struct super_block *sb)
 	if (!ei)
 		return NULL;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         wq = NULL;
         if(is_hetero_buffer_set()){
                 wq = kmalloc_hetero(sizeof(*wq), GFP_KERNEL);

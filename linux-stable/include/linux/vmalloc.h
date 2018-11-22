@@ -41,7 +41,7 @@ struct vm_struct {
 	unsigned int		nr_pages;
 	phys_addr_t		phys_addr;
 	const void		*caller;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	int 			is_hetero;
 #endif
 };
@@ -55,7 +55,7 @@ struct vmap_area {
 	struct llist_node purge_list;    /* "lazy purge" list */
 	struct vm_struct *vm;
 	struct rcu_head rcu_head;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	int is_hetero;
 #endif
 };

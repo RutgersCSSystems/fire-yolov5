@@ -2106,9 +2106,11 @@ struct page *alloc_pages_current(gfp_t gfp, unsigned order)
 EXPORT_SYMBOL(alloc_pages_current);
 
 
-//#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 /*Heterogeneous Memory allocation. Use it only for kernel data structures*/
-struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
+struct page *alloc_pages_current_hetero(gfp_t gfp, 
+					unsigned order, 
+					int nodeid)
 {
 	struct mempolicy *pol = &default_policy;
 	struct page *page;
@@ -2129,7 +2131,7 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
                 page cache*/
 		//if (is_hetero_kernel_set()) {
 		//policy_nodemask(gfp, pol)
-		page = __alloc_pages_nodemask_hetero(gfp, order,NUMA_HETERO_NODE,NULL);
+		page = __alloc_pages_nodemask_hetero(gfp, order, nodeid, NULL);
 		if(!page) {
 			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
 				"\n", __func__, __LINE__);
@@ -2146,7 +2148,7 @@ struct page *alloc_pages_current_hetero(gfp_t gfp, unsigned order)
 	return page;
 }
 EXPORT_SYMBOL(alloc_pages_current_hetero);
-//#endif
+#endif
 
 
 int vma_dup_policy(struct vm_area_struct *src, struct vm_area_struct *dst)

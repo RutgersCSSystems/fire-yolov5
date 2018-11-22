@@ -5,7 +5,6 @@
  *
  * Address space accounting code	<alan@lxorguk.ukuu.org.uk>
  */
-
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/kernel.h>
@@ -114,8 +113,9 @@ void reset_hetero_stats(void) {
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
-inline int check_hetero_proc (void) {
- 
+
+inline int check_hetero_proc (void) 
+{
     //f(current->pid == hetero_pid && hetero_pid){
     if (current->hetero_task == HETERO_PROC){
 	return 1;
@@ -123,22 +123,53 @@ inline int check_hetero_proc (void) {
     return 0; 	
 }
 
-int is_hetero_exit() {
+
+/* Exit function called during process exit */
+int is_hetero_exit(void) 
+{
     if(check_hetero_proc()) {
 	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_exit);
 
-inline int is_hetero_target_obj(void *obj) {
-
+inline int is_hetero_obj(void *obj) 
+{
 	if(obj && current->hetero_obj && current->hetero_obj == obj){
 		return 1;
 	}
 	return 0;
 }
-EXPORT_SYMBOL(is_hetero_target_obj);
+EXPORT_SYMBOL(is_hetero_obj);
+
+
+void set_curr_hetero_obj(void *obj) 
+{
+        current->hetero_obj = obj;
+}
+EXPORT_SYMBOL(set_curr_hetero_obj);
+
+
+void set_fsmap_hetero_obj(void *mapobj) 
+{
+       struct address_space *mapping = NULL;
+
+	mapping = (struct address_space *)mapobj;
+        mapping->hetero_obj = NULL;
+        if(is_hetero_buffer_set()){
+		struct dentry *res;
+                mapping->hetero_obj = (void *)mapping->host;
+                current->hetero_obj = (void *)mapping->host;
+		if(mapping->host) {
+			res = d_find_any_alias(mapping->host);
+			printk(KERN_ALERT "\n %s:%d Inode %lu FNAME %s \n",
+			 __func__,__LINE__,mapping->host->i_ino, res->d_iname);
+		}
+        }
+}
+EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
 
 /* Functions to test different allocation strategies */
@@ -146,8 +177,6 @@ int is_hetero_pgcache_set(void){
 
       if(check_hetero_proc()) 
 	if(enbl_hetero_pgcache) { 	
-		//if(pgcache_cnt % 10000 == 0)
-		//	print_hetero_stats();
 	    	return enbl_hetero_pgcache;
     	}		
     return 0;

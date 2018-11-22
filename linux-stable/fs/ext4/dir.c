@@ -437,7 +437,7 @@ static struct dir_private_info *ext4_htree_create_dir_info(struct file *filp,
 {
 	struct dir_private_info *p;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -483,7 +483,7 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
 
 	/* Create and allocate the fname structure */
 	len = sizeof(struct fname) + ent_name->len + 1;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	new_fn = kzalloc_hetero_buf(len, GFP_KERNEL);
 #else
 	new_fn = kzalloc(len, GFP_KERNEL);

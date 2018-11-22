@@ -342,7 +342,7 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
 	BUG_ON(is.s.not_found);
 
 	len -= EXT4_MIN_INLINE_DATA_SIZE;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	value = kzalloc_hetero_buf(len, GFP_NOFS);
 #else 
 	value = kzalloc(len, GFP_NOFS);
@@ -1186,7 +1186,7 @@ static int ext4_convert_inline_data_nolock(handle_t *handle,
 	int inline_size;
 
 	inline_size = ext4_get_inline_size(inode);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -1370,7 +1370,7 @@ int htree_inlinedir_to_tree(struct file *dir_file,
 	}
 
 	inline_size = ext4_get_inline_size(inode);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -1489,7 +1489,7 @@ int ext4_read_inline_dir(struct file *file,
 	}
 
 	inline_size = ext4_get_inline_size(inode);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -2014,7 +2014,7 @@ int ext4_inline_data_truncate(struct inode *inode, int *has_inline)
 			BUG_ON(is.s.not_found);
 
 			value_len = le32_to_cpu(is.s.here->e_value_size);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 			if(is_hetero_buffer_set()) {
 				printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			}

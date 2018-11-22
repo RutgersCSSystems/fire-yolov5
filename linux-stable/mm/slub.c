@@ -1576,6 +1576,14 @@ static inline bool shuffle_freelist(struct kmem_cache *s, struct page *page)
 }
 #endif /* CONFIG_SLAB_FREELIST_RANDOM */
 
+#ifdef CONFIG_HETERO_ENABLE
+void update_hetero_obj(struct kmem_cache *s, void *obj) 
+{
+	s->hetero_obj = obj;
+}
+EXPORT_SYMBOL(update_hetero_obj);
+#endif
+
 static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
 {
 	struct page *page;
@@ -1600,14 +1608,16 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
 	if ((alloc_gfp & __GFP_DIRECT_RECLAIM) && oo_order(oo) > oo_order(s->min))
 		alloc_gfp = (alloc_gfp | __GFP_NOMEMALLOC) & ~(__GFP_RECLAIM|__GFP_NOFAIL);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	page = NULL;
-	if(is_hetero_buffer_set()) {
-		page = alloc_slab_page(s, alloc_gfp, NUMA_HETERO_NODE, oo);
-		//if(page) 
-		  //      printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n",
-                    //    __func__, __LINE__, node, page_to_nid(page));
+
+	if(!page && is_hetero_obj(s->hetero_obj)) {
+		hetero_info("%s:%d \n", __func__, __LINE__);
+		page = alloc_slab_page(s, alloc_gfp, NUMA_FAST_NODE, oo);
 	}
+	if(!page && is_hetero_buffer_set())
+		page = alloc_slab_page(s, alloc_gfp, NUMA_HETERO_NODE, oo);
+
 	if(!page)
 #endif
 	page = alloc_slab_page(s, alloc_gfp, node, oo);
@@ -2553,7 +2563,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	void *freelist;
 	struct page *page;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
 	}
 #endif
@@ -2650,7 +2660,7 @@ static void *__slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
 	void *p;
 	unsigned long flags;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
 		//dump_stack();
 		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -2690,7 +2700,7 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
 	struct page *page;
 	unsigned long tid;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         //if(is_hetero_buffer_set()){
 	//	dump_stack();
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -2778,7 +2788,7 @@ redo:
 }
 
  /* HeteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 
 static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
 {
@@ -2804,16 +2814,17 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 	if ((alloc_gfp & __GFP_DIRECT_RECLAIM) && oo_order(oo) > oo_order(s->min))
 		alloc_gfp = (alloc_gfp | __GFP_NOMEMALLOC) & ~(__GFP_RECLAIM|__GFP_NOFAIL);
 
+	page = NULL;
+	if(!page && is_hetero_obj(s->hetero_obj)) {
+		//hetero_info("%s:%d \n", __func__, __LINE__);
+		page = alloc_slab_page(s, alloc_gfp, NUMA_FAST_NODE, oo);
+	}
+	if(!page)
+		page = alloc_slab_page(s, alloc_gfp, node, oo);
 
-	page = alloc_slab_page(s, alloc_gfp, node, oo);
 	if(page_to_nid(page) == NUMA_HETERO_NODE) {
 		heterobuff_pgs++;	
 	}
-	
-	dump_stack();
-        //printk(KERN_ALERT "%s : %d, target node: %d dest node %d \n", 
-	//		__func__, __LINE__, node, page_to_nid(page));
-
 	if (unlikely(!page)) {
 		oo = s->min;
 		alloc_gfp = flags;
@@ -3199,7 +3210,7 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		return slab_alloc_node_hetero(s, gfpflags, NUMA_HETERO_NODE, addr);
 	}
@@ -3214,7 +3225,7 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 void *kmem_cache_alloc(struct kmem_cache *s, gfp_t gfpflags)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set())
             return kmem_cache_alloc_hetero(s, gfpflags);
 #endif
@@ -3241,7 +3252,7 @@ EXPORT_SYMBOL(kmem_cache_alloc_trace_hetero);
 void *kmem_cache_alloc_trace(struct kmem_cache *s, gfp_t gfpflags, size_t size)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
 		//dump_stack();
 		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -3274,7 +3285,7 @@ void *kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags, int node)
 {
 	void *ret = slab_alloc_node(s, gfpflags, node, _RET_IP_);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         //if(is_hetero_buffer_set()){
 		//dump_stack();
 		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -3293,7 +3304,7 @@ void *kmem_cache_alloc_node_trace(struct kmem_cache *s,
 				    int node, size_t size)
 {
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         //if(is_hetero_buffer_set()){
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	//}
@@ -3633,7 +3644,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
 	struct kmem_cache_cpu *c;
 	int i;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -4329,7 +4340,7 @@ int g_val=0;
 */
 
 /* heteroOS code */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_hetero(size_t size, gfp_t flags)
 {
 	struct kmem_cache *s;

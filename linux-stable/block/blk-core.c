@@ -832,7 +832,7 @@ static void *alloc_request_simple(gfp_t gfp_mask, void *data)
 {
 	struct request_queue *q = data;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		return kmem_cache_alloc_node_hetero(request_cachep, gfp_mask, q->node);
         }
@@ -850,7 +850,7 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 	struct request_queue *q = data;
 	struct request *rq;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	rq = NULL;
         if(is_hetero_buffer_set()) {
 #ifdef _HETERO_MIGRATE
@@ -867,7 +867,7 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 			q->node);
 
 	if (rq && q->init_rq_fn && q->init_rq_fn(q, rq, gfp_mask) < 0) {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()){
 #ifdef _HETERO_MIGRATE
 			//vfree_hetero(rq);
@@ -890,7 +890,7 @@ static void free_request_size(void *element, void *data)
 	if (q->exit_rq_fn)
 		q->exit_rq_fn(q, element);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 #ifdef _HETERO_MIGRATE
 	if(is_hetero_buffer_set()){
 		//vfree_hetero(element);

@@ -408,23 +408,17 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * cache first for the new node to get accounted to the memory
 		 * cgroup.
 		 */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
+		ret = NULL;
 		if (is_hetero_radix_set()) {
 			radix_cnt++;
 			ret = kmem_cache_alloc_hetero(radix_tree_node_cachep,
 					       gfp_mask | __GFP_NOWARN);
 		}
-		else
-			ret = kmem_cache_alloc(radix_tree_node_cachep,
-				       gfp_mask | __GFP_NOWARN);
-
-#else 
+		if(!ret)
+#endif
 		ret = kmem_cache_alloc(radix_tree_node_cachep,
 				       gfp_mask | __GFP_NOWARN);
-#endif 
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(ret);
-
 		if (ret)
 			goto out;
 
@@ -434,17 +428,11 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		 * kmem_cache_alloc)
 		 */
 		rtp = this_cpu_ptr(&radix_tree_preloads);
-		//if (global_flag == 4)
-		//	add_to_hashtable_preload(rtp);
 
 		if (rtp->nr) {
 			ret = rtp->nodes;
-		//	if (global_flag == 4)
-		//		add_to_hashtable_node(ret);
 
 			rtp->nodes = ret->parent;
-		//	if (global_flag == 4)
-		//		add_to_hashtable_node(rtp->nodes);
 			rtp->nr--;
 		}
 		/*
@@ -454,24 +442,19 @@ radix_tree_node_alloc(gfp_t gfp_mask, struct radix_tree_node *parent,
 		kmemleak_update_trace(ret);
 		goto out;
 	}
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
+	ret = NULL;
 	if (is_hetero_radix_set()) {
 		radix_cnt++;
 		ret = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
 	}
-	else
-		ret = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
-#else 
+	if(!ret)
+#endif
 	ret = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
-#endif 
-	//if (global_flag == 4)
-	//	add_to_hashtable_node(ret);
 
 out:
 	BUG_ON(radix_tree_is_internal_node(ret));
 	if (ret) {
-	//	if (int radix_cnt = 0;global_flag == 4)
-	//		add_to_hashtable_node(ret);
 		ret->shift = shift;
 		ret->offset = offset;
 		ret->count = count;
@@ -533,7 +516,7 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 
 	while (rtp->nr < nr) {
 		preempt_enable();
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		if (is_hetero_radix_set()) {
  			radix_cnt++;
 			node = kmem_cache_alloc_hetero(radix_tree_node_cachep, gfp_mask);
@@ -985,12 +968,13 @@ int __radix_tree_create_hetero(struct radix_tree_root *root, unsigned long index
 	unsigned long max = index | ((1UL << order) - 1);
 	gfp_t gfp = root_gfp_mask(root);
 
-
 	/*Mark the cache that it belongs to Hetero targe object*/
-	if (IS_ENABLED(CONFIG_HETERO_ENABLE)){
-		radix_tree_node_cachep->hetero_obj = hetero_obj;
+#ifdef CONFIG_HETERO_ENABLE
+        if (is_hetero_obj(hetero_obj)){
+		//pr_info("%s:%d\n",__func__, __LINE__);
+		update_hetero_obj(radix_tree_node_cachep, hetero_obj);
 	}
-
+#endif
 	shift = radix_tree_load_root(root, &child, &maxindex);
 
 	/* Make sure the tree is high enough.  */
@@ -2553,6 +2537,7 @@ void __init radix_tree_init(void)
 			sizeof(struct radix_tree_node), 0,
 			SLAB_PANIC | SLAB_RECLAIM_ACCOUNT,
 			radix_tree_node_ctor);
+
 	radix_tree_init_maxnodes();
 	ret = cpuhp_setup_state_nocalls(CPUHP_RADIX_DEAD, "lib/radix:dead",
 					NULL, radix_tree_cpu_dead);

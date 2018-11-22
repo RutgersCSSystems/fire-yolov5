@@ -32,6 +32,10 @@
 #include <linux/dnotify.h>
 #include <linux/compat.h>
 
+#ifdef ONFIG_HETERO_ENABLE
+#include <linux/hetero.h>
+#endif
+
 #include "internal.h"
 
 int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
@@ -240,6 +244,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 {
 	struct inode *inode = file_inode(file);
 	long ret;
+
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(inode->i_mapping);
+#endif
 
 	if (offset < 0 || len <= 0)
 		return -EINVAL;

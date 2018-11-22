@@ -134,7 +134,7 @@ static void *__kmalloc_reserve_hetero(size_t size, gfp_t flags, int node,
 	void *obj;
 	bool ret_pfmemalloc = false;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
                 node = NUMA_HETERO_NODE;
         }
@@ -167,7 +167,7 @@ static void *__kmalloc_reserve(size_t size, gfp_t flags, int node,
 	void *obj;
 	bool ret_pfmemalloc = false;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
 		 printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 node = NUMA_HETERO_NODE;
@@ -233,7 +233,7 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 	if (sk_memalloc_socks() && (flags & SKB_ALLOC_RX))
 		gfp_mask |= __GFP_MEMALLOC;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         skb = NULL;
 	if(is_hetero_buffer_set()){
 		node = NUMA_HETERO_NODE;
@@ -254,7 +254,7 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 	 */
 	size = SKB_DATA_ALIGN(size);
 	size += SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         data = NULL;
 	if(is_hetero_buffer_set()){
 		node = NUMA_HETERO_NODE;
@@ -1518,7 +1518,7 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
 		data = kmalloc_reserve_hetero(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
@@ -5370,7 +5370,7 @@ static int pskb_carve_inside_header(struct sk_buff *skb, const u32 off,
 
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
 		data = kmalloc_reserve_hetero(size +
@@ -5503,7 +5503,7 @@ static int pskb_carve_inside_nonlinear(struct sk_buff *skb, const u32 off,
 
 	if (skb_pfmemalloc(skb))
 		gfp_mask |= __GFP_MEMALLOC;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
 		data = kmalloc_reserve_hetero(size +

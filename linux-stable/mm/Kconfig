@@ -149,12 +149,17 @@ config NO_BOOTMEM
 config MEMORY_ISOLATION
 	bool
 
-config ENABLE_HETERO
+config HETERO_ENABLE
         def_bool y
 
 config HETERO_MIGRATE
         def_bool y
-        depends on ENABLE_HETERO
+        depends on HETERO_ENABLE
+
+config HETERO_OBJAFF
+        def_bool y
+        depends on HETERO_ENABLE
+
 
 #
 # Only be set on architectures that have completely implemented memory hotplug

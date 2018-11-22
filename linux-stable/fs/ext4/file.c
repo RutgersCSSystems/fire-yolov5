@@ -389,6 +389,11 @@ static int ext4_file_open(struct inode * inode, struct file * filp)
 	char buf[64], *cp;
 	int ret;
 
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(inode->i_mapping);
+#endif
+
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 

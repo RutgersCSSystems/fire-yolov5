@@ -92,7 +92,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
 	}
 
 	if (!new_entry) {
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		new_entry = kmem_cache_alloc_hetero(ext4_system_zone_cachep,
 					     GFP_KERNEL);
 #else 

@@ -408,7 +408,7 @@ struct address_space {
 	void			*private_data;	/* ditto */
 	errseq_t		wb_err;
 #ifdef CONFIG_HETERO_ENABLE
-	int 			hetero_obj;    /* Heterogeneous memory target object */
+	void 			*hetero_obj;    /* Heterogeneous memory target object */
 #endif
 } __attribute__((aligned(sizeof(long)))) __randomize_layout;
 	/*

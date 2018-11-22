@@ -432,7 +432,7 @@ static inline struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 
 /* heteroOS code */
 /*
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 static inline struct bio *bio_alloc_hetero(gfp_t gfp_mask, unsigned int nr_iovecs)
 {
 	return bio_alloc_bioset_hetero(gfp_mask, nr_iovecs, fs_bio_set);

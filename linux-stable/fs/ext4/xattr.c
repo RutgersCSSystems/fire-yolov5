@@ -1940,7 +1940,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 
 			unlock_buffer(bs->bh);
 			ea_bdebug(bs->bh, "cloning");
-#ifdef _ENABLE_HETERO 
+#ifdef CONFIG_HETERO_ENABLE 
 			if(is_hetero_buffer_set()) {
 				s->base = kmalloc_hetero(bs->bh->b_size, GFP_NOFS);
 			}else
@@ -1991,7 +1991,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 		}
 	} else {
 		/* Allocate a buffer where we construct the new block. */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		s->base = kzalloc_hetero_buf(sb->s_blocksize, GFP_NOFS);
 #else 
 		s->base = kzalloc(sb->s_blocksize, GFP_NOFS);
@@ -2630,7 +2630,7 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	struct ext4_xattr_ibody_header *header = IHDR(inode, raw_inode);
 	int error;
 
-#ifdef _ENABLE_HETERO 
+#ifdef CONFIG_HETERO_ENABLE 
 	if(is_hetero_buffer_set()) {
 		is = kzalloc_hetero_buf(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
 	} else
@@ -2640,7 +2640,7 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_xattr_ibody_find(is);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		bs = kzalloc_hetero_buf(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
 	}else
@@ -2650,7 +2650,7 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_ext4_xattr_block_find(bs);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		buffer = kmalloc_hetero(value_size, GFP_NOFS);
 	}else
@@ -2659,7 +2659,7 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	//if (global_flag == PFN_TRACE)
 	//	add_to_hashtable_char(buffer);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		b_entry_name = kmalloc_hetero(entry->e_name_len + 1, GFP_NOFS);
 	}else
@@ -2908,7 +2908,7 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 		 * Start with 15 inodes, so it fits into a power-of-two size.
 		 * If *ea_inode_array is NULL, this is essentially offsetof()
 		 */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		(*ea_inode_array) =
 			kmalloc_hetero(offsetof(struct ext4_xattr_inode_array,
 					 inodes[EIA_MASK]),
@@ -2931,7 +2931,7 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 		int count = (*ea_inode_array)->count;
 
 		/* if new_array is NULL, this is essentially offsetof() */
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		new_array = kmalloc_hetero(
 				offsetof(struct ext4_xattr_inode_array,
 					 inodes[count + EIA_INCR]),

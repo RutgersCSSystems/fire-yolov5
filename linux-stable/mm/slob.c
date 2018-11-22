@@ -473,7 +473,7 @@ EXPORT_SYMBOL(__kmalloc);
 
 /* heteroOS code */
 /*
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_hetero(size_t size, gfp_t gfp)
 {
 	//return __do_kmalloc_node(size, gfp, NUMA_NO_NODE, _RET_IP_);

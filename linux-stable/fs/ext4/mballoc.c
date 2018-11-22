@@ -905,7 +905,7 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 	/* allocate buffer_heads to read bitmaps */
 	if (groups_per_page > 1) {
 		i = sizeof(struct buffer_head *) * groups_per_page;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 
                 if(is_hetero_buffer_set()) {
                 //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
@@ -2500,7 +2500,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	if (group % EXT4_DESC_PER_BLOCK(sb) == 0) {
 		metalen = sizeof(*meta_group_info) <<
 			EXT4_DESC_PER_BLOCK_BITS(sb);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()) {
 		//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		}
@@ -2524,7 +2524,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		sbi->s_group_info[group >> EXT4_DESC_PER_BLOCK_BITS(sb)];
 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
 
-#ifdef _ENABLE_HETERO 
+#ifdef CONFIG_HETERO_ENABLE 
 	meta_group_info[i] = kmem_cache_zalloc_hetero(cachep, GFP_NOFS);
 #else
 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
@@ -2556,7 +2556,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 #ifdef DOUBLE_CHECK
 	{
 		struct buffer_head *bh;
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
                 if(is_hetero_buffer_set()) {
                 //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 }
@@ -2698,7 +2698,7 @@ int ext4_mb_init(struct super_block *sb)
 
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_offsets);
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -2715,7 +2715,7 @@ int ext4_mb_init(struct super_block *sb)
 	}
 
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_maxs);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 	}
@@ -3777,7 +3777,7 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
 	BUG_ON(ac->ac_status != AC_STATUS_FOUND);
 	BUG_ON(!S_ISREG(ac->ac_inode->i_mode));
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	pa = kmem_cache_alloc_hetero(ext4_pspace_cachep, GFP_NOFS);
 #else 
 	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
@@ -3878,7 +3878,7 @@ ext4_mb_new_group_pa(struct ext4_allocation_context *ac)
 	BUG_ON(!S_ISREG(ac->ac_inode->i_mode));
 
 	BUG_ON(ext4_pspace_cachep == NULL);
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	pa = kmem_cache_alloc_hetero(ext4_pspace_cachep, GFP_NOFS);
 #else 
 	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
@@ -4675,7 +4675,7 @@ ext4_fsblk_t ext4_mb_new_blocks(handle_t *handle,
 		}
 	}
 
-#ifdef _ENABLE_HETERO
+#ifdef CONFIG_HETERO_ENABLE
 	ac = kmem_cache_zalloc_hetero(ext4_ac_cachep, GFP_NOFS);
 #else 
 	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_NOFS);
@@ -5038,7 +5038,7 @@ do_more:
 		 * We use __GFP_NOFAIL because ext4_free_blocks() is not allowed
 		 * to fail.
 		 */
-#ifdef _ENABLE_HETERO 
+#ifdef CONFIG_HETERO_ENABLE 
 		new_entry = kmem_cache_alloc_hetero(ext4_free_data_cachep,
 				GFP_NOFS|__GFP_NOFAIL);
 #else 
