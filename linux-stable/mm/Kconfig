@@ -152,6 +152,9 @@ config MEMORY_ISOLATION
 config HETERO_ENABLE
         def_bool y
 
+config HETERO_STATS
+	def_bool y
+
 config HETERO_MIGRATE
         def_bool y
         depends on HETERO_ENABLE

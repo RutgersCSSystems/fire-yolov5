@@ -123,7 +123,6 @@
  */
 
 extern int global_flag;
-extern int pgcache_cnt;
 struct page *__page_cache_alloc_hetero(gfp_t gfp, struct address_space *x);
 
 static int page_cache_tree_insert(struct address_space *mapping,
@@ -971,9 +970,12 @@ struct page *__page_cache_alloc(gfp_t gfp)
 			/*Check if we have enable customized HETERO allocation for 
 			page cache*/
 			if (is_hetero_pgcache_set()) {
-				page = __alloc_pages_node_hetero(NUMA_HETERO_NODE, gfp, 0);
+				n = NUMA_HETERO_NODE;
+				page = __alloc_pages_node_hetero(n, gfp, 0);
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
-				pgcache_cnt++;
+#ifdef CONFIG_HETERO_STATS
+				update_hetero_pgcache(n, page);
+#endif
 			}
 			else {
 				page = __alloc_pages_node(n, gfp, 0);
@@ -1059,15 +1061,20 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 	                }
 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
 
-		pgcache_cnt++;
+#ifdef CONFIG_HETERO_STATS
+		update_hetero_pgcache(n, page);
+#endif
 		return page;
 	}
 
         if(!allocpage && (is_hetero_pgcache_set() &&  
 	    is_hetero_obj(x->hetero_obj))) {
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
-		pgcache_cnt++;
+#ifdef CONFIG_HETERO_STATS
+	update_hetero_pgcache(n, allocpage);
+#endif
 	}
+
 	if(!allocpage)
         	allocpage = __page_cache_alloc(gfp);
 	return allocpage;
