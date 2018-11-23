@@ -2457,7 +2457,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 
 #ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
-        if(is_hetero_obj(s->hetero_obj) && is_hetero_buffer_set()) {
+        if(is_hetero_obj(s->hetero_obj) || is_hetero_buffer_set()) {
                 node = NUMA_FAST_NODE;
         }else {
                 node = NUMA_HETERO_NODE;
@@ -2486,7 +2486,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		*pc = c;
 
 #ifdef CONFIG_HETERO_STATS
-		if(is_hetero_obj(s->hetero_obj) && 
+		if(is_hetero_obj(s->hetero_obj) || 
 			is_hetero_buffer_set()) {
 	                update_hetero_pgbuff(node, page);
 		}
@@ -2902,7 +2902,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
         struct page *page;
 
         /* Check if we are allocating for targetted object */
-	if(is_hetero_obj(s->hetero_obj) && is_hetero_buffer_set()) {
+	if(is_hetero_obj(s->hetero_obj) || is_hetero_buffer_set()) {
 		node = NUMA_FAST_NODE;
 	}else {
 		node = NUMA_HETERO_NODE;
@@ -2930,7 +2930,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 *pc = c;
 
 #ifdef CONFIG_HETERO_STATS
-		if(is_hetero_obj(s->hetero_obj) && 
+		if(is_hetero_obj(s->hetero_obj) || 
 			is_hetero_buffer_set()) {
 	                update_hetero_pgbuff(node, page);
 		}
