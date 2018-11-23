@@ -993,8 +993,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 EXPORT_SYMBOL(__page_cache_alloc);
 
 
-#ifdef CONFIG_HETERO_ENABLE
-
+#ifdef CONFIG_HETERO_DEBUG
 void dgb_target_hetero_obj(struct address_space *x){
 
 	struct inode *curr_inode = NULL, *hetero_inode = NULL;
@@ -1027,8 +1026,11 @@ void dgb_target_hetero_obj(struct address_space *x){
 error:
 	return;
 }
+#endif
 
 
+#ifdef CONFIG_HETERO_ENABLE
+/* Hetero Cache allocation */
 struct page *__page_cache_alloc_hetero(gfp_t gfp, 
 			struct address_space *x)
 {
