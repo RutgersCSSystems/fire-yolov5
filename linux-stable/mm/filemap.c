@@ -1034,47 +1034,45 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 {
 	int n;
 	struct page *page, *allocpage = NULL;
-	
+	/*By default, allocate to HETERO_NODE */
         n = NUMA_HETERO_NODE;
-	if (is_hetero_pgcache_set() || 
-	    is_hetero_obj(x->hetero_obj)) {
-                    n = NUMA_FAST_NODE;
-	}
 
+#ifdef CONFIG_HETERO_DEBUG
 	if(!is_hetero_pgcache_set() || !is_hetero_obj(x->hetero_obj)){
 	        dgb_target_hetero_obj(x);
 	}
-
+#endif
 	if (cpuset_do_page_mem_spread()) {
 		unsigned int cpuset_mems_cookie;
 		do {
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
-			/*Check if we have enable customized HETERO allocation for 
-			page cache*/
+			/* Check if  HETERO allocation enabled for page cache 
+			enabled */
 			if (is_hetero_pgcache_set() &&  
 			    is_hetero_obj(x->hetero_obj)) {
+				n = NUMA_FAST_NODE;
 				page = __alloc_pages_node_hetero(n, gfp, 0);
+#ifdef CONFIG_HETERO_STATS
+				update_hetero_pgcache(n, page);
+#endif
 			}
 			else {
 				page = __alloc_pages_node(n, gfp, 0);
-	                }
+			}
 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
 
-#ifdef CONFIG_HETERO_STATS
-		update_hetero_pgcache(n, page);
-#endif
 		return page;
 	}
 
         if(!allocpage && (is_hetero_pgcache_set() &&  
 	    is_hetero_obj(x->hetero_obj))) {
+		n = NUMA_FAST_NODE;
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
 #ifdef CONFIG_HETERO_STATS
-	update_hetero_pgcache(n, allocpage);
+		update_hetero_pgcache(n, allocpage);
 #endif
 	}
-
 	if(!allocpage)
         	allocpage = __page_cache_alloc(gfp);
 	return allocpage;
