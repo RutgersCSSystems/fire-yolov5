@@ -113,8 +113,6 @@
 #define MPOL_MF_INVERT (MPOL_MF_INTERNAL << 1)		/* Invert check for nodemask */
 
 extern int global_flag;
-extern int heterobuff_pgs;
-
 static struct kmem_cache *policy_cache;
 static struct kmem_cache *sn_cache;
 
@@ -2138,7 +2136,6 @@ struct page *alloc_pages_current_hetero(gfp_t gfp,
                 }else {
 			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
 					"\n", __func__, __LINE__);
-                        heterobuff_pgs++;
                 }
                 if(!page)
   		         page = __alloc_pages_nodemask(gfp, order,

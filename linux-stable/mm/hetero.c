@@ -88,8 +88,6 @@ int pgcache_miss_cnt = 0;
 int pgbuff_hits_cnt = 0;
 int pgbuff_miss_cnt = 0;
 int radix_cnt = 0;
-int heterobuff_pgs = 0;
-
 
 int enbl_hetero_pgcache=0;
 int enbl_hetero_buffer=0;
@@ -104,17 +102,19 @@ char procname[TASK_COMM_LEN];
 
 
 void print_hetero_stats(void) {
-       printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s "
-	      "page cache hits %d cache miss %d page buffer %d \n ", 
+       printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s page "
+	      "cache hits %d cache miss %d buffer page hits %d miss %d \n ", 
               hetero_pid, current->pid, current->comm, procname, 
-              pgcache_hits_cnt, pgcache_miss_cnt, heterobuff_pgs);
+              pgcache_hits_cnt, pgcache_miss_cnt, pgbuff_hits_cnt, 
+              pgbuff_miss_cnt);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
 void reset_hetero_stats(void) {
         pgcache_hits_cnt = 0;
 	pgcache_miss_cnt = 0;
-        heterobuff_pgs = 0;
+	pgbuff_miss_cnt = 0;
+	pgbuff_hits_cnt = 0;
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 

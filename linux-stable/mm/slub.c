@@ -41,8 +41,6 @@
 
 #include "internal.h"
 
-extern int heterobuff_pgs;
-
 /*
  * Lock order:
  *   1. slab_mutex (Global Mutex)
