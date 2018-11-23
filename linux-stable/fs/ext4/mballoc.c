@@ -906,7 +906,6 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 	if (groups_per_page > 1) {
 		i = sizeof(struct buffer_head *) * groups_per_page;
 #ifdef CONFIG_HETERO_ENABLE
-
                 if(is_hetero_buffer_set()) {
                 //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 }
@@ -914,9 +913,6 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 #else 
 		bh = kzalloc(i, gfp);
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_buffer_head(bh);
-
 		if (bh == NULL) {
 			err = -ENOMEM;
 			goto out;

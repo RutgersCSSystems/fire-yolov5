@@ -546,8 +546,6 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 #ifdef CONFIG_HETERO_ENABLE
                 p = NULL;
                 if(is_hetero_buffer_set()) {
-                        //printk(KERN_ALERT "%s : %d \n", 
-			//	__func__, __LINE__);
                         p = mempool_alloc_hetero(bs->bio_pool, gfp_mask);
                 }
                 if(!p)
@@ -559,7 +557,6 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 #ifdef CONFIG_HETERO_ENABLE
 			p = NULL;
 			if(is_hetero_buffer_set()) {
-				//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 				p = mempool_alloc_hetero(bs->bio_pool, gfp_mask);
 			}
 			if(!p)

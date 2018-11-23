@@ -85,6 +85,8 @@
 int global_flag = 0;
 int pgcache_hits_cnt = 0;
 int pgcache_miss_cnt = 0;
+int pgbuff_hits_cnt = 0;
+int pgbuff_miss_cnt = 0;
 int radix_cnt = 0;
 int heterobuff_pgs = 0;
 
@@ -131,12 +133,15 @@ inline int check_hetero_proc (void)
 int is_hetero_exit(void) 
 {
     if(check_hetero_proc()) {
-	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s  user pages %d kern pages %d\n",
-		hetero_pid, current->pid, current->comm, procname,  hetero_usrpg_cnt, hetero_kernpg_cnt);
+	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
+		"user pages %d kern pages %d\n",
+		hetero_pid, current->pid, current->comm, procname,  
+	        hetero_usrpg_cnt, hetero_kernpg_cnt);
     }
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_exit);
+
 
 inline int is_hetero_obj(void *obj) 
 {
@@ -174,7 +179,6 @@ void set_fsmap_hetero_obj(void *mapobj)
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
-
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void)
 {
@@ -186,7 +190,6 @@ int is_hetero_pgcache_set(void)
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
-
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int nodeid, struct page *page) 
 {
@@ -197,8 +200,17 @@ void update_hetero_pgcache(int nodeid, struct page *page)
 	}
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
-#endif
 
+void update_hetero_pgbuff(int nodeid, struct page *page) 
+{
+        if(page_to_nid(page) == nodeid) {
+		pgbuff_hits_cnt += 1;
+	}else {
+        	pgbuff_miss_cnt += 1;
+	}
+}
+EXPORT_SYMBOL(update_hetero_pgbuff);
+#endif
 
 int is_hetero_buffer_set(void){
 

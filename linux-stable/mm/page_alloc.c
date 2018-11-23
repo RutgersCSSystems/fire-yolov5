@@ -4495,7 +4495,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         }
 	//hetero_info("%s:%d node:%d pref node:%d\n",
 	//	__func__,__LINE__, page_to_nid(page), preferred_nid);
-
         if(is_hetero_buffer_set()) {
                 if ((alloc_mask & __GFP_MOVABLE)) {
                         hetero_usrpg_cnt++;

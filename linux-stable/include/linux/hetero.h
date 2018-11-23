@@ -55,6 +55,7 @@ void set_fsmap_hetero_obj(void *mapobj);
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *);
+void update_hetero_pgbuff(int nodeid, struct page *page);
 #endif
 
 #endif /* _LINUX_NUMA_H */
