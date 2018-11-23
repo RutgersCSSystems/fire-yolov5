@@ -1715,10 +1715,7 @@ no_page:
 
 #ifdef CONFIG_HETERO_ENABLE
                 page = NULL;
-                if (is_hetero_pgcache_set()) {
-                        page = __page_cache_alloc_hetero(gfp_mask, mapping);
-		        //pr_info("%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page)); 
-                }
+                page = __page_cache_alloc_hetero(gfp_mask, mapping);
                 if(!page)
 #endif
 		page = __page_cache_alloc(gfp_mask);
@@ -2418,10 +2415,7 @@ no_cached_page:
 		 * page..
 		 */
 #ifdef CONFIG_HETERO_ENABLE
-                if (is_hetero_pgcache_set()) {
-                        page = page_cache_alloc_hetero(mapping);
-                        printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
-                }
+                page = page_cache_alloc_hetero(mapping);
                 if(!page)
 #endif
 		page = page_cache_alloc(mapping);
@@ -2536,11 +2530,9 @@ static int page_cache_read(struct file *file, pgoff_t offset, gfp_t gfp_mask)
 	int ret;
 
 	do {
+
 #ifdef CONFIG_HETERO_ENABLE
-                if (is_hetero_pgcache_set()) {
-                        page = __page_cache_alloc_hetero(gfp_mask, mapping);
-	                printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
-                }
+                page = __page_cache_alloc_hetero(gfp_mask, mapping);
                 if(!page)
 #endif
 		page = __page_cache_alloc(gfp_mask);
@@ -2952,10 +2944,7 @@ repeat:
 	if (!page) {
 #ifdef CONFIG_HETERO_ENABLE
                 page = NULL;
-                if (is_hetero_pgcache_set()) {
-                        page = __page_cache_alloc_hetero(gfp, mapping);
-                        
-                }
+                page = __page_cache_alloc_hetero(gfp, mapping);
                 if(!page)
 #endif
 		page = __page_cache_alloc(gfp);
