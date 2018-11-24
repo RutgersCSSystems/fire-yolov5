@@ -156,13 +156,20 @@ EXPORT_SYMBOL(is_hetero_obj);
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void)
 {
-      if(check_hetero_proc()) 
-	if(enbl_hetero_pgcache) { 	
-	    	return enbl_hetero_pgcache;
-    	}		
-    return 0;
+        if(check_hetero_proc()) 
+	        return enbl_hetero_pgcache;
+        return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
+
+int is_hetero_buffer_set(void)
+{
+        if(check_hetero_proc()) 
+                return enbl_hetero_buffer;
+    return 0;
+}
+EXPORT_SYMBOL(is_hetero_buffer_set);
+
 
 
 /*Sets current task with hetero obj*/
