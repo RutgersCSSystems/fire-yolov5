@@ -226,7 +226,7 @@ fallback:
 #ifdef CONFIG_HETERO_ENABLE
 		bvl = NULL;
 	        if(is_hetero_buffer_set()) {
-			bvl = mempool_alloc_hetero(pool, gfp_mask);
+			bvl = mempool_alloc_hetero(pool, gfp_mask, NULL);
 		}
 	        if(!bvl)
 #endif
@@ -245,7 +245,6 @@ fallback:
 #ifdef CONFIG_HETERO_ENABLE
 		bvl = NULL;
 	        if(is_hetero_buffer_set()) {
-			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			bvl = kmem_cache_alloc_hetero(bvs->slab, __gfp_mask);
 		}
 	        if(!bvl)
@@ -489,23 +488,6 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 	if (!bs) {
 		if (nr_iovecs > UIO_MAXIOV)
 			return NULL;
-#ifdef CONFIG_HETERO_ENABLE
-                p = NULL;
-		if(is_hetero_buffer_set()) {
-
-#ifdef _HETERO_MIGRATE
-		        printk(KERN_ALERT "%s : %d size %d \n",
-				 __func__, __LINE__, sizeof(struct bio) + 
-				nr_iovecs * sizeof(struct bio_vec));
-                        p = vmalloc_hetero(sizeof(struct bio) + nr_iovecs * sizeof(struct bio_vec)); 
-			if(!p)
-#endif
-		        p = kmalloc_hetero(sizeof(struct bio) +
-			    nr_iovecs * sizeof(struct bio_vec),
-			    gfp_mask);
-		}
-	      	if(!p)
-#endif
 		p = kmalloc(sizeof(struct bio) +
 			    nr_iovecs * sizeof(struct bio_vec),
 			    gfp_mask);
@@ -543,27 +525,12 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 		    bs->rescue_workqueue)
 			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
 
-#ifdef CONFIG_HETERO_ENABLE
-                p = NULL;
-                if(is_hetero_buffer_set()) {
-                        p = mempool_alloc_hetero(bs->bio_pool, gfp_mask);
-                }
-                if(!p)
-#endif
 		p = mempool_alloc(bs->bio_pool, gfp_mask);
 		if (!p && gfp_mask != saved_gfp) {
 			punt_bios_to_rescuer(bs);
 			gfp_mask = saved_gfp;
-#ifdef CONFIG_HETERO_ENABLE
-			p = NULL;
-			if(is_hetero_buffer_set()) {
-				p = mempool_alloc_hetero(bs->bio_pool, gfp_mask);
-			}
-			if(!p)
-#endif
 			p = mempool_alloc(bs->bio_pool, gfp_mask);
 		}
-
 		front_pad = bs->front_pad;
 		inline_vecs = BIO_INLINE_VECS;
 	}
@@ -598,9 +565,175 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
 	return bio;
 
 err_free:
+	mempool_free(p, bs->bio_pool);
+	return NULL;
+}
+EXPORT_SYMBOL(bio_alloc_bioset);
+
+/**
+ * bio_alloc_bioset_hetero - allocate a bio for I/O
+ * @gfp_mask:   the GFP_* mask given to the slab allocator
+ * @nr_iovecs:	number of iovecs to pre-allocate
+ * @bs:		the bio_set to allocate from.
+ *
+ * Description:
+ *   If @bs is NULL, uses kmalloc() to allocate the bio; else the allocation is
+ *   backed by the @bs's mempool.
+ *
+ *   When @bs is not NULL, if %__GFP_DIRECT_RECLAIM is set then bio_alloc will
+ *   always be able to allocate a bio. This is due to the mempool guarantees.
+ *   To make this work, callers must never allocate more than 1 bio at a time
+ *   from this pool. Callers that need to allocate more than 1 bio must always
+ *   submit the previously allocated bio for IO before attempting to allocate
+ *   a new one. Failure to do so can cause deadlocks under memory pressure.
+ *
+ *   Note that when running under generic_make_request() (i.e. any block
+ *   driver), bios are not submitted until after you return - see the code in
+ *   generic_make_request() that converts recursion into iteration, to prevent
+ *   stack overflows.
+ *
+ *   This would normally mean allocating multiple bios under
+ *   generic_make_request() would be susceptible to deadlocks, but we have
+ *   deadlock avoidance code that resubmits any blocked bios from a rescuer
+ *   thread.
+ *
+ *   However, we do not guarantee forward progress for allocations from other
+ *   mempools. Doing multiple allocations from the same mempool under
+ *   generic_make_request() should be avoided - instead, use bio_set's front_pad
+ *   for per bio allocations.
+ *
+ *   RETURNS:
+ *   Pointer to new bio on success, NULL on failure.
+ */
+struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
+			     struct bio_set *bs, void *hetero_obj)
+{
+	gfp_t saved_gfp = gfp_mask;
+	unsigned front_pad;
+	unsigned inline_vecs;
+	struct bio_vec *bvl = NULL;
+	struct bio *bio;
+	void *p;
+
+	if (!bs) {
+		if (nr_iovecs > UIO_MAXIOV)
+			return NULL;
+
+                p = NULL;
+		if(is_hetero_buffer_set()) {
+
+#ifdef _HETERO_MIGRATE
+		        printk(KERN_ALERT "%s : %d size %d \n",
+				 __func__, __LINE__, sizeof(struct bio) + 
+				nr_iovecs * sizeof(struct bio_vec));
+                        p = vmalloc_hetero(sizeof(struct bio) + nr_iovecs * sizeof(struct bio_vec)); 
+			if(!p)
+#endif
+		        p = kmalloc_hetero(sizeof(struct bio) +
+			    nr_iovecs * sizeof(struct bio_vec),
+			    gfp_mask);
+		}
+	      	if(!p)
+			p = kmalloc(sizeof(struct bio) +
+			    nr_iovecs * sizeof(struct bio_vec),
+			    gfp_mask);
+
+		front_pad = 0;
+		inline_vecs = nr_iovecs;
+
+	} else {
+		/* should not use nobvec bioset for nr_iovecs > 0 */
+		if (WARN_ON_ONCE(!bs->bvec_pool && nr_iovecs > 0))
+			return NULL;
+		/*
+		 * generic_make_request() converts recursion to iteration; this
+		 * means if we're running beneath it, any bios we allocate and
+		 * submit will not be submitted (and thus freed) until after we
+		 * return.
+		 *
+		 * This exposes us to a potential deadlock if we allocate
+		 * multiple bios from the same bio_set() while running
+		 * underneath generic_make_request(). If we were to allocate
+		 * multiple bios (say a stacking block driver that was splitting
+		 * bios), we would deadlock if we exhausted the mempool's
+		 * reserve.
+		 *
+		 * We solve this, and guarantee forward progress, with a rescuer
+		 * workqueue per bio_set. If we go to allocate and there are
+		 * bios on current->bio_list, we first try the allocation
+		 * without __GFP_DIRECT_RECLAIM; if that fails, we punt those
+		 * bios we would be blocking to the rescuer workqueue before
+		 * we retry with the original gfp_flags.
+		 */
+
+		if (current->bio_list &&
+		    (!bio_list_empty(&current->bio_list[0]) ||
+		     !bio_list_empty(&current->bio_list[1])) &&
+		    bs->rescue_workqueue)
+			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
+
+                p = NULL;
+                if(is_hetero_buffer_set() && is_hetero_obj(hetero_obj)) {
+                        p = mempool_alloc_hetero(bs->bio_pool, gfp_mask, 
+						 hetero_obj);
+                }
+                if(!p)
+			p = mempool_alloc(bs->bio_pool, gfp_mask);
+
+		if (!p && gfp_mask != saved_gfp) {
+			punt_bios_to_rescuer(bs);
+			gfp_mask = saved_gfp;
+			p = NULL;
+			if(is_hetero_buffer_set()) {
+				p = mempool_alloc_hetero(bs->bio_pool, gfp_mask, 
+							 hetero_obj);
+			}
+			if(!p)
+				p = mempool_alloc(bs->bio_pool, gfp_mask);
+		}
+		front_pad = bs->front_pad;
+		inline_vecs = BIO_INLINE_VECS;
+	}
+
+	if (unlikely(!p))
+		return NULL;
+
+	bio = p + front_pad;
+	bio_init(bio, NULL, 0);
+
+	if (nr_iovecs > inline_vecs) {
+		unsigned long idx = 0;
+
+		bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, bs->bvec_pool);
+		if (!bvl && gfp_mask != saved_gfp) {
+			punt_bios_to_rescuer(bs);
+			gfp_mask = saved_gfp;
+			bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, bs->bvec_pool);
+		}
+
+		if (unlikely(!bvl))
+			goto err_free;
+
+		bio->bi_flags |= idx << BVEC_POOL_OFFSET;
+	} else if (nr_iovecs) {
+		bvl = bio->bi_inline_vecs;
+	}
+
+	bio->bi_pool = bs;
+	bio->bi_max_vecs = nr_iovecs;
+	bio->bi_io_vec = bvl;
+#ifdef CONFIG_HETERO_ENABLE
+        if (is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
+                hetero_dbg("%s:%d \n",__func__,__LINE__);
+                bio->hetero_obj = hetero_obj;
+		bs->hetero_obj = hetero_obj;
+        }
+#endif
+	return bio;
+
+err_free:
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
-		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		mempool_free_hetero(p, bs->bio_pool);
 	}
 #else
@@ -608,7 +741,9 @@ err_free:
 #endif
 	return NULL;
 }
-EXPORT_SYMBOL(bio_alloc_bioset);
+EXPORT_SYMBOL(bio_alloc_bioset_hetero);
+
+
 
 void zero_fill_bio(struct bio *bio)
 {
@@ -2024,7 +2159,6 @@ struct bio_set *bioset_create(unsigned int pool_size,
 #ifdef CONFIG_HETERO_ENABLE
 	bs->bio_pool = NULL;
         if(is_hetero_buffer_set()) {
-        //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 bs->bio_pool = mempool_create_slab_pool_hetero(pool_size, bs->bio_slab);
         }
 	if(!bs->bio_pool)

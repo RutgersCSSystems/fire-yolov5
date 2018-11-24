@@ -511,8 +511,6 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 
 	preempt_disable();
 	rtp = this_cpu_ptr(&radix_tree_preloads);
-	//if (global_flag == 4)
-	//	add_to_hashtable_preload(rtp);
 
 	while (rtp->nr < nr) {
 		preempt_enable();
@@ -527,22 +525,13 @@ static __must_check int __radix_tree_preload(gfp_t gfp_mask, unsigned nr)
 #else 
 		node = kmem_cache_alloc(radix_tree_node_cachep, gfp_mask);
 #endif
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(node);
-
 		if (node == NULL)
 			goto out;
 		preempt_disable();
 		rtp = this_cpu_ptr(&radix_tree_preloads);
-		//if (global_flag == 4)
-		//	add_to_hashtable_preload(rtp);
 		if (rtp->nr < nr) {
 			node->parent = rtp->nodes;
-			//if(global_flag == 4)
-			//	add_to_hashtable_node(node->parent);
 			rtp->nodes = node;
-			//if (global_flag == 4)
-			//	add_to_hashtable_node(rtp->nodes);
 			rtp->nr++;
 		} else {
 			kmem_cache_free(radix_tree_node_cachep, node);
@@ -971,7 +960,6 @@ int __radix_tree_create_hetero(struct radix_tree_root *root, unsigned long index
 	/*Mark the cache that it belongs to Hetero targe object*/
 #ifdef CONFIG_HETERO_ENABLE
         if (is_hetero_obj(hetero_obj)){
-		//pr_info("%s:%d\n",__func__, __LINE__);
 		update_hetero_obj(radix_tree_node_cachep, hetero_obj);
 	}
 #endif

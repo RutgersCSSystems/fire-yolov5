@@ -88,6 +88,7 @@ int pgcache_miss_cnt = 0;
 int pgbuff_hits_cnt = 0;
 int pgbuff_miss_cnt = 0;
 int radix_cnt = 0;
+int hetero_dbgmask = 0;
 
 int enbl_hetero_pgcache=0;
 int enbl_hetero_buffer=0;
@@ -152,33 +153,6 @@ inline int is_hetero_obj(void *obj)
 }
 EXPORT_SYMBOL(is_hetero_obj);
 
-
-void set_curr_hetero_obj(void *obj) 
-{
-        current->hetero_obj = obj;
-}
-EXPORT_SYMBOL(set_curr_hetero_obj);
-
-
-void set_fsmap_hetero_obj(void *mapobj) 
-{
-       struct address_space *mapping = NULL;
-
-	mapping = (struct address_space *)mapobj;
-        mapping->hetero_obj = NULL;
-        if(is_hetero_buffer_set()){
-		struct dentry *res;
-                mapping->hetero_obj = (void *)mapping->host;
-                current->hetero_obj = (void *)mapping->host;
-		if(mapping->host) {
-			res = d_find_any_alias(mapping->host);
-			printk(KERN_ALERT "\n %s:%d Inode %lu FNAME %s \n",
-			 __func__,__LINE__,mapping->host->i_ino, res->d_iname);
-		}
-        }
-}
-EXPORT_SYMBOL(set_fsmap_hetero_obj);
-
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void)
 {
@@ -189,6 +163,41 @@ int is_hetero_pgcache_set(void)
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
+
+
+/*Sets current task with hetero obj*/
+void set_curr_hetero_obj(void *obj) 
+{
+        current->hetero_obj = obj;
+}
+EXPORT_SYMBOL(set_curr_hetero_obj);
+
+/*Sets page with hetero obj*/
+void set_hetero_obj_page(struct page *page, void *obj)                          
+{
+        page->hetero_obj = obj;
+}
+EXPORT_SYMBOL(set_hetero_obj_page);
+
+
+void set_fsmap_hetero_obj(void *mapobj) 
+{
+        struct address_space *mapping = NULL;
+	mapping = (struct address_space *)mapobj;
+        mapping->hetero_obj = NULL;
+
+        if(is_hetero_buffer_set()){
+		struct dentry *res;
+                mapping->hetero_obj = (void *)mapping->host;
+                current->hetero_obj = (void *)mapping->host;
+		if(mapping->host) {
+			res = d_find_any_alias(mapping->host);
+			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
+			 __func__,__LINE__,current->comm, mapping->host->i_ino,                          res->d_iname);
+		}
+        }
+}
+EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int nodeid, struct page *page) 
@@ -201,7 +210,7 @@ void update_hetero_pgcache(int nodeid, struct page *page)
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
-void update_hetero_pgbuff(int nodeid, struct page *page) 
+void update_hetero_pgbuff_stat(int nodeid, struct page *page) 
 {
         if(page_to_nid(page) == nodeid) {
 		pgbuff_hits_cnt += 1;
@@ -209,20 +218,30 @@ void update_hetero_pgbuff(int nodeid, struct page *page)
         	pgbuff_miss_cnt += 1;
 	}
 }
-EXPORT_SYMBOL(update_hetero_pgbuff);
+EXPORT_SYMBOL(update_hetero_pgbuff_stat);
+
+/*Simple miss increment; called specifically from 
+functions that do not explicity aim to place pages 
+on heterogeneous memory
+*/
+void update_hetero_pgbuff_stat_miss(void) 
+{
+        pgbuff_miss_cnt += 1;
+}
+EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
 #endif
 
-int is_hetero_buffer_set(void){
+/* Check if the designed node and current page location 
+ * match. Responsibility of the requester to pass nodeid
+ */
+int is_hetero_page(struct page *page, int nodeid){
 
-    if(check_hetero_proc()) 
-    {
-	if(enbl_hetero_buffer) {
-	    	return enbl_hetero_buffer;
-    	}
-    } 
+   if(page_to_nid(page) == nodeid) {
+	return 1;
+   }
    return 0;
 }
-EXPORT_SYMBOL(is_hetero_buffer_set);
+EXPORT_SYMBOL(is_hetero_page);
 
 
 int is_hetero_journ_set(void){
@@ -350,6 +369,9 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    enbl_hetero_kernel = 1;
 	    break;
 	default:
+#ifdef CONFIG_HETERO_DEBUG
+	   hetero_dbgmask = 1;	
+#endif
 	    hetero_pid = flag;
 	    current->hetero_task = HETERO_PROC;
             memcpy(procname, current->comm, TASK_COMM_LEN);

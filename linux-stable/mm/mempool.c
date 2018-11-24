@@ -451,7 +451,6 @@ void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data)
 	VM_BUG_ON(mem->ctor);
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
-                //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 		return kmem_cache_alloc_hetero(mem, gfp_mask);
         }
 #endif
@@ -505,7 +504,7 @@ EXPORT_SYMBOL(mempool_kfree);
  * fail if called from an IRQ context.)
  * Note: using __GFP_ZERO is not supported.
  */
-void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask)
+void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask, void *hetero_obj)
 {
 	void *element;
 	unsigned long flags;
@@ -522,8 +521,16 @@ void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask)
 	gfp_temp = gfp_mask & ~(__GFP_DIRECT_RECLAIM|__GFP_IO);
 
 repeat_alloc:
-
-	//printk(KERN_ALERT "%s:%d Function %pF \n", __func__, __LINE__, pool->alloc);
+#ifdef CONFIG_HETERO_ENABLE
+        if (hetero_obj && is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
+		struct kmem_cache *s = (struct kmem_cache *)pool->pool_data;
+		if(s) {
+			update_hetero_obj(s, hetero_obj);
+		}else {
+		        hetero_warn("%s:%d ERROR... \n", __func__, __LINE__);
+		}
+        }
+#endif
 	element = pool->alloc(gfp_temp, pool->pool_data);
 
 	if (likely(element != NULL))

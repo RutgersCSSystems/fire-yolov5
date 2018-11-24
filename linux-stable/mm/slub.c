@@ -2457,9 +2457,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 
 #ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
-        if(is_hetero_obj(s->hetero_obj) || is_hetero_buffer_set()) {
-                node = NUMA_FAST_NODE;
-        }else {
+        if(is_hetero_buffer_set()) {
                 node = NUMA_HETERO_NODE;
         }
 #endif
@@ -2484,11 +2482,15 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		stat(s, ALLOC_SLAB);
 		c->page = page;
 		*pc = c;
-
 #ifdef CONFIG_HETERO_STATS
-		if(is_hetero_obj(s->hetero_obj) || 
-			is_hetero_buffer_set()) {
-	                update_hetero_pgbuff(node, page);
+		/*Most likely this should be a fast page miss 
+		* because we explicity redirected allocatio to 
+		* slow memory 
+		*/
+	        if(is_hetero_buffer_set()) {
+			//dgb_target_hetero_obj(s->hetero_obj);
+			//dump_stack();
+			update_hetero_pgbuff_stat(node, page);
 		}
 #endif
 	} else
@@ -2496,6 +2498,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 
 	return freelist;
 }
+
 
 static inline bool pfmemalloc_match(struct page *page, gfp_t gfpflags)
 {
@@ -2894,6 +2897,38 @@ static struct page *new_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
 
 
 #ifdef CONFIG_HETERO_ENABLE
+void dgb_target_hetero_obj(void *hetero_obj){
+
+        struct inode *curr_inode = NULL, *hetero_inode = NULL;
+        struct dentry *curr_dentry = NULL, *hetero_dentry = NULL;
+        struct address_space *hetero_map = NULL;
+
+        curr_inode = (struct inode *)hetero_obj;
+
+        if(curr_inode) {
+                curr_dentry = d_find_any_alias(curr_inode);
+                printk("%s:%d Proc name %s is_hetero_obj %d "
+                       "inode %lu", __func__,__LINE__, current->comm,
+                       is_hetero_obj(hetero_obj),
+                       curr_inode->i_ino);
+        }
+        else
+                goto error;
+
+        hetero_inode = (struct inode *)current->hetero_obj;
+        if(hetero_inode) {
+                hetero_dentry = d_find_any_alias(hetero_inode);
+                if(hetero_dentry && curr_dentry)
+                        printk("fname %s hetero fname %s \n",
+                               curr_dentry->d_iname, hetero_dentry->d_iname);
+        }else {
+                printk("fname %s hetero_inode NULL \n",
+                                curr_dentry->d_iname);
+        }
+error:
+        return;
+}
+
 static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                         int node, struct kmem_cache_cpu **pc)
 {
@@ -2902,7 +2937,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
         struct page *page;
 
         /* Check if we are allocating for targetted object */
-	if(is_hetero_obj(s->hetero_obj) || is_hetero_buffer_set()) {
+	if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
 		node = NUMA_FAST_NODE;
 	}else {
 		node = NUMA_HETERO_NODE;
@@ -2930,9 +2965,19 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 *pc = c;
 
 #ifdef CONFIG_HETERO_STATS
-		if(is_hetero_obj(s->hetero_obj) || 
-			is_hetero_buffer_set()) {
-	                update_hetero_pgbuff(node, page);
+		/* We set hetero_obj to page even if not in the desired 
+		 * memory node. We can later use this for migration.
+		 */
+		if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj))
+			if(is_hetero_page(page))
+				set_hetero_obj_page(page, s->hetero_obj);	
+		}
+		/* Hit or miss to desired node */
+                if(is_hetero_buffer_set()) {
+			/* FIXME: Duplicate page to node check */
+		        update_hetero_pgbuff_stat(node, page);
+			//dgb_target_hetero_obj(s->hetero_obj);
+			//dump_stack();
 		}
 #endif
         } else
@@ -3062,10 +3107,6 @@ static void *__slab_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags, int node,
         void *p;
         unsigned long flags;
 
-        /*if(is_hetero_buffer_set()) {
-                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-        }*/
-
         local_irq_save(flags);
 #ifdef CONFIG_PREEMPT
         /*
@@ -3138,16 +3179,7 @@ redo:
 	object = c->freelist;
 	page = c->page;
 
-        //if(is_hetero_buffer_set()) {
-	/*if (gfpflags & GFP_KERNEL_ACCOUNT)
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-	else {*/
-	//}
-        //}
 	if (unlikely(!object || !node_match(page, node))) {
-		//if(page)
-		//	printk(KERN_ALERT "%s:%d, target %d, dest %d \n", 
-		//		__func__, __LINE__, node, page_to_nid(page));
 		object = __slab_alloc_hetero(s, gfpflags, node, addr, c);
 		stat(s, ALLOC_SLOWPATH);
 	} else {

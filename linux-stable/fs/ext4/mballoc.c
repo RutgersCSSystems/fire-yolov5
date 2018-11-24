@@ -5035,6 +5035,9 @@ do_more:
 		 * to fail.
 		 */
 #ifdef CONFIG_HETERO_ENABLE 
+		if (is_hetero_obj((void *)inode)){
+			update_hetero_obj(ext4_free_data_cachep, (void *)inode);
+		}
 		new_entry = kmem_cache_alloc_hetero(ext4_free_data_cachep,
 				GFP_NOFS|__GFP_NOFAIL);
 #else 

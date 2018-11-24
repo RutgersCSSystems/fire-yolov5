@@ -59,8 +59,6 @@
 #define PFN_TRACE 4
 
 extern int global_flag;
-int cnt = 0;
-
 static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
 static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
 			 enum rw_hint hint, struct writeback_control *wbc);
@@ -829,7 +827,9 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	struct buffer_head *bh, *head;
 	gfp_t gfp = GFP_NOFS;
 	long offset;
-
+#ifdef CONFIG_HETERO_ENABLE
+	void *hetero_obj = NULL;
+#endif
 	if (retry)
 		gfp |= __GFP_NOFAIL;
 
@@ -839,8 +839,14 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 
 #ifdef CONFIG_HETERO_ENABLE
 		if (is_hetero_buffer_set()) {
-			bh = alloc_buffer_head_hetero(gfp);
-			cnt++;
+			if(page->mapping) {
+				hetero_dbg("%s:%d inode %lu\n",__func__,__LINE__, 
+					page->mapping->host->i_ino);
+				hetero_obj = (void *)page->mapping->host;
+				bh = alloc_buffer_head_hetero(gfp, hetero_obj);
+			}else {
+				bh = alloc_buffer_head_hetero(gfp, NULL);
+			}
 		}
 		else
 			bh = alloc_buffer_head(gfp);
@@ -3396,9 +3402,8 @@ EXPORT_SYMBOL(alloc_buffer_head);
 
 /* HeteroOS code */
 #ifdef CONFIG_HETERO_ENABLE
-struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
+struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags, void *hetero_obj)
 {
-        //struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
         struct buffer_head *ret = kmem_cache_zalloc_hetero(bh_cachep, gfp_flags);
         if (ret) {
                 INIT_LIST_HEAD(&ret->b_assoc_buffers);
@@ -3406,6 +3411,9 @@ struct buffer_head *alloc_buffer_head_hetero(gfp_t gfp_flags)
                 __this_cpu_inc(bh_accounting.nr);
                 recalc_bh_state();
                 preempt_enable();
+
+		/* Relate the cache object to hetero_obj */
+		update_hetero_obj(bh_cachep, hetero_obj);
         }
         return ret;
 }

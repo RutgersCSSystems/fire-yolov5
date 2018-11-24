@@ -35,8 +35,10 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 #endif
 
-/* #define pmfs_dbg(s, args...)         pr_debug(s, ## args) */
-#define hetero_dbg(s, args ...)           pr_warning(s, ## args)
+extern int hetero_dbgmask;
+
+#define hetero_dbg(s, args ...)              \
+        ((1 & hetero_dbgmask) ? pr_warning(s, ## args) : 0)
 #define hetero_err(sb, s, args ...)       pmfs_error_mng(sb, s, ## args)
 #define hetero_warn(s, args ...)          pr_warning(s, ## args)
 #define hetero_info(s, args ...)          pr_info(s, ## args)
@@ -50,12 +52,15 @@ int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
 int is_hetero_exit(void);
 inline int is_hetero_obj(void *obj);
+int is_hetero_page(struct page *page, int nodeid);
+
 void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);
+void set_hetero_obj_page(struct page *page, void *obj);
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *);
-void update_hetero_pgbuff(int nodeid, struct page *page);
+void update_hetero_pgbuff_stat(int nodeid, struct page *page);
 #endif
 
 #endif /* _LINUX_NUMA_H */

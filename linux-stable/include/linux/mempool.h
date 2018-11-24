@@ -56,7 +56,7 @@ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
 
 #ifdef CONFIG_HETERO_ENABLE
 //Hetero mempool alloc
-extern void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask) __malloc;
+extern void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask, void *obj) __malloc;
 extern void mempool_free_hetero(void *element, mempool_t *pool);
 
 void *mempool_alloc_slab_hetero(gfp_t gfp_mask, void *pool_data);

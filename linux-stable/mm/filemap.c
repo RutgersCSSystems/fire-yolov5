@@ -136,7 +136,6 @@ static int page_cache_tree_insert(struct address_space *mapping,
 	error = 1;
 	/* Set page to Hetero Object */
 	if (is_hetero_obj(mapping->hetero_obj)){
-		//pr_info("%s:%d\n",__func__, __LINE__);
 		page->hetero_obj = mapping->hetero_obj;	
 		error = __radix_tree_create_hetero(&mapping->i_pages, 
 						   page->index, 0,
@@ -1035,13 +1034,22 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 			struct address_space *x)
 {
 	int n;
+	int is_hetero_alloc = 0;
 	struct page *page, *allocpage = NULL;
 	/*By default, allocate to HETERO_NODE */
         n = NUMA_HETERO_NODE;
 
+	/* Check if  HETERO allocation enabled for page cache 
+	 * enabled 
+         */
+	if (is_hetero_pgcache_set() && is_hetero_obj(x->hetero_obj)) {
+		n = NUMA_FAST_NODE;
+		is_hetero_alloc = 1;
+	}
 #ifdef CONFIG_HETERO_DEBUG
-	if(!is_hetero_pgcache_set() || !is_hetero_obj(x->hetero_obj)){
-	        dgb_target_hetero_obj(x);
+	else if (is_hetero_pgcache_set()) {
+		dgb_target_hetero_obj(x);
+		dump_stack();
 	}
 #endif
 	if (cpuset_do_page_mem_spread()) {
@@ -1049,34 +1057,19 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		do {
 			cpuset_mems_cookie = read_mems_allowed_begin();
 			n = cpuset_mem_spread_node();
-			/* Check if  HETERO allocation enabled for page cache 
-			enabled */
-			if (is_hetero_pgcache_set() &&  
-			    is_hetero_obj(x->hetero_obj)) {
-				n = NUMA_FAST_NODE;
-				page = __alloc_pages_node_hetero(n, gfp, 0);
-#ifdef CONFIG_HETERO_STATS
-				update_hetero_pgcache(n, page);
-#endif
-			}
-			else {
-				page = __alloc_pages_node(n, gfp, 0);
-			}
+			page = __alloc_pages_node_hetero(n, gfp, 0);
 		} while (!page && read_mems_allowed_retry(cpuset_mems_cookie));
-
-		return page;
+		allocpage = page;
+		goto alloc;
 	}
 
-        if(!allocpage && (is_hetero_pgcache_set() &&  
-	    is_hetero_obj(x->hetero_obj))) {
-		n = NUMA_FAST_NODE;
+        if(!allocpage && is_hetero_alloc) {
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
-#ifdef CONFIG_HETERO_STATS
-		update_hetero_pgcache(n, allocpage);
-#endif
 	}
-	if(!allocpage)
-        	allocpage = __page_cache_alloc(gfp);
+alloc:
+#ifdef CONFIG_HETERO_STATS
+	update_hetero_pgcache(n, allocpage);
+#endif
 	return allocpage;
 }
 EXPORT_SYMBOL(__page_cache_alloc_hetero);

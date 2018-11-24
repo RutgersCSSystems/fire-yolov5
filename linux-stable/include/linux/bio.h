@@ -431,14 +431,16 @@ static inline struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 }
 
 /* heteroOS code */
-/*
 #ifdef CONFIG_HETERO_ENABLE
-static inline struct bio *bio_alloc_hetero(gfp_t gfp_mask, unsigned int nr_iovecs)
+extern struct bio *bio_alloc_bioset_hetero(gfp_t, unsigned int, 
+					   struct bio_set *, void *);
+
+static inline struct bio *bio_alloc_hetero(gfp_t gfp_mask, unsigned int nr_iovecs, 
+					   void *hetero_obj)
 {
-	return bio_alloc_bioset_hetero(gfp_mask, nr_iovecs, fs_bio_set);
+	return bio_alloc_bioset_hetero(gfp_mask, nr_iovecs, fs_bio_set, hetero_obj);
 }
 #endif
-*/
 
 static inline struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 {
@@ -740,7 +742,6 @@ struct bio_set {
 	mempool_t *bio_integrity_pool;
 	mempool_t *bvec_integrity_pool;
 #endif
-
 	/*
 	 * Deadlock avoidance for stacking block drivers: see comments in
 	 * bio_alloc_bioset() for details
@@ -749,6 +750,9 @@ struct bio_set {
 	struct bio_list		rescue_list;
 	struct work_struct	rescue_work;
 	struct workqueue_struct	*rescue_workqueue;
+#ifdef CONFIG_HETERO_ENABLE
+	void	*hetero_obj;
+#endif
 };
 
 struct biovec_slab {
