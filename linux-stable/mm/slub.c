@@ -2968,7 +2968,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		/* We set hetero_obj to page even if not in the desired 
 		 * memory node. We can later use this for migration.
 		 */
-		if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj))
+		if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
 			if(is_hetero_page(page, node))
 				set_hetero_obj_page(page, s->hetero_obj);	
 		}
