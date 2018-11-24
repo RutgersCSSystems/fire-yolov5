@@ -713,11 +713,6 @@ struct task_struct {
 	unsigned			sched_migrated:1;
 	unsigned			sched_remote_wakeup:1;
 
-#ifdef CONFIG_HETERO_ENABLE
-        unsigned 			hetero_task:1;  
-	void 				*hetero_obj;
-#endif
-
 	/* Force alignment to the next boundary: */
 	unsigned			:0;
 

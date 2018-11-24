@@ -12,7 +12,7 @@
 #define HETERO_PG_FLAG 1
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
-#define HETERO_PROC 1
+#define HETERO_PROC 4
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
 /* Buffer allocation */

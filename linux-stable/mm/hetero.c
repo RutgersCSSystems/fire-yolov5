@@ -122,10 +122,14 @@ EXPORT_SYMBOL(reset_hetero_stats);
 
 inline int check_hetero_proc (void) 
 {
+	return 0;
+
+#ifdef CONFIG_HETERO_ENABLE
     //f(current->pid == hetero_pid && hetero_pid){
-    if (current->hetero_task == HETERO_PROC){
+    if (current->mm->hetero_task == HETERO_PROC){
 	return 1;
     }
+#endif
     return 0; 	
 }
 
@@ -146,9 +150,12 @@ EXPORT_SYMBOL(is_hetero_exit);
 
 inline int is_hetero_obj(void *obj) 
 {
-	if(obj && current->hetero_obj && current->hetero_obj == obj){
+	return 0;
+#ifdef CONFIG_HETERO_ENABLE
+	if(obj && current->mm->hetero_obj && current->mm->hetero_obj == obj){
 		return 1;
 	}
+#endif
 	return 0;
 }
 EXPORT_SYMBOL(is_hetero_obj);
@@ -156,6 +163,7 @@ EXPORT_SYMBOL(is_hetero_obj);
 /* Functions to test different allocation strategies */
 int is_hetero_pgcache_set(void)
 {
+	return 0;
         if(check_hetero_proc()) 
 	        return enbl_hetero_pgcache;
         return 0;
@@ -164,6 +172,7 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void)
 {
+	return 0;
         if(check_hetero_proc()) 
                 return enbl_hetero_buffer;
     return 0;
@@ -175,20 +184,25 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 /*Sets current task with hetero obj*/
 void set_curr_hetero_obj(void *obj) 
 {
-        current->hetero_obj = obj;
+#ifdef CONFIG_HETERO_ENABLE
+        current->mm->hetero_obj = obj;
+#endif
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
 /*Sets page with hetero obj*/
 void set_hetero_obj_page(struct page *page, void *obj)                          
 {
+#ifdef CONFIG_HETERO_ENABLE
         page->hetero_obj = obj;
+#endif
 }
 EXPORT_SYMBOL(set_hetero_obj_page);
 
 
-void set_fsmap_hetero_obj(void *mapobj) 
+void set_fsmap_hetero_obj(void *mapobj)                                        
 {
+#ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	mapping = (struct address_space *)mapobj;
         mapping->hetero_obj = NULL;
@@ -196,13 +210,14 @@ void set_fsmap_hetero_obj(void *mapobj)
         if(is_hetero_buffer_set()){
 		struct dentry *res;
                 mapping->hetero_obj = (void *)mapping->host;
-                current->hetero_obj = (void *)mapping->host;
+                current->mm->hetero_obj = (void *)mapping->host;
 		if(mapping->host) {
 			res = d_find_any_alias(mapping->host);
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
 			 __func__,__LINE__,current->comm, mapping->host->i_ino,                          res->d_iname);
 		}
         }
+#endif
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
@@ -380,7 +395,9 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	   hetero_dbgmask = 1;	
 #endif
 	    hetero_pid = flag;
-	    current->hetero_task = HETERO_PROC;
+#ifdef CONFIG_HETERO_ENABLE
+	    current->mm->hetero_task = HETERO_PROC;
+#endif
             memcpy(procname, current->comm, TASK_COMM_LEN);
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;

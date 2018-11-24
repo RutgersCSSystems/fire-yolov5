@@ -2915,7 +2915,7 @@ void dgb_target_hetero_obj(void *hetero_obj){
         else
                 goto error;
 
-        hetero_inode = (struct inode *)current->hetero_obj;
+        hetero_inode = (struct inode *)current->mm->hetero_obj;
         if(hetero_inode) {
                 hetero_dentry = d_find_any_alias(hetero_inode);
                 if(hetero_dentry && curr_dentry)
@@ -3274,6 +3274,7 @@ EXPORT_SYMBOL(kmem_cache_alloc);
 
 #ifdef CONFIG_TRACING
 
+#ifdef CONFIG_HETERO_ENABLE
 void *kmem_cache_alloc_trace_hetero(struct kmem_cache *s, gfp_t gfpflags, size_t size)
 {
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
@@ -3283,6 +3284,17 @@ void *kmem_cache_alloc_trace_hetero(struct kmem_cache *s, gfp_t gfpflags, size_t
 }
 EXPORT_SYMBOL(kmem_cache_alloc_trace_hetero);
 
+void *kmem_cache_alloc_node_hetero(struct kmem_cache *s, gfp_t gfpflags, int node)
+{
+        void *ret = slab_alloc_node_hetero(s, gfpflags, node, _RET_IP_);
+
+        trace_kmem_cache_alloc_node(_RET_IP_, ret,
+                                    s->object_size, s->size, gfpflags, node);
+
+        return ret;
+}
+EXPORT_SYMBOL(kmem_cache_alloc_node_hetero);
+#endif
 
 void *kmem_cache_alloc_trace(struct kmem_cache *s, gfp_t gfpflags, size_t size)
 {
@@ -3301,16 +3313,6 @@ EXPORT_SYMBOL(kmem_cache_alloc_trace);
 
 #ifdef CONFIG_NUMA
 
-void *kmem_cache_alloc_node_hetero(struct kmem_cache *s, gfp_t gfpflags, int node)
-{
-        void *ret = slab_alloc_node_hetero(s, gfpflags, node, _RET_IP_);
-
-        trace_kmem_cache_alloc_node(_RET_IP_, ret,
-                                    s->object_size, s->size, gfpflags, node);
-
-        return ret;
-}
-EXPORT_SYMBOL(kmem_cache_alloc_node_hetero);
 
 
 void *kmem_cache_alloc_node(struct kmem_cache *s, gfp_t gfpflags, int node)
@@ -4405,6 +4407,7 @@ static void *kmalloc_large_node(size_t size, gfp_t flags, int node)
 	return ptr;
 }
 
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_node_hetero(size_t size, gfp_t flags, int node)
 {
 	struct kmem_cache *s;
@@ -4434,6 +4437,7 @@ void *__kmalloc_node_hetero(size_t size, gfp_t flags, int node)
 	return ret;
 }
 EXPORT_SYMBOL(__kmalloc_node_hetero);
+#endif
 
 
 void *__kmalloc_node(size_t size, gfp_t flags, int node)
@@ -4968,6 +4972,7 @@ void *__kmalloc_track_caller(size_t size, gfp_t gfpflags, unsigned long caller)
 	return ret;
 }
 
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_track_caller_hetero(size_t size, gfp_t gfpflags, unsigned long caller)
 {
 	struct kmem_cache *s;
@@ -4986,6 +4991,7 @@ void *__kmalloc_track_caller_hetero(size_t size, gfp_t gfpflags, unsigned long c
 	trace_kmalloc(caller, ret, size, s->size, gfpflags);
 	return ret;
 }
+#endif
 
 
 #ifdef CONFIG_NUMA
@@ -5018,6 +5024,7 @@ void *__kmalloc_node_track_caller(size_t size, gfp_t gfpflags,
 	return ret;
 }
 
+#ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_node_track_caller_hetero(size_t size, gfp_t gfpflags,
 					int node, unsigned long caller)
 {
@@ -5033,19 +5040,16 @@ void *__kmalloc_node_track_caller_hetero(size_t size, gfp_t gfpflags,
 
 		return ret;
 	}
-
 	s = kmalloc_slab(size, gfpflags);
-
 	if (unlikely(ZERO_OR_NULL_PTR(s)))
 		return s;
-
 	ret = slab_alloc_node_hetero(s, gfpflags, node, caller);
-
 	/* Honor the call site pointer we received. */
 	trace_kmalloc_node(caller, ret, size, s->size, gfpflags, node);
 
 	return ret;
 }
+#endif //CONFIG_HETERO_ENABLE
 
 #endif
 

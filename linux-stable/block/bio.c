@@ -570,6 +570,9 @@ err_free:
 }
 EXPORT_SYMBOL(bio_alloc_bioset);
 
+
+
+#ifdef CONFIG_HETERO_ENABLE
 /**
  * bio_alloc_bioset_hetero - allocate a bio for I/O
  * @gfp_mask:   the GFP_* mask given to the slab allocator
@@ -671,12 +674,13 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
 		     !bio_list_empty(&current->bio_list[1])) &&
 		    bs->rescue_workqueue)
 			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
-
+#ifdef CONFIG_HETERO_ENABLE
                 p = NULL;
                 if(is_hetero_buffer_set() && is_hetero_obj(hetero_obj)) {
                         p = mempool_alloc_hetero(bs->bio_pool, gfp_mask, 
 						 hetero_obj);
                 }
+#endif
                 if(!p)
 			p = mempool_alloc(bs->bio_pool, gfp_mask);
 
@@ -742,7 +746,7 @@ err_free:
 	return NULL;
 }
 EXPORT_SYMBOL(bio_alloc_bioset_hetero);
-
+#endif
 
 
 void zero_fill_bio(struct bio *bio)
