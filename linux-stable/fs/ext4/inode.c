@@ -3335,7 +3335,6 @@ static int ext4_readpage(struct file *file, struct page *page)
 
 	if (ret == -EAGAIN)
 		return ext4_mpage_readpages(page->mapping, NULL, page, 1);
-
 	return ret;
 }
 
