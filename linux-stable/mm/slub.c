@@ -2467,6 +2467,10 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		return freelist;
 
 	page = new_slab(s, flags, node);
+
+        if(NUMA_FAST_NODE == page_to_nid(page)) {
+                printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
+        }
 	if (page) {
 		c = raw_cpu_ptr(s->cpu_slab);
 		if (c->page)
@@ -2490,7 +2494,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 	        if(is_hetero_buffer_set()) {
 			//dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
-			update_hetero_pgbuff_stat(node, page);
+			update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
 		}
 #endif
 	} else
@@ -2928,7 +2932,9 @@ void dgb_target_hetero_obj(void *hetero_obj){
 error:
         return;
 }
+#endif
 
+#ifdef CONFIG_HETERO_ENABLE
 static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                         int node, struct kmem_cache_cpu **pc)
 {
@@ -2936,12 +2942,14 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
         struct kmem_cache_cpu *c = *pc;
         struct page *page;
 
+#ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
 	if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
 		node = NUMA_FAST_NODE;
 	}else {
 		node = NUMA_HETERO_NODE;
 	}
+#endif
 
         freelist = get_partial(s, flags, node, c);
 
@@ -2949,6 +2957,10 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 return freelist;
 
         page = new_slab_hetero(s, flags, node);
+
+	if(NUMA_FAST_NODE == page_to_nid(page)) {
+		printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
+	}
         if (page) {
                 c = raw_cpu_ptr(s->cpu_slab);
                 if (c->page)
@@ -2975,7 +2987,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		/* Hit or miss to desired node */
                 if(is_hetero_buffer_set()) {
 			/* FIXME: Duplicate page to node check */
-		        update_hetero_pgbuff_stat(node, page);
+		        update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
 			//dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
 		}

@@ -751,7 +751,7 @@ struct bio_set {
 	struct work_struct	rescue_work;
 	struct workqueue_struct	*rescue_workqueue;
 #ifdef CONFIG_HETERO_ENABLE
-	void	*hetero_obj;
+	void			*hetero_obj;
 #endif
 };
 

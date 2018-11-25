@@ -159,11 +159,11 @@ config HETERO_DEBUG
         def_bool n
 
 config HETERO_MIGRATE
-        def_bool y
+        def_bool n
         depends on HETERO_ENABLE
 
 config HETERO_OBJAFF
-        def_bool y
+        def_bool n
         depends on HETERO_ENABLE
 
 

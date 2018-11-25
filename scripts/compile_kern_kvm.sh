@@ -17,8 +17,8 @@ sudo make modules &>> $KERN_SRC/compile.out
 grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 sudo make modules_install &>> $KERN_SRC/compile.out
 grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
-sudo make install &>> $KERN_SRC/compile.out
-grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
+#sudo make install &>> $KERN_SRC/compile.out
+#grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 
  y="4.17.0"
    if [[ x$ == x ]];
