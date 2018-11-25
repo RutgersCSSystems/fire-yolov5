@@ -50,20 +50,33 @@ sudo docker pull cloudsuite/graph-analytics
 sudo docker pull cloudsuite/twitter-dataset-graph
 }
 
+INSTALL_CMAKE() {
+	cd $SHARED_LIBS
+	#!/bin/bash
+	git clone https://github.com/Kitware/CMake.git
+	cd CMake
+	./configure
+	make -j16
+	sudo make install
+}
+
+INSTALL_ROCKSDB() {
+	cd $APPBENCH/apps
+	git clone https://github.com/facebook/rocksdb
+	#cp $APPBENCH/apps/db_bench_tool.cc $APPBENCH/apps/rocksdb/tools/
+	cd rocksdb
+	mkdir build 
+	cd build
+	cmake ..
+	make -j16
+	cp $APPBENCH/apps/run_rocksdb.sh $APPBENCH/apps/rocksdb/build/run.sh
+}
+
 INSTALL_GFLAGS(){
 cd $SHARED_LIBS
 git clone https://github.com/gflags/gflags.git
 cd gflags
 export CXXFLAGS="-fPIC" && cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
-cd $APPBENCH/apps
-git clone https://github.com/facebook/rocksdb
-#cp $APPBENCH/apps/db_bench_tool.cc $APPBENCH/apps/rocksdb/tools/
-cp $APPBENCH/apps/run_rocksdb.sh $APPBENCH/apps/rocksdb/build/run.sh
-cd rocksdb
-mkdir build 
-cd build
-cmake ..
-make -j16
 }
 
 
@@ -81,8 +94,11 @@ git clone https://github.com/memcached/memcached.git
 
 
 INSTALL_SYSTEM_LIBS
-INSTALL_GFLAGS
 GETAPPS
+INSTALL_CMAKE
+INSTALL_GFLAGS
+INSTALL_ROCKSDB
+exit
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh
 $APPBENCH/setup.sh
