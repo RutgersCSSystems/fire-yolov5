@@ -2771,6 +2771,10 @@ void filemap_map_pages(struct vm_fault *vmf,
 	unsigned long max_idx;
 	struct page *head, *page;
 
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(mapping);
+#endif
 	rcu_read_lock();
 	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start_pgoff) {
 		if (iter.index > end_pgoff)

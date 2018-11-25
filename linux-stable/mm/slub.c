@@ -2523,7 +2523,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* slow memory 
 		*/
 	        if(is_hetero_buffer_set()) {
-			dgb_target_hetero_obj(s->hetero_obj);
+			//dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
 			update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
 		}
@@ -2982,8 +2982,8 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 if(is_hetero_buffer_set()) {
 			/* FIXME: Duplicate page to node check */
 		        update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
-			if(NUMA_FAST_NODE != page_to_nid(page))
-				dgb_target_hetero_obj(s->hetero_obj);
+			//if(NUMA_FAST_NODE != page_to_nid(page))
+			//	dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
 		}
 #endif
