@@ -197,23 +197,22 @@ EXPORT_SYMBOL(set_hetero_obj_page);
 
 void set_fsmap_hetero_obj(void *mapobj)                                        
 {
-#ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	mapping = (struct address_space *)mapobj;
         mapping->hetero_obj = NULL;
 
-#ifdef CONFIG_HETERO_DEBUG
         if(is_hetero_buffer_set()){
 		struct dentry *res;
                 mapping->hetero_obj = (void *)mapping->host;
                 current->mm->hetero_obj = (void *)mapping->host;
+#ifdef CONFIG_HETERO_DEBUG
 		if(mapping->host) {
 			res = d_find_any_alias(mapping->host);
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
 			 __func__,__LINE__,current->comm, mapping->host->i_ino,                                                 res->d_iname);
 		}
-        }
 #endif
+        }
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 

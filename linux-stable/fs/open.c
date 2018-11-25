@@ -818,6 +818,12 @@ static int do_dentry_open(struct file *f,
 
 	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
 
+        /*Mark the mapping to Hetero target object*/
+#ifdef CONFIG_HETERO_ENABLE
+	//if(inode)
+	  //      set_fsmap_hetero_obj(inode->i_mapping);
+#endif
+
 	return 0;
 
 cleanup_all:

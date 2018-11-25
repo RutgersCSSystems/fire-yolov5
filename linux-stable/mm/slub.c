@@ -2448,6 +2448,41 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
 #endif
 }
 
+#ifdef CONFIG_HETERO_ENABLE
+void dgb_target_hetero_obj(void *hetero_obj){
+
+        struct inode *curr_inode = NULL, *hetero_inode = NULL;
+        struct dentry *curr_dentry = NULL, *hetero_dentry = NULL;
+        struct address_space *hetero_map = NULL;
+
+        curr_inode = (struct inode *)hetero_obj;
+
+        if(curr_inode) {
+                curr_dentry = d_find_any_alias(curr_inode);
+                printk("%s:%d Proc name %s is_hetero_obj %d "
+                       "inode %lu", __func__,__LINE__, current->comm,
+                       is_hetero_obj(hetero_obj),
+                       curr_inode->i_ino);
+        }
+        else
+                goto error;
+
+        hetero_inode = (struct inode *)current->mm->hetero_obj;
+        if(hetero_inode) {
+                hetero_dentry = d_find_any_alias(hetero_inode);
+                if(hetero_dentry && curr_dentry)
+                        printk("fname %s hetero fname %s \n",
+                               curr_dentry->d_iname, hetero_dentry->d_iname);
+        }else {
+                printk("fname %s hetero_inode NULL \n",
+                                curr_dentry->d_iname);
+        }
+error:
+        return;
+}
+#endif
+
+
 static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 			int node, struct kmem_cache_cpu **pc)
 {
@@ -2467,10 +2502,6 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		return freelist;
 
 	page = new_slab(s, flags, node);
-
-        if(NUMA_FAST_NODE == page_to_nid(page)) {
-                printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
-        }
 	if (page) {
 		c = raw_cpu_ptr(s->cpu_slab);
 		if (c->page)
@@ -2492,7 +2523,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* slow memory 
 		*/
 	        if(is_hetero_buffer_set()) {
-			//dgb_target_hetero_obj(s->hetero_obj);
+			dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
 			update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
 		}
@@ -2900,39 +2931,6 @@ static struct page *new_slab_hetero(struct kmem_cache *s, gfp_t flags, int node)
 }
 
 
-#ifdef CONFIG_HETERO_ENABLE
-void dgb_target_hetero_obj(void *hetero_obj){
-
-        struct inode *curr_inode = NULL, *hetero_inode = NULL;
-        struct dentry *curr_dentry = NULL, *hetero_dentry = NULL;
-        struct address_space *hetero_map = NULL;
-
-        curr_inode = (struct inode *)hetero_obj;
-
-        if(curr_inode) {
-                curr_dentry = d_find_any_alias(curr_inode);
-                printk("%s:%d Proc name %s is_hetero_obj %d "
-                       "inode %lu", __func__,__LINE__, current->comm,
-                       is_hetero_obj(hetero_obj),
-                       curr_inode->i_ino);
-        }
-        else
-                goto error;
-
-        hetero_inode = (struct inode *)current->mm->hetero_obj;
-        if(hetero_inode) {
-                hetero_dentry = d_find_any_alias(hetero_inode);
-                if(hetero_dentry && curr_dentry)
-                        printk("fname %s hetero fname %s \n",
-                               curr_dentry->d_iname, hetero_dentry->d_iname);
-        }else {
-                printk("fname %s hetero_inode NULL \n",
-                                curr_dentry->d_iname);
-        }
-error:
-        return;
-}
-#endif
 
 #ifdef CONFIG_HETERO_ENABLE
 static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
@@ -2957,10 +2955,6 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 return freelist;
 
         page = new_slab_hetero(s, flags, node);
-
-	if(NUMA_FAST_NODE == page_to_nid(page)) {
-		printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
-	}
         if (page) {
                 c = raw_cpu_ptr(s->cpu_slab);
                 if (c->page)
@@ -2988,7 +2982,8 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 if(is_hetero_buffer_set()) {
 			/* FIXME: Duplicate page to node check */
 		        update_hetero_pgbuff_stat(NUMA_FAST_NODE, page);
-			//dgb_target_hetero_obj(s->hetero_obj);
+			if(NUMA_FAST_NODE != page_to_nid(page))
+				dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
 		}
 #endif
