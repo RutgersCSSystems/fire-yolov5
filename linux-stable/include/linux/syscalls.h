@@ -1103,7 +1103,7 @@ asmlinkage long sys_old_mmap(struct mmap_arg_struct __user *arg);
 asmlinkage long sys_ni_syscall(void);
 
 /* adding new trace system call for rbtree */
-asmlinkage long sys_start_trace(int flag);
+asmlinkage long sys_start_trace(int flag, int val);
 
 #endif /* CONFIG_ARCH_HAS_SYSCALL_WRAPPER */
 

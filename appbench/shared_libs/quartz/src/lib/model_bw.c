@@ -23,7 +23,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #include "topology.h"
 #include "monotonic_timer.h"
 #include "model.h"
-
 /**
  * \file
  * 
@@ -47,6 +46,7 @@ bw_model_t write_bw_model;
 
 #define THROTTLE_INCREMENT 15
 #define THROTTLE_INITIAL_VALUE 0x800f
+#define EXIT_WHEN_TRAINING
 
 static int train_model(physical_node_t* phys_node, char model_type, bw_model_t* bw_model)
 {
@@ -96,6 +96,80 @@ static int train_model(physical_node_t* phys_node, char model_type, bw_model_t* 
             if (abs(m) < stop_slope) {
                 break;
             }
+        }
+    }
+    bw_model->npoints = i;
+    return E_SUCCESS;
+}
+
+
+static int train_model_exit(physical_node_t* phys_node, char model_type, bw_model_t* bw_model, 
+			double stop_rate)
+{
+    double x[MAX_THROTTLE_VALUE];
+    double best_rate;
+    double m;
+    int    i;
+    uint16_t    throttle_reg_val;
+
+    int min_number_throttle_points = 10;
+    double stop_slope = 0.1;
+    int phys_node_id = phys_node->node_id;
+    pci_regs_t *regs = phys_node->mc_pci_regs;
+
+    // reset throttling
+    phys_node->cpu_model->get_throttle_register(regs, THROTTLE_DDR_ACT, &throttle_reg_val);
+    if (throttle_reg_val < 0x8fff)
+        phys_node->cpu_model->set_throttle_register(regs, THROTTLE_DDR_ACT, 0x8FFF);
+
+    DBG_LOG(INFO, "throttle bus id %d, on physical node: %d\n", regs->addr[0].bus_id, phys_node_id);
+
+    i = 0;
+
+    if(stop_rate >= 10000) {
+	phys_node->cpu_model->set_throttle_register(regs, THROTTLE_DDR_ACT, 0x8FFF);
+	return E_SUCCESS;
+    }
+
+    // we run until our bandwidth curve flattens out which we find out using 
+    // gradient (slope) analysis 
+    for ( ; i < MAX_THROTTLE_VALUE; i++) {
+        phys_node->cpu_model->get_throttle_register(regs, THROTTLE_DDR_ACT, &throttle_reg_val);
+        if (throttle_reg_val >= 0x8fff) throttle_reg_val = THROTTLE_INITIAL_VALUE;
+        else throttle_reg_val += THROTTLE_INCREMENT;
+        if (model_type == 'r') {
+            phys_node->cpu_model->set_throttle_register(regs, THROTTLE_DDR_ACT, throttle_reg_val);
+            best_rate = measure_read_bw(phys_node_id, phys_node_id);
+
+	    fprintf(stderr, "physical node: %d stop_rate %lf best_rate %lf\n", 
+			phys_node_id, stop_rate, best_rate);
+
+	    if (abs(stop_rate - best_rate) < 200) {
+	        DBG_LOG(INFO, "Exiting training after reaching target "
+		       "throttle reg: 0x%x, %c bandwidth: %f\n", throttle_reg_val, model_type, best_rate);
+		return E_SUCCESS;
+	    }
+
+            // restore throttling register
+            //phys_node->cpu_model->set_throttle_register(regs, THROTTLE_DDR_ACT, 0x8fff);
+        } /*else if (model_type == 'w') {
+            phys_node->cpu_model->set_throttle_register(bus_id, THROTTLE_DDR_ACT, throttle_reg_val);
+            best_rate = measure_write_bw(phys_node_id, phys_node_id);
+            // restore throttling register
+            phys_node->cpu_model->set_throttle_register(bus_id, THROTTLE_DDR_ACT, 0x8fff);
+        }*/
+        DBG_LOG(INFO, "throttle reg: 0x%x, %c bandwidth: %f\n", throttle_reg_val, model_type, best_rate);
+        bw_model->throttle_reg_val[i] = throttle_reg_val;
+        bw_model->bandwidth[i] = best_rate;
+        x[i] = (double) throttle_reg_val; // slope calculation requires values of type double
+        if (i > min_number_throttle_points) {
+            m = slope(&x[i-min_number_throttle_points], 
+                      &bw_model->bandwidth[i-min_number_throttle_points], 
+                      min_number_throttle_points);
+            if (abs(m) < stop_slope) {
+                break;
+            }
+
         }
     }
     bw_model->npoints = i;
@@ -241,6 +315,11 @@ int set_read_bw(config_t* cfg, physical_node_t* node)
 {
     int target_bw;
     __cconfig_lookup_int(cfg, "bandwidth.read", &target_bw);
+
+#ifdef EXIT_WHEN_TRAINING
+	train_model_exit(node, 'r', &read_bw_model, target_bw);
+	exit(0);
+#endif
 
     return __set_read_bw(node, target_bw);
 }

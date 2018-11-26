@@ -5034,7 +5034,7 @@ do_more:
 		 * We use __GFP_NOFAIL because ext4_free_blocks() is not allowed
 		 * to fail.
 		 */
-#ifdef CONFIG_HETERO_ENABLE 
+#if 0 //def CONFIG_HETERO_ENABLE 
 		if (is_hetero_obj((void *)inode)){
 			update_hetero_obj(ext4_free_data_cachep, (void *)inode);
 		}

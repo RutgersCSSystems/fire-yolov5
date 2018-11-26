@@ -80,6 +80,7 @@
 #define HETERO_JOURNAL 13
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
+#define HETERO_SET_FASTMEM_NODE 16
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -95,6 +96,7 @@ int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
+int hetero_fastmem_node=0;
 
 int hetero_pid = 0;
 int hetero_usrpg_cnt = 0;
@@ -284,9 +286,12 @@ int is_hetero_kernel_set(void){
 }
 EXPORT_SYMBOL(is_hetero_kernel_set);
 
+int get_fastmem_node(void) {
+        return hetero_fastmem_node;
+}
 
 /* start trace system call */
-SYSCALL_DEFINE1(start_trace, int, flag)
+SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 {
 
     switch(flag) {
@@ -385,6 +390,12 @@ SYSCALL_DEFINE1(start_trace, int, flag)
 	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
 	    enbl_hetero_kernel = 1;
 	    break;
+
+	case HETERO_SET_FASTMEM_NODE:
+	    printk("flag to set FASTMEM node to %d \n", val);
+	    hetero_fastmem_node = val;
+	    break;
+
 	default:
 #ifdef CONFIG_HETERO_DEBUG
 	   hetero_dbgmask = 1;	

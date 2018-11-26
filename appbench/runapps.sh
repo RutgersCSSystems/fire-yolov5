@@ -41,6 +41,14 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/apps/memcached_client
+	APP=memcached
+	echo "running $APP..."
+	RUNAPP
+	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+	/bin/ls
+	export LD_PRELOAD=""
+
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
 	echo "running $APP..."
@@ -68,13 +76,6 @@ if [ -z "$4" ]
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
 
-	APPBASE=$APPBENCH/apps/memcached_client
-	APP=memcached
-	echo "running $APP..."
-	RUNAPP
-	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-	/bin/ls
-	export LD_PRELOAD=""
 
 	#APPBASE=$APPBENCH/memcached/memtier_benchmark
 	#APP=memcached

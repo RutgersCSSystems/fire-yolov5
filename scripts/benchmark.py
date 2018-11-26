@@ -206,7 +206,7 @@ class ParamTest:
 
 
     def run_max_bw_test(self, params, bench): 
-	count = 10000
+	count = 30000
 	bench = "maxbw"
         output = OUTDIR + "/" + bench + "_membw_" + str(count)
         os.environ['OUTPUTDIR'] = output
@@ -230,8 +230,7 @@ def main():
 
     if is_membw_test:
         p.setvals(membw_test)
-
-        p.run_max_bw_test(membw_test, "")
+        #p.run_max_bw_test(membw_test, "")
 
         for i in range(0, len(benchmarks)):
             p.compile_sharedlib(str(benchmarks[i]))

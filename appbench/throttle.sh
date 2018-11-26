@@ -109,6 +109,9 @@ PERFORM_THROTTLE_QUARTZ() {
      # First time to generate the bandwidth model and PCI model of your machine
      $APPPREFIX date
 
+     # We train and exit to a specific value
+     #rm -rf /tmp/bandwidth_model
+
      if [ -f $APPBENCH/bandwidth_model ]; then
          cp $APPBENCH/bandwidth_model /tmp/
      else
