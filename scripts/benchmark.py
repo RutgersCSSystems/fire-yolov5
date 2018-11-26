@@ -13,14 +13,13 @@ OUTDIR=os.environ['OUTPUTDIR']
 SHAREDLIB=os.environ['SHARED_LIBS']
 tree = ET.parse(INFILE)
 root = tree.getroot()
+os.system(APPBENCH + "/install_quartz.sh")
 
 ############# Check the tests that are enabled #############
 benchmarks = []
 for child in root.findall('benchmarks'):
     for subchild in child:
         benchmarks.append(subchild.text)
-
-
 
 def setup():
     os.system("scripts/set_appbench.sh")
@@ -232,7 +231,7 @@ def main():
     if is_membw_test:
         p.setvals(membw_test)
 
-        #p.run_max_bw_test(membw_test, "")
+        p.run_max_bw_test(membw_test, "")
 
         for i in range(0, len(benchmarks)):
             p.compile_sharedlib(str(benchmarks[i]))

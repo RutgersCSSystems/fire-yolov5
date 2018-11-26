@@ -10,7 +10,7 @@ APPBASE=$APPBENCH/apps/memcached
 APP=$APPBASE/memcached
 CLIENTBASE=$APPBENCH/apps/memcached_client
 INPUT=$CLIENTBASE/$DATA
-DATASET=$SHARED_DATA/twitter_dataset_40x
+DATASET=$SHARED_DATA/twitter_dataset_200x
 
 FLUSH_DISK()
 {
@@ -42,14 +42,14 @@ RUN(){
 cd $CLIENTBASE
 $CLIENTBASE/killer.sh &
 #export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$APPPREFIX $CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32 -d
+$APPPREFIX $CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32
 export LD_PRELOAD=""
 }
 
 
 FLUSH_DISK
 RUNMEMCACHED
-#RUN_WARMUP
+RUN_WARMUP
 sleep 5
 RUN
 FINISH

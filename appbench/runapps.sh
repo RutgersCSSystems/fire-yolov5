@@ -51,13 +51,6 @@ if [ -z "$4" ]
 	echo "running $APP ..."
 	RUNAPP
 
-	RUNSCRIPT="runfcreate.sh"
-        APP=fcreate
-        echo "running $APP ..."
-        RUNAPP
-        RUNSCRIPT=run.sh
-
-
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
 	echo "running $APP..."
@@ -89,6 +82,15 @@ if [ -z "$4" ]
 	#RUNAPP
 
 	exit
+
+	RUNSCRIPT="runfcreate.sh"
+        APP=fcreate
+        echo "running $APP ..."
+        RUNAPP
+        RUNSCRIPT=run.sh
+
+
+
 
 	APPBASE=$APPBENCH/apps/mongo-perf
 	APP=mongodb
