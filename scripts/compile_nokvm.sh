@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
 
-sudo umount $MOUNT_DIR
-
+#make menuconfig
+make olddefconfig
 #Compile the kernel
 cd $KERN_SRC
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode

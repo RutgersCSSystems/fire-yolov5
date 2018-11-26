@@ -1,13 +1,17 @@
 #!/bin/bash
 
 HOMEDIR=$HOME
-CLOUDLAB=$HOMEDIR/cloudlab
-LEVELDBHOME=$CLOUDLAB/leveldb-nvm
-YCSBHOME=$CLOUDLAB/leveldb-nvm/mapkeeper/ycsb/YCSB
 SSD=$HOME/ssd
+CLOUDLAB=$SSD
+LEVELDBHOME=$SSD
+YCSBHOME=$SSD/leveldb-nvm/mapkeeper/ycsb/YCSB
 SSD_DEVICE="/dev/sdc"
 SSD_PARTITION="/dev/sdc1"
-USER=skannan
+
+DIRBASE="/users/$USER"
+
+sudo apt-get update
+sudo dpkg --configure -a
 
 FORMAT_SSD() {
     mkdir $SSD
@@ -164,7 +168,7 @@ INSTALL_JAVA() {
 }
 
 INSTALL_CMAKE(){
-    cd $CLOUDLAB
+    cd $SSD
     wget https://cmake.org/files/v3.7/cmake-3.7.0-rc3.tar.gz
     tar zxvf cmake-3.7.0-rc3.tar.gz
     cd cmake-3.7.0*
@@ -174,58 +178,72 @@ INSTALL_CMAKE(){
     make install
 }
 
+SETGITHUB() {
+    cd $SSD
+    sudo -u $USER ssh -T git@github.com
+    git clone git@github.com:sudarsunkannan/NVM.git
+}
+
 INSTALL_SYSTEM_LIBS(){
-sudo apt-get install -y git
-git config --global user.name "sudarsun"
-git config --global user.email "sudarsun.kannan@gmail.com"
-#git commit --amend --reset-author
-sudo apt-get install kernel-package
-sudo apt-get install -y software-properties-common
-sudo apt-get install -y python3-software-properties
-sudo apt-get install -y python-software-properties
-sudo apt-get install -y unzip
-sudo apt-get install -y python-setuptools python-dev build-essential
-sudo easy_install pip
-sudo apt-get install -y numactl
-sudo apt-get install -y libsqlite3-dev
-sudo apt-get install -y libnuma-dev
-sudo apt-get install -y libkrb5-dev
-sudo apt-get install -y libsasl2-dev
-sudo apt-get install -y cmake
-sudo apt-get install -y build-essential
-sudo apt-get install -y maven
-sudo apt-get install -y mosh
-#sudo pip install thrift_compiler
-INSTALL_JAVA
+	sudo apt-get install -y git
+	git config --global user.name "sudarsunkannan"
+	git config --global user.email "sudarsun.kannan@gmail.com"
+	#git commit --amend --reset-author
+	sudo apt-get install kernel-package
+	sudo apt-get install -y software-properties-common
+	sudo apt-get install -y python3-software-properties
+	sudo apt-get install -y python-software-properties
+	sudo apt-get install -y unzip
+	sudo apt-get install -y python-setuptools python-dev build-essential
+	sudo easy_install pip
+	sudo apt-get install -y numactl
+	sudo apt-get install -y libsqlite3-dev
+	sudo apt-get install -y libnuma-dev
+	sudo apt-get install -y libkrb5-dev
+	sudo apt-get install -y libsasl2-dev
+	sudo apt-get install -y cmake
+	sudo apt-get install -y build-essential
+	sudo apt-get install -y maven
+	sudo apt-get install -y mosh
+	#sudo pip install thrift_compiler
+	#INSTALL_JAVA
 }
 
 INSTALL_SCHEDSP() {
- cd ~/ssd
- git clone https://gitlab.com/sudarsunkannan/schedsp.git
- cd schedsp
+	 cd ~/ssd
+	 git clone https://gitlab.com/sudarsunkannan/schedsp.git
+	 cd schedsp
 }
+
+
+INSTALL_KERNEL() {
+	 cd $SSD/NVM
+	 #scripts/compile_deb.sh
+	 source scripts/setvars.sh "trusty"
+         $SSD/NVM/scripts/compile_nokvm.sh
+}
+
 
 INSTALL_HETERO() {
- cd ~/ssd
- git clone https://github.com/jwjoo0209/NVM
- cd ~/ssd/NVM
- source scripts/setvars.sh "trusty"   
- scripts/set_appbench.sh
- scripts/compile_deb.sh
+	 cd ~/ssd
+	 INSTALL_CMAKE
+	 git clone https://github.com/SudarsunKannan/NVM
+	 cd $SSD/NVM
+	 git checkout cleaned
+	 source scripts/setvars.sh "trusty"   
+	 scripts/set_appbench.sh
 }
 
-
-mkdir $CLOUDLAB
-cd $CLOUDLAB
 INSTALL_SYSTEM_LIBS
 FORMAT_SSD
-INSTALL_SCHEDSP
+#INSTALL_SCHEDSP
+SETGITHUB
 INSTALL_HETERO
+INSTALL_KERNEL
+
 
 #Install ycsb and casandara
 #INSTALL_YCSB
 #RUN_YCSB_CASSANDARA
-
-#INSTALL_CMAKE
 #INSTALL_YCSB
 
