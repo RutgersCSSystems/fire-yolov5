@@ -53,11 +53,20 @@ if [ -z "$4" ]
 	APP=Metis
 	echo "running $APP..."
 	RUNAPP
+	exit
+
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+
 
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
+
+
 
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
@@ -65,10 +74,6 @@ if [ -z "$4" ]
 	RUNAPP
 
 
-	APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi

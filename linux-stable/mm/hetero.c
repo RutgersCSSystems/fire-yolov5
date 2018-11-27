@@ -211,12 +211,14 @@ void set_fsmap_hetero_obj(void *mapobj)
 		if(mapping->host) {
 			res = d_find_any_alias(mapping->host);
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
-			 __func__,__LINE__,current->comm, mapping->host->i_ino,                                                 res->d_iname);
+			 __func__,__LINE__,current->comm, mapping->host->i_ino, 
+		         res->d_iname);
 		}
 #endif
         }
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
+
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int nodeid, struct page *page) 
