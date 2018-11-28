@@ -148,6 +148,26 @@ int is_hetero_exit(void)
 EXPORT_SYMBOL(is_hetero_exit);
 
 
+void debug_hetero_obj(void *obj) {
+
+#if 1//def CONFIG_HETERO_DEBUG
+        struct dentry *dentry, *curr_dentry = NULL;
+	struct inode *inode = (struct inode *)obj;
+	struct inode *currinode = (struct inode *)current->mm->hetero_obj;
+	if(inode && currinode) {
+		dentry = d_find_any_alias(inode);
+		curr_dentry = d_find_any_alias(currinode);
+		if(current->mm->hetero_obj != obj) {
+			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s "
+			 "current->heterobj_name %s \n",
+		 	__func__,__LINE__,current->comm, inode->i_ino, 
+			dentry->d_iname, curr_dentry->d_iname);
+		}
+	}
+#endif
+}
+EXPORT_SYMBOL(debug_hetero_obj);
+
 inline int is_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_ENABLE
@@ -226,6 +246,7 @@ void update_hetero_pgcache(int nodeid, struct page *page)
         if(page_to_nid(page) == nodeid) {
 		pgcache_hits_cnt += 1;
 	}else {
+		//dump_stack();
         	pgcache_miss_cnt += 1;
 	}
 }

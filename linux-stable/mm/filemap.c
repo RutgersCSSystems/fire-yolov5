@@ -989,7 +989,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 	}
 	allocpage = alloc_pages(gfp, 0);
 #ifdef CONFIG_HETERO_STATS
-	if(allocpage)	
+	if(allocpage && is_hetero_pgcache_set())	
 		update_hetero_pgcache(get_fastmem_node(), allocpage);
 #endif
 	return allocpage;
@@ -1071,7 +1071,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
 	}
 #ifdef CONFIG_HETERO_STATS
-	if(allocpage)
+	if(allocpage && is_hetero_pgcache_set())
 	    update_hetero_pgcache(get_fastmem_node(), allocpage);
 #endif
 	return allocpage;
@@ -2773,7 +2773,7 @@ void filemap_map_pages(struct vm_fault *vmf,
 
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
-        set_fsmap_hetero_obj(mapping);
+        //set_fsmap_hetero_obj(mapping);
 #endif
 	rcu_read_lock();
 	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start_pgoff) {

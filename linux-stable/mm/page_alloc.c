@@ -4490,7 +4490,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
         if(!page) {
-                return __alloc_pages_nodemask_hetero(gfp_mask, order, 
+                return __alloc_pages_nodemask(gfp_mask, order, 
 						     preferred_nid, nodemask);
         }
 	//hetero_info("%s:%d node:%d pref node:%d\n",
