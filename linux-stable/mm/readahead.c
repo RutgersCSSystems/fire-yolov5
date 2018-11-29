@@ -190,7 +190,10 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 			}
 		}
 		if(is_hetero_pgcache_set() && !is_hetero_obj(mapping->host)) {
-			debug_hetero_obj(mapping->host);
+			if(!execute_ok(inode)) {
+				//debug_hetero_obj(mapping->host);
+				set_fsmap_hetero_obj(mapping);
+			}
 		}
 #endif
 		page = __page_cache_alloc(gfp_mask);

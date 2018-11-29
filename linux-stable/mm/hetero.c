@@ -159,9 +159,9 @@ void debug_hetero_obj(void *obj) {
 		curr_dentry = d_find_any_alias(currinode);
 		if(current->mm->hetero_obj != obj) {
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s "
-			 "current->heterobj_name %s \n",
+			 "current->heterobj_name %s Write access? %d \n",
 		 	__func__,__LINE__,current->comm, inode->i_ino, 
-			dentry->d_iname, curr_dentry->d_iname);
+			dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
 		}
 	}
 #endif
@@ -220,16 +220,18 @@ EXPORT_SYMBOL(set_hetero_obj_page);
 void set_fsmap_hetero_obj(void *mapobj)                                        
 {
         struct address_space *mapping = NULL;
+	struct inode *inode = NULL;
 	mapping = (struct address_space *)mapobj;
         mapping->hetero_obj = NULL;
+	inode = (struct inode *)mapping->host;
 
-        if(is_hetero_buffer_set()){
+        if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
 		struct dentry *res;
-                mapping->hetero_obj = (void *)mapping->host;
-                current->mm->hetero_obj = (void *)mapping->host;
-#ifdef CONFIG_HETERO_DEBUG
+                mapping->hetero_obj = (void *)inode;
+                current->mm->hetero_obj = (void *)inode;
+#if 1 //def CONFIG_HETERO_DEBUG
 		if(mapping->host) {
-			res = d_find_any_alias(mapping->host);
+			res = d_find_any_alias(inode);
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
 			 __func__,__LINE__,current->comm, mapping->host->i_ino, 
 		         res->d_iname);

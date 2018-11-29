@@ -1044,6 +1044,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 	/*By default, allocate to HETERO_NODE */
         n = NUMA_HETERO_NODE;
 
+
 	/* Check if  HETERO allocation enabled for page cache 
 	 * enabled 
          */
