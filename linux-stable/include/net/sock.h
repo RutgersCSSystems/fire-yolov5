@@ -317,6 +317,8 @@ struct sock_common {
   *	@sk_rcu: used during RCU grace period
   */
 struct sock {
+
+
 	/*
 	 * Now struct inet_timewait_sock also uses sock_common, so please just
 	 * don't add nothing before this first member (__sk_common) --acme
