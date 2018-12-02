@@ -357,8 +357,8 @@ struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t gfp_mask,
 
 #ifdef CONFIG_HETERO_ENABLE
         skb = NULL;
-	if(is_hetero_buffer_set()){
-		node = NUMA_HETERO_NODE;
+	if(is_hetero_obj(hetero_obj)){
+	        update_hetero_obj(cache, hetero_obj);
      	        skb = kmem_cache_alloc_node_hetero(cache, gfp_mask & ~__GFP_DMA, node);
 	}
 	if(!skb)
@@ -379,7 +379,6 @@ struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t gfp_mask,
 #ifdef CONFIG_HETERO_ENABLE
         data = NULL;
 	if(is_hetero_buffer_set()){
-	        dump_stack();
 		node = NUMA_HETERO_NODE;
      	        data = kmalloc_reserve_hetero(size, gfp_mask, node, &pfmemalloc);
 	}
@@ -434,7 +433,7 @@ nodata:
 	skb = NULL;
 	goto out;
 }
-EXPORT_SYMBOL(__alloc_skb);
+EXPORT_SYMBOL(__alloc_skb_hetero);
 
 
 /**

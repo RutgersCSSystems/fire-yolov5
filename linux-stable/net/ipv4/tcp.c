@@ -283,6 +283,10 @@
 #include <asm/ioctls.h>
 #include <net/busy_poll.h>
 
+#ifdef CONFIG_HETERO_ENABLE
+#include <linux/hetero.h>
+#endif
+
 struct percpu_counter tcp_orphan_count;
 EXPORT_SYMBOL_GPL(tcp_orphan_count);
 
@@ -872,6 +876,15 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp,
 	if (unlikely(tcp_under_memory_pressure(sk)))
 		sk_mem_reclaim_partial(sk);
 
+        /* Allocate hetero buffer */
+#ifdef CONFIG_HETERO_ENABLE
+	skb = NULL;
+	if(sk && (is_hetero_obj(sk->hetero_obj))){
+		skb = alloc_skb_fclone_hetero(size + sk->sk_prot->max_header, gfp,
+			sk->hetero_obj);
+	}	
+	if(!skb)
+#endif
 	skb = alloc_skb_fclone(size + sk->sk_prot->max_header, gfp);
 	if (likely(skb)) {
 		bool mem_scheduled;

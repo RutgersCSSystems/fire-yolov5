@@ -988,17 +988,6 @@ static inline struct sk_buff *alloc_skb(unsigned int size,
 	return __alloc_skb(size, priority, 0, NUMA_NO_NODE);
 }
 
-#ifdef CONFIG_HETERO_ENABLE
-struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t priority, int flags,
-                            int node, void *hetero_obj);
-
-static inline struct sk_buff *alloc_skb_hetero(unsigned int size,
-					gfp_t priority, void *hetero_obj)
-{
-	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE);
-}
-#endif
-
 struct sk_buff *alloc_skb_with_frags(unsigned long header_len,
 				     unsigned long data_len,
 				     int max_page_order,
@@ -1040,6 +1029,27 @@ static inline struct sk_buff *alloc_skb_fclone(unsigned int size,
 {
 	return __alloc_skb(size, priority, SKB_ALLOC_FCLONE, NUMA_NO_NODE);
 }
+
+#ifdef CONFIG_HETERO_ENABLE
+struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t priority, int flags,
+                            int node, void *hetero_obj);
+
+static inline struct sk_buff *alloc_skb_hetero(unsigned int size,
+					gfp_t priority, void *hetero_obj)
+{
+	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE, 
+				hetero_obj);
+}
+
+static inline struct sk_buff *alloc_skb_fclone_hetero(unsigned int size,
+					       gfp_t priority, void *hetero_obj)
+{
+	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE, 
+				hetero_obj);
+}
+#endif
+
+
 
 struct sk_buff *skb_morph(struct sk_buff *dst, struct sk_buff *src);
 int skb_copy_ubufs(struct sk_buff *skb, gfp_t gfp_mask);

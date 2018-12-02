@@ -738,7 +738,7 @@ slow_path:
 		/* Allocate buffer */
 #ifdef CONFIG_HETERO_ENABLE
 		skb2 = NULL;
-		if(is_hetero_obj(sk && sk->hetero_obj)){
+		if(sk && is_hetero_obj(sk->hetero_obj)){
 			skb2 = alloc_skb_hetero(len + hlen + ll_rs, GFP_ATOMIC, 
 				sk->hetero_obj);
 		}
@@ -981,9 +981,21 @@ alloc_new_skb:
 			} else {
 				skb = NULL;
 				if (refcount_read(&sk->sk_wmem_alloc) + wmem_alloc_delta <=
-				    2 * sk->sk_sndbuf)
+				    2 * sk->sk_sndbuf) {
+
+      			          /* Allocate buffer */
+#ifdef CONFIG_HETERO_ENABLE
+				if(sk && is_hetero_obj(sk->hetero_obj)){
+					skb = alloc_skb_hetero(alloclen + hh_len + 15,
+						sk->sk_allocation, sk->hetero_obj);
+				}else {
+					printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
+				}
+				if(!skb)
+#endif
 					skb = alloc_skb(alloclen + hh_len + 15,
 							sk->sk_allocation);
+				}
 				if (unlikely(!skb))
 					err = -ENOBUFS;
 			}

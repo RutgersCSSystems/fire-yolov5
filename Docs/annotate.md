@@ -42,3 +42,16 @@
         }
 #endif
 ```
+
+* Setting stream_alloc_skb
+```
+#ifdef CONFIG_HETERO_ENABLE
+        skb = NULL;
+        if(sk && (is_hetero_obj(sk->hetero_obj))){
+		...
+        }
+        if(!skb)
+#endif
+```
+
+
