@@ -107,6 +107,8 @@
 #include <net/busy_poll.h>
 #include <linux/errqueue.h>
 
+#include <linux/hetero.h>
+
 #ifdef CONFIG_NET_RX_BUSY_POLL
 unsigned int sysctl_net_busy_read __read_mostly;
 unsigned int sysctl_net_busy_poll __read_mostly;
@@ -911,6 +913,12 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from)
 			     .msg_iocb = iocb};
 	ssize_t res;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
+		&& file->f_inode ) {
+        	set_sock_hetero_obj((void *)sock, (void *)file->f_inode);
+        }
+#endif
 	if (iocb->ki_pos != 0)
 		return -ESPIPE;
 

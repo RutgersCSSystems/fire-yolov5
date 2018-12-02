@@ -229,7 +229,11 @@ struct sock_common {
 		u32		skc_window_clamp;
 		u32		skc_tw_snd_nxt; /* struct tcp_timewait_sock */
 	};
+
 	/* public: */
+#ifdef CONFIG_HETERO_ENABLE
+        void *hetero_obj;
+#endif
 };
 
 /**
@@ -317,8 +321,6 @@ struct sock_common {
   *	@sk_rcu: used during RCU grace period
   */
 struct sock {
-
-
 	/*
 	 * Now struct inet_timewait_sock also uses sock_common, so please just
 	 * don't add nothing before this first member (__sk_common) --acme
@@ -389,6 +391,11 @@ struct sock {
 		struct socket_wq __rcu	*sk_wq;
 		struct socket_wq	*sk_wq_raw;
 	};
+
+#ifdef CONFIG_HETERO_ENABLE
+        void *hetero_obj;
+#endif
+
 #ifdef CONFIG_XFRM
 	struct xfrm_policy __rcu *sk_policy[2];
 #endif

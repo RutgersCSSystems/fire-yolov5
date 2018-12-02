@@ -3,6 +3,7 @@
 #define _LINUX_HETERO_H
 
 #include <linux/vmalloc.h>
+
 /* HeteroOS code */
 //#define CONFIG_HETERO_ENABLE
 //#define _HETERO_MIGRATE
@@ -58,6 +59,7 @@ void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);
 void set_hetero_obj_page(struct page *page, void *obj);
 void debug_hetero_obj(void *obj);
+void set_sock_hetero_obj(void *socket, void *inode);
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *);

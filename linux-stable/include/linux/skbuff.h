@@ -981,11 +981,23 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t priority, int flags,
 			    int node);
 struct sk_buff *__build_skb(void *data, unsigned int frag_size);
 struct sk_buff *build_skb(void *data, unsigned int frag_size);
+
 static inline struct sk_buff *alloc_skb(unsigned int size,
 					gfp_t priority)
 {
 	return __alloc_skb(size, priority, 0, NUMA_NO_NODE);
 }
+
+#ifdef CONFIG_HETERO_ENABLE
+struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t priority, int flags,
+                            int node, void *hetero_obj);
+
+static inline struct sk_buff *alloc_skb_hetero(unsigned int size,
+					gfp_t priority, void *hetero_obj)
+{
+	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE);
+}
+#endif
 
 struct sk_buff *alloc_skb_with_frags(unsigned long header_len,
 				     unsigned long data_len,

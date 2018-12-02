@@ -55,8 +55,8 @@
 #include <asm/cacheflush.h>
 #include <asm/tlb.h>
 #include <asm/mmu_context.h>
-
 #include <linux/pfn_trace.h>
+#include <net/sock.h>
 
 #include "internal.h"
 
@@ -240,6 +240,31 @@ void set_fsmap_hetero_obj(void *mapobj)
         }
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
+
+/* Mark the socket to Hetero target object */
+void set_sock_hetero_obj(void *socket_obj, void *inode)                                        
+{
+        struct sock *sock = NULL;
+	struct socket *socket = (struct socket *)socket_obj;
+	sock = (struct sock *)socket->sk;
+
+	if(!sock) {
+		printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
+		return;
+	}
+
+        if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+		sock->hetero_obj = (void *)inode;
+		current->mm->hetero_obj = (void *)inode;
+		sock->__sk_common.hetero_obj = (void *)inode;
+#ifdef CONFIG_HETERO_DEBUG
+		printk(KERN_ALERT "%s:%d Proc %s \n", __func__,__LINE__,
+			current->comm);
+#endif
+	}
+}
+EXPORT_SYMBOL(set_sock_hetero_obj);
+
 
 
 #ifdef CONFIG_HETERO_STATS

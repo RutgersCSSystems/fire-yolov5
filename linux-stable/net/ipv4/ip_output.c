@@ -736,6 +736,14 @@ slow_path:
 		}
 
 		/* Allocate buffer */
+#ifdef CONFIG_HETERO_ENABLE
+		skb2 = NULL;
+		if(is_hetero_obj(sk && sk->hetero_obj)){
+			skb2 = alloc_skb_hetero(len + hlen + ll_rs, GFP_ATOMIC, 
+				sk->hetero_obj);
+		}
+		if(!skb2)
+#endif
 		skb2 = alloc_skb(len + hlen + ll_rs, GFP_ATOMIC);
 		if (!skb2) {
 			err = -ENOMEM;
