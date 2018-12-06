@@ -36,6 +36,8 @@
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
 
+#define HETERO_FASTMEM_NODE 1
+
 static int setinit;
 
 void sig_handler(int);

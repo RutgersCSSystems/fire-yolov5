@@ -10,9 +10,14 @@ echo "./app \$maxhotpage \$BW \$outputdir \$app"
 }
 
 RUNAPP(){
-  rm $OUTPUTDIR/$APP
+  #rm $OUTPUTDIR/$APP
   cd $APPBASE
   $APPBASE/$RUNSCRIPT $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
+  echo "******************"  &>> $OUTPUTDIR/$APP
+  echo "KERNEL  DMESG"  &>> $OUTPUTDIR/$APP
+  echo "******************"  &>> $OUTPUTDIR/$APP 	
+  echo "  "  &>> $OUTPUTDIR/$APP
+  sudo dmesg -c &>> $OUTPUTDIR/$APP
 }
 
 intexit() {
@@ -41,6 +46,21 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/apps/fio
+	APP=fio
+	echo "running $APP ..."
+	RUNAPP
+	exit
+
+
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+
+
+
+
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
 	echo "running $APP..."
@@ -53,19 +73,6 @@ if [ -z "$4" ]
 	APP=Metis
 	echo "running $APP..."
 	RUNAPP
-	exit
-
-	APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
-
-
-	APPBASE=$APPBENCH/apps/fio
-	APP=fio
-	echo "running $APP ..."
-	RUNAPP
-
 
 
 	APPBASE=$APPBENCH/redis-3.0.0/src
@@ -81,6 +88,7 @@ if [ -z "$4" ]
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
 
+	exit
 
 	#APPBASE=$APPBENCH/memcached/memtier_benchmark
 	#APP=memcached

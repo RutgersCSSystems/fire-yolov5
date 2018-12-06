@@ -35,6 +35,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
+#define HETERO_FASTNODE 1
 
 static int setinit;
 
@@ -77,7 +78,7 @@ void con() {
         a = syscall(__NR_start_trace, HETERO_JOURNAL, 0);
         a = syscall(__NR_start_trace, HETERO_RADIX, 0);
         a = syscall(__NR_start_trace, HETERO_FULLKERN, 0);
-        a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
+        a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTNODE);
 	a = syscall(__NR_start_trace, (int)pid);
 
         //Register KILL

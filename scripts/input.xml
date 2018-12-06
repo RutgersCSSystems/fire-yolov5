@@ -6,9 +6,12 @@
         <membw>500</membw>  <!--Memory bandwidth default value-->
     </membw-main>
     <benchmarks> <!-- tags specify type of DBbench's benchmark -->
-	<test>cachekernbuff</test>
-	<!--test>kernbuff</test>
-        <test>pgcache</test-->
+	<!--test>kernbuff_node0</test>
+	<test>kernbuff_node1</test>
+	<test>pgcache_node0</test>
+	<test>pgcache_node1</test-->
+	<test>cachekernbuff_node0</test>
+	<test>cachekernbuff_node1</test>
     </benchmarks>
 </test>
 

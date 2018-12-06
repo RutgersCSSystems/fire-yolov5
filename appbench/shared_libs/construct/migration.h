@@ -11,8 +11,6 @@
 #include <assert.h>
 #include <time.h>
 
-#define HETERO_FASTMEM_NODE 1
-
 #ifdef __cplusplus
 extern "C" {
 #endif

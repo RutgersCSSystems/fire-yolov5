@@ -170,6 +170,11 @@ EXPORT_SYMBOL(debug_hetero_obj);
 
 inline int is_hetero_obj(void *obj) 
 {
+
+#ifndef CONFIG_HETERO_OBJAFF
+	return 1;
+#endif
+
 #ifdef CONFIG_HETERO_ENABLE
 	if(obj && current->mm->hetero_obj && current->mm->hetero_obj == obj){
 		return 1;

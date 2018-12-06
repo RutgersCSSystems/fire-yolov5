@@ -10,6 +10,7 @@ SCRIPTS=os.environ['SCRIPTS']
 INFILE=os.environ['INPUTXML']
 QUARTZ=os.environ['QUARTZ']
 OUTDIR=os.environ['OUTPUTDIR']
+OUTDIRCPY=os.environ['OUTPUTDIR']
 SHAREDLIB=os.environ['SHARED_LIBS']
 tree = ET.parse(INFILE)
 root = tree.getroot()
@@ -195,11 +196,12 @@ class ParamTest:
         for loop in range(0, int(self.num_tests)):
             self.num_str = "--num=" + str(count)
 	    #Set the output director
-            output = OUTDIR + "/" + bench + "_membw_" + str(count)
+            output = OUTDIRCPY + "/" + bench + "_membw_" + str(count)
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']
-	    throttle(count)	
+	    print "NOT RUNNING THROTTLING"
+	    #throttle(count)	
             self.runapp(APP, count)
             count = count * int(self.xincr) 
             print output;     
