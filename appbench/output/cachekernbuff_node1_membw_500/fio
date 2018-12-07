@@ -1,198 +1,84 @@
 + APPBASE=/users/skannan/ssd/NVM/appbench/apps/fio
 + APP=/users/skannan/ssd/NVM/appbench/apps/fio/fio
-+ DATA=/users/skannan/ssd/NVM/appbench/apps/fio/DATA
++ DATA=/mnt/pmemdir/DATA
 + SIZE=' --size=4G'
-+ PARAM=' --directory=/users/skannan/ssd/NVM/appbench/apps/fio/DATA  --size=4G'
++ PARAM=' --directory=/mnt/pmemdir/DATA  --size=4G'
 + OUTPUT=/users/skannan/ssd/NVM/appbench/output/cachekernbuff_node1_membw_500/fio
-+ mkdir /users/skannan/ssd/NVM/appbench/apps/fio/DATA
-mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/fio/DATA’: File exists
++ mkdir /mnt/pmemdir/DATA
+mkdir: cannot create directory ‘/mnt/pmemdir/DATA’: File exists
 + cd /users/skannan/ssd/NVM/appbench/apps/fio
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
 + sudo sh -c sync
 + sudo sh -c sync
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ RANDOM_WRITE
-+ echo 'Running Random Write'
-Running Random Write
++ SEQ_WRITE
++ cd /mnt/pmemdir
 + export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
 + LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/fio/fio /users/skannan/ssd/NVM/appbench/apps/fio/examples/fio-rand-RW.job --name=randwrite --directory=/users/skannan/ssd/NVM/appbench/apps/fio/DATA --size=4G
++ echo 'Running Sequential Write'
+Running Sequential Write
++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/fio/fio /users/skannan/ssd/NVM/appbench/apps/fio/examples/fio-seq-write.job --name=seqwrite --directory=/mnt/pmemdir/DATA --size=4G
 initiating tracing...
 initiating tracing...
-randwrite: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
-file1: (g=0): rw=randrw, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=16
-...
+seqwrite: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
+file1: (g=0): rw=write, bs=(R) 256KiB-256KiB, (W) 256KiB-256KiB, (T) 256KiB-256KiB, ioengine=libaio, iodepth=16
 fio-3.9-3-g75ee3
-Starting 5 processes
-randwrite: Laying out IO file (1 file / 4096MiB)
-file1: Laying out IO file (1 file / 10240MiB)
+Starting 2 processes
+seqwrite: Laying out IO file (1 file / 4096MiB)
+fio: ENOSPC on laying out file, stopping
 
-randwrite: (groupid=0, jobs=1): err= 0: pid=4855: Wed Dec  5 22:49:38 2018
-   read: IOPS=85.9k, BW=336MiB/s (352MB/s)(4096MiB/12200msec)
-    clat (nsec): min=1026, max=5193.7k, avg=11103.19, stdev=79042.93
-     lat (nsec): min=1058, max=5193.7k, avg=11162.02, stdev=79042.07
+fio: terminating on signal 2
+
+seqwrite: (groupid=0, jobs=1): err= 0: pid=5858: Thu Dec  6 09:58:48 2018
+   read: IOPS=323k, BW=1261MiB/s (1322MB/s)(4096MiB/3248msec)
+    clat (nsec): min=665, max=426986, avg=2810.04, stdev=16460.82
+     lat (nsec): min=698, max=427019, avg=2843.72, stdev=16460.81
     clat percentiles (nsec):
-     |  1.00th=[   1256],  5.00th=[   1288], 10.00th=[   1304],
-     | 20.00th=[   1336], 30.00th=[   1384], 40.00th=[   1560],
-     | 50.00th=[   1880], 60.00th=[   1928], 70.00th=[   1960],
-     | 80.00th=[   1992], 90.00th=[   2064], 95.00th=[   2128],
-     | 99.00th=[ 561152], 99.50th=[ 626688], 99.90th=[ 790528],
-     | 99.95th=[ 823296], 99.99th=[1531904]
-   bw (  KiB/s): min=187392, max=357376, per=100.00%, avg=343606.96, stdev=34426.53, samples=24
-   iops        : min=46848, max=89344, avg=85901.62, stdev=8606.61, samples=24
-  lat (usec)   : 2=80.38%, 4=17.01%, 10=0.86%, 20=0.17%, 50=0.02%
-  lat (usec)   : 100=0.01%, 250=0.01%, 500=0.25%, 750=1.12%, 1000=0.17%
-  lat (msec)   : 2=0.01%, 4=0.01%, 10=0.01%
-  cpu          : usr=7.34%, sys=25.85%, ctx=16350, majf=0, minf=11
+     |  1.00th=[   692],  5.00th=[   708], 10.00th=[   716], 20.00th=[   724],
+     | 30.00th=[   732], 40.00th=[   732], 50.00th=[   740], 60.00th=[   748],
+     | 70.00th=[   756], 80.00th=[   764], 90.00th=[   788], 95.00th=[   852],
+     | 99.00th=[124416], 99.50th=[134144], 99.90th=[160768], 99.95th=[173056],
+     | 99.99th=[211968]
+   bw (  MiB/s): min= 1117, max= 1302, per=99.92%, avg=1260.04, stdev=71.80, samples=6
+   iops        : min=286072, max=333312, avg=322570.00, stdev=18381.73, samples=6
+  lat (nsec)   : 750=60.33%, 1000=37.37%
+  lat (usec)   : 2=0.60%, 4=0.06%, 10=0.07%, 20=0.01%, 50=0.01%
+  lat (usec)   : 100=0.01%, 250=1.56%, 500=0.01%
+  cpu          : usr=15.28%, sys=84.45%, ctx=8, majf=0, minf=12
   IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
      complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
      issued rwts: total=1048576,0,0,0 short=0,0,0,0 dropped=0,0,0,0
      latency   : target=0, window=0, percentile=100.00%, depth=1
-file1: (groupid=0, jobs=1): err= 0: pid=4856: Wed Dec  5 22:49:38 2018
-   read: IOPS=6613, BW=25.8MiB/s (27.1MB/s)(1550MiB/60000msec)
-    slat (nsec): min=1562, max=7204.2k, avg=143320.95, stdev=259692.57
-    clat (usec): min=2, max=32624, avg=1358.51, stdev=1888.85
-     lat (usec): min=66, max=35065, avg=1502.16, stdev=2076.87
+file1: (groupid=0, jobs=1): err= 0: pid=5859: Thu Dec  6 09:58:48 2018
+  write: IOPS=2949, BW=737MiB/s (773MB/s)(9186MiB/12459msec)
+    slat (usec): min=192, max=1336, avg=337.35, stdev=58.61
+    clat (usec): min=2, max=12147, avg=5080.46, stdev=707.72
+     lat (usec): min=1235, max=12938, avg=5417.99, stdev=749.16
     clat percentiles (usec):
-     |  1.00th=[  219],  5.00th=[  375], 10.00th=[  482], 20.00th=[  611],
-     | 30.00th=[  725], 40.00th=[  816], 50.00th=[  898], 60.00th=[  996],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6063],
-     | 99.00th=[ 9765], 99.50th=[11338], 99.90th=[15139], 99.95th=[19530],
-     | 99.99th=[26870]
-   bw (  KiB/s): min= 1976, max=61816, per=14.90%, avg=26150.11, stdev=18681.93, samples=119
-   iops        : min=  494, max=15454, avg=6537.49, stdev=4670.47, samples=119
-  write: IOPS=4428, BW=17.3MiB/s (18.1MB/s)(1038MiB/60000msec)
-    slat (nsec): min=1961, max=1783.9k, avg=6382.67, stdev=4877.24
-    clat (usec): min=59, max=33388, avg=1357.97, stdev=1889.10
-     lat (usec): min=65, max=33397, avg=1364.45, stdev=1890.52
-    clat percentiles (usec):
-     |  1.00th=[  217],  5.00th=[  371], 10.00th=[  478], 20.00th=[  611],
-     | 30.00th=[  717], 40.00th=[  816], 50.00th=[  898], 60.00th=[  996],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6128],
-     | 99.00th=[ 9765], 99.50th=[11207], 99.90th=[15401], 99.95th=[19530],
-     | 99.99th=[27132]
-   bw (  KiB/s): min= 1208, max=42048, per=24.79%, avg=17501.62, stdev=12524.00, samples=119
-   iops        : min=  302, max=10512, avg=4375.39, stdev=3131.01, samples=119
-  lat (usec)   : 4=0.01%, 100=0.18%, 250=1.30%, 500=10.30%, 750=22.24%
-  lat (usec)   : 1000=26.49%
-  lat (msec)   : 2=32.21%, 4=0.50%, 10=5.87%, 20=0.86%, 50=0.05%
-  cpu          : usr=2.69%, sys=9.68%, ctx=270108, majf=0, minf=13
+     |  1.00th=[ 4686],  5.00th=[ 4686], 10.00th=[ 4752], 20.00th=[ 4752],
+     | 30.00th=[ 4752], 40.00th=[ 4752], 50.00th=[ 4817], 60.00th=[ 4817],
+     | 70.00th=[ 4883], 80.00th=[ 5538], 90.00th=[ 5735], 95.00th=[ 6063],
+     | 99.00th=[ 8848], 99.50th=[ 9241], 99.90th=[10159], 99.95th=[10814],
+     | 99.99th=[12125]
+   bw (  KiB/s): min=570762, max=805376, per=100.00%, avg=761296.42, stdev=64614.68, samples=24
+   iops        : min= 2229, max= 3146, avg=2973.79, stdev=252.47, samples=24
+  lat (usec)   : 4=0.01%
+  lat (msec)   : 2=0.01%, 4=0.11%, 10=99.77%, 20=0.11%
+  cpu          : usr=1.60%, sys=98.43%, ctx=18, majf=0, minf=13
   IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
      submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
      complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=396833,265702,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4857: Wed Dec  5 22:49:38 2018
-   read: IOPS=6578, BW=25.7MiB/s (26.9MB/s)(1542MiB/60001msec)
-    slat (nsec): min=1431, max=5770.1k, avg=144123.03, stdev=259672.20
-    clat (usec): min=3, max=33807, avg=1365.46, stdev=1884.16
-     lat (usec): min=61, max=37079, avg=1509.91, stdev=2072.60
-    clat percentiles (usec):
-     |  1.00th=[  227],  5.00th=[  388], 10.00th=[  494], 20.00th=[  627],
-     | 30.00th=[  734], 40.00th=[  824], 50.00th=[  906], 60.00th=[ 1004],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6128],
-     | 99.00th=[ 9896], 99.50th=[11338], 99.90th=[15139], 99.95th=[18744],
-     | 99.99th=[26084]
-   bw (  KiB/s): min= 2099, max=59520, per=14.84%, avg=26045.34, stdev=18483.77, samples=119
-   iops        : min=  524, max=14880, avg=6511.29, stdev=4620.95, samples=119
-  write: IOPS=4390, BW=17.2MiB/s (17.0MB/s)(1029MiB/60001msec)
-    slat (nsec): min=1888, max=1502.5k, avg=6412.38, stdev=4827.28
-    clat (usec): min=57, max=37062, avg=1369.17, stdev=1894.85
-     lat (usec): min=61, max=37069, avg=1375.68, stdev=1896.23
-    clat percentiles (usec):
-     |  1.00th=[  223],  5.00th=[  383], 10.00th=[  490], 20.00th=[  619],
-     | 30.00th=[  734], 40.00th=[  824], 50.00th=[  906], 60.00th=[ 1004],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6128],
-     | 99.00th=[ 9896], 99.50th=[11338], 99.90th=[15926], 99.95th=[19792],
-     | 99.99th=[25297]
-   bw (  KiB/s): min= 1572, max=39872, per=24.61%, avg=17374.14, stdev=12283.62, samples=119
-   iops        : min=  393, max= 9968, avg=4343.51, stdev=3070.91, samples=119
-  lat (usec)   : 4=0.01%, 100=0.19%, 250=1.21%, 500=9.32%, 750=21.88%
-  lat (usec)   : 1000=27.08%
-  lat (msec)   : 2=33.02%, 4=0.50%, 10=5.88%, 20=0.89%, 50=0.04%
-  cpu          : usr=2.50%, sys=10.03%, ctx=269509, majf=0, minf=13
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=394745,263464,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4858: Wed Dec  5 22:49:38 2018
-   read: IOPS=6579, BW=25.7MiB/s (26.9MB/s)(1542MiB/60001msec)
-    slat (nsec): min=1488, max=6672.3k, avg=144014.56, stdev=259916.62
-    clat (usec): min=3, max=30976, avg=1366.60, stdev=1888.93
-     lat (usec): min=69, max=33944, avg=1510.96, stdev=2077.21
-    clat percentiles (usec):
-     |  1.00th=[  223],  5.00th=[  379], 10.00th=[  486], 20.00th=[  619],
-     | 30.00th=[  725], 40.00th=[  824], 50.00th=[  906], 60.00th=[ 1004],
-     | 70.00th=[ 1106], 80.00th=[ 1254], 90.00th=[ 1516], 95.00th=[ 6128],
-     | 99.00th=[ 9896], 99.50th=[11338], 99.90th=[15401], 99.95th=[18482],
-     | 99.99th=[25822]
-   bw (  KiB/s): min= 2008, max=58936, per=14.83%, avg=26038.42, stdev=18615.56, samples=119
-   iops        : min=  502, max=14734, avg=6509.58, stdev=4653.89, samples=119
-  write: IOPS=4402, BW=17.2MiB/s (18.0MB/s)(1032MiB/60001msec)
-    slat (usec): min=2, max=2842, avg= 6.46, stdev= 6.56
-    clat (usec): min=63, max=31515, avg=1364.55, stdev=1890.09
-     lat (usec): min=68, max=31527, avg=1371.11, stdev=1891.52
-    clat percentiles (usec):
-     |  1.00th=[  219],  5.00th=[  375], 10.00th=[  482], 20.00th=[  619],
-     | 30.00th=[  725], 40.00th=[  816], 50.00th=[  898], 60.00th=[  996],
-     | 70.00th=[ 1106], 80.00th=[ 1254], 90.00th=[ 1500], 95.00th=[ 6128],
-     | 99.00th=[ 9896], 99.50th=[11469], 99.90th=[15401], 99.95th=[18744],
-     | 99.99th=[25822]
-   bw (  KiB/s): min= 1464, max=39848, per=24.68%, avg=17427.20, stdev=12462.37, samples=119
-   iops        : min=  366, max= 9962, avg=4356.76, stdev=3115.58, samples=119
-  lat (usec)   : 4=0.01%, 100=0.19%, 250=1.29%, 500=9.97%, 750=22.01%
-  lat (usec)   : 1000=26.45%
-  lat (msec)   : 2=32.78%, 4=0.49%, 10=5.89%, 20=0.89%, 50=0.04%
-  cpu          : usr=2.56%, sys=9.96%, ctx=268946, majf=0, minf=13
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=394763,264133,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4859: Wed Dec  5 22:49:38 2018
-   read: IOPS=6642, BW=25.9MiB/s (27.2MB/s)(1557MiB/60001msec)
-    slat (nsec): min=1522, max=7015.5k, avg=142822.31, stdev=258681.58
-    clat (usec): min=2, max=37944, avg=1354.17, stdev=1889.17
-     lat (usec): min=64, max=43313, avg=1497.32, stdev=2077.46
-    clat percentiles (usec):
-     |  1.00th=[  215],  5.00th=[  367], 10.00th=[  478], 20.00th=[  611],
-     | 30.00th=[  717], 40.00th=[  807], 50.00th=[  889], 60.00th=[  996],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6063],
-     | 99.00th=[ 9765], 99.50th=[11207], 99.90th=[15401], 99.95th=[19792],
-     | 99.99th=[27395]
-   bw (  KiB/s): min= 2032, max=61936, per=14.96%, avg=26263.84, stdev=18853.24, samples=119
-   iops        : min=  508, max=15484, avg=6565.95, stdev=4713.30, samples=119
-  write: IOPS=4431, BW=17.3MiB/s (18.2MB/s)(1039MiB/60001msec)
-    slat (nsec): min=1922, max=2651.2k, avg=6301.80, stdev=6796.27
-    clat (usec): min=62, max=42300, avg=1354.44, stdev=1893.87
-     lat (usec): min=66, max=42304, avg=1360.83, stdev=1895.31
-    clat percentiles (usec):
-     |  1.00th=[  215],  5.00th=[  367], 10.00th=[  478], 20.00th=[  603],
-     | 30.00th=[  717], 40.00th=[  807], 50.00th=[  889], 60.00th=[  996],
-     | 70.00th=[ 1106], 80.00th=[ 1237], 90.00th=[ 1500], 95.00th=[ 6128],
-     | 99.00th=[ 9765], 99.50th=[11207], 99.90th=[15401], 99.95th=[20055],
-     | 99.99th=[27395]
-   bw (  KiB/s): min= 1304, max=42288, per=24.81%, avg=17518.84, stdev=12568.72, samples=119
-   iops        : min=  326, max=10572, avg=4379.69, stdev=3142.17, samples=119
-  lat (usec)   : 4=0.01%, 100=0.21%, 250=1.34%, 500=10.62%, 750=22.62%
-  lat (usec)   : 1000=26.01%
-  lat (msec)   : 2=31.94%, 4=0.53%, 10=5.81%, 20=0.86%, 50=0.05%
-  cpu          : usr=2.63%, sys=9.67%, ctx=270682, majf=0, minf=15
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=398586,265899,0,0 short=0,0,0,0 dropped=0,0,0,0
+     issued rwts: total=0,36742,0,0 short=0,0,0,0 dropped=0,0,0,0
      latency   : target=0, window=0, percentile=100.00%, depth=16
 
 Run status group 0 (all jobs):
-   READ: bw=171MiB/s (180MB/s), 25.7MiB/s-336MiB/s (26.9MB/s-352MB/s), io=10.0GiB (10.8GB), run=12200-60001msec
-  WRITE: bw=68.0MiB/s (72.3MB/s), 17.2MiB/s-17.3MiB/s (17.0MB/s-18.2MB/s), io=4137MiB (4338MB), run=60000-60001msec
+   READ: bw=1261MiB/s (1322MB/s), 1261MiB/s-1261MiB/s (1322MB/s-1322MB/s), io=4096MiB (4295MB), run=3248-3248msec
+  WRITE: bw=737MiB/s (773MB/s), 737MiB/s-737MiB/s (773MB/s-773MB/s), io=9186MiB (9632MB), run=12459-12459msec
 
 Disk stats (read/write):
-  sdc: ios=1094553/585462, merge=0/12, ticks=233372/1726540, in_queue=1959980, util=99.92%
+  pmem0: ios=0/0, merge=0/0, ticks=0/0, in_queue=0, util=0.00%
 fio: file hash not empty on exit
 application termination...
 + export LD_PRELOAD=
@@ -202,196 +88,7 @@ application termination...
 + sudo sh -c sync
 + sudo sh -c sync
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ RANDOM_READ
-+ echo 'Running Random Read'
-Running Random Read
-+ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/fio/fio /users/skannan/ssd/NVM/appbench/apps/fio/examples/fio-seq-RW.job --name=randwrite --directory=/users/skannan/ssd/NVM/appbench/apps/fio/DATA --size=4G
-initiating tracing...
-initiating tracing...
-randwrite: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=psync, iodepth=1
-file1: (g=0): rw=rw, bs=(R) 256KiB-256KiB, (W) 256KiB-256KiB, (T) 256KiB-256KiB, ioengine=libaio, iodepth=16
-...
-fio-3.9-3-g75ee3
-Starting 5 processes
-file1: Laying out IO file (1 file / 10240MiB)
-
-randwrite: (groupid=0, jobs=1): err= 0: pid=4961: Wed Dec  5 22:51:24 2018
-   read: IOPS=52.1k, BW=203MiB/s (213MB/s)(4096MiB/20140msec)
-    clat (nsec): min=1034, max=14835k, avg=18809.37, stdev=153792.59
-     lat (nsec): min=1067, max=14835k, avg=18855.66, stdev=153792.20
-    clat percentiles (nsec):
-     |  1.00th=[   1240],  5.00th=[   1288], 10.00th=[   1304],
-     | 20.00th=[   1336], 30.00th=[   1352], 40.00th=[   1384],
-     | 50.00th=[   1400], 60.00th=[   1432], 70.00th=[   1496],
-     | 80.00th=[   1944], 90.00th=[   2064], 95.00th=[   2192],
-     | 99.00th=[ 897024], 99.50th=[1302528], 99.90th=[1761280],
-     | 99.95th=[1892352], 99.99th=[3588096]
-   bw (  KiB/s): min=196064, max=217088, per=27.42%, avg=208128.65, stdev=6348.29, samples=40
-   iops        : min=49016, max=54272, avg=52032.00, stdev=1587.09, samples=40
-  lat (usec)   : 2=84.73%, 4=13.25%, 10=0.37%, 20=0.08%, 50=0.01%
-  lat (usec)   : 100=0.01%, 250=0.01%, 500=0.20%, 750=0.20%, 1000=0.36%
-  lat (msec)   : 2=0.76%, 4=0.04%, 10=0.01%, 20=0.01%
-  cpu          : usr=3.64%, sys=14.45%, ctx=16343, majf=0, minf=12
-  IO depths    : 1=100.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=1048576,0,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=1
-file1: (groupid=0, jobs=1): err= 0: pid=4962: Wed Dec  5 22:51:24 2018
-   read: IOPS=673, BW=168MiB/s (177MB/s)(10.0GiB/60785msec)
-    slat (usec): min=35, max=39666, avg=971.10, stdev=2827.36
-    clat (usec): min=8, max=12156k, avg=15019.01, stdev=224263.09
-     lat (usec): min=1029, max=12158k, avg=15990.74, stdev=224546.09
-    clat percentiles (msec):
-     |  1.00th=[    4],  5.00th=[    4], 10.00th=[    5], 20.00th=[    5],
-     | 30.00th=[    6], 40.00th=[    6], 50.00th=[    7], 60.00th=[    9],
-     | 70.00th=[   11], 80.00th=[   12], 90.00th=[   14], 95.00th=[   17],
-     | 99.00th=[  125], 99.50th=[  144], 99.90th=[  184], 99.95th=[  243],
-     | 99.99th=[12147]
-   bw (  KiB/s): min=14336, max=456704, per=28.18%, avg=213882.96, stdev=154913.60, samples=98
-   iops        : min=   56, max= 1784, avg=835.43, stdev=605.13, samples=98
-  write: IOPS=449, BW=112MiB/s (118MB/s)(6837MiB/60785msec)
-    slat (usec): min=62, max=3664, avg=315.78, stdev=153.45
-    clat (usec): min=879, max=12065k, avg=10816.34, stdev=75205.65
-     lat (usec): min=958, max=12066k, avg=11132.27, stdev=75208.20
-    clat percentiles (msec):
-     |  1.00th=[    3],  5.00th=[    4], 10.00th=[    4], 20.00th=[    5],
-     | 30.00th=[    5], 40.00th=[    6], 50.00th=[    7], 60.00th=[    8],
-     | 70.00th=[   10], 80.00th=[   12], 90.00th=[   14], 95.00th=[   16],
-     | 99.00th=[  123], 99.50th=[  142], 99.90th=[  169], 99.95th=[  186],
-     | 99.99th=[  262]
-   bw (  KiB/s): min= 5120, max=318976, per=30.97%, avg=142853.54, stdev=103723.43, samples=98
-   iops        : min=   20, max= 1246, avg=557.97, stdev=405.16, samples=98
-  lat (usec)   : 10=0.01%, 1000=0.01%
-  lat (msec)   : 2=0.06%, 4=8.72%, 10=61.87%, 20=25.82%, 50=0.67%
-  lat (msec)   : 100=1.08%, 250=1.74%, 500=0.01%
-  cpu          : usr=1.10%, sys=42.55%, ctx=32329, majf=0, minf=18
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=40961,27349,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4963: Wed Dec  5 22:51:24 2018
-   read: IOPS=673, BW=168MiB/s (177MB/s)(10.0GiB/60785msec)
-    slat (usec): min=39, max=39735, avg=963.26, stdev=2829.01
-    clat (usec): min=13, max=12118k, avg=13846.19, stdev=189576.10
-     lat (usec): min=1834, max=12118k, avg=14810.08, stdev=189854.73
-    clat percentiles (msec):
-     |  1.00th=[    4],  5.00th=[    4], 10.00th=[    5], 20.00th=[    5],
-     | 30.00th=[    6], 40.00th=[    6], 50.00th=[    7], 60.00th=[    9],
-     | 70.00th=[   11], 80.00th=[   12], 90.00th=[   14], 95.00th=[   17],
-     | 99.00th=[  122], 99.50th=[  144], 99.90th=[  184], 99.95th=[  199],
-     | 99.99th=[12147]
-   bw (  KiB/s): min=15360, max=456704, per=28.18%, avg=213912.14, stdev=154955.14, samples=98
-   iops        : min=   60, max= 1784, avg=835.55, stdev=605.30, samples=98
-  write: IOPS=448, BW=112MiB/s (118MB/s)(6816MiB/60785msec)
-    slat (usec): min=63, max=6633, avg=329.76, stdev=150.77
-    clat (usec): min=1518, max=12118k, avg=12634.31, stdev=164529.70
-     lat (usec): min=1764, max=12119k, avg=12964.27, stdev=164529.54
-    clat percentiles (msec):
-     |  1.00th=[    3],  5.00th=[    4], 10.00th=[    4], 20.00th=[    5],
-     | 30.00th=[    5], 40.00th=[    6], 50.00th=[    7], 60.00th=[    8],
-     | 70.00th=[   10], 80.00th=[   12], 90.00th=[   14], 95.00th=[   16],
-     | 99.00th=[  123], 99.50th=[  142], 99.90th=[  180], 99.95th=[  197],
-     | 99.99th=[12013]
-   bw (  KiB/s): min= 8192, max=327168, per=30.86%, avg=142385.00, stdev=102847.51, samples=98
-   iops        : min=   32, max= 1278, avg=556.14, stdev=401.76, samples=98
-  lat (usec)   : 20=0.01%
-  lat (msec)   : 2=0.06%, 4=8.23%, 10=62.61%, 20=25.49%, 50=0.77%
-  lat (msec)   : 100=0.97%, 250=1.85%
-  cpu          : usr=0.82%, sys=43.25%, ctx=31911, majf=0, minf=17
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=40961,27262,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4964: Wed Dec  5 22:51:24 2018
-   read: IOPS=673, BW=168MiB/s (177MB/s)(10.0GiB/60785msec)
-    slat (usec): min=36, max=40001, avg=966.24, stdev=2829.79
-    clat (usec): min=8, max=12135k, avg=14767.00, stdev=216100.24
-     lat (usec): min=1694, max=12156k, avg=15733.88, stdev=216395.13
-    clat percentiles (msec):
-     |  1.00th=[    4],  5.00th=[    4], 10.00th=[    5], 20.00th=[    5],
-     | 30.00th=[    6], 40.00th=[    6], 50.00th=[    7], 60.00th=[    9],
-     | 70.00th=[   11], 80.00th=[   12], 90.00th=[   14], 95.00th=[   16],
-     | 99.00th=[  128], 99.50th=[  144], 99.90th=[  184], 99.95th=[  199],
-     | 99.99th=[12147]
-   bw (  KiB/s): min=13824, max=457216, per=28.18%, avg=213882.54, stdev=154930.81, samples=98
-   iops        : min=   54, max= 1786, avg=835.43, stdev=605.18, samples=98
-  write: IOPS=452, BW=113MiB/s (119MB/s)(6874MiB/60785msec)
-    slat (usec): min=74, max=2677, avg=322.48, stdev=149.64
-    clat (usec): min=1644, max=12107k, avg=11155.75, stdev=104639.76
-     lat (msec): min=2, max=12107, avg=11.48, stdev=104.64
-    clat percentiles (msec):
-     |  1.00th=[    3],  5.00th=[    4], 10.00th=[    4], 20.00th=[    5],
-     | 30.00th=[    5], 40.00th=[    6], 50.00th=[    7], 60.00th=[    8],
-     | 70.00th=[   10], 80.00th=[   12], 90.00th=[   14], 95.00th=[   16],
-     | 99.00th=[  125], 99.50th=[  144], 99.90th=[  178], 99.95th=[  188],
-     | 99.99th=[  220]
-   bw (  KiB/s): min= 7680, max=330240, per=31.13%, avg=143602.38, stdev=105357.23, samples=98
-   iops        : min=   30, max= 1290, avg=560.89, stdev=411.55, samples=98
-  lat (usec)   : 10=0.01%
-  lat (msec)   : 2=0.02%, 4=8.96%, 10=61.81%, 20=25.75%, 50=0.65%
-  lat (msec)   : 100=0.95%, 250=1.84%
-  cpu          : usr=0.79%, sys=42.76%, ctx=31966, majf=0, minf=17
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=40961,27494,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-file1: (groupid=0, jobs=1): err= 0: pid=4965: Wed Dec  5 22:51:24 2018
-   read: IOPS=673, BW=168MiB/s (177MB/s)(10.0GiB/60785msec)
-    slat (usec): min=36, max=39519, avg=975.78, stdev=2830.19
-    clat (usec): min=15, max=12094k, avg=13055.29, stdev=158892.35
-     lat (usec): min=1402, max=12107k, avg=14031.73, stdev=159215.19
-    clat percentiles (msec):
-     |  1.00th=[    4],  5.00th=[    4], 10.00th=[    5], 20.00th=[    5],
-     | 30.00th=[    6], 40.00th=[    6], 50.00th=[    7], 60.00th=[    9],
-     | 70.00th=[   11], 80.00th=[   12], 90.00th=[   14], 95.00th=[   17],
-     | 99.00th=[  131], 99.50th=[  150], 99.90th=[  186], 99.95th=[  199],
-     | 99.99th=[12013]
-   bw (  KiB/s): min=14848, max=456704, per=28.19%, avg=213936.47, stdev=154886.32, samples=98
-   iops        : min=   58, max= 1784, avg=835.65, stdev=605.04, samples=98
-  write: IOPS=451, BW=113MiB/s (118MB/s)(6858MiB/60785msec)
-    slat (usec): min=81, max=8592, avg=308.51, stdev=167.71
-    clat (usec): min=1318, max=12107k, avg=13731.14, stdev=206953.81
-     lat (usec): min=1510, max=12107k, avg=14039.81, stdev=206953.76
-    clat percentiles (msec):
-     |  1.00th=[    3],  5.00th=[    4], 10.00th=[    4], 20.00th=[    5],
-     | 30.00th=[    5], 40.00th=[    6], 50.00th=[    6], 60.00th=[    8],
-     | 70.00th=[   10], 80.00th=[   12], 90.00th=[   14], 95.00th=[   16],
-     | 99.00th=[  123], 99.50th=[  146], 99.90th=[  180], 99.95th=[  199],
-     | 99.99th=[12147]
-   bw (  KiB/s): min= 5632, max=315904, per=31.05%, avg=143261.83, stdev=105808.31, samples=98
-   iops        : min=   22, max= 1234, avg=559.57, stdev=413.33, samples=98
-  lat (usec)   : 20=0.01%
-  lat (msec)   : 2=0.08%, 4=9.17%, 10=61.22%, 20=26.10%, 50=0.62%
-  lat (msec)   : 100=1.04%, 250=1.74%, 500=0.01%
-  cpu          : usr=0.67%, sys=42.10%, ctx=32346, majf=0, minf=18
-  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=100.0%, 32=0.0%, >=64=0.0%
-     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
-     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.1%, 32=0.0%, 64=0.0%, >=64=0.0%
-     issued rwts: total=40961,27432,0,0 short=0,0,0,0 dropped=0,0,0,0
-     latency   : target=0, window=0, percentile=100.00%, depth=16
-
-Run status group 0 (all jobs):
-   READ: bw=741MiB/s (777MB/s), 168MiB/s-203MiB/s (177MB/s-213MB/s), io=44.0GiB (47.2GB), run=20140-60785msec
-  WRITE: bw=451MiB/s (472MB/s), 112MiB/s-113MiB/s (118MB/s-119MB/s), io=26.7GiB (28.7GB), run=60785-60785msec
-
-Disk stats (read/write):
-  sdc: ios=57723/27544, merge=33/11, ticks=124328/2320168, in_queue=2444452, util=88.24%
-fio: file hash not empty on exit
-application termination...
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ rm /users/skannan/ssd/NVM/appbench/apps/fio/DATA/fio-rand-RW /users/skannan/ssd/NVM/appbench/apps/fio/DATA/fio-seq-RW /users/skannan/ssd/NVM/appbench/apps/fio/DATA/randwrite.0.0
++ rm /mnt/pmemdir/DATA/seqwrite.0.0
 + rm -rf fio-seq-RW
 + rm -rf fio-rand-RW
 + set +x
@@ -399,185 +96,420 @@ application termination...
 KERNEL  DMESG
 ******************
   
-[ 2534.705120] drop_caches: sh (4809): drop_caches: 3
-[ 2535.111351] drop_caches: sh (4817): drop_caches: 3
-[ 2535.149090] flag is set to collect hetero allocate  9 
-[ 2535.149092] flag is set to enable HETERO_PGCACHE 11 
-[ 2535.149093] flag is set to enable HETERO_BUFFER 12 
-[ 2535.149094] flag is set to enable HETERO_JOURNAL 13 
-[ 2535.149094] flag is set to enable HETERO_RADIX 14 
-[ 2535.149095] flag is set to enable HETERO_FULLKERN 15 
-[ 2535.149096] flag to set FASTMEM node to 1 
-[ 2535.149097] hetero_pid set to 4818 4818 procname numactl
-[ 2535.149152] set_fsmap_hetero_obj:241 Proc numactl Inode 5909051 FNAME fio
-[ 2535.157008] set_fsmap_hetero_obj:241 Proc numactl Inode 262365 FNAME ld-2.19.so
-[ 2535.189891] flag is set to collect hetero allocate  9 
-[ 2535.189892] flag is set to enable HETERO_PGCACHE 11 
-[ 2535.189893] flag is set to enable HETERO_BUFFER 12 
-[ 2535.189894] flag is set to enable HETERO_JOURNAL 13 
-[ 2535.189895] flag is set to enable HETERO_RADIX 14 
-[ 2535.189895] flag is set to enable HETERO_FULLKERN 15 
-[ 2535.189896] flag to set FASTMEM node to 1 
-[ 2535.189897] hetero_pid set to 4818 4818 procname fio
-[ 2535.193753] set_fsmap_hetero_obj:241 Proc fio Inode 835724 FNAME locale-archive
-[ 2535.206413] set_fsmap_hetero_obj:241 Proc fio Inode 540824 FNAME locale.alias
-[ 2535.483161] set_fsmap_hetero_obj:241 Proc fio Inode 6041475 FNAME fio-rand-RW.job
-[ 2535.635300] set_fsmap_hetero_obj:241 Proc fio Inode 5909102 FNAME randwrite.0.0
-[ 2535.643480] set_fsmap_hetero_obj:241 Proc fio Inode 5909102 FNAME randwrite.0.0
-[ 2535.651645] set_fsmap_hetero_obj:241 Proc fio Inode 5909102 FNAME randwrite.0.0
-[ 2549.463658] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2549.474604] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2549.482580] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2556.084273] __ip_append_data:992 
-[ 2585.666516] set_fsmap_hetero_obj:241 Proc fio Inode 5909102 FNAME randwrite.0.0
-[ 2585.667622] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2585.668062] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2585.668153] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2585.668282] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2585.706563] set_fsmap_hetero_obj:241 Proc fio Inode 5909115 FNAME fio-rand-RW
-[ 2631.842657] __ip_append_data:992 
-[ 2645.731495] set_fsmap_hetero_obj:241 Proc fio Inode 542668 FNAME localtime
-[ 2645.739320] set_fsmap_hetero_obj:241 Proc fio Inode 262340 FNAME libm-2.19.so
-[ 2645.816554] flag is set to print hetero allocate stat 10 
-[ 2645.816558] hetero_pid 4818 Curr 4818 Currname fio HeteroProcname fio page cache hits 6514692 cache miss 2126758 buffer page hits 131133 miss 0 
-[ 2645.816558]  
-[ 2645.816560] flag set to clear count 0
-[ 2645.816562] hetero_pid 4818 Curr 4818 Currname fio HeteroProcname fio user pages 0 kern pages 0
-[ 2647.515444] drop_caches: sh (4861): drop_caches: 3
-[ 2653.071131] drop_caches: sh (4869): drop_caches: 3
-[ 2653.098320] flag is set to collect hetero allocate  9 
-[ 2653.098321] flag is set to enable HETERO_PGCACHE 11 
-[ 2653.098322] flag is set to enable HETERO_BUFFER 12 
-[ 2653.098323] flag is set to enable HETERO_JOURNAL 13 
-[ 2653.098324] flag is set to enable HETERO_RADIX 14 
-[ 2653.098324] flag is set to enable HETERO_FULLKERN 15 
-[ 2653.098325] flag to set FASTMEM node to 1 
-[ 2653.098326] hetero_pid set to 4870 4870 procname numactl
-[ 2653.098373] set_fsmap_hetero_obj:241 Proc numactl Inode 5909051 FNAME fio
-[ 2653.106231] set_fsmap_hetero_obj:241 Proc numactl Inode 262365 FNAME ld-2.19.so
-[ 2653.135153] flag is set to collect hetero allocate  9 
-[ 2653.135155] flag is set to enable HETERO_PGCACHE 11 
-[ 2653.135155] flag is set to enable HETERO_BUFFER 12 
-[ 2653.135156] flag is set to enable HETERO_JOURNAL 13 
-[ 2653.135157] flag is set to enable HETERO_RADIX 14 
-[ 2653.135158] flag is set to enable HETERO_FULLKERN 15 
-[ 2653.135158] flag to set FASTMEM node to 1 
-[ 2653.135159] hetero_pid set to 4870 4870 procname fio
-[ 2653.138775] set_fsmap_hetero_obj:241 Proc fio Inode 835724 FNAME locale-archive
-[ 2653.151450] set_fsmap_hetero_obj:241 Proc fio Inode 540824 FNAME locale.alias
-[ 2653.436047] set_fsmap_hetero_obj:241 Proc fio Inode 6041478 FNAME fio-seq-RW.job
-[ 2653.586998] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2653.594888] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2653.602763] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2659.508196] CPU: 11 PID: 4870 Comm: fio Tainted: G           OE     4.17.0 #4
-[ 2659.508205] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
-[ 2659.508207] Call Trace:
-[ 2659.508216]  <IRQ>
-[ 2659.508242]  dump_stack+0x5a/0x73
-[ 2659.508248]  __alloc_skb+0x6e/0x2d0
-[ 2659.508252]  ? task_tick_fair+0x586/0x9a0
-[ 2659.508256]  ? tcp_delack_timer_handler+0x1a0/0x1a0
-[ 2659.508258]  tcp_send_ack+0x4f/0x120
-[ 2659.508259]  tcp_delack_timer_handler+0x14a/0x1a0
-[ 2659.508261]  tcp_delack_timer+0x9f/0xb0
-[ 2659.508265]  call_timer_fn+0x2b/0x130
-[ 2659.508268]  run_timer_softirq+0x1cf/0x400
-[ 2659.508270]  ? enqueue_hrtimer+0x38/0x90
-[ 2659.508271]  ? __hrtimer_run_queues+0x119/0x240
-[ 2659.508277]  __do_softirq+0xd1/0x275
-[ 2659.508281]  irq_exit+0xbe/0xd0
-[ 2659.508284]  smp_apic_timer_interrupt+0x60/0x120
-[ 2659.508287]  apic_timer_interrupt+0xf/0x20
-[ 2659.508288]  </IRQ>
-[ 2659.508294] RIP: 0010:ext4_da_get_block_prep+0x16d/0x460
-[ 2659.508295] RSP: 0018:ffffc90009557b68 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-[ 2659.508297] RAX: ffff88107048b000 RBX: ffff881ed42bebc8 RCX: 0000000000000000
-[ 2659.508298] RDX: 00000000006635f2 RSI: 0000000000016df2 RDI: 07ffffffffffffff
-[ 2659.508299] RBP: ffff881ff9e644e8 R08: 0000000000113fff R09: 0000000000001000
-[ 2659.508299] R10: 0000000000000000 R11: ffff881ed42bebc8 R12: ffffffffffff0000
-[ 2659.508300] R13: 00000000000f75f2 R14: 0000000000001000 R15: 0000000000000000
-[ 2659.508304]  ? ext4_da_get_block_prep+0x86/0x460
-[ 2659.508307]  __block_write_begin_int+0x1d8/0x650
-[ 2659.508309]  ? other_inode_match+0x1e0/0x1e0
-[ 2659.508312]  ext4_da_write_begin+0x18a/0x3f0
-[ 2659.508314]  ? ext4_da_write_end+0x13c/0x290
-[ 2659.508318]  generic_perform_write+0xb0/0x190
-[ 2659.508321]  __generic_file_write_iter+0x175/0x1d0
-[ 2659.508323]  ext4_file_write_iter+0x13f/0x390
-[ 2659.508328]  ? set_next_entity+0x8a/0xd0
-[ 2659.508332]  __vfs_write+0xd2/0x130
-[ 2659.508335]  vfs_write+0xad/0x1a0
-[ 2659.508337]  ksys_write+0x42/0x90
-[ 2659.508342]  do_syscall_64+0x5c/0x190
-[ 2659.508344]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 2659.508346] RIP: 0033:0x7f3ec5ec435d
-[ 2659.508347] RSP: 002b:00007ffe58094890 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-[ 2659.508348] RAX: ffffffffffffffda RBX: 0000000000040000 RCX: 00007f3ec5ec435d
-[ 2659.508349] RDX: 0000000000040000 RSI: 0000000001a93170 RDI: 0000000000000003
-[ 2659.508349] RBP: 0000000001a93170 R08: 0000000000000008 R09: 9e37fffffffc0001
-[ 2659.508350] R10: 00000000f64f5598 R11: 0000000000000293 R12: 0000000188a40000
-[ 2659.508351] R13: 00007f3ea45c1df0 R14: 0000000000000000 R15: 00007f3ec48e18f0
-[ 2659.508368] CPU: 11 PID: 4870 Comm: fio Tainted: G           OE     4.17.0 #4
-[ 2659.508368] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
-[ 2659.508369] Call Trace:
-[ 2659.508369]  <IRQ>
-[ 2659.508371]  dump_stack+0x5a/0x73
-[ 2659.508373]  __alloc_skb+0x295/0x2d0
-[ 2659.508374]  ? task_tick_fair+0x586/0x9a0
-[ 2659.508375]  ? tcp_delack_timer_handler+0x1a0/0x1a0
-[ 2659.508377]  tcp_send_ack+0x4f/0x120
-[ 2659.508378]  tcp_delack_timer_handler+0x14a/0x1a0
-[ 2659.508379]  tcp_delack_timer+0x9f/0xb0
-[ 2659.508381]  call_timer_fn+0x2b/0x130
-[ 2659.508383]  run_timer_softirq+0x1cf/0x400
-[ 2659.508384]  ? enqueue_hrtimer+0x38/0x90
-[ 2659.508385]  ? __hrtimer_run_queues+0x119/0x240
-[ 2659.508387]  __do_softirq+0xd1/0x275
-[ 2659.508389]  irq_exit+0xbe/0xd0
-[ 2659.508391]  smp_apic_timer_interrupt+0x60/0x120
-[ 2659.508392]  apic_timer_interrupt+0xf/0x20
-[ 2659.508393]  </IRQ>
-[ 2659.508395] RIP: 0010:ext4_da_get_block_prep+0x16d/0x460
-[ 2659.508395] RSP: 0018:ffffc90009557b68 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
-[ 2659.508396] RAX: ffff88107048b000 RBX: ffff881ed42bebc8 RCX: 0000000000000000
-[ 2659.508397] RDX: 00000000006635f2 RSI: 0000000000016df2 RDI: 07ffffffffffffff
-[ 2659.508398] RBP: ffff881ff9e644e8 R08: 0000000000113fff R09: 0000000000001000
-[ 2659.508398] R10: 0000000000000000 R11: ffff881ed42bebc8 R12: ffffffffffff0000
-[ 2659.508399] R13: 00000000000f75f2 R14: 0000000000001000 R15: 0000000000000000
-[ 2659.508401]  ? ext4_da_get_block_prep+0x86/0x460
-[ 2659.508402]  __block_write_begin_int+0x1d8/0x650
-[ 2659.508404]  ? other_inode_match+0x1e0/0x1e0
-[ 2659.508406]  ext4_da_write_begin+0x18a/0x3f0
-[ 2659.508408]  ? ext4_da_write_end+0x13c/0x290
-[ 2659.508409]  generic_perform_write+0xb0/0x190
-[ 2659.508411]  __generic_file_write_iter+0x175/0x1d0
-[ 2659.508413]  ext4_file_write_iter+0x13f/0x390
-[ 2659.508414]  ? set_next_entity+0x8a/0xd0
-[ 2659.508416]  __vfs_write+0xd2/0x130
-[ 2659.508418]  vfs_write+0xad/0x1a0
-[ 2659.508420]  ksys_write+0x42/0x90
-[ 2659.508422]  do_syscall_64+0x5c/0x190
-[ 2659.508423]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[ 2659.508424] RIP: 0033:0x7f3ec5ec435d
-[ 2659.508425] RSP: 002b:00007ffe58094890 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-[ 2659.508426] RAX: ffffffffffffffda RBX: 0000000000040000 RCX: 00007f3ec5ec435d
-[ 2659.508426] RDX: 0000000000040000 RSI: 0000000001a93170 RDI: 0000000000000003
-[ 2659.508427] RBP: 0000000001a93170 R08: 0000000000000008 R09: 9e37fffffffc0001
-[ 2659.508427] R10: 00000000f64f5598 R11: 0000000000000293 R12: 0000000188a40000
-[ 2659.508428] R13: 00007f3ea45c1df0 R14: 0000000000000000 R15: 00007f3ec48e18f0
-[ 2690.995380] set_fsmap_hetero_obj:241 Proc fio Inode 5909102 FNAME randwrite.0.0
-[ 2691.013551] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.013870] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.013878] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.013886] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.013903] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.021440] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2691.029311] set_fsmap_hetero_obj:241 Proc fio Inode 5909116 FNAME fio-seq-RW
-[ 2751.866348] set_fsmap_hetero_obj:241 Proc fio Inode 542668 FNAME localtime
-[ 2751.941891] flag is set to print hetero allocate stat 10 
-[ 2751.941895] hetero_pid 4870 Curr 4870 Currname fio HeteroProcname fio page cache hits 6300812 cache miss 3679621 buffer page hits 119260 miss 0 
-[ 2751.941895]  
-[ 2751.941897] flag set to clear count 0
-[ 2751.941898] hetero_pid 4870 Curr 4870 Currname fio HeteroProcname fio user pages 0 kern pages 0
-[ 2753.239417] drop_caches: sh (4994): drop_caches: 3
-[ 2753.604973] drop_caches: sh (5022): drop_caches: 3
+[ 5238.877159] drop_caches: sh (5815): drop_caches: 3
+[ 5239.275115] drop_caches: sh (5823): drop_caches: 3
+[ 5239.312566] flag is set to collect hetero allocate  9 
+[ 5239.312568] flag is set to enable HETERO_PGCACHE 11 
+[ 5239.312569] flag is set to enable HETERO_BUFFER 12 
+[ 5239.312570] flag is set to enable HETERO_JOURNAL 13 
+[ 5239.312571] flag is set to enable HETERO_RADIX 14 
+[ 5239.312572] flag is set to enable HETERO_FULLKERN 15 
+[ 5239.312572] flag to set FASTMEM node to 1 
+[ 5239.312573] hetero_pid set to 5824 5824 procname numactl
+[ 5239.312615] set_fsmap_hetero_obj:241 Proc numactl Inode 5909051 FNAME fio
+[ 5239.320509] set_fsmap_hetero_obj:241 Proc numactl Inode 262365 FNAME ld-2.19.so
+[ 5239.344874] flag is set to collect hetero allocate  9 
+[ 5239.344876] flag is set to enable HETERO_PGCACHE 11 
+[ 5239.344877] flag is set to enable HETERO_BUFFER 12 
+[ 5239.344878] flag is set to enable HETERO_JOURNAL 13 
+[ 5239.344878] flag is set to enable HETERO_RADIX 14 
+[ 5239.344879] flag is set to enable HETERO_FULLKERN 15 
+[ 5239.344880] flag to set FASTMEM node to 1 
+[ 5239.344881] hetero_pid set to 5824 5824 procname fio
+[ 5239.348537] set_fsmap_hetero_obj:241 Proc fio Inode 835724 FNAME locale-archive
+[ 5239.361293] set_fsmap_hetero_obj:241 Proc fio Inode 540824 FNAME locale.alias
+[ 5239.636315] set_fsmap_hetero_obj:241 Proc fio Inode 6042012 FNAME fio-seq-write.job
+[ 5239.787208] set_fsmap_hetero_obj:241 Proc fio Inode 262149 FNAME seqwrite.0.0
+[ 5239.795193] set_fsmap_hetero_obj:241 Proc fio Inode 262149 FNAME seqwrite.0.0
+[ 5239.803166] set_fsmap_hetero_obj:241 Proc fio Inode 262149 FNAME seqwrite.0.0
+[ 5239.926098] set_fsmap_hetero_obj:241 Proc fio Inode 262149 FNAME seqwrite.0.0
+[ 5239.928736] set_fsmap_hetero_obj:241 Proc fio Inode 12 FNAME fio-seq-write
+[ 5244.056666] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5244.056669] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5244.056669] Call Trace:
+[ 5244.056688]  <IRQ>
+[ 5244.056703]  dump_stack+0x5a/0x73
+[ 5244.056708]  __alloc_skb+0x6e/0x2d0
+[ 5244.056714]  __neigh_notify+0x3f/0xc0
+[ 5244.056716]  neigh_timer_handler+0xf6/0x270
+[ 5244.056718]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5244.056724]  call_timer_fn+0x2b/0x130
+[ 5244.056726]  run_timer_softirq+0x1cf/0x400
+[ 5244.056728]  ? enqueue_hrtimer+0x38/0x90
+[ 5244.056730]  ? __hrtimer_run_queues+0x119/0x240
+[ 5244.056734]  __do_softirq+0xc8/0x26c
+[ 5244.056738]  irq_exit+0xbe/0xd0
+[ 5244.056740]  smp_apic_timer_interrupt+0x60/0x120
+[ 5244.056742]  apic_timer_interrupt+0xf/0x20
+[ 5244.056743]  </IRQ>
+[ 5244.056750] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5244.056751] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5244.056753] RAX: ffffea00cc7bbac0 RBX: ffff881b26701618 RCX: 0000000000001000
+[ 5244.056754] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00cc7bbac0
+[ 5244.056754] RBP: ffff881b26701618 R08: 0000000000001000 R09: ffffea00cc7bbac0
+[ 5244.056755] R10: ffff881d363f4000 R11: ffff881b26701618 R12: 0000000000000000
+[ 5244.056756] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5244.056759]  block_write_end+0x2e/0x70
+[ 5244.056760]  generic_write_end+0x35/0xb0
+[ 5244.056763]  ext4_da_write_end+0x120/0x290
+[ 5244.056767]  generic_perform_write+0xf5/0x190
+[ 5244.056770]  __generic_file_write_iter+0x175/0x1d0
+[ 5244.056774]  ext4_file_write_iter+0x13f/0x390
+[ 5244.056780]  ? common_file_perm+0x3f/0xf0
+[ 5244.056784]  aio_write+0xe0/0x150
+[ 5244.056788]  ? _cond_resched+0x15/0x30
+[ 5244.056792]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5244.056793]  do_io_submit+0x3fe/0x640
+[ 5244.056795]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5244.056800]  do_syscall_64+0x5c/0x180
+[ 5244.056802]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5244.056804] RIP: 0033:0x7fe6454705d7
+[ 5244.056805] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000297 ORIG_RAX: 00000000000000d1
+[ 5244.056806] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5244.056807] RDX: 000000000186dd68 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5244.056808] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186d1f0
+[ 5244.056809] R10: 00007fe6232a6010 R11: 0000000000000297 R12: 0000000000000001
+[ 5244.056809] R13: 0000000000000028 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5244.056812] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5244.056813] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5244.056814] Call Trace:
+[ 5244.056814]  <IRQ>
+[ 5244.056816]  dump_stack+0x5a/0x73
+[ 5244.056817]  __alloc_skb+0x295/0x2d0
+[ 5244.056819]  __neigh_notify+0x3f/0xc0
+[ 5244.056820]  neigh_timer_handler+0xf6/0x270
+[ 5244.056822]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5244.056824]  call_timer_fn+0x2b/0x130
+[ 5244.056826]  run_timer_softirq+0x1cf/0x400
+[ 5244.056827]  ? enqueue_hrtimer+0x38/0x90
+[ 5244.056828]  ? __hrtimer_run_queues+0x119/0x240
+[ 5244.056829]  __do_softirq+0xc8/0x26c
+[ 5244.056831]  irq_exit+0xbe/0xd0
+[ 5244.056832]  smp_apic_timer_interrupt+0x60/0x120
+[ 5244.056834]  apic_timer_interrupt+0xf/0x20
+[ 5244.056834]  </IRQ>
+[ 5244.056836] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5244.056837] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5244.056838] RAX: ffffea00cc7bbac0 RBX: ffff881b26701618 RCX: 0000000000001000
+[ 5244.056839] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00cc7bbac0
+[ 5244.056840] RBP: ffff881b26701618 R08: 0000000000001000 R09: ffffea00cc7bbac0
+[ 5244.056840] R10: ffff881d363f4000 R11: ffff881b26701618 R12: 0000000000000000
+[ 5244.056841] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5244.056843]  block_write_end+0x2e/0x70
+[ 5244.056844]  generic_write_end+0x35/0xb0
+[ 5244.056845]  ext4_da_write_end+0x120/0x290
+[ 5244.056847]  generic_perform_write+0xf5/0x190
+[ 5244.056848]  __generic_file_write_iter+0x175/0x1d0
+[ 5244.056850]  ext4_file_write_iter+0x13f/0x390
+[ 5244.056852]  ? common_file_perm+0x3f/0xf0
+[ 5244.056853]  aio_write+0xe0/0x150
+[ 5244.056856]  ? _cond_resched+0x15/0x30
+[ 5244.056857]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5244.056858]  do_io_submit+0x3fe/0x640
+[ 5244.056860]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5244.056862]  do_syscall_64+0x5c/0x180
+[ 5244.056863]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5244.056864] RIP: 0033:0x7fe6454705d7
+[ 5244.056864] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000297 ORIG_RAX: 00000000000000d1
+[ 5244.056865] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5244.056866] RDX: 000000000186dd68 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5244.056866] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186d1f0
+[ 5244.056867] R10: 00007fe6232a6010 R11: 0000000000000297 R12: 0000000000000001
+[ 5244.056868] R13: 0000000000000028 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5248.152580] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5248.152583] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5248.152584] Call Trace:
+[ 5248.152593]  <IRQ>
+[ 5248.152625]  dump_stack+0x5a/0x73
+[ 5248.152630]  __alloc_skb+0x6e/0x2d0
+[ 5248.152635]  __neigh_notify+0x3f/0xc0
+[ 5248.152637]  neigh_timer_handler+0xf6/0x270
+[ 5248.152640]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5248.152646]  call_timer_fn+0x2b/0x130
+[ 5248.152648]  run_timer_softirq+0x1cf/0x400
+[ 5248.152650]  ? enqueue_hrtimer+0x38/0x90
+[ 5248.152651]  ? __hrtimer_run_queues+0x119/0x240
+[ 5248.152656]  __do_softirq+0xc8/0x26c
+[ 5248.152660]  irq_exit+0xbe/0xd0
+[ 5248.152662]  smp_apic_timer_interrupt+0x60/0x120
+[ 5248.152664]  apic_timer_interrupt+0xf/0x20
+[ 5248.152665]  </IRQ>
+[ 5248.152669] RIP: 0010:__add_to_page_cache_locked+0xe3/0x1e0
+[ 5248.152670] RSP: 0018:ffffc90009ad7b20 EFLAGS: 00000283 ORIG_RAX: ffffffffffffff13
+[ 5248.152672] RAX: 000000000000003a RBX: ffff88207537f528 RCX: 0000000000027b78
+[ 5248.152673] RDX: 0000000000027b2e RSI: 000000000000000e RDI: ffff88207537f528
+[ 5248.152674] RBP: ffffea00be4aedf0 R08: 0000000000000000 R09: 0000000000000012
+[ 5248.152674] R10: 0000000000000000 R11: ffff881fb01f60a1 R12: 0000000000000000
+[ 5248.152675] R13: 0000000000175911 R14: ffffc90009ad7b60 R15: 0000000000000000
+[ 5248.152678]  add_to_page_cache_lru+0x39/0xc0
+[ 5248.152679]  pagecache_get_page+0x81/0x220
+[ 5248.152681]  grab_cache_page_write_begin+0x1f/0x40
+[ 5248.152688]  ext4_da_write_begin+0xcd/0x3f0
+[ 5248.152690]  ? ext4_da_write_end+0x13c/0x290
+[ 5248.152691]  generic_perform_write+0xb0/0x190
+[ 5248.152693]  __generic_file_write_iter+0x175/0x1d0
+[ 5248.152695]  ext4_file_write_iter+0x13f/0x390
+[ 5248.152701]  ? common_file_perm+0x3f/0xf0
+[ 5248.152705]  aio_write+0xe0/0x150
+[ 5248.152709]  ? _cond_resched+0x15/0x30
+[ 5248.152712]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5248.152714]  do_io_submit+0x3fe/0x640
+[ 5248.152716]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5248.152721]  do_syscall_64+0x5c/0x180
+[ 5248.152722]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5248.152725] RIP: 0033:0x7fe6454705d7
+[ 5248.152725] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000297 ORIG_RAX: 00000000000000d1
+[ 5248.152727] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5248.152727] RDX: 000000000186dd60 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5248.152728] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186d370
+[ 5248.152729] R10: 00007fe6232e6010 R11: 0000000000000297 R12: 0000000000000001
+[ 5248.152730] R13: 0000000000000020 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5248.152733] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5248.152733] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5248.152734] Call Trace:
+[ 5248.152735]  <IRQ>
+[ 5248.152736]  dump_stack+0x5a/0x73
+[ 5248.152737]  __alloc_skb+0x295/0x2d0
+[ 5248.152739]  __neigh_notify+0x3f/0xc0
+[ 5248.152741]  neigh_timer_handler+0xf6/0x270
+[ 5248.152742]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5248.152744]  call_timer_fn+0x2b/0x130
+[ 5248.152746]  run_timer_softirq+0x1cf/0x400
+[ 5248.152747]  ? enqueue_hrtimer+0x38/0x90
+[ 5248.152748]  ? __hrtimer_run_queues+0x119/0x240
+[ 5248.152749]  __do_softirq+0xc8/0x26c
+[ 5248.152751]  irq_exit+0xbe/0xd0
+[ 5248.152752]  smp_apic_timer_interrupt+0x60/0x120
+[ 5248.152753]  apic_timer_interrupt+0xf/0x20
+[ 5248.152754]  </IRQ>
+[ 5248.152755] RIP: 0010:__add_to_page_cache_locked+0xe3/0x1e0
+[ 5248.152756] RSP: 0018:ffffc90009ad7b20 EFLAGS: 00000283 ORIG_RAX: ffffffffffffff13
+[ 5248.152757] RAX: 000000000000003a RBX: ffff88207537f528 RCX: 0000000000027b78
+[ 5248.152757] RDX: 0000000000027b2e RSI: 000000000000000e RDI: ffff88207537f528
+[ 5248.152758] RBP: ffffea00be4aedf0 R08: 0000000000000000 R09: 0000000000000012
+[ 5248.152758] R10: 0000000000000000 R11: ffff881fb01f60a1 R12: 0000000000000000
+[ 5248.152759] R13: 0000000000175911 R14: ffffc90009ad7b60 R15: 0000000000000000
+[ 5248.152761]  add_to_page_cache_lru+0x39/0xc0
+[ 5248.152762]  pagecache_get_page+0x81/0x220
+[ 5248.152764]  grab_cache_page_write_begin+0x1f/0x40
+[ 5248.152765]  ext4_da_write_begin+0xcd/0x3f0
+[ 5248.152766]  ? ext4_da_write_end+0x13c/0x290
+[ 5248.152768]  generic_perform_write+0xb0/0x190
+[ 5248.152769]  __generic_file_write_iter+0x175/0x1d0
+[ 5248.152771]  ext4_file_write_iter+0x13f/0x390
+[ 5248.152773]  ? common_file_perm+0x3f/0xf0
+[ 5248.152774]  aio_write+0xe0/0x150
+[ 5248.152776]  ? _cond_resched+0x15/0x30
+[ 5248.152777]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5248.152779]  do_io_submit+0x3fe/0x640
+[ 5248.152781]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5248.152782]  do_syscall_64+0x5c/0x180
+[ 5248.152783]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5248.152784] RIP: 0033:0x7fe6454705d7
+[ 5248.152785] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000297 ORIG_RAX: 00000000000000d1
+[ 5248.152786] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5248.152786] RDX: 000000000186dd60 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5248.152787] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186d370
+[ 5248.152787] R10: 00007fe6232e6010 R11: 0000000000000297 R12: 0000000000000001
+[ 5248.152788] R13: 0000000000000020 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5251.224517] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5251.224520] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5251.224520] Call Trace:
+[ 5251.224530]  <IRQ>
+[ 5251.224545]  dump_stack+0x5a/0x73
+[ 5251.224550]  __alloc_skb+0x6e/0x2d0
+[ 5251.224553]  arp_create+0x72/0x290
+[ 5251.224555]  arp_send_dst.part.21+0x27/0x80
+[ 5251.224556]  arp_solicit+0xfc/0x240
+[ 5251.224563]  ? mod_timer+0x150/0x2d0
+[ 5251.224566]  neigh_probe+0x48/0x60
+[ 5251.224570]  neigh_timer_handler+0xc6/0x270
+[ 5251.224572]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5251.224574]  call_timer_fn+0x2b/0x130
+[ 5251.224576]  run_timer_softirq+0x1cf/0x400
+[ 5251.224578]  ? enqueue_hrtimer+0x38/0x90
+[ 5251.224579]  ? __hrtimer_run_queues+0x119/0x240
+[ 5251.224584]  __do_softirq+0xc8/0x26c
+[ 5251.224588]  irq_exit+0xbe/0xd0
+[ 5251.224590]  smp_apic_timer_interrupt+0x60/0x120
+[ 5251.224591]  apic_timer_interrupt+0xf/0x20
+[ 5251.224593]  </IRQ>
+[ 5251.224599] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5251.224600] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5251.224601] RAX: ffffea00ba0f26c0 RBX: ffff881f418e0e38 RCX: 0000000000001000
+[ 5251.224602] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00ba0f26c0
+[ 5251.224603] RBP: ffff881f418e0e38 R08: 0000000000001000 R09: ffffea00ba0f26c0
+[ 5251.224604] R10: ffff881a94734000 R11: ffff881f418e0e38 R12: 0000000000000000
+[ 5251.224604] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5251.224607]  block_write_end+0x2e/0x70
+[ 5251.224609]  generic_write_end+0x35/0xb0
+[ 5251.224611]  ext4_da_write_end+0x120/0x290
+[ 5251.224615]  generic_perform_write+0xf5/0x190
+[ 5251.224619]  __generic_file_write_iter+0x175/0x1d0
+[ 5251.224623]  ext4_file_write_iter+0x13f/0x390
+[ 5251.224629]  ? common_file_perm+0x3f/0xf0
+[ 5251.224632]  aio_write+0xe0/0x150
+[ 5251.224637]  ? _cond_resched+0x15/0x30
+[ 5251.224640]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5251.224641]  do_io_submit+0x3fe/0x640
+[ 5251.224644]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5251.224648]  do_syscall_64+0x5c/0x180
+[ 5251.224650]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5251.224652] RIP: 0033:0x7fe6454705d7
+[ 5251.224652] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+[ 5251.224654] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5251.224654] RDX: 000000000186ddb8 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5251.224655] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186b930
+[ 5251.224656] R10: 00007fe623026010 R11: 0000000000000246 R12: 0000000000000001
+[ 5251.224657] R13: 0000000000000078 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5251.224660] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5251.224660] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5251.224661] Call Trace:
+[ 5251.224661]  <IRQ>
+[ 5251.224663]  dump_stack+0x5a/0x73
+[ 5251.224664]  __alloc_skb+0x295/0x2d0
+[ 5251.224665]  arp_create+0x72/0x290
+[ 5251.224666]  arp_send_dst.part.21+0x27/0x80
+[ 5251.224668]  arp_solicit+0xfc/0x240
+[ 5251.224670]  ? mod_timer+0x150/0x2d0
+[ 5251.224671]  neigh_probe+0x48/0x60
+[ 5251.224672]  neigh_timer_handler+0xc6/0x270
+[ 5251.224674]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5251.224676]  call_timer_fn+0x2b/0x130
+[ 5251.224678]  run_timer_softirq+0x1cf/0x400
+[ 5251.224679]  ? enqueue_hrtimer+0x38/0x90
+[ 5251.224680]  ? __hrtimer_run_queues+0x119/0x240
+[ 5251.224682]  __do_softirq+0xc8/0x26c
+[ 5251.224683]  irq_exit+0xbe/0xd0
+[ 5251.224684]  smp_apic_timer_interrupt+0x60/0x120
+[ 5251.224686]  apic_timer_interrupt+0xf/0x20
+[ 5251.224686]  </IRQ>
+[ 5251.224688] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5251.224689] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5251.224690] RAX: ffffea00ba0f26c0 RBX: ffff881f418e0e38 RCX: 0000000000001000
+[ 5251.224691] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00ba0f26c0
+[ 5251.224691] RBP: ffff881f418e0e38 R08: 0000000000001000 R09: ffffea00ba0f26c0
+[ 5251.224692] R10: ffff881a94734000 R11: ffff881f418e0e38 R12: 0000000000000000
+[ 5251.224692] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5251.224694]  block_write_end+0x2e/0x70
+[ 5251.224695]  generic_write_end+0x35/0xb0
+[ 5251.224696]  ext4_da_write_end+0x120/0x290
+[ 5251.224698]  generic_perform_write+0xf5/0x190
+[ 5251.224699]  __generic_file_write_iter+0x175/0x1d0
+[ 5251.224701]  ext4_file_write_iter+0x13f/0x390
+[ 5251.224703]  ? common_file_perm+0x3f/0xf0
+[ 5251.224705]  aio_write+0xe0/0x150
+[ 5251.224707]  ? _cond_resched+0x15/0x30
+[ 5251.224708]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5251.224709]  do_io_submit+0x3fe/0x640
+[ 5251.224711]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5251.224713]  do_syscall_64+0x5c/0x180
+[ 5251.224714]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5251.224715] RIP: 0033:0x7fe6454705d7
+[ 5251.224716] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+[ 5251.224717] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5251.224718] RDX: 000000000186ddb8 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5251.224718] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186b930
+[ 5251.224719] R10: 00007fe623026010 R11: 0000000000000246 R12: 0000000000000001
+[ 5251.224720] R13: 0000000000000078 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5251.224765] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5251.224766] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5251.224766] Call Trace:
+[ 5251.224767]  <IRQ>
+[ 5251.224768]  dump_stack+0x5a/0x73
+[ 5251.224769]  __alloc_skb+0x6e/0x2d0
+[ 5251.224771]  __neigh_notify+0x3f/0xc0
+[ 5251.224773]  neigh_timer_handler+0xf6/0x270
+[ 5251.224774]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5251.224776]  call_timer_fn+0x2b/0x130
+[ 5251.224778]  run_timer_softirq+0x1cf/0x400
+[ 5251.224779]  ? enqueue_hrtimer+0x38/0x90
+[ 5251.224780]  ? __hrtimer_run_queues+0x119/0x240
+[ 5251.224782]  __do_softirq+0xc8/0x26c
+[ 5251.224783]  irq_exit+0xbe/0xd0
+[ 5251.224784]  smp_apic_timer_interrupt+0x60/0x120
+[ 5251.224786]  apic_timer_interrupt+0xf/0x20
+[ 5251.224786]  </IRQ>
+[ 5251.224788] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5251.224789] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5251.224790] RAX: ffffea00ba0f26c0 RBX: ffff881f418e0e38 RCX: 0000000000001000
+[ 5251.224791] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00ba0f26c0
+[ 5251.224791] RBP: ffff881f418e0e38 R08: 0000000000001000 R09: ffffea00ba0f26c0
+[ 5251.224792] R10: ffff881a94734000 R11: ffff881f418e0e38 R12: 0000000000000000
+[ 5251.224792] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5251.224794]  block_write_end+0x2e/0x70
+[ 5251.224795]  generic_write_end+0x35/0xb0
+[ 5251.224796]  ext4_da_write_end+0x120/0x290
+[ 5251.224798]  generic_perform_write+0xf5/0x190
+[ 5251.224800]  __generic_file_write_iter+0x175/0x1d0
+[ 5251.224801]  ext4_file_write_iter+0x13f/0x390
+[ 5251.224803]  ? common_file_perm+0x3f/0xf0
+[ 5251.224805]  aio_write+0xe0/0x150
+[ 5251.224807]  ? _cond_resched+0x15/0x30
+[ 5251.224808]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5251.224809]  do_io_submit+0x3fe/0x640
+[ 5251.224811]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5251.224813]  do_syscall_64+0x5c/0x180
+[ 5251.224814]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5251.224815] RIP: 0033:0x7fe6454705d7
+[ 5251.224815] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+[ 5251.224816] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5251.224817] RDX: 000000000186ddb8 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5251.224817] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186b930
+[ 5251.224818] R10: 00007fe623026010 R11: 0000000000000246 R12: 0000000000000001
+[ 5251.224818] R13: 0000000000000078 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5251.224820] CPU: 8 PID: 5859 Comm: fio Tainted: G           OE     4.17.0 #5
+[ 5251.224820] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5251.224821] Call Trace:
+[ 5251.224821]  <IRQ>
+[ 5251.224823]  dump_stack+0x5a/0x73
+[ 5251.224824]  __alloc_skb+0x295/0x2d0
+[ 5251.224825]  __neigh_notify+0x3f/0xc0
+[ 5251.224827]  neigh_timer_handler+0xf6/0x270
+[ 5251.224829]  ? __neigh_for_each_release+0xa0/0xa0
+[ 5251.224830]  call_timer_fn+0x2b/0x130
+[ 5251.224832]  run_timer_softirq+0x1cf/0x400
+[ 5251.224833]  ? enqueue_hrtimer+0x38/0x90
+[ 5251.224834]  ? __hrtimer_run_queues+0x119/0x240
+[ 5251.224836]  __do_softirq+0xc8/0x26c
+[ 5251.224837]  irq_exit+0xbe/0xd0
+[ 5251.224839]  smp_apic_timer_interrupt+0x60/0x120
+[ 5251.224840]  apic_timer_interrupt+0xf/0x20
+[ 5251.224840]  </IRQ>
+[ 5251.224842] RIP: 0010:__block_commit_write.isra.32+0x78/0xb0
+[ 5251.224843] RSP: 0018:ffffc90009ad7b28 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[ 5251.224844] RAX: ffffea00ba0f26c0 RBX: ffff881f418e0e38 RCX: 0000000000001000
+[ 5251.224845] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffea00ba0f26c0
+[ 5251.224846] RBP: ffff881f418e0e38 R08: 0000000000001000 R09: ffffea00ba0f26c0
+[ 5251.224846] R10: ffff881a94734000 R11: ffff881f418e0e38 R12: 0000000000000000
+[ 5251.224847] R13: 0000000000001000 R14: 0000000000001000 R15: 0000000000000000
+[ 5251.224849]  block_write_end+0x2e/0x70
+[ 5251.224850]  generic_write_end+0x35/0xb0
+[ 5251.224851]  ext4_da_write_end+0x120/0x290
+[ 5251.224852]  generic_perform_write+0xf5/0x190
+[ 5251.224854]  __generic_file_write_iter+0x175/0x1d0
+[ 5251.224855]  ext4_file_write_iter+0x13f/0x390
+[ 5251.224857]  ? common_file_perm+0x3f/0xf0
+[ 5251.224859]  aio_write+0xe0/0x150
+[ 5251.224861]  ? _cond_resched+0x15/0x30
+[ 5251.224862]  ? kmem_cache_alloc_hetero+0x1c3/0x1e0
+[ 5251.224863]  do_io_submit+0x3fe/0x640
+[ 5251.224865]  ? __x64_sys_io_getevents+0x48/0x70
+[ 5251.224867]  do_syscall_64+0x5c/0x180
+[ 5251.224868]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5251.224868] RIP: 0033:0x7fe6454705d7
+[ 5251.224869] RSP: 002b:00007ffcc3d7ce88 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
+[ 5251.224870] RAX: ffffffffffffffda RBX: 000000000186ca40 RCX: 00007fe6454705d7
+[ 5251.224870] RDX: 000000000186ddb8 RSI: 0000000000000001 RDI: 00007fe645e89000
+[ 5251.224871] RBP: 0000000000000000 R08: 0000000000000010 R09: 000000000186b930
+[ 5251.224871] R10: 00007fe623026010 R11: 0000000000000246 R12: 0000000000000001
+[ 5251.224872] R13: 0000000000000078 R14: 00007fe62343fdf0 R15: 000000000186ddd0
+[ 5252.681384] set_fsmap_hetero_obj:241 Proc fio Inode 542668 FNAME localtime
+[ 5252.697558] set_fsmap_hetero_obj:241 Proc fio Inode 262340 FNAME libm-2.19.so
+[ 5252.783410] flag is set to print hetero allocate stat 10 
+[ 5252.783413] hetero_pid 5824 Curr 5824 Currname fio HeteroProcname fio page cache hits 3396499 cache miss 1049021 buffer page hits 62308 miss 0 
+[ 5252.783413]  
+[ 5252.783415] flag set to clear count 0
+[ 5252.783417] hetero_pid 5824 Curr 5824 Currname fio HeteroProcname fio user pages 0 kern pages 0
+[ 5253.794329] drop_caches: sh (5863): drop_caches: 3
+[ 5262.745517] drop_caches: sh (5877): drop_caches: 3

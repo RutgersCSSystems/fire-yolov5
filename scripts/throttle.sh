@@ -35,8 +35,8 @@ apply='0x2'
 RUNSTREAM() {
   #Compile stream
   cd stream && make && cd ..
-  numactl --membind=0 stream/stream_c.exe &> $OUTPUTDIR/throttle.out
-  numactl --membind=1 stream/stream_c.exe &>> $OUTPUTDIR/throttle.out
+  numactl --membind=0 stream/stream_c.exe &> throttle.out
+  numactl --membind=1 stream/stream_c.exe &>> throttle.out
 }
 
 #Throttle Values. Modify values specific to your platforms using 
@@ -109,6 +109,9 @@ PERFORM_THROTTLE_QUARTZ() {
      # First time to generate the bandwidth model and PCI model of your machine
      $APPPREFIX date
 
+     # We train and exit to a specific value
+     #rm -rf /tmp/bandwidth_model
+
      if [ -f $APPBENCH/bandwidth_model ]; then
          cp $APPBENCH/bandwidth_model /tmp/
      else
@@ -130,7 +133,7 @@ echo "-----------------"
 echo "BEFORE THROTTLING"
 echo "-----------------"
 echo "BANDWIDTH NODE 1 and NODE 2 (MB/s)"
-grep -r "Copy:" $OUTPUTDIR/throttle.out | awk '{print $2}'
+grep -r "Copy:" throttle.out | awk '{print $2}'
 echo "-----------------"
 echo " "
 
@@ -147,7 +150,7 @@ echo "-----------------"
 echo "AFTER THROTTLING"
 echo "-----------------"
 echo "BANDWIDTH NODE 1 and NODE 2 (MB/s)"
-grep -r "Copy:" $OUTPUTDIR/throttle.out | awk '{print $2}'
+grep -r "Copy:" throttle.out | awk '{print $2}'
 echo "-----------------"
 echo " "
 set +x

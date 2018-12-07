@@ -46,17 +46,17 @@ trap intexit INT
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+	exit
+
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
 	exit
-
-
-	APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
 
 
 
