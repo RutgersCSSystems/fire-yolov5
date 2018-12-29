@@ -35,7 +35,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_FASTNODE 1
+#define HETERO_FASTNODE 0
 
 static int setinit;
 

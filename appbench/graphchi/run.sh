@@ -26,10 +26,12 @@ rm -rf $SHARED_DATA/$DATA.*
 echo "edgelist" | LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX /usr/bin/time -v $APP file $INPUT niters 32
 #echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 32
 export LD_PRELOAD=""
+rm -rf $SHARED_DATA/$DATA.*
 }
 
-cd $APPBENCH/graphchi 
+cd $APPBENCH/graphchi/graphchi-cpp
 RUN
 FlushDisk
+rm -rf $SHARED_DATA/$DATA.*
 set +x
 

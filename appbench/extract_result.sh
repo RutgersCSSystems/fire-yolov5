@@ -5,7 +5,7 @@ grep "Elapsed" $OUTPUTDIR/$APP | awk '{print "graphchi: " $8}'
 APP=db_bench
 cat $OUTPUTDIR/$APP | grep "MB/s" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print "rocksdb: " SUM}'
 APP=fio
-cat $OUTPUTDIR/$APP | grep "bw=" | awk '{print $2}'| grep -o '[0-9]*' | awk '{sum += $1} END {print "fio: " sum}'
+cat $OUTPUTDIR/$APP | grep "WRITE: bw=" | awk '{print $2}'| grep -o '[0-9]*' | awk '{sum += $1} END {print "fio: " sum}'
 #APP=fcreate
 #cat $OUTPUTDIR/$APP | grep "bw=" | awk '{print $2}'| grep -o '[0-9]*' | awk '{sum += $1} END {print "fcreate: " sum}'
 APP=Metis
