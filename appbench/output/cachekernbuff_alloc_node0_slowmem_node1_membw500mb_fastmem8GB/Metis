@@ -1,0 +1,16 @@
++ DATA=/users/skannan/ssd/NVM/appbench/shared_data/com-orkut.ungraph.txt
++ BASE=/users/skannan/ssd/NVM/appbench/Metis
++ APPBASE=/users/skannan/ssd/NVM/appbench/Metis/obj
++ APP=/users/skannan/ssd/NVM/appbench/Metis/obj/wc
++ PARAM=1
++ OUTPUT=/users/skannan/ssd/NVM/appbench/output/cachekernbuff_alloc_node0_slowmem_node1_membw500mb_fastmem8GB/Metis
++ cd /users/skannan/ssd/NVM/appbench/Metis/obj
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ RUN
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so numactl --membind=0 /users/skannan/ssd/NVM/appbench/Metis/obj/wc /users/skannan/ssd/NVM/appbench/shared_data/com-orkut.ungraph.txt
+initiating tracing...
+initiating tracing...
