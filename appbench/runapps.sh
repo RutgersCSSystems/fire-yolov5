@@ -46,6 +46,12 @@ $NVMBASE/scripts/copy_data.sh
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/redis-3.0.0/src
+	APP=redis
+	echo "running $APP..."
+	RUNAPP
+	exit
+
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
 	echo "running $APP..."
@@ -55,21 +61,16 @@ if [ -z "$4" ]
 	export LD_PRELOAD=""
 	exit
 
-
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
-	exit
 
 
         APPBASE=$APPBENCH/apps/rocksdb/build
 	APP=db_bench
 	echo "running $APP ..."
 	RUNAPP
-	exit
-
-
 
 
 	APPBASE=$APPBENCH/graphchi
@@ -77,19 +78,12 @@ if [ -z "$4" ]
 	echo "running $APP ..."
 	RUNAPP
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
-	exit
 
 
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
 	echo "running $APP..."
 	RUNAPP
-
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
-	echo "running $APP..."
-	RUNAPP
-
 
 
 	#APPBASE=$APPBENCH/memcached/memtier_benchmark

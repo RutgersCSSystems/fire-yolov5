@@ -145,6 +145,7 @@ class ParamTest:
     seed_count = 0
     num_tests = 0
     membw = 0
+    maxbwtest = 0
     
     output = " "    
     resarr = []    
@@ -159,6 +160,7 @@ class ParamTest:
         self.seed_count = params.find('seed-count').text
         self.num_tests = params.find('num-tests').text
         self.membw = params.find('membw').text
+	self.maxbwtest = params.find('maxbwtest').text
 
         self.membw_str = str(self.membw);
         self.xincr = int(self.seed_count)
@@ -232,7 +234,10 @@ def main():
 
     if is_membw_test:
         p.setvals(membw_test)
-        #p.run_max_bw_test(membw_test, "")
+
+	if int(p.maxbwtest) == 1:
+		p.compile_sharedlib("fastonly")
+	        p.run_max_bw_test(membw_test, "")
 
         for i in range(0, len(benchmarks)):
             p.compile_sharedlib(str(benchmarks[i]))

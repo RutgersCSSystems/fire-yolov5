@@ -14,7 +14,6 @@
 #include <pthread.h>
 #include <signal.h>
 #include <string.h>
-#include "migration.h"
 
 #define __NR_start_trace 333
 
@@ -34,8 +33,6 @@
 #define HETERO_JOURNAL 13
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
-#define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_FASTNODE 0
 
 static int setinit;
 
@@ -55,15 +52,14 @@ void dest() {
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);*/
-    a = syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
-    a = syscall(__NR_start_trace, CLEAR_COUNT, 0);
+    a = syscall(__NR_start_trace, PRINT_ALLOCATE);
+    a = syscall(__NR_start_trace, CLEAR_COUNT);
 }
 
 void con() {
   
     int a = 0;
     struct sigaction action;
-    pid_t pid = getpid();
 
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
@@ -72,14 +68,12 @@ void con() {
         a = syscall(__NR_start_trace, COLLECT_TRACE);
         a = syscall(__NR_start_trace, PFN_TRACE);
         a = syscall(__NR_start_trace, TIME_TRACE);*/
-        a = syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
-        a = syscall(__NR_start_trace, HETERO_PGCACHE, 0);
-        a = syscall(__NR_start_trace, HETERO_BUFFER, 0);
-        a = syscall(__NR_start_trace, HETERO_JOURNAL, 0);
-        a = syscall(__NR_start_trace, HETERO_RADIX, 0);
-        a = syscall(__NR_start_trace, HETERO_FULLKERN, 0);
-        a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTNODE);
-	a = syscall(__NR_start_trace, (int)pid);
+        //a = syscall(__NR_start_trace, COLLECT_ALLOCATE);
+        //a = syscall(__NR_start_trace, HETERO_PGCACHE);
+        //a = syscall(__NR_start_trace, HETERO_BUFFER);
+        /*a = syscall(__NR_start_trace, HETERO_JOURNAL);
+        a = syscall(__NR_start_trace, HETERO_RADIX);
+        a = syscall(__NR_start_trace, HETERO_FULLKERN);*/
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
