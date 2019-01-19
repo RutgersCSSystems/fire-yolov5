@@ -6,8 +6,9 @@ set -x
 PARAM=$1
 OUTPUT=$2
 DATA=twitter_dataset_unscaled
-APPBASE=$APPBENCH/apps/memcached
-APP=$APPBASE/memcached
+#APPBASE=$APPBENCH/apps/memcached
+#APP=$APPBASE/memcached
+APP=/usr/bin/memcached
 CLIENTBASE=$APPBENCH/apps/memcached_client
 INPUT=$CLIENTBASE/$DATA
 DATASET=$SHARED_DATA/twitter_dataset_200x
