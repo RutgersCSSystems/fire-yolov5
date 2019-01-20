@@ -406,11 +406,13 @@ repeat:
 	return 0;
 }
 
+#if 0
 void add_to_hashtable_handle_t(handle_t *handle) {
 	unsigned long pfn = (__pa(handle) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /* Allocate a new handle.  This should probably be in a slab... */
 static handle_t *new_handle(int nblocks)

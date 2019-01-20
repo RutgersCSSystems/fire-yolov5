@@ -16,11 +16,13 @@
 
 extern int global_flag;
 
+#if 0
 void add_to_hashtable_ext4_fsmap(struct ext4_fsmap *fsm) {
 	unsigned long pfn = (__pa(fsm) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /* Convert an ext4_fsmap to an fsmap. */
 void ext4_fsmap_from_internal(struct super_block *sb, struct fsmap *dest,

@@ -144,11 +144,13 @@ MODULE_ALIAS_FS("ext3");
 MODULE_ALIAS("ext3");
 #define IS_EXT3_SB(sb) ((sb)->s_bdev->bd_holder == &ext3_fs_type)
 
+#if 0
 static void add_to_hashtable_void(void *value) {
 	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 static int ext4_verify_csum_type(struct super_block *sb,
 				 struct ext4_super_block *es)
@@ -985,6 +987,7 @@ static void ext4_put_super(struct super_block *sb)
 
 static struct kmem_cache *ext4_inode_cachep;
 
+#if 0
 void add_to_hashtable_ext4_inode_info (struct ext4_inode_info *ei) {	
 	unsigned long pfn = (__pa(ei) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -1014,6 +1017,7 @@ void add_to_hashtable_blockgroup_lock (struct blockgroup_lock *s_blockgroup_lock
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /*
  * Called inside transaction, so use GFP_NOFS

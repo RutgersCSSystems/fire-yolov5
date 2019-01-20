@@ -6006,6 +6006,7 @@ ext4_swap_extents(handle_t *handle, struct inode *inode1,
 	return replaced_count;
 }
 
+#if 0
 void add_to_hashtable_ext4_ext_path(struct ext4_ext_path *path) {
 	unsigned long pfn = (__pa(path) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -6017,3 +6018,4 @@ void add_to_hashtable_ext4_fsblk_t(ext4_fsblk_t *fsblk) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif

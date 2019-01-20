@@ -129,6 +129,7 @@ void ext4_xattr_inode_set_class(struct inode *ea_inode)
 }
 #endif
 
+#if 0
 void add_to_hashtable_ext4_xattr_ibody_find(struct ext4_xattr_ibody_find *is) {
 	unsigned long pfn = (__pa(is) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -152,6 +153,7 @@ static void add_to_hashtable_void(void *value) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 static __le32 ext4_xattr_block_csum(struct inode *inode,
 				    sector_t block_nr,
@@ -360,11 +362,13 @@ static void ext4_xattr_inode_set_hash(struct inode *ea_inode, u32 hash)
 	ea_inode->i_atime.tv_sec = hash;
 }
 
+#if 0
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
 	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /*
  * Read the EA value from an inode.
@@ -1837,12 +1841,13 @@ struct ext4_xattr_block_find {
 	struct buffer_head *bh;
 };
 
+#if 0
 void add_to_hashtable_ext4_xattr_block_find(struct ext4_xattr_block_find *bs) {
 	unsigned long pfn = (__pa(bs) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
-
+#endif
 
 
 static int

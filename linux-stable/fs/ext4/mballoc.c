@@ -377,7 +377,7 @@ static void ext4_mb_generate_from_pa(struct super_block *sb, void *bitmap,
 					ext4_group_t group);
 static void ext4_mb_generate_from_freelist(struct super_block *sb, void *bitmap,
 						ext4_group_t group);
-
+#if 0
 void add_to_hashtable_ext4_allocation_context(struct ext4_allocation_context *ac) {
 	unsigned long pfn = (__pa(ac) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -419,7 +419,7 @@ void add_to_hashtable_ext4_group_info(struct ext4_group_info **meta_group_info) 
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
-
+#endif
 
 static inline void *mb_correct_addr_and_bit(int *bit, void *addr)
 {
@@ -846,11 +846,13 @@ static void mb_regenerate_buddy(struct ext4_buddy *e4b)
 		e4b->bd_bitmap, e4b->bd_group);
 }
 
+#if 0
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
 	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /* The buddy information is attached the buddy cache inode
  * for convenience. The information regarding each group

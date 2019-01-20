@@ -11,11 +11,13 @@
 
 extern int global_flag;
 
+#if 0
 void add_to_hashtable_mmpd_data(struct mmpd_data *mmpd_data) {
 	unsigned long pfn = (__pa(mmpd_data) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /* Checksumming functions */
 static __le32 ext4_mmp_csum(struct super_block *sb, struct mmp_struct *mmp)

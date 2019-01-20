@@ -13,7 +13,8 @@ qemu-img create $QEMU_IMG_FILE 20g
 
 #Now format your disk with some file system; 
 #ext4 in this example
-mkfs.ext4 $QEMU_IMG_FILE
+sudo mkfs.ext4 $QEMU_IMG_FILE
+sudo chown -R $USER $QEMU_IMG_FILE
 
 #Now create a mount point directory for your image file
 mkdir $MOUNT_DIR
@@ -32,6 +33,5 @@ sudo debootstrap --arch amd64 $OS_RELEASE_NAME  $MOUNT_DIR
 
 #Chroot and Now install all your required packages; lets start with vim and build_esstentials.
 sudo chroot $MOUNT_DIR && sudo apt-get install vim && sudo apt-get install build-essential && sudo apt-get install ssh
-
 #You are all set. Now unmount your image file from the directory.
 exit
