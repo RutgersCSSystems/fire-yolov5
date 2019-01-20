@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 INSTALL_SYSTEM_LIBS(){
 sudo apt-get install -y git
@@ -56,6 +57,7 @@ INSTALL_CMAKE(){
     wget https://cmake.org/files/v3.7/cmake-3.7.0-rc3.tar.gz
     tar zxvf cmake-3.7.0-rc3.tar.gz
     cd cmake-3.7.0-rc3
+    rm -rf CMakeCache*
     ./configure
     ./bootstrap
     make -j16
@@ -69,16 +71,18 @@ INSTALL_ROCKSDB() {
 	cd rocksdb
 	mkdir build 
 	cd build
+	rm -rf CMakeCache.txt
 	cmake ..
 	make -j16
 	cp $APPBENCH/apps/run_rocksdb.sh $APPBENCH/apps/rocksdb/build/run.sh
 }
 
 INSTALL_GFLAGS(){
-cd $SHARED_LIBS
-git clone https://github.com/gflags/gflags.git
-cd gflags
-export CXXFLAGS="-fPIC" && $SHARED_LIBS/cmake-3.7.0-rc3/bin/cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
+	cd $SHARED_LIBS
+	git clone https://github.com/gflags/gflags.git
+	cd gflags
+	rm -rf CMakeCache.txt
+	export CXXFLAGS="-fPIC" && cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
 }
 
 
@@ -97,7 +101,7 @@ git clone https://github.com/memcached/memcached.git
 
 #INSTALL_SYSTEM_LIBS
 #GETAPPS
-INSTALL_CMAKE
+#INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
 exit

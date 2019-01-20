@@ -15,6 +15,15 @@ INSTALL_SHAREDLIB() {
 
 INSTALL_SHAREDLIB
 
+cd $BASE/apps
+cd memcached/memcached-1.4.15_serv
+./autogen.sh
+./configure
+make clean && make -j4 && sudo make install
+cd $BASE/apps
+cd memcached_client
+make
+
 cd $BASE
 cd phoenix-2.0/
 make clean && make -j4
@@ -52,16 +61,6 @@ cd $BASE/apps
 cd fio
 ./configure
 make clean && make -j4 && sudo make install
-
-cd $BASE/apps
-cd memcached
-./autogen.sh
-./configure
-make clean && make -j4 && sudo make install
-
-cd $BASE/apps
-cd memcached_client
-make
 
 cd $BASE
 exit
