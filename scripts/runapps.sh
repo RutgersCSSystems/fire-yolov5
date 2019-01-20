@@ -54,11 +54,6 @@ if [ -z "$4" ]
 	/bin/ls
 	export LD_PRELOAD=""
 
-        APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
-
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
 	echo "running $APP ..."
@@ -81,6 +76,13 @@ if [ -z "$4" ]
 	APP=redis
 	echo "running $APP..."
 	RUNAPP
+
+        APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+
+
 	exit
 
 
