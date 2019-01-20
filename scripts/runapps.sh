@@ -46,6 +46,13 @@ $NVMBASE/scripts/copy_data.sh
 if [ -z "$4" ]
   then
 
+        APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	echo "running $APP ..."
+	RUNAPP
+	exit
+
+
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
 	echo "running $APP..."
@@ -56,11 +63,6 @@ if [ -z "$4" ]
 
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio
-	echo "running $APP ..."
-	RUNAPP
-
-        APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
 	echo "running $APP ..."
 	RUNAPP
 

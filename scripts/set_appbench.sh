@@ -60,6 +60,18 @@ INSTALL_CMAKE() {
 	sudo make install
 }
 
+
+INSTALL_CMAKE(){
+    cd $SHARED_LIBS
+    wget https://cmake.org/files/v3.7/cmake-3.7.0-rc3.tar.gz
+    tar zxvf cmake-3.7.0-rc3.tar.gz
+    cd cmake-3.7.0*
+    ./configure
+    ./bootstrap
+    make -j16
+    make install
+}
+
 INSTALL_ROCKSDB() {
 	cd $APPBENCH/apps
 	git clone https://github.com/facebook/rocksdb
@@ -95,7 +107,7 @@ git clone https://github.com/memcached/memcached.git
 
 #INSTALL_SYSTEM_LIBS
 #GETAPPS
-#INSTALL_CMAKE
+INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
 exit
