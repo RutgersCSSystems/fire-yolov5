@@ -1,10 +1,13 @@
 #!/bin/bash
-set -x
+set +x
 APPBASE=$APPBENCH/apps/fxmark
 APP=$APPBASE/bin/fxmark
-DATA=$APPBASE/DATA
+#DATA=$APPBASE/DATA
+DATA=$SHARED_DATA
 SIZE=" --size=10G"
-PARAM=" --type DRBL --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
+TYPE=" --type DRBL"
+PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
+
 OUTPUT=$2
 mkdir $DATA
 
@@ -25,9 +28,15 @@ LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP $PARAM
 
 
 cd $APPBASE
-#FlushDisk
-##RANDOM_WRITE
 FlushDisk
+TYPE=" --type DWAL"
+PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
+RANDOM_READ
+FlushDisk
+rm $DATA/*
+exit
+TYPE=" --type DRBL"
+PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 RANDOM_READ
 FlushDisk
 rm $DATA/*
