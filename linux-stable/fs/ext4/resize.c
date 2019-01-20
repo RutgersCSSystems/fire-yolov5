@@ -190,6 +190,7 @@ struct ext4_new_flex_group_data {
 						 */
 };
 
+#if 0
 void add_to_hashtable_ext4_new_flex_group_data(struct ext4_new_flex_group_data *flex_gd) {
 	unsigned long pfn = (__pa(flex_gd) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -207,6 +208,7 @@ void add_to_hashtable_u16(__u16 *bg_flags) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /*
  * alloc_flex_gd() allocates a ext4_new_flex_group_data with size of
@@ -809,12 +811,13 @@ static int verify_reserved_gdb(struct super_block *sb,
 
 	return gdbackups;
 }
-
+#if 0
 static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
 	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 /*
  * Called when we need to bring a reserved group descriptor table block into

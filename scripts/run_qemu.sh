@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set -x
 
 $APPBENCH/scripts/umout_qemu.sh
 sleep 1
@@ -7,7 +7,9 @@ sleep 1
 
 $APPBENCH/scripts/killqemu.sh
 
-sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-15 -curses -vga std -numa node,nodeid=1,cpus=16-32 
+#sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -smp maxcpus=16  -numa node,nodeid=0,cpus=0-4 -curses -vga std -numa node,nodeid=1,cpus=10-13
+
+sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-8 -numa node,nodeid=1,cpus=9-15 -smp sockets=2,cores=2,threads=2,maxcpus=16 -curses
 
 #-nographic #-display curses
 #sudo qemu-system-x86_64 -nographic -kernel $KERNEL/vmlinuz-4.17.0 -hda qemu-image.img -append "root=/dev/sda rw console=ttyAMA0 console=ttyS0" --enable-kvm -m 16G -numa node,nodeid=0,cpus=0-4 -numa node,nodeid=1,cpus=10-13

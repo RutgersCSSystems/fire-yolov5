@@ -36,6 +36,7 @@ extern int global_flag;
 
 static struct kmem_cache *io_end_cachep;
 
+#if 0
 static void add_to_hashtable_bio (struct bio *bio) {
 	unsigned long pfn = (__pa(bio) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -47,7 +48,7 @@ void add_to_hashtable_ext4_io_end_t(ext4_io_end_t *io) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
-
+#endif
 
 int __init ext4_init_pageio(void)
 {

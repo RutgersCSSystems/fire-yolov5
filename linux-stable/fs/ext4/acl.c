@@ -319,6 +319,7 @@ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
 	return error;
 }
 
+#if 0
 void add_to_hashtable_ext4_acl_header(ext4_acl_header *ext4_acl_header) {
 	unsigned long pfn = (__pa(ext4_acl_header) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
@@ -330,3 +331,4 @@ void add_to_hashtable_char(char *value) {
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif

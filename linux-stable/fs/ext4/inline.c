@@ -22,11 +22,13 @@
 
 extern int global_flag;
 
+#if 0
 static void add_to_hashtable_void(void *value) {
 	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 static int ext4_get_inline_size(struct inode *inode)
 {

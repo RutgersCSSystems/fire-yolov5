@@ -21,12 +21,13 @@
 
 extern int global_flag;
 
-
+#if 0
 void add_to_hashtable_kobject(struct kobject *kobj) {
 	unsigned long pfn = (__pa(kobj) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 typedef enum {
 	attr_noop,

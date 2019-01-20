@@ -150,7 +150,7 @@ EXPORT_SYMBOL(is_hetero_exit);
 
 void debug_hetero_obj(void *obj) {
 
-#if 1//def CONFIG_HETERO_DEBUG
+#ifdef CONFIG_HETERO_DEBUG
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
 	struct inode *currinode = (struct inode *)current->mm->hetero_obj;
@@ -224,6 +224,7 @@ EXPORT_SYMBOL(set_hetero_obj_page);
 
 void set_fsmap_hetero_obj(void *mapobj)                                        
 {
+#ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
 	mapping = (struct address_space *)mapobj;
@@ -234,7 +235,7 @@ void set_fsmap_hetero_obj(void *mapobj)
 		struct dentry *res;
                 mapping->hetero_obj = (void *)inode;
                 current->mm->hetero_obj = (void *)inode;
-#if 1 //def CONFIG_HETERO_DEBUG
+#ifdef CONFIG_HETERO_DEBUG
 		if(mapping->host) {
 			res = d_find_any_alias(inode);
 			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
@@ -243,12 +244,14 @@ void set_fsmap_hetero_obj(void *mapobj)
 		}
 #endif
         }
+#endif
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
 /* Mark the socket to Hetero target object */
 void set_sock_hetero_obj(void *socket_obj, void *inode)                                        
 {
+#ifdef CONFIG_HETERO_ENABLE
         struct sock *sock = NULL;
 	struct socket *socket = (struct socket *)socket_obj;
 	sock = (struct sock *)socket->sk;
@@ -259,6 +262,7 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 	}
 
         if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+
 		sock->hetero_obj = (void *)inode;
 		current->mm->hetero_obj = (void *)inode;
 		sock->__sk_common.hetero_obj = (void *)inode;
@@ -267,6 +271,7 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 			current->comm);
 #endif
 	}
+#endif
 }
 EXPORT_SYMBOL(set_sock_hetero_obj);
 

@@ -32,11 +32,13 @@ struct ext4_system_zone {
 
 static struct kmem_cache *ext4_system_zone_cachep;
 
+#if 0
 void add_to_hashtable_ext4_system_zone(struct ext4_system_zone *value) {
 	unsigned long pfn = (__pa(value) >> PAGE_SHIFT);
 	if (pfn <= max_pfn)
 		insert_pfn_hashtable(pfn);
 }
+#endif
 
 int __init ext4_init_system_zone(void)
 {
