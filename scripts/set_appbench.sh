@@ -55,7 +55,7 @@ INSTALL_CMAKE(){
     cd $SHARED_LIBS
     wget https://cmake.org/files/v3.7/cmake-3.7.0-rc3.tar.gz
     tar zxvf cmake-3.7.0-rc3.tar.gz
-    cd cmake-3.7.0*
+    cd cmake-3.7.0-rc3
     ./configure
     ./bootstrap
     make -j16
