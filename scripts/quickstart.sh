@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/ssd/NVM
+cd $NVMBASE
 source scripts/setvars.sh
 $APPBENCH/install_quartz.sh
 $APPBENCH/throttle.sh
