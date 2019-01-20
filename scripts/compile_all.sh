@@ -37,6 +37,12 @@ cd Metis
 make clean 
 ./configure && make -j8
 
+cd $BASE/apps
+cd rocksdb/build
+make clean
+cmake ..
+make -j16
+
 cd $BASE
 cd leveldb
 make clean

@@ -34,6 +34,7 @@ sudo apt-get install -y libgflags-dev
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y libbz2-dev
 sudo apt-get install -y libevent-dev
+sudo apt-get install memcached
 }
 
 INSTALL_SPARK(){
@@ -49,17 +50,6 @@ sudo service docker start
 sudo docker pull cloudsuite/graph-analytics
 sudo docker pull cloudsuite/twitter-dataset-graph
 }
-
-INSTALL_CMAKE() {
-	cd $SHARED_LIBS
-	#!/bin/bash
-	git clone https://github.com/Kitware/CMake.git
-	cd CMake
-	./configure
-	make -j16
-	sudo make install
-}
-
 
 INSTALL_CMAKE(){
     cd $SHARED_LIBS
@@ -88,7 +78,7 @@ INSTALL_GFLAGS(){
 cd $SHARED_LIBS
 git clone https://github.com/gflags/gflags.git
 cd gflags
-export CXXFLAGS="-fPIC" && cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
+export CXXFLAGS="-fPIC" && $SHARED_LIBS/cmake-3.7.0-rc3/bin/cmake . -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHARED_LIBS=ON && make -j16 && sudo make install
 }
 
 
