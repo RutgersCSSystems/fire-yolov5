@@ -988,8 +988,6 @@ alloc_new_skb:
 				if(sk && is_hetero_obj(sk->hetero_obj)){
 					skb = alloc_skb_hetero(alloclen + hh_len + 15,
 						sk->sk_allocation, sk->hetero_obj);
-				}else {
-					printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
 				}
 				if(!skb)
 #endif
