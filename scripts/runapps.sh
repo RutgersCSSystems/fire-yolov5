@@ -58,7 +58,7 @@ if [ -z "$4" ]
 	APP=fio
 	echo "running $APP ..."
 	RUNAPP
-
+	
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
