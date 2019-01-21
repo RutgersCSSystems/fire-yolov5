@@ -5,8 +5,8 @@ import re
 from subprocess import Popen, PIPE
 
 APPBENCH=os.environ['APPBENCH']
-APP=APPBENCH + "/runapps.sh"
 SCRIPTS=os.environ['SCRIPTS']
+APP=SCRIPTS + "/runapps.sh"
 INFILE=os.environ['INPUTXML']
 QUARTZ=os.environ['QUARTZ']
 OUTDIR=os.environ['OUTPUTDIR']
@@ -26,11 +26,7 @@ def setup():
     os.system("scripts/set_appbench.sh")
 
 def makedb():
-    os.chdir(APPBENCH)
-    #os.system("make -j4")
-    os.chdir(APPBENCH)
-    APP = APPBENCH + "/runapps.sh"
-
+    APP = SCRIPTS + "/runapps.sh"
     os.system("killall -9 fio")
     os.system("killall -9 run.sh") 
     os.system("killall -9 runapps.sh") 
