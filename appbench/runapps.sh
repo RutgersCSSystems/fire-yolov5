@@ -59,7 +59,6 @@ if [ -z "$4" ]
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	/bin/ls
 	export LD_PRELOAD=""
-	exit
 
 	APPBASE=$APPBENCH/apps/fio
 	APP=fio

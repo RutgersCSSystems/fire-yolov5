@@ -203,7 +203,7 @@ class ParamTest:
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']
 	    print "NOT RUNNING THROTTLING"
-	    #throttle(count)	
+	    throttle(count)	
             self.runapp(APP, count)
             count = count * int(self.xincr) 
             print output;     
