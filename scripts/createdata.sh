@@ -1,8 +1,9 @@
 #!/bin/bash
 
 #get data
-mkdir $NVMBASE
-cd $NVMBASE/shared_data
+mkdir $APPBENCH/shared_data
+cd $APPBENCH/shared_data
+
 
 if [ ! -f com-orkut.ungraph.txt ]; then
         wget https://snap.stanford.edu/data/bigdata/communities/com-orkut.ungraph.txt

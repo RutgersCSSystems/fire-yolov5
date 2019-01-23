@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set -x
 APPBASE=$APPBENCH/apps/fxmark
 APP=$APPBASE/bin/fxmark
 #DATA=$APPBASE/DATA
@@ -34,7 +34,7 @@ PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 RANDOM_READ
 FlushDisk
 rm $DATA/*
-exit
+#exit
 TYPE=" --type DRBL"
 PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 RANDOM_READ

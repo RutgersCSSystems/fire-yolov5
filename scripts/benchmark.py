@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import subprocess
 import os, datetime
+import sys
 import re
 from subprocess import Popen, PIPE
 
@@ -11,7 +12,11 @@ INFILE=os.environ['INPUTXML']
 QUARTZ=os.environ['QUARTZ']
 OUTDIR=os.environ['OUTPUTDIR']
 OUTDIRCPY=os.environ['OUTPUTDIR']
+OUTARG=str(sys.argv[1])
 SHAREDLIB=os.environ['SHARED_LIBS']
+STATUSPATH=os.environ['NVMBASE']
+flagpath=STATUSPATH + "/flags"
+
 tree = ET.parse(INFILE)
 root = tree.getroot()
 os.system(APPBENCH + "/install_quartz.sh")
@@ -61,7 +66,6 @@ def hupexit():
     # HUP'd (probably by intexit)
     print("Interrupted")
     intexit()
-
 
 def throttle(membw):
     print "throttling bandwidth to: " + str(membw)
@@ -221,6 +225,40 @@ class ParamTest:
         print SHARED_LIB_APP + " " + bench
         os.system(SHARED_LIB_APP + " " + bench)
 
+    def complete_path(self, path):
+	f = open(flagpath + "/" + path, "w")
+	f.write("1")
+
+    def reset_path(self, path):
+	f = open(flagpath + "/" + path, "w")
+	f.write("0")
+
+    def check_set(self, path):
+	data=0
+	if(os.path.exists(flagpath + "/" + path)):
+	    f = open(flagpath + "/" + path, "r")
+	    data=f.read()
+	return int(data)
+
+    def version_output(self):
+	now = datetime.datetime.now()
+	src=OUTDIR
+	dest= src + "-" + str(now.strftime("%Y-%m-%d")) + "-" + OUTARG
+	print src + " " + dest
+        CMD = "cp -r " + src + "  " + dest 
+        os.system(CMD)
+
+    def run_fastmemonly(self, membw_test):
+	p = self
+	if int(p.maxbwtest) == 1 and int(p.check_set("fastonly")) == 0:
+	    print p.check_set("fastonly")	
+	    p.compile_sharedlib("fastonly")
+	    p.run_max_bw_test(membw_test, "")
+            p.complete_path("fastonly")
+	else:
+	    print "fastonly" + " ALREADY SET"
+
+
 def main():
 
     p = ParamTest()
@@ -231,15 +269,23 @@ def main():
     if is_membw_test:
         p.setvals(membw_test)
 
-	if int(p.maxbwtest) == 1:
-		p.compile_sharedlib("fastonly")
-	        p.run_max_bw_test(membw_test, "")
+	p.run_fastmemonly(membw_test)
 
         for i in range(0, len(benchmarks)):
-            p.compile_sharedlib(str(benchmarks[i]))
-            p.run_membw_test(membw_test, str(benchmarks[i]))
-
-      
+	    if(int(p.check_set(benchmarks[i])) == 0):
+	        print p.check_set(benchmarks[i])
+		p.compile_sharedlib(str(benchmarks[i]))
+                p.run_membw_test(membw_test, str(benchmarks[i]))
+	    else:
+		print benchmarks[i] + " ALREADY SET"
+       	    p.complete_path(str(benchmarks[i]))
+		
+   	p.reset_path("fastonly")
+	for i in range(0, len(benchmarks)):
+	    p.reset_path(str(benchmarks[i]))
+	
+    p.version_output()	
+    raise SystemExit
 
 # MAke database 
 #setup()

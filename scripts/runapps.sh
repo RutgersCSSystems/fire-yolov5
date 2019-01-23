@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 RUNNOW=1
 RUNSCRIPT=run.sh
@@ -11,14 +11,23 @@ echo "./app \$maxhotpage \$BW \$outputdir \$app"
 
 RUNAPP(){
   #rm $OUTPUTDIR/$APP
-  cd $APPBASE
-  $APPBASE/$RUNSCRIPT $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
-  echo "******************"  &>> $OUTPUTDIR/$APP
-  echo "KERNEL  DMESG"  &>> $OUTPUTDIR/$APP
-  echo "******************"  &>> $OUTPUTDIR/$APP 	
-  echo "  "  &>> $OUTPUTDIR/$APP
-  sudo dmesg -c &>> $OUTPUTDIR/$APP
+  FLAGPATH=$NVMBASE"/flags/"$APP
+  let value=`cat "$FLAGPATH"`
+  if [ $value == 0 ]; then
+	  echo "$APP NOW RUNNING"
+	  cd $APPBASE
+	  $APPBASE/$RUNSCRIPT $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
+	  echo "******************"  &>> $OUTPUTDIR/$APP
+	  echo "KERNEL  DMESG"  &>> $OUTPUTDIR/$APP
+	  echo "******************"  &>> $OUTPUTDIR/$APP 	
+	  echo "  "  &>> $OUTPUTDIR/$APP
+	  sudo dmesg -c &>> $OUTPUTDIR/$APP
+	  echo 1 > $FLAGPATH
+  else
+	  echo "$APP ALREADY RUN"	
+  fi
 }
+
 
 intexit() {
     # Kill all subprocesses (all processes in the current process group)
@@ -46,77 +55,79 @@ $NVMBASE/scripts/copy_data.sh
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/apps/rocksdb/build
+	APP=db_bench
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
+
+        APPBASE=$APPBENCH/apps/filebench
+        APP=filebench
+        RUNAPP
+
+	#APPBASE=$APPBENCH/apps/fxmark
+	#APP=fxmark
+	#echo "running $APP..."
+	#RUNAPP
+	#exit
+
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
-	echo "running $APP..."
 	RUNAPP
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	/bin/ls
 	export LD_PRELOAD=""
 
-	APPBASE=$APPBENCH/apps/fio
-	APP=fio
-	echo "running $APP ..."
-	RUNAPP
-	
+
+	#APPBASE=$APPBENCH/apps/fio
+	#APP=fio
+	#echo "running $APP ..."
+	#RUNAPP
 
 	APPBASE=$APPBENCH/graphchi
 	APP=graphchi
-	echo "running $APP ..."
 	RUNAPP
+	# We need data files
+	$SCRIPTS/createdata.sh
 	rm $SHARED_DATA/com-orkut.ungraph.txt.*
-
 
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
-	echo "running $APP..."
+	$SCRIPTS/createdata.sh
 	RUNAPP
 
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
-	echo "running $APP..."
 	RUNAPP
-
-        APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
-
-
-	exit
-
-
 
 	#APPBASE=$APPBENCH/memcached/memtier_benchmark
 	#APP=memcached
 	#echo "running $APP ..."
 	#RUNAPP
+	#exit
 
-	exit
+	#RUNSCRIPT="runfcreate.sh"
+        #APP=fcreate
+        #RUNAPP
+        #RUNSCRIPT=run.sh
 
-	RUNSCRIPT="runfcreate.sh"
-        APP=fcreate
-        echo "running $APP ..."
-        RUNAPP
-        RUNSCRIPT=run.sh
-
-
-
-
-	APPBASE=$APPBENCH/apps/mongo-perf
-	APP=mongodb
-	echo "running $APP..."
-	RUNAPP
+	#APPBASE=$APPBENCH/apps/mongo-perf
+	#APP=mongodb
+	#RUNAPP
 
 
-	APPBASE=$APPBENCH/xstream_release
-	APP=xstream_release
-	scp -r $HOSTIP:$SHARED_DATA*.ini $APPBASE
-        cp $APPBASE/*.ini $SHARED_DATA
-	echo "running $APP ..."
-	RUNAPP
+	#APPBASE=$APPBENCH/xstream_release
+	#APP=xstream_release
+	#scp -r $HOSTIP:$SHARED_DATA*.ini $APPBASE
+        #cp $APPBASE/*.ini $SHARED_DATA
+	#RUNAPP
 
 fi
+
+finish:
+$NVMBASE/scripts/reset.sh
+
+#currentDate=`date +"%D %T"`
+#cp -r $OUTPUTDIR $OUTPUTDIR"-"$currentDate
 	
 #APPBASE=$APPBENCH/$4
 #APP=$4
