@@ -32,9 +32,9 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 #export GRAPHCHI_ROOT=$APPBENCH/graphchi/graphchi-cpp
 export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
-export APPPREFIX="numactl --membind=1"
+export APPPREFIX="numactl --membind=0"
 #export APPPREFIX=""
-export APP_PREFIX="numactl --membind=1"
+export APP_PREFIX="numactl --membind=0"
 export OUTPUTDIR=$APPBENCH/output
 export TEST_TMPDIR=/mnt/pmemdir
 

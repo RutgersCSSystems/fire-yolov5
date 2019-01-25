@@ -55,6 +55,22 @@ $NVMBASE/scripts/copy_data.sh
 if [ -z "$4" ]
   then
 
+	APPBASE=$APPBENCH/redis-3.0.0/src
+	APP=redis
+	echo "running $APP..."
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+
+
+	APPBASE=$APPBENCH/apps/leveldb
+	APP=leveldb
+	echo "running $APP..."
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+
+
 	APPBASE=$APPBENCH/apps/rocksdb/build
 	APP=db_bench
 	RUNAPP
@@ -63,12 +79,6 @@ if [ -z "$4" ]
         APPBASE=$APPBENCH/apps/filebench
         APP=filebench
         RUNAPP
-
-	#APPBASE=$APPBENCH/apps/fxmark
-	#APP=fxmark
-	#echo "running $APP..."
-	#RUNAPP
-	#exit
 
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
@@ -93,10 +103,6 @@ if [ -z "$4" ]
 	APPBASE=$APPBENCH/Metis
 	APP=Metis
 	$SCRIPTS/createdata.sh
-	RUNAPP
-
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
 	RUNAPP
 
 	#APPBASE=$APPBENCH/memcached/memtier_benchmark

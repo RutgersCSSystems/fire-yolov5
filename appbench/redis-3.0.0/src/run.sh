@@ -4,7 +4,9 @@ APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
 
+cd $APPBASE
 /bin/rm *.rdb
+rm -rf *.aof
 killall redis-server
 sleep 5
 
@@ -19,9 +21,11 @@ FlushDisk()
 
 RUN(){
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$APPPREFIX $APPBASE/redis-server &
+$APPPREFIX $APPBASE/redis-server $APPBENCH/redis-3.0.0/redis.conf &
 export LD_PRELOAD=""
 }
+
+FlushDisk
 
 alias rm=rm
 RUN

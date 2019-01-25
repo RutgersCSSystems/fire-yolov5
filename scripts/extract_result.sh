@@ -12,9 +12,9 @@ cat $OUTPUTDIR/$APP | grep "IO Summary:" | awk '{print "filebench:" $10}'
 #APP=Metis
 #grep "Real:" $OUTPUTDIR/$APP | awk '{print "Metis: " $2}'
 APP=redis
-cat $OUTPUTDIR/$APP | grep -a "ET:" | awk 'BEGIN {SUM=0}; {SUM+=$3}; END {printf "redis: %5.3f\n", SUM}'
+cat $OUTPUTDIR/$APP | grep -a "requests per second" | awk 'BEGIN {SUM=0}; {SUM+=$3}; END {printf "redis: %5.3f\n", SUM}'
 APP=memcached
 cat $OUTPUTDIR/$APP | grep -a "ETS:" | tail -1 | awk 'BEGIN {SUM=0}; {SUM=$2+$4}; END {print "memcached: " SUM}'
 echo "________________________"
-#APP=leveldb
-#awk 'BEGIN {SUM=0}; {SUM=SUM+$3}; END {printf "%.3f\n", SUM}' $OUTPUTDIR/$APP
+APP=leveldb
+awk 'BEGIN {SUM=0}; {SUM=SUM+$3}; END {printf "%.3f\n", SUM}' $OUTPUTDIR/$APP
