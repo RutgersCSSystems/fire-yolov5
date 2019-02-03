@@ -1,11 +1,741 @@
-SET: 0.00SET: 116138.89SET: 118300.80SET: 117182.19SET: 119187.62SET: 118587.86SET: 116880.83SET: 117632.42SET: 118295.70SET: 119084.37SET: 119880.09SET: 118331.03SET: 117176.88SET: 118064.27SET: 118736.43SET: 119328.35SET: 119874.07SET: 120434.86SET: 120866.29SET: 121285.36SET: 121715.72SET: 122185.08SET: 122573.07SET: 122992.01SET: 123492.17SET: 122550.38SET: 121764.23SET: 121051.98SET: 121568.12SET: 122112.52SET: 122584.25SET: 123092.75SET: 123521.75SET: 123870.82SET: 124021.29SET: 124155.51SET: 124319.48SET: 124439.59SET: 124613.03SET: 124725.91SET: 124863.33SET: 125028.29SET: 125166.35SET: 125351.66SET: 125496.64SET: 125654.91SET: 125824.03SET: 125962.48SET: 126125.81SET: 126264.53SET: 126440.97SET: 126572.07SET: 126716.43SET: 126876.02SET: 127008.66SET: 127178.45SET: 127320.95SET: 127499.58SET: 127640.74SET: 127806.88SET: 127955.27SET: 128117.82SET: 128293.77SET: 128427.12SET: 128592.30SET: 128724.89SET: 128879.83SET: 129012.11SET: 129162.27SET: 129305.76SET: 129451.43SET: 129608.83SET: 129733.30SET: 129884.77SET: 130007.77SET: 130155.82SET: 130275.97SET: 130415.07SET: 130532.81SET: 130660.69SET: 130778.12SET: 130892.01SET: 131021.16SET: 131121.77SET: 131247.41SET: 131357.00SET: 131480.05SET: 131589.97SET: 131705.70SET: 131823.06SET: 131930.89SET: 132056.12SET: 132149.06SET: 132268.70SET: 132365.41SET: 132481.84SET: 132583.98SET: 132693.38SET: 132797.81SET: 132895.92SET: 133006.75SET: 133092.81SET: 133199.20SET: 133288.94SET: 133393.05SET: 133483.92SET: 133583.88SET: 133678.16SET: 133765.69SET: 133874.03SET: 133951.48SET: 134051.56SET: 134130.84SET: 134228.44SET: 134306.25SET: 134397.47SET: 134479.06SET: 134562.94SET: 134656.70SET: 134702.81 requests per second
-GET: 124000.00GET: 145421.58GET: 145992.81GET: 146366.00GET: 146245.27GET: 146281.02GET: 146442.16GET: 146509.41GET: 147262.16GET: 147801.39GET: 148239.05GET: 148749.11GET: 149193.72GET: 149343.92GET: 149720.47GET: 150013.92GET: 150094.67GET: 150280.30GET: 150454.34GET: 150622.34GET: 150855.02GET: 151059.73GET: 151093.41GET: 151234.23GET: 151342.62GET: 151408.81GET: 151490.39GET: 151617.69GET: 151687.36GET: 151819.05GET: 151902.98GET: 151982.31GET: 152056.73GET: 152127.50GET: 152213.53GET: 152276.52GET: 152343.64GET: 152378.58GET: 152467.77GET: 152479.09GET: 152528.64GET: 152623.53GET: 152634.23GET: 152693.23GET: 152752.89GET: 152767.30GET: 152827.89GET: 152883.88GET: 152930.58GET: 153005.20GET: 153043.89GET: 153054.75GET: 153105.23GET: 153184.36GET: 153191.88GET: 153241.34GET: 153310.41GET: 153337.48GET: 153367.41GET: 153413.95GET: 153429.33GET: 153481.52GET: 153493.64GET: 153512.34GET: 153549.77GET: 153576.05GET: 153601.53GET: 1534447:M 11 Sep 22:08:07.011 * 10000 changes in 60 seconds. Saving...
-34447:M 11 Sep 22:08:07.102 * Background saving started by pid 34452
-34447:signal-handler (344521536725287:signal-handler () 1536725287Received SIGTERM scheduling shutdown...) 
-Received SIGTERM scheduling shutdown...
-34447:M 11 Sep 22:08:07.505 # User requested shutdown...
-34447:M 11 Sep 22:08:07.505 # There is a child saving an .rdb. Killing it!
-34447:M 11 Sep 22:08:07.505 * Saving the final RDB snapshot before exiting.
-34447:M 11 Sep 22:08:13.546 * DB saved on disk
-34447:M 11 Sep 22:08:13.546 # Redis is now ready to exit, bye bye...
-application termination...
+[ 5455.197989] hetero_pid 0 Curr 5159 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5455.197989]  
+[ 5588.816460] drop_caches: sh (5242): drop_caches: 3
+[ 5589.066916] drop_caches: sh (5250): drop_caches: 3
+[ 5589.114616] flag is set to collect hetero allocate  9 
+[ 5589.114618] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.114619] flag is set to enable HETERO_BUFFER 12 
+[ 5589.114619] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.114620] flag is set to enable HETERO_RADIX 14 
+[ 5589.114621] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.114622] flag to set FASTMEM node to 1 
+[ 5589.114623] hetero_pid set to 5253 5253 procname numactl
+[ 5589.114631] flag is set to collect hetero allocate  9 
+[ 5589.114633] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.114634] flag is set to enable HETERO_BUFFER 12 
+[ 5589.114634] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.114635] flag is set to enable HETERO_RADIX 14 
+[ 5589.114636] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.114637] flag to set FASTMEM node to 1 
+[ 5589.114638] hetero_pid set to 5252 5252 procname numactl
+[ 5589.114652] flag is set to collect hetero allocate  9 
+[ 5589.114653] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.114654] flag is set to enable HETERO_BUFFER 12 
+[ 5589.114654] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.114655] flag is set to enable HETERO_RADIX 14 
+[ 5589.114656] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.114657] flag to set FASTMEM node to 1 
+[ 5589.114658] flag is set to collect hetero allocate  9 
+[ 5589.114659] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.114660] hetero_pid set to 5251 5251 procname numactl
+[ 5589.114661] flag is set to enable HETERO_BUFFER 12 
+[ 5589.114662] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.114662] flag is set to enable HETERO_RADIX 14 
+[ 5589.114663] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.114664] flag to set FASTMEM node to 1 
+[ 5589.114665] hetero_pid set to 5254 5254 procname numactl
+[ 5589.135251] flag is set to collect hetero allocate  9 
+[ 5589.135254] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.135254] flag is set to enable HETERO_BUFFER 12 
+[ 5589.135255] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.135256] flag is set to enable HETERO_RADIX 14 
+[ 5589.135256] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.135257] flag to set FASTMEM node to 1 
+[ 5589.135258] hetero_pid set to 5251 5251 procname redis-server1
+[ 5589.135278] flag is set to collect hetero allocate  9 
+[ 5589.135280] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.135280] flag is set to enable HETERO_BUFFER 12 
+[ 5589.135281] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.135282] flag is set to enable HETERO_RADIX 14 
+[ 5589.135282] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.135283] flag is set to collect hetero allocate  9 
+[ 5589.135284] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.135285] flag to set FASTMEM node to 1 
+[ 5589.135287] hetero_pid set to 5253 5253 procname redis-server3
+[ 5589.135287] flag is set to enable HETERO_BUFFER 12 
+[ 5589.135288] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.135290] flag is set to collect hetero allocate  9 
+[ 5589.135291] flag is set to enable HETERO_PGCACHE 11 
+[ 5589.135291] flag is set to enable HETERO_RADIX 14 
+[ 5589.135292] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.135293] flag is set to enable HETERO_BUFFER 12 
+[ 5589.135294] flag is set to enable HETERO_JOURNAL 13 
+[ 5589.135295] flag to set FASTMEM node to 1 
+[ 5589.135296] hetero_pid set to 5252 5252 procname redis-server2
+[ 5589.135296] flag is set to enable HETERO_RADIX 14 
+[ 5589.135297] flag is set to enable HETERO_FULLKERN 15 
+[ 5589.135298] flag to set FASTMEM node to 1 
+[ 5589.135299] hetero_pid set to 5254 5254 procname redis-server4
+[ 5594.559525] __kmalloc : 4354 
+[ 5594.560200] __kmalloc : 4354 
+[ 5594.560207] __kmalloc : 4354 
+[ 5594.560212] __kmalloc : 4354 
+[ 5594.560216] __kmalloc : 4354 
+[ 5594.561316] __kmalloc : 4354 
+[ 5594.561323] __kmalloc : 4354 
+[ 5594.561331] __kmalloc : 4354 
+[ 5594.562853] __kmalloc : 4354 
+[ 5594.566164] __kmalloc : 4354 
+[ 5594.569478] __kmalloc : 4354 
+[ 5594.572787] __kmalloc : 4354 
+[ 5597.224251] hetero_pid 5254 Curr 5271 Currname redis-server2 HeteroProcname redis-server4 page cache hits 321126 cache miss 0 buffer page hits 8299 miss 0 
+[ 5597.224251]  
+[ 5597.224768] hetero_pid 5254 Curr 5273 Currname redis-server3 HeteroProcname redis-server4 page cache hits 321126 cache miss 0 buffer page hits 8299 miss 0 
+[ 5597.224768]  
+[ 5597.224774] hetero_pid 5254 Curr 5270 Currname redis-server4 HeteroProcname redis-server4 page cache hits 321126 cache miss 0 buffer page hits 8299 miss 0 
+[ 5597.224774]  
+[ 5597.224778] hetero_pid 5254 Curr 5272 Currname redis-server1 HeteroProcname redis-server4 page cache hits 321126 cache miss 0 buffer page hits 8299 miss 0 
+[ 5597.224778]  
+[ 5598.725959] __kmalloc : 4354 
+[ 5598.729300] __kmalloc : 4354 
+[ 5598.732632] __kmalloc : 4354 
+[ 5599.074446] __kmalloc : 4354 
+[ 5599.077773] __kmalloc : 4354 
+[ 5599.081113] __kmalloc : 4354 
+[ 5599.086030] __kmalloc : 4354 
+[ 5599.089353] __kmalloc : 4354 
+[ 5599.092674] __kmalloc : 4354 
+[ 5599.103015] __kmalloc : 4354 
+[ 5599.106342] __kmalloc : 4354 
+[ 5599.109665] __kmalloc : 4354 
+[ 5604.618466] hetero_pid 5254 Curr 5274 Currname redis-server3 HeteroProcname redis-server4 page cache hits 1427533 cache miss 0 buffer page hits 37070 miss 0 
+[ 5604.618466]  
+[ 5606.274777] hetero_pid 5254 Curr 5275 Currname redis-server2 HeteroProcname redis-server4 page cache hits 1699420 cache miss 0 buffer page hits 43576 miss 0 
+[ 5606.274777]  
+[ 5606.275241] hetero_pid 5254 Curr 5276 Currname redis-server1 HeteroProcname redis-server4 page cache hits 1699420 cache miss 0 buffer page hits 43576 miss 0 
+[ 5606.275241]  
+[ 5606.275257] hetero_pid 5254 Curr 5277 Currname redis-server4 HeteroProcname redis-server4 page cache hits 1699420 cache miss 0 buffer page hits 43576 miss 0 
+[ 5606.275257]  
+[ 5609.851621] __kmalloc : 4354 
+[ 5609.854941] __kmalloc : 4354 
+[ 5609.858256] __kmalloc : 4354 
+[ 5615.839254] __kmalloc : 4354 
+[ 5615.842600] __kmalloc : 4354 
+[ 5615.845939] __kmalloc : 4354 
+[ 5615.929979] __kmalloc : 4354 
+[ 5615.933307] __kmalloc : 4354 
+[ 5615.936630] __kmalloc : 4354 
+[ 5616.072430] __kmalloc : 4354 
+[ 5616.075765] __kmalloc : 4354 
+[ 5616.079133] __kmalloc : 4354 
+[ 5623.365373] hetero_pid 5254 Curr 5279 Currname redis-server3 HeteroProcname redis-server4 page cache hits 4355062 cache miss 0 buffer page hits 112241 miss 0 
+[ 5623.365373]  
+[ 5649.063123] CPU: 5 PID: 5281 Comm: redis-server1 Tainted: G           OE     4.17.0 #12
+[ 5649.063125] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5649.063127] Call Trace:
+[ 5649.063129]  <IRQ>
+[ 5649.063138]  dump_stack+0x5a/0x73
+[ 5649.063142]  pskb_expand_head+0x245/0x2f0
+[ 5649.063146]  __tcp_retransmit_skb+0x576/0x6d0
+[ 5649.063148]  ? tcp_established_options+0x28/0xd0
+[ 5649.063150]  ? tcp_write_timer_handler+0x250/0x250
+[ 5649.063152]  ? tcp_current_mss+0x4d/0x70
+[ 5649.063153]  ? tcp_write_timer_handler+0x250/0x250
+[ 5649.063154]  tcp_send_loss_probe+0x108/0x1b0
+[ 5649.063156]  tcp_write_timer_handler+0x1c4/0x250
+[ 5649.063157]  tcp_write_timer+0x85/0x90
+[ 5649.063161]  call_timer_fn+0x2b/0x130
+[ 5649.063163]  run_timer_softirq+0x1cf/0x400
+[ 5649.063164]  ? enqueue_hrtimer+0x38/0x90
+[ 5649.063165]  ? __hrtimer_run_queues+0x119/0x240
+[ 5649.063169]  __do_softirq+0xd1/0x275
+[ 5649.063171]  irq_exit+0xbe/0xd0
+[ 5649.063173]  smp_apic_timer_interrupt+0x60/0x120
+[ 5649.063179]  apic_timer_interrupt+0xf/0x20
+[ 5649.063180]  </IRQ>
+[ 5649.063183] RIP: 0010:find_get_pages_range_tag+0xa1/0x280
+[ 5649.063186] RSP: 0018:ffffc900205c7d58 EFLAGS: 00000297 ORIG_RAX: ffffffffffffff13
+[ 5649.063187] RAX: 0000000000000003 RBX: 0007ffffffffffff RCX: 0000000000000003
+[ 5649.063188] RDX: ffffea00d7c35180 RSI: ffffea00d7c3519c RDI: ffffea00d7c35180
+[ 5649.063193] RBP: 000000000000000f R08: 000000000000000f R09: 0000000000051517
+[ 5649.063193] R10: 0000000000000000 R11: 0000000000000008 R12: ffffc900205c7df0
+[ 5649.063194] R13: ffffc900205c7de0 R14: ffff8826455e79e8 R15: 0000000000000000
+[ 5649.063196]  ? find_get_pages_range_tag+0x14f/0x280
+[ 5649.063202]  pagevec_lookup_range_tag+0x24/0x30
+[ 5649.063204]  __filemap_fdatawait_range+0x74/0x110
+[ 5649.063209]  file_write_and_wait_range+0x62/0xa0
+[ 5649.063213]  ext4_sync_file+0x104/0x350
+[ 5649.063217]  do_fsync+0x38/0x60
+[ 5649.063218]  __x64_sys_fdatasync+0x13/0x20
+[ 5649.063223]  do_syscall_64+0x5c/0x190
+[ 5649.063225]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5649.063226] RIP: 0033:0x7f2bde54efdd
+[ 5649.063227] RSP: 002b:00007ffe1e3e3c00 EFLAGS: 00000293 ORIG_RAX: 000000000000004b
+[ 5649.063231] RAX: ffffffffffffffda RBX: 00007ffe1e3e3c80 RCX: 00007f2bde54efdd
+[ 5649.063232] RDX: 0000000000000000 RSI: 00000000392155b0 RDI: 0000000000000004
+[ 5649.063233] RBP: 0000000007cd88f9 R08: 00007f2bdf159740 R09: 00007f2bd3dce020
+[ 5649.063233] R10: 000000d242a55be0 R11: 0000000000000293 R12: 0000000000000001
+[ 5649.063234] R13: 00007f2bd3dce020 R14: 0000000014cb9f08 R15: 0000000000000000
+[ 5649.063243] CPU: 5 PID: 5281 Comm: redis-server1 Tainted: G           OE     4.17.0 #12
+[ 5649.063247] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[ 5649.063247] Call Trace:
+[ 5649.063248]  <IRQ>
+[ 5649.063249]  dump_stack+0x5a/0x73
+[ 5649.063251]  pskb_expand_head+0x245/0x2f0
+[ 5649.063253]  __tcp_retransmit_skb+0x576/0x6d0
+[ 5649.063254]  ? tcp_established_options+0x28/0xd0
+[ 5649.063255]  ? tcp_write_timer_handler+0x250/0x250
+[ 5649.063257]  ? tcp_current_mss+0x4d/0x70
+[ 5649.063258]  ? tcp_write_timer_handler+0x250/0x250
+[ 5649.063259]  tcp_send_loss_probe+0x108/0x1b0
+[ 5649.063260]  tcp_write_timer_handler+0x1c4/0x250
+[ 5649.063262]  tcp_write_timer+0x85/0x90
+[ 5649.063264]  call_timer_fn+0x2b/0x130
+[ 5649.063266]  run_timer_softirq+0x1cf/0x400
+[ 5649.063267]  ? enqueue_hrtimer+0x38/0x90
+[ 5649.063268]  ? __hrtimer_run_queues+0x119/0x240
+[ 5649.063269]  __do_softirq+0xd1/0x275
+[ 5649.063270]  irq_exit+0xbe/0xd0
+[ 5649.063272]  smp_apic_timer_interrupt+0x60/0x120
+[ 5649.063273]  apic_timer_interrupt+0xf/0x20
+[ 5649.063274]  </IRQ>
+[ 5649.063275] RIP: 0010:find_get_pages_range_tag+0xa1/0x280
+[ 5649.063275] RSP: 0018:ffffc900205c7d58 EFLAGS: 00000297 ORIG_RAX: ffffffffffffff13
+[ 5649.063276] RAX: 0000000000000003 RBX: 0007ffffffffffff RCX: 0000000000000003
+[ 5649.063277] RDX: ffffea00d7c35180 RSI: ffffea00d7c3519c RDI: ffffea00d7c35180
+[ 5649.063277] RBP: 000000000000000f R08: 000000000000000f R09: 0000000000051517
+[ 5649.063278] R10: 0000000000000000 R11: 0000000000000008 R12: ffffc900205c7df0
+[ 5649.063278] R13: ffffc900205c7de0 R14: ffff8826455e79e8 R15: 0000000000000000
+[ 5649.063280]  ? find_get_pages_range_tag+0x14f/0x280
+[ 5649.063281]  pagevec_lookup_range_tag+0x24/0x30
+[ 5649.063282]  __filemap_fdatawait_range+0x74/0x110
+[ 5649.063284]  file_write_and_wait_range+0x62/0xa0
+[ 5649.063286]  ext4_sync_file+0x104/0x350
+[ 5649.063287]  do_fsync+0x38/0x60
+[ 5649.063288]  __x64_sys_fdatasync+0x13/0x20
+[ 5649.063290]  do_syscall_64+0x5c/0x190
+[ 5649.063291]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 5649.063292] RIP: 0033:0x7f2bde54efdd
+[ 5649.063292] RSP: 002b:00007ffe1e3e3c00 EFLAGS: 00000293 ORIG_RAX: 000000000000004b
+[ 5649.063293] RAX: ffffffffffffffda RBX: 00007ffe1e3e3c80 RCX: 00007f2bde54efdd
+[ 5649.063294] RDX: 0000000000000000 RSI: 00000000392155b0 RDI: 0000000000000004
+[ 5649.063294] RBP: 0000000007cd88f9 R08: 00007f2bdf159740 R09: 00007f2bd3dce020
+[ 5649.063295] R10: 000000d242a55be0 R11: 0000000000000293 R12: 0000000000000001
+[ 5649.063295] R13: 00007f2bd3dce020 R14: 0000000014cb9f08 R15: 0000000000000000
+[ 5649.250598] hetero_pid 5254 Curr 5280 Currname redis-server4 HeteroProcname redis-server4 page cache hits 6879807 cache miss 0 buffer page hits 176723 miss 0 
+[ 5649.250598]  
+[ 5649.250600] hetero_pid 5254 Curr 5282 Currname redis-server2 HeteroProcname redis-server4 page cache hits 6879807 cache miss 0 buffer page hits 176723 miss 0 
+[ 5649.250600]  
+[ 5649.263098] hetero_pid 5254 Curr 5281 Currname redis-server1 HeteroProcname redis-server4 page cache hits 6879807 cache miss 0 buffer page hits 176723 miss 0 
+[ 5649.263098]  
+[ 5687.441101] flag is set to print hetero allocate stat 10 
+[ 5687.441104] hetero_pid 5254 Curr 5251 Currname redis-server1 HeteroProcname redis-server4 page cache hits 8511632 cache miss 0 buffer page hits 219201 miss 0 
+[ 5687.441104]  
+[ 5687.441106] flag set to clear count 0
+[ 5687.441107] hetero_pid 5254 Curr 5251 Currname redis-server1 HeteroProcname redis-server4 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.441107]  
+[ 5687.441498] hetero_pid 0 Curr 5260 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.441498]  
+[ 5687.441519] hetero_pid 0 Curr 5261 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.441519]  
+[ 5687.441539] hetero_pid 0 Curr 5251 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.441539]  
+[ 5687.894938] flag is set to print hetero allocate stat 10 
+[ 5687.894941] hetero_pid 0 Curr 5253 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.894941]  
+[ 5687.894943] flag set to clear count 0
+[ 5687.894944] hetero_pid 0 Curr 5253 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.894944]  
+[ 5687.894991] flag is set to print hetero allocate stat 10 
+[ 5687.894993] hetero_pid 0 Curr 5252 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.894993]  
+[ 5687.894994] flag set to clear count 0
+[ 5687.894995] hetero_pid 0 Curr 5252 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.894995]  
+[ 5687.895042] hetero_pid 0 Curr 5256 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895042]  
+[ 5687.895088] hetero_pid 0 Curr 5262 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895088]  
+[ 5687.895099] hetero_pid 0 Curr 5257 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895099]  
+[ 5687.895121] hetero_pid 0 Curr 5263 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895121]  
+[ 5687.895135] flag is set to print hetero allocate stat 10 
+[ 5687.895137] hetero_pid 0 Curr 5254 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895137]  
+[ 5687.895138] flag set to clear count 0
+[ 5687.895139] hetero_pid 0 Curr 5254 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895139]  
+[ 5687.895142] hetero_pid 0 Curr 5253 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895142]  
+[ 5687.895173] hetero_pid 0 Curr 5252 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895173]  
+[ 5687.895196] hetero_pid 0 Curr 5258 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895196]  
+[ 5687.895234] hetero_pid 0 Curr 5259 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895234]  
+[ 5687.895335] hetero_pid 0 Curr 5254 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5687.895335]  
+[ 5884.533562] drop_caches: sh (5355): drop_caches: 3
+[ 5884.916146] drop_caches: sh (5363): drop_caches: 3
+[ 5884.959785] flag is set to collect hetero allocate  9 
+[ 5884.959786] flag is set to collect hetero allocate  9 
+[ 5884.959788] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.959788] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.959789] flag is set to enable HETERO_BUFFER 12 
+[ 5884.959790] flag is set to enable HETERO_BUFFER 12 
+[ 5884.959791] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.959791] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.959792] flag is set to enable HETERO_RADIX 14 
+[ 5884.959793] flag is set to enable HETERO_RADIX 14 
+[ 5884.959793] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.959794] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.959795] flag to set FASTMEM node to 0 
+[ 5884.959795] flag to set FASTMEM node to 0 
+[ 5884.959797] hetero_pid set to 5365 5365 procname numactl
+[ 5884.959798] hetero_pid set to 5366 5366 procname numactl
+[ 5884.959805] flag is set to collect hetero allocate  9 
+[ 5884.959806] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.959807] flag is set to enable HETERO_BUFFER 12 
+[ 5884.959808] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.959808] flag is set to enable HETERO_RADIX 14 
+[ 5884.959809] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.959810] flag to set FASTMEM node to 0 
+[ 5884.959811] hetero_pid set to 5367 5367 procname numactl
+[ 5884.959815] flag is set to collect hetero allocate  9 
+[ 5884.959817] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.959818] flag is set to enable HETERO_BUFFER 12 
+[ 5884.959818] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.959819] flag is set to enable HETERO_RADIX 14 
+[ 5884.959820] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.959820] flag to set FASTMEM node to 0 
+[ 5884.959821] hetero_pid set to 5364 5364 procname numactl
+[ 5884.980502] flag is set to collect hetero allocate  9 
+[ 5884.980506] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.980507] flag is set to enable HETERO_BUFFER 12 
+[ 5884.980509] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.980510] flag is set to enable HETERO_RADIX 14 
+[ 5884.980512] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.980513] flag to set FASTMEM node to 0 
+[ 5884.980515] hetero_pid set to 5365 5365 procname redis-server2
+[ 5884.980548] flag is set to collect hetero allocate  9 
+[ 5884.980551] flag is set to collect hetero allocate  9 
+[ 5884.980552] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.980554] flag is set to enable HETERO_BUFFER 12 
+[ 5884.980556] flag is set to collect hetero allocate  9 
+[ 5884.980557] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.980559] flag is set to enable HETERO_PGCACHE 11 
+[ 5884.980560] flag is set to enable HETERO_BUFFER 12 
+[ 5884.980562] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.980563] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.980565] flag is set to enable HETERO_RADIX 14 
+[ 5884.980566] flag is set to enable HETERO_BUFFER 12 
+[ 5884.980568] flag is set to enable HETERO_RADIX 14 
+[ 5884.980569] flag is set to enable HETERO_JOURNAL 13 
+[ 5884.980571] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.980572] flag is set to enable HETERO_RADIX 14 
+[ 5884.980574] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.980575] flag is set to enable HETERO_FULLKERN 15 
+[ 5884.980577] flag to set FASTMEM node to 0 
+[ 5884.980578] flag to set FASTMEM node to 0 
+[ 5884.980580] flag to set FASTMEM node to 0 
+[ 5884.980582] hetero_pid set to 5366 5366 procname redis-server1
+[ 5884.980584] hetero_pid set to 5364 5364 procname redis-server1
+[ 5884.980587] hetero_pid set to 5367 5367 procname redis-server4
+[ 5890.413373] __kmalloc : 4354 
+[ 5890.415383] __kmalloc : 4354 
+[ 5890.416343] __kmalloc : 4354 
+[ 5890.416353] __kmalloc : 4354 
+[ 5890.416359] __kmalloc : 4354 
+[ 5890.416405] __kmalloc : 4354 
+[ 5890.416414] __kmalloc : 4354 
+[ 5890.416419] __kmalloc : 4354 
+[ 5890.416711] __kmalloc : 4354 
+[ 5890.420024] __kmalloc : 4354 
+[ 5890.423332] __kmalloc : 4354 
+[ 5890.426650] __kmalloc : 4354 
+[ 5893.056769] hetero_pid 5367 Curr 5383 Currname redis-server1 HeteroProcname redis-server4 page cache hits 346197 cache miss 0 buffer page hits 8978 miss 0 
+[ 5893.056769]  
+[ 5893.056989] hetero_pid 5367 Curr 5384 Currname redis-server4 HeteroProcname redis-server4 page cache hits 346197 cache miss 0 buffer page hits 8978 miss 0 
+[ 5893.056989]  
+[ 5893.057002] hetero_pid 5367 Curr 5382 Currname redis-server2 HeteroProcname redis-server4 page cache hits 346197 cache miss 0 buffer page hits 8978 miss 0 
+[ 5893.057002]  
+[ 5893.057025] hetero_pid 5367 Curr 5381 Currname redis-server3 HeteroProcname redis-server4 page cache hits 346197 cache miss 0 buffer page hits 8978 miss 0 
+[ 5893.057025]  
+[ 5894.533607] __kmalloc : 4354 
+[ 5894.536936] __kmalloc : 4354 
+[ 5894.540264] __kmalloc : 4354 
+[ 5894.762371] __kmalloc : 4354 
+[ 5894.765709] __kmalloc : 4354 
+[ 5894.769041] __kmalloc : 4354 
+[ 5894.859236] __kmalloc : 4354 
+[ 5894.862570] __kmalloc : 4354 
+[ 5894.865896] __kmalloc : 4354 
+[ 5895.077663] __kmalloc : 4354 
+[ 5895.080989] __kmalloc : 4354 
+[ 5895.084440] __kmalloc : 4354 
+[ 5901.047062] hetero_pid 5367 Curr 5385 Currname redis-server3 HeteroProcname redis-server4 page cache hits 1658263 cache miss 0 buffer page hits 42560 miss 0 
+[ 5901.047062]  
+[ 5901.047383] hetero_pid 5367 Curr 5386 Currname redis-server4 HeteroProcname redis-server4 page cache hits 1658363 cache miss 0 buffer page hits 42563 miss 0 
+[ 5901.047383]  
+[ 5901.485760] hetero_pid 5367 Curr 5387 Currname redis-server1 HeteroProcname redis-server4 page cache hits 1910057 cache miss 0 buffer page hits 49183 miss 0 
+[ 5901.485760]  
+[ 5902.636689] hetero_pid 5367 Curr 5388 Currname redis-server2 HeteroProcname redis-server4 page cache hits 2100264 cache miss 0 buffer page hits 54259 miss 0 
+[ 5902.636689]  
+[ 5908.522063] __kmalloc : 4354 
+[ 5908.525409] __kmalloc : 4354 
+[ 5908.528740] __kmalloc : 4354 
+[ 5910.050573] __kmalloc : 4354 
+[ 5910.053911] __kmalloc : 4354 
+[ 5910.057240] __kmalloc : 4354 
+[ 5910.158981] __kmalloc : 4354 
+[ 5910.162318] __kmalloc : 4354 
+[ 5910.165649] __kmalloc : 4354 
+[ 5911.462264] __kmalloc : 4354 
+[ 5911.465595] __kmalloc : 4354 
+[ 5911.468923] __kmalloc : 4354 
+[ 5924.483817] hetero_pid 5367 Curr 5389 Currname redis-server4 HeteroProcname redis-server4 page cache hits 5828146 cache miss 0 buffer page hits 145185 miss 0 
+[ 5924.483817]  
+[ 5943.885470] hetero_pid 5367 Curr 5390 Currname redis-server3 HeteroProcname redis-server4 page cache hits 7036994 cache miss 0 buffer page hits 177645 miss 0 
+[ 5943.885470]  
+[ 5957.069729] hetero_pid 5367 Curr 5391 Currname redis-server1 HeteroProcname redis-server4 page cache hits 7625746 cache miss 0 buffer page hits 186468 miss 0 
+[ 5957.069729]  
+[ 5957.299807] __kmalloc : 4354 
+[ 5957.303151] __kmalloc : 4354 
+[ 5957.306468] __kmalloc : 4354 
+[ 5957.515576] hetero_pid 5367 Curr 5403 Currname redis-server1 HeteroProcname redis-server4 page cache hits 7633603 cache miss 0 buffer page hits 186483 miss 0 
+[ 5957.515576]  
+[ 5957.657737] hetero_pid 5367 Curr 5392 Currname redis-server2 HeteroProcname redis-server4 page cache hits 7633603 cache miss 0 buffer page hits 186493 miss 0 
+[ 5957.657737]  
+[ 5966.145820] flag is set to print hetero allocate stat 10 
+[ 5966.145824] hetero_pid 5367 Curr 5367 Currname redis-server4 HeteroProcname redis-server4 page cache hits 7674404 cache miss 0 buffer page hits 186748 miss 0 
+[ 5966.145824]  
+[ 5966.145825] flag set to clear count 0
+[ 5966.145826] hetero_pid 5367 Curr 5367 Currname redis-server4 HeteroProcname redis-server4 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.145826]  
+[ 5966.153199] hetero_pid 0 Curr 5371 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.153199]  
+[ 5966.153221] hetero_pid 0 Curr 5373 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.153221]  
+[ 5966.153241] hetero_pid 0 Curr 5367 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.153241]  
+[ 5966.849180] flag is set to print hetero allocate stat 10 
+[ 5966.849183] hetero_pid 0 Curr 5366 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.849183]  
+[ 5966.849184] flag set to clear count 0
+[ 5966.849185] hetero_pid 0 Curr 5366 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.849185]  
+[ 5966.849225] hetero_pid 0 Curr 5375 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.849225]  
+[ 5966.849251] hetero_pid 0 Curr 5376 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.849251]  
+[ 5966.849273] hetero_pid 0 Curr 5366 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5966.849273]  
+[ 5968.898197] flag is set to print hetero allocate stat 10 
+[ 5968.898200] hetero_pid 0 Curr 5364 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5968.898200]  
+[ 5968.898201] flag set to clear count 0
+[ 5968.898202] hetero_pid 0 Curr 5364 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5968.898202]  
+[ 5968.898238] hetero_pid 0 Curr 5372 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5968.898238]  
+[ 5968.898260] hetero_pid 0 Curr 5374 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5968.898260]  
+[ 5968.898282] hetero_pid 0 Curr 5364 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5968.898282]  
+[ 5969.129337] flag is set to print hetero allocate stat 10 
+[ 5969.129340] hetero_pid 0 Curr 5365 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5969.129340]  
+[ 5969.129341] flag set to clear count 0
+[ 5969.129342] hetero_pid 0 Curr 5365 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5969.129342]  
+[ 5969.129377] hetero_pid 0 Curr 5369 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5969.129377]  
+[ 5969.129399] hetero_pid 0 Curr 5370 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5969.129399]  
+[ 5969.129420] hetero_pid 0 Curr 5365 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 5969.129420]  
+[ 7454.062623] drop_caches: sh (5709): drop_caches: 3
+[ 7454.398378] drop_caches: sh (5717): drop_caches: 3
+[ 7454.441786] flag is set to collect hetero allocate  9 
+[ 7454.441788] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441788] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441789] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441790] flag is set to enable HETERO_RADIX 14 
+[ 7454.441791] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441791] flag to set FASTMEM node to 0 
+[ 7454.441792] hetero_pid set to 5718 5718 procname numactl
+[ 7454.441836] flag is set to collect hetero allocate  9 
+[ 7454.441837] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441838] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441838] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441839] flag is set to enable HETERO_RADIX 14 
+[ 7454.441840] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441840] flag to set FASTMEM node to 0 
+[ 7454.441841] hetero_pid set to 5720 5720 procname numactl
+[ 7454.441847] flag is set to collect hetero allocate  9 
+[ 7454.441848] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441849] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441850] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441850] flag is set to enable HETERO_RADIX 14 
+[ 7454.441851] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441852] flag to set FASTMEM node to 0 
+[ 7454.441853] hetero_pid set to 5724 5724 procname numactl
+[ 7454.441855] flag is set to collect hetero allocate  9 
+[ 7454.441856] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441857] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441858] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441859] flag is set to enable HETERO_RADIX 14 
+[ 7454.441859] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441860] flag to set FASTMEM node to 0 
+[ 7454.441861] hetero_pid set to 5719 5719 procname numactl
+[ 7454.441871] flag is set to collect hetero allocate  9 
+[ 7454.441872] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441873] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441874] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441874] flag is set to enable HETERO_RADIX 14 
+[ 7454.441875] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441876] flag to set FASTMEM node to 0 
+[ 7454.441877] hetero_pid set to 5722 5722 procname numactl
+[ 7454.441884] flag is set to collect hetero allocate  9 
+[ 7454.441886] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441887] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441887] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441888] flag is set to enable HETERO_RADIX 14 
+[ 7454.441889] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441890] flag to set FASTMEM node to 0 
+[ 7454.441891] hetero_pid set to 5723 5723 procname numactl
+[ 7454.441893] flag is set to collect hetero allocate  9 
+[ 7454.441895] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441895] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441896] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441897] flag is set to enable HETERO_RADIX 14 
+[ 7454.441898] flag is set to collect hetero allocate  9 
+[ 7454.441899] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441900] flag to set FASTMEM node to 0 
+[ 7454.441900] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.441901] flag is set to enable HETERO_BUFFER 12 
+[ 7454.441902] hetero_pid set to 5725 5725 procname numactl
+[ 7454.441903] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.441904] flag is set to enable HETERO_RADIX 14 
+[ 7454.441905] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.441906] flag to set FASTMEM node to 0 
+[ 7454.441907] hetero_pid set to 5721 5721 procname numactl
+[ 7454.462961] flag is set to collect hetero allocate  9 
+[ 7454.462963] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462963] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462964] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462965] flag is set to enable HETERO_RADIX 14 
+[ 7454.462966] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.462966] flag to set FASTMEM node to 0 
+[ 7454.462967] hetero_pid set to 5722 5722 procname redis-server5
+[ 7454.462969] flag is set to collect hetero allocate  9 
+[ 7454.462971] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462972] flag is set to collect hetero allocate  9 
+[ 7454.462973] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462974] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462975] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462975] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462976] flag is set to enable HETERO_RADIX 14 
+[ 7454.462977] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462977] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.462978] flag to set FASTMEM node to 0 
+[ 7454.462979] flag is set to enable HETERO_RADIX 14 
+[ 7454.462980] flag is set to collect hetero allocate  9 
+[ 7454.462980] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.462981] hetero_pid set to 5723 5723 procname redis-server6
+[ 7454.462983] flag is set to collect hetero allocate  9 
+[ 7454.462983] flag to set FASTMEM node to 0 
+[ 7454.462985] hetero_pid set to 5720 5720 procname redis-server3
+[ 7454.462986] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462986] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462988] flag is set to collect hetero allocate  9 
+[ 7454.462988] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462988] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462990] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462990] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462991] flag is set to enable HETERO_RADIX 14 
+[ 7454.462992] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462993] flag is set to enable HETERO_RADIX 14 
+[ 7454.462994] flag is set to collect hetero allocate  9 
+[ 7454.462994] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462995] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.462996] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.462996] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.462998] flag is set to enable HETERO_BUFFER 12 
+[ 7454.462999] flag is set to collect hetero allocate  9 
+[ 7454.462999] flag is set to enable HETERO_RADIX 14 
+[ 7454.462999] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.463001] flag is set to enable HETERO_PGCACHE 11 
+[ 7454.463001] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.463002] flag to set FASTMEM node to 0 
+[ 7454.463002] flag to set FASTMEM node to 0 
+[ 7454.463003] flag to set FASTMEM node to 0 
+[ 7454.463004] hetero_pid set to 5724 5724 procname redis-server1
+[ 7454.463005] hetero_pid set to 5718 5718 procname redis-server1
+[ 7454.463006] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.463007] flag is set to enable HETERO_BUFFER 12 
+[ 7454.463007] flag is set to enable HETERO_RADIX 14 
+[ 7454.463009] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.463010] hetero_pid set to 5719 5719 procname redis-server2
+[ 7454.463011] flag is set to enable HETERO_JOURNAL 13 
+[ 7454.463011] flag to set FASTMEM node to 0 
+[ 7454.463013] hetero_pid set to 5725 5725 procname redis-server8
+[ 7454.463013] flag is set to enable HETERO_RADIX 14 
+[ 7454.463014] flag is set to enable HETERO_FULLKERN 15 
+[ 7454.463015] flag to set FASTMEM node to 0 
+[ 7454.463016] hetero_pid set to 5721 5721 procname redis-server4
+[ 7459.893681] __kmalloc : 4354 
+[ 7459.897010] __kmalloc : 4354 
+[ 7459.898447] __kmalloc : 4354 
+[ 7459.900336] __kmalloc : 4354 
+[ 7459.903648] __kmalloc : 4354 
+[ 7459.910280] __kmalloc : 4354 
+[ 7459.997500] __kmalloc : 4354 
+[ 7460.000831] __kmalloc : 4354 
+[ 7460.004154] __kmalloc : 4354 
+[ 7460.023347] __kmalloc : 4354 
+[ 7460.026695] __kmalloc : 4354 
+[ 7460.030024] __kmalloc : 4354 
+[ 7462.998466] hetero_pid 5721 Curr 5747 Currname redis-server3 HeteroProcname redis-server4 page cache hits 510532 cache miss 0 buffer page hits 13420 miss 0 
+[ 7462.998466]  
+[ 7462.998518] hetero_pid 5721 Curr 5748 Currname redis-server2 HeteroProcname redis-server4 page cache hits 510532 cache miss 0 buffer page hits 13420 miss 0 
+[ 7462.998518]  
+[ 7462.999156] hetero_pid 5721 Curr 5749 Currname redis-server4 HeteroProcname redis-server4 page cache hits 510532 cache miss 0 buffer page hits 13420 miss 0 
+[ 7462.999156]  
+[ 7462.999274] hetero_pid 5721 Curr 5750 Currname redis-server1 HeteroProcname redis-server4 page cache hits 510532 cache miss 0 buffer page hits 13420 miss 0 
+[ 7462.999274]  
+[ 7465.548845] __kmalloc : 4354 
+[ 7465.552167] __kmalloc : 4354 
+[ 7465.555501] __kmalloc : 4354 
+[ 7465.753019] __kmalloc : 4354 
+[ 7465.756350] __kmalloc : 4354 
+[ 7465.759677] __kmalloc : 4354 
+[ 7465.847163] __kmalloc : 4354 
+[ 7465.850497] __kmalloc : 4354 
+[ 7465.853823] __kmalloc : 4354 
+[ 7465.978185] __kmalloc : 4354 
+[ 7465.981512] __kmalloc : 4354 
+[ 7465.984843] __kmalloc : 4354 
+[ 7473.532703] hetero_pid 5721 Curr 5752 Currname redis-server1 HeteroProcname redis-server4 page cache hits 2174724 cache miss 0 buffer page hits 56478 miss 0 
+[ 7473.532703]  
+[ 7473.533171] hetero_pid 5721 Curr 5753 Currname redis-server4 HeteroProcname redis-server4 page cache hits 2174817 cache miss 0 buffer page hits 56480 miss 0 
+[ 7473.533171]  
+[ 7475.111504] hetero_pid 5721 Curr 5754 Currname redis-server3 HeteroProcname redis-server4 page cache hits 2594298 cache miss 0 buffer page hits 67585 miss 0 
+[ 7475.111504]  
+[ 7476.289087] hetero_pid 5721 Curr 5755 Currname redis-server2 HeteroProcname redis-server4 page cache hits 2803802 cache miss 0 buffer page hits 70698 miss 0 
+[ 7476.289087]  
+[ 7482.524333] __kmalloc : 4354 
+[ 7482.527657] __kmalloc : 4354 
+[ 7482.530985] __kmalloc : 4354 
+[ 7484.485832] __kmalloc : 4354 
+[ 7484.489157] __kmalloc : 4354 
+[ 7484.492499] __kmalloc : 4354 
+[ 7487.760135] __kmalloc : 4354 
+[ 7487.763474] __kmalloc : 4354 
+[ 7487.766806] __kmalloc : 4354 
+[ 7489.416420] __kmalloc : 4354 
+[ 7489.419753] __kmalloc : 4354 
+[ 7489.423082] __kmalloc : 4354 
+[ 7518.898554] hetero_pid 5721 Curr 5756 Currname redis-server4 HeteroProcname redis-server4 page cache hits 6964787 cache miss 0 buffer page hits 173689 miss 0 
+[ 7518.898554]  
+[ 7519.365497] __kmalloc : 4354 
+[ 7519.368830] __kmalloc : 4354 
+[ 7519.372161] __kmalloc : 4354 
+[ 7528.345458] hetero_pid 5721 Curr 5762 Currname redis-server5 HeteroProcname redis-server4 page cache hits 8021343 cache miss 0 buffer page hits 201174 miss 0 
+[ 7528.345458]  
+[ 7528.853624] hetero_pid 5721 Curr 5757 Currname redis-server1 HeteroProcname redis-server4 page cache hits 8179493 cache miss 0 buffer page hits 201174 miss 0 
+[ 7528.853624]  
+[ 7543.041558] hetero_pid 5721 Curr 5758 Currname redis-server3 HeteroProcname redis-server4 page cache hits 9332428 cache miss 0 buffer page hits 220432 miss 0 
+[ 7543.041558]  
+[ 7544.346925] __kmalloc : 4354 
+[ 7544.350252] __kmalloc : 4354 
+[ 7544.353574] __kmalloc : 4354 
+[ 7548.238481] hetero_pid 5721 Curr 5759 Currname redis-server2 HeteroProcname redis-server4 page cache hits 9934936 cache miss 0 buffer page hits 235943 miss 0 
+[ 7548.238481]  
+[ 7557.616545] hetero_pid 5721 Curr 5763 Currname redis-server5 HeteroProcname redis-server4 page cache hits 10398363 cache miss 0 buffer page hits 236072 miss 0 
+[ 7557.616545]  
+[ 7559.501770] flag is set to print hetero allocate stat 10 
+[ 7559.501773] hetero_pid 5721 Curr 5724 Currname redis-server7 HeteroProcname redis-server4 page cache hits 10430849 cache miss 0 buffer page hits 236224 miss 0 
+[ 7559.501773]  
+[ 7559.501775] flag set to clear count 0
+[ 7559.501776] hetero_pid 5721 Curr 5724 Currname redis-server7 HeteroProcname redis-server4 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.501776]  
+[ 7559.501851] flag is set to print hetero allocate stat 10 
+[ 7559.501853] hetero_pid 0 Curr 5725 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.501853]  
+[ 7559.501854] flag set to clear count 0
+[ 7559.501855] hetero_pid 0 Curr 5725 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.501855]  
+[ 7559.501867] flag is set to print hetero allocate stat 10 
+[ 7559.501869] hetero_pid 0 Curr 5723 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.501869]  
+[ 7559.501870] flag set to clear count 0
+[ 7559.501871] hetero_pid 0 Curr 5723 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.501871]  
+[ 7559.515524] hetero_pid 0 Curr 5731 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515524]  
+[ 7559.515530] hetero_pid 0 Curr 5737 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515530]  
+[ 7559.515539] hetero_pid 0 Curr 5739 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515539]  
+[ 7559.515546] hetero_pid 0 Curr 5732 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515546]  
+[ 7559.515548] hetero_pid 0 Curr 5738 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515548]  
+[ 7559.515556] hetero_pid 0 Curr 5741 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515556]  
+[ 7559.515559] hetero_pid 0 Curr 5724 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515559]  
+[ 7559.515560] hetero_pid 0 Curr 5725 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515560]  
+[ 7559.515567] hetero_pid 0 Curr 5723 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7559.515567]  
+[ 7561.399532] flag is set to print hetero allocate stat 10 
+[ 7561.399534] hetero_pid 0 Curr 5720 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.399534]  
+[ 7561.399536] flag set to clear count 0
+[ 7561.399537] hetero_pid 0 Curr 5720 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.399537]  
+[ 7561.399578] hetero_pid 0 Curr 5733 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.399578]  
+[ 7561.399599] hetero_pid 0 Curr 5735 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.399599]  
+[ 7561.399619] hetero_pid 0 Curr 5720 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.399619]  
+[ 7561.512051] flag is set to print hetero allocate stat 10 
+[ 7561.512055] hetero_pid 0 Curr 5718 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.512055]  
+[ 7561.512056] flag set to clear count 0
+[ 7561.512058] hetero_pid 0 Curr 5718 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.512058]  
+[ 7561.512105] hetero_pid 0 Curr 5729 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.512105]  
+[ 7561.512128] hetero_pid 0 Curr 5730 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.512128]  
+[ 7561.512149] hetero_pid 0 Curr 5718 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.512149]  
+[ 7561.569187] flag is set to print hetero allocate stat 10 
+[ 7561.569190] hetero_pid 0 Curr 5719 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.569190]  
+[ 7561.569191] flag set to clear count 0
+[ 7561.569192] hetero_pid 0 Curr 5719 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.569192]  
+[ 7561.569236] hetero_pid 0 Curr 5740 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.569236]  
+[ 7561.569259] hetero_pid 0 Curr 5742 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.569259]  
+[ 7561.569279] hetero_pid 0 Curr 5719 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7561.569279]  
+[ 7562.281288] flag is set to print hetero allocate stat 10 
+[ 7562.281291] hetero_pid 0 Curr 5721 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7562.281291]  
+[ 7562.281292] flag set to clear count 0
+[ 7562.281294] hetero_pid 0 Curr 5721 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7562.281294]  
+[ 7562.281337] hetero_pid 0 Curr 5734 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7562.281337]  
+[ 7562.281359] hetero_pid 0 Curr 5736 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7562.281359]  
+[ 7562.281379] hetero_pid 0 Curr 5721 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7562.281379]  
+[ 7563.262609] flag is set to print hetero allocate stat 10 
+[ 7563.262613] hetero_pid 0 Curr 5722 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7563.262613]  
+[ 7563.262615] flag set to clear count 0
+[ 7563.262616] hetero_pid 0 Curr 5722 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7563.262616]  
+[ 7563.262681] hetero_pid 0 Curr 5727 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7563.262681]  
+[ 7563.262710] hetero_pid 0 Curr 5728 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7563.262710]  

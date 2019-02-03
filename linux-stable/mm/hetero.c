@@ -138,10 +138,11 @@ inline int check_hetero_proc (void)
 int is_hetero_exit(void) 
 {
     if(check_hetero_proc()) {
-	printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
+	/*printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
 		"user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  
-	        hetero_usrpg_cnt, hetero_kernpg_cnt);
+	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
+	print_hetero_stats();
     }
     return 0;
 }
@@ -283,7 +284,11 @@ void update_hetero_pgcache(int nodeid, struct page *page)
         if(page_to_nid(page) == nodeid) {
 		pgcache_hits_cnt += 1;
 	}else {
-		//dump_stack();
+		/*printk(KERN_ALERT "*****%s:%d***** page_to_nid(page) %d  "
+			"target node %d \n", __func__,__LINE__,
+			page_to_nid(page), nodeid);
+		dump_stack();*/
+		
         	pgcache_miss_cnt += 1;
 	}
 }

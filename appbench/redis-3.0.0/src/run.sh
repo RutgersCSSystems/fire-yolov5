@@ -1,15 +1,30 @@
 #!/bin/bash
-APPBASE=$APPBENCH/redis-3.0.0/src
+#set -x
+REDISROOT=$APPBENCH/redis-3.0.0
+APPBASE=$REDISROOT/src
 APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
+READS=2000000
+KEYS=4000000
+CLIPREFIX="numactl --membind=0"
+PHYSCPU="--physcpubind"
 
 cd $APPBASE
-/bin/rm *.rdb
-rm -rf *.aof
-killall redis-server
-sleep 5
+let MAXINST=8
+let STARTPORT=6378
+let SERVERCPU=20
 
+CLEAN() {
+
+        for (( n=1; n<=$MAXINST; n++ ))
+	do
+		rm -rf *.rdb
+		rm -rf *.aof
+		killall redis-server$n
+	done
+	sleep 5
+}
 
 FlushDisk()
 {
@@ -20,20 +35,35 @@ FlushDisk()
 }
 
 RUN(){
-export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$APPPREFIX $APPBASE/redis-server $APPBENCH/redis-3.0.0/redis.conf &
-export LD_PRELOAD=""
+  let port=$STARTPORT
+  let physcpu=$SERVERCPU
+  for (( n=1; n<=$MAXINST; n++))
+  do
+    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu $APPBASE/redis-server$n $REDISROOT/redis-$port".conf" &
+    let port=$port+1
+    let physcpu=$physcpu+1
+  done
+  export LD_PRELOAD=""
 }
 
+RUNCLIENT(){
+  let port=$STARTPORT
+  let physcpu=$SERVERCPU
+  PARAMS=" -r $READS -n $KEYS -c 100 -t get,set -P 16 -q  -h 127.0.0.1 -d 1024"
+
+  for (( n=1; n<$MAXINST; n++))
+  do
+    $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$n".txt" &
+    let port=$port+1
+    let physcpu=$physcpu+1
+  done
+  $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$n".txt"  
+}
+
+CLEAN
 FlushDisk
-
-alias rm=rm
 RUN
-sleep 5
-$APPPREFIX $APPBASE/redis-benchmark -r 1000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -p 6379 -d 4096 #&> $OUTPUT
-killall redis-server
-
-
-
-
-
+sleep 10
+RUNCLIENT
+sleep 10
+CLEAN

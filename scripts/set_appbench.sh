@@ -99,9 +99,9 @@ git clone https://github.com/memcached/memcached.git
 }
 
 
-#INSTALL_SYSTEM_LIBS
-#GETAPPS
-#INSTALL_CMAKE
+INSTALL_SYSTEM_LIBS
+GETAPPS
+INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
 exit

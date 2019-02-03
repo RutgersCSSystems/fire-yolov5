@@ -27,6 +27,11 @@ for child in root.findall('benchmarks'):
     for subchild in child:
         benchmarks.append(subchild.text)
 
+appprefix = []
+for child in root.findall('numabind'):
+    for subchild in child:
+      appprefix.append(subchild.text)		
+
 def setup():
     os.system("scripts/set_appbench.sh")
 
@@ -191,14 +196,14 @@ class ParamTest:
         """
 
     # Vary num elements (keys) from base num-elements to num-elements * 2 * num_tests
-    def run_membw_test(self, params, bench):
+    def run_membw_test(self, params, bench, numanode):
 
         count=int(self.membw)      
              
         for loop in range(0, int(self.num_tests)):
             self.num_str = "--num=" + str(count)
-	    #Set the output director
-            output = OUTDIRCPY + "/" + bench + "_membw_" + str(count)
+   	        #Set the output director
+            output = OUTDIRCPY + "/" + bench + "_membw_" + str(count) + numanode
             #Set environmental variable output directory
             os.environ['OUTPUTDIR'] = output	
 	    print os.environ['OUTPUTDIR']
@@ -268,17 +273,22 @@ def main():
 
     if is_membw_test:
         p.setvals(membw_test)
+	#p.run_fastmemonly(membw_test)
 
-	p.run_fastmemonly(membw_test)
+	for j in range(0, len(appprefix)):
+	    os.environ['APPPREFIX'] = "numactl --membind=" + str(appprefix[j])
+	    os.environ['APP_PREFIX'] = "numactl --membind=" + str(appprefix[j])
+	    print os.environ['APP_PREFIX']
 
-        for i in range(0, len(benchmarks)):
-	    if(int(p.check_set(benchmarks[i])) == 0):
-	        print p.check_set(benchmarks[i])
-		p.compile_sharedlib(str(benchmarks[i]))
-                p.run_membw_test(membw_test, str(benchmarks[i]))
-	    else:
-		print benchmarks[i] + " ALREADY SET"
-       	    p.complete_path(str(benchmarks[i]))
+            for i in range(0, len(benchmarks)):
+
+		if(int(p.check_set(benchmarks[i])) == 0):
+		    print p.check_set(benchmarks[i])
+		    p.compile_sharedlib(str(benchmarks[i]))
+		    p.run_membw_test(membw_test, str(benchmarks[i]), "-numa-node-" + str(appprefix[j]))
+		else:
+		    print benchmarks[i] + " ALREADY SET"
+		    p.complete_path(str(benchmarks[i]))
 		
    	p.reset_path("fastonly")
 	for i in range(0, len(benchmarks)):

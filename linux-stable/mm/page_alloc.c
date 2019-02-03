@@ -4460,8 +4460,8 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
-       return __alloc_pages_nodemask(gfp_mask, order, 
-					     preferred_nid, nodemask);
+       //return __alloc_pages_nodemask(gfp_mask, order, 
+	//				     preferred_nid, nodemask);
 
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
@@ -4470,12 +4470,12 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	finalise_ac(gfp_mask, order, &ac);
 
-//#ifndef CONFIG_HETERO_ENABLE
+#ifndef CONFIG_HETERO_ENABLE
 	/* First allocation attempt */
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page))
 		goto out;
-//#endif
+#endif
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
 	 * resp. GFP_NOIO which has to be inherited for all allocation requests

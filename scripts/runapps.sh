@@ -63,31 +63,40 @@ if [ -z "$4" ]
 	exit
 
 
-	APPBASE=$APPBENCH/apps/leveldb
-	APP=leveldb
-	echo "running $APP..."
-	RUNAPP
-	$NVMBASE/scripts/reset.sh
-	exit
-
-
-	APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	RUNAPP
-	$NVMBASE/scripts/reset.sh
-
-        APPBASE=$APPBENCH/apps/filebench
-        APP=filebench
-        RUNAPP
-
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached
 	RUNAPP
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	/bin/ls
 	export LD_PRELOAD=""
+        $NVMBASE/scripts/reset.sh
+        exit
 
 
+
+
+        APPBASE=$APPBENCH/apps/filebench
+        APP=filebench
+        RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+	
+	APPBASE=$APPBENCH/apps/rocksdb
+	APP=db_bench
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+
+
+
+	APPBASE=$APPBENCH/apps/leveldb
+	APP=leveldb
+	echo "running $APP..."
+	RUNAPP
+
+
+
+	
 	#APPBASE=$APPBENCH/apps/fio
 	#APP=fio
 	#echo "running $APP ..."

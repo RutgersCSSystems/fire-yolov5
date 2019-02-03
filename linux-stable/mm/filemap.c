@@ -987,7 +987,10 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 		return page;
 	}
+
+	
 	allocpage = alloc_pages(gfp, 0);
+
 #ifdef CONFIG_HETERO_STATS
 	if(allocpage && is_hetero_pgcache_set())	
 		update_hetero_pgcache(get_fastmem_node(), allocpage);
@@ -1072,8 +1075,9 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
 	}
 #ifdef CONFIG_HETERO_STATS
-	if(allocpage && is_hetero_pgcache_set())
+	if(allocpage && is_hetero_pgcache_set()) {
 	    update_hetero_pgcache(get_fastmem_node(), allocpage);
+	}
 #endif
 	return allocpage;
 }

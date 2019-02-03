@@ -2133,9 +2133,6 @@ struct page *alloc_pages_current_hetero(gfp_t gfp,
 		if(!page) {
 			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
 				"\n", __func__, __LINE__);
-                }else {
-			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
-					"\n", __func__, __LINE__);
                 }
                 if(!page)
   		         page = __alloc_pages_nodemask(gfp, order,

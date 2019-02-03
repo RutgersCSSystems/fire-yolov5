@@ -499,7 +499,7 @@ static void exit_mm(void)
 	struct core_state *core_state;
 
 #ifdef CONFIG_HETERO_ENABLE
-	//is_hetero_exit();
+	is_hetero_exit();
 #endif
 	mm_release(current, mm);
 	if (!mm)
