@@ -3266,7 +3266,7 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
 	info.si_pid = task_tgid_vnr(current);
 	info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
 #ifdef _ENABLE_HETERO
-	is_hetero_exit();
+	is_hetero_exit(current);
 #endif
 	return kill_something_info(sig, &info, pid);
 }

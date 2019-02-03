@@ -51,7 +51,7 @@ int is_hetero_journ_set(void);
 int is_hetero_radix_set(void);
 int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
-int is_hetero_exit(void);
+int is_hetero_exit(struct task_struct *task);
 int get_fastmem_node(void);
 inline int is_hetero_obj(void *obj);
 int is_hetero_page(struct page *page, int nodeid);

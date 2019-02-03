@@ -122,11 +122,11 @@ void reset_hetero_stats(void) {
 EXPORT_SYMBOL(reset_hetero_stats);
 
 
-inline int check_hetero_proc (void) 
+inline int check_hetero_proc (struct task_struct *task) 
 {
 #ifdef CONFIG_HETERO_ENABLE
     //f(current->pid == hetero_pid && hetero_pid){
-    if (current && current->mm && (current->mm->hetero_task == HETERO_PROC)){
+    if (task && task->mm && (task->mm->hetero_task == HETERO_PROC)){
 	return 1;
     }
 #endif
@@ -135,9 +135,9 @@ inline int check_hetero_proc (void)
 
 
 /* Exit function called during process exit */
-int is_hetero_exit(void) 
+int is_hetero_exit(struct task_struct *task) 
 {
-    if(check_hetero_proc()) {
+    if(check_hetero_proc(task)) {
 	/*printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
 		"user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  
@@ -375,7 +375,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             enbl_hetero_kernel = 0;
 
 	    reset_hetero_stats();	
-	    is_hetero_exit();
+	    is_hetero_exit(current);
 
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
