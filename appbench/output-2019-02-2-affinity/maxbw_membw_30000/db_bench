@@ -1,0 +1,1326 @@
+++ ROCKSDB=/users/skannan/ssd/NVM/appbench/apps/rocksdb/
+++ USEPLAINTABLE=--use_plain_table=1
+++ DISABLEDATASYNC=--disable_data_sync=0
+++ STORAGE=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+++ mkdir /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA’: File exists
+++ OTHERPARAMS=' --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600'
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb’: Is a directory
+++ NUMVALS=' --num=500000'
+++ VALSIZE=' --value_size=4096'
+++ rm -rf /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=1 /users/skannan/ssd/NVM/appbench/apps/rocksdb//db_bench --db=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600 --num=500000 --value_size=4096 --benchmarks=fillrandom,readrandom,fillseq,readseq
+initiating tracing...
+initiating tracing...
+RocksDB:    version 5.18
+Date:       Sun Feb  3 00:00:41 2019
+CPU:        40 * Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz
+CPUCache:   25600 KB
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       16 bytes each
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    500000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    1960.8 MB (estimated)
+FileSize:   984.2 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: NoCompression
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+fillrandom   :      16.821 micros/op 59447 ops/sec;  233.1 MB/s
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 400000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+readrandom   :      32.787 micros/op 30500 ops/sec;  119.6 MB/s (500000 of 500000 found)
+
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+fillseq      :       8.862 micros/op 112842 ops/sec;  442.5 MB/s
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+readseq      :       1.384 micros/op 722652 ops/sec; 2833.9 MB/s
+application termination...
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+******************
+KERNEL  DMESG
+******************
+  
+[ 7624.600285] hetero_pid 8043 Curr 8176 Currname redis-server8 HeteroProcname redis-server5 page cache hits 7680873 cache miss 6413171 buffer page hits 9807 miss 340438 
+[ 7624.600285]  
+[ 7765.340279] flag is set to print hetero allocate stat 10 
+[ 7765.340283] hetero_pid 8043 Curr 8039 Currname redis-server1 HeteroProcname redis-server5 page cache hits 8192938 cache miss 8277572 buffer page hits 10493 miss 394174 
+[ 7765.340283]  
+[ 7765.340285] flag set to clear count 0
+[ 7765.340286] hetero_pid 8043 Curr 8039 Currname redis-server1 HeteroProcname redis-server5 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.340286]  
+[ 7765.340344] hetero_pid 0 Curr 8061 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.340344]  
+[ 7765.340406] hetero_pid 0 Curr 8063 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.340406]  
+[ 7765.340445] hetero_pid 0 Curr 8039 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.340445]  
+[ 7765.436728] flag is set to print hetero allocate stat 10 
+[ 7765.436731] hetero_pid 0 Curr 8046 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.436731]  
+[ 7765.436733] flag set to clear count 0
+[ 7765.436734] hetero_pid 0 Curr 8046 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.436734]  
+[ 7765.436863] hetero_pid 0 Curr 8050 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.436863]  
+[ 7765.437000] hetero_pid 0 Curr 8054 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.437000]  
+[ 7765.437040] hetero_pid 0 Curr 8046 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.437040]  
+[ 7765.534491] flag is set to print hetero allocate stat 10 
+[ 7765.534494] hetero_pid 0 Curr 8041 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.534494]  
+[ 7765.534495] flag set to clear count 0
+[ 7765.534496] hetero_pid 0 Curr 8041 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.534496]  
+[ 7765.534618] hetero_pid 0 Curr 8055 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.534618]  
+[ 7765.534741] hetero_pid 0 Curr 8060 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.534741]  
+[ 7765.534793] hetero_pid 0 Curr 8041 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.534793]  
+[ 7765.838987] flag is set to print hetero allocate stat 10 
+[ 7765.838990] hetero_pid 0 Curr 8044 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.838990]  
+[ 7765.838994] flag set to clear count 0
+[ 7765.838995] hetero_pid 0 Curr 8044 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.838995]  
+[ 7765.839094] hetero_pid 0 Curr 8052 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.839094]  
+[ 7765.839202] hetero_pid 0 Curr 8057 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.839202]  
+[ 7765.839240] hetero_pid 0 Curr 8044 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7765.839240]  
+[ 7767.827435] flag is set to print hetero allocate stat 10 
+[ 7767.827439] hetero_pid 0 Curr 8045 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7767.827439]  
+[ 7767.827443] flag set to clear count 0
+[ 7767.827444] hetero_pid 0 Curr 8045 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7767.827444]  
+[ 7767.827566] hetero_pid 0 Curr 8048 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7767.827566]  
+[ 7767.827635] hetero_pid 0 Curr 8049 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7767.827635]  
+[ 7767.827681] hetero_pid 0 Curr 8045 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 7767.827681]  
+[ 8212.415993] hetero_pid 0 Curr 8265 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8212.415993]  
+[ 8212.606701] hetero_pid 0 Curr 8264 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8212.606701]  
+[ 8212.799998] hetero_pid 0 Curr 8263 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8212.799998]  
+[10372.648101] hetero_pid 0 Curr 8374 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10372.648101]  
+[10378.724940] hetero_pid 0 Curr 8375 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10378.724940]  
+[10384.701029] hetero_pid 0 Curr 8376 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10384.701029]  
+[10390.677125] hetero_pid 0 Curr 8377 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10390.677125]  
+[10396.654186] hetero_pid 0 Curr 8378 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10396.654186]  
+[10402.728336] hetero_pid 0 Curr 8379 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10402.728336]  
+[10408.719598] hetero_pid 0 Curr 8380 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10408.719598]  
+[10414.694629] hetero_pid 0 Curr 8381 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10414.694629]  
+[10420.671441] hetero_pid 0 Curr 8382 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10420.671441]  
+[10426.648363] hetero_pid 0 Curr 8383 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10426.648363]  
+[10432.725052] hetero_pid 0 Curr 8384 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10432.725052]  
+[10438.701880] hetero_pid 0 Curr 8385 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10438.701880]  
+[10444.677688] hetero_pid 0 Curr 8386 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10444.677688]  
+[10450.654443] hetero_pid 0 Curr 8387 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10450.654443]  
+[10456.729031] hetero_pid 0 Curr 8405 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10456.729031]  
+[10462.706929] hetero_pid 0 Curr 8411 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10462.706929]  
+[10468.684799] hetero_pid 0 Curr 8415 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10468.684799]  
+[10474.660834] hetero_pid 0 Curr 8417 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10474.660834]  
+[10480.736975] hetero_pid 0 Curr 8422 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10480.736975]  
+[10486.714629] hetero_pid 0 Curr 8423 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10486.714629]  
+[10492.691472] hetero_pid 0 Curr 8424 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10492.691472]  
+[10498.669175] hetero_pid 0 Curr 8425 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10498.669175]  
+[10504.647377] hetero_pid 0 Curr 8426 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10504.647377]  
+[10510.725466] hetero_pid 0 Curr 8429 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10510.725466]  
+[10516.702593] hetero_pid 0 Curr 8449 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10516.702593]  
+[10522.690559] hetero_pid 0 Curr 8460 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10522.690559]  
+[10528.663558] hetero_pid 0 Curr 8462 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10528.663558]  
+[10534.743889] hetero_pid 0 Curr 8463 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10534.743889]  
+[10540.721160] hetero_pid 0 Curr 8465 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10540.721160]  
+[10546.697717] hetero_pid 0 Curr 8469 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10546.697717]  
+[10552.674272] hetero_pid 0 Curr 8472 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10552.674272]  
+[10558.651841] hetero_pid 0 Curr 8476 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10558.651841]  
+[10564.724293] hetero_pid 0 Curr 8478 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10564.724293]  
+[10570.700780] hetero_pid 0 Curr 8480 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10570.700780]  
+[10576.677739] hetero_pid 0 Curr 8481 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10576.677739]  
+[10582.653606] hetero_pid 0 Curr 8482 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10582.653606]  
+[10588.730884] hetero_pid 0 Curr 8483 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10588.730884]  
+[10594.706758] hetero_pid 0 Curr 8485 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10594.706758]  
+[10600.682660] hetero_pid 0 Curr 8490 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10600.682660]  
+[10606.659641] hetero_pid 0 Curr 8491 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10606.659641]  
+[10612.735448] hetero_pid 0 Curr 8493 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10612.735448]  
+[10618.712721] hetero_pid 0 Curr 8500 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10618.712721]  
+[10624.690086] hetero_pid 0 Curr 8695 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10624.690086]  
+[10630.670139] hetero_pid 0 Curr 8743 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10630.670139]  
+[10636.644419] hetero_pid 0 Curr 8767 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10636.644419]  
+[10642.721946] hetero_pid 0 Curr 8779 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10642.721946]  
+[10648.699325] hetero_pid 0 Curr 8783 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10648.699325]  
+[10654.676292] hetero_pid 0 Curr 8784 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10654.676292]  
+[10660.653950] hetero_pid 0 Curr 8786 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10660.653950]  
+[10666.730877] hetero_pid 0 Curr 8787 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10666.730877]  
+[10672.708084] hetero_pid 0 Curr 8788 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10672.708084]  
+[10678.685301] hetero_pid 0 Curr 8789 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10678.685301]  
+[10684.659254] hetero_pid 0 Curr 8790 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10684.659254]  
+[10690.736874] hetero_pid 0 Curr 8792 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10690.736874]  
+[10696.712371] hetero_pid 0 Curr 8794 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10696.712371]  
+[10702.687460] hetero_pid 0 Curr 8813 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10702.687460]  
+[10708.662896] hetero_pid 0 Curr 8815 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10708.662896]  
+[10714.639360] hetero_pid 0 Curr 8817 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10714.639360]  
+[10720.716676] hetero_pid 0 Curr 8838 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10720.716676]  
+[10726.693769] hetero_pid 0 Curr 8870 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10726.693769]  
+[10732.668086] hetero_pid 0 Curr 8873 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10732.668086]  
+[10738.641054] hetero_pid 0 Curr 8876 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10738.641054]  
+[10744.718780] hetero_pid 0 Curr 8884 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10744.718780]  
+[10750.696207] hetero_pid 0 Curr 8894 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10750.696207]  
+[10756.673482] hetero_pid 0 Curr 8904 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10756.673482]  
+[10762.650737] hetero_pid 0 Curr 8917 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10762.650737]  
+[10768.727925] hetero_pid 0 Curr 8920 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10768.727925]  
+[10774.703281] hetero_pid 0 Curr 8933 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10774.703281]  
+[10780.680742] hetero_pid 0 Curr 8934 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10780.680742]  
+[10786.655841] hetero_pid 0 Curr 8935 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10786.655841]  
+[10792.733400] hetero_pid 0 Curr 8936 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10792.733400]  
+[10798.708943] hetero_pid 0 Curr 8939 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10798.708943]  
+[10804.686270] hetero_pid 0 Curr 8940 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10804.686270]  
+[10810.663679] hetero_pid 0 Curr 8941 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10810.663679]  
+[10816.639365] hetero_pid 0 Curr 8942 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10816.639365]  
+[10822.716432] hetero_pid 0 Curr 8943 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10822.716432]  
+[10828.694129] hetero_pid 0 Curr 8964 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10828.694129]  
+[10834.671604] hetero_pid 0 Curr 8974 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10834.671604]  
+[10840.647391] hetero_pid 0 Curr 8976 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10840.647391]  
+[10846.724977] hetero_pid 0 Curr 8977 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10846.724977]  
+[10852.702038] hetero_pid 0 Curr 8981 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10852.702038]  
+[10858.678265] hetero_pid 0 Curr 8982 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10858.678265]  
+[10864.655174] hetero_pid 0 Curr 8984 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10864.655174]  
+[10870.732437] hetero_pid 0 Curr 8985 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10870.732437]  
+[10876.708262] hetero_pid 0 Curr 8986 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10876.708262]  
+[10882.685327] hetero_pid 0 Curr 8987 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10882.685327]  
+[10888.678218] hetero_pid 0 Curr 8990 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10888.678218]  
+[10894.653985] hetero_pid 0 Curr 9006 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10894.653985]  
+[10900.732921] hetero_pid 0 Curr 9007 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10900.732921]  
+[10906.711646] hetero_pid 0 Curr 9009 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10906.711646]  
+[10912.689485] hetero_pid 0 Curr 9012 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10912.689485]  
+[10918.666283] hetero_pid 0 Curr 9017 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10918.666283]  
+[10924.652053] hetero_pid 0 Curr 9294 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10924.652053]  
+[10930.748028] hetero_pid 0 Curr 9502 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10930.748028]  
+[10936.732418] hetero_pid 0 Curr 9511 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10936.732418]  
+[10942.719076] hetero_pid 0 Curr 9516 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10942.719076]  
+[10948.711172] hetero_pid 0 Curr 9527 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10948.711172]  
+[10954.688330] hetero_pid 0 Curr 9528 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10954.688330]  
+[10960.662353] hetero_pid 0 Curr 10904 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10960.662353]  
+[10966.639906] hetero_pid 0 Curr 11017 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10966.639906]  
+[10972.707713] hetero_pid 0 Curr 12916 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10972.707713]  
+[10979.156189] hetero_pid 0 Curr 13959 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10979.156189]  
+[10985.257998] hetero_pid 0 Curr 13989 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10985.257998]  
+[10991.507584] hetero_pid 0 Curr 14028 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10991.507584]  
+[10997.604877] hetero_pid 0 Curr 14074 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[10997.604877]  
+[11003.238301] hetero_pid 0 Curr 14107 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11003.238301]  
+[11009.314396] hetero_pid 0 Curr 14175 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11009.314396]  
+[11015.673399] hetero_pid 0 Curr 14248 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11015.673399]  
+[11021.499221] hetero_pid 0 Curr 14321 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11021.499221]  
+[11027.718416] hetero_pid 0 Curr 14382 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11027.718416]  
+[11033.660187] hetero_pid 0 Curr 14435 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11033.660187]  
+[11039.679192] hetero_pid 0 Curr 14535 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11039.679192]  
+[11045.533305] hetero_pid 0 Curr 14628 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11045.533305]  
+[11051.532342] hetero_pid 0 Curr 14712 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11051.532342]  
+[11057.461574] hetero_pid 0 Curr 14742 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11057.461574]  
+[11063.604588] hetero_pid 0 Curr 14787 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11063.604588]  
+[11069.340023] hetero_pid 0 Curr 14833 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11069.340023]  
+[11074.892812] hetero_pid 0 Curr 14840 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11074.892812]  
+[11081.046264] hetero_pid 0 Curr 14879 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11081.046264]  
+[11086.634468] hetero_pid 0 Curr 14885 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11086.634468]  
+[11092.706600] hetero_pid 0 Curr 14895 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11092.706600]  
+[11098.685103] hetero_pid 0 Curr 14896 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11098.685103]  
+[11104.662841] hetero_pid 0 Curr 14897 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11104.662841]  
+[11110.655732] hetero_pid 0 Curr 14898 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11110.655732]  
+[11116.735048] hetero_pid 0 Curr 14901 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11116.735048]  
+[11122.718251] hetero_pid 0 Curr 14903 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11122.718251]  
+[11128.695803] hetero_pid 0 Curr 14905 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11128.695803]  
+[11134.673773] hetero_pid 0 Curr 14915 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11134.673773]  
+[11140.651448] hetero_pid 0 Curr 14916 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11140.651448]  
+[11146.730296] hetero_pid 0 Curr 14917 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11146.730296]  
+[11152.708164] hetero_pid 0 Curr 14927 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11152.708164]  
+[11158.685774] hetero_pid 0 Curr 14928 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11158.685774]  
+[11164.662975] hetero_pid 0 Curr 14930 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11164.662975]  
+[11170.642898] hetero_pid 0 Curr 14931 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11170.642898]  
+[11176.723388] hetero_pid 0 Curr 14941 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11176.723388]  
+[11182.701063] hetero_pid 0 Curr 14942 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11182.701063]  
+[11185.367325] flag is set to collect hetero allocate  9 
+[11185.367329] flag is set to enable HETERO_PGCACHE 11 
+[11185.367330] flag is set to enable HETERO_BUFFER 12 
+[11185.367330] flag is set to enable HETERO_JOURNAL 13 
+[11185.367331] flag is set to enable HETERO_RADIX 14 
+[11185.367332] flag is set to enable HETERO_FULLKERN 15 
+[11185.367333] flag to set FASTMEM node to 0 
+[11185.367334] hetero_pid set to 14949 14949 procname numactl
+[11185.368933] flag is set to collect hetero allocate  9 
+[11185.368935] flag is set to enable HETERO_PGCACHE 11 
+[11185.368936] flag is set to enable HETERO_BUFFER 12 
+[11185.368936] flag is set to enable HETERO_JOURNAL 13 
+[11185.368937] flag is set to enable HETERO_RADIX 14 
+[11185.368938] flag is set to enable HETERO_FULLKERN 15 
+[11185.368939] flag to set FASTMEM node to 0 
+[11185.368940] hetero_pid set to 14949 14949 procname db_bench
+[11185.370841] hetero_pid 14949 Curr 14952 Currname db_bench HeteroProcname db_bench page cache hits 0 cache miss 1 buffer page hits 0 miss 0 
+[11185.370841]  
+[11185.374603] hetero_pid 14949 Curr 14954 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 0 
+[11185.374603]  
+[11185.374619] hetero_pid 14949 Curr 14955 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 0 
+[11185.374619]  
+[11185.374641] hetero_pid 14949 Curr 14956 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.374641]  
+[11185.374663] hetero_pid 14949 Curr 14957 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.374663]  
+[11185.374695] hetero_pid 14949 Curr 14958 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.374695]  
+[11185.374974] hetero_pid 14949 Curr 14959 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.374974]  
+[11185.374990] hetero_pid 14949 Curr 14960 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.374990]  
+[11185.375040] hetero_pid 14949 Curr 14961 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375040]  
+[11185.375078] hetero_pid 14949 Curr 14962 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375078]  
+[11185.375119] hetero_pid 14949 Curr 14963 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375119]  
+[11185.375164] hetero_pid 14949 Curr 14964 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375164]  
+[11185.375202] hetero_pid 14949 Curr 14965 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375202]  
+[11185.375242] hetero_pid 14949 Curr 14966 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375242]  
+[11185.375274] hetero_pid 14949 Curr 14967 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375274]  
+[11185.375308] hetero_pid 14949 Curr 14968 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 6 buffer page hits 0 miss 1 
+[11185.375308]  
+[11185.397951] hetero_pid 14949 Curr 14969 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 7 cache miss 6 buffer page hits 1 miss 1 
+[11185.397951]  
+[11185.398143] hetero_pid 14949 Curr 14953 Currname db_bench HeteroProcname db_bench page cache hits 7 cache miss 7 buffer page hits 1 miss 1 
+[11185.398143]  
+[11185.398438] hetero_pid 14949 Curr 14970 Currname db_bench HeteroProcname db_bench page cache hits 7 cache miss 7 buffer page hits 1 miss 1 
+[11185.398438]  
+[11185.401777] hetero_pid 14949 Curr 14973 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401777]  
+[11185.401781] hetero_pid 14949 Curr 14972 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401781]  
+[11185.401803] hetero_pid 14949 Curr 14974 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401803]  
+[11185.401831] hetero_pid 14949 Curr 14975 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401831]  
+[11185.401862] hetero_pid 14949 Curr 14976 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401862]  
+[11185.401892] hetero_pid 14949 Curr 14977 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401892]  
+[11185.401925] hetero_pid 14949 Curr 14978 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401925]  
+[11185.401959] hetero_pid 14949 Curr 14979 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.401959]  
+[11185.402231] hetero_pid 14949 Curr 14980 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402231]  
+[11185.402263] hetero_pid 14949 Curr 14981 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402263]  
+[11185.402294] hetero_pid 14949 Curr 14982 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402294]  
+[11185.402324] hetero_pid 14949 Curr 14983 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402324]  
+[11185.402357] hetero_pid 14949 Curr 14984 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402357]  
+[11185.402395] hetero_pid 14949 Curr 14985 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402395]  
+[11185.402437] hetero_pid 14949 Curr 14986 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 9 buffer page hits 1 miss 1 
+[11185.402437]  
+[11188.765340] hetero_pid 14949 Curr 14993 Currname redis-server2 HeteroProcname db_bench page cache hits 85567 cache miss 72970 buffer page hits 935 miss 41 
+[11188.765340]  
+[11194.686813] hetero_pid 14949 Curr 14989 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 239737 buffer page hits 1609 miss 1951 
+[11194.686813]  
+[11194.712180] hetero_pid 14949 Curr 14994 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240109 buffer page hits 1609 miss 1951 
+[11194.712180]  
+[11194.726297] hetero_pid 14949 Curr 14991 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240357 buffer page hits 1609 miss 1951 
+[11194.726297]  
+[11194.731781] hetero_pid 14949 Curr 14988 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240437 buffer page hits 1609 miss 1951 
+[11194.731781]  
+[11194.732566] hetero_pid 14949 Curr 14990 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11194.732566]  
+[11198.314574] hetero_pid 14949 Curr 14995 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314574]  
+[11198.314577] hetero_pid 14949 Curr 14996 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314577]  
+[11198.314582] hetero_pid 14949 Curr 14997 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314582]  
+[11198.314586] hetero_pid 14949 Curr 14998 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314586]  
+[11198.314597] hetero_pid 14949 Curr 14987 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314597]  
+[11198.314638] hetero_pid 14949 Curr 14949 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314638]  
+[11198.314644] hetero_pid 14949 Curr 14951 Currname rocksdb:high0 HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314644]  
+[11198.314650] hetero_pid 14949 Curr 14971 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314650]  
+[11198.314667] hetero_pid 14949 Curr 14950 Currname rocksdb:low0 HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1951 
+[11198.314667]  
+[11200.683871] hetero_pid 14949 Curr 15000 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1952 
+[11200.683871]  
+[11206.660187] hetero_pid 14949 Curr 15004 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1952 
+[11206.660187]  
+[11212.637428] hetero_pid 14949 Curr 15008 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240450 buffer page hits 1609 miss 1952 
+[11212.637428]  
+[11218.715254] hetero_pid 14949 Curr 15029 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11218.715254]  
+[11224.692588] hetero_pid 14949 Curr 15033 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11224.692588]  
+[11230.671040] hetero_pid 14949 Curr 15034 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11230.671040]  
+[11236.649214] hetero_pid 14949 Curr 15035 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11236.649214]  
+[11242.728433] hetero_pid 14949 Curr 15041 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11242.728433]  
+[11248.706076] hetero_pid 14949 Curr 15048 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11248.706076]  
+[11254.684570] hetero_pid 14949 Curr 15052 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11254.684570]  
+[11260.665023] hetero_pid 14949 Curr 15053 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11260.665023]  
+[11266.642962] hetero_pid 14949 Curr 15055 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11266.642962]  
+[11272.723872] hetero_pid 14949 Curr 15059 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11272.723872]  
+[11278.701986] hetero_pid 14949 Curr 15060 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11278.701986]  
+[11284.682533] hetero_pid 14949 Curr 15061 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11284.682533]  
+[11290.660305] hetero_pid 14949 Curr 15074 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11290.660305]  
+[11296.638081] hetero_pid 14949 Curr 15078 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11296.638081]  
+[11302.716001] hetero_pid 14949 Curr 15118 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240451 buffer page hits 1609 miss 1952 
+[11302.716001]  
+[11308.689441] hetero_pid 14949 Curr 15135 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11308.689441]  
+[11314.666978] hetero_pid 14949 Curr 15136 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11314.666978]  
+[11320.645473] hetero_pid 14949 Curr 15137 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11320.645473]  
+[11326.721413] hetero_pid 14949 Curr 15140 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11326.721413]  
+[11332.698752] hetero_pid 14949 Curr 15142 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11332.698752]  
+[11338.676764] hetero_pid 14949 Curr 15146 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11338.676764]  
+[11344.654181] hetero_pid 14949 Curr 15156 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11344.654181]  
+[11350.732295] hetero_pid 14949 Curr 15157 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11350.732295]  
+[11356.710451] hetero_pid 14949 Curr 15158 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11356.710451]  
+[11362.690069] hetero_pid 14949 Curr 15159 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11362.690069]  
+[11368.668246] hetero_pid 14949 Curr 15161 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11368.668246]  
+[11374.648330] hetero_pid 14949 Curr 15162 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11374.648330]  
+[11380.727068] hetero_pid 14949 Curr 15169 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11380.727068]  
+[11390.136973] hetero_pid 14949 Curr 15252 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11390.136973]  
+[11393.201020] hetero_pid 14949 Curr 15253 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240452 buffer page hits 1609 miss 1952 
+[11393.201020]  
+[11398.678376] hetero_pid 14949 Curr 15254 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240453 buffer page hits 1609 miss 1952 
+[11398.678376]  
+[11404.656308] hetero_pid 14949 Curr 15255 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240453 buffer page hits 1609 miss 1952 
+[11404.656308]  
+[11410.633243] hetero_pid 14949 Curr 15262 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240453 buffer page hits 1609 miss 1952 
+[11410.633243]  
+[11416.710228] hetero_pid 14949 Curr 15268 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240453 buffer page hits 1609 miss 1952 
+[11416.710228]  
+[11422.686896] hetero_pid 14949 Curr 15272 Currname redis-server2 HeteroProcname db_bench page cache hits 226057 cache miss 240453 buffer page hits 1609 miss 1952 
+[11422.686896]  
+[11428.426767] flag is set to collect hetero allocate  9 
+[11428.426770] flag is set to enable HETERO_PGCACHE 11 
+[11428.426771] flag is set to enable HETERO_BUFFER 12 
+[11428.426772] flag is set to enable HETERO_JOURNAL 13 
+[11428.426772] flag is set to enable HETERO_RADIX 14 
+[11428.426773] flag is set to enable HETERO_FULLKERN 15 
+[11428.426774] flag to set FASTMEM node to 0 
+[11428.426775] hetero_pid set to 15281 15281 procname numactl
+[11428.428283] flag is set to collect hetero allocate  9 
+[11428.428285] flag is set to enable HETERO_PGCACHE 11 
+[11428.428286] flag is set to enable HETERO_BUFFER 12 
+[11428.428286] flag is set to enable HETERO_JOURNAL 13 
+[11428.428287] flag is set to enable HETERO_RADIX 14 
+[11428.428288] flag is set to enable HETERO_FULLKERN 15 
+[11428.428289] flag to set FASTMEM node to 0 
+[11428.428290] hetero_pid set to 15281 15281 procname db_bench
+[11428.429994] hetero_pid 15281 Curr 15284 Currname db_bench HeteroProcname db_bench page cache hits 226057 cache miss 240454 buffer page hits 1609 miss 1954 
+[11428.429994]  
+[11428.433308] hetero_pid 15281 Curr 15286 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.433308]  
+[11428.434284] hetero_pid 15281 Curr 15287 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434284]  
+[11428.434301] hetero_pid 15281 Curr 15288 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434301]  
+[11428.434330] hetero_pid 15281 Curr 15289 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434330]  
+[11428.434358] hetero_pid 15281 Curr 15290 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434358]  
+[11428.434407] hetero_pid 15281 Curr 15291 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434407]  
+[11428.434451] hetero_pid 15281 Curr 15292 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434451]  
+[11428.434492] hetero_pid 15281 Curr 15293 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434492]  
+[11428.434538] hetero_pid 15281 Curr 15294 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434538]  
+[11428.434582] hetero_pid 15281 Curr 15295 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434582]  
+[11428.434641] hetero_pid 15281 Curr 15296 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434641]  
+[11428.434650] hetero_pid 15281 Curr 15297 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434650]  
+[11428.434695] hetero_pid 15281 Curr 15298 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434695]  
+[11428.434718] hetero_pid 15281 Curr 15299 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434718]  
+[11428.434769] hetero_pid 15281 Curr 15300 Currname db_bench HeteroProcname db_bench page cache hits 226062 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.434769]  
+[11428.458634] hetero_pid 15281 Curr 15301 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 226064 cache miss 240457 buffer page hits 1609 miss 1954 
+[11428.458634]  
+[11428.458789] hetero_pid 15281 Curr 15285 Currname db_bench HeteroProcname db_bench page cache hits 226064 cache miss 240458 buffer page hits 1609 miss 1954 
+[11428.458789]  
+[11428.459042] hetero_pid 15281 Curr 15302 Currname db_bench HeteroProcname db_bench page cache hits 226064 cache miss 240458 buffer page hits 1609 miss 1954 
+[11428.459042]  
+[11428.461736] hetero_pid 15281 Curr 15304 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.461736]  
+[11428.461754] hetero_pid 15281 Curr 15305 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.461754]  
+[11428.461759] hetero_pid 15281 Curr 15306 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.461759]  
+[11428.461774] hetero_pid 15281 Curr 15307 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.461774]  
+[11428.461996] hetero_pid 15281 Curr 15308 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.461996]  
+[11428.462026] hetero_pid 15281 Curr 15309 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462026]  
+[11428.462053] hetero_pid 15281 Curr 15310 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462053]  
+[11428.462082] hetero_pid 15281 Curr 15311 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462082]  
+[11428.462111] hetero_pid 15281 Curr 15312 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462111]  
+[11428.462134] hetero_pid 15281 Curr 15313 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462134]  
+[11428.462160] hetero_pid 15281 Curr 15314 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462160]  
+[11428.462190] hetero_pid 15281 Curr 15315 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1955 
+[11428.462190]  
+[11428.462223] hetero_pid 15281 Curr 15316 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1956 
+[11428.462223]  
+[11428.462251] hetero_pid 15281 Curr 15317 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1956 
+[11428.462251]  
+[11428.462288] hetero_pid 15281 Curr 15318 Currname db_bench HeteroProcname db_bench page cache hits 226069 cache miss 240460 buffer page hits 1609 miss 1956 
+[11428.462288]  
+[11428.723537] hetero_pid 15281 Curr 15324 Currname redis-server2 HeteroProcname db_bench page cache hits 250802 cache miss 241098 buffer page hits 2197 miss 1960 
+[11428.723537]  
+[11434.875585] hetero_pid 15281 Curr 15325 Currname redis-server2 HeteroProcname db_bench page cache hits 584752 cache miss 525667 buffer page hits 3507 miss 9008 
+[11434.875585]  
+[11440.782901] hetero_pid 15281 Curr 15328 Currname redis-server2 HeteroProcname db_bench page cache hits 894948 cache miss 798397 buffer page hits 4409 miss 22482 
+[11440.782901]  
+[11446.714228] hetero_pid 15281 Curr 15329 Currname redis-server2 HeteroProcname db_bench page cache hits 1204650 cache miss 1075491 buffer page hits 5303 miss 35993 
+[11446.714228]  
+[11452.815560] hetero_pid 15281 Curr 15330 Currname redis-server2 HeteroProcname db_bench page cache hits 1528125 cache miss 1348787 buffer page hits 6351 miss 49561 
+[11452.815560]  
+[11458.831428] hetero_pid 15281 Curr 15331 Currname redis-server2 HeteroProcname db_bench page cache hits 1852495 cache miss 1627519 buffer page hits 7319 miss 63515 
+[11458.831428]  
+[11464.806400] hetero_pid 15281 Curr 15333 Currname redis-server2 HeteroProcname db_bench page cache hits 2163346 cache miss 1906126 buffer page hits 8197 miss 77164 
+[11464.806400]  
+[11470.840111] hetero_pid 15281 Curr 15334 Currname redis-server2 HeteroProcname db_bench page cache hits 2501942 cache miss 2186539 buffer page hits 9184 miss 91379 
+[11470.840111]  
+[11476.752574] hetero_pid 15281 Curr 15335 Currname redis-server2 HeteroProcname db_bench page cache hits 2813253 cache miss 2466657 buffer page hits 10001 miss 105167 
+[11476.752574]  
+[11482.747963] hetero_pid 15281 Curr 15336 Currname redis-server2 HeteroProcname db_bench page cache hits 3135199 cache miss 2740267 buffer page hits 10925 miss 118869 
+[11482.747963]  
+[11488.806546] hetero_pid 15281 Curr 15337 Currname redis-server2 HeteroProcname db_bench page cache hits 3459098 cache miss 3024777 buffer page hits 11869 miss 132983 
+[11488.806546]  
+[11494.821345] hetero_pid 15281 Curr 15338 Currname redis-server2 HeteroProcname db_bench page cache hits 3797402 cache miss 3310757 buffer page hits 12899 miss 147315 
+[11494.821345]  
+[11500.817621] hetero_pid 15281 Curr 15339 Currname redis-server2 HeteroProcname db_bench page cache hits 4093407 cache miss 3572527 buffer page hits 13729 miss 160198 
+[11500.817621]  
+[11506.780576] hetero_pid 15281 Curr 15340 Currname redis-server2 HeteroProcname db_bench page cache hits 4392542 cache miss 3835907 buffer page hits 14592 miss 173171 
+[11506.780576]  
+[11509.209663] hetero_pid 15281 Curr 15323 Currname db_bench HeteroProcname db_bench page cache hits 4523945 cache miss 3940668 buffer page hits 14993 miss 178575 
+[11509.209663]  
+[11509.440337] hetero_pid 15281 Curr 15322 Currname db_bench HeteroProcname db_bench page cache hits 4529555 cache miss 3948712 buffer page hits 15001 miss 178849 
+[11509.440337]  
+[11509.520691] hetero_pid 15281 Curr 15320 Currname db_bench HeteroProcname db_bench page cache hits 4539939 cache miss 3956002 buffer page hits 15036 miss 179270 
+[11509.520691]  
+[11509.522006] hetero_pid 15281 Curr 15321 Currname db_bench HeteroProcname db_bench page cache hits 4540032 cache miss 3956060 buffer page hits 15037 miss 179274 
+[11509.522006]  
+[11512.734020] hetero_pid 15281 Curr 15345 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11512.734020]  
+[11518.789588] hetero_pid 15281 Curr 15346 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11518.789588]  
+[11524.743639] hetero_pid 15281 Curr 15347 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11524.743639]  
+[11530.797788] hetero_pid 15281 Curr 15348 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11530.797788]  
+[11536.751876] hetero_pid 15281 Curr 15349 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11536.751876]  
+[11542.712161] hetero_pid 15281 Curr 15350 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11542.712161]  
+[11548.764773] hetero_pid 15281 Curr 15352 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11548.764773]  
+[11554.718080] hetero_pid 15281 Curr 15353 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11554.718080]  
+[11560.772668] hetero_pid 15281 Curr 15354 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11560.772668]  
+[11566.724545] hetero_pid 15281 Curr 15355 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11566.724545]  
+[11572.778218] hetero_pid 15281 Curr 15356 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11572.778218]  
+[11578.731642] hetero_pid 15281 Curr 15357 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956064 buffer page hits 15302 miss 179287 
+[11578.731642]  
+[11584.790937] hetero_pid 15281 Curr 15360 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11584.790937]  
+[11590.726354] hetero_pid 15281 Curr 15363 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11590.726354]  
+[11596.761860] hetero_pid 15281 Curr 15364 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11596.761860]  
+[11602.696067] hetero_pid 15281 Curr 15365 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11602.696067]  
+[11608.728472] hetero_pid 15281 Curr 15366 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11608.728472]  
+[11614.763304] hetero_pid 15281 Curr 15367 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11614.763304]  
+[11620.695571] hetero_pid 15281 Curr 15368 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11620.695571]  
+[11626.729574] hetero_pid 15281 Curr 15369 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11626.729574]  
+[11632.763432] hetero_pid 15281 Curr 15370 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11632.763432]  
+[11638.697934] hetero_pid 15281 Curr 15371 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11638.697934]  
+[11644.730991] hetero_pid 15281 Curr 15372 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11644.730991]  
+[11650.763896] hetero_pid 15281 Curr 15373 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11650.763896]  
+[11656.697728] hetero_pid 15281 Curr 15374 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11656.697728]  
+[11662.731888] hetero_pid 15281 Curr 15375 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11662.731888]  
+[11668.764868] hetero_pid 15281 Curr 15376 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11668.764868]  
+[11674.698508] hetero_pid 15281 Curr 15377 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956065 buffer page hits 15302 miss 179287 
+[11674.698508]  
+[11680.731951] hetero_pid 15281 Curr 15378 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11680.731951]  
+[11686.765101] hetero_pid 15281 Curr 15379 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11686.765101]  
+[11692.697564] hetero_pid 15281 Curr 15380 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11692.697564]  
+[11698.729891] hetero_pid 15281 Curr 15381 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11698.729891]  
+[11704.761472] hetero_pid 15281 Curr 15382 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11704.761472]  
+[11710.692627] hetero_pid 15281 Curr 15383 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11710.692627]  
+[11716.724747] hetero_pid 15281 Curr 15384 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11716.724747]  
+[11722.774066] hetero_pid 15281 Curr 15385 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11722.774066]  
+[11728.705275] hetero_pid 15281 Curr 15387 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11728.705275]  
+[11734.733564] hetero_pid 15281 Curr 15388 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11734.733564]  
+[11740.763123] hetero_pid 15281 Curr 15389 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11740.763123]  
+[11746.692813] hetero_pid 15281 Curr 15390 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11746.692813]  
+[11752.721698] hetero_pid 15281 Curr 15391 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11752.721698]  
+[11758.749772] hetero_pid 15281 Curr 15392 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11758.749772]  
+[11764.677374] hetero_pid 15281 Curr 15394 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956066 buffer page hits 15302 miss 179287 
+[11764.677374]  
+[11770.701949] hetero_pid 15281 Curr 15395 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11770.701949]  
+[11776.724732] hetero_pid 15281 Curr 15396 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11776.724732]  
+[11782.747995] hetero_pid 15281 Curr 15397 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11782.747995]  
+[11784.571333] hetero_pid 15281 Curr 15341 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11784.571333]  
+[11785.294277] hetero_pid 15281 Curr 15343 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11785.294277]  
+[11786.753180] hetero_pid 15281 Curr 15342 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11786.753180]  
+[11787.537675] hetero_pid 15281 Curr 15344 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11787.537675]  
+[11787.537786] hetero_pid 15281 Curr 15319 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11787.537786]  
+[11787.546833] hetero_pid 15281 Curr 15303 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179287 
+[11787.546833]  
+[11788.642976] hetero_pid 15281 Curr 15399 Currname redis-server2 HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179289 
+[11788.642976]  
+[11789.663864] hetero_pid 15281 Curr 15398 Currname db_bench HeteroProcname db_bench page cache hits 4550094 cache miss 3956067 buffer page hits 15302 miss 179296 
+[11789.663864]  
+[11789.671796] hetero_pid 15281 Curr 15401 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671796]  
+[11789.671820] hetero_pid 15281 Curr 15402 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671820]  
+[11789.671834] hetero_pid 15281 Curr 15403 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671834]  
+[11789.671875] hetero_pid 15281 Curr 15404 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671875]  
+[11789.671907] hetero_pid 15281 Curr 15405 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671907]  
+[11789.671934] hetero_pid 15281 Curr 15406 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671934]  
+[11789.671971] hetero_pid 15281 Curr 15407 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.671971]  
+[11789.672090] hetero_pid 15281 Curr 15408 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672090]  
+[11789.672797] hetero_pid 15281 Curr 15409 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672797]  
+[11789.672830] hetero_pid 15281 Curr 15410 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672830]  
+[11789.672865] hetero_pid 15281 Curr 15411 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672865]  
+[11789.672892] hetero_pid 15281 Curr 15412 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672892]  
+[11789.672921] hetero_pid 15281 Curr 15413 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672921]  
+[11789.672949] hetero_pid 15281 Curr 15414 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672949]  
+[11789.672984] hetero_pid 15281 Curr 15415 Currname db_bench HeteroProcname db_bench page cache hits 4550099 cache miss 3956069 buffer page hits 15302 miss 179297 
+[11789.672984]  
+[11792.926928] hetero_pid 15281 Curr 15417 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.926928]  
+[11792.926944] hetero_pid 15281 Curr 15418 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.926944]  
+[11792.926951] hetero_pid 15281 Curr 15419 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.926951]  
+[11792.926967] hetero_pid 15281 Curr 15281 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.926967]  
+[11792.927013] hetero_pid 15281 Curr 15420 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.927013]  
+[11792.927036] hetero_pid 15281 Curr 15400 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.927036]  
+[11792.927046] hetero_pid 15281 Curr 15283 Currname rocksdb:high0 HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.927046]  
+[11792.927061] hetero_pid 15281 Curr 15282 Currname rocksdb:low0 HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.927061]  
+[11792.927144] hetero_pid 15281 Curr 15416 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11792.927144]  
+[11794.728590] hetero_pid 15281 Curr 15421 Currname redis-server2 HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11794.728590]  
+[11800.707098] hetero_pid 15281 Curr 15423 Currname redis-server2 HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11800.707098]  
+[11806.683764] hetero_pid 15281 Curr 15424 Currname redis-server2 HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179340 
+[11806.683764]  
+[11806.825516] flag is set to collect hetero allocate  9 
+[11806.825518] flag is set to enable HETERO_PGCACHE 11 
+[11806.825519] flag is set to enable HETERO_BUFFER 12 
+[11806.825520] flag is set to enable HETERO_JOURNAL 13 
+[11806.825520] flag is set to enable HETERO_RADIX 14 
+[11806.825521] flag is set to enable HETERO_FULLKERN 15 
+[11806.825522] flag to set FASTMEM node to 0 
+[11806.825523] hetero_pid set to 15429 15429 procname numactl
+[11806.827031] flag is set to collect hetero allocate  9 
+[11806.827032] flag is set to enable HETERO_PGCACHE 11 
+[11806.827033] flag is set to enable HETERO_BUFFER 12 
+[11806.827033] flag is set to enable HETERO_JOURNAL 13 
+[11806.827034] flag is set to enable HETERO_RADIX 14 
+[11806.827035] flag is set to enable HETERO_FULLKERN 15 
+[11806.827036] flag to set FASTMEM node to 0 
+[11806.827037] hetero_pid set to 15429 15429 procname db_bench
+[11806.828684] hetero_pid 15429 Curr 15432 Currname db_bench HeteroProcname db_bench page cache hits 4641476 cache miss 4197986 buffer page hits 16010 miss 179341 
+[11806.828684]  
+[11806.831730] hetero_pid 15429 Curr 15434 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.831730]  
+[11806.832611] hetero_pid 15429 Curr 15435 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832611]  
+[11806.832624] hetero_pid 15429 Curr 15436 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832624]  
+[11806.832651] hetero_pid 15429 Curr 15437 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832651]  
+[11806.832680] hetero_pid 15429 Curr 15438 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832680]  
+[11806.832708] hetero_pid 15429 Curr 15439 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832708]  
+[11806.832740] hetero_pid 15429 Curr 15440 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832740]  
+[11806.832769] hetero_pid 15429 Curr 15441 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832769]  
+[11806.832803] hetero_pid 15429 Curr 15442 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832803]  
+[11806.832830] hetero_pid 15429 Curr 15443 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832830]  
+[11806.832858] hetero_pid 15429 Curr 15444 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832858]  
+[11806.832887] hetero_pid 15429 Curr 15445 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832887]  
+[11806.832919] hetero_pid 15429 Curr 15446 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832919]  
+[11806.832948] hetero_pid 15429 Curr 15447 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832948]  
+[11806.832975] hetero_pid 15429 Curr 15448 Currname db_bench HeteroProcname db_bench page cache hits 4641481 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.832975]  
+[11806.857148] hetero_pid 15429 Curr 15449 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 4641483 cache miss 4197988 buffer page hits 16010 miss 179343 
+[11806.857148]  
+[11806.857310] hetero_pid 15429 Curr 15433 Currname db_bench HeteroProcname db_bench page cache hits 4641483 cache miss 4197989 buffer page hits 16010 miss 179343 
+[11806.857310]  
+[11806.857556] hetero_pid 15429 Curr 15450 Currname db_bench HeteroProcname db_bench page cache hits 4641483 cache miss 4197989 buffer page hits 16010 miss 179343 
+[11806.857556]  
+[11806.860186] hetero_pid 15429 Curr 15452 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179345 
+[11806.860186]  
+[11806.860198] hetero_pid 15429 Curr 15453 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179345 
+[11806.860198]  
+[11806.860215] hetero_pid 15429 Curr 15454 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179345 
+[11806.860215]  
+[11806.860232] hetero_pid 15429 Curr 15455 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179345 
+[11806.860232]  
+[11806.860443] hetero_pid 15429 Curr 15456 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179345 
+[11806.860443]  
+[11806.860472] hetero_pid 15429 Curr 15457 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179346 
+[11806.860472]  
+[11806.860499] hetero_pid 15429 Curr 15458 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179346 
+[11806.860499]  
+[11806.860526] hetero_pid 15429 Curr 15459 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179346 
+[11806.860526]  
+[11806.860554] hetero_pid 15429 Curr 15460 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179346 
+[11806.860554]  
+[11806.860637] hetero_pid 15429 Curr 15462 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179347 
+[11806.860637]  
+[11806.860649] hetero_pid 15429 Curr 15461 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179347 
+[11806.860649]  
+[11806.860666] hetero_pid 15429 Curr 15463 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179347 
+[11806.860666]  
+[11806.860699] hetero_pid 15429 Curr 15464 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179348 
+[11806.860699]  
+[11806.860711] hetero_pid 15429 Curr 15465 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179348 
+[11806.860711]  
+[11806.860750] hetero_pid 15429 Curr 15466 Currname db_bench HeteroProcname db_bench page cache hits 4641488 cache miss 4197991 buffer page hits 16010 miss 179348 
+[11806.860750]  
+[11812.667034] hetero_pid 15429 Curr 15472 Currname redis-server2 HeteroProcname db_bench page cache hits 4973444 cache miss 4467270 buffer page hits 17700 miss 184887 
+[11812.667034]  
+[11818.743816] hetero_pid 15429 Curr 15473 Currname redis-server2 HeteroProcname db_bench page cache hits 5314209 cache miss 4749701 buffer page hits 18686 miss 198936 
+[11818.743816]  
+[11824.837753] hetero_pid 15429 Curr 15474 Currname redis-server2 HeteroProcname db_bench page cache hits 5653601 cache miss 5033692 buffer page hits 19552 miss 213201 
+[11824.837753]  
+[11830.753243] hetero_pid 15429 Curr 15475 Currname redis-server2 HeteroProcname db_bench page cache hits 5969740 cache miss 5300642 buffer page hits 20411 miss 226364 
+[11830.753243]  
+[11836.794866] hetero_pid 15429 Curr 15476 Currname redis-server2 HeteroProcname db_bench page cache hits 6310774 cache miss 5575139 buffer page hits 21355 miss 240392 
+[11836.794866]  
+[11842.788830] hetero_pid 15429 Curr 15477 Currname redis-server2 HeteroProcname db_bench page cache hits 6649307 cache miss 5861360 buffer page hits 22206 miss 254634 
+[11842.788830]  
+[11845.490218] hetero_pid 15429 Curr 15468 Currname db_bench HeteroProcname db_bench page cache hits 6786826 cache miss 5983457 buffer page hits 22558 miss 260526 
+[11845.490218]  
+[11845.696470] hetero_pid 15429 Curr 15470 Currname db_bench HeteroProcname db_bench page cache hits 6804578 cache miss 5998633 buffer page hits 22662 miss 261296 
+[11845.696470]  
+[11845.949543] hetero_pid 15429 Curr 15471 Currname db_bench HeteroProcname db_bench page cache hits 6810641 cache miss 6004949 buffer page hits 22678 miss 261502 
+[11845.949543]  
+[11845.951504] hetero_pid 15429 Curr 15469 Currname db_bench HeteroProcname db_bench page cache hits 6810875 cache miss 6005077 buffer page hits 22678 miss 261511 
+[11845.951504]  
+[11848.715607] hetero_pid 15429 Curr 15482 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005081 buffer page hits 23194 miss 261530 
+[11848.715607]  
+[11854.762642] hetero_pid 15429 Curr 15483 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005081 buffer page hits 23194 miss 261530 
+[11854.762642]  
+[11860.690935] hetero_pid 15429 Curr 15484 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11860.690935]  
+[11866.716879] hetero_pid 15429 Curr 15485 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11866.716879]  
+[11872.743570] hetero_pid 15429 Curr 15486 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11872.743570]  
+[11878.775742] hetero_pid 15429 Curr 15487 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11878.775742]  
+[11884.699028] hetero_pid 15429 Curr 15488 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11884.699028]  
+[11890.723840] hetero_pid 15429 Curr 15489 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11890.723840]  
+[11896.747109] hetero_pid 15429 Curr 15490 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11896.747109]  
+[11902.683216] hetero_pid 15429 Curr 15491 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11902.683216]  
+[11908.699052] hetero_pid 15429 Curr 15493 Currname redis-server2 HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11908.699052]  
+[11909.608688] hetero_pid 15429 Curr 15481 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11909.608688]  
+[11910.590752] hetero_pid 15429 Curr 15479 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11910.590752]  
+[11910.939679] hetero_pid 15429 Curr 15480 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11910.939679]  
+[11911.369434] hetero_pid 15429 Curr 15478 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11911.369434]  
+[11911.369443] hetero_pid 15429 Curr 15467 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261532 
+[11911.369443]  
+[11911.375631] hetero_pid 15429 Curr 15451 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261533 
+[11911.375631]  
+[11912.432983] hetero_pid 15429 Curr 15494 Currname db_bench HeteroProcname db_bench page cache hits 6830923 cache miss 6005082 buffer page hits 23194 miss 261538 
+[11912.432983]  
+[11912.438581] hetero_pid 15429 Curr 15496 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438581]  
+[11912.438605] hetero_pid 15429 Curr 15497 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438605]  
+[11912.438632] hetero_pid 15429 Curr 15498 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438632]  
+[11912.438655] hetero_pid 15429 Curr 15499 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438655]  
+[11912.438687] hetero_pid 15429 Curr 15500 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438687]  
+[11912.438717] hetero_pid 15429 Curr 15501 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438717]  
+[11912.438749] hetero_pid 15429 Curr 15502 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261538 
+[11912.438749]  
+[11912.438829] hetero_pid 15429 Curr 15503 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.438829]  
+[11912.439427] hetero_pid 15429 Curr 15505 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.439427]  
+[11912.439487] hetero_pid 15429 Curr 15504 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.439487]  
+[11912.439530] hetero_pid 15429 Curr 15506 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.439530]  
+[11912.439544] hetero_pid 15429 Curr 15507 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.439544]  
+[11912.439575] hetero_pid 15429 Curr 15508 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261539 
+[11912.439575]  
+[11912.439607] hetero_pid 15429 Curr 15509 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261540 
+[11912.439607]  
+[11912.439645] hetero_pid 15429 Curr 15510 Currname db_bench HeteroProcname db_bench page cache hits 6830928 cache miss 6005084 buffer page hits 23194 miss 261540 
+[11912.439645]  
+[11914.787429] hetero_pid 15429 Curr 15516 Currname redis-server2 HeteroProcname db_bench page cache hits 6893312 cache miss 6147038 buffer page hits 23742 miss 261570 
+[11914.787429]  
+[11920.796425] hetero_pid 15429 Curr 15517 Currname redis-server2 HeteroProcname db_bench page cache hits 7022133 cache miss 6547558 buffer page hits 24338 miss 261925 
+[11920.796425]  
+[11926.774623] hetero_pid 15429 Curr 15518 Currname redis-server2 HeteroProcname db_bench page cache hits 7157592 cache miss 6947495 buffer page hits 24893 miss 269179 
+[11926.774623]  
+[11932.736667] hetero_pid 15429 Curr 15519 Currname redis-server2 HeteroProcname db_bench page cache hits 7313341 cache miss 7348456 buffer page hits 25556 miss 277907 
+[11932.736667]  
+[11938.840740] hetero_pid 15429 Curr 15520 Currname redis-server2 HeteroProcname db_bench page cache hits 7481237 cache miss 7753368 buffer page hits 26246 miss 287462 
+[11938.840740]  
+[11942.348139] hetero_pid 15429 Curr 15515 Currname db_bench HeteroProcname db_bench page cache hits 7572605 cache miss 7987990 buffer page hits 26621 miss 293042 
+[11942.348139]  
+[11942.355328] hetero_pid 15429 Curr 15514 Currname db_bench HeteroProcname db_bench page cache hits 7572605 cache miss 7988411 buffer page hits 26623 miss 293042 
+[11942.355328]  
+[11942.442444] hetero_pid 15429 Curr 15513 Currname db_bench HeteroProcname db_bench page cache hits 7579172 cache miss 7993697 buffer page hits 26644 miss 293296 
+[11942.442444]  
+[11942.460761] hetero_pid 15429 Curr 15512 Currname db_bench HeteroProcname db_bench page cache hits 7581805 cache miss 7995397 buffer page hits 26668 miss 293386 
+[11942.460761]  
+[11944.758193] hetero_pid 15429 Curr 15526 Currname redis-server2 HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11944.758193]  
+[11946.086403] hetero_pid 15429 Curr 15523 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.086403]  
+[11946.086487] hetero_pid 15429 Curr 15522 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.086487]  
+[11946.086494] hetero_pid 15429 Curr 15521 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.086494]  
+[11946.091371] hetero_pid 15429 Curr 15524 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.091371]  
+[11946.091461] hetero_pid 15429 Curr 15511 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.091461]  
+[11946.093247] hetero_pid 15429 Curr 15495 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.093247]  
+[11946.093911] hetero_pid 15429 Curr 15430 Currname rocksdb:low0 HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.093911]  
+[11946.093954] hetero_pid 15429 Curr 15431 Currname rocksdb:high0 HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.093954]  
+[11946.096550] flag is set to print hetero allocate stat 10 
+[11946.096552] hetero_pid 15429 Curr 15429 Currname db_bench HeteroProcname db_bench page cache hits 7582674 cache miss 7995403 buffer page hits 26692 miss 293392 
+[11946.096552]  
+[11946.096553] flag set to clear count 0
+[11946.096554] hetero_pid 15429 Curr 15429 Currname db_bench HeteroProcname db_bench page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11946.096554]  
+[11946.096596] hetero_pid 0 Curr 15429 Currname db_bench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11946.096596]  
+[11950.635793] hetero_pid 0 Curr 15527 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11950.635793]  
+[11956.715251] hetero_pid 0 Curr 15528 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11956.715251]  
+[11962.694125] hetero_pid 0 Curr 15529 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11962.694125]  
+[11968.671439] hetero_pid 0 Curr 15530 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11968.671439]  
+[11974.650897] hetero_pid 0 Curr 15531 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11974.650897]  
+[11980.630077] hetero_pid 0 Curr 15534 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11980.630077]  
+[11986.705051] hetero_pid 0 Curr 15540 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11986.705051]  
+[11992.682944] hetero_pid 0 Curr 15542 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11992.682944]  
+[11998.662024] hetero_pid 0 Curr 15543 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11998.662024]  
+[12004.639640] hetero_pid 0 Curr 15544 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12004.639640]  
+[12010.717709] hetero_pid 0 Curr 15546 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12010.717709]  
+[12016.697191] hetero_pid 0 Curr 15552 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12016.697191]  
+[12022.676901] hetero_pid 0 Curr 15553 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12022.676901]  
+[12028.645096] hetero_pid 0 Curr 15555 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12028.645096]  
+[12034.622363] hetero_pid 0 Curr 15556 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12034.622363]  
+[12040.690412] hetero_pid 0 Curr 15559 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12040.690412]  
+[12046.667986] hetero_pid 0 Curr 15560 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12046.667986]  
+[12052.635939] hetero_pid 0 Curr 15562 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12052.635939]  
+[12058.713502] hetero_pid 0 Curr 15563 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12058.713502]  
+[12064.690344] hetero_pid 0 Curr 15565 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12064.690344]  
+[12070.667329] hetero_pid 0 Curr 15566 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12070.667329]  
+[12076.643607] hetero_pid 0 Curr 15568 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12076.643607]  
+[12082.720381] hetero_pid 0 Curr 15570 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12082.720381]  
+[12088.700846] hetero_pid 0 Curr 15572 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12088.700846]  
+[12094.682211] hetero_pid 0 Curr 15578 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12094.682211]  
+[12100.654895] hetero_pid 0 Curr 15597 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12100.654895]  
+[12106.632184] hetero_pid 0 Curr 15599 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12106.632184]  
+[12112.701365] hetero_pid 0 Curr 15625 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12112.701365]  
+[12118.679075] hetero_pid 0 Curr 15626 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12118.679075]  
+[12124.655821] hetero_pid 0 Curr 15627 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12124.655821]  
+[12130.633461] hetero_pid 0 Curr 15628 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12130.633461]  
+[12136.710703] hetero_pid 0 Curr 15629 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12136.710703]  
+[12142.688567] hetero_pid 0 Curr 15630 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12142.688567]  
+[12148.665242] hetero_pid 0 Curr 15631 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12148.665242]  
+[12154.638062] hetero_pid 0 Curr 15637 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12154.638062]  
+[12160.715121] hetero_pid 0 Curr 15638 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12160.715121]  
+[12166.692560] hetero_pid 0 Curr 15639 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12166.692560]  
+[12172.669641] hetero_pid 0 Curr 15640 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12172.669641]  
+[12178.646716] hetero_pid 0 Curr 15641 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12178.646716]  
+[12184.623909] hetero_pid 0 Curr 15642 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12184.623909]  
+[12190.699976] hetero_pid 0 Curr 15643 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12190.699976]  
+[12196.676859] hetero_pid 0 Curr 15644 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12196.676859]  
+[12202.653924] hetero_pid 0 Curr 15645 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12202.653924]  
+[12208.630813] hetero_pid 0 Curr 15646 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12208.630813]  
+[12214.708039] hetero_pid 0 Curr 15647 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12214.708039]  
+[12220.684742] hetero_pid 0 Curr 15648 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12220.684742]  
+[12226.661753] hetero_pid 0 Curr 15649 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12226.661753]  
+[12232.638797] hetero_pid 0 Curr 15650 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12232.638797]  
+[12238.716128] hetero_pid 0 Curr 15651 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12238.716128]  
+[12244.692803] hetero_pid 0 Curr 15652 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12244.692803]  
+[12250.669977] hetero_pid 0 Curr 15653 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12250.669977]  
+[12256.646945] hetero_pid 0 Curr 15654 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12256.646945]  
+[12262.623824] hetero_pid 0 Curr 15655 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12262.623824]  
+[12268.700877] hetero_pid 0 Curr 15657 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12268.700877]  
+[12274.677394] hetero_pid 0 Curr 15658 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12274.677394]  
+[12280.654289] hetero_pid 0 Curr 15659 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12280.654289]  
+[12286.631469] hetero_pid 0 Curr 15660 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12286.631469]  
+[12292.708769] hetero_pid 0 Curr 15665 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12292.708769]  
+[12298.685267] hetero_pid 0 Curr 15666 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12298.685267]  
+[12304.662492] hetero_pid 0 Curr 15667 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12304.662492]  
+[12310.638279] hetero_pid 0 Curr 15668 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12310.638279]  
+[12316.714559] hetero_pid 0 Curr 15669 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12316.714559]  
+[12322.691690] hetero_pid 0 Curr 15670 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12322.691690]  
+[12328.668608] hetero_pid 0 Curr 15671 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12328.668608]  
+[12334.645443] hetero_pid 0 Curr 15672 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12334.645443]  
+[12340.622680] hetero_pid 0 Curr 15673 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12340.622680]  
+[12346.700229] hetero_pid 0 Curr 15674 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12346.700229]  
+[12352.677219] hetero_pid 0 Curr 15675 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12352.677219]  
+[12358.654437] hetero_pid 0 Curr 15676 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12358.654437]  
+[12364.631711] hetero_pid 0 Curr 15678 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12364.631711]  
+[12370.708542] hetero_pid 0 Curr 15679 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12370.708542]  
+[12376.686036] hetero_pid 0 Curr 15680 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12376.686036]  
+[12382.660099] hetero_pid 0 Curr 15682 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12382.660099]  
+[12388.638348] hetero_pid 0 Curr 15685 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12388.638348]  
+[12394.713703] hetero_pid 0 Curr 15696 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12394.713703]  
+[12400.689282] hetero_pid 0 Curr 15704 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12400.689282]  
+[12406.666968] hetero_pid 0 Curr 15707 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12406.666968]  
+[12412.644034] hetero_pid 0 Curr 15711 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12412.644034]  
+[12418.621819] hetero_pid 0 Curr 15714 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12418.621819]  
+[12424.698536] hetero_pid 0 Curr 15721 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12424.698536]  
+[12430.674476] hetero_pid 0 Curr 15726 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12430.674476]  
+[12436.651629] hetero_pid 0 Curr 15727 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12436.651629]  
+[12442.628637] hetero_pid 0 Curr 15729 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12442.628637]  
+[12448.700653] hetero_pid 0 Curr 15735 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12448.700653]  
+[12454.677949] hetero_pid 0 Curr 15736 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12454.677949]  
+[12460.654900] hetero_pid 0 Curr 15738 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12460.654900]  
+[12466.637500] hetero_pid 0 Curr 15867 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12466.637500]  
+[12475.798221] hetero_pid 0 Curr 16266 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12475.798221]  
+[12478.642593] hetero_pid 0 Curr 16360 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12478.642593]  
+[12479.707376] nvmemul: ioctl command: 0xc008aa02
+[12479.707380] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[12479.707385] nvmemul: ioctl command: 0x8008aa01
+[12479.707387] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[12479.707390] nvmemul: ioctl command: 0x8008aa01
+[12479.707391] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[12479.707393] nvmemul: ioctl command: 0x8008aa01
+[12479.707394] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[12479.707397] nvmemul: ioctl command: 0x8008aa01
+[12479.707398] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[12479.707400] nvmemul: ioctl command: 0x8008aa01
+[12479.707401] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[12479.707404] nvmemul: ioctl command: 0x8008aa01
+[12479.707405] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[12479.707407] nvmemul: ioctl command: 0x8008aa01
+[12479.707408] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[12479.707411] nvmemul: ioctl command: 0x8008aa01
+[12479.707412] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[12484.598748] hetero_pid 0 Curr 16364 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12484.598748]  
+[12490.674095] hetero_pid 0 Curr 16499 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12490.674095]  
+[12496.625623] hetero_pid 0 Curr 16500 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12496.625623]  
+[12502.674173] hetero_pid 0 Curr 16501 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12502.674173]  
+[12508.650274] hetero_pid 0 Curr 16502 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12508.650274]  
+[12514.601279] hetero_pid 0 Curr 16503 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12514.601279]  
+[12520.653101] hetero_pid 0 Curr 16508 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12520.653101]  
+[12526.605260] hetero_pid 0 Curr 16509 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12526.605260]  
+[12532.656963] hetero_pid 0 Curr 16510 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12532.656963]  
+[12538.609095] hetero_pid 0 Curr 16511 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12538.609095]  
+[12544.660892] hetero_pid 0 Curr 16512 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12544.660892]  
+[12550.612913] hetero_pid 0 Curr 16513 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12550.612913]  
+[12556.665239] hetero_pid 0 Curr 16514 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12556.665239]  
+[12562.617095] hetero_pid 0 Curr 16515 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12562.617095]  
+[12568.668404] hetero_pid 0 Curr 16516 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12568.668404]  
+[12574.619326] hetero_pid 0 Curr 16517 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12574.619326]  
+[12580.671653] hetero_pid 0 Curr 16518 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12580.671653]  
+[12586.622704] hetero_pid 0 Curr 16541 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12586.622704]  
+[12592.673714] hetero_pid 0 Curr 16542 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12592.673714]  
+[12598.625226] hetero_pid 0 Curr 16543 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12598.625226]  
+[12604.675997] hetero_pid 0 Curr 16548 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12604.675997]  
+[12606.693818] flag is set to print hetero allocate stat 10 
+[12606.693821] hetero_pid 0 Curr 16456 Currname db_bench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[12606.693821]  
+[12606.693822] flag set to clear count 0

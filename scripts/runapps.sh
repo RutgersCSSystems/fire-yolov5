@@ -55,6 +55,20 @@ $NVMBASE/scripts/copy_data.sh
 if [ -z "$4" ]
   then
 
+        APPBASE=$APPBENCH/apps/filebench
+        APP=filebench
+        RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+
+
+	APPBASE=$APPBENCH/apps/rocksdb
+	APP=db_bench
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit
+
+
 	APPBASE=$APPBENCH/redis-3.0.0/src
 	APP=redis
 	echo "running $APP..."
@@ -75,20 +89,7 @@ if [ -z "$4" ]
 
 
 
-        APPBASE=$APPBENCH/apps/filebench
-        APP=filebench
-        RUNAPP
-	$NVMBASE/scripts/reset.sh
-	exit
 	
-	APPBASE=$APPBENCH/apps/rocksdb
-	APP=db_bench
-	RUNAPP
-	$NVMBASE/scripts/reset.sh
-	exit
-
-
-
 	APPBASE=$APPBENCH/apps/leveldb
 	APP=leveldb
 	echo "running $APP..."

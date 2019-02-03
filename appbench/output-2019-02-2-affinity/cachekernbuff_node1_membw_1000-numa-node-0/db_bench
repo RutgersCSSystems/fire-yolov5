@@ -1,0 +1,348 @@
+++ ROCKSDB=/users/skannan/ssd/NVM/appbench/apps/rocksdb/
+++ USEPLAINTABLE=--use_plain_table=1
+++ DISABLEDATASYNC=--disable_data_sync=0
+++ STORAGE=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+++ mkdir /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA’: File exists
+++ OTHERPARAMS=' --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600'
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb’: Is a directory
+++ NUMVALS=' --num=500000'
+++ VALSIZE=' --value_size=4096'
+++ rm -rf /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/rocksdb//db_bench --db=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600 --num=500000 --value_size=4096 --benchmarks=fillrandom,readrandom,fillseq,readseq
+initiating tracing...
+initiating tracing...
+RocksDB:    version 5.18
+Date:       Sun Feb  3 00:21:40 2019
+CPU:        40 * Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz
+CPUCache:   25600 KB
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       16 bytes each
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    500000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    1960.8 MB (estimated)
+FileSize:   984.2 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: NoCompression
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+fillrandom   :      17.485 micros/op 57193 ops/sec;  224.3 MB/s
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+readrandom   :      42.357 micros/op 23608 ops/sec;   92.6 MB/s (500000 of 500000 found)
+
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+fillseq      :       8.889 micros/op 112493 ops/sec;  441.1 MB/s
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              DB path: [/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb]
+readseq      :       1.496 micros/op 668597 ops/sec; 2621.9 MB/s
+application termination...
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+******************
+KERNEL  DMESG
+******************
+  
+[13421.709018] hetero_pid 17334 Curr 17373 Currname db_bench HeteroProcname db_bench page cache hits 16452 cache miss 0 buffer page hits 250 miss 4 
+[13421.709018]  
+[13426.619799] hetero_pid 17334 Curr 17381 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 0 buffer page hits 250 miss 4 
+[13426.619799]  
+[13432.678706] hetero_pid 17334 Curr 17383 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13432.678706]  
+[13438.637654] hetero_pid 17334 Curr 17384 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13438.637654]  
+[13444.596588] hetero_pid 17334 Curr 17385 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13444.596588]  
+[13450.654667] hetero_pid 17334 Curr 17386 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13450.654667]  
+[13456.613482] hetero_pid 17334 Curr 17387 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13456.613482]  
+[13462.672693] hetero_pid 17334 Curr 17388 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13462.672693]  
+[13468.631822] hetero_pid 17334 Curr 17392 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13468.631822]  
+[13474.590861] hetero_pid 17334 Curr 17393 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13474.590861]  
+[13480.649749] hetero_pid 17334 Curr 17394 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13480.649749]  
+[13486.608657] hetero_pid 17334 Curr 17395 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13486.608657]  
+[13492.667677] hetero_pid 17334 Curr 17396 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13492.667677]  
+[13498.626563] hetero_pid 17334 Curr 17397 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13498.626563]  
+[13504.585442] hetero_pid 17334 Curr 17398 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13504.585442]  
+[13510.644731] hetero_pid 17334 Curr 17399 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13510.644731]  
+[13516.603587] hetero_pid 17334 Curr 17400 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13516.603587]  
+[13522.662733] hetero_pid 17334 Curr 17402 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 1 buffer page hits 250 miss 4 
+[13522.662733]  
+[13528.621728] hetero_pid 17334 Curr 17406 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 2 buffer page hits 250 miss 4 
+[13528.621728]  
+[13534.580696] hetero_pid 17334 Curr 17407 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 2 buffer page hits 250 miss 4 
+[13534.580696]  
+[13540.639706] hetero_pid 17334 Curr 17408 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 2 buffer page hits 250 miss 4 
+[13540.639706]  
+[13546.598817] hetero_pid 17334 Curr 17411 Currname redis-server2 HeteroProcname db_bench page cache hits 16452 cache miss 2 buffer page hits 250 miss 4 
+[13546.598817]  
+[13552.649756] hetero_pid 17334 Curr 17418 Currname redis-server2 HeteroProcname db_bench page cache hits 20382 cache miss 2 buffer page hits 351 miss 4 
+[13552.649756]  
+[13555.976089] flag is set to print hetero allocate stat 10 
+[13555.976093] hetero_pid 17334 Curr 8042 Currname redis-server4 HeteroProcname db_bench page cache hits 46847 cache miss 2 buffer page hits 363 miss 5 
+[13555.976093]  
+[13555.976094] flag set to clear count 0
+[13555.976095] hetero_pid 17334 Curr 8042 Currname redis-server4 HeteroProcname db_bench page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13555.976095]  
+[13555.976142] hetero_pid 0 Curr 8059 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13555.976142]  
+[13555.976181] hetero_pid 0 Curr 8062 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13555.976181]  
+[13555.976196] hetero_pid 0 Curr 8042 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13555.976196]  
+[13556.859911] flag is set to print hetero allocate stat 10 
+[13556.859914] hetero_pid 0 Curr 8043 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13556.859914]  
+[13556.859915] flag set to clear count 0
+[13556.859917] hetero_pid 0 Curr 8043 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13556.859917]  
+[13556.859958] hetero_pid 0 Curr 8053 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13556.859958]  
+[13556.860000] hetero_pid 0 Curr 8058 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13556.860000]  
+[13556.860016] hetero_pid 0 Curr 8043 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13556.860016]  
+[13558.609227] hetero_pid 0 Curr 17421 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13558.609227]  
+[13564.668977] hetero_pid 0 Curr 17429 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13564.668977]  
+[13570.628073] hetero_pid 0 Curr 17435 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13570.628073]  
+[13576.586954] hetero_pid 0 Curr 17436 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13576.586954]  
+[13579.049395] hetero_pid 0 Curr 8056 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13579.049395]  
+[13579.049427] hetero_pid 0 Curr 8051 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13579.049427]  
+[13579.049461] hetero_pid 0 Curr 8040 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13579.049461]  
+[13700.376839] nvmemul: ioctl command: 0xc008aa02
+[13700.376844] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8348
+[13700.376849] nvmemul: ioctl command: 0x8008aa01
+[13700.376851] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[13700.376853] nvmemul: ioctl command: 0x8008aa01
+[13700.376854] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[13700.376856] nvmemul: ioctl command: 0x8008aa01
+[13700.376858] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[13700.376860] nvmemul: ioctl command: 0x8008aa01
+[13700.376861] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[13700.376864] nvmemul: ioctl command: 0xc008aa02
+[13700.376865] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[13700.376867] nvmemul: ioctl command: 0x8008aa01
+[13700.376868] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[13700.376871] nvmemul: ioctl command: 0x8008aa01
+[13700.376872] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[13700.376874] nvmemul: ioctl command: 0x8008aa01
+[13700.376875] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[13700.376877] nvmemul: ioctl command: 0x8008aa01
+[13700.376878] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[13716.175971] nvmemul: ioctl command: 0xc008aa02
+[13716.175975] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[13716.175987] nvmemul: ioctl command: 0x8008aa01
+[13716.175988] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[13716.175991] nvmemul: ioctl command: 0x8008aa01
+[13716.175992] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[13716.175995] nvmemul: ioctl command: 0x8008aa01
+[13716.175996] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[13716.175998] nvmemul: ioctl command: 0x8008aa01
+[13716.175999] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[13725.500073] nvmemul: ioctl command: 0xc008aa02
+[13725.500078] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[13725.500086] nvmemul: ioctl command: 0x8008aa01
+[13725.500088] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[13725.500090] nvmemul: ioctl command: 0x8008aa01
+[13725.500091] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[13725.500094] nvmemul: ioctl command: 0x8008aa01
+[13725.500095] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[13725.500097] nvmemul: ioctl command: 0x8008aa01
+[13725.500098] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[13744.580069] flag is set to collect hetero allocate  9 
+[13744.580072] flag is set to enable HETERO_PGCACHE 11 
+[13744.580073] flag is set to enable HETERO_BUFFER 12 
+[13744.580074] flag is set to enable HETERO_JOURNAL 13 
+[13744.580075] flag is set to enable HETERO_RADIX 14 
+[13744.580075] flag is set to enable HETERO_FULLKERN 15 
+[13744.580076] flag to set FASTMEM node to 1 
+[13744.580077] hetero_pid set to 18167 18167 procname numactl
+[13744.581534] flag is set to collect hetero allocate  9 
+[13744.581535] flag is set to enable HETERO_PGCACHE 11 
+[13744.581536] flag is set to enable HETERO_BUFFER 12 
+[13744.581537] flag is set to enable HETERO_JOURNAL 13 
+[13744.581538] flag is set to enable HETERO_RADIX 14 
+[13744.581539] flag is set to enable HETERO_FULLKERN 15 
+[13744.581539] flag to set FASTMEM node to 1 
+[13744.581540] hetero_pid set to 18167 18167 procname db_bench
+[13744.583647] hetero_pid 18167 Curr 18170 Currname db_bench HeteroProcname db_bench page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13744.583647]  
+[13744.586802] hetero_pid 18167 Curr 18172 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 0 miss 0 
+[13744.586802]  
+[13744.586815] hetero_pid 18167 Curr 18173 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 0 miss 0 
+[13744.586815]  
+[13744.586856] hetero_pid 18167 Curr 18174 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586856]  
+[13744.586868] hetero_pid 18167 Curr 18175 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586868]  
+[13744.586900] hetero_pid 18167 Curr 18176 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586900]  
+[13744.586928] hetero_pid 18167 Curr 18177 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586928]  
+[13744.586958] hetero_pid 18167 Curr 18178 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586958]  
+[13744.586990] hetero_pid 18167 Curr 18179 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.586990]  
+[13744.587584] hetero_pid 18167 Curr 18180 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587584]  
+[13744.587613] hetero_pid 18167 Curr 18181 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587613]  
+[13744.587641] hetero_pid 18167 Curr 18182 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587641]  
+[13744.587671] hetero_pid 18167 Curr 18183 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587671]  
+[13744.587700] hetero_pid 18167 Curr 18184 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587700]  
+[13744.587728] hetero_pid 18167 Curr 18185 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587728]  
+[13744.587755] hetero_pid 18167 Curr 18186 Currname db_bench HeteroProcname db_bench page cache hits 5 cache miss 2 buffer page hits 1 miss 0 
+[13744.587755]  
+[13744.614550] hetero_pid 18167 Curr 18187 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 7 cache miss 2 buffer page hits 2 miss 0 
+[13744.614550]  
+[13744.614703] hetero_pid 18167 Curr 18171 Currname db_bench HeteroProcname db_bench page cache hits 7 cache miss 3 buffer page hits 2 miss 0 
+[13744.614703]  
+[13744.614952] hetero_pid 18167 Curr 18188 Currname db_bench HeteroProcname db_bench page cache hits 7 cache miss 3 buffer page hits 2 miss 0 
+[13744.614952]  
+[13744.617627] hetero_pid 18167 Curr 18190 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617627]  
+[13744.617648] hetero_pid 18167 Curr 18191 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617648]  
+[13744.617662] hetero_pid 18167 Curr 18192 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617662]  
+[13744.617680] hetero_pid 18167 Curr 18193 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617680]  
+[13744.617709] hetero_pid 18167 Curr 18194 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617709]  
+[13744.617737] hetero_pid 18167 Curr 18195 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617737]  
+[13744.617766] hetero_pid 18167 Curr 18196 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617766]  
+[13744.617793] hetero_pid 18167 Curr 18197 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617793]  
+[13744.617824] hetero_pid 18167 Curr 18198 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617824]  
+[13744.617854] hetero_pid 18167 Curr 18199 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617854]  
+[13744.617882] hetero_pid 18167 Curr 18200 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.617882]  
+[13744.618107] hetero_pid 18167 Curr 18201 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.618107]  
+[13744.618136] hetero_pid 18167 Curr 18202 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.618136]  
+[13744.618164] hetero_pid 18167 Curr 18203 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.618164]  
+[13744.618202] hetero_pid 18167 Curr 18204 Currname db_bench HeteroProcname db_bench page cache hits 12 cache miss 5 buffer page hits 2 miss 0 
+[13744.618202]  
+[13779.585951] hetero_pid 18167 Curr 18209 Currname db_bench HeteroProcname db_bench page cache hits 2113132 cache miss 1864401 buffer page hits 95989 miss 0 
+[13779.585951]  
+[13779.586392] hetero_pid 18167 Curr 18206 Currname db_bench HeteroProcname db_bench page cache hits 2113231 cache miss 1864440 buffer page hits 95992 miss 0 
+[13779.586392]  
+[13779.588483] hetero_pid 18167 Curr 18207 Currname db_bench HeteroProcname db_bench page cache hits 2113523 cache miss 1864619 buffer page hits 96005 miss 0 
+[13779.588483]  
+[13779.589216] hetero_pid 18167 Curr 18208 Currname db_bench HeteroProcname db_bench page cache hits 2113742 cache miss 1864671 buffer page hits 96011 miss 0 
+[13779.589216]  
+[13862.180234] hetero_pid 18167 Curr 18223 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864677 buffer page hits 96445 miss 0 
+[13862.180234]  
+[13862.492690] hetero_pid 18167 Curr 18222 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96445 miss 0 
+[13862.492690]  
+[13864.118029] hetero_pid 18167 Curr 18220 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96445 miss 0 
+[13864.118029]  
+[13864.303115] hetero_pid 18167 Curr 18221 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96445 miss 0 
+[13864.303115]  
+[13864.303217] hetero_pid 18167 Curr 18205 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96445 miss 0 
+[13864.303217]  
+[13864.306063] hetero_pid 18167 Curr 18189 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96447 miss 0 
+[13864.306063]  
+[13865.897190] hetero_pid 18167 Curr 18225 Currname db_bench HeteroProcname db_bench page cache hits 2129607 cache miss 1864678 buffer page hits 96452 miss 0 
+[13865.897190]  
+[13865.903191] hetero_pid 18167 Curr 18227 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96453 miss 0 
+[13865.903191]  
+[13865.903246] hetero_pid 18167 Curr 18228 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96453 miss 0 
+[13865.903246]  
+[13865.903313] hetero_pid 18167 Curr 18229 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96453 miss 0 
+[13865.903313]  
+[13865.903339] hetero_pid 18167 Curr 18230 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96453 miss 0 
+[13865.903339]  
+[13865.903384] hetero_pid 18167 Curr 18231 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96453 miss 0 
+[13865.903384]  
+[13865.903446] hetero_pid 18167 Curr 18232 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96454 miss 0 
+[13865.903446]  
+[13865.903486] hetero_pid 18167 Curr 18233 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96454 miss 0 
+[13865.903486]  
+[13865.905220] hetero_pid 18167 Curr 18234 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96454 miss 0 
+[13865.905220]  
+[13865.905235] hetero_pid 18167 Curr 18235 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96454 miss 0 
+[13865.905235]  
+[13865.905272] hetero_pid 18167 Curr 18236 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96455 miss 0 
+[13865.905272]  
+[13865.905315] hetero_pid 18167 Curr 18237 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96455 miss 0 
+[13865.905315]  
+[13865.905348] hetero_pid 18167 Curr 18238 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96455 miss 0 
+[13865.905348]  
+[13865.905389] hetero_pid 18167 Curr 18239 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96455 miss 0 
+[13865.905389]  
+[13865.905450] hetero_pid 18167 Curr 18240 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96456 miss 0 
+[13865.905450]  
+[13865.907117] hetero_pid 18167 Curr 18241 Currname db_bench HeteroProcname db_bench page cache hits 2129612 cache miss 1864680 buffer page hits 96456 miss 0 
+[13865.907117]  
+[13883.678109] hetero_pid 18167 Curr 18246 Currname db_bench HeteroProcname db_bench page cache hits 2680333 cache miss 3853696 buffer page hits 134470 miss 0 
+[13883.678109]  
+[13883.684215] hetero_pid 18167 Curr 18243 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854299 buffer page hits 134499 miss 0 
+[13883.684215]  
+[13883.686785] hetero_pid 18167 Curr 18245 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854610 buffer page hits 134507 miss 0 
+[13883.686785]  
+[13883.688164] hetero_pid 18167 Curr 18244 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854745 buffer page hits 134512 miss 0 
+[13883.688164]  
+[13886.678651] hetero_pid 18167 Curr 18248 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.678651]  
+[13886.678689] hetero_pid 18167 Curr 18247 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.678689]  
+[13886.678693] hetero_pid 18167 Curr 18250 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.678693]  
+[13886.679857] hetero_pid 18167 Curr 18249 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.679857]  
+[13886.679971] hetero_pid 18167 Curr 18242 Currname rocksdb:dump_st HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.679971]  
+[13886.681599] hetero_pid 18167 Curr 18226 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.681599]  
+[13886.682198] hetero_pid 18167 Curr 18168 Currname rocksdb:low0 HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.682198]  
+[13886.682361] hetero_pid 18167 Curr 18169 Currname rocksdb:high0 HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.682361]  
+[13886.683668] flag is set to print hetero allocate stat 10 
+[13886.683671] hetero_pid 18167 Curr 18167 Currname db_bench HeteroProcname db_bench page cache hits 2680801 cache miss 3854751 buffer page hits 134515 miss 0 
+[13886.683671]  
+[13886.683672] flag set to clear count 0
+[13886.683673] hetero_pid 18167 Curr 18167 Currname db_bench HeteroProcname db_bench page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[13886.683673]  
