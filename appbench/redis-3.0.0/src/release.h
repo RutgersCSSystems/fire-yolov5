@@ -1,3 +1,3 @@
-#define REDIS_GIT_SHA1 "e830fe4a"
-#define REDIS_GIT_DIRTY "422"
-#define REDIS_BUILD_ID "node-0.meeting.fsperfatscale-pg0.wisc.cloudlab.us-1549053433"
+#define REDIS_GIT_SHA1 "5553ee78"
+#define REDIS_GIT_DIRTY "58"
+#define REDIS_BUILD_ID "node-1.meeting2.fsperfatscale-pg0.wisc.cloudlab.us-1549176668"

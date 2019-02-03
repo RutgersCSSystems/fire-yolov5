@@ -104,7 +104,6 @@ GETAPPS
 INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
-exit
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh
 $APPBENCH/setup.sh
