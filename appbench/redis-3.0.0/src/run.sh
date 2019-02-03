@@ -26,6 +26,13 @@ CLEAN() {
 	sleep 5
 }
 
+PREPARE() {
+        for (( inst=1; inst<=$MAXINST; inst++ ))
+	do
+		cp redis-server redis-server$inst
+	done
+}
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -61,6 +68,7 @@ RUNCLIENT(){
 }
 
 CLEAN
+PREPARE
 FlushDisk
 RUN
 sleep 10
