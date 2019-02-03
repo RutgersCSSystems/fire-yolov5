@@ -74,7 +74,7 @@ INSTALL_ROCKSDB() {
 	rm -rf CMakeCache.txt
 	cmake ..
 	make -j16
-	cp $APPBENCH/apps/run_rocksdb.sh $APPBENCH/apps/rocksdb/build/run.sh
+	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
 }
 
 INSTALL_GFLAGS(){

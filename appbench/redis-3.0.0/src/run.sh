@@ -1,6 +1,7 @@
 #!/bin/bash
 #set -x
 REDISROOT=$APPBENCH/redis-3.0.0
+REDISCONF=$REDISROOT/config
 APPBASE=$REDISROOT/src
 APP=$APPBASE/pagerank
 PARAM=$1
@@ -23,7 +24,6 @@ CLEAN() {
 		rm -rf *.aof
 		killall redis-server$n
 	done
-	sleep 5
 }
 
 PREPARE() {
@@ -46,7 +46,7 @@ RUN(){
   let physcpu=$SERVERCPU
   for (( n=1; n<=$MAXINST; n++))
   do
-    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu $APPBASE/redis-server$n $REDISROOT/redis-$port".conf" &
+    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu $APPBASE/redis-server$n $REDISCONF/redis-$port".conf" &
     let port=$port+1
     let physcpu=$physcpu+1
   done
@@ -67,6 +67,8 @@ RUNCLIENT(){
   $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$n".txt"  
 }
 
+CLEAN
+sleep 5
 CLEAN
 PREPARE
 FlushDisk

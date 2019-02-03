@@ -1,5 +1,5 @@
 set -x
-ROCKSDB="$APPBENCH/apps/rocksdb/build"
+ROCKSDB="$APPBENCH/apps/rocksdb"
 USEPLAINTABLE="--use_plain_table=1"
 DISABLEDATASYNC="--disable_data_sync=0"
 STORAGE="$APPBENCH/apps/rocksdb/DATA"

@@ -273,7 +273,7 @@ def main():
 
     if is_membw_test:
         p.setvals(membw_test)
-	#p.run_fastmemonly(membw_test)
+	p.run_fastmemonly(membw_test)
 
 	for j in range(0, len(appprefix)):
 	    os.environ['APPPREFIX'] = "numactl --membind=" + str(appprefix[j])
