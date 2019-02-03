@@ -1,0 +1,474 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/leveldb
++ APP=db_bench
++ PARAM=1
++ OUTPUT=/users/skannan/ssd/NVM/appbench/output/maxbw_membw_30000/leveldb
++ mkdir /users/skannan/ssd/NVM/appbench/apps/leveldb/DATA
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/leveldb/DATA’: File exists
++ export TEST_TMPDIR=/users/skannan/ssd/NVM/appbench/apps/leveldb/DATA
++ TEST_TMPDIR=/users/skannan/ssd/NVM/appbench/apps/leveldb/DATA
++ export TMP_TESTDIR=/users/skannan/ssd/NVM/appbench/apps/leveldb/DATA
++ TMP_TESTDIR=/users/skannan/ssd/NVM/appbench/apps/leveldb/DATA
++ cd /users/skannan/ssd/NVM/appbench/apps/leveldb
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ RUN
++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/leveldb/db_bench --num=100000 --value_size=4096
+initiating tracing...
+initiating tracing...
+LevelDB:    version 1.18
+Date:       Thu Jan 24 15:43:13 2019
+CPU:        40 * Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz
+CPUCache:   25600 KB
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              Keys:       16 bytes each
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    100000
+RawSize:    392.2 MB (estimated)
+FileSize:   196.8 MB (estimated)
+WARNING: Snappy compression is not enabled
+------------------------------------------------
+fillseq      :      24.392 micros/op;  160.8 MB/s
+... finished 100 ops                              fillsync     :     471.980 micros/op;    8.3 MB/s (100 ops)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              fillrandom   :     124.578 micros/op;   31.5 MB/s
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              overwrite    :     164.437 micros/op;   23.8 MB/s
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              readrandom   :       5.867 micros/op; (18465 of 100000 found)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              readrandom   :       6.008 micros/op; (18465 of 100000 found)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              readseq      :       2.021 micros/op; 1940.2 MB/s
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              readreverse  :       2.739 micros/op; 1431.8 MB/s
+compact      : 5524577.000 micros/op;
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              readrandom   :       2.082 micros/op; (18465 of 100000 found)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              readseq      :       1.097 micros/op; 3574.8 MB/s
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              readreverse  :       1.456 micros/op; 2692.7 MB/s
+... finished 100 ops                              fill100K     :     382.500 micros/op;  249.4 MB/s (100 ops)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... crc=0xa46ab21fcrc32c       :       4.362 micros/op;  895.5 MB/s (4K per op)
+snappycomp   :    4932.000 micros/op; (snappy failure)
+snappyuncomp :    4829.000 micros/op; (snappy failure)
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              acquireload  :       0.406 micros/op; (each op is 1000 loads)
+application termination...
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ set +x
+******************
+KERNEL  DMESG
+******************
+  
+[96950.214358] nvmemul: ioctl command: 0xc008aa02
+[96950.214366] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[96950.214376] nvmemul: ioctl command: 0x8008aa01
+[96950.214379] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[96950.214385] nvmemul: ioctl command: 0x8008aa01
+[96950.214387] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[96950.214393] nvmemul: ioctl command: 0x8008aa01
+[96950.214396] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[96950.214401] nvmemul: ioctl command: 0x8008aa01
+[96950.214403] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[96950.214409] nvmemul: ioctl command: 0x8008aa01
+[96950.214411] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[96950.214416] nvmemul: ioctl command: 0x8008aa01
+[96950.214418] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[96950.214424] nvmemul: ioctl command: 0x8008aa01
+[96950.214426] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[96950.214432] nvmemul: ioctl command: 0x8008aa01
+[96950.214434] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[96960.362818] nvmemul: ioctl command: 0xc008aa02
+[96960.362823] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[96960.362828] nvmemul: ioctl command: 0xc008aa02
+[96960.362829] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[96960.362833] nvmemul: ioctl command: 0x8008aa01
+[96960.362835] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[96960.362837] nvmemul: ioctl command: 0x8008aa01
+[96960.362839] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[96960.362841] nvmemul: ioctl command: 0x8008aa01
+[96960.362843] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[96960.362846] nvmemul: ioctl command: 0x8008aa01
+[96960.362847] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[96989.040532] nvmemul: ioctl command: 0xc008aa02
+[96989.040544] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[96989.040596] nvmemul: ioctl command: 0x8008aa01
+[96989.040601] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[96989.040609] nvmemul: ioctl command: 0x8008aa01
+[96989.040610] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[96989.040613] nvmemul: ioctl command: 0x8008aa01
+[96989.040614] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[96989.040617] nvmemul: ioctl command: 0x8008aa01
+[96989.040618] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[97004.478654] nvmemul: ioctl command: 0xc008aa02
+[97004.478667] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[97004.478689] nvmemul: ioctl command: 0x8008aa01
+[97004.478691] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[97004.478694] nvmemul: ioctl command: 0x8008aa01
+[97004.478695] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[97004.478698] nvmemul: ioctl command: 0x8008aa01
+[97004.478699] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[97004.478702] nvmemul: ioctl command: 0x8008aa01
+[97004.478703] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[97015.798350] nvmemul: ioctl command: 0xc008aa02
+[97015.798357] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[97015.798365] nvmemul: ioctl command: 0x8008aa01
+[97015.798366] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[97015.798369] nvmemul: ioctl command: 0x8008aa01
+[97015.798371] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[97015.798373] nvmemul: ioctl command: 0x8008aa01
+[97015.798375] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[97015.798378] nvmemul: ioctl command: 0x8008aa01
+[97015.798379] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[97025.264682] nvmemul: ioctl command: 0xc008aa02
+[97025.264688] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[97025.264696] nvmemul: ioctl command: 0x8008aa01
+[97025.264698] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[97025.264701] nvmemul: ioctl command: 0x8008aa01
+[97025.264702] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[97025.264705] nvmemul: ioctl command: 0x8008aa01
+[97025.264706] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[97025.264709] nvmemul: ioctl command: 0x8008aa01
+[97025.264710] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[97059.312444] nvmemul: ioctl command: 0xc008aa02
+[97059.312449] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[97059.312455] nvmemul: ioctl command: 0x8008aa01
+[97059.312456] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[97059.312459] nvmemul: ioctl command: 0x8008aa01
+[97059.312461] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[97059.312463] nvmemul: ioctl command: 0x8008aa01
+[97059.312465] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[97059.312467] nvmemul: ioctl command: 0x8008aa01
+[97059.312469] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[97059.312471] nvmemul: ioctl command: 0xc008aa02
+[97059.312473] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[97059.312476] nvmemul: ioctl command: 0x8008aa01
+[97059.312477] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[97059.312479] nvmemul: ioctl command: 0x8008aa01
+[97059.312480] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[97059.312483] nvmemul: ioctl command: 0x8008aa01
+[97059.312484] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[97059.312487] nvmemul: ioctl command: 0x8008aa01
+[97059.312488] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[97074.858864] perf: interrupt took too long (84168 > 83926), lowering kernel.perf_event_max_sample_rate to 2250
+[97087.746940] nvmemul: ioctl command: 0xc008aa02
+[97087.746956] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[97087.746992] nvmemul: ioctl command: 0x8008aa01
+[97087.746993] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[97087.746998] nvmemul: ioctl command: 0x8008aa01
+[97087.746999] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[97087.747002] nvmemul: ioctl command: 0x8008aa01
+[97087.747003] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[97087.747006] nvmemul: ioctl command: 0x8008aa01
+[97087.747007] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[97102.784711] nvmemul: ioctl command: 0xc008aa02
+[97102.784721] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[97102.784729] nvmemul: ioctl command: 0x8008aa01
+[97102.784731] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[97102.784734] nvmemul: ioctl command: 0x8008aa01
+[97102.784735] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[97102.784738] nvmemul: ioctl command: 0x8008aa01
+[97102.784739] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[97102.784742] nvmemul: ioctl command: 0x8008aa01
+[97102.784743] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[97113.680386] nvmemul: ioctl command: 0xc008aa02
+[97113.680399] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[97113.680407] nvmemul: ioctl command: 0x8008aa01
+[97113.680409] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[97113.680412] nvmemul: ioctl command: 0x8008aa01
+[97113.680413] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[97113.680415] nvmemul: ioctl command: 0x8008aa01
+[97113.680417] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[97113.680420] nvmemul: ioctl command: 0x8008aa01
+[97113.680421] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[97122.740555] nvmemul: ioctl command: 0xc008aa02
+[97122.740566] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[97122.740574] nvmemul: ioctl command: 0x8008aa01
+[97122.740575] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[97122.740578] nvmemul: ioctl command: 0x8008aa01
+[97122.740580] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[97122.740583] nvmemul: ioctl command: 0x8008aa01
+[97122.740584] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[97122.740587] nvmemul: ioctl command: 0x8008aa01
+[97122.740588] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[97881.430911] nvmemul: ioctl command: 0xc008aa02
+[97881.430916] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[97881.430922] nvmemul: ioctl command: 0x8008aa01
+[97881.430924] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[97881.430926] nvmemul: ioctl command: 0x8008aa01
+[97881.430928] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[97881.430930] nvmemul: ioctl command: 0x8008aa01
+[97881.430932] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[97881.430935] nvmemul: ioctl command: 0x8008aa01
+[97881.430936] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[97881.430939] nvmemul: ioctl command: 0x8008aa01
+[97881.430940] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[97881.430943] nvmemul: ioctl command: 0x8008aa01
+[97881.430944] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[97881.430946] nvmemul: ioctl command: 0x8008aa01
+[97881.430948] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[97881.430950] nvmemul: ioctl command: 0x8008aa01
+[97881.430951] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[97891.596641] nvmemul: ioctl command: 0xc008aa02
+[97891.596646] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[97891.596651] nvmemul: ioctl command: 0xc008aa02
+[97891.596652] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[97891.596656] nvmemul: ioctl command: 0x8008aa01
+[97891.596658] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[97891.596660] nvmemul: ioctl command: 0x8008aa01
+[97891.596662] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[97891.596664] nvmemul: ioctl command: 0x8008aa01
+[97891.596666] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[97891.596669] nvmemul: ioctl command: 0x8008aa01
+[97891.596670] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[97917.861992] perf: interrupt took too long (107020 > 105210), lowering kernel.perf_event_max_sample_rate to 1750
+[97920.106083] nvmemul: ioctl command: 0xc008aa02
+[97920.106129] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[97920.106147] nvmemul: ioctl command: 0x8008aa01
+[97920.106160] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[97920.106162] nvmemul: ioctl command: 0x8008aa01
+[97920.106163] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[97920.106166] nvmemul: ioctl command: 0x8008aa01
+[97920.106168] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[97920.106170] nvmemul: ioctl command: 0x8008aa01
+[97920.106171] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[97935.244043] nvmemul: ioctl command: 0xc008aa02
+[97935.244062] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[97935.244080] nvmemul: ioctl command: 0x8008aa01
+[97935.244087] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[97935.244096] nvmemul: ioctl command: 0x8008aa01
+[97935.244097] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[97935.244099] nvmemul: ioctl command: 0x8008aa01
+[97935.244101] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[97935.244104] nvmemul: ioctl command: 0x8008aa01
+[97935.244105] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[97946.217978] nvmemul: ioctl command: 0xc008aa02
+[97946.217991] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[97946.218000] nvmemul: ioctl command: 0x8008aa01
+[97946.218002] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[97946.218005] nvmemul: ioctl command: 0x8008aa01
+[97946.218006] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[97946.218009] nvmemul: ioctl command: 0x8008aa01
+[97946.218010] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[97946.218013] nvmemul: ioctl command: 0x8008aa01
+[97946.218014] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[97955.363474] nvmemul: ioctl command: 0xc008aa02
+[97955.363484] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[97955.363499] nvmemul: ioctl command: 0x8008aa01
+[97955.363500] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[97955.363503] nvmemul: ioctl command: 0x8008aa01
+[97955.363504] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[97955.363507] nvmemul: ioctl command: 0x8008aa01
+[97955.363509] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[97955.363512] nvmemul: ioctl command: 0x8008aa01
+[97955.363513] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[97989.225578] nvmemul: ioctl command: 0xc008aa02
+[97989.225583] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[97989.225588] nvmemul: ioctl command: 0x8008aa01
+[97989.225590] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[97989.225593] nvmemul: ioctl command: 0x8008aa01
+[97989.225594] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[97989.225597] nvmemul: ioctl command: 0x8008aa01
+[97989.225599] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[97989.225601] nvmemul: ioctl command: 0x8008aa01
+[97989.225603] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[97989.225605] nvmemul: ioctl command: 0xc008aa02
+[97989.225607] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[97989.225610] nvmemul: ioctl command: 0x8008aa01
+[97989.225611] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[97989.225613] nvmemul: ioctl command: 0x8008aa01
+[97989.225615] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[97989.225617] nvmemul: ioctl command: 0x8008aa01
+[97989.225618] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[97989.225621] nvmemul: ioctl command: 0x8008aa01
+[97989.225622] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[98018.018646] nvmemul: ioctl command: 0xc008aa02
+[98018.018665] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[98018.018690] nvmemul: ioctl command: 0x8008aa01
+[98018.018703] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[98018.018711] nvmemul: ioctl command: 0x8008aa01
+[98018.018719] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[98018.018721] nvmemul: ioctl command: 0x8008aa01
+[98018.018723] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[98018.018726] nvmemul: ioctl command: 0x8008aa01
+[98018.018727] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[98033.575581] nvmemul: ioctl command: 0xc008aa02
+[98033.575602] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[98033.575610] nvmemul: ioctl command: 0x8008aa01
+[98033.575617] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[98033.575620] nvmemul: ioctl command: 0x8008aa01
+[98033.575621] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[98033.575624] nvmemul: ioctl command: 0x8008aa01
+[98033.575626] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[98033.575628] nvmemul: ioctl command: 0x8008aa01
+[98033.575629] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[98045.038472] nvmemul: ioctl command: 0xc008aa02
+[98045.038479] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[98045.038487] nvmemul: ioctl command: 0x8008aa01
+[98045.038489] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[98045.038492] nvmemul: ioctl command: 0x8008aa01
+[98045.038493] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[98045.038496] nvmemul: ioctl command: 0x8008aa01
+[98045.038497] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[98045.038500] nvmemul: ioctl command: 0x8008aa01
+[98045.038501] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[98054.672241] nvmemul: ioctl command: 0xc008aa02
+[98054.672252] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[98054.672261] nvmemul: ioctl command: 0x8008aa01
+[98054.672263] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[98054.672266] nvmemul: ioctl command: 0x8008aa01
+[98054.672268] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[98054.672270] nvmemul: ioctl command: 0x8008aa01
+[98054.672272] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[98054.672274] nvmemul: ioctl command: 0x8008aa01
+[98054.672275] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[98211.299114] nvmemul: ioctl command: 0xc008aa02
+[98211.299119] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[98211.299124] nvmemul: ioctl command: 0x8008aa01
+[98211.299126] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[98211.299129] nvmemul: ioctl command: 0x8008aa01
+[98211.299130] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[98211.299133] nvmemul: ioctl command: 0x8008aa01
+[98211.299135] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[98211.299137] nvmemul: ioctl command: 0x8008aa01
+[98211.299139] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[98211.299142] nvmemul: ioctl command: 0x8008aa01
+[98211.299143] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[98211.299146] nvmemul: ioctl command: 0x8008aa01
+[98211.299147] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[98211.299150] nvmemul: ioctl command: 0x8008aa01
+[98211.299151] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[98211.299154] nvmemul: ioctl command: 0x8008aa01
+[98211.299155] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[98221.475199] nvmemul: ioctl command: 0xc008aa02
+[98221.475204] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[98221.475208] nvmemul: ioctl command: 0xc008aa02
+[98221.475209] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[98221.475213] nvmemul: ioctl command: 0x8008aa01
+[98221.475215] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[98221.475218] nvmemul: ioctl command: 0x8008aa01
+[98221.475219] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[98221.475222] nvmemul: ioctl command: 0x8008aa01
+[98221.475224] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[98221.475226] nvmemul: ioctl command: 0x8008aa01
+[98221.475227] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[98250.096635] nvmemul: ioctl command: 0xc008aa02
+[98250.096657] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[98250.096680] nvmemul: ioctl command: 0x8008aa01
+[98250.096686] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[98250.096701] nvmemul: ioctl command: 0x8008aa01
+[98250.096702] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[98250.096709] nvmemul: ioctl command: 0x8008aa01
+[98250.096711] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[98250.096715] nvmemul: ioctl command: 0x8008aa01
+[98250.096717] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[98265.538852] nvmemul: ioctl command: 0xc008aa02
+[98265.538858] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[98265.538874] nvmemul: ioctl command: 0x8008aa01
+[98265.538876] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[98265.538879] nvmemul: ioctl command: 0x8008aa01
+[98265.538880] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[98265.538883] nvmemul: ioctl command: 0x8008aa01
+[98265.538884] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[98265.538887] nvmemul: ioctl command: 0x8008aa01
+[98265.538888] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[98276.837526] nvmemul: ioctl command: 0xc008aa02
+[98276.837539] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[98276.837547] nvmemul: ioctl command: 0x8008aa01
+[98276.837549] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[98276.837552] nvmemul: ioctl command: 0x8008aa01
+[98276.837553] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[98276.837556] nvmemul: ioctl command: 0x8008aa01
+[98276.837557] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[98276.837560] nvmemul: ioctl command: 0x8008aa01
+[98276.837561] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[98286.345590] nvmemul: ioctl command: 0xc008aa02
+[98286.345600] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[98286.345608] nvmemul: ioctl command: 0x8008aa01
+[98286.345610] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[98286.345613] nvmemul: ioctl command: 0x8008aa01
+[98286.345614] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[98286.345617] nvmemul: ioctl command: 0x8008aa01
+[98286.345619] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[98286.345621] nvmemul: ioctl command: 0x8008aa01
+[98286.345623] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[98320.434999] nvmemul: ioctl command: 0xc008aa02
+[98320.435004] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[98320.435009] nvmemul: ioctl command: 0x8008aa01
+[98320.435011] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[98320.435014] nvmemul: ioctl command: 0x8008aa01
+[98320.435015] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[98320.435018] nvmemul: ioctl command: 0x8008aa01
+[98320.435020] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[98320.435022] nvmemul: ioctl command: 0x8008aa01
+[98320.435024] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[98320.435026] nvmemul: ioctl command: 0xc008aa02
+[98320.435028] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[98320.435030] nvmemul: ioctl command: 0x8008aa01
+[98320.435031] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[98320.435034] nvmemul: ioctl command: 0x8008aa01
+[98320.435035] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[98320.435038] nvmemul: ioctl command: 0x8008aa01
+[98320.435039] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[98320.435042] nvmemul: ioctl command: 0x8008aa01
+[98320.435043] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[98348.951988] nvmemul: ioctl command: 0xc008aa02
+[98348.952010] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[98348.952041] nvmemul: ioctl command: 0x8008aa01
+[98348.952043] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[98348.952049] nvmemul: ioctl command: 0x8008aa01
+[98348.952051] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[98348.952063] nvmemul: ioctl command: 0x8008aa01
+[98348.952064] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[98348.952067] nvmemul: ioctl command: 0x8008aa01
+[98348.952068] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[98364.370573] nvmemul: ioctl command: 0xc008aa02
+[98364.370590] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[98364.370607] nvmemul: ioctl command: 0x8008aa01
+[98364.370608] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[98364.370611] nvmemul: ioctl command: 0x8008aa01
+[98364.370612] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[98364.370615] nvmemul: ioctl command: 0x8008aa01
+[98364.370617] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[98364.370619] nvmemul: ioctl command: 0x8008aa01
+[98364.370620] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[98375.664508] nvmemul: ioctl command: 0xc008aa02
+[98375.664514] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[98375.664523] nvmemul: ioctl command: 0x8008aa01
+[98375.664524] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[98375.664527] nvmemul: ioctl command: 0x8008aa01
+[98375.664528] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[98375.664531] nvmemul: ioctl command: 0x8008aa01
+[98375.664532] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[98375.664535] nvmemul: ioctl command: 0x8008aa01
+[98375.664536] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[98385.094991] nvmemul: ioctl command: 0xc008aa02
+[98385.094997] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[98385.095005] nvmemul: ioctl command: 0x8008aa01
+[98385.095007] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[98385.095010] nvmemul: ioctl command: 0x8008aa01
+[98385.095011] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[98385.095014] nvmemul: ioctl command: 0x8008aa01
+[98385.095015] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[98385.095018] nvmemul: ioctl command: 0x8008aa01
+[98385.095019] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[112788.302236] nvmemul: ioctl command: 0xc008aa02
+[112788.302241] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[112788.302246] nvmemul: ioctl command: 0x8008aa01
+[112788.302248] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[112788.302251] nvmemul: ioctl command: 0x8008aa01
+[112788.302252] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[112788.302255] nvmemul: ioctl command: 0x8008aa01
+[112788.302256] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[112788.302259] nvmemul: ioctl command: 0x8008aa01
+[112788.302260] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[112788.302263] nvmemul: ioctl command: 0x8008aa01
+[112788.302264] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[112788.302267] nvmemul: ioctl command: 0x8008aa01
+[112788.302268] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[112788.302270] nvmemul: ioctl command: 0x8008aa01
+[112788.302272] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[112788.302274] nvmemul: ioctl command: 0x8008aa01
+[112788.302275] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[112794.252537] drop_caches: sh (13626): drop_caches: 3
+[112794.671421] drop_caches: sh (13634): drop_caches: 3
+[112834.610472] flag is set to print hetero allocate stat 10 
+[112834.610476] hetero_pid 0 Curr 13635 Currname db_bench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[112834.610476]  
+[112834.610478] flag set to clear count 0

@@ -1,0 +1,62 @@
+++ ROCKSDB=/users/skannan/ssd/NVM/appbench/apps/rocksdb/
+++ USEPLAINTABLE=--use_plain_table=1
+++ DISABLEDATASYNC=--disable_data_sync=0
+++ STORAGE=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+++ mkdir /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA’: File exists
+++ OTHERPARAMS=' --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600'
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb’: Is a directory
+++ NUMVALS=' --num=500000'
+++ VALSIZE=' --value_size=512'
+++ rm -rf /users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/rocksdb//db_bench --db=/users/skannan/ssd/NVM/appbench/apps/rocksdb/DATA/rocksdb --num_levels=2 --compression_type=none --disable_auto_compactions --threads=4 --write_buffer_size=104857600 --num=500000 --value_size=512 --benchmarks=fillrandom,readrandom,fillseq,readseq
+initiating tracing...
+initiating tracing...
+RocksDB:    version 5.18
+Date:       Mon Jan 28 16:04:00 2019
+CPU:        40 * Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz
+CPUCache:   25600 KB
+... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ******************
+KERNEL  DMESG
+******************
+  
+[96375.687077] nvmemul: ioctl command: 0xc008aa02
+[96375.687082] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[96375.687088] nvmemul: ioctl command: 0x8008aa01
+[96375.687089] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[96375.687092] nvmemul: ioctl command: 0x8008aa01
+[96375.687093] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[96375.687096] nvmemul: ioctl command: 0x8008aa01
+[96375.687098] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[96375.687100] nvmemul: ioctl command: 0x8008aa01
+[96375.687101] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[96375.687104] nvmemul: ioctl command: 0xc008aa02
+[96375.687106] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[96375.687109] nvmemul: ioctl command: 0x8008aa01
+[96375.687110] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[96375.687112] nvmemul: ioctl command: 0x8008aa01
+[96375.687113] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[96375.687116] nvmemul: ioctl command: 0x8008aa01
+[96375.687117] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[96375.687120] nvmemul: ioctl command: 0x8008aa01
+[96375.687121] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[96391.736634] flag is set to collect hetero allocate  9 
+[96391.736637] flag is set to enable HETERO_PGCACHE 11 
+[96391.736638] flag is set to enable HETERO_BUFFER 12 
+[96391.736639] flag is set to enable HETERO_JOURNAL 13 
+[96391.736640] flag is set to enable HETERO_RADIX 14 
+[96391.736641] flag is set to enable HETERO_FULLKERN 15 
+[96391.736642] flag to set FASTMEM node to 1 
+[96391.736643] hetero_pid set to 15308 15308 procname numactl
+[96391.738463] flag is set to collect hetero allocate  9 
+[96391.738464] flag is set to enable HETERO_PGCACHE 11 
+[96391.738465] flag is set to enable HETERO_BUFFER 12 
+[96391.738466] flag is set to enable HETERO_JOURNAL 13 
+[96391.738466] flag is set to enable HETERO_RADIX 14 
+[96391.738467] flag is set to enable HETERO_FULLKERN 15 
+[96391.738468] flag to set FASTMEM node to 1 
+[96391.738469] hetero_pid set to 15308 15308 procname db_bench

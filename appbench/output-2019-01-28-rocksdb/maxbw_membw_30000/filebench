@@ -1,0 +1,68 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/filebench
++ APP=/users/skannan/ssd/NVM/appbench/apps/filebench/filebench
++ DATA=/users/skannan/ssd/NVM/appbench/shared_data
++ SIZE=' --size=4G'
++ PARAM=' --directory=/users/skannan/ssd/NVM/appbench/shared_data  --size=4G'
++ OUTPUT=/users/skannan/ssd/NVM/appbench/output/maxbw_membw_30000/filebench
++ mkdir /users/skannan/ssd/NVM/appbench/shared_data
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/shared_data’: File exists
++ cd /users/skannan/ssd/NVM/appbench/apps/filebench
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ RANDOM_WRITE
++ echo 'Running Random Write'
+Running Random Write
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/filebench/filebench -f /users/skannan/ssd/NVM/appbench/apps/filebench/workloads/randomrw.f
+initiating tracing...
+initiating tracing...
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 173MB of shared memory
+0.121: Random RW Version 3.0 personality successfully loaded
+0.121: Populating and pre-allocating filesets
+0.133: Reusing existing largefile1 tree
+0.133: Pre-allocating files in largefile1 tree
+0.133: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+0.133: Population and pre-allocation of filesets completed
+0.133: Starting 1 rand-rw instances
+initiating tracing...
+1.135: Running...
+31.138: Run took 30 seconds...
+31.138: Per-Operation Breakdown
+rand-write1          3797701ops   126578ops/s 988.9mb/s    0.028ms/op [0.002ms - 5040.259ms]
+rand-read1           17373587ops   579066ops/s 4524.0mb/s    0.006ms/op [0.001ms - 5036.942ms]
+31.138: IO Summary: 21171288 ops 705644.398 ops/s 579066/126578 rd/wr 5512.8mb/s 0.010ms/op
+31.138: Shutting down processes
+application termination...
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/logfiles
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/bigfileset
++ set +x
+******************
+KERNEL  DMESG
+******************
+  
+[11688.877371] drop_caches: sh (7299): drop_caches: 3
+[11689.199245] drop_caches: sh (7307): drop_caches: 3
+[11692.873044] flag is set to print hetero allocate stat 10 
+[11692.873050] hetero_pid 0 Curr 7283 Currname redis-server HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11692.873050]  
+[11692.873053] flag set to clear count 0
+[11722.418169] flag is set to print hetero allocate stat 10 
+[11722.418173] hetero_pid 0 Curr 7308 Currname filebench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[11722.418173]  
+[11722.418175] flag set to clear count 0
+[11723.507745] drop_caches: sh (7326): drop_caches: 3
+[11724.902904] drop_caches: sh (7334): drop_caches: 3

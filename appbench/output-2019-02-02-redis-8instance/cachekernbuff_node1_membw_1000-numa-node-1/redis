@@ -1,0 +1,586 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/redis-3.0.0/src
++ APP=/users/skannan/ssd/NVM/appbench/redis-3.0.0/src/pagerank
++ PARAM=1
++ OUTPUT=/users/skannan/ssd/NVM/appbench/output/cachekernbuff_node1_membw_1000-numa-node-1/redis
++ READS=2000000
++ KEYS=4000000
++ CLIPREFIX='numactl --membind=0'
++ PHYSCPU=--physcpubind
++ cd /users/skannan/ssd/NVM/appbench/redis-3.0.0/src
++ CLEAN
++ /bin/rm dump-6378.rdb dump-6379.rdb dump-6380.rdb dump-6381.rdb
++ rm -rf appendonly-6382.aof temp-rewriteaof-7483.aof temp-rewriteaof-bg-7472.aof temp-rewriteaof-bg-7482.aof
++ killall redis-server
+redis-server: no process found
++ killall redis-server1
+redis-server1: no process found
++ killall redis-server2
+redis-server2: no process found
++ killall redis-server3
+redis-server3: no process found
++ killall redis-server4
+redis-server4: no process found
++ sleep 5
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ alias rm=rm
++ RUN
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=20 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6378.conf
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=21 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6379.conf
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=22 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server3 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6380.conf
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=23 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server4 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6381.conf
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=24 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server5 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6382.conf
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=25 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server6 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6383.conf
++ export LD_PRELOAD=
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ LD_PRELOAD=
++ numactl --membind=1 --physcpubind=26 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server7 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6384.conf
++ sleep 10
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=27 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server8 /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis-6385.conf
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+initiating tracing...
+7596:M 02 Feb 17:21:06.203 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7603:M 02 Feb 17:21:06.200 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7601:M 02 Feb 17:21:06.202 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7597:M 02 Feb 17:21:06.204 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7602:M 02 Feb 17:21:06.201 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7600:M 02 Feb 17:21:06.202 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7596:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7603:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7601:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7597:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7602:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7600:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7596:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7603:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7601:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7597:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7602:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7600:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7598:M 02 Feb 17:21:06.204 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7598:M 02 Feb 17:21:06.204 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7598:M 02 Feb 17:21:06.204 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+7603:M 02 Feb 17:21:06.204 # Creating Server TCP listening socket *:6385: bind: Address already in use
+7601:M 02 Feb 17:21:06.204 # Creating Server TCP listening socket *:6383: bind: Address already in use
+application termination...
+application termination...
+7600:M 02 Feb 17:21:06.205 # Creating Server TCP listening socket *:6382: bind: Address already in use
+7602:M 02 Feb 17:21:06.205 # Creating Server TCP listening socket *:6384: bind: Address already in use
+application termination...
+application termination...
+7596:M 02 Feb 17:21:06.207 # Server started, Redis version 3.0.0
+7596:M 02 Feb 17:21:06.207 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+7599:M 02 Feb 17:21:06.207 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7599:M 02 Feb 17:21:06.207 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7599:M 02 Feb 17:21:06.207 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 3.0.0 (e830fe4a/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
+ |    `-._   `._    /     _.-'    |     PID: 7598
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+7596:M 02 Feb 17:21:06.207 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+7598:M 02 Feb 17:21:06.207 # Server started, Redis version 3.0.0
+7596:M 02 Feb 17:21:06.207 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+7598:M 02 Feb 17:21:06.207 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+7598:M 02 Feb 17:21:06.207 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+7598:M 02 Feb 17:21:06.207 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+7598:M 02 Feb 17:21:06.207 * The server is now ready to accept connections on port 6380
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 3.0.0 (e830fe4a/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 7597
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+7597:M 02 Feb 17:21:06.208 # Server started, Redis version 3.0.0
+7597:M 02 Feb 17:21:06.208 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+7597:M 02 Feb 17:21:06.208 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+7597:M 02 Feb 17:21:06.208 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+7597:M 02 Feb 17:21:06.208 * The server is now ready to accept connections on port 6379
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 3.0.0 (e830fe4a/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 7599
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+7599:M 02 Feb 17:21:06.211 # Server started, Redis version 3.0.0
+7599:M 02 Feb 17:21:06.211 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+7599:M 02 Feb 17:21:06.211 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+7599:M 02 Feb 17:21:06.211 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+7599:M 02 Feb 17:21:06.211 * The server is now ready to accept connections on port 6381
++ numactl --membind=0 --physcpubind=1 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6378 -d 1024
++ numactl --membind=0 --physcpubind=2 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6379 -d 1024
++ numactl --membind=0 --physcpubind=3 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6380 -d 1024
++ numactl --membind=0 --physcpubind=4 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6381 -d 1024
++ numactl --membind=0 --physcpubind=5 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6382 -d 1024
++ numactl --membind=0 --physcpubind=6 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6383 -d 1024
++ numactl --membind=0 --physcpubind=7 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6384 -d 1024
++ sleep 10
++ numactl --membind=0 --physcpubind=8 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6385 -d 1024
+7597:M 02 Feb 17:21:18.663 * Starting automatic rewriting of AOF on 6782379600% growth
+7597:M 02 Feb 17:21:18.684 * Background append only file rewriting started by pid 7623
+7598:M 02 Feb 17:21:18.709 * Starting automatic rewriting of AOF on 6856995800% growth
+7598:M 02 Feb 17:21:18.721 * Background append only file rewriting started by pid 7624
+7599:M 02 Feb 17:21:18.791 * Starting automatic rewriting of AOF on 6865654700% growth
+7599:M 02 Feb 17:21:18.805 * Background append only file rewriting started by pid 7625
+7597:M 02 Feb 17:21:22.234 * AOF rewrite child asks to stop sending diffs.
+7623:C 02 Feb 17:21:22.235 * Parent agreed to stop sending diffs. Finalizing AOF...
+7623:C 02 Feb 17:21:22.236 * Concatenating 3.94 MB of AOF diff received from parent.
+7623:C 02 Feb 17:21:22.404 * SYNC append only file rewrite performed
+7623:C 02 Feb 17:21:22.434 * AOF rewrite: 12 MB of memory used by copy-on-write
+7597:M 02 Feb 17:21:22.512 * Background AOF rewrite terminated with success
+7597:M 02 Feb 17:21:22.700 * Residual parent diff successfully flushed to the rewritten AOF (10.04 MB)
+7597:M 02 Feb 17:21:22.720 * Background AOF rewrite finished successfully
+7599:M 02 Feb 17:21:22.750 * AOF rewrite child asks to stop sending diffs.
+7625:C 02 Feb 17:21:22.750 * Parent agreed to stop sending diffs. Finalizing AOF...
+7625:C 02 Feb 17:21:22.751 * Concatenating 2.81 MB of AOF diff received from parent.
+7625:C 02 Feb 17:21:22.830 * SYNC append only file rewrite performed
+7598:M 02 Feb 17:21:22.869 * AOF rewrite child asks to stop sending diffs.
+7625:C 02 Feb 17:21:22.869 * AOF rewrite: 14 MB of memory used by copy-on-write
+7624:C 02 Feb 17:21:22.869 * Parent agreed to stop sending diffs. Finalizing AOF...
+7624:C 02 Feb 17:21:22.870 * Concatenating 3.56 MB of AOF diff received from parent.
+7624:C 02 Feb 17:21:22.958 * SYNC append only file rewrite performed
+7599:M 02 Feb 17:21:22.971 * Background AOF rewrite terminated with success
+7624:C 02 Feb 17:21:22.987 * AOF rewrite: 13 MB of memory used by copy-on-write
+7599:M 02 Feb 17:21:23.088 * Residual parent diff successfully flushed to the rewritten AOF (15.13 MB)
+7599:M 02 Feb 17:21:23.110 * Background AOF rewrite finished successfully
+7598:M 02 Feb 17:21:23.150 * Background AOF rewrite terminated with success
+7598:M 02 Feb 17:21:23.276 * Residual parent diff successfully flushed to the rewritten AOF (17.64 MB)
+7598:M 02 Feb 17:21:23.305 * Background AOF rewrite finished successfully
+7597:M 02 Feb 17:21:26.088 * Starting automatic rewriting of AOF on 102% growth
+7597:M 02 Feb 17:21:26.131 * Background append only file rewriting started by pid 7626
++ CLEAN
++ /bin/rm '*.rdb'
+/bin/rm: cannot remove ‘*.rdb’: No such file or directory
++ rm -rf appendonly-6378.aof appendonly-6379.aof appendonly-6380.aof appendonly-6381.aof appendonly-6383.aof appendonly-6384.aof temp-rewriteaof-7626.aof temp-rewriteaof-bg-7585.aof
++ killall redis-server
+redis-server: no process found
++ killall redis-server1
+7596:signal-handler (1549149686) Received SIGTERM scheduling shutdown...
++ killall redis-server2
+7626+ killall redis-server3
+:signal-handler (1549149686) Received SIGTERM scheduling shutdown...
+7597:signal-handler (1549149686) Received SIGTERM scheduling shutdown...
+7598:signal-handler (1549149686) Received SIGTERM scheduling shutdown...
++ killall redis-server4
+7597:M 02 Feb 17:21:26.768 # User requested shutdown...
+7597:M 02 Feb 17:21:26.768 # There is a child rewriting the AOF. Killing it!
+7597:M 02 Feb 17:21:26.768 * Calling fsync() on the AOF file.
++ sleep 5
+7599:signal-handler (1549149686) Received SIGTERM scheduling shutdown...
+7598:M 02 Feb 17:21:26.851 # User requested shutdown...
+7598:M 02 Feb 17:21:26.851 * Calling fsync() on the AOF file.
+7596:M 02 Feb 17:21:26.871 # User requested shutdown...
+7599:M 02 Feb 17:21:26.883 # User requested shutdown...
+7599:M 02 Feb 17:21:26.883 * Calling fsync() on the AOF file.
+7598:M 02 Feb 17:21:27.532 * Saving the final RDB snapshot before exiting.
+7597:M 02 Feb 17:21:27.532 * Saving the final RDB snapshot before exiting.
+7599:M 02 Feb 17:21:27.583 * Saving the final RDB snapshot before exiting.
+7596:M 02 Feb 17:21:28.453 # Redis is now ready to exit, bye bye...
+application termination...
+7597:M 02 Feb 17:21:28.584 * DB saved on disk
+7597:M 02 Feb 17:21:28.584 # Redis is now ready to exit, bye bye...
+application termination...
+7598:M 02 Feb 17:21:28.621 * DB saved on disk
+7598:M 02 Feb 17:21:28.621 # Redis is now ready to exit, bye bye...
+application termination...
+7599:M 02 Feb 17:21:28.745 * DB saved on disk
+7599:M 02 Feb 17:21:28.745 # Redis is now ready to exit, bye bye...
+application termination...
+******************
+KERNEL  DMESG
+******************
+  
+[ 8303.326158] hetero_pid 0 Curr 7240 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8303.326158]  
+[ 8309.477645] flag is set to print hetero allocate stat 10 
+[ 8309.477648] hetero_pid 0 Curr 7210 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.477648]  
+[ 8309.477649] flag set to clear count 0
+[ 8309.477651] hetero_pid 0 Curr 7210 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.477651]  
+[ 8309.477693] hetero_pid 0 Curr 7219 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.477693]  
+[ 8309.477719] hetero_pid 0 Curr 7220 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.477719]  
+[ 8309.477741] hetero_pid 0 Curr 7210 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.477741]  
+[ 8309.697772] flag is set to print hetero allocate stat 10 
+[ 8309.697777] hetero_pid 0 Curr 7211 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.697777]  
+[ 8309.697778] flag set to clear count 0
+[ 8309.697780] hetero_pid 0 Curr 7211 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.697780]  
+[ 8309.697815] hetero_pid 0 Curr 7211 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.697815]  
+[ 8309.697911] hetero_pid 0 Curr 7221 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.697911]  
+[ 8309.697956] hetero_pid 0 Curr 7222 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.697956]  
+[ 8309.860413] flag is set to print hetero allocate stat 10 
+[ 8309.860414] flag is set to print hetero allocate stat 10 
+[ 8309.860419] hetero_pid 0 Curr 7213 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860419]  
+[ 8309.860422] hetero_pid 0 Curr 7212 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860422]  
+[ 8309.860423] flag set to clear count 0
+[ 8309.860425] hetero_pid 0 Curr 7213 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860425]  
+[ 8309.860426] flag set to clear count 0
+[ 8309.860428] hetero_pid 0 Curr 7212 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860428]  
+[ 8309.860522] hetero_pid 0 Curr 7212 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860522]  
+[ 8309.860523] hetero_pid 0 Curr 7213 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860523]  
+[ 8309.860814] hetero_pid 0 Curr 7223 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860814]  
+[ 8309.860815] hetero_pid 0 Curr 7225 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860815]  
+[ 8309.860927] hetero_pid 0 Curr 7224 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860927]  
+[ 8309.860930] hetero_pid 0 Curr 7226 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8309.860930]  
+[ 8322.294595] nvmemul: ioctl command: 0xc008aa02
+[ 8322.294599] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[ 8322.294605] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294606] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[ 8322.294609] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294610] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[ 8322.294612] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294613] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[ 8322.294616] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294617] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[ 8322.294619] nvmemul: ioctl command: 0xc008aa02
+[ 8322.294620] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[ 8322.294623] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294624] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[ 8322.294626] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294627] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[ 8322.294629] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294630] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[ 8322.294633] nvmemul: ioctl command: 0x8008aa01
+[ 8322.294633] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[ 8337.818242] perf: interrupt took too long (62472 > 61452), lowering kernel.perf_event_max_sample_rate to 3000
+[ 8348.810321] nvmemul: ioctl command: 0xc008aa02
+[ 8348.810335] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[ 8348.810413] nvmemul: ioctl command: 0x8008aa01
+[ 8348.810414] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[ 8348.810421] nvmemul: ioctl command: 0x8008aa01
+[ 8348.810427] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[ 8348.810429] nvmemul: ioctl command: 0x8008aa01
+[ 8348.810435] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[ 8348.810437] nvmemul: ioctl command: 0x8008aa01
+[ 8348.810442] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[ 8362.851925] nvmemul: ioctl command: 0xc008aa02
+[ 8362.851946] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[ 8362.851970] nvmemul: ioctl command: 0x8008aa01
+[ 8362.851978] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[ 8362.851986] nvmemul: ioctl command: 0x8008aa01
+[ 8362.851992] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[ 8362.851995] nvmemul: ioctl command: 0x8008aa01
+[ 8362.851996] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[ 8362.851999] nvmemul: ioctl command: 0x8008aa01
+[ 8362.852000] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[ 8373.097577] nvmemul: ioctl command: 0xc008aa02
+[ 8373.097590] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[ 8373.097607] nvmemul: ioctl command: 0x8008aa01
+[ 8373.097613] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[ 8373.097616] nvmemul: ioctl command: 0x8008aa01
+[ 8373.097617] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[ 8373.097620] nvmemul: ioctl command: 0x8008aa01
+[ 8373.097621] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[ 8373.097623] nvmemul: ioctl command: 0x8008aa01
+[ 8373.097624] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[ 8379.104227] hetero_pid 0 Curr 7254 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8379.104227]  
+[ 8392.927997] hetero_pid 0 Curr 7472 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8392.927997]  
+[ 8395.105164] hetero_pid 0 Curr 7482 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8395.105164]  
+[ 8398.464868] hetero_pid 0 Curr 7483 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8398.464868]  
+[ 8403.358203] drop_caches: sh (7587): drop_caches: 3
+[ 8410.903836] drop_caches: sh (7595): drop_caches: 3
+[ 8411.064811] flag is set to collect hetero allocate  9 
+[ 8411.064813] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.064814] flag is set to enable HETERO_BUFFER 12 
+[ 8411.064815] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.064816] flag is set to enable HETERO_RADIX 14 
+[ 8411.064817] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.064818] flag to set FASTMEM node to 1 
+[ 8411.064819] hetero_pid set to 7600 7600 procname numactl
+[ 8411.064836] flag is set to collect hetero allocate  9 
+[ 8411.064838] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.064839] flag is set to enable HETERO_BUFFER 12 
+[ 8411.064840] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.064841] flag is set to enable HETERO_RADIX 14 
+[ 8411.064842] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.064843] flag to set FASTMEM node to 1 
+[ 8411.064844] hetero_pid set to 7598 7598 procname numactl
+[ 8411.064917] flag is set to collect hetero allocate  9 
+[ 8411.064919] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.064920] flag is set to enable HETERO_BUFFER 12 
+[ 8411.064921] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.064922] flag is set to enable HETERO_RADIX 14 
+[ 8411.064923] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.064924] flag to set FASTMEM node to 1 
+[ 8411.064926] hetero_pid set to 7603 7603 procname numactl
+[ 8411.064983] flag is set to collect hetero allocate  9 
+[ 8411.064985] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.064989] flag is set to enable HETERO_BUFFER 12 
+[ 8411.064990] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.064991] flag is set to enable HETERO_RADIX 14 
+[ 8411.064992] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.064993] flag to set FASTMEM node to 1 
+[ 8411.064995] hetero_pid set to 7597 7597 procname numactl
+[ 8411.065010] flag is set to collect hetero allocate  9 
+[ 8411.065011] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.065012] flag is set to enable HETERO_BUFFER 12 
+[ 8411.065013] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.065014] flag is set to enable HETERO_RADIX 14 
+[ 8411.065015] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.065016] flag to set FASTMEM node to 1 
+[ 8411.065017] hetero_pid set to 7601 7601 procname numactl
+[ 8411.065033] flag is set to collect hetero allocate  9 
+[ 8411.065035] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.065036] flag is set to enable HETERO_BUFFER 12 
+[ 8411.065037] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.065037] flag is set to enable HETERO_RADIX 14 
+[ 8411.065038] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.065039] flag to set FASTMEM node to 1 
+[ 8411.065041] hetero_pid set to 7602 7602 procname numactl
+[ 8411.065051] flag is set to collect hetero allocate  9 
+[ 8411.065053] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.065054] flag is set to enable HETERO_BUFFER 12 
+[ 8411.065055] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.065056] flag is set to enable HETERO_RADIX 14 
+[ 8411.065057] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.065058] flag to set FASTMEM node to 1 
+[ 8411.065059] hetero_pid set to 7599 7599 procname numactl
+[ 8411.065083] flag is set to collect hetero allocate  9 
+[ 8411.065084] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.065085] flag is set to enable HETERO_BUFFER 12 
+[ 8411.065086] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.065087] flag is set to enable HETERO_RADIX 14 
+[ 8411.065088] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.065089] flag to set FASTMEM node to 1 
+[ 8411.065090] hetero_pid set to 7596 7596 procname numactl
+[ 8411.076894] flag is set to collect hetero allocate  9 
+[ 8411.076897] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.076898] flag is set to enable HETERO_BUFFER 12 
+[ 8411.076899] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.076899] flag is set to enable HETERO_RADIX 14 
+[ 8411.076900] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.076901] flag to set FASTMEM node to 1 
+[ 8411.076902] hetero_pid set to 7602 7602 procname redis-server7
+[ 8411.076905] flag is set to collect hetero allocate  9 
+[ 8411.076907] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.076908] flag is set to enable HETERO_BUFFER 12 
+[ 8411.076908] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.076909] flag is set to enable HETERO_RADIX 14 
+[ 8411.076910] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.076911] flag to set FASTMEM node to 1 
+[ 8411.076912] hetero_pid set to 7601 7601 procname redis-server6
+[ 8411.076928] flag is set to collect hetero allocate  9 
+[ 8411.076929] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.076930] flag is set to enable HETERO_BUFFER 12 
+[ 8411.076931] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.076932] flag is set to enable HETERO_RADIX 14 
+[ 8411.076932] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.076933] flag to set FASTMEM node to 1 
+[ 8411.076934] hetero_pid set to 7600 7600 procname redis-server5
+[ 8411.076986] flag is set to collect hetero allocate  9 
+[ 8411.076987] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.076988] flag is set to enable HETERO_BUFFER 12 
+[ 8411.076989] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.076990] flag is set to enable HETERO_RADIX 14 
+[ 8411.076991] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.076992] flag to set FASTMEM node to 1 
+[ 8411.076993] hetero_pid set to 7597 7597 procname redis-server2
+[ 8411.077009] flag is set to collect hetero allocate  9 
+[ 8411.077011] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.077012] flag is set to enable HETERO_BUFFER 12 
+[ 8411.077013] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.077013] flag is set to enable HETERO_RADIX 14 
+[ 8411.077014] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.077015] flag to set FASTMEM node to 1 
+[ 8411.077016] hetero_pid set to 7598 7598 procname redis-server3
+[ 8411.077032] flag is set to collect hetero allocate  9 
+[ 8411.077034] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.077035] flag is set to enable HETERO_BUFFER 12 
+[ 8411.077035] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.077036] flag is set to enable HETERO_RADIX 14 
+[ 8411.077037] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.077038] flag to set FASTMEM node to 1 
+[ 8411.077039] hetero_pid set to 7599 7599 procname redis-server4
+[ 8411.077068] flag is set to collect hetero allocate  9 
+[ 8411.077069] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.077070] flag is set to enable HETERO_BUFFER 12 
+[ 8411.077071] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.077072] flag is set to enable HETERO_RADIX 14 
+[ 8411.077072] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.077073] flag to set FASTMEM node to 1 
+[ 8411.077074] hetero_pid set to 7596 7596 procname redis-server1
+[ 8411.079175] flag is set to collect hetero allocate  9 
+[ 8411.079177] flag is set to enable HETERO_PGCACHE 11 
+[ 8411.079178] flag is set to enable HETERO_BUFFER 12 
+[ 8411.079178] flag is set to enable HETERO_JOURNAL 13 
+[ 8411.079179] flag is set to enable HETERO_RADIX 14 
+[ 8411.079180] flag is set to enable HETERO_FULLKERN 15 
+[ 8411.079181] flag to set FASTMEM node to 1 
+[ 8411.079182] hetero_pid set to 7603 7603 procname redis-server8
+[ 8411.089175] flag is set to print hetero allocate stat 10 
+[ 8411.089181] hetero_pid 7603 Curr 7603 Currname redis-server8 HeteroProcname redis-server8 page cache hits 4631 cache miss 0 buffer page hits 110 miss 0 
+[ 8411.089181]  
+[ 8411.089183] flag set to clear count 0
+[ 8411.089184] hetero_pid 7603 Curr 7603 Currname redis-server8 HeteroProcname redis-server8 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089184]  
+[ 8411.089192] flag is set to print hetero allocate stat 10 
+[ 8411.089197] hetero_pid 0 Curr 7601 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089197]  
+[ 8411.089203] flag set to clear count 0
+[ 8411.089204] hetero_pid 0 Curr 7601 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089204]  
+[ 8411.089291] flag is set to print hetero allocate stat 10 
+[ 8411.089293] flag is set to print hetero allocate stat 10 
+[ 8411.089295] hetero_pid 0 Curr 7600 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089295]  
+[ 8411.089296] hetero_pid 0 Curr 7602 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089296]  
+[ 8411.089298] flag set to clear count 0
+[ 8411.089299] flag set to clear count 0
+[ 8411.089300] hetero_pid 0 Curr 7600 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089300]  
+[ 8411.089302] hetero_pid 0 Curr 7602 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.089302]  
+[ 8411.093696] hetero_pid 0 Curr 7602 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.093696]  
+[ 8411.093698] hetero_pid 0 Curr 7601 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.093698]  
+[ 8411.093702] hetero_pid 0 Curr 7603 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.093702]  
+[ 8411.093713] hetero_pid 0 Curr 7600 Currname redis-server5 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8411.093713]  
+[ 8424.106336] hetero_pid 0 Curr 7584 Currname redis-server7 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8424.106336]  
+[ 8424.193354] hetero_pid 0 Curr 7577 Currname redis-server6 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8424.193354]  
+[ 8427.318600] hetero_pid 0 Curr 7623 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8427.318600]  
+[ 8427.753614] hetero_pid 0 Curr 7625 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8427.753614]  
+[ 8427.872013] hetero_pid 0 Curr 7624 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8427.872013]  
+[ 8428.784938] hetero_pid 0 Curr 7622 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8428.784938]  
+[ 8430.946544] hetero_pid 0 Curr 7585 Currname redis-server8 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8430.946544]  
+[ 8431.656561] hetero_pid 0 Curr 7626 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8431.656561]  
+[ 8433.337696] flag is set to print hetero allocate stat 10 
+[ 8433.337700] hetero_pid 0 Curr 7596 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.337700]  
+[ 8433.337701] flag set to clear count 0
+[ 8433.337703] hetero_pid 0 Curr 7596 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.337703]  
+[ 8433.337753] hetero_pid 0 Curr 7605 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.337753]  
+[ 8433.337779] hetero_pid 0 Curr 7606 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.337779]  
+[ 8433.337804] hetero_pid 0 Curr 7596 Currname redis-server1 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.337804]  
+[ 8433.468353] flag is set to print hetero allocate stat 10 
+[ 8433.468357] hetero_pid 0 Curr 7597 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.468357]  
+[ 8433.468358] flag set to clear count 0
+[ 8433.468359] hetero_pid 0 Curr 7597 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.468359]  
+[ 8433.468519] hetero_pid 0 Curr 7609 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.468519]  
+[ 8433.468579] hetero_pid 0 Curr 7610 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.468579]  
+[ 8433.468626] hetero_pid 0 Curr 7597 Currname redis-server2 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.468626]  
+[ 8433.505878] flag is set to print hetero allocate stat 10 
+[ 8433.505882] hetero_pid 0 Curr 7598 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.505882]  
+[ 8433.505885] flag set to clear count 0
+[ 8433.505886] hetero_pid 0 Curr 7598 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.505886]  
+[ 8433.505957] hetero_pid 0 Curr 7607 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.505957]  
+[ 8433.506004] hetero_pid 0 Curr 7608 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.506004]  
+[ 8433.506041] hetero_pid 0 Curr 7598 Currname redis-server3 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.506041]  
+[ 8433.629472] flag is set to print hetero allocate stat 10 
+[ 8433.629476] hetero_pid 0 Curr 7599 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.629476]  
+[ 8433.629479] flag set to clear count 0
+[ 8433.629481] hetero_pid 0 Curr 7599 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.629481]  
+[ 8433.629547] hetero_pid 0 Curr 7611 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.629547]  
+[ 8433.629587] hetero_pid 0 Curr 7612 Currname redis-server4 HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[ 8433.629587]  

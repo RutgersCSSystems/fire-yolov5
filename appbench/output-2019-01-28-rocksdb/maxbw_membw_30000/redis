@@ -1,0 +1,227 @@
+redis-server: no process found
+initiating tracing...
+initiating tracing...
+7283:M 26 Jan 19:51:54.988 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+7283:M 26 Jan 19:51:54.995 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
+7283:M 26 Jan 19:51:54.995 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 3.0.0 (e6b2f285/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 7283
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+7283:M 26 Jan 19:51:54.996 # Server started, Redis version 3.0.0
+7283:M 26 Jan 19:51:54.996 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+7283:M 26 Jan 19:51:54.996 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+7283:M 26 Jan 19:51:54.996 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+7283:M 26 Jan 19:51:54.996 * The server is now ready to accept connections on port 6379
+SET: 0.007283:M 26 Jan 19:52:00.208 * Starting automatic rewriting of AOF on 8065427900% growth
+7283:M 26 Jan 19:52:00.210 * Background append only file rewriting started by pid 7288
+SET: 84308.30SET: 70664.02SET: 51450.20SET: 44070.79SET: 49806.86SET: 50107.797283:M 26 Jan 19:52:01.526 * AOF rewrite child asks to stop sending diffs.
+7288:C 26 Jan 19:52:01.526 * Parent agreed to stop sending diffs. Finalizing AOF...
+7288:C 26 Jan 19:52:01.526 * Concatenating 220.16 MB of AOF diff received from parent.
+SET: 52392.477283:M 26 Jan 19:52:01.778 * Background AOF buffer size: 77 MB
+SET: 55752.377283:M 26 Jan 19:52:02.097 * Background AOF buffer size: 177 MB
+SET: 58815.367288:C 26 Jan 19:52:02.469 * SYNC append only file rewrite performed
+7288:C 26 Jan 19:52:02.474 * AOF rewrite: 249 MB of memory used by copy-on-write
+7283:M 26 Jan 19:52:02.532 * Background AOF rewrite terminated with success
+7283:M 26 Jan 19:52:02.714 * Residual parent diff successfully flushed to the rewritten AOF (247.66 MB)
+SET: 50483.71SET: 46252.777283:M 26 Jan 19:52:03.013 * Background AOF rewrite finished successfully
+SET: 47120.63SET: 49342.23SET: 52113.31SET: 52809.19SET: 55656.51SET: 56737.01SET: 57660.267283:M 26 Jan 19:52:04.817 * Starting automatic rewriting of AOF on 104% growth
+7283:M 26 Jan 19:52:04.826 * Background append only file rewriting started by pid 7289
+SET: 57092.92SET: 57455.197283:M 26 Jan 19:52:05.241 * Background AOF buffer size: 70 MB
+SET: 58466.727283:M 26 Jan 19:52:05.557 * Background AOF buffer size: 170 MB
+SET: 59403.80SET: 57857.607283:M 26 Jan 19:52:06.134 * Background AOF buffer size: 275 MB
+SET: 58155.957283:M 26 Jan 19:52:06.445 * Background AOF buffer size: 375 MB
+SET: 58759.687283:M 26 Jan 19:52:06.613 * Background AOF buffer size: 378 MB
+SET: 56918.88SET: 56322.357283:M 26 Jan 19:52:07.210 * Background AOF buffer size: 478 MB
+SET: 56446.24SET: 57015.657283:M 26 Jan 19:52:07.609 * Background AOF buffer size: 574 MB
+SET: 56911.45SET: 56235.527283:M 26 Jan 19:52:08.264 * Background AOF buffer size: 678 MB
+SET: 56460.81SET: 57208.97SET: 54729.667283:M 26 Jan 19:52:09.023 * Background AOF buffer size: 779 MB
+SET: 55024.167283:M 26 Jan 19:52:09.380 * Background AOF buffer size: 875 MB
+SET: 54647.497283:M 26 Jan 19:52:09.642 * Background AOF buffer size: 876 MB
+SET: 54028.34SET: 54115.237283:M 26 Jan 19:52:10.175 # Background AOF buffer size: 978 MB
+SET: 53842.99SET: 53823.937283:M 26 Jan 19:52:10.778 * Background AOF buffer size: 1073 MB
+SET: 53605.957283:M 26 Jan 19:52:10.860 * Background AOF buffer size: 1077 MB
+SET: 53577.477283:M 26 Jan 19:52:11.300 * Background AOF buffer size: 1176 MB
+SET: 53733.917283:M 26 Jan 19:52:11.646 * Background AOF buffer size: 1179 MB
+SET: 52383.81SET: 52316.827283:M 26 Jan 19:52:12.124 * Background AOF buffer size: 1272 MB
+SET: 52047.217283:M 26 Jan 19:52:12.339 * Background AOF buffer size: 1272 MB
+7283:M 26 Jan 19:52:12.467 * AOF rewrite child asks to stop sending diffs.
+7289:C 26 Jan 19:52:12.467 * Parent agreed to stop sending diffs. Finalizing AOF...
+7289:C 26 Jan 19:52:12.467 * Concatenating 159.88 MB of AOF diff received from parent.
+7283:M 26 Jan 19:52:12.484 * Background AOF buffer size: 1270 MB
+SET: 51692.43SET: 52171.457283:M 26 Jan 19:52:12.818 * Background AOF buffer size: 1370 MB
+7289:C 26 Jan 19:52:12.976 * SYNC append only file rewrite performed
+7289:C 26 Jan 19:52:12.987 * AOF rewrite: 906 MB of memory used by copy-on-write
+SET: 52642.327283:M 26 Jan 19:52:13.069 * Background AOF rewrite terminated with success
+SET: 51698.26SET: 50746.24SET: 49825.05SET: 48940.197283:M 26 Jan 19:52:14.158 * Residual parent diff successfully flushed to the rewritten AOF (1446.21 MB)
+SET: 48086.20SET: 47258.27SET: 46461.49SET: 45691.14SET: 44942.98SET: 44221.77SET: 43523.34SET: 42843.97SET: 42188.06SET: 41551.93SET: 40932.27SET: 40333.18SET: 39751.377283:M 26 Jan 19:52:17.385 * Background AOF rewrite finished successfully
+7283:M 26 Jan 19:52:17.487 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+SET: 39759.68SET: 40006.68SET: 40471.99SET: 41088.16SET: 41322.38SET: 42095.75SET: 42865.31SET: 43603.18SET: 44442.32SET: 45162.98SET: 45122.99SET: 45137.61SET: 45814.30SET: 46475.80SET: 47028.51SET: 46550.06SET: 47070.71SET: 47685.28SET: 48284.12SET: 48016.70SET: 48114.69SET: 48689.64SET: 49245.17SET: 49206.07SET: 49268.55SET: 49808.87SET: 50328.04SET: 50106.56SET: 50267.70SET: 50773.00SET: 51263.84SET: 50912.68SET: 51312.20SET: 51778.11SET: 51775.037283:M 26 Jan 19:52:26.164 * Starting automatic rewriting of AOF on 101% growth
+7283:M 26 Jan 19:52:26.196 * Background append only file rewriting started by pid 7290
+SET: 51299.57SET: 50896.93SET: 50041.65SET: 49851.277283:M 26 Jan 19:52:27.600 * Background AOF buffer size: 76 MB
+SET: 49815.227283:M 26 Jan 19:52:27.695 * Background AOF buffer size: 79 MB
+SET: 49706.57SET: 49608.037283:M 26 Jan 19:52:28.349 * Background AOF buffer size: 179 MB
+SET: 49693.43SET: 49630.81SET: 49547.727283:M 26 Jan 19:52:29.008 * Background AOF buffer size: 270 MB
+SET: 49476.38SET: 49656.48SET: 49077.747283:M 26 Jan 19:52:29.863 * Background AOF buffer size: 374 MB
+7283:M 26 Jan 19:52:29.953 * Background AOF buffer size: 377 MB
+SET: 49014.82SET: 49185.707283:M 26 Jan 19:52:30.616 * Background AOF buffer size: 479 MB
+SET: 48846.78SET: 48777.88SET: 48819.057283:M 26 Jan 19:52:31.266 * Background AOF buffer size: 577 MB
+SET: 49013.05SET: 48761.73SET: 48699.157283:M 26 Jan 19:52:31.982 * Background AOF buffer size: 673 MB
+SET: 48759.387283:M 26 Jan 19:52:32.416 * Background AOF buffer size: 777 MB
+SET: 48960.27SET: 48891.44SET: 48872.417283:M 26 Jan 19:52:33.023 * Background AOF buffer size: 875 MB
+SET: 48887.937283:M 26 Jan 19:52:33.450 # Background AOF buffer size: 978 MB
+SET: 49085.77SET: 49245.577283:M 26 Jan 19:52:33.977 * Background AOF buffer size: 1076 MB
+SET: 49046.957283:M 26 Jan 19:52:34.063 * Background AOF buffer size: 1078 MB
+SET: 49120.377283:M 26 Jan 19:52:34.398 * Background AOF buffer size: 1178 MB
+SET: 49134.247283:M 26 Jan 19:52:34.786 * Background AOF buffer size: 1179 MB
+SET: 48794.69SET: 48751.007283:M 26 Jan 19:52:35.267 * Background AOF buffer size: 1277 MB
+SET: 48841.70SET: 48881.79SET: 48670.30SET: 48514.707283:M 26 Jan 19:52:36.170 * Background AOF buffer size: 1378 MB
+SET: 48687.33SET: 48601.267283:M 26 Jan 19:52:36.647 * Background AOF buffer size: 1471 MB
+SET: 48597.18SET: 48558.547283:M 26 Jan 19:52:37.265 * Background AOF buffer size: 1579 MB
+SET: 48512.15SET: 48559.03SET: 48356.217283:M 26 Jan 19:52:38.127 * Background AOF buffer size: 1679 MB
+SET: 48409.29SET: 48608.637283:M 26 Jan 19:52:38.691 * Background AOF buffer size: 1770 MB
+7283:M 26 Jan 19:52:38.744 * Background AOF buffer size: 1778 MB
+SET: 48311.84SET: 48256.827283:M 26 Jan 19:52:39.222 * Background AOF buffer size: 1876 MB
+SET: 48385.597283:M 26 Jan 19:52:39.566 * Background AOF buffer size: 1878 MB
+SET: 47890.49SET: 47893.507283:M 26 Jan 19:52:40.214 # Background AOF buffer size: 1976 MB
+SET: 47983.847283:M 26 Jan 19:52:40.436 # Background AOF buffer size: 1979 MB
+SET: 47822.76SET: 47778.14SET: 47757.387283:M 26 Jan 19:52:41.095 * Background AOF buffer size: 2079 MB
+SET: 47934.527283:M 26 Jan 19:52:41.420 * Background AOF buffer size: 2179 MB
+SET: 48128.83SET: 47960.007283:M 26 Jan 19:52:42.017 * Background AOF buffer size: 2278 MB
+SET: 47958.44SET: 48113.027283:M 26 Jan 19:52:42.735 * Background AOF buffer size: 2377 MB
+SET: 47906.98SET: 47768.527283:M 26 Jan 19:52:43.553 * Background AOF buffer size: 2479 MB
+SET: 47465.69SET: 47491.357283:M 26 Jan 19:52:44.130 * Background AOF buffer size: 2578 MB
+SET: 47557.79SET: 47454.68SET: 47382.547283:M 26 Jan 19:52:44.872 * Background AOF buffer size: 2677 MB
+7283:M 26 Jan 19:52:44.956 * Background AOF buffer size: 2679 MB
+SET: 47459.127283:M 26 Jan 19:52:45.338 * Background AOF buffer size: 2775 MB
+SET: 47544.52SET: 47726.64SET: 47443.457283:M 26 Jan 19:52:45.988 * Background AOF buffer size: 2876 MB
+7283:M 26 Jan 19:52:46.072 * Background AOF buffer size: 2879 MB
+SET: 47524.117283:M 26 Jan 19:52:46.386 # Background AOF buffer size: 2979 MB
+SET: 47599.91SET: 47439.88SET: 47341.007283:M 26 Jan 19:52:47.226 * Background AOF buffer size: 3078 MB
+SET: 47519.797283:M 26 Jan 19:52:47.751 * Background AOF buffer size: 3174 MB
+SET: 47370.797283:M 26 Jan 19:52:48.010 * Background AOF buffer size: 3177 MB
+SET: 47237.42SET: 47405.167283:M 26 Jan 19:52:48.758 * Background AOF buffer size: 3270 MB
+7283:M 26 Jan 19:52:48.810 * Background AOF buffer size: 3278 MB
+SET: 47011.23SET: 46796.12SET: 46581.39SET: 46372.057283:M 26 Jan 19:52:49.834 * AOF rewrite child asks to stop sending diffs.
+7290:C 26 Jan 19:52:49.834 * Parent agreed to stop sending diffs. Finalizing AOF...
+7290:C 26 Jan 19:52:49.834 * Concatenating 572.81 MB of AOF diff received from parent.
+SET: 46183.64SET: 46349.887283:M 26 Jan 19:52:50.132 * Background AOF buffer size: 3277 MB
+SET: 46521.717283:M 26 Jan 19:52:50.443 * Background AOF buffer size: 3377 MB
+SET: 46449.81SET: 46413.107283:M 26 Jan 19:52:51.062 * Background AOF buffer size: 3477 MB
+SET: 46560.527283:M 26 Jan 19:52:51.374 * Background AOF buffer size: 3577 MB
+SET: 46733.46SET: 46904.577283:M 26 Jan 19:52:51.682 * Background AOF buffer size: 3677 MB
+SET: 47075.967283:M 26 Jan 19:52:51.991 * Background AOF buffer size: 3777 MB
+SET: 47239.597283:M 26 Jan 19:52:52.301 * Background AOF buffer size: 3877 MB
+SET: 47406.357283:M 26 Jan 19:52:52.609 # Background AOF buffer size: 3977 MB
+SET: 47571.247290:C 26 Jan 19:52:52.733 * SYNC append only file rewrite performed
+7290:C 26 Jan 19:52:52.764 * AOF rewrite: 3920 MB of memory used by copy-on-write
+SET: 47510.52SET: 47287.027283:M 26 Jan 19:52:53.173 * Background AOF rewrite terminated with success
+SET: 47066.73SET: 46847.38SET: 46630.07SET: 46413.91SET: 46200.59SET: 45989.22SET: 45779.78SET: 45571.41SET: 45365.75SET: 45161.93SET: 44959.14SET: 44758.957283:M 26 Jan 19:52:56.244 * Residual parent diff successfully flushed to the rewritten AOF (4018.03 MB)
+SET: 44560.54SET: 44363.10SET: 44168.18SET: 43974.96SET: 43782.66SET: 43592.80SET: 43404.57SET: 43217.21SET: 43032.21SET: 42848.78SET: 42666.18SET: 42485.86SET: 42307.05SET: 42129.03SET: 41953.21SET: 41639.70SET: 41467.25SET: 41296.89SET: 41127.93SET: 40959.68SET: 40793.46SET: 40628.58SET: 40465.04SET: 40302.15SET: 40141.22SET: 39981.56SET: 39822.54SET: 39665.41SET: 39509.50SET: 39354.21SET: 39200.74SET: 39048.46SET: 38896.76SET: 38746.84SET: 38416.33SET: 38270.07SET: 38124.937283:M 26 Jan 19:53:06.017 * Background AOF rewrite finished successfully
+7283:M 26 Jan 19:53:06.121 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+SET: 38103.33SET: 38183.82SET: 38383.37SET: 38581.75SET: 38769.65SET: 38895.34SET: 38937.43SET: 39076.98SET: 39080.98SET: 39179.27SET: 39123.51SET: 39255.48SET: 39440.76SET: 39547.63SET: 39555.48SET: 39585.79SET: 39731.54SET: 39801.36SET: 39798.55SET: 39984.30SET: 40161.70SET: 40248.06SET: 40263.50SET: 40263.89SET: 40433.16SET: 40507.55SET: 40508.29SET: 40571.62SET: 40731.53SET: 40812.84SET: 40772.95SET: 40871.50SET: 41026.24SET: 41076.25SET: 41030.74SET: 41135.52SET: 41278.00SET: 41327.30SET: 41308.01SET: 41476.14SET: 41615.55SET: 41669.11SET: 41639.14SET: 41711.48SET: 41848.65SET: 41896.66SET: 41840.13SET: 42000.22SET: 42145.50SET: 42178.68SET: 42169.51SET: 42264.10SET: 42383.87SET: 42426.52SET: 42375.37SET: 42529.93SET: 42667.41SET: 42690.43SET: 42674.07SET: 42766.57SET: 42878.28SET: 42913.52SET: 42896.96SET: 43047.74SET: 43157.03SET: 43188.98SET: 43148.79SET: 43261.33SET: 43389.36SET: 43434.70SET: 43438.24SET: 43476.72SET: 43607.03SET: 43638.92SET: 43598.68SET: 43704.99SET: 43833.16SET: 43879.60SET: 43883.61SET: 43908.01SET: 44033.70SET: 44064.85SET: 44030.24SET: 44151.59SET: 44278.71SET: 44306.30SET: 44307.13SET: 44335.38SET: 44453.92SET: 44473.59SET: 44426.62SET: 44556.78SET: 44680.39SET: 44700.36SET: 44702.23 requests per second
+GET: 167272.72GET: 147631.58GET: 161238.72GET: 167721.45GET: 170908.17GET: 172831.59GET: 174387.67GET: 175514.19GET: 176435.75GET: 177104.64GET: 177626.72GET: 178141.98GET: 178571.38GET: 178882.75GET: 179151.34GET: 179386.08GET: 179649.41GET: 179866.36GET: 180043.11GET: 179135.11GET: 177088.89GET: 175332.55GET: 173746.97GET: 172195.22GET: 170859.39GET: 169562.69GET: 168398.84GET: 167247.38GET: 166273.55GET: 165301.47GET: 164391.70GET: 163526.14GET: 162701.23GET: 161921.06GET: 161186.48GET: 160505.64GET: 159888.42GET: 159278.05GET: 158710.02GET: 158159.59GET: 157620.78GET: 157148.89GET: 156670.34GET: 156236.53GET: 155781.89GET: 155369.33GET: 154982.72GET: 154596.97GET: 154241.73GET: 153914.92GET: 153569.72GET: 153241.09GET: 152919.08GET: 152606.38GET: 152309.42GET: 152023.53GET: 151743.70GET: 151471.91GET: 151218.36GET: 150969.00GET: 150726.80GET: 150491.88GET: 150265.56GET: 150044.98GET: 149855.56GET: 149663.25GET: 149464.55GET: 149276.02GET: 149093.16GET: 148926.53GET: 148744.72GET: 148581.31GET: 148420.91GET: 148255.95GET: 148095.41GET: 147939.95GET: 147790.89GET: 147655.86GET: 147536.75GET: 147409.28GET: 147294.14GET: 147165.67GET: 147046.11GET: 146909.62GET: 146783.59GET: 146663.06GET: 146534.23GET: 146415.33GET: 146299.00GET: 146183.67GET: 146057.47GET: 145936.39GET: 145811.48GET: 145698.52GET: 145594.62GET: 145470.94GET: 145369.25GET: 145248.06GET: 145149.23GET: 145046.84GET: 144954.27GET: 144878.20GET: 144789.19GET: 144707.67GET: 144629.31GET: 144554.64GET: 144470.75GET: 144397.97GET: 144336.16GET: 144261.36GET: 144179.83GET: 144164.92 requests per second
+
+7283:signal-handler (1548557637) Received SIGTERM scheduling shutdown...
+7283:M 26 Jan 19:53:57.341 # User requested shutdown...
+7283:M 26 Jan 19:53:57.341 * Calling fsync() on the AOF file.
+7283:M 26 Jan 19:53:57.341 * Saving the final RDB snapshot before exiting.
+7283:M 26 Jan 19:54:02.809 * DB saved on disk
+7283:M 26 Jan 19:54:02.809 # Redis is now ready to exit, bye bye...
+application termination...
+lect hetero allocate  9 
+[10949.822313] flag is set to enable HETERO_PGCACHE 11 
+[10949.822314] flag is set to enable HETERO_BUFFER 12 
+[10949.822315] flag is set to enable HETERO_JOURNAL 13 
+[10949.822316] flag is set to enable HETERO_RADIX 14 
+[10949.822317] flag is set to enable HETERO_FULLKERN 15 
+[10949.822318] flag to set FASTMEM node to 1 
+[10949.822319] hetero_pid set to 6431 6431 procname numactl
+[10949.832841] flag is set to collect hetero allocate  9 
+[10949.832842] flag is set to enable HETERO_PGCACHE 11 
+[10949.832843] flag is set to enable HETERO_BUFFER 12 
+[10949.832844] flag is set to enable HETERO_JOURNAL 13 
+[10949.832845] flag is set to enable HETERO_RADIX 14 
+[10949.832846] flag is set to enable HETERO_FULLKERN 15 
+[10949.832847] flag to set FASTMEM node to 1 
+[10949.832848] hetero_pid set to 6431 6431 procname redis-server
+[10955.053853] __kmalloc : 4354 
+[10955.057201] __kmalloc : 4354 
+[10955.060521] __kmalloc : 4354 
+[10959.004623] __kmalloc : 4354 
+[10959.007944] __kmalloc : 4354 
+[10959.011263] __kmalloc : 4354 
+[10989.488926] __kmalloc : 4354 
+[10989.492250] __kmalloc : 4354 
+[10989.495563] __kmalloc : 4354 
+[11074.923016] flag is set to print hetero allocate stat 10 
+[11074.923020] hetero_pid 6431 Curr 6431 Currname redis-server HeteroProcname redis-server page cache hits 8048454 cache miss 0 buffer page hits 219521 miss 0 
+[11074.923020]  
+[11074.923022] flag set to clear count 0
+[11074.923023] hetero_pid 6431 Curr 6431 Currname redis-server HeteroProcname redis-server user pages 8047589 kern pages 522
+[11134.343054] drop_caches: sh (6477): drop_caches: 3
+[11134.721159] drop_caches: sh (6485): drop_caches: 3
+[11134.765180] flag is set to collect hetero allocate  9 
+[11134.765182] flag is set to enable HETERO_PGCACHE 11 
+[11134.765183] flag is set to enable HETERO_BUFFER 12 
+[11134.765184] flag is set to enable HETERO_JOURNAL 13 
+[11134.765185] flag is set to enable HETERO_RADIX 14 
+[11134.765186] flag is set to enable HETERO_FULLKERN 15 
+[11134.765187] flag to set FASTMEM node to 0 
+[11134.765188] hetero_pid set to 6486 6486 procname numactl
+[11134.769689] flag is set to collect hetero allocate  9 
+[11134.769690] flag is set to enable HETERO_PGCACHE 11 
+[11134.769691] flag is set to enable HETERO_BUFFER 12 
+[11134.769692] flag is set to enable HETERO_JOURNAL 13 
+[11134.769693] flag is set to enable HETERO_RADIX 14 
+[11134.769693] flag is set to enable HETERO_FULLKERN 15 
+[11134.769694] flag to set FASTMEM node to 0 
+[11134.769695] hetero_pid set to 6486 6486 procname redis-server
+[11139.992393] __kmalloc : 4354 
+[11139.995730] __kmalloc : 4354 
+[11139.999056] __kmalloc : 4354 
+[11143.790546] __kmalloc : 4354 
+[11143.793874] __kmalloc : 4354 
+[11143.797198] __kmalloc : 4354 
+[11164.675489] __kmalloc : 4354 
+[11164.678817] __kmalloc : 4354 
+[11164.682145] __kmalloc : 4354 
+[11252.266388] flag is set to print hetero allocate stat 10 
+[11252.266393] hetero_pid 6486 Curr 6486 Currname redis-server HeteroProcname redis-server page cache hits 7199835 cache miss 0 buffer page hits 196384 miss 0 
+[11252.266393]  
+[11252.266394] flag set to clear count 0
+[11252.266396] hetero_pid 6486 Curr 6486 Currname redis-server HeteroProcname redis-server user pages 7199478 kern pages 388
+[11552.010660] nvmemul: ioctl command: 0xc008aa02
+[11552.010667] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[11552.010677] nvmemul: ioctl command: 0x8008aa01
+[11552.010679] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[11552.010685] nvmemul: ioctl command: 0x8008aa01
+[11552.010687] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[11552.010693] nvmemul: ioctl command: 0x8008aa01
+[11552.010695] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[11552.010701] nvmemul: ioctl command: 0x8008aa01
+[11552.010703] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[11552.010708] nvmemul: ioctl command: 0x8008aa01
+[11552.010711] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[11552.010716] nvmemul: ioctl command: 0x8008aa01
+[11552.010718] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[11552.010723] nvmemul: ioctl command: 0x8008aa01
+[11552.010726] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[11552.010731] nvmemul: ioctl command: 0x8008aa01
+[11552.010733] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[11564.632373] drop_caches: sh (7274): drop_caches: 3
+[11565.001556] drop_caches: sh (7282): drop_caches: 3
