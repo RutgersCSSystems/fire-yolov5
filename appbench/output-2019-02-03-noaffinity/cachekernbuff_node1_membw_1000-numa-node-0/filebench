@@ -1,0 +1,170 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/filebench
++ APP=/users/skannan/ssd/NVM/appbench/apps/filebench/filebench
++ DATA=/users/skannan/ssd/NVM/appbench/shared_data
++ SIZE=' --size=4G'
++ PARAM=' --directory=/users/skannan/ssd/NVM/appbench/shared_data  --size=4G'
++ OUTPUT=/users/skannan/ssd/NVM/appbench/output/cachekernbuff_node1_membw_1000-numa-node-0/filebench
++ mkdir /users/skannan/ssd/NVM/appbench/shared_data
+mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/shared_data’: File exists
++ cd /users/skannan/ssd/NVM/appbench/apps/filebench
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ RANDOM_WRITE
++ echo 'Running Random Write'
+Running Random Write
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/filebench/filebench -f /users/skannan/ssd/NVM/appbench/apps/filebench/workloads/randomrw.f
+initiating tracing...
+initiating tracing...
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 173MB of shared memory
+0.005: Failed to open cvar directory around line 1
+0.006: Random RW Version 3.0 personality successfully loaded
+0.006: Populating and pre-allocating filesets
+0.015: Reusing existing largefile1 tree
+0.015: Pre-allocating files in largefile1 tree
+0.015: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+0.015: Population and pre-allocation of filesets completed
+0.016: Starting 1 rand-rw instances
+initiating tracing...
+1.018: Running...
+31.020: Run took 30 seconds...
+31.021: Per-Operation Breakdown
+rand-write1          1753639ops    58449ops/s 456.6mb/s    0.068ms/op [0.002ms - 273.030ms]
+rand-read1           1806286ops    60204ops/s 470.3mb/s    0.065ms/op [0.001ms - 23.631ms]
+31.021: IO Summary: 3559925 ops 118652.598 ops/s 60204/58449 rd/wr 927.0mb/s 0.067ms/op
+31.021: Shutting down processes
+application termination...
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/logfiles
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/bigfileset
++ set +x
+******************
+KERNEL  DMESG
+******************
+  
+[  872.683993] nvmemul: ioctl command: 0xc008aa02
+[  872.683998] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[  872.684002] nvmemul: ioctl command: 0xc008aa02
+[  872.684003] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[  872.684006] nvmemul: ioctl command: 0x8008aa01
+[  872.684008] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[  872.684010] nvmemul: ioctl command: 0x8008aa01
+[  872.684012] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[  872.684014] nvmemul: ioctl command: 0x8008aa01
+[  872.684015] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[  872.684018] nvmemul: ioctl command: 0x8008aa01
+[  872.684018] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[  891.804565] perf: interrupt took too long (39620 > 39531), lowering kernel.perf_event_max_sample_rate to 5000
+[  902.438360] nvmemul: ioctl command: 0xc008aa02
+[  902.438365] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[  902.438404] nvmemul: ioctl command: 0x8008aa01
+[  902.438405] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[  902.438414] nvmemul: ioctl command: 0x8008aa01
+[  902.438415] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[  902.438420] nvmemul: ioctl command: 0x8008aa01
+[  902.438422] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[  902.438424] nvmemul: ioctl command: 0x8008aa01
+[  902.438425] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[  917.485775] nvmemul: ioctl command: 0xc008aa02
+[  917.485790] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[  917.485815] nvmemul: ioctl command: 0x8008aa01
+[  917.485816] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[  917.485819] nvmemul: ioctl command: 0x8008aa01
+[  917.485819] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[  917.485822] nvmemul: ioctl command: 0x8008aa01
+[  917.485823] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[  917.485826] nvmemul: ioctl command: 0x8008aa01
+[  917.485827] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[  928.261233] nvmemul: ioctl command: 0xc008aa02
+[  928.261239] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[  928.261247] nvmemul: ioctl command: 0x8008aa01
+[  928.261249] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[  928.261252] nvmemul: ioctl command: 0x8008aa01
+[  928.261253] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[  928.261255] nvmemul: ioctl command: 0x8008aa01
+[  928.261256] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[  928.261259] nvmemul: ioctl command: 0x8008aa01
+[  928.261260] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[  937.115953] nvmemul: ioctl command: 0xc008aa02
+[  937.115958] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[  937.115967] nvmemul: ioctl command: 0x8008aa01
+[  937.115969] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[  937.115971] nvmemul: ioctl command: 0x8008aa01
+[  937.115972] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[  937.115975] nvmemul: ioctl command: 0x8008aa01
+[  937.115976] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[  937.115978] nvmemul: ioctl command: 0x8008aa01
+[  937.115979] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[  958.879078] drop_caches: sh (5068): drop_caches: 3
+[  959.232232] drop_caches: sh (5076): drop_caches: 3
+[  959.282531] flag is set to collect hetero allocate  9 
+[  959.282533] flag is set to enable HETERO_PGCACHE 11 
+[  959.282534] flag is set to enable HETERO_BUFFER 12 
+[  959.282535] flag is set to enable HETERO_JOURNAL 13 
+[  959.282535] flag is set to enable HETERO_RADIX 14 
+[  959.282536] flag is set to enable HETERO_FULLKERN 15 
+[  959.282537] flag to set FASTMEM node to 1 
+[  959.282538] hetero_pid set to 5077 5077 procname numactl
+[  959.294248] flag is set to collect hetero allocate  9 
+[  959.294249] flag is set to enable HETERO_PGCACHE 11 
+[  959.294250] flag is set to enable HETERO_BUFFER 12 
+[  959.294251] flag is set to enable HETERO_JOURNAL 13 
+[  959.294251] flag is set to enable HETERO_RADIX 14 
+[  959.294252] flag is set to enable HETERO_FULLKERN 15 
+[  959.294253] flag to set FASTMEM node to 1 
+[  959.294254] hetero_pid set to 5077 5077 procname filebench
+[  959.375793] flag is set to collect hetero allocate  9 
+[  959.375796] flag is set to enable HETERO_PGCACHE 11 
+[  959.375797] flag is set to enable HETERO_BUFFER 12 
+[  959.375798] flag is set to enable HETERO_JOURNAL 13 
+[  959.375799] flag is set to enable HETERO_RADIX 14 
+[  959.375799] flag is set to enable HETERO_FULLKERN 15 
+[  959.375800] flag to set FASTMEM node to 1 
+[  959.375802] hetero_pid set to 5081 5081 procname filebench
+[  959.377893] hetero_pid 5081 Curr 5079 Currname filebench HeteroProcname filebench page cache hits 10027 cache miss 0 buffer page hits 325 miss 0 
+[  959.377893]  
+[  991.379469] hetero_pid 5081 Curr 5083 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38280 miss 0 
+[  991.379469]  
+[  991.379478] hetero_pid 5081 Curr 5084 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38281 miss 0 
+[  991.379478]  
+[  991.379484] hetero_pid 5081 Curr 5082 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38282 miss 0 
+[  991.379484]  
+[  991.379515] hetero_pid 5081 Curr 5087 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38284 miss 0 
+[  991.379515]  
+[  991.379524] hetero_pid 5081 Curr 5088 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38284 miss 0 
+[  991.379524]  
+[  991.379531] hetero_pid 5081 Curr 5086 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38285 miss 0 
+[  991.379531]  
+[  991.379562] hetero_pid 5081 Curr 5081 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38287 miss 0 
+[  991.379562]  
+[  991.379566] hetero_pid 5081 Curr 5085 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38287 miss 0 
+[  991.379566]  
+[  991.379583] hetero_pid 5081 Curr 5089 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38287 miss 0 
+[  991.379583]  
+[  991.381403] hetero_pid 5081 Curr 5080 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38287 miss 0 
+[  991.381403]  
+[  991.381482] flag is set to print hetero allocate stat 10 
+[  991.381484] hetero_pid 5081 Curr 5077 Currname filebench HeteroProcname filebench page cache hits 1314644 cache miss 0 buffer page hits 38289 miss 0 
+[  991.381484]  
+[  991.381486] flag set to clear count 0
+[  991.381487] hetero_pid 5081 Curr 5077 Currname filebench HeteroProcname filebench page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[  991.381487]  
+[  991.381519] hetero_pid 0 Curr 5077 Currname filebench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[  991.381519]  
+[  991.381549] hetero_pid 0 Curr 5078 Currname filebench HeteroProcname 0000000000000000 page cache hits 0 cache miss 0 buffer page hits 0 miss 0 
+[  991.381549]  
+[  992.536352] drop_caches: sh (5091): drop_caches: 3
+[  998.128764] drop_caches: sh (5100): drop_caches: 3
