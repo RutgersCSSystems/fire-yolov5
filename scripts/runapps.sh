@@ -50,7 +50,7 @@ trap intexit INT
 #  exit
 #fi
 
-$NVMBASE/scripts/copy_data.sh
+#$NVMBASE/scripts/copy_data.sh
 
 if [ -z "$4" ]
   then
