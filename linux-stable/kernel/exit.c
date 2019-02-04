@@ -499,9 +499,6 @@ static void exit_mm(void)
 	struct mm_struct *mm = current->mm;
 	struct core_state *core_state;
 
-#ifdef CONFIG_HETERO_ENABLE
-	//is_hetero_exit();
-#endif
 	mm_release(current, mm);
 	if (!mm)
 		return;
@@ -731,9 +728,6 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
 	if (tsk->exit_state == EXIT_DEAD)
 		list_add(&tsk->ptrace_entry, &dead);
 
-#ifdef CONFIG_HETERO_ENABLE
-        is_hetero_exit(tsk);
-#endif
 	/* mt-exec, de_thread() is waiting for group leader */
 	if (unlikely(tsk->signal->notify_count < 0))
 		wake_up_process(tsk->signal->group_exit_task);
@@ -742,9 +736,6 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
 	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
 		list_del_init(&p->ptrace_entry);
 		release_task(p);
-#ifdef CONFIG_HETERO_ENABLE
-        	is_hetero_exit(p);
-#endif
 	}
 }
 
@@ -780,6 +771,9 @@ void __noreturn do_exit(long code)
 	profile_task_exit(tsk);
 	kcov_task_exit(tsk);
 
+#ifdef CONFIG_HETERO_ENABLE
+        is_hetero_exit(tsk);
+#endif
 	WARN_ON(blk_needs_flush_plug(tsk));
 
 	if (unlikely(in_interrupt()))

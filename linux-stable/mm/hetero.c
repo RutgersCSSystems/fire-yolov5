@@ -84,10 +84,6 @@
 
 /* Hetero Stats information*/
 int global_flag = 0;
-int pgcache_hits_cnt = 0;
-int pgcache_miss_cnt = 0;
-int pgbuff_hits_cnt = 0;
-int pgbuff_miss_cnt = 0;
 int radix_cnt = 0;
 int hetero_dbgmask = 0;
 
@@ -104,20 +100,20 @@ int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
 
 
-void print_hetero_stats(void) {
+void print_hetero_stats(struct task_struct *task) {
        printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s page "
 	      "cache hits %d cache miss %d buffer page hits %d miss %d \n ", 
               hetero_pid, current->pid, current->comm, procname, 
-              pgcache_hits_cnt, pgcache_miss_cnt, pgbuff_hits_cnt, 
-              pgbuff_miss_cnt);
+              task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
+	      task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
-void reset_hetero_stats(void) {
-        pgcache_hits_cnt = 0;
-	pgcache_miss_cnt = 0;
-	pgbuff_miss_cnt = 0;
-	pgbuff_hits_cnt = 0;
+void reset_hetero_stats(struct task_struct *task) {
+        task->mm->pgcache_hits_cnt = 0;
+	task->mm->pgcache_miss_cnt = 0;
+	task->mm->pgbuff_miss_cnt = 0;
+	task->mm->pgbuff_hits_cnt = 0;
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
@@ -142,7 +138,8 @@ int is_hetero_exit(struct task_struct *task)
 		"user pages %d kern pages %d\n",
 		hetero_pid, current->pid, current->comm, procname,  
 	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
-	print_hetero_stats();
+	print_hetero_stats(task);
+        reset_hetero_stats(task);
     }
     return 0;
 }
@@ -282,14 +279,9 @@ EXPORT_SYMBOL(set_sock_hetero_obj);
 void update_hetero_pgcache(int nodeid, struct page *page) 
 {
         if(page_to_nid(page) == nodeid) {
-		pgcache_hits_cnt += 1;
+		current->mm->pgcache_hits_cnt += 1;
 	}else {
-		/*printk(KERN_ALERT "*****%s:%d***** page_to_nid(page) %d  "
-			"target node %d \n", __func__,__LINE__,
-			page_to_nid(page), nodeid);
-		dump_stack();*/
-		
-        	pgcache_miss_cnt += 1;
+        	current->mm->pgcache_miss_cnt += 1;
 	}
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
@@ -297,9 +289,9 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 void update_hetero_pgbuff_stat(int nodeid, struct page *page) 
 {
         if(page_to_nid(page) == nodeid) {
-		pgbuff_hits_cnt += 1;
+		current->mm->pgbuff_hits_cnt += 1;
 	}else {
-        	pgbuff_miss_cnt += 1;
+        	current->mm->pgbuff_miss_cnt += 1;
 	}
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat);
@@ -310,7 +302,7 @@ on heterogeneous memory
 */
 void update_hetero_pgbuff_stat_miss(void) 
 {
-        pgbuff_miss_cnt += 1;
+        current->mm->pgbuff_miss_cnt += 1;
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
 #endif
@@ -374,8 +366,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
 
-	    reset_hetero_stats();	
-	    is_hetero_exit(current);
+	    //reset_hetero_stats();	
+	    //is_hetero_exit(current);
 
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
@@ -433,7 +425,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_ALLOCATE:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
-	    print_hetero_stats();
+	    print_hetero_stats(current);
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
