@@ -2480,6 +2480,7 @@ relock:
 			do_coredump(&ksig->info);
 		}
 
+
 		/*
 		 * Death signals, no core dump.
 		 */

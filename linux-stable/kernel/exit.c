@@ -772,7 +772,8 @@ void __noreturn do_exit(long code)
 	kcov_task_exit(tsk);
 
 #ifdef CONFIG_HETERO_ENABLE
-        is_hetero_exit(tsk);
+	if(code == SIGKILL)
+        	is_hetero_exit(tsk);
 #endif
 	WARN_ON(blk_needs_flush_plug(tsk));
 

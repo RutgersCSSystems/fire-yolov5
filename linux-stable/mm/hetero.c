@@ -101,9 +101,10 @@ char procname[TASK_COMM_LEN];
 
 
 void print_hetero_stats(struct task_struct *task) {
-       printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s page "
-	      "cache hits %d cache miss %d buffer page hits %d miss %d \n ", 
-              hetero_pid, current->pid, current->comm, procname, 
+       printk("Curr %d Currname %s HeteroProcname %s "
+	      "page_cache_hits %lu page_cache_miss %lu " 
+	      "buff_page_hits %lu buff_page_miss %lu \n ", 
+              current->pid, current->comm, procname, 
               task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
 	      task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt);
 }
@@ -364,8 +365,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
-
-	    //reset_hetero_stats();	
+	    reset_hetero_stats(current);	
 	    //is_hetero_exit(current);
 
 	    hetero_pid = 0;
@@ -385,6 +385,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    print_rbtree_stat();
 	    //print_btree_stat();
 	    print_radix_tree_stat();
+	    is_hetero_exit(current);
 	    break;
 	//case DUMP_STACK:
 	//	printk("flag is set to dump stack %d\n", flag);
