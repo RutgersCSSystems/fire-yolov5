@@ -1,12 +1,31 @@
-mm/hetero.c:236:18: warning: unused variable ‘res’ [-Wunused-variable]
-mm/slub.c:2456:31: warning: unused variable ‘hetero_map’ [-Wunused-variable]
-mm/slub.c:3241:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-mm/slub.c:3274:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-mm/slub.c:3313:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
-./include/linux/hetero.h:56:12: warning: inline function ‘is_hetero_obj’ declared but never defined
+block/bio.c:1271:18: warning: format ‘%d’ expects argument of type ‘int’, but argument 4 has type ‘long unsigned int’ [-Wformat=]
+block/blk-core.c:920:2: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+block/blk-core.c:920:8: warning: unused variable ‘fn’ [-Wunused-variable]
+mm/page_alloc.c:4509:1: warning: label ‘out’ defined but not used [-Wunused-label]
+fs/buffer.c:3378:13: warning: ‘add_to_hashtable_buffer_head’ defined but not used [-Wunused-function]
+mm/hetero.c:233:18: warning: unused variable ‘res’ [-Wunused-variable]
+lib/rbtree.c:181:5: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:205:5: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:230:4: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:232:4: warning: multi-line comment [-Wcomment]
+./include/linux/bench.h:47:1: warning: ‘read_tsc’ defined but not used [-Wunused-function]
+lib/rbtree.c:181:5: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:205:5: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:230:4: warning: multi-line comment [-Wcomment]
+lib/rbtree.c:232:4: warning: multi-line comment [-Wcomment]
+drivers/isdn/hardware/eicon/diddfunc.c:77:1: warning: the frame size of 1128 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/isdn/hardware/eicon/divasfunc.c:192:1: warning: the frame size of 1128 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/isdn/hardware/eicon/mntfunc.c:112:1: warning: the frame size of 1128 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/isdn/hardware/eicon/idifunc.c:223:1: warning: the frame size of 1128 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/isdn/hardware/eicon/capifunc.c:1094:1: warning: the frame size of 1128 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/isdn/hardware/eicon/message.c:5985:1: warning: the frame size of 1107 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/chelsio/cxgb/common.h:38:0: warning: "pr_fmt" redefined [enabled by default]
+drivers/net/ethernet/neterion/vxge/vxge-main.c:119:1: warning: the frame size of 1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+drivers/usb/misc/usbtest.c:2126:1: warning: the frame size of 1192 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+mm/hetero.c:232:18: warning: unused variable ‘res’ [-Wunused-variable]
