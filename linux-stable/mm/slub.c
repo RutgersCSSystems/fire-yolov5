@@ -4350,8 +4350,8 @@ void *__kmalloc(size_t size, gfp_t flags)
 
 	kasan_kmalloc(s, ret, size, flags);
 
-	if(is_hetero_buffer_set())
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+	//if(is_hetero_buffer_set())
+	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 
 	return ret;
 }
