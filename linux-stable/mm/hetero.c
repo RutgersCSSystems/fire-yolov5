@@ -129,7 +129,6 @@ inline int check_hetero_proc (struct task_struct *task)
     return 0; 	
 }
 
-
 /* Exit function called during process exit */
 int is_hetero_exit(struct task_struct *task) 
 {
