@@ -169,8 +169,8 @@ static void *__kmalloc_reserve(size_t size, gfp_t flags, int node,
 
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()){
-		dump_stack();
-		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		//dump_stack();
+		//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 node = NUMA_HETERO_NODE;
         }
 #endif
@@ -1644,7 +1644,7 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
 #ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
-		dump_stack();
+		//dump_stack();
 		data = kmalloc_reserve_hetero(size + SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_HETERO_NODE, NULL);
         }
@@ -5497,7 +5497,7 @@ static int pskb_carve_inside_header(struct sk_buff *skb, const u32 off,
 #ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
-		dump_stack();
+		//dump_stack();
 		data = kmalloc_reserve_hetero(size +
 			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_HETERO_NODE, NULL);
@@ -5631,7 +5631,7 @@ static int pskb_carve_inside_nonlinear(struct sk_buff *skb, const u32 off,
 #ifdef CONFIG_HETERO_ENABLE
         data = NULL;
         if(is_hetero_buffer_set()){
-		dump_stack();
+		//dump_stack();
 		data = kmalloc_reserve_hetero(size +
 			       SKB_DATA_ALIGN(sizeof(struct skb_shared_info)),
 			       gfp_mask, NUMA_HETERO_NODE, NULL);
