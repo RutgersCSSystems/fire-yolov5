@@ -64,6 +64,15 @@ INSTALL_CMAKE(){
     make install
 }
 
+INSTALL_SYSBENCH() {
+        curl -s https://packagecloud.io/install/repositories/akopytov/sysbench/script.deb.sh | sudo bash
+        sudo apt -y install sysbench
+}
+
+INSTALL_MYSQL() {
+        sudo apt-get install mysql-server-5.7
+}
+
 INSTALL_ROCKSDB() {
 	cd $APPBENCH/apps
 	git clone https://github.com/facebook/rocksdb
@@ -104,6 +113,10 @@ GETAPPS
 INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
+
+INSTALL_SYSBENCH
+INSTALL_MYSQL
+
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh
 $APPBENCH/setup.sh
