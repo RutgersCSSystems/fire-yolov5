@@ -4,6 +4,7 @@ set -x
 RUNNOW=1
 RUNSCRIPT=run.sh
 mkdir $OUTPUTDIR
+sudo dmesg -c &> del.txt
 
 USAGE(){
 echo "./app \$maxhotpage \$BW \$outputdir \$app"
@@ -54,30 +55,23 @@ trap intexit INT
 
 if [ -z "$4" ]
   then
+        APPBASE=$APPBENCH/apps/filebench
+        APP=filebench
+        RUNAPP
+	$NVMBASE/scripts/reset.sh
+	exit	
+
+	APPBASE=$APPBENCH/redis-3.0.0/src
+	APP=redis
+	echo "running $APP..."
+	RUNAPP
+	$NVMBASE/scripts/reset.sh
 
 	APPBASE=$APPBENCH/apps/rocksdb
 	APP=db_bench
 	RUNAPP
 	$NVMBASE/scripts/reset.sh
 	exit
-
-
-
-        APPBASE=$APPBENCH/apps/filebench
-        APP=filebench
-        RUNAPP
-	$NVMBASE/scripts/reset.sh
-	exit
-
-
-	
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
-	echo "running $APP..."
-	RUNAPP
-	$NVMBASE/scripts/reset.sh
-	exit
-
 
 	APPBASE=$APPBENCH/apps/memcached_client
 	APP=memcached

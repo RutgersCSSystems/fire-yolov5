@@ -139,7 +139,7 @@ int is_hetero_exit(struct task_struct *task)
 		hetero_pid, current->pid, current->comm, procname,  
 	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
 	print_hetero_stats(task);
-        reset_hetero_stats(task);
+        //reset_hetero_stats(task);
     }
     return 0;
 }
