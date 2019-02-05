@@ -12,7 +12,7 @@ export VER="4.17.0"
 #QEMU
 export QEMU_IMG=$NVMBASE
 #export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-full.img
-export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
+export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="18432M"
 export KERNEL=$NVMBASE/KERNEL
