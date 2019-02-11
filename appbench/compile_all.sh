@@ -28,14 +28,14 @@ cd $BASE
 cd graphchi/graphchi-cpp
 make clean && make -j8
 
-cd $BASE
-cd redis-3.0.0/src 
-make clean && make all -j8
+#cd $BASE
+#cd redis-3.0.0/src 
+#make clean && make all -j8
 
-cd $BASE
-cd Metis
-make clean 
-./configure && make -j8
+#cd $BASE
+#cd Metis
+#make clean 
+#./configure && make -j8
 
 cd $BASE
 cd leveldb
@@ -47,15 +47,15 @@ cd fio
 ./configure
 make clean && make -j4 && sudo make install
 
-cd $BASE/apps
-cd memcached
-./autogen.sh
-./configure
-make clean && make -j4 && sudo make install
+#cd $BASE/apps
+#cd memcached
+#./autogen.sh
+#./configure
+#make clean && make -j4 && sudo make install
 
-cd $BASE/apps
-cd memcached_client
-make
+#cd $BASE/apps
+#cd memcached_client
+#make
 
 cd $BASE
 exit

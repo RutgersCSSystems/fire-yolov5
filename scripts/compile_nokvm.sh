@@ -2,7 +2,7 @@
 set -x
 
 #make menuconfig
-make olddefconfig
+#make olddefconfig
 #Compile the kernel
 cd $KERN_SRC
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
