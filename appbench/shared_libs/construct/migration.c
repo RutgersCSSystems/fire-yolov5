@@ -79,7 +79,7 @@ void con() {
         a = syscall(__NR_start_trace, HETERO_JOURNAL, 0);
         a = syscall(__NR_start_trace, HETERO_RADIX, 0);
         a = syscall(__NR_start_trace, HETERO_FULLKERN, 0);
-        //a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
+        a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
 	a = syscall(__NR_start_trace, (int)pid);
 
         //Register KILL

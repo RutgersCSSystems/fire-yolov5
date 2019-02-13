@@ -1,7 +1,7 @@
 #!/bin/bash
 
 HOMEDIR=$HOME
-SSD=$HOME/ssd
+export SSD=$HOME/ssd
 CLOUDLAB=$SSD
 LEVELDBHOME=$SSD
 YCSBHOME=$SSD/leveldb-nvm/mapkeeper/ycsb/YCSB
