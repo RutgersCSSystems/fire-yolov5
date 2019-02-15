@@ -11,6 +11,8 @@
 
 #ifdef CONFIG_HETERO_ENABLE
 #define HETERO_PG_FLAG 1
+#define HETERO_PG_DEL_FLAG 2
+
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
 #define HETERO_PROC 4
@@ -61,9 +63,37 @@ void set_hetero_obj_page(struct page *page, void *obj);
 void debug_hetero_obj(void *obj);
 void set_sock_hetero_obj(void *socket, void *inode);
 
+
+int hetero_init_rbtree(struct task_struct *task);
+
+
+int
+hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page);
+
+int 
+hetero_insert_kpage_rbtree(struct task_struct *task, struct page *page);
+
+//hetero_insert_pg_rbtree
+//
+
+struct page *hetero_search_pg_rbtree(struct task_struct *task, 
+				     struct page *page);
+
+/* Erase pages of rbtree */
+void hetero_erase_cpage_rbtree(struct task_struct *task, struct page *page);
+void hetero_erase_kpage_rbtree(struct task_struct *task, struct page *page);
+
+/* Erase full rbtree */
+void hetero_erase_cache_rbree(struct task_struct *task);
+void hetero_erase_kbuff_rbree(struct task_struct *task);
+
+
+int hetero_reset_rbtree(struct task_struct *task);
+
+
 #ifdef CONFIG_HETERO_STATS
-void update_hetero_pgcache(int node, struct page *);
-void update_hetero_pgbuff_stat(int nodeid, struct page *page);
+void update_hetero_pgcache(int node, struct page *, int delpage);
+void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
 #endif
 
 #endif /* _LINUX_NUMA_H */

@@ -4547,11 +4547,21 @@ EXPORT_SYMBOL(get_zeroed_page);
 
 void __free_pages(struct page *page, unsigned int order)
 {
+	static DEFINE_SPINLOCK(lock);	
+
 	if (put_page_testzero(page)) {
 		if (order == 0)
 			free_unref_page(page);
 		else
 			__free_pages_ok(page, order);
+
+#ifdef CONFIG_HETERO_ENABLE
+		spin_lock(&lock);
+		if(page != NULL && is_hetero_buffer_set()) {
+			update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
+		}
+		spin_unlock(&lock);
+#endif
 	}
 }
 

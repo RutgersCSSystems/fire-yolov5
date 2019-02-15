@@ -12,7 +12,7 @@ sudo make x86_64_defconfig
 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA &> $KERN_SRC/compile.out
-grep -r "error:|undefined" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
+grep -r "error:|undefined|warning" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 sudo make modules &>> $KERN_SRC/compile.out
 grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 #sudo make modules_install &>> $KERN_SRC/compile.out

@@ -93,6 +93,7 @@ int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 int hetero_fastmem_node=0;
+int enbl_hetero_objaff=0;
 
 int hetero_pid = 0;
 int hetero_usrpg_cnt = 0;
@@ -168,10 +169,8 @@ EXPORT_SYMBOL(debug_hetero_obj);
 
 inline int is_hetero_obj(void *obj) 
 {
-
-#ifndef CONFIG_HETERO_OBJAFF
-	return 1;
-#endif
+	if(enbl_hetero_objaff)
+		return 1;
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(obj && current->mm->hetero_obj && current->mm->hetero_obj == obj){
@@ -276,25 +275,74 @@ EXPORT_SYMBOL(set_sock_hetero_obj);
 
 
 #ifdef CONFIG_HETERO_STATS
-void update_hetero_pgcache(int nodeid, struct page *page) 
+void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
-        if(page_to_nid(page) == nodeid) {
+
+	spin_lock(&current->mm->objaff_cache_lock);
+
+        if(page && page_to_nid(page) == nodeid) {
+
+		if(delpage && page->hetero == HETERO_PG_FLAG && 
+			enbl_hetero_objaff) {
+			hetero_erase_cpage_rbtree(current, page);
+			spin_unlock(&current->mm->objaff_cache_lock);
+			return;
+		} else if(enbl_hetero_objaff) {
+		        hetero_insert_cpage_rbtree(current, page);	
+		}
+		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
 	}else {
         	current->mm->pgcache_miss_cnt += 1;
 	}
+	spin_unlock(&current->mm->objaff_cache_lock);
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
-void update_hetero_pgbuff_stat(int nodeid, struct page *page) 
+void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage) 
 {
-        if(page_to_nid(page) == nodeid) {
+	int correct_node = 0; 
+	if(!page) 
+		return;
+	if(page_to_nid(page) == nodeid)
+		correct_node = 1;
+
+
+	//Check if page is in the write node and 
+	//we are not deleting and only inserting the page
+	if(correct_node && !delpage) {
 		current->mm->pgbuff_hits_cnt += 1;
-	}else {
-        	current->mm->pgbuff_miss_cnt += 1;
+		page->hetero = HETERO_PG_FLAG;
+	}else if(!delpage) {
+		current->mm->pgbuff_miss_cnt += 1;
+		page->hetero = 0;
+	}else if(delpage) {
+		if( page->hetero != HETERO_PG_FLAG)
+			return;
 	}
+
+	//Either if object affinity is disabled or page node is 
+	//incorrect, then return
+	if(!correct_node || !enbl_hetero_objaff)
+		goto ret_pgbuff_stat;
+	
+	//spin_lock(&current->mm->objaff_kbuff_lock);
+
+	//Not a page delete, then insert into kpage rbtree
+	if(!delpage) {
+		hetero_insert_kpage_rbtree(current, page);
+	}else {
+		//page delete, remove from kpage.
+		//printk(KERN_ALERT "remove page \n");
+		hetero_erase_kpage_rbtree(current, page);
+	}
+	//spin_unlock(&current->mm->objaff_kbuff_lock);
+
+ret_pgbuff_stat:
+	return;
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat);
+
 
 /*Simple miss increment; called specifically from 
 functions that do not explicity aim to place pages 
@@ -366,7 +414,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
 	    reset_hetero_stats(current);	
-	    //is_hetero_exit(current);
+
+	    if(enbl_hetero_objaff)		
+	    	hetero_reset_rbtree(current);	
 
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
@@ -461,6 +511,12 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #ifdef CONFIG_HETERO_ENABLE
 	    current->mm->hetero_task = HETERO_PROC;
 #endif
+#ifdef CONFIG_HETERO_OBJAFF
+	    hetero_init_rbtree(current);
+	    enbl_hetero_objaff = 1;
+#else
+	    enbl_hetero_objaff = 0;
+#endif 
             memcpy(procname, current->comm, TASK_COMM_LEN);
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;
@@ -470,3 +526,237 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 
 
 
+#ifdef CONFIG_HETERO_OBJAFF
+
+/*Initialize hetero object pool*/
+int hetero_init_rbtree(struct task_struct *task) {
+
+	if(!task->mm->objaff_root_init) {
+		task->mm->objaff_cache_rbroot = RB_ROOT;
+		task->mm->objaff_cache_rbroot = RB_ROOT;
+		task->mm->objaff_root_init = 1;
+	}
+}
+EXPORT_SYMBOL(hetero_init_rbtree);
+
+
+int hetero_reset_rbtree(struct task_struct *task) {
+        hetero_erase_cache_rbree(task);
+	hetero_erase_kbuff_rbree(task);
+	task->mm->objaff_root_init = 0;
+	return 0;
+}
+EXPORT_SYMBOL(hetero_reset_rbtree);
+
+
+int hetero_insert_pg_rbtree(struct task_struct *task, struct page *page, 
+			struct rb_root *root){
+
+        struct rb_node **new = &(root->rb_node), *parent = NULL;
+
+	if(!page) {
+		printk("%s:%d page is NULL \n", __func__, __LINE__);
+		return 0;
+	}
+
+	if(!task->mm->objaff_root_init) {
+		printk("%s:%d root_init %d\n", __func__, __LINE__, 
+			task->mm->objaff_root_init);
+		return 0;
+	}
+	
+        /* Figure out where to put new node */
+        while (*new) {
+                struct page *this = rb_entry(*new, struct page, rb_node);
+                parent = *new;
+                if(!this) {
+                        printk("%s : %d page NULL \n", __func__, __LINE__);
+                        goto insert_fail_pg;
+                }
+
+		//if(this->hetero == HETERO_PG_DEL_FLAG)
+		//	rb_erase(&this->rb_node, root);
+
+                if ((unsigned long)page < (unsigned long)this) {
+                        new = &((*new)->rb_left);
+                }else if ((unsigned long)page > (unsigned long)this){
+                        new = &((*new)->rb_right);
+                }else{
+                        goto insert_success_pg;
+                }
+        }
+        /* Add new node and rebalance tree. */
+        rb_link_node(&page->rb_node, parent, new);
+        rb_insert_color(&page->rb_node, root);
+insert_success_pg:
+#ifdef CONFIG_HETERO_DEBUG
+        printk("%s : %d SUCCESS \n", __func__, __LINE__);
+#endif
+        return 0;
+
+insert_fail_pg:
+        printk("%s : %d FAIL \n", __func__, __LINE__);
+        return -1;
+}
+EXPORT_SYMBOL(hetero_insert_pg_rbtree);
+
+
+/*add pages to rbtree node */
+int hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page){
+
+	int ret = -1;
+        struct rb_root *root = &task->mm->objaff_cache_rbroot;
+	ret = hetero_insert_pg_rbtree(task, page, root);
+	if(!ret) {
+		task->mm->objaff_cache_len++;
+	}
+}
+EXPORT_SYMBOL(hetero_insert_cpage_rbtree);
+
+/*add pages to rbtree node */
+int hetero_insert_kpage_rbtree(struct task_struct *task, struct page *page){
+
+	int ret = -1;
+        struct rb_root *root = &task->mm->objaff_pgbuff_rbroot;
+	ret = hetero_insert_pg_rbtree(task, page, root);
+	if(!ret) {
+		task->mm->objaff_kbuff_len++;
+		//printk(KERN_ALERT "%s:%d Kbuff enteries %lu\n",
+		//	__func__, __LINE__,task->mm->objaff_kbuff_len);
+	}
+}
+EXPORT_SYMBOL(hetero_insert_kpage_rbtree);
+
+
+
+/*Search for page. BUGGY currently */
+struct page *hetero_search_pg_rbtree(struct task_struct *task, struct page *page){
+
+	struct rb_root *root = &task->mm->objaff_cache_rbroot;
+        struct rb_node *node = root->rb_node;
+        unsigned long srcobj = (unsigned long)page;
+	struct page *new = NULL;
+
+        while (node) {
+                struct page *this = rb_entry(node, struct page, rb_node);
+                if(!this) {
+                        printk("%s : %d page search failed \n", __func__, __LINE__);
+                        return 0;
+                }
+                if( srcobj == (unsigned long)this) {
+			new = this;
+                        goto ret_search_page;
+                }
+                if ( srcobj < (unsigned long)this)
+                        node = node->rb_left;
+                else if (srcobj > (unsigned long)this)
+                        node = node->rb_right;
+        }
+        return 0;
+ret_search_page:
+#ifdef CONFIG_HETERO_DEBUG
+        printk("%s : %d page search SUCCESS \n", 
+		__func__, __LINE__);
+#endif
+        return new;
+}
+EXPORT_SYMBOL(hetero_search_pg_rbtree);
+
+
+void hetero_erase_cpage_rbtree(struct task_struct *task, struct page *page)
+{
+        struct rb_root *root = &task->mm->objaff_cache_rbroot;
+
+	if(!task->mm->objaff_root_init) {
+		printk("%s:%d root_init %d\n", __func__, __LINE__, 
+			task->mm->objaff_root_init);
+		return;
+	}
+	if(root && page) {
+	    rb_erase(&page->rb_node, root);
+	    if(task->mm->objaff_cache_len)
+	            task->mm->objaff_cache_len--;
+	}
+}
+EXPORT_SYMBOL(hetero_erase_cpage_rbtree);
+
+
+void hetero_erase_kpage_rbtree(struct task_struct *task, struct page *page)
+{
+        struct rb_root *root = &task->mm->objaff_pgbuff_rbroot;
+
+	if(!task->mm->objaff_root_init) {
+		printk("%s:%d root_init %d\n", __func__, __LINE__, 
+			task->mm->objaff_root_init);
+		return;
+	}
+	if(root && page) {
+	   //rb_erase(&page->rb_node, root);
+	   page->hetero = HETERO_PG_DEL_FLAG;
+	   if(task->mm->objaff_kbuff_len)
+	   	task->mm->objaff_kbuff_len--;
+	}
+}
+EXPORT_SYMBOL(hetero_erase_kpage_rbtree);
+
+
+void hetero_erase_cache_rbree(struct task_struct *task) {
+
+	struct rb_root *root = &task->mm->objaff_cache_rbroot;
+        struct rb_node *n, *next;
+        unsigned int count = 0;
+	struct page *new = NULL;
+        int i;
+
+	if(!task->mm->objaff_root_init) {
+		printk("%s:%d root_init %d\n", __func__, __LINE__, 
+			task->mm->objaff_root_init);
+		return;
+	}
+
+	//spin_lock(&task->mm->objaff_lock);
+        for (n = rb_first(root); n != NULL; n = rb_next(n)) {
+		new = rb_entry(n, struct page, rb_node);
+		if(new) {
+			rb_erase(&new->rb_node, root);
+			count++;
+		}
+	}
+	//spin_unlock(&task->mm->objaff_lock);
+        if (count)
+                printk("%s : %d page erase SUCCESS count %d \n", 
+			__func__, __LINE__, count);
+}
+
+
+void hetero_erase_kbuff_rbree(struct task_struct *task) {
+
+	struct rb_root *root = &task->mm->objaff_pgbuff_rbroot;
+        struct rb_node *n, *next;
+        unsigned int count = 0;
+	struct page *new = NULL;
+        int i;
+
+	if(!task->mm->objaff_root_init) {
+		printk("%s:%d root_init %d\n", __func__, __LINE__, 
+			task->mm->objaff_root_init);
+		return;
+	}
+	//spin_lock(&task->mm->objaff_lock);
+        for (n = rb_first(root); n != NULL; n = rb_next(n)) {
+
+		if(n == NULL) {	
+			break;	
+		}
+		new = rb_entry(n, struct page, rb_node);
+		if(new) {
+			rb_erase(&new->rb_node, root);
+			count++;
+		}
+	}
+	//spin_unlock(&task->mm->objaff_lock);
+        if (count)
+                printk("%s : %d page erase SUCCESS count %d \n", 
+			__func__, __LINE__, count);
+}
+#endif

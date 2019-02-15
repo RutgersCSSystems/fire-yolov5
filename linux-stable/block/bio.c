@@ -172,7 +172,6 @@ void bvec_free(mempool_t *pool, struct bio_vec *bv, unsigned int idx)
 	if (idx == BVEC_POOL_MAX) {
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
-                //printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 mempool_free_hetero(bv, pool);
         }
 #else

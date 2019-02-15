@@ -1688,6 +1688,7 @@ static void __free_slab(struct kmem_cache *s, struct page *page)
 	int order = compound_order(page);
 	int pages = 1 << order;
 
+
 	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
 		void *p;
 
@@ -1710,6 +1711,7 @@ static void __free_slab(struct kmem_cache *s, struct page *page)
 		current->reclaim_state->reclaimed_slab += pages;
 	memcg_uncharge_slab(page, order, s);
 	__free_pages(page, order);
+
 }
 
 #define need_reserve_slab_rcu						\
@@ -2523,9 +2525,8 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* slow memory 
 		*/
 	        if(is_hetero_buffer_set()) {
-			//dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();
-			update_hetero_pgbuff_stat(get_fastmem_node(), page);
+			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
 #endif
 	} else
@@ -2979,9 +2980,9 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 				set_hetero_obj_page(page, s->hetero_obj);	
 		}
 		/* Hit or miss to desired node */
-                if(is_hetero_buffer_set()) {
+                if(is_hetero_buffer_set()  && is_hetero_obj(s->hetero_obj)) {
 			/* FIXME: Duplicate page to node check */
-		        update_hetero_pgbuff_stat(get_fastmem_node(), page);
+		        update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 			//if(get_fastmem_node() != page_to_nid(page))
 			//	dgb_target_hetero_obj(s->hetero_obj);
 			//dump_stack();

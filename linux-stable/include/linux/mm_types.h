@@ -372,6 +372,14 @@ struct mm_struct {
 	unsigned long 			pgcache_hits_cnt;
         unsigned long 			pgbuff_miss_cnt;
 	unsigned long 			pgbuff_hits_cnt;	
+	struct rb_root 			objaff_cache_rbroot;
+	struct rb_root 			objaff_pgbuff_rbroot;
+	spinlock_t 			objaff_cache_lock;
+	spinlock_t 			objaff_kbuff_lock;
+	int 				objaff_root_init;
+	unsigned long                   objaff_kbuff_len;
+	unsigned long                   objaff_cache_len;
+
 #endif
 
 #ifdef CONFIG_MMU

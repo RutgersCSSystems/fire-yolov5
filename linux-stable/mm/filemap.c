@@ -298,6 +298,11 @@ static void page_cache_free_page(struct address_space *mapping,
 {
 	void (*freepage)(struct page *);
 
+#ifdef CONFIG_HETERO_STATS
+        if (page && is_hetero_pgcache_set()) {
+        	update_hetero_pgcache(get_fastmem_node(), page, 1);
+	}
+#endif
 	freepage = mapping->a_ops->freepage;
 	if (freepage)
 		freepage(page);
@@ -329,6 +334,8 @@ void delete_from_page_cache(struct page *page)
 	xa_unlock_irqrestore(&mapping->i_pages, flags);
 
 	page_cache_free_page(mapping, page);
+
+
 }
 EXPORT_SYMBOL(delete_from_page_cache);
 
@@ -974,7 +981,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
 #ifdef CONFIG_HETERO_STATS
 				if(page)	
-				        update_hetero_pgcache(get_fastmem_node(), page);
+				        update_hetero_pgcache(get_fastmem_node(), page, 0);
 #endif
 			}
 			else {
@@ -993,7 +1000,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 #ifdef CONFIG_HETERO_STATS
 	if(allocpage && is_hetero_pgcache_set())	
-		update_hetero_pgcache(get_fastmem_node(), allocpage);
+		update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
 #endif
 	return allocpage;
 }
@@ -1076,7 +1083,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 	}
 #ifdef CONFIG_HETERO_STATS
 	if(allocpage && is_hetero_pgcache_set()) {
-	    update_hetero_pgcache(get_fastmem_node(), allocpage);
+	    update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
 	}
 #endif
 	return allocpage;
