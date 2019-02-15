@@ -71,6 +71,17 @@ INSTALL_SYSBENCH() {
 
 INSTALL_MYSQL() {
         sudo apt-get install mysql-server-5.7
+
+	# change datadir to ssd	
+	sudo systemctl stop mysql
+	sudo rsync -av /var/lib/mysql $SSD/mysql
+	sudo mv /var/lib/mysql /var/lib/mysql.bak
+	sed -i '/datadir/d' /etc/mysql/mysql.conf.d/mysqld.cnf | cat -n
+	echo 'datadir = $SSD/mysql/mysql' >> /etc/mysql/mysql.conf.d/mysqld.cnf
+	echo 'alias /var/lib/mysql/ -> $SSD/mysql,' >> /etc/apparmor.d/tunables/alias
+	sudo systemctl restart apparmor
+	sudo mkdir /var/lib/mysql/mysql -p
+	sudo systemctl start mysql
 }
 
 INSTALL_ROCKSDB() {
