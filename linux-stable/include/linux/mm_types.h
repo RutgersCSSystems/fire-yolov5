@@ -208,6 +208,7 @@ struct page {
 	void *hetero_obj;
         /* group service_tree member */
         struct rb_node rb_node;
+	struct list_head hetero_list;
 #endif
 	/*
 	 * On machines where all RAM is mapped into kernel address space,

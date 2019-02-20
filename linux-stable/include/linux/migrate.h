@@ -65,8 +65,16 @@ extern void putback_movable_pages(struct list_head *l);
 extern int migrate_page(struct address_space *mapping,
 			struct page *newpage, struct page *page,
 			enum migrate_mode mode);
+
+
 extern int migrate_pages(struct list_head *l, new_page_t new, free_page_t free,
 		unsigned long private, enum migrate_mode mode, int reason);
+
+int migrate_pages_hetero(struct rb_root *root, new_page_t get_new_page,
+                free_page_t put_new_page, unsigned long private,
+                enum migrate_mode mode, int reason, struct task_struct *task);
+
+
 extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
 extern void putback_movable_page(struct page *page);
 

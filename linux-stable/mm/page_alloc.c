@@ -2808,7 +2808,12 @@ void free_unref_page_list(struct list_head *list)
 	list_for_each_entry_safe(page, next, list, lru) {
 		pfn = page_to_pfn(page);
 		if (!free_unref_page_prepare(page, pfn))
+#ifdef CONFIG_HETERO_ENABLE
+			//if(page->hetero == HETERO_PG_FLAG) 
+			//	unlock_page(page);
+#endif
 			list_del(&page->lru);
+
 		set_page_private(page, pfn);
 	}
 

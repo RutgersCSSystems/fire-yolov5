@@ -90,6 +90,8 @@ void hetero_erase_kbuff_rbree(struct task_struct *task);
 
 int hetero_reset_rbtree(struct task_struct *task);
 
+int migrate_pages_slowmem(struct task_struct *task);
+
 
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *, int delpage);

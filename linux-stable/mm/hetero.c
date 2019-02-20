@@ -58,6 +58,8 @@
 #include <linux/pfn_trace.h>
 #include <net/sock.h>
 
+#include <linux/migrate.h>
+
 #include "internal.h"
 
 /* start_trace flag option */
@@ -81,6 +83,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
+#define HETERO_MIGRATE_FREQ 10
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -278,24 +281,30 @@ EXPORT_SYMBOL(set_sock_hetero_obj);
 void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
 
-	spin_lock(&current->mm->objaff_cache_lock);
+	//spin_lock(&current->mm->objaff_cache_lock);
 
         if(page && page_to_nid(page) == nodeid) {
 
 		if(delpage && page->hetero == HETERO_PG_FLAG && 
 			enbl_hetero_objaff) {
 			hetero_erase_cpage_rbtree(current, page);
-			spin_unlock(&current->mm->objaff_cache_lock);
+			//spin_unlock(&current->mm->objaff_cache_lock);
 			return;
 		} else if(enbl_hetero_objaff) {
 		        hetero_insert_cpage_rbtree(current, page);	
 		}
 		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
+
+		if(current->mm->objaff_cache_len && 
+		    current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ == 0) {
+			migrate_pages_slowmem(current);
+		}
+
 	}else {
         	current->mm->pgcache_miss_cnt += 1;
 	}
-	spin_unlock(&current->mm->objaff_cache_lock);
+	//spin_unlock(&current->mm->objaff_cache_lock);
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
@@ -394,6 +403,11 @@ EXPORT_SYMBOL(is_hetero_kernel_set);
 int get_fastmem_node(void) {
         return hetero_fastmem_node;
 }
+
+int get_slowmem_node(void) {
+        return NUMA_HETERO_NODE;
+}
+
 
 /* start trace system call */
 SYSCALL_DEFINE2(start_trace, int, flag, int, val)
@@ -610,6 +624,7 @@ int hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page){
 	if(!ret) {
 		task->mm->objaff_cache_len++;
 	}
+
 }
 EXPORT_SYMBOL(hetero_insert_cpage_rbtree);
 
@@ -662,6 +677,17 @@ ret_search_page:
 }
 EXPORT_SYMBOL(hetero_search_pg_rbtree);
 
+void hetero_add_to_list(struct page *page, struct list_head *list_pages){
+        list_add(&page->hetero_list, list_pages);
+}
+
+void hetero_del_from_list(struct page *page)
+{
+        unsigned long flags;
+        //raw_spin_lock_irqsave(&undef_lock, flags);
+        list_del(&page->hetero_list);
+        //raw_spin_unlock_irqrestore(&undef_lock, flags);
+}
 
 void hetero_erase_cpage_rbtree(struct task_struct *task, struct page *page)
 {
@@ -674,6 +700,8 @@ void hetero_erase_cpage_rbtree(struct task_struct *task, struct page *page)
 	}
 	if(root && page) {
 	    rb_erase(&page->rb_node, root);
+	    //hetero_del_from_list(page);	
+		
 	    if(task->mm->objaff_cache_len)
 	            task->mm->objaff_cache_len--;
 	}
@@ -706,13 +734,6 @@ void hetero_erase_cache_rbree(struct task_struct *task) {
         struct rb_node *n, *next;
         unsigned int count = 0;
 	struct page *new = NULL;
-        int i;
-
-	if(!task->mm->objaff_root_init) {
-		printk("%s:%d root_init %d\n", __func__, __LINE__, 
-			task->mm->objaff_root_init);
-		return;
-	}
 
 	//spin_lock(&task->mm->objaff_lock);
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {
@@ -758,5 +779,136 @@ void hetero_erase_kbuff_rbree(struct task_struct *task) {
         if (count)
                 printk("%s : %d page erase SUCCESS count %d \n", 
 			__func__, __LINE__, count);
+}
+
+
+
+/* Generate page list from RB tree */
+int 
+gen_list_from_rbtree(struct rb_root *root, struct list_head *list_pages) {
+
+	struct rb_node *n, *next;
+	unsigned long count = 0;
+	struct page *new = NULL;
+
+	if(!list_pages || !root) {
+		printk("%s:%d NULL \n", __func__, __LINE__);
+	}
+
+        for (n = rb_first(root); n != NULL; n = rb_next(n)) {
+
+		if(n == NULL) {	
+			break;	
+		}
+		new = rb_entry(n, struct page, rb_node);
+		if(new) {
+			if (trylock_page(new)) {
+				hetero_add_to_list(new, list_pages);
+				unlock_page(new);
+				count++;
+			}
+			//printk("%s:%d page to PFN: %lu \n", 
+			//	 __func__, __LINE__, page_to_pfn(new));
+		}
+		if(count > 10) 
+			break;
+		//new = NULL;
+	}
+	printk("%s:%d Num pages added to list %lu \n", 
+		__func__, __LINE__, count);
+	return 0;
+}
+
+
+/* Generate page list from RB tree */
+int 
+del_list_from_rbtree(struct rb_root *root, struct list_head *list_pages){
+
+	struct rb_node *n, *next;
+	unsigned long count = 0;
+	struct page *new = NULL;
+
+	if(!list_pages || !root) {
+		printk("%s:%d NULL \n", __func__, __LINE__);
+	}
+
+        for (n = rb_first(root); n != NULL; n = rb_next(n)) {
+
+		if(n == NULL) {	
+			break;	
+		}
+		new = rb_entry(n, struct page, rb_node);
+		if(new) {
+			hetero_del_from_list(new);
+			//printk("%s:%d page to PFN: %lu \n", 
+			//	 __func__, __LINE__, page_to_pfn(new));
+			count++;
+		}
+		new = NULL;
+	}
+	printk("%s:%d Num pages deleted from list %lu \n", 
+		__func__, __LINE__, count);
+	return 0;
+}
+
+
+int delme_counter = 0;
+
+int migrate_pages_slowmem(struct task_struct *task) {
+
+	//page list with pages to migrate.
+	static LIST_HEAD(pagelist);
+	//destination node
+	int destnode = get_slowmem_node();
+	//migration error flag
+	int err = -1;
+	//spin lock
+	spinlock_t migrate_lock;
+	struct rb_root *root = &task->mm->objaff_cache_rbroot;
+
+	if(delme_counter)
+		return;
+	delme_counter++;
+
+	//Intialize list
+	//INIT_LIST_HEAD(&pagelist);
+
+	//generate linked list from page_cache rb tree
+	//if(gen_list_from_rbtree(root, &pagelist)) {
+	//	printk("%s:%d gen_list_from_rbtree failed \n", 
+	//		__func__, __LINE__);
+	//}
+
+	//migrate_prep();
+#if 1
+	//spin_lock(&migrate_lock);
+        //if (!list_empty(&pagelist)) {
+
+	printk(KERN_ALERT "Number of pages before migration %u \n", 
+		task->mm->objaff_cache_len);
+
+	if(task->mm->objaff_cache_len) {
+		err = migrate_pages_hetero(root, alloc_new_node_page, NULL, destnode,
+			MIGRATE_SYNC, MR_SYSCALL, task);	
+	        if (err) {
+			printk("%s:%d migrate_pages failed \n", 
+				__func__, __LINE__);			
+			putback_movable_pages(&pagelist);
+	        }else {
+			 printk("%s:%d migrate_pages succeeded \n",
+				 __func__, __LINE__);
+                }
+        }
+#endif
+	//spin_unlock(&migrate_lock);
+
+	msleep(10000);
+
+        //delete linked list from page_cache rb tree
+        //if(del_list_from_rbtree(root, &pagelist)) {
+          //      printk("%s:%d gen_list_from_rbtree failed \n",
+            //            __func__, __LINE__);
+        //}
+	return 0;
 }
 #endif
