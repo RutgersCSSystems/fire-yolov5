@@ -298,12 +298,6 @@ static void page_cache_free_page(struct address_space *mapping,
 {
 	void (*freepage)(struct page *);
 
-#ifdef CONFIG_HETERO_STATS
-        if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
-		printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
-        	update_hetero_pgcache(get_fastmem_node(), page, 1);
-	}
-#endif
 	freepage = mapping->a_ops->freepage;
 	if (freepage)
 		freepage(page);
@@ -314,6 +308,14 @@ static void page_cache_free_page(struct address_space *mapping,
 	} else {
 		put_page(page);
 	}
+#ifdef CONFIG_HETERO_STATS
+        if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
+		//unlock_page(page);
+		//printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
+        	update_hetero_pgcache(get_fastmem_node(), page, 1);
+	}
+#endif
+
 }
 
 /**
@@ -339,6 +341,22 @@ void delete_from_page_cache(struct page *page)
 
 }
 EXPORT_SYMBOL(delete_from_page_cache);
+
+
+void delete_from_page_cache_hetero(struct page *page)
+{
+	struct address_space *mapping = page_mapping(page);
+	unsigned long flags;
+
+	//BUG_ON(!PageLocked(page));
+	//xa_lock_irqsave(&mapping->i_pages, flags);
+	page->mapping = NULL;
+	__delete_from_page_cache(page, NULL);
+	//xa_unlock_irqrestore(&mapping->i_pages, flags);
+	page_cache_free_page(mapping, page);
+}
+EXPORT_SYMBOL(delete_from_page_cache_hetero);
+
 
 /*
  * page_cache_tree_delete_batch - delete several pages from page cache
@@ -859,6 +877,67 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
 }
 EXPORT_SYMBOL_GPL(replace_page_cache_page);
 
+
+
+int replace_page_cache_page_hetero(struct page *old, struct page *new, gfp_t gfp_mask)
+{
+	int error;
+
+	VM_BUG_ON_PAGE(!PageLocked(old), old);
+	VM_BUG_ON_PAGE(!PageLocked(new), new);
+	VM_BUG_ON_PAGE(new->mapping, new);
+
+	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+	if (!error) {
+		struct address_space *mapping = old->mapping;
+		void (*freepage)(struct page *);
+		unsigned long flags;
+
+		if(!mapping) {
+			printk("%s:%d mapping NULL \n", __func__, __LINE__);
+			return -1;
+		}
+
+		pgoff_t offset = old->index;
+		freepage = mapping->a_ops->freepage;
+
+		get_page(new);
+		new->mapping = mapping;
+		new->index = offset;
+
+		printk("%s:%d  \n", __func__, __LINE__);
+
+		xa_lock_irqsave(&mapping->i_pages, flags);
+		__delete_from_page_cache(old, NULL);
+		//unlock_page(old);
+		//delete_from_page_cache_hetero(old);
+		//delete_from_page_cache(old);
+
+		printk("%s:%d  \n", __func__, __LINE__);
+
+		error = page_cache_tree_insert(mapping, new, NULL);
+		BUG_ON(error);
+
+		/*
+		 * hugetlb pages do not participate in page cache accounting.
+		 */
+		if (!PageHuge(new))
+			__inc_node_page_state(new, NR_FILE_PAGES);
+		if (PageSwapBacked(new))
+			__inc_node_page_state(new, NR_SHMEM);
+		xa_unlock_irqrestore(&mapping->i_pages, flags);
+		mem_cgroup_migrate(old, new);
+		radix_tree_preload_end();
+		if (freepage)
+			freepage(old);
+		put_page(old);
+	}
+
+	return error;
+}
+EXPORT_SYMBOL_GPL(replace_page_cache_page_hetero);
+
+
 static int __add_to_page_cache_locked(struct page *page,
 				      struct address_space *mapping,
 				      pgoff_t offset, gfp_t gfp_mask,
@@ -1086,6 +1165,13 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 #ifdef CONFIG_HETERO_STATS
 	if(allocpage && is_hetero_pgcache_set()) {
 	    update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
+	}
+#endif
+
+#ifdef CONFIG_HETERO_OBJAFF
+	if(allocpage && is_hetero_pgcache_set()) {
+		try_hetero_migration((void *)x,
+			 mapping_gfp_constraint(x, GFP_KERNEL));
 	}
 #endif
 	return allocpage;

@@ -635,6 +635,8 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
 extern void delete_from_page_cache(struct page *page);
 extern void __delete_from_page_cache(struct page *page, void *shadow);
 int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask);
+int replace_page_cache_page_hetero(struct page *old, struct page *new, gfp_t gfp_mask);
+
 void delete_from_page_cache_batch(struct address_space *mapping,
 				  struct pagevec *pvec);
 

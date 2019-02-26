@@ -12,6 +12,7 @@
 #ifdef CONFIG_HETERO_ENABLE
 #define HETERO_PG_FLAG 1
 #define HETERO_PG_DEL_FLAG 2
+//#define HETERO_MIGRATE_FREQ 100
 
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
@@ -62,16 +63,15 @@ void set_fsmap_hetero_obj(void *mapobj);
 void set_hetero_obj_page(struct page *page, void *obj);
 void debug_hetero_obj(void *obj);
 void set_sock_hetero_obj(void *socket, void *inode);
-
-
 int hetero_init_rbtree(struct task_struct *task);
-
 
 int
 hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page);
-
 int 
 hetero_insert_kpage_rbtree(struct task_struct *task, struct page *page);
+
+inline int 
+check_hetero_page(struct mm_struct *mm, struct page *page);
 
 //hetero_insert_pg_rbtree
 //
@@ -96,6 +96,11 @@ int migrate_pages_slowmem(struct task_struct *task);
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *, int delpage);
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
+#endif
+
+#ifdef CONFIG_HETERO_OBJAFF
+void
+try_hetero_migration(void *map, gfp_t gfp_mask);
 #endif
 
 #endif /* _LINUX_NUMA_H */

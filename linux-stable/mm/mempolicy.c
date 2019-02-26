@@ -912,11 +912,16 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 	 * Avoid migrating a page that is shared with others.
 	 */
 	if ((flags & MPOL_MF_MOVE_ALL) || page_mapcount(head) == 1) {
+
 		if (!isolate_lru_page(head)) {
+			//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 			list_add_tail(&head->lru, pagelist);
 			mod_node_page_state(page_pgdat(head),
 				NR_ISOLATED_ANON + page_is_file_cache(head),
 				hpage_nr_pages(head));
+		}else if (PageLRU(page)) {
+			SetPageLRU(page);
+			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 		}
 	}
 }
@@ -958,7 +963,7 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
 
 	/*
 	 * This does not "check" the range but isolates all pages that
-	 * need migration.  Between passing in the full user address
+/	 * need migration.  Between passing in the full user address
 	 * space range and MPOL_MF_DISCONTIG_OK, this call can not fail.
 	 */
 	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
@@ -974,6 +979,125 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
 
 	return err;
 }
+
+
+#ifdef CONFIG_HETERO_ENABLE
+/*
+ * Scan through pages checking if pages follow certain conditions,
+ * and move them to the pagelist if they do.
+ */
+static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
+			unsigned long end, struct mm_walk *walk)
+{
+	struct vm_area_struct *vma = walk->vma;
+	struct page *page;
+	struct queue_pages *qp = walk->private;
+	unsigned long flags = qp->flags;
+	int ret;
+	pte_t *pte;
+	spinlock_t *ptl;
+
+	ptl = pmd_trans_huge_lock(pmd, vma);
+	if (ptl) {
+		ret = queue_pages_pmd(pmd, ptl, addr, end, walk);
+		if (ret)
+			return 0;
+	}
+
+	if (pmd_trans_unstable(pmd))
+		return 0;
+
+	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
+	for (; addr != end; pte++, addr += PAGE_SIZE) {
+		if (!pte_present(*pte))
+			continue;
+		page = vm_normal_page(vma, addr, *pte);
+		if (!page)
+			continue;
+
+		if(check_hetero_page(walk->mm, page)) {
+			continue;
+		}
+		/*
+		 * vm_normal_page() filters out zero pages, but there might
+		 * still be PageReserved pages to skip, perhaps in a VDSO.
+		 */
+		if (PageReserved(page))
+			continue;
+		if (!queue_pages_required(page, qp))
+			continue;
+
+		//SetPageLRU(page);
+		migrate_page_add(page, qp->pagelist, flags);
+	}
+	pte_unmap_unlock(pte - 1, ptl);
+	cond_resched();
+	return 0;
+}
+
+/*
+ * Walk through page tables and collect pages to be migrated.
+ *
+ * If pages found in a given range are on a set of nodes (determined by
+ * @nodes and @flags,) it's isolated and queued to the pagelist which is
+ * passed via @private.)
+ */
+static int
+queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned long end,
+		nodemask_t *nodes, unsigned long flags,
+		struct list_head *pagelist)
+{
+	struct queue_pages qp = {
+		.pagelist = pagelist,
+		.flags = flags,
+		.nmask = nodes,
+		.prev = NULL,
+	};
+	struct mm_walk queue_pages_walk = {
+		.hugetlb_entry = queue_pages_hugetlb,
+		.pmd_entry = queue_pages_pte_range_hetero,
+		.test_walk = queue_pages_test_walk,
+		.mm = mm,
+		.private = &qp,
+	};
+
+	return walk_page_range(start, end, &queue_pages_walk);
+}
+
+
+/*
+ * Migrate pages from one node to a target node.
+ * Returns error or the number of pages not migrated.
+ */
+int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
+			   int flags)
+{
+	nodemask_t nmask;
+	LIST_HEAD(pagelist);
+	int err = 0;
+
+	nodes_clear(nmask);
+	node_set(source, nmask);
+
+	/*
+	 * This does not "check" the range but isolates all pages that
+	 * need migration.  Between passing in the full user address
+	 * space range and MPOL_MF_DISCONTIG_OK, this call can not fail.
+	 */
+	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
+	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
+			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
+
+	if (!list_empty(&pagelist)) {
+		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
+					MIGRATE_SYNC, MR_SYSCALL);
+		if (err)
+			putback_movable_pages(&pagelist);
+	}
+
+	return err;
+}
+#endif
 
 /*
  * Move pages between the two nodesets so as to preserve the physical

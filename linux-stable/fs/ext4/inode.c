@@ -1253,6 +1253,10 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
         set_fsmap_hetero_obj(mapping);
+	if(current->mm->hetero_task == HETERO_PROC) {
+		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		//try_hetero_migration(mapping, 0);
+	}
 #endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
@@ -3018,6 +3022,11 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
 	struct inode *inode = mapping->host;
 	handle_t *handle;
 
+#ifdef CONFIG_HETERO_ENABLE
+	if(current->mm->hetero_task == HETERO_PROC)
+		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+	        try_hetero_migration(mapping, 0);
+#endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 
@@ -3327,6 +3336,10 @@ static int ext4_readpage(struct file *file, struct page *page)
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
         set_fsmap_hetero_obj(page->mapping);
+	if(current->mm->hetero_task == HETERO_PROC) {
+		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		try_hetero_migration(page->mapping, 0);
+	}
 #endif
 	trace_ext4_readpage(page);
 
@@ -3343,6 +3356,14 @@ ext4_readpages(struct file *file, struct address_space *mapping,
 		struct list_head *pages, unsigned nr_pages)
 {
 	struct inode *inode = mapping->host;
+
+#ifdef CONFIG_HETERO_ENABLE
+        set_fsmap_hetero_obj(page->mapping);
+        if(current->mm->hetero_task == HETERO_PROC) {
+                printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+                try_hetero_migration(page->mapping, 0);
+        }
+#endif
 
 	/* If the file has inline data, no need to do readpages. */
 	if (ext4_has_inline_data(inode))
@@ -3677,6 +3698,13 @@ static ssize_t ext4_direct_IO_write(struct kiocb *iocb, struct iov_iter *iter)
 	int orphan = 0;
 	handle_t *handle;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current->mm->hetero_task == HETERO_PROC) {
+                printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+                //try_hetero_migration(page->mapping, 0);
+        }
+#endif
+
 	if (final_size > inode->i_size || final_size > ei->i_disksize) {
 		/* Credits for sb + inode write */
 		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
@@ -3826,6 +3854,12 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
 	size_t count = iov_iter_count(iter);
 	ssize_t ret;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current->mm->hetero_task == HETERO_PROC) {
+                printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+                //try_hetero_migration(page->mapping, 0);
+        }
+#endif
 	/*
 	 * Shared inode_lock is enough for us - it protects against concurrent
 	 * writes & truncates and since we take care of writing back page cache,

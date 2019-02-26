@@ -141,6 +141,9 @@ struct mempolicy *__get_vma_policy(struct vm_area_struct *vma,
 		unsigned long addr);
 bool vma_policy_mof(struct vm_area_struct *vma);
 
+int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
+                           int flags);
+
 extern void numa_default_policy(void);
 extern void numa_policy_init(void);
 extern void mpol_rebind_task(struct task_struct *tsk, const nodemask_t *new);
