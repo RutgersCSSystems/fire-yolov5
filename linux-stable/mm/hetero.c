@@ -306,9 +306,9 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 
         if(page && page_to_nid(page) == nodeid) {
 		if(enbl_hetero_objaff) {
-			//spin_lock(&current->mm->objaff_cache_lock);
-		        //hetero_insert_cpage_rbtree(current, page);
-			//spin_unlock(&current->mm->objaff_cache_lock);	
+			spin_lock(&current->mm->objaff_cache_lock);
+		        hetero_insert_cpage_rbtree(current, page);
+			spin_unlock(&current->mm->objaff_cache_lock);	
 		}
 		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
@@ -643,7 +643,7 @@ int hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page){
         if (unlikely(!trylock_page(page)))
                 goto out_putpage;
 
-	ret = hetero_insert_pg_rbtree(task, page, root);
+	//ret = hetero_insert_pg_rbtree(task, page, root);
 	if(!ret) {
 		task->mm->objaff_cache_len++;
 	}
