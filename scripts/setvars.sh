@@ -1,7 +1,9 @@
-#!/bin/bash
-export NVMBASE=$PWD
-######## DO NOT CHANGE BEYOUND THIS ###########
 
+
+
+
+export NVMBASE=$HOME/ssd/NVM
+######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME=$1
 export KERN_SRC=$NVMBASE/linux-stable

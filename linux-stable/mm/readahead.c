@@ -182,14 +182,15 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 
 #ifdef CONFIG_HETERO_ENABLE
 		page = NULL;
-		if(is_hetero_pgcache_set() && is_hetero_obj(mapping->host)) {
+		if(mapping && is_hetero_pgcache_set() && 
+			is_hetero_obj(mapping->host)) {
 	                page = __page_cache_alloc_hetero(gfp_mask, mapping);
                 	if(!page)  {
 				printk(KERN_ALERT "%s:%d procname %s \n",
 					__func__,__LINE__, current->comm);
 			}
 		}
-		if(is_hetero_pgcache_set() && !is_hetero_obj(mapping->host)) {
+		if(is_hetero_pgcache_set() && mapping && !is_hetero_obj(mapping->host)) {
 			if(!execute_ok(inode)) {
 				//debug_hetero_obj(mapping->host);
 				set_fsmap_hetero_obj(mapping);

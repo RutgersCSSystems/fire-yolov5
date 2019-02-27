@@ -1253,9 +1253,10 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
         set_fsmap_hetero_obj(mapping);
-	if(current->mm->hetero_task == HETERO_PROC) {
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
 		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		//try_hetero_migration(mapping, 0);
+		try_hetero_migration(mapping, 0);
 	}
 #endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
@@ -3023,9 +3024,11 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
 	handle_t *handle;
 
 #ifdef CONFIG_HETERO_ENABLE
-	if(current->mm->hetero_task == HETERO_PROC)
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
 		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 	        try_hetero_migration(mapping, 0);
+	}
 #endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
@@ -3336,7 +3339,8 @@ static int ext4_readpage(struct file *file, struct page *page)
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
         set_fsmap_hetero_obj(page->mapping);
-	if(current->mm->hetero_task == HETERO_PROC) {
+        if(current && current->mm && 
+		current->mm->hetero_task == HETERO_PROC) {
 		printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 		try_hetero_migration(page->mapping, 0);
 	}
@@ -3358,13 +3362,12 @@ ext4_readpages(struct file *file, struct address_space *mapping,
 	struct inode *inode = mapping->host;
 
 #ifdef CONFIG_HETERO_ENABLE
-        set_fsmap_hetero_obj(page->mapping);
-        if(current->mm->hetero_task == HETERO_PROC) {
+        if(current && current->mm && 
+		current->mm->hetero_task == HETERO_PROC) {
                 printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-                try_hetero_migration(page->mapping, 0);
+                try_hetero_migration(mapping, 0);
         }
 #endif
-
 	/* If the file has inline data, no need to do readpages. */
 	if (ext4_has_inline_data(inode))
 		return 0;

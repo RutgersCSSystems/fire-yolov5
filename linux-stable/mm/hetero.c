@@ -191,7 +191,8 @@ inline int is_hetero_obj(void *obj)
 		return 1;
 
 #ifdef CONFIG_HETERO_ENABLE
-	if(obj && current->mm->hetero_obj && current->mm->hetero_obj == obj){
+	if(obj && current && current->mm && 
+		current->mm->hetero_obj && current->mm->hetero_obj == obj){
 		return 1;
 	}
 #endif

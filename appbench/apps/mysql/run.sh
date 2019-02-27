@@ -17,13 +17,14 @@ PREPARE_SYSBENCH() {
 	sysbench --db-driver=mysql --mysql-user=$MYSQL_USER --mysql-password=$MYSQL_PASSWD --mysql-db=sbtest --table_size=10000000 --threads=16 /usr/share/sysbench/oltp_read_only.lua prepare
 }
 
-#CREATE_DB
-#PREPARE_SYSBENCH
+CREATE_DB
+PREPARE_SYSBENCH
+exit
 
 #Run read only
 READ_ONLY() {
 	for each in 1 2 4 8 16 32 64; do 
-	export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+	#export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
 	$PREFIX sysbench $MYSQL_OPTIONS --threads=$each /usr/share/sysbench/oltp_read_only.lua run; sleep 5;
 	export LD_PRELOAD=""
 	done
@@ -33,7 +34,7 @@ READ_ONLY() {
 #Run write only
 WRITE_ONLY() {
 	for each in 1 2 4 8 16 32 64; do
-	export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+	#export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
 	$PREFIX sysbench $MYSQL_OPTIONS --threads=$each /usr/share/sysbench/oltp_write_only.lua run; sleep 5;
 	export LD_PRELOAD=""
 	done
@@ -42,7 +43,7 @@ WRITE_ONLY() {
 #Run read-write
 READ_WRITE() {
 	for each in 1 2 4 8 16 32 64; do
-	export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+	#export LD_PRELOAD=/ssd/NVM/appbench/shared_libs/construct/libmigration.so
 	$PREFIX sysbench $MYSQL_OPTIONS --threads=$each /usr/share/sysbench/oltp_read_write.lua run; sleep 5;
 	export LD_PRELOAD=""
 	done
