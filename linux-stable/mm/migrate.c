@@ -2068,7 +2068,7 @@ retry:
 	nr_failed += retry;
 	rc = nr_failed;
 out:
-	printk(KERN_ALERT "nr_succeeded pages migrated %u \n", nr_succeeded);
+	//printk(KERN_ALERT "nr_succeeded pages migrated %u \n", nr_succeeded);
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)
