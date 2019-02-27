@@ -922,9 +922,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	count = migrate_to_node_hetero(current->mm, get_fastmem_node(), get_slowmem_node(),
 		   MPOL_MF_MOVE_ALL);
 
-	printk("%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, 
-			count);
-
+	//printk("%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, 
+	//		count);
 	return;
 
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {
