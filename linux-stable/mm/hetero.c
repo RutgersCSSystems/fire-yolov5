@@ -299,16 +299,16 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(delpage && page->hetero == HETERO_PG_FLAG && 
 		 enbl_hetero_objaff) {	
 		//spin_lock(&current->mm->objaff_cache_lock);
-		hetero_erase_cpage_rbtree(current, page);
+		//hetero_erase_cpage_rbtree(current, page);
 		//spin_unlock(&current->mm->objaff_cache_lock);
 		return;
 	}
 
         if(page && page_to_nid(page) == nodeid) {
 		if(enbl_hetero_objaff) {
-			spin_lock(&current->mm->objaff_cache_lock);
-		        hetero_insert_cpage_rbtree(current, page);
-			spin_unlock(&current->mm->objaff_cache_lock);	
+			//spin_lock(&current->mm->objaff_cache_lock);
+		        //hetero_insert_cpage_rbtree(current, page);
+			//spin_unlock(&current->mm->objaff_cache_lock);	
 		}
 		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
@@ -570,8 +570,8 @@ EXPORT_SYMBOL(hetero_init_rbtree);
 
 
 int hetero_reset_rbtree(struct task_struct *task) {
-        hetero_erase_cache_rbree(task);
-	hetero_erase_kbuff_rbree(task);
+        //hetero_erase_cache_rbree(task);
+	//hetero_erase_kbuff_rbree(task);
 	task->mm->objaff_root_init = 0;
 	return 0;
 }
