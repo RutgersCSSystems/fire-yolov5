@@ -380,7 +380,8 @@ struct mm_struct {
 	int 				objaff_root_init;
 	unsigned long                   objaff_kbuff_len;
 	unsigned long                   objaff_cache_len;
-
+	unsigned long			pages_migrated;
+	unsigned long			migrate_attempt;
 #endif
 
 #ifdef CONFIG_MMU

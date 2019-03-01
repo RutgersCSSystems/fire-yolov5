@@ -56,6 +56,8 @@
 
 #ifdef CONFIG_HETERO_ENABLE
 int hetero_page_migrate_cnt=0;
+extern int g_nr_success_hetero_list;
+extern int g_freq_cnt;
 #endif
 
 #include "internal.h"
@@ -1832,9 +1834,6 @@ out:
 }
 #endif
 
-int g_nr_success_hetero_list;
-
-
 int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 		free_page_t put_new_page, unsigned long private,
 		enum migrate_mode mode, int reason)
@@ -1848,6 +1847,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	int swapwrite = current->flags & PF_SWAPWRITE;
 	int rc = 0;
 	struct rb_root *root;
+	int pagecount = 0;
 
 	if (!swapwrite)
 		current->flags |= PF_SWAPWRITE;
@@ -1856,12 +1856,19 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 		return rc;
 
 	root = &current->mm->objaff_cache_rbroot;
+	if(current->mm->objaff_cache_len < 1000) {
 
-	if(current->mm->objaff_cache_len < 1000)
+		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		return rc;
+	}
+	current->mm->migrate_attempt++;
+
+	if(current->mm->migrate_attempt % 2 != 0)
+		return rc; 
 
 	for(pass = 0; pass < 1 && retry; pass++) {
 		retry = 0;
+		pagecount++;
 
 #if 0
                 struct rb_node *n, *next;
@@ -1873,6 +1880,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
                         if(!page || page->hetero != HETERO_PG_FLAG)
                                 continue;
 #else
+
 			list_for_each_entry_safe(page, page2, from, lru) {
 
 			/* Not a Hetero page */
@@ -1887,7 +1895,6 @@ retry:
 			/* Migrate only page cache pages*/
 			if (PageAnon(page))
 				continue;
-	
 
 #ifdef CONFIG_HETERO_HUGEPAGE
 			if (PageHuge(page))
@@ -1948,15 +1955,15 @@ retry:
 	nr_failed += retry;
 	rc = nr_failed;
 out:
-	g_nr_success_hetero_list += nr_succeeded;
-	printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u \n", 
-		g_nr_success_hetero_list, nr_failed);
+	current->mm->pages_migrated += nr_succeeded;
+	
+	//printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u \n", 
+	//	current->mm->pages_migrated, nr_failed);
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)
 		count_vm_events(PGMIGRATE_FAIL, nr_failed);
 	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
-
 
 	/*Update the heteromem stats*/
 	current->mm->objaff_cache_len -= nr_succeeded;	

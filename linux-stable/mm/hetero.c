@@ -102,14 +102,15 @@ int hetero_usrpg_cnt = 0;
 int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
 
-
 void print_hetero_stats(struct task_struct *task) {
-       printk("Curr %d Currname %s HeteroProcname %s "
-	      "page_cache_hits %lu page_cache_miss %lu " 
-	      "buff_page_hits %lu buff_page_miss %lu \n ", 
-              current->pid, current->comm, procname, 
-              task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
-	      task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt);
+       printk("Curr %d Currname %s HeteroProcname %s " 
+		"page_cache_hits %lu page_cache_miss %lu " 
+	      	"buff_page_hits %lu buff_page_miss %lu " 
+		"pages migrated %lu \n ", 
+	  	current->pid, current->comm, procname, 
+              	task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
+	      	task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt, 
+		task->mm->pages_migrated);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
@@ -118,6 +119,11 @@ void reset_hetero_stats(struct task_struct *task) {
 	task->mm->pgcache_miss_cnt = 0;
 	task->mm->pgbuff_miss_cnt = 0;
 	task->mm->pgbuff_hits_cnt = 0;
+	/* Represents pages migrated and 
+	* frequency of page migration attempts
+	*/
+	task->mm->pages_migrated = 0;
+	task->mm->migrate_attempt = 0;
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
