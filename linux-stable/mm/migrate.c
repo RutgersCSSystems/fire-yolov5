@@ -1866,7 +1866,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(current->mm->migrate_attempt % 2 != 0)
 		return rc; 
 
-	for(pass = 0; pass < 1 && retry; pass++) {
+	for(pass = 0; pass < 10 && retry; pass++) {
 		retry = 0;
 		pagecount++;
 
@@ -1957,8 +1957,8 @@ retry:
 out:
 	current->mm->pages_migrated += nr_succeeded;
 	
-	//printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u \n", 
-	//	current->mm->pages_migrated, nr_failed);
+	printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u \n", 
+		current->mm->pages_migrated, nr_failed);
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)

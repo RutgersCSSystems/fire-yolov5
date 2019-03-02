@@ -82,7 +82,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_MIGRATE_FREQ 100
+#define HETERO_MIGRATE_FREQ 1
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -917,8 +917,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		(current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ != 0)) {
 		return;
 	}else {
-		//printk("%s:%d Cache length %lu \n", __func__, __LINE__, 
-		//	current->mm->objaff_cache_len);
+		printk("%s:%d Cache length %lu \n", __func__, __LINE__, 
+			current->mm->objaff_cache_len);
 	}
 	root = &current->mm->objaff_cache_rbroot;
         if(!root) {

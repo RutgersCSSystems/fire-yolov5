@@ -624,6 +624,12 @@ void deactivate_file_page(struct page *page)
 		if (!pagevec_add(pvec, page) || PageCompound(page))
 			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn, NULL);
 		put_cpu_var(lru_deactivate_file_pvecs);
+#ifdef CONFIG_HETERO_ENABLE
+		//dectivation function works
+		/*if(page && page->hetero == HETERO_PG_FLAG) {
+			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		}*/
+#endif
 	}
 }
 

@@ -1598,6 +1598,10 @@ int isolate_lru_page(struct page *page)
 	WARN_RATELIMIT(PageTail(page), "trying to isolate tail page");
 
 	if (PageLRU(page)) {
+
+		//if(page->hetero == HETERO_PG_FLAG) {
+		//	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		//}
 		struct zone *zone = page_zone(page);
 		struct lruvec *lruvec;
 
@@ -1611,7 +1615,46 @@ int isolate_lru_page(struct page *page)
 			ret = 0;
 		}
 		spin_unlock_irq(zone_lru_lock(zone));
+	}else if(page->hetero == HETERO_PG_FLAG) {
+		struct zone *zone = page_zone(page);
+		struct address_space *mapping = page_mapping(page);
+		if(!zone)
+			goto exit_isolate;
+		if(!mapping)
+			goto exit_isolate;
+
+		struct lruvec *lruvec;
+
+		spin_lock_irq(zone_lru_lock(zone));
+		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+		
+		if(PageActive(page)) {
+			printk(KERN_ALERT "Active page %s:%d \n", __func__, __LINE__);
+		}
+		if(PageLRU(page)) {
+			 printk(KERN_ALERT "LRU page %s:%d \n", __func__, __LINE__);
+		}
+
+		/*if (PageLRU(page)) 
+		{
+			int lru = page_lru(page);
+			get_page(page);
+			ClearPageLRU(page);
+			del_page_from_lru_list(page, lruvec, lru);
+			ret = 0;
+		}*/
+		spin_unlock_irq(zone_lru_lock(zone));
+
+		//spin_lock_irq(zone_lru_lock(zone));
+		/*if(add_to_page_cache_lru(page, mapping, page->index,
+                                  GFP_KERNEL)) {
+			printk(KERN_ALERT "FAILED %s:%d \n", __func__, __LINE__);
+		}*/
+		//spin_unlock_irq(zone_lru_lock(zone));
 	}
+	return ret;
+
+exit_isolate:
 	return ret;
 }
 

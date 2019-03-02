@@ -2,7 +2,7 @@
 
 
 
-export NVMBASE=$HOME/ssd/NVM
+export NVMBASE=$HOME/NVM
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME=$1
@@ -10,11 +10,12 @@ export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
 export PARA="-j32"
 export VER="4.17.0"
+#export VER="4.18.0-2-amd64"
 
 #QEMU
 export QEMU_IMG=$NVMBASE
-#export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-full.img
-export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
+export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
+#export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="18432M"
 export KERNEL=$NVMBASE/KERNEL
