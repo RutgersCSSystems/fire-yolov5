@@ -1629,10 +1629,20 @@ int isolate_lru_page(struct page *page)
 		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
 		
 		if(PageActive(page)) {
-			printk(KERN_ALERT "Active page %s:%d \n", __func__, __LINE__);
+			//printk(KERN_ALERT "Active page %s:%d \n", __func__, __LINE__);
 		}
 		if(PageLRU(page)) {
 			 printk(KERN_ALERT "LRU page %s:%d \n", __func__, __LINE__);
+		}
+		if(PageUnevictable(page)) {
+			 printk(KERN_ALERT "Unevictable page %s:%d \n", __func__, __LINE__);
+		}
+		if(PageDirty(page)) {
+			printk(KERN_ALERT "Dirty page %s:%d \n", __func__, __LINE__);
+		}
+
+		if(PageWriteback(page)) {
+			printk(KERN_ALERT "Writeback page %s:%d \n", __func__, __LINE__);
 		}
 
 		/*if (PageLRU(page)) 

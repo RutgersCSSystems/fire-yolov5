@@ -82,7 +82,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_MIGRATE_FREQ 1
+#define HETERO_MIGRATE_FREQ 100
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -312,9 +312,9 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 
         if(page && page_to_nid(page) == nodeid) {
 		if(enbl_hetero_objaff) {
-			spin_lock(&current->mm->objaff_cache_lock);
+			//spin_lock(&current->mm->objaff_cache_lock);
 		        hetero_insert_cpage_rbtree(current, page);
-			spin_unlock(&current->mm->objaff_cache_lock);	
+			//spin_unlock(&current->mm->objaff_cache_lock);	
 		}
 		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
@@ -646,14 +646,14 @@ int hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page){
 	int ret = 0;
         struct rb_root *root = &task->mm->objaff_cache_rbroot;
 	
-        if (unlikely(!trylock_page(page)))
-                goto out_putpage;
+        //if (unlikely(!trylock_page(page)))
+          //      goto out_putpage;
 
 	//ret = hetero_insert_pg_rbtree(task, page, root);
 	if(!ret) {
 		task->mm->objaff_cache_len++;
 	}
-	unlock_page(page);
+	//unlock_page(page);
 
 out_putpage:
 	return 0;
@@ -917,8 +917,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		(current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ != 0)) {
 		return;
 	}else {
-		printk("%s:%d Cache length %lu \n", __func__, __LINE__, 
-			current->mm->objaff_cache_len);
+		//printk("%s:%d Cache length %lu \n", __func__, __LINE__, 
+		//	current->mm->objaff_cache_len);
 	}
 	root = &current->mm->objaff_cache_rbroot;
         if(!root) {
@@ -927,7 +927,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	count = migrate_to_node_hetero(current->mm, get_fastmem_node(), get_slowmem_node(),
 		   MPOL_MF_MOVE_ALL);
-
 	//printk("%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, 
 	//		count);
 	return;

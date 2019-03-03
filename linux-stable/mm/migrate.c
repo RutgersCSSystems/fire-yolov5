@@ -1857,7 +1857,6 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 
 	root = &current->mm->objaff_cache_rbroot;
 	if(current->mm->objaff_cache_len < 1000) {
-
 		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		return rc;
 	}
@@ -1866,7 +1865,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(current->mm->migrate_attempt % 2 != 0)
 		return rc; 
 
-	for(pass = 0; pass < 10 && retry; pass++) {
+	for(pass = 0; pass < 1 && retry; pass++) {
 		retry = 0;
 		pagecount++;
 
@@ -1883,18 +1882,21 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 
 			list_for_each_entry_safe(page, page2, from, lru) {
 
-			/* Not a Hetero page */
-			if ((page->hetero != HETERO_PG_FLAG) ||
-				(page->hetero == HETERO_PG_DEL_FLAG))
-				continue;
 #endif
 
 retry:
 			cond_resched();
 
 			/* Migrate only page cache pages*/
-			if (PageAnon(page))
+			//if (PageAnon(page))
+			//	continue;
+
+			/* Not a Hetero page */
+			if ((page->hetero != HETERO_PG_FLAG) || 
+				(page->hetero == HETERO_PG_DEL_FLAG))
 				continue;
+
+			 pagecount++;
 
 #ifdef CONFIG_HETERO_HUGEPAGE
 			if (PageHuge(page))
@@ -1951,14 +1953,14 @@ retry:
 			}
 		}
 	}
-
 	nr_failed += retry;
 	rc = nr_failed;
 out:
 	current->mm->pages_migrated += nr_succeeded;
-	
-	printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u \n", 
-		current->mm->pages_migrated, nr_failed);
+	//printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u " 
+	//	"retry %d  pagecount %d\n", 
+	//	current->mm->pages_migrated, nr_failed, retry,  pagecount);
+
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)

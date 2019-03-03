@@ -909,10 +909,10 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 {
 	struct page *head = compound_head(page);
 
-	//if (PageLRU(page) && (page->hetero == HETERO_PG_FLAG)) {
-	//	SetPageLRU(page);
-	//	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-	//}
+	if (PageLRU(page) && (page->hetero == HETERO_PG_FLAG)) {
+		SetPageLRU(page);
+		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+	}
 	/*
 	 * Avoid migrating a page that is shared with others.
 	 */
@@ -920,8 +920,8 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 
 		if (!isolate_lru_page(head)) {
 
-			if(page->hetero == HETERO_PG_FLAG) 
-				printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+			//if(page->hetero == HETERO_PG_FLAG) 
+			//	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 			list_add_tail(&head->lru, pagelist);
 			mod_node_page_state(page_pgdat(head),
 				NR_ISOLATED_ANON + page_is_file_cache(head),
@@ -1093,7 +1093,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
 
 	if (!list_empty(&pagelist)) {
-		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+		//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_SYNC, MR_SYSCALL);
 		if (err)
