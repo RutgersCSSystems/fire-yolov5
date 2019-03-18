@@ -488,16 +488,15 @@ int migrate_page_move_mapping(struct address_space *mapping,
 
 	expected_count += hpage_nr_pages(page) + page_has_private(page);
 
-	if(page->hetero == HETERO_PG_FLAG)
-		printk(KERN_ALERT "%s:%d page count for migration: %d"
+	/*if(page->hetero == HETERO_PG_FLAG)
+		hetero_dbg("%s:%d page count for migration: %d"
 			"hpage_nr_pages %d page_has_private %d "
 			"page_count(page) %d Not radix page %d \n", 
 			__func__,__LINE__, hetero_page_migrate_cnt, 
 			hpage_nr_pages(page), 
 			page_has_private(page), page_count(page), 
 			(radix_tree_deref_slot_protected(pslot,
-                                        &mapping->i_pages.xa_lock) != page));
-
+                                        &mapping->i_pages.xa_lock) != page));*/
 
 	if (page_count(page) != expected_count ||
 		radix_tree_deref_slot_protected(pslot,
@@ -506,8 +505,8 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		return -EAGAIN;
 	}
 
-        if(page->hetero == HETERO_PG_FLAG)
-                hetero_dbg("%s:%d \n",__func__,__LINE__);
+        /*if(page->hetero == HETERO_PG_FLAG)
+                hetero_dbg("%s:%d \n",__func__,__LINE__);*/
 
 	if (!page_ref_freeze(page, expected_count)) {
 		xa_unlock_irq(&mapping->i_pages);
