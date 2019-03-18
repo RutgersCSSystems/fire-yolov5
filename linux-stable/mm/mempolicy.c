@@ -909,10 +909,11 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 {
 	struct page *head = compound_head(page);
 
-	if (PageLRU(page) && (page->hetero == HETERO_PG_FLAG)) {
+	/*if (PageLRU(page) && (page->hetero ==  HETERO_PG_FLAG)) {
 		SetPageLRU(page);
 		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-	}
+	}*/
+
 	/*
 	 * Avoid migrating a page that is shared with others.
 	 */
@@ -920,8 +921,6 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 
 		if (!isolate_lru_page(head)) {
 
-			//if(page->hetero == HETERO_PG_FLAG) 
-			//	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 			list_add_tail(&head->lru, pagelist);
 			mod_node_page_state(page_pgdat(head),
 				NR_ISOLATED_ANON + page_is_file_cache(head),
@@ -1036,6 +1035,9 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	}
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
+        //if (!list_empty(qp->pagelist))
+          //      printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);	
+
 	return 0;
 }
 
@@ -1089,11 +1091,14 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	 * space range and MPOL_MF_DISCONTIG_OK, this call can not fail.
 	 */
 	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
+
 	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
 
 	if (!list_empty(&pagelist)) {
-		//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+
+		hetero_dbg("%s:%d \n",__func__,__LINE__);
+
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_SYNC, MR_SYSCALL);
 		if (err)

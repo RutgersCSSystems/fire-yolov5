@@ -1599,9 +1599,10 @@ int isolate_lru_page(struct page *page)
 
 	if (PageLRU(page)) {
 
-		//if(page->hetero == HETERO_PG_FLAG) {
-		//	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		//}
+		if(page->hetero == HETERO_PG_MIG_FLAG) {
+			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+		}
+
 		struct zone *zone = page_zone(page);
 		struct lruvec *lruvec;
 
@@ -1615,7 +1616,9 @@ int isolate_lru_page(struct page *page)
 			ret = 0;
 		}
 		spin_unlock_irq(zone_lru_lock(zone));
-	}else if(page->hetero == HETERO_PG_FLAG) {
+
+	}else if(page->hetero == HETERO_PG_MIG_FLAG) {
+
 		struct zone *zone = page_zone(page);
 		struct address_space *mapping = page_mapping(page);
 		if(!zone)
@@ -1639,6 +1642,7 @@ int isolate_lru_page(struct page *page)
 		}
 		if(PageDirty(page)) {
 			printk(KERN_ALERT "Dirty page %s:%d \n", __func__, __LINE__);
+			hetero_replace_cache(GFP_KERNEL, page);
 		}
 
 		if(PageWriteback(page)) {

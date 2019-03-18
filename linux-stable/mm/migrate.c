@@ -457,13 +457,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
 	expected_count += is_device_private_page(page);
 	expected_count += is_device_public_page(page);
 
-        //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-
 	if (!mapping) {
 
-	        //if(page->hetero == HETERO_PG_FLAG)
-        	  //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+	        if(page->hetero == HETERO_PG_FLAG)
+        	        hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 		/* Anonymous page without mapping */
 		if (page_count(page) != expected_count)
@@ -478,8 +475,8 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		return MIGRATEPAGE_SUCCESS;
 	}
 
-        //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+        if(page->hetero == HETERO_PG_FLAG)
+                hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 	oldzone = page_zone(page);
 	newzone = page_zone(newpage);
@@ -491,7 +488,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
 
 	expected_count += hpage_nr_pages(page) + page_has_private(page);
 
-	/*if(page->hetero == HETERO_PG_FLAG)
+	if(page->hetero == HETERO_PG_FLAG)
 		printk(KERN_ALERT "%s:%d page count for migration: %d"
 			"hpage_nr_pages %d page_has_private %d "
 			"page_count(page) %d Not radix page %d \n", 
@@ -499,7 +496,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
 			hpage_nr_pages(page), 
 			page_has_private(page), page_count(page), 
 			(radix_tree_deref_slot_protected(pslot,
-                                        &mapping->i_pages.xa_lock) != page));*/
+                                        &mapping->i_pages.xa_lock) != page));
 
 
 	if (page_count(page) != expected_count ||
@@ -509,8 +506,8 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		return -EAGAIN;
 	}
 
-        //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+        if(page->hetero == HETERO_PG_FLAG)
+                hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 	if (!page_ref_freeze(page, expected_count)) {
 		xa_unlock_irq(&mapping->i_pages);
@@ -532,7 +529,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
 	}
 
         //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+          //      hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 	/*
 	 * Now we know that no one else is looking at the page:
@@ -551,9 +548,6 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		VM_BUG_ON_PAGE(PageSwapCache(page), page);
 	}
 
-        //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-
 	/* Move dirty while page refs frozen and newpage not yet exposed */
 	dirty = PageDirty(page);
 	if (dirty) {
@@ -561,8 +555,8 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		SetPageDirty(newpage);
 	}
 
-        //if(page->hetero == HETERO_PG_FLAG)
-          //      printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+        if(page->hetero == HETERO_PG_FLAG)
+               hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
 	if (PageTransHuge(page)) {
@@ -814,6 +808,117 @@ int migrate_page(struct address_space *mapping,
 }
 EXPORT_SYMBOL(migrate_page);
 
+
+
+
+
+/*
+ * Copy the page to its new location
+ */
+void hetero_migrate_page_states(struct page *newpage, struct page *page)
+{
+	int cpupid;
+
+	if (PageError(page))
+		SetPageError(newpage);
+	if (PageReferenced(page))
+		SetPageReferenced(newpage);
+	if (PageUptodate(page))
+		SetPageUptodate(newpage);
+	if (TestClearPageActive(page)) {
+		VM_BUG_ON_PAGE(PageUnevictable(page), page);
+		SetPageActive(newpage);
+	} else if (TestClearPageUnevictable(page))
+		SetPageUnevictable(newpage);
+	if (PageChecked(page))
+		SetPageChecked(newpage);
+	if (PageMappedToDisk(page))
+		SetPageMappedToDisk(newpage);
+
+	/* Move dirty on pages not done by migrate_page_move_mapping() */
+	if (PageDirty(page))
+		SetPageDirty(newpage);
+
+	if (page_is_young(page))
+		set_page_young(newpage);
+	if (page_is_idle(page))
+		set_page_idle(newpage);
+
+	/*
+	 * Copy NUMA information to the new page, to prevent over-eager
+	 * future migrations of this same page.
+	 */
+	cpupid = page_cpupid_xchg_last(page, -1);
+	page_cpupid_xchg_last(newpage, cpupid);
+
+	ksm_migrate_page(newpage, page);
+	/*
+	 * Please do not reorder this without considering how mm/ksm.c's
+	 * get_ksm_page() depends upon ksm_migrate_page() and PageSwapCache().
+	 */
+	if (PageSwapCache(page))
+		ClearPageSwapCache(page);
+	ClearPagePrivate(page);
+	set_page_private(page, 0);
+
+	/*
+	 * If any waiters have accumulated on the new page then
+	 * wake them up.
+	 */
+	if (PageWriteback(newpage))
+		end_page_writeback(newpage);
+
+	copy_page_owner(page, newpage);
+
+	mem_cgroup_migrate(page, newpage);
+}
+EXPORT_SYMBOL(hetero_migrate_page_states);
+
+void hetero_migrate_page_copy(struct page *newpage, struct page *page)
+{
+	if (PageHuge(page) || PageTransHuge(page))
+		copy_huge_page(newpage, page);
+	else
+		copy_highpage(newpage, page);
+
+	migrate_page_states(newpage, page);
+}
+EXPORT_SYMBOL(hetero_migrate_page_copy);
+
+/************************************************************
+ *                    Migration functions
+ ***********************************************************/
+
+/*
+ * Common logic to directly migrate a single LRU page suitable for
+ * pages that do not use PagePrivate/PagePrivate2.
+ *
+ * Pages are locked upon entry and exit.
+ */
+int hetero_migrate_page(struct address_space *mapping,
+		struct page *newpage, struct page *page,
+		enum migrate_mode mode)
+{
+	int rc;
+
+	BUG_ON(PageWriteback(page));	/* Writeback must be complete */
+
+	rc = migrate_page_move_mapping(mapping, newpage, page, NULL, mode, 0);
+
+	if (rc != MIGRATEPAGE_SUCCESS)
+		return rc;
+
+	if (mode != MIGRATE_SYNC_NO_COPY)
+		hetero_migrate_page_copy(newpage, page);
+	else
+		hetero_migrate_page_states(newpage, page);
+	return MIGRATEPAGE_SUCCESS;
+}
+EXPORT_SYMBOL(hetero_migrate_page);
+
+
+
+
 #ifdef CONFIG_BLOCK
 /*
  * Migration function for pages with buffers. This function can only be used
@@ -1005,7 +1110,7 @@ static int move_to_new_page(struct page *newpage, struct page *page,
 							page, mode);
 
 			if(page->hetero == HETERO_PG_FLAG)
-                        	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+                        	hetero_dbg("%s:%d \n",__func__,__LINE__);
 		}
 	} else {
 		/*
@@ -1017,13 +1122,6 @@ static int move_to_new_page(struct page *newpage, struct page *page,
 			rc = MIGRATEPAGE_SUCCESS;
 			__ClearPageIsolated(page);
 			goto out;
-		}
-
-
-                if(page->hetero == HETERO_PG_FLAG) {
-		        void *func = &mapping->a_ops->migratepage;
-		        printk(KERN_ALERT "func: %pF at address: %p\n", func, func);
-                        printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		}
 
 		rc = mapping->a_ops->migratepage(mapping, newpage,
@@ -1056,8 +1154,6 @@ static int move_to_new_page(struct page *newpage, struct page *page,
 			page->mapping = NULL;
 	}
 out:
-	//if(page->hetero == HETERO_PG_FLAG)
-	//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 	return rc;
 }
 
@@ -1140,9 +1236,6 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
 	if (unlikely(!trylock_page(newpage)))
 		goto out_unlock;
 
-	//if(page->hetero == HETERO_PG_FLAG)
-	//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-
 	if (unlikely(!is_lru)) {
 		rc = move_to_new_page(newpage, page, mode);
 		goto out_unlock_both;
@@ -1162,18 +1255,12 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
 	 */
 	if (!page->mapping) {
 
-		//if(page->hetero == HETERO_PG_FLAG)
-		//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-
 		VM_BUG_ON_PAGE(PageAnon(page), page);
 		if (page_has_private(page)) {
 			try_to_free_buffers(page);
 			goto out_unlock_both;
 		}
 	} else if (page_mapped(page)) {
-
-		//if(page->hetero == HETERO_PG_FLAG)
-		//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 
 		/* Establish migration ptes */
 		VM_BUG_ON_PAGE(PageAnon(page) && !PageKsm(page) && !anon_vma,
@@ -1184,15 +1271,10 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
 	}
 
 	if (!page_mapped(page)) {
-		//if(page->hetero == HETERO_PG_FLAG)
-		//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		rc = move_to_new_page(newpage, page, mode);
 	}
 
 	if (page_was_mapped) {
-
-		//if(page->hetero == HETERO_PG_FLAG)
-		//	printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 
 		remove_migration_ptes(page,
 			rc == MIGRATEPAGE_SUCCESS ? newpage : page, false);
@@ -1273,8 +1355,6 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
 			put_page(newpage);
 		goto out;
 	}
-
-	//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 	rc = __unmap_and_move(page, newpage, force, mode);
 	if (rc == MIGRATEPAGE_SUCCESS)
 		set_page_owner_migrate_reason(newpage, reason);
@@ -1857,7 +1937,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 
 	root = &current->mm->objaff_cache_rbroot;
 	if(current->mm->objaff_cache_len < 1000) {
-		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+		//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		return rc;
 	}
 	current->mm->migrate_attempt++;
@@ -1865,23 +1945,19 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(current->mm->migrate_attempt % 2 != 0)
 		return rc; 
 
-	for(pass = 0; pass < 1 && retry; pass++) {
+	for(pass = 0; pass < 5 && retry; pass++) {
 		retry = 0;
 		pagecount++;
-
 #if 0
                 struct rb_node *n, *next;
                 for (n = rb_first(root); n != NULL; n = rb_next(n)) {
                         if(n == NULL)
                                 break;
-
 			page = rb_entry(n, struct page, rb_node);
                         if(!page || page->hetero != HETERO_PG_FLAG)
                                 continue;
 #else
-
 			list_for_each_entry_safe(page, page2, from, lru) {
-
 #endif
 
 retry:
@@ -1957,9 +2033,11 @@ retry:
 	rc = nr_failed;
 out:
 	current->mm->pages_migrated += nr_succeeded;
-	//printk(KERN_ALERT "nr_succeeded pages migrated %u nr_failed %u " 
-	//	"retry %d  pagecount %d\n", 
-	//	current->mm->pages_migrated, nr_failed, retry,  pagecount);
+
+	if(nr_succeeded)
+		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+			"retry %d  pagecount %d\n", 
+			current->mm->pages_migrated, nr_failed, retry,  pagecount);
 
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);

@@ -82,7 +82,7 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_MIGRATE_FREQ 100
+#define HETERO_MIGRATE_FREQ 1
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -927,8 +927,9 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	count = migrate_to_node_hetero(current->mm, get_fastmem_node(), get_slowmem_node(),
 		   MPOL_MF_MOVE_ALL);
-	//printk("%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, 
-	//		count);
+
+	//if(!count)
+	//printk(KERN_ALERT "%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, count);
 	return;
 
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {
@@ -991,6 +992,62 @@ out_try_migration:
 EXPORT_SYMBOL(try_hetero_migration);
 
 
+
+
+void 
+hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage){
+
+        unsigned long count = 0;
+        struct page *newpg = NULL;
+	struct address_space *mapping = oldpage->mapping;
+	int destnode = get_slowmem_node();
+
+	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
+		goto out_hetero_replace;
+
+	if(!mapping) 
+		goto out_hetero_replace;
+
+	if(!current->mm->objaff_cache_len || 
+		(current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ != 0)) {
+		goto out_hetero_replace;
+	}	
+
+	newpg = page_cache_alloc(mapping);
+	if (!newpg) 
+		goto out_hetero_replace;
+
+	/*if (WARN_ON(page_has_private(oldpage))) {
+		printk("%s:%d NULL \n", __func__, __LINE__);
+		goto out_hetero_replace;
+	}
+	
+        if (WARN_ON(PageDirty(oldpage) || PageWriteback(oldpage))) {
+		printk("%s:%d NULL \n", __func__, __LINE__);	
+		goto out_hetero_replace;
+	}
+	if (WARN_ON(PageMlocked(oldpage))) {
+		printk("%s:%d NULL \n", __func__, __LINE__);
+		goto out_hetero_replace;
+	}*/
+
+	printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+	//if (replace_page_cache_page_hetero(oldpage, newpg, gfp_mask)) {
+	if(hetero_migrate_page(oldpage->mapping, newpg, oldpage, MIGRATE_SYNC)) {
+		printk(KERN_ALERT "%s:%d FAILED \n",__func__, __LINE__);
+		put_page(oldpage);
+	}else {
+		printk(KERN_ALERT "%s:%d SUCCESS \n",__func__, __LINE__);
+		oldpage->mapping = NULL;
+		delme_counter++;
+	}
+        newpg = NULL;
+
+out_hetero_replace:
+	printk("%s:%d NULL \n", __func__, __LINE__);
+        return 0;
+}
+EXPORT_SYMBOL(hetero_replace_cache);
 
 
 

@@ -12,6 +12,7 @@
 #ifdef CONFIG_HETERO_ENABLE
 #define HETERO_PG_FLAG 1
 #define HETERO_PG_DEL_FLAG 2
+#define HETERO_PG_MIG_FLAG 3
 //#define HETERO_MIGRATE_FREQ 100
 
 #define NUMA_FAST_NODE 0
@@ -75,7 +76,6 @@ check_hetero_page(struct mm_struct *mm, struct page *page);
 
 //hetero_insert_pg_rbtree
 //
-
 struct page *hetero_search_pg_rbtree(struct task_struct *task, 
 				     struct page *page);
 
@@ -86,11 +86,11 @@ void hetero_erase_kpage_rbtree(struct task_struct *task, struct page *page);
 /* Erase full rbtree */
 void hetero_erase_cache_rbree(struct task_struct *task);
 void hetero_erase_kbuff_rbree(struct task_struct *task);
-
-
 int hetero_reset_rbtree(struct task_struct *task);
-
 int migrate_pages_slowmem(struct task_struct *task);
+
+void
+hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
 
 #ifdef CONFIG_HETERO_STATS

@@ -66,6 +66,11 @@ extern int migrate_page(struct address_space *mapping,
 			struct page *newpage, struct page *page,
 			enum migrate_mode mode);
 
+extern int hetero_migrate_page(struct address_space *mapping,
+                        struct page *newpage, struct page *page,
+                        enum migrate_mode mode);
+
+
 
 extern int migrate_pages(struct list_head *l, new_page_t new, free_page_t free,
 		unsigned long private, enum migrate_mode mode, int reason);

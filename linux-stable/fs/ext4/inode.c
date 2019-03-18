@@ -3200,9 +3200,11 @@ static int ext4_da_write_end(struct file *file,
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(page && page->hetero == HETERO_PG_FLAG) {
-		deactivate_file_page(page);
+		page->hetero = HETERO_PG_FLAG;
+		//deactivate_file_page(page);
 		if(current && current->mm &&
 			current->mm->hetero_task == HETERO_PROC) {
+			//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 			try_hetero_migration(mapping, 0);
 		}
 	}
