@@ -57,7 +57,8 @@ int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
 int is_hetero_exit(struct task_struct *task);
 int get_fastmem_node(void);
-inline int is_hetero_obj(void *obj);
+int get_slowmem_node(void);
+int is_hetero_obj(void *obj);
 int is_hetero_page(struct page *page, int nodeid);
 void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);
@@ -71,7 +72,7 @@ hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page);
 int 
 hetero_insert_kpage_rbtree(struct task_struct *task, struct page *page);
 
-inline int 
+int 
 check_hetero_page(struct mm_struct *mm, struct page *page);
 
 //hetero_insert_pg_rbtree

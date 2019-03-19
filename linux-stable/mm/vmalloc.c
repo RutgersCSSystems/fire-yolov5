@@ -886,7 +886,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
         vb = NULL;
         if(is_hetero_buffer_set()) {
                  vb = kmalloc_node_hetero(sizeof(struct vmap_block),
-                                gfp_mask & GFP_RECLAIM_MASK, NUMA_HETERO_NODE);
+                                gfp_mask & GFP_RECLAIM_MASK, get_fastmem_node());
         }
         if(!vb)
 #endif
@@ -1427,7 +1427,7 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
 	area = NULL;
         if(is_hetero_buffer_set()) {
 		 area = kzalloc_node_hetero(sizeof(*area), 
-				gfp_mask & GFP_RECLAIM_MASK, NUMA_HETERO_NODE);
+				gfp_mask & GFP_RECLAIM_MASK, get_fastmem_node());
         }
 	if(!area)
 #endif
@@ -1929,7 +1929,7 @@ static struct vm_struct *__get_vm_area_node_hetero(unsigned long size,
 struct vm_struct *__get_vm_area_hetero(unsigned long size, unsigned long flags,
 				unsigned long start, unsigned long end)
 {
-	return __get_vm_area_node_hetero(size, 1, flags, start, end, NUMA_HETERO_NODE,
+	return __get_vm_area_node_hetero(size, 1, flags, start, end, get_fastmem_node(),
 				  GFP_KERNEL, __builtin_return_address(0));
 }
 EXPORT_SYMBOL_GPL(__get_vm_area_hetero);
@@ -2095,7 +2095,7 @@ static void *__vmalloc_node_hetero(unsigned long size, unsigned long align,
 
 void *__vmalloc_hetero(unsigned long size, gfp_t gfp_mask, pgprot_t prot)
 {
-	return __vmalloc_node_hetero(size, 1, gfp_mask, prot, NUMA_HETERO_NODE,
+	return __vmalloc_node_hetero(size, 1, gfp_mask, prot, get_fastmem_node(),
 				__builtin_return_address(0));
 }
 EXPORT_SYMBOL(__vmalloc_hetero);
@@ -2140,7 +2140,7 @@ void *vmalloc_hetero(unsigned long size)
 	insert_obj_rbtree(&pool_root, handle, dst);
 	return dst;
 #else
-	return __vmalloc_node_flags_hetero(size, NUMA_HETERO_NODE,
+	return __vmalloc_node_flags_hetero(size, get_fastmem_node(),
 				    GFP_KERNEL);
 #endif
 }

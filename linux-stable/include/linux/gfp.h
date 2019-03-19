@@ -502,7 +502,7 @@ __alloc_pages_node_hetero(int nid, gfp_t gfp_mask, unsigned int order)
 static inline struct page *alloc_pages_hetero_node(int nid, gfp_t gfp_mask,
 						unsigned int order)
 {
-	return __alloc_pages_node_hetero(NUMA_HETERO_NODE, gfp_mask, order);
+	return __alloc_pages_node_hetero(nid, gfp_mask, order);
 }
 //#endif
 
@@ -551,7 +551,7 @@ extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
 		alloc_pages_node(numa_node_id(), gfp_mask, order)
 
 #define alloc_pages_hetero(gfp_mask, order) \
-		alloc_pages_hetero_node(NUMA_HETERO_NODE, gfp_mask, order)
+		alloc_pages_hetero_node(get_fastmem_node(), gfp_mask, order)
 
 #define alloc_pages_vma(gfp_mask, order, vma, addr, node, false)\
 	alloc_pages(gfp_mask, order)

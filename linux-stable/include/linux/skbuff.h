@@ -1037,14 +1037,14 @@ struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t priority, int flags,
 static inline struct sk_buff *alloc_skb_hetero(unsigned int size,
 					gfp_t priority, void *hetero_obj)
 {
-	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE, 
+	return __alloc_skb_hetero(size, priority, 0, get_fastmem_node(), 
 				hetero_obj);
 }
 
 static inline struct sk_buff *alloc_skb_fclone_hetero(unsigned int size,
 					       gfp_t priority, void *hetero_obj)
 {
-	return __alloc_skb_hetero(size, priority, 0, NUMA_HETERO_NODE, 
+	return __alloc_skb_hetero(size, priority, 0, get_fastmem_node(), 
 				hetero_obj);
 }
 #endif

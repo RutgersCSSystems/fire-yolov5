@@ -139,7 +139,7 @@ inline int check_hetero_proc (struct task_struct *task)
     return 0; 	
 }
 
-inline int check_hetero_page(struct mm_struct *mm, struct page *page) {
+int check_hetero_page(struct mm_struct *mm, struct page *page) {
 
 	int rc = -1;
 
@@ -191,7 +191,7 @@ void debug_hetero_obj(void *obj) {
 }
 EXPORT_SYMBOL(debug_hetero_obj);
 
-inline int is_hetero_obj(void *obj) 
+int is_hetero_obj(void *obj) 
 {
 	if(enbl_hetero_objaff)
 		return 1;

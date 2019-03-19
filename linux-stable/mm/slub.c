@@ -2495,7 +2495,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 #ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
         if(is_hetero_buffer_set()) {
-                node = NUMA_HETERO_NODE;
+                node = get_fastmem_node();
         }
 #endif
 	freelist = get_partial(s, flags, node, c);
@@ -2946,7 +2946,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 	if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
 		node = get_fastmem_node();
 	}else {
-		node = NUMA_HETERO_NODE;
+		node = get_fastmem_node();
 	}
 #endif
 
@@ -3231,7 +3231,7 @@ redo:
 static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 		gfp_t gfpflags, unsigned long addr)
 {
-	return slab_alloc_node_hetero(s, gfpflags, NUMA_HETERO_NODE, addr);
+	return slab_alloc_node_hetero(s, gfpflags, get_fastmem_node(), addr);
 }
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
@@ -3255,7 +3255,7 @@ static __always_inline void *slab_alloc(struct kmem_cache *s,
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
-		return slab_alloc_node_hetero(s, gfpflags, NUMA_HETERO_NODE, addr);
+		return slab_alloc_node_hetero(s, gfpflags, get_fastmem_node(), addr);
 	}
 	return slab_alloc_node(s, gfpflags, get_fastmem_node(), addr);
 #else

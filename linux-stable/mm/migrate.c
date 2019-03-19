@@ -1334,6 +1334,13 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
 	if (!thp_migration_supported() && PageTransHuge(page))
 		return -ENOMEM;
 
+#ifdef CONFIG_HETERO_ENABLE
+	//if(page && page->hetero == HETERO_PG_FLAG) {
+		//printk(KERN_ALERT "%s:%d\n", __func__,__LINE__);
+		//void *func = get_new_page;
+		//printk("func: %pF at address: %p\n", func, func);
+	//}
+#endif
 	newpage = get_new_page(page, private);
 	if (!newpage)
 		return -ENOMEM;
@@ -2391,6 +2398,7 @@ static int do_pages_move(struct mm_struct *mm, nodemask_t task_nodes,
 			current_node = node;
 			start = i;
 		} else if (node != current_node) {
+
 			err = do_move_pages_to_node(mm, &pagelist, current_node);
 			if (err)
 				goto out;

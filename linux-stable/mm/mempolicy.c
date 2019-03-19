@@ -946,8 +946,17 @@ struct page *alloc_new_node_page(struct page *page, unsigned long node)
 		prep_transhuge_page(thp);
 		return thp;
 	} else
-		return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
-						    __GFP_THISNODE, 0);
+#ifdef CONFIG_HETERO_ENABLE
+        if(page && page->hetero == HETERO_PG_FLAG) {
+                hetero_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
+			__func__,__LINE__, page_to_nid(page), get_slowmem_node());
+		return __alloc_pages_node_hetero(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
+				__GFP_THISNODE, 0);
+        }
+#endif
+	return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
+				__GFP_THISNODE, 0);
+
 }
 
 /*

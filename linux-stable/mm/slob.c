@@ -477,7 +477,7 @@ EXPORT_SYMBOL(__kmalloc);
 void *__kmalloc_hetero(size_t size, gfp_t gfp)
 {
 	//return __do_kmalloc_node(size, gfp, NUMA_NO_NODE, _RET_IP_);
-	return __do_kmalloc_node(size, gfp, NUMA_HETERO_NODE, _RET_IP_);
+	return __do_kmalloc_node(size, gfp, get_fastmem_node(), _RET_IP_);
 
 }
 EXPORT_SYMBOL(__kmalloc_hetero);
