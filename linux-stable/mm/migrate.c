@@ -1922,7 +1922,7 @@ out:
 
 int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 		free_page_t put_new_page, unsigned long private,
-		enum migrate_mode mode, int reason)
+		enum migrate_mode mode, int reason, struct mm_struct *mm)
 {
 	int retry = 1;
 	int nr_failed = 0;
@@ -1932,24 +1932,24 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	struct page *page2;
 	int swapwrite = current->flags & PF_SWAPWRITE;
 	int rc = 0;
-	struct rb_root *root;
 	int pagecount = 0;
 
 	if (!swapwrite)
 		current->flags |= PF_SWAPWRITE;
 
-	if(current->mm->hetero_task != HETERO_PROC)
-		return rc;
-
-	root = &current->mm->objaff_cache_rbroot;
-	if(current->mm->objaff_cache_len < 1000) {
-		//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+	if(!mm) {
+		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		return rc;
 	}
-	current->mm->migrate_attempt++;
+	if(mm->hetero_task != HETERO_PROC)
+		return rc;
 
-	if(current->mm->migrate_attempt % 2 != 0)
-		return rc; 
+	if(mm->objaff_cache_len < 1000) {
+		return rc;
+	}
+	//mm->migrate_attempt++;
+	//if(mm->migrate_attempt % 2 != 0)
+	//	return rc; 
 
 	for(pass = 0; pass < 5 && retry; pass++) {
 		retry = 0;
@@ -2038,12 +2038,12 @@ retry:
 	nr_failed += retry;
 	rc = nr_failed;
 out:
-	current->mm->pages_migrated += nr_succeeded;
+	mm->pages_migrated += nr_succeeded;
 
 	if(nr_succeeded)
 		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
-			"retry %d  pagecount %d\n", 
-			current->mm->pages_migrated, nr_failed, retry,  pagecount);
+			    "retry %d  pagecount %d\n", 
+			    mm->pages_migrated, nr_failed, retry,  pagecount);
 
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
@@ -2052,7 +2052,7 @@ out:
 	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
 
 	/*Update the heteromem stats*/
-	current->mm->objaff_cache_len -= nr_succeeded;	
+	mm->objaff_cache_len -= nr_succeeded;	
 
 	if (!swapwrite)
 		current->flags &= ~PF_SWAPWRITE;

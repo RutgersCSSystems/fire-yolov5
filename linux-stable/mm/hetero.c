@@ -83,6 +83,12 @@
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 100
+#define _ENABLE_HETERO_THREAD
+
+#ifdef _ENABLE_HETERO_THREAD
+struct task_struct *migration_thread;
+int migration_thrd_active;
+#endif
 
 /* Hetero Stats information*/
 int global_flag = 0;
@@ -165,6 +171,10 @@ int is_hetero_exit(struct task_struct *task)
 	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
 	print_hetero_stats(task);
         //reset_hetero_stats(task);
+#ifdef _ENABLE_HETERO_THREAD
+	kthread_stop(migration_thread);
+	migration_thread = NULL;
+#endif
     }
     return 0;
 }
@@ -896,6 +906,21 @@ del_list_from_rbtree(struct rb_root *root, struct list_head *list_pages){
 
 int delme_counter = 0;
 
+static int migration_thread_fn(void *arg) {
+
+	unsigned long count = 0;
+	struct mm_struct *mm = (struct mm_struct *)arg;
+	migration_thrd_active = 1;
+	if(!mm) {
+		return 0;
+	}
+	count = migrate_to_node_hetero(mm, get_fastmem_node(), 
+			get_slowmem_node(),MPOL_MF_MOVE_ALL);
+	migration_thrd_active = 0;
+	//printk("%s:%d\n", __func__, __LINE__);	
+}
+
+
 void 
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
@@ -909,27 +934,36 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
 		return;
-
 	if(!mapping) 
 		return;
 
 	if(!current->mm->objaff_cache_len || 
 		(current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ != 0)) {
 		return;
-	}else {
-		//printk("%s:%d Cache length %lu \n", __func__, __LINE__, 
-		//	current->mm->objaff_cache_len);
 	}
+
+	hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, 
+		current->mm->objaff_cache_len);
+	
 	root = &current->mm->objaff_cache_rbroot;
         if(!root) {
                 printk("%s:%d NULL \n", __func__, __LINE__);
         }
 
+#ifdef _ENABLE_HETERO_THREAD
+	if(!migration_thrd_active) {
+		migration_thread = kthread_run(migration_thread_fn, current->mm,
+                                      "migration_thread");	
+	}
+	else {
+		//kthread_stop(migration_thread);
+		//migration_thread = NULL;
+	}	
+#else
 	count = migrate_to_node_hetero(current->mm, get_fastmem_node(), get_slowmem_node(),
 		   MPOL_MF_MOVE_ALL);
+#endif
 
-	//if(!count)
-	//printk(KERN_ALERT "%s:%d migrate_to_node_hetero returned %lu \n", __func__, __LINE__, count);
 	return;
 
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {
