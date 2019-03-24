@@ -11,6 +11,8 @@
 #include <assert.h>
 #include <time.h>
 
+#define __NR_start_trace 333
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +21,15 @@ void migrate_pages(int node);
 int migrate_now();
 void init_allocs();
 void stopmigrate();
+
+#define HETERO_MIGRATE_FREQ 17
+#define FREQ 10000
+
+void set_migration_freq() {
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, FREQ);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

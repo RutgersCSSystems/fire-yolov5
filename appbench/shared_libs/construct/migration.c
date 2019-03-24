@@ -35,8 +35,9 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-
 #define HETERO_FASTMEM_NODE 0
+
+
 
 static int setinit;
 
@@ -46,6 +47,8 @@ void sig_handler(int);
 
 static void con() __attribute__((constructor)); 
 static void dest() __attribute__((destructor));
+
+
 
 void dest() {
     int a = 0;
@@ -81,6 +84,9 @@ void con() {
         a = syscall(__NR_start_trace, HETERO_FULLKERN, 0);
         a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
 	a = syscall(__NR_start_trace, (int)pid);
+	a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
+
+	set_migration_freq();
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
