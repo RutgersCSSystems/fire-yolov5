@@ -82,7 +82,8 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
-#define HETERO_MIGRATE_FREQ 100
+#define HETERO_MIGRATE_FREQ 17
+
 #define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
@@ -101,6 +102,7 @@ int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 int hetero_fastmem_node=0;
+int hetero_migrate_freq=0;
 int enbl_hetero_objaff=0;
 
 int hetero_pid = 0;
@@ -328,10 +330,6 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		}
 		page->hetero = HETERO_PG_FLAG;
 		current->mm->pgcache_hits_cnt += 1;
-		/*if(current->mm->objaff_cache_len && 
-		    current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ == 0) {
-			migrate_pages_slowmem(current);
-		}*/
 	}else {
 		page->hetero = 0;
         	current->mm->pgcache_miss_cnt += 1;
@@ -542,12 +540,13 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
 	    enbl_hetero_kernel = 1;
 	    break;
-
 	case HETERO_SET_FASTMEM_NODE:
 	    printk("flag to set FASTMEM node to %d \n", val);
 	    hetero_fastmem_node = val;
 	    break;
-
+	case HETERO_MIGRATE_FREQ:
+	     hetero_migrate_freq = val;
+	     printk("flag to set MIGRATION FREQ to %d \n", hetero_migrate_freq);
 	default:
 #ifdef CONFIG_HETERO_DEBUG
 	   hetero_dbgmask = 1;	
@@ -938,7 +937,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		return;
 
 	if(!current->mm->objaff_cache_len || 
-		(current->mm->objaff_cache_len % HETERO_MIGRATE_FREQ != 0)) {
+		(current->mm->objaff_cache_len % hetero_migrate_freq != 0)) {
 		return;
 	}
 
