@@ -552,6 +552,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case HETERO_MIGRATE_FREQ:
 	     hetero_migrate_freq = val;
 	     printk("flag to set MIGRATION FREQ to %d \n", hetero_migrate_freq);
+	     break;
 	default:
 #ifdef CONFIG_HETERO_DEBUG
 	   hetero_dbgmask = 1;	
