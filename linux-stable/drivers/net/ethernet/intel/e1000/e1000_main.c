@@ -4364,6 +4364,55 @@ static struct sk_buff *e1000_copybreak(struct e1000_adapter *adapter,
 	return skb;
 }
 
+#ifdef CONFIG_HETERO_ENABLE
+/* initialize skb pre
+ */
+static void init_skb_pre(struct e1000_adapter *adapter,
+				       struct e1000_rx_buffer *buffer_info,
+				       u32 length, const void *data, struct sk_buff *skb)
+{
+	if (length > copybreak)
+		return NULL;
+
+	dma_sync_single_for_cpu(&adapter->pdev->dev, buffer_info->dma,
+				length, DMA_FROM_DEVICE);
+
+	skb->pre_parse = 1;
+
+	skb_put_data(skb, data, length);
+}
+
+/**
+ * e1000_receive_skb - helper function to handle rx indications
+ * @adapter: board private structure
+ * @status: descriptor status field as written by hardware
+ * @vlan: descriptor vlan field as written by hardware (no le/be conversion)
+ * @skb: pointer to sk_buff to be indicated to stack
+ */
+static void e1000_pre_parse_skb(struct e1000_adapter *adapter, u8 status,
+                              __le16 vlan, struct sk_buff *skb)
+{
+//#if 0
+	skb->pre_parse = 1;
+    skb->protocol = eth_type_trans(skb, adapter->netdev);
+
+	printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);
+
+    if (status & E1000_RXD_STAT_VP) {
+            u16 vid = le16_to_cpu(vlan) & E1000_RXD_SPC_VLAN_MASK;
+
+            __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
+    }
+    napi_gro_receive(&adapter->napi, skb);
+
+	printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);	
+//#endif
+}
+
+
+#endif
+
+
 /**
  * e1000_clean_rx_irq - Send received data up the network stack; legacy
  * @adapter: board private structure
@@ -4385,12 +4434,18 @@ static bool e1000_clean_rx_irq(struct e1000_adapter *adapter,
 	bool cleaned = false;
 	unsigned int total_rx_bytes = 0, total_rx_packets = 0;
 
+#ifdef CONFIG_HETERO_ENABLE
+	//struct sk_buff p_skb;
+	struct sock *sk = NULL;
+	struct task_struct *task = NULL;
+#endif
+
 	i = rx_ring->next_to_clean;
 	rx_desc = E1000_RX_DESC(*rx_ring, i);
 	buffer_info = &rx_ring->buffer_info[i];
 
 	while (rx_desc->status & E1000_RXD_STAT_DD) {
-		struct sk_buff *skb;
+		struct sk_buff *skb = NULL;
 		u8 *data;
 		u8 status;
 
@@ -4404,6 +4459,88 @@ static bool e1000_clean_rx_irq(struct e1000_adapter *adapter,
 
 		data = buffer_info->rxbuf.data;
 		prefetch(data);
+
+#ifdef CONFIG_HETERO_ENABLE
+
+		if (is_hetero_buffer_set_new()) {
+
+				/*struct sk_buff *pre_skb = &p_skb;
+
+				init_skb_pre(adapter, buffer_info, length, data, pre_skb);
+				e1000_pre_parse_skb(adapter, status, rx_desc->special, pre_skb);*/
+				
+				struct sk_buff *pre_skb = e1000_copybreak(adapter, buffer_info, length, data);
+
+				u32 len = le16_to_cpu(rx_desc->length);
+
+				/* !EOP means multiple descriptors were used to store a single
+				 * packet, if thats the case we need to toss it.  In fact, we
+				 * to toss every packet with the EOP bit clear and the next
+				 * frame that _does_ have the EOP bit set, as it is by
+				 * definition only a frame fragment
+				 */
+				if (unlikely(!(status & E1000_RXD_STAT_EOP)))
+					adapter->discarding = true;
+
+				if (adapter->discarding) {
+					/* All receives must fit into a single buffer */
+					netdev_dbg(netdev, "Receive packet consumed multiple buffers\n");
+					dev_kfree_skb(pre_skb);
+					if (status & E1000_RXD_STAT_EOP)
+						adapter->discarding = false;
+					goto next_desc;
+				}
+
+				if (unlikely(rx_desc->errors & E1000_RXD_ERR_FRAME_ERR_MASK)) {
+					if (e1000_tbi_should_accept(adapter, status,
+									rx_desc->errors,
+									len, data)) {
+						len--;
+					} else if (netdev->features & NETIF_F_RXALL) {
+						goto process_pre_skb;
+					} else {
+						dev_kfree_skb(pre_skb);
+						goto next_desc;
+					}
+				}
+
+process_pre_skb:
+
+				if (likely(!(netdev->features & NETIF_F_RXFCS)))
+					/* adjust length to remove Ethernet CRC, this must be
+					 * done after the TBI_ACCEPT workaround above
+					 */
+					len -= 4;
+#if 0
+				if (buffer_info->rxbuf.data == NULL)
+					skb_put(pre_skb, len);
+				else /* copybreak skb */
+					skb_trim(pre_skb, len);
+#endif
+
+				e1000_pre_parse_skb(adapter, status, rx_desc->special, pre_skb);
+
+				sk = pre_skb->sk;
+
+				dev_kfree_skb(pre_skb);
+
+				printk(KERN_ALERT "sk = 0x%lx | %s:%d \n", sk, __FUNCTION__, __LINE__);
+
+
+				// TODO should able to get task here but get a kernel panic,
+				// need to figure it out
+
+				/*task = find_task_by_vpid(sk->sk_socket->file->f_owner.pid->numbers->nr);
+
+				if (sk && task && task->mm && sk->hetero_obj == task->mm->hetero_obj) {
+					skb = e1000_copybreak_hetero(adapter, buffer_info, length, data);
+				}*/
+
+		}
+
+		if (!skb)
+#endif
+
 		skb = e1000_copybreak(adapter, buffer_info, length, data);
 		if (!skb) {
 			unsigned int frag_len = e1000_frag_len(adapter);

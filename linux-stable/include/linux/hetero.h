@@ -66,6 +66,9 @@ void debug_hetero_obj(void *obj);
 void set_sock_hetero_obj(void *socket, void *inode);
 int hetero_init_rbtree(struct task_struct *task);
 
+
+int is_hetero_buffer_set_new(void);
+
 int
 hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page);
 int 

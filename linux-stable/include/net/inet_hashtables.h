@@ -369,9 +369,13 @@ static inline struct sock *__inet_lookup_skb(struct inet_hashinfo *hashinfo,
 	struct sock *sk = skb_steal_sock(skb);
 	const struct iphdr *iph = ip_hdr(skb);
 
+	printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
+
 	*refcounted = true;
 	if (sk)
 		return sk;
+
+	printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
 
 	return __inet_lookup(dev_net(skb_dst(skb)->dev), hashinfo, skb,
 			     doff, iph->saddr, sport,
