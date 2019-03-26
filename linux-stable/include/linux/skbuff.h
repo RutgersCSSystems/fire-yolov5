@@ -699,6 +699,10 @@ struct sk_buff {
 		struct list_head	tcp_tsorted_anchor;
 	};
 
+#ifdef CONFIG_HETERO_ENABLE
+	__u16			pre_parse;
+#endif
+
 #ifdef CONFIG_XFRM
 	struct	sec_path	*sp;
 #endif
