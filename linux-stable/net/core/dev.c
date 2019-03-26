@@ -4638,11 +4638,6 @@ static int __netif_receive_skb(struct sk_buff *skb)
 {
 	int ret;
 
-#ifdef CONFIG_HETERO_ENABLE
-	//dump_stack();
-	printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
-#endif
-
 	if (sk_memalloc_socks() && skb_pfmemalloc(skb)) {
 		unsigned int noreclaim_flag;
 
@@ -4755,8 +4750,6 @@ static int netif_receive_skb_internal(struct sk_buff *skb)
  */
 int netif_receive_skb(struct sk_buff *skb)
 {
-	//dump_stack();
-
 	trace_netif_receive_skb_entry(skb);
 
 	return netif_receive_skb_internal(skb);
@@ -5384,8 +5377,6 @@ void __napi_schedule(struct napi_struct *n)
 {
 	unsigned long flags;
 
-	//printk(KERN_ALERT "NAPI used ... | %s:%d\n", __FUNCTION__, __LINE__);
-
 	local_irq_save(flags);
 	____napi_schedule(this_cpu_ptr(&softnet_data), n);
 	local_irq_restore(flags);
@@ -5404,8 +5395,6 @@ EXPORT_SYMBOL(__napi_schedule);
 bool napi_schedule_prep(struct napi_struct *n)
 {
 	unsigned long val, new;
-
-	//printk(KERN_ALERT "NAPI used ... | %s:%d\n", __FUNCTION__, __LINE__);
 
 	do {
 		val = READ_ONCE(n->state);
@@ -5821,10 +5810,6 @@ static __latent_entropy void net_rx_action(struct softirq_action *h)
 			break;
 		}
 	}
-
-#ifdef CONFIG_HETERO_ENABLE 
-	printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);                                                                      
-#endif
 
 	local_irq_disable();
 

@@ -229,17 +229,12 @@ EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 int is_hetero_buffer_set(void)
 {
-        if(check_hetero_proc(current))
+        if(check_hetero_proc(current)) 
                 return enbl_hetero_buffer;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
-int is_hetero_buffer_set_new(void)
-{
-    return enbl_hetero_buffer;
-}
-EXPORT_SYMBOL(is_hetero_buffer_set_new);
 
 
 /*Sets current task with hetero obj*/
@@ -571,8 +566,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;
     }
-	printk(KERN_ALERT "In syscall with flag %d, hetero_buffer_set is %d | %s:%d\n", flag, enbl_hetero_buffer, __FUNCTION__,__LINE__);
-
     return 0;
 }
 

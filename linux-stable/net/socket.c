@@ -913,14 +913,9 @@ static ssize_t sock_write_iter(struct kiocb *iocb, struct iov_iter *from)
 			     .msg_iocb = iocb};
 	ssize_t res;
 
-	printk(KERN_ALERT "current_process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
-
 #ifdef CONFIG_HETERO_ENABLE
         if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
 		&& file->f_inode ) {
-
-			printk(KERN_ALERT "%s:%d\n", __FUNCTION__, __LINE__);			
-
         	set_sock_hetero_obj((void *)sock, (void *)file->f_inode);
         }
 #endif
@@ -1638,15 +1633,6 @@ int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
 	fd_install(newfd, newfile);
 	err = newfd;
 
-#ifdef CONFIG_HETERO_ENABLE
-	if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
-		&& newsock->file->f_inode ) { 
-			printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
- 
-			set_sock_hetero_obj((void *)newsock, (void *)newsock->file->f_inode);
-	}
-#endif
-
 out_put:
 	fput_light(sock->file, fput_needed);
 out:
@@ -1809,16 +1795,6 @@ int __sys_sendto(int fd, void __user *buff, size_t len, unsigned int flags,
 	if (!sock)
 		goto out;
 
-#ifdef CONFIG_HETERO_ENABLE
-        if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
-		&& sock->file->f_inode ) {
-
-			printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);			
-
-        	set_sock_hetero_obj((void *)sock, (void *)sock->file->f_inode);
-        }
-#endif
-
 	msg.msg_name = NULL;
 	msg.msg_control = NULL;
 	msg.msg_controllen = 0;
@@ -1879,16 +1855,6 @@ int __sys_recvfrom(int fd, void __user *ubuf, size_t size, unsigned int flags,
 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
 	if (!sock)
 		goto out;
-
-#ifdef CONFIG_HETERO_ENABLE
-        if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
-		&& sock->file->f_inode ) {
-
-			printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);			
-
-        	set_sock_hetero_obj((void *)sock, (void *)sock->file->f_inode);
-        }
-#endif
 
 	msg.msg_control = NULL;
 	msg.msg_controllen = 0;

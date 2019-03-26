@@ -253,8 +253,6 @@ int ip_local_deliver(struct sk_buff *skb)
 			return 0;
 	}
 
-	printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);
-
 	return NF_HOOK(NFPROTO_IPV4, NF_INET_LOCAL_IN,
 		       net, NULL, skb, skb->dev, NULL,
 		       ip_local_deliver_finish);
@@ -331,8 +329,6 @@ static int ip_rcv_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
 		const struct net_protocol *ipprot;
 		int protocol = iph->protocol;
 
-		printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);
-
 		ipprot = rcu_dereference(inet_protos[protocol]);
 		if (ipprot && (edemux = READ_ONCE(ipprot->early_demux))) {
 			err = edemux(skb);
@@ -342,13 +338,6 @@ static int ip_rcv_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
 			iph = ip_hdr(skb);
 		}
 	}
-
-	printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);
-
-#ifdef CONFIG_HETERO_ENABLE
-	if (skb->pre_parse == 1)
-		return 0;
-#endif	
 
 	/*
 	 *	Initialise the virtual path cache for the packet. It describes
@@ -445,10 +434,6 @@ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, 
 		goto inhdr_error;
 
 	iph = ip_hdr(skb);
-
-#ifdef CONFIG_HETERO_ENABLE	
-	printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
-#endif
 
 	/*
 	 *	RFC1122: 3.2.1.2 MUST silently discard any IP frame that fails the checksum.
