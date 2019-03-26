@@ -1647,7 +1647,7 @@ static void sk_init_common(struct sock *sk)
 	lockdep_set_class_and_name(&sk->sk_receive_queue.lock,
 			af_rlock_keys + sk->sk_family,
 			af_family_rlock_key_strings[sk->sk_family]);
-	lockdep_set_class_and_name(&sk->sk_write_queue.lock,
+	lockdep_set_class_and_name(&asdf.lock,
 			af_wlock_keys + sk->sk_family,
 			af_family_wlock_key_strings[sk->sk_family]);
 	lockdep_set_class_and_name(&sk->sk_error_queue.lock,
