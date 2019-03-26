@@ -50,7 +50,7 @@ static struct sk_buff *qpolicy_prio_worst_skb(struct sock *sk)
 {
 	struct sk_buff *skb, *worst = NULL;
 
-	skb_queue_walk(&sk->sk_write_queue, skb)
+	skb_queue_walk(&asdf, skb)
 		if (worst == NULL || skb->priority < worst->priority)
 			worst = skb;
 	return worst;
