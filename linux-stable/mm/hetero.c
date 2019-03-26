@@ -102,7 +102,7 @@ int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 int hetero_fastmem_node=0;
-int hetero_migrate_freq=0;
+int migrate_freq=0;
 int enbl_hetero_objaff=0;
 
 int hetero_pid = 0;
@@ -545,8 +545,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    hetero_fastmem_node = val;
 	    break;
 	case HETERO_MIGRATE_FREQ:
-	     hetero_migrate_freq = val;
-	     printk("flag to set MIGRATION FREQ to %d \n", hetero_migrate_freq);
+	     migrate_freq = val;
+	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
 	     break;
 	default:
 #ifdef CONFIG_HETERO_DEBUG
@@ -937,8 +937,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if(!mapping) 
 		return;
 
-	if(!current->mm->objaff_cache_len || 
-		(current->mm->objaff_cache_len % hetero_migrate_freq != 0)) {
+	if(!migrate_freq ||  !current->mm->objaff_cache_len || 
+		(current->mm->objaff_cache_len % migrate_freq != 0)) {
 		return;
 	}
 
