@@ -205,7 +205,7 @@ EXPORT_SYMBOL(debug_hetero_obj);
 
 int is_hetero_obj(void *obj) 
 {
-	if(enbl_hetero_objaff)
+	if(!enbl_hetero_objaff)
 		return 1;
 
 #ifdef CONFIG_HETERO_ENABLE
@@ -547,7 +547,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case HETERO_MIGRATE_FREQ:
 	     migrate_freq = val;
 	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
-	     break;
 	default:
 #ifdef CONFIG_HETERO_DEBUG
 	   hetero_dbgmask = 1;	
@@ -559,6 +558,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #ifdef CONFIG_HETERO_OBJAFF
 	    hetero_init_rbtree(current);
 	    enbl_hetero_objaff = 1;
+	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
 #else
 	    enbl_hetero_objaff = 0;
 #endif 
