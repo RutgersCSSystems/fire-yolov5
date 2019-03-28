@@ -75,7 +75,10 @@
 #define PRINT_ALLOCATE 10
 
 
-/* Flags to enable hetero allocations */
+/* 
+Flags to enable hetero allocations.
+Move this to header file later.
+*/
 #define HETERO_PGCACHE 11
 #define HETERO_BUFFER 12
 #define HETERO_JOURNAL 13
@@ -83,6 +86,7 @@
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 17
+#define HETERO_OBJ_AFF 18
 
 #define _ENABLE_HETERO_THREAD
 
@@ -208,8 +212,13 @@ EXPORT_SYMBOL(debug_hetero_obj);
 
 int is_hetero_obj(void *obj) 
 {
+#ifdef CONFIG_HETERO_OBJAFF
+        /*If we do not enable object affinity then we simply 
+	return true for all the case*/
 	if(!enbl_hetero_objaff)
 		return 1;
+#endif
+
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(obj && current && current->mm && 
@@ -255,7 +264,8 @@ void set_curr_hetero_obj(void *obj)
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
 /*Sets page with hetero obj*/
-void set_hetero_obj_page(struct page *page, void *obj)                          
+void 
+set_hetero_obj_page(struct page *page, void *obj)                          
 {
 #ifdef CONFIG_HETERO_ENABLE
         page->hetero_obj = obj;
@@ -264,12 +274,21 @@ void set_hetero_obj_page(struct page *page, void *obj)
 EXPORT_SYMBOL(set_hetero_obj_page);
 
 
-void set_fsmap_hetero_obj(void *mapobj)                                        
+void 
+set_fsmap_hetero_obj(void *mapobj)                                        
 {
+
 #ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
 	struct dentry *res = NULL;
+
+#ifdef CONFIG_HETERO_OBJAFF
+        /*If we do not enable object affinity then we simply 
+	return true for all the case*/
+	if(!enbl_hetero_objaff)
+		return;
+#endif
 
 	mapping = (struct address_space *)mapobj;
         mapping->hetero_obj = NULL;
@@ -478,6 +497,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    //if(enbl_hetero_objaff)		
 	    //	hetero_reset_rbtree(current);	
 
+	    enbl_hetero_objaff = 0;	
+
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
 	    hetero_usrpg_cnt = 0;
@@ -564,6 +585,15 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case HETERO_MIGRATE_FREQ:
 	     migrate_freq = val;
 	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
+	     break;	
+	case HETERO_OBJ_AFF:
+#ifdef CONFIG_HETERO_OBJAFF
+	    hetero_init_rbtree(current);
+	    enbl_hetero_objaff = 1;
+	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
+#endif 
+	    break;	
+
 	default:
 #ifdef CONFIG_HETERO_DEBUG
 	   hetero_dbgmask = 1;	
@@ -572,13 +602,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #ifdef CONFIG_HETERO_ENABLE
 	    current->mm->hetero_task = HETERO_PROC;
 #endif
-#ifdef CONFIG_HETERO_OBJAFF
-	    hetero_init_rbtree(current);
-	    enbl_hetero_objaff = 1;
-	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
-#else
-	    enbl_hetero_objaff = 0;
-#endif 
             memcpy(procname, current->comm, TASK_COMM_LEN);
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;
