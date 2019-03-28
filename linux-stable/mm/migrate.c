@@ -1975,10 +1975,13 @@ retry:
 
 			/* Not a Hetero page */
 			if ((page->hetero != HETERO_PG_FLAG) || 
-				(page->hetero == HETERO_PG_DEL_FLAG))
+				(page->hetero == HETERO_PG_DEL_FLAG) )
 				continue;
 
-			 pagecount++;
+			if (page_to_nid(page) == get_slowmem_node()) {
+				continue;
+			}
+			pagecount++;
 
 #ifdef CONFIG_HETERO_HUGEPAGE
 			if (PageHuge(page))

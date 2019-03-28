@@ -185,19 +185,22 @@ EXPORT_SYMBOL(is_hetero_exit);
 
 void debug_hetero_obj(void *obj) {
 
-#ifdef CONFIG_HETERO_DEBUG
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
+
+#ifdef CONFIG_HETERO_DEBUG
 	struct inode *currinode = (struct inode *)current->mm->hetero_obj;
 	if(inode && currinode) {
+
+		if(execute_ok(inode))
+			return;
+
 		dentry = d_find_any_alias(inode);
 		curr_dentry = d_find_any_alias(currinode);
-		if(current->mm->hetero_obj != obj) {
-			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s "
-			 "current->heterobj_name %s Write access? %d \n",
-		 	__func__,__LINE__,current->comm, inode->i_ino, 
-			dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
-		}
+		printk(KERN_ALERT "%s:%d Proc %s Hetero Proc? %d Inode %lu FNAME %s "
+		 "current->heterobj_name %s Write access? %d \n",
+		__func__,__LINE__,current->comm, current->mm->hetero_task, inode->i_ino, 
+		dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
 	}
 #endif
 }
@@ -211,8 +214,13 @@ int is_hetero_obj(void *obj)
 #ifdef CONFIG_HETERO_ENABLE
 	if(obj && current && current->mm && 
 		current->mm->hetero_obj && current->mm->hetero_obj == obj){
+		//debug_hetero_obj(current->mm->hetero_obj);
 		return 1;
-	}
+	}else if(obj && current && current->mm && current->mm->hetero_obj) {
+		//dump_stack();
+       		debug_hetero_obj(obj);
+        }
+
 #endif
 	return 0;
 }
@@ -261,12 +269,21 @@ void set_fsmap_hetero_obj(void *mapobj)
 #ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
+	struct dentry *res = NULL;
+
 	mapping = (struct address_space *)mapobj;
         mapping->hetero_obj = NULL;
 	inode = (struct inode *)mapping->host;
 
+	if(execute_ok(inode)) {
+		mapping->hetero_obj = NULL;
+		return;
+	}
+
+	if(current->mm->hetero_obj == (void *)inode)
+		return;
+
         if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
-		struct dentry *res;
                 mapping->hetero_obj = (void *)inode;
                 current->mm->hetero_obj = (void *)inode;
 #ifdef CONFIG_HETERO_DEBUG
@@ -458,8 +475,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             enbl_hetero_kernel = 0;
 	    reset_hetero_stats(current);	
 
-	    if(enbl_hetero_objaff)		
-	    	hetero_reset_rbtree(current);	
+	    //if(enbl_hetero_objaff)		
+	    //	hetero_reset_rbtree(current);	
 
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
@@ -584,7 +601,8 @@ int hetero_init_rbtree(struct task_struct *task) {
 }
 EXPORT_SYMBOL(hetero_init_rbtree);
 
-
+/* Delete this code */
+#if 0
 int hetero_reset_rbtree(struct task_struct *task) {
         //hetero_erase_cache_rbree(task);
 	//hetero_erase_kbuff_rbree(task);
@@ -592,6 +610,7 @@ int hetero_reset_rbtree(struct task_struct *task) {
 	return 0;
 }
 EXPORT_SYMBOL(hetero_reset_rbtree);
+#endif
 
 
 int hetero_insert_pg_rbtree(struct task_struct *task, struct page *page, 

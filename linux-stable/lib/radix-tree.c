@@ -959,7 +959,7 @@ int __radix_tree_create_hetero(struct radix_tree_root *root, unsigned long index
 
 	/*Mark the cache that it belongs to Hetero targe object*/
 #ifdef CONFIG_HETERO_ENABLE
-        if (is_hetero_obj(hetero_obj)){
+        if (is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
 		update_hetero_obj(radix_tree_node_cachep, hetero_obj);
 	}
 #endif

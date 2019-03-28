@@ -738,7 +738,7 @@ slow_path:
 		/* Allocate buffer */
 #ifdef CONFIG_HETERO_ENABLE
 		skb2 = NULL;
-		if(sk && is_hetero_obj(sk->hetero_obj)){
+		if(sk && is_hetero_buffer_set() && is_hetero_obj(sk->hetero_obj)){
 			skb2 = alloc_skb_hetero(len + hlen + ll_rs, GFP_ATOMIC, 
 				sk->hetero_obj);
 		}

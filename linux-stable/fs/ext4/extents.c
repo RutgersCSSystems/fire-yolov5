@@ -4963,7 +4963,7 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
-        set_fsmap_hetero_obj(inode->i_mapping);
+        //set_fsmap_hetero_obj(inode->i_mapping);
 #endif
 
 	/*

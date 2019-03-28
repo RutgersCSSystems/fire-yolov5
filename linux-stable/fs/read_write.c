@@ -445,6 +445,14 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 	if (unlikely(!access_ok(VERIFY_WRITE, buf, count)))
 		return -EFAULT;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
+		struct inode *inode = file_inode(file);
+                if(!execute_ok(inode))
+                        set_fsmap_hetero_obj(inode->i_mapping);
+        }
+#endif
 	ret = rw_verify_area(READ, file, pos, count);
 	if (!ret) {
 		if (count > MAX_RW_COUNT)
@@ -540,6 +548,15 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
 		return -EINVAL;
 	if (unlikely(!access_ok(VERIFY_READ, buf, count)))
 		return -EFAULT;
+
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
+		struct inode *inode = file_inode(file);
+                if(!execute_ok(inode))
+                        set_fsmap_hetero_obj(inode->i_mapping);
+        }
+#endif
 
 	ret = rw_verify_area(WRITE, file, pos, count);
 	if (!ret) {
@@ -981,6 +998,14 @@ ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
 	struct iov_iter iter;
 	ssize_t ret;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
+		struct inode *inode = file_inode(file);
+                if(!execute_ok(inode))
+                        set_fsmap_hetero_obj(inode->i_mapping);
+        }
+#endif
 	ret = import_iovec(READ, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
 	if (ret >= 0) {
 		ret = do_iter_read(file, &iter, pos, flags);
@@ -997,6 +1022,15 @@ static ssize_t vfs_writev(struct file *file, const struct iovec __user *vec,
 	struct iovec *iov = iovstack;
 	struct iov_iter iter;
 	ssize_t ret;
+
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
+                struct inode *inode = file_inode(file);
+                if(!execute_ok(inode))
+                        set_fsmap_hetero_obj(inode->i_mapping);
+        }
+#endif
 
 	ret = import_iovec(WRITE, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
 	if (ret >= 0) {

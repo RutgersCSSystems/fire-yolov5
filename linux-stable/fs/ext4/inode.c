@@ -1252,11 +1252,12 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
 
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
-        set_fsmap_hetero_obj(mapping);
         if(current && current->mm &&
                 current->mm->hetero_task == HETERO_PROC) {
 		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 		//try_hetero_migration(mapping, 0);
+		//if(!execute_ok(inode))
+		  //      set_fsmap_hetero_obj(mapping);
 	}
 #endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
@@ -3026,8 +3027,8 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
 #ifdef CONFIG_HETERO_ENABLE
         if(current && current->mm &&
                 current->mm->hetero_task == HETERO_PROC) {
-		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-	        //try_hetero_migration(mapping, 0);
+		//if(!execute_ok(inode))
+	          //      set_fsmap_hetero_obj(mapping);
 	}
 #endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
@@ -3349,11 +3350,12 @@ static int ext4_readpage(struct file *file, struct page *page)
 	struct inode *inode = page->mapping->host;
         /*Mark the mapping to Hetero target object*/
 #ifdef CONFIG_HETERO_ENABLE
-        set_fsmap_hetero_obj(page->mapping);
         if(current && current->mm && 
 		current->mm->hetero_task == HETERO_PROC) {
 		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 		//try_hetero_migration(page->mapping, 0);
+		//if(!execute_ok(inode))
+			//set_fsmap_hetero_obj(page->mapping);
 	}
 #endif
 	trace_ext4_readpage(page);
@@ -3375,6 +3377,8 @@ ext4_readpages(struct file *file, struct address_space *mapping,
 #ifdef CONFIG_HETERO_ENABLE
         if(current && current->mm && 
 		current->mm->hetero_task == HETERO_PROC) {
+		//if(!execute_ok(inode))
+                	//set_fsmap_hetero_obj(mapping);
                 //printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
                 //try_hetero_migration(mapping, 0);
         }
