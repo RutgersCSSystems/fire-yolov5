@@ -496,7 +496,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 
 	    //if(enbl_hetero_objaff)		
 	    //	hetero_reset_rbtree(current);	
-
 	    enbl_hetero_objaff = 0;	
 
 	    hetero_pid = 0;
