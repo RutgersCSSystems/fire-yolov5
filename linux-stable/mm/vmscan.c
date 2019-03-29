@@ -1617,7 +1617,9 @@ int isolate_lru_page(struct page *page)
 		}
 		spin_unlock_irq(zone_lru_lock(zone));
 
-	}else if(page->hetero == HETERO_PG_MIG_FLAG) {
+	}
+#if 0
+	else if(page->hetero == HETERO_PG_MIG_FLAG) {
 
 		struct zone *zone = page_zone(page);
 		struct address_space *mapping = page_mapping(page);
@@ -1666,6 +1668,7 @@ int isolate_lru_page(struct page *page)
 		}*/
 		//spin_unlock_irq(zone_lru_lock(zone));
 	}
+#endif
 	return ret;
 
 exit_isolate:

@@ -51,7 +51,6 @@ static void dest() __attribute__((destructor));
 
 
 void dest() {
-    int a = 0;
     fprintf(stderr, "application termination...\n");
 
     /*a = syscall(__NR_start_trace, PRINT_STATS);
@@ -59,13 +58,12 @@ void dest() {
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);*/
-    a = syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
-    a = syscall(__NR_start_trace, CLEAR_COUNT, 0);
+    syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
+    syscall(__NR_start_trace, CLEAR_COUNT, 0);
 }
 
 void con() {
   
-    int a = 0;
     struct sigaction action;
     pid_t pid = getpid();
 
@@ -76,18 +74,23 @@ void con() {
         a = syscall(__NR_start_trace, COLLECT_TRACE);
         a = syscall(__NR_start_trace, PFN_TRACE);
         a = syscall(__NR_start_trace, TIME_TRACE);*/
-        a = syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
-        a = syscall(__NR_start_trace, HETERO_PGCACHE, 0);
-        a = syscall(__NR_start_trace, HETERO_BUFFER, 0);
-        a = syscall(__NR_start_trace, HETERO_JOURNAL, 0);
-        a = syscall(__NR_start_trace, HETERO_RADIX, 0);
-        a = syscall(__NR_start_trace, HETERO_FULLKERN, 0);
-        a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
-	a = syscall(__NR_start_trace, (int)pid);
-	a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
+        syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
+        syscall(__NR_start_trace, HETERO_PGCACHE, 0);
+        syscall(__NR_start_trace, HETERO_BUFFER, 0);
+        syscall(__NR_start_trace, HETERO_JOURNAL, 0);
+        syscall(__NR_start_trace, HETERO_RADIX, 0);
+        syscall(__NR_start_trace, HETERO_FULLKERN, 0);
+        syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
+	syscall(__NR_start_trace, (int)pid);
+	syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
 
+#ifdef _ENABLE_MIGRATION
 	set_migration_freq();
+#endif
+
+#ifdef _ENABLE_OBJAFF
 	enable_object_affn();
+#endif
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));

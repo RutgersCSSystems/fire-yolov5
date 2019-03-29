@@ -1920,150 +1920,6 @@ out:
 }
 #endif
 
-int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
-		free_page_t put_new_page, unsigned long private,
-		enum migrate_mode mode, int reason, struct mm_struct *mm)
-{
-	int retry = 1;
-	int nr_failed = 0;
-	int nr_succeeded = 0;
-	int pass = 0;
-	struct page *page;
-	struct page *page2;
-	int swapwrite = current->flags & PF_SWAPWRITE;
-	int rc = 0;
-	int pagecount = 0;
-
-	if (!swapwrite)
-		current->flags |= PF_SWAPWRITE;
-
-	if(!mm) {
-		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-		return rc;
-	}
-	if(mm->hetero_task != HETERO_PROC)
-		return rc;
-
-	if(mm->objaff_cache_len < 1000) {
-		return rc;
-	}
-	//mm->migrate_attempt++;
-	//if(mm->migrate_attempt % 2 != 0)
-	//	return rc; 
-
-	for(pass = 0; pass < 5 && retry; pass++) {
-		retry = 0;
-		pagecount++;
-#if 0
-                struct rb_node *n, *next;
-                for (n = rb_first(root); n != NULL; n = rb_next(n)) {
-                        if(n == NULL)
-                                break;
-			page = rb_entry(n, struct page, rb_node);
-                        if(!page || page->hetero != HETERO_PG_FLAG)
-                                continue;
-#else
-			list_for_each_entry_safe(page, page2, from, lru) {
-#endif
-
-retry:
-			cond_resched();
-
-			/* Migrate only page cache pages*/
-			//if (PageAnon(page))
-			//	continue;
-
-			/* Not a Hetero page */
-			if ((page->hetero != HETERO_PG_FLAG) || 
-				(page->hetero == HETERO_PG_DEL_FLAG) )
-				continue;
-
-			if (page_to_nid(page) == get_slowmem_node()) {
-				continue;
-			}
-			pagecount++;
-
-#ifdef CONFIG_HETERO_HUGEPAGE
-			if (PageHuge(page))
-				rc = unmap_and_move_huge_page(get_new_page,
-						put_new_page, private, page,
-						pass > 2, mode, reason);
-			else
-#endif
-				rc = unmap_and_move(get_new_page, put_new_page,
-						private, page, pass > 2, mode,
-						reason);
-
-			switch(rc) {
-			case -ENOMEM:
-				/*
-				 * THP migration might be unsupported or the
-				 * allocation could've failed so we should
-				 * retry on the same page with the THP split
-				 * to base pages.
-				 *
-				 * Head page is retried immediately and tail
-				 * pages are added to the tail of the list so
-				 * we encounter them after the rest of the list
-				 * is processed.
-				 */
-#ifdef CONFIG_HETERO_HUGEPAGE
-				if (PageTransHuge(page)) {
-					lock_page(page);
-					rc = split_huge_page_to_list(page, from);
-					unlock_page(page);
-					if (!rc) {
-						list_safe_reset_next(page, page2, lru);
-						goto retry;
-					}
-				}
-#endif
-				nr_failed++;
-				goto out;
-			case -EAGAIN:
-				retry++;
-				break;
-			case MIGRATEPAGE_SUCCESS:
-				nr_succeeded++;
-				break;
-			default:
-				/*
-				 * Permanent failure (-EBUSY, -ENOSYS, etc.):
-				 * unlike -EAGAIN case, the failed page is
-				 * removed from migration page list and not
-				 * retried in the next outer loop.
-				 */
-				nr_failed++;
-				break;
-			}
-		}
-	}
-	nr_failed += retry;
-	rc = nr_failed;
-out:
-	mm->pages_migrated += nr_succeeded;
-
-	if(nr_succeeded)
-		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
-			    "retry %d  pagecount %d\n", 
-			    mm->pages_migrated, nr_failed, retry,  pagecount);
-
-	if (nr_succeeded)
-		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
-	if (nr_failed)
-		count_vm_events(PGMIGRATE_FAIL, nr_failed);
-	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
-
-	/*Update the heteromem stats*/
-	mm->objaff_cache_len -= nr_succeeded;	
-
-	if (!swapwrite)
-		current->flags &= ~PF_SWAPWRITE;
-
-	return rc;
-}
-
-
 
 /*
  * migrate_pages - migrate the pages specified in a list, to the free pages
@@ -4030,3 +3886,151 @@ int migrate_vmalloc_pages(const void *addr, new_page_t get_new_page,
 	return status;
 }
 EXPORT_SYMBOL(migrate_vmalloc_pages);
+
+
+int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
+		free_page_t put_new_page, unsigned long private,
+		enum migrate_mode mode, int reason, struct mm_struct *mm)
+{
+	int retry = 1;
+	int nr_failed = 0;
+	int nr_succeeded = 0;
+	int pass = 0;
+	struct page *page;
+	struct page *page2;
+	int swapwrite = current->flags & PF_SWAPWRITE;
+	int rc = 0;
+	int pagecount = 0;
+
+	if (!swapwrite)
+		current->flags |= PF_SWAPWRITE;
+
+	if(!mm) {
+		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
+		return rc;
+	}
+	if(mm->hetero_task != HETERO_PROC)
+		return rc;
+
+	
+	//TODO: Remove these optimizations
+	/*if(mm->objaff_cache_len < 1000) {
+		return rc;
+	}
+	if(mm->migrate_attempt % 2 != 0)
+		return rc; */
+
+	for(pass = 0; pass < 5 && retry; pass++) {
+		retry = 0;
+		pagecount++;
+#if 0
+                struct rb_node *n, *next;
+                for (n = rb_first(root); n != NULL; n = rb_next(n)) {
+                        if(n == NULL)
+                                break;
+			page = rb_entry(n, struct page, rb_node);
+                        if(!page || page->hetero != HETERO_PG_FLAG)
+                                continue;
+#else
+			list_for_each_entry_safe(page, page2, from, lru) {
+#endif
+
+retry:
+			cond_resched();
+
+			/* Migrate only page cache pages*/
+			//if (PageAnon(page))
+			//	continue;
+
+			/* Not a Hetero page */
+			if ((page->hetero != HETERO_PG_FLAG) || 
+				(page->hetero == HETERO_PG_DEL_FLAG) )
+				continue;
+
+			if (page_to_nid(page) == get_slowmem_node()) {
+				continue;
+			}
+			pagecount++;
+
+#ifdef CONFIG_HETERO_HUGEPAGE
+			if (PageHuge(page))
+				rc = unmap_and_move_huge_page(get_new_page,
+						put_new_page, private, page,
+						pass > 2, mode, reason);
+			else
+#endif
+				rc = unmap_and_move(get_new_page, put_new_page,
+						private, page, pass > 2, mode,
+						reason);
+
+			switch(rc) {
+			case -ENOMEM:
+				/*
+				 * THP migration might be unsupported or the
+				 * allocation could've failed so we should
+				 * retry on the same page with the THP split
+				 * to base pages.
+				 *
+				 * Head page is retried immediately and tail
+				 * pages are added to the tail of the list so
+				 * we encounter them after the rest of the list
+				 * is processed.
+				 */
+#ifdef CONFIG_HETERO_HUGEPAGE
+				if (PageTransHuge(page)) {
+					lock_page(page);
+					rc = split_huge_page_to_list(page, from);
+					unlock_page(page);
+					if (!rc) {
+						list_safe_reset_next(page, page2, lru);
+						goto retry;
+					}
+				}
+#endif
+				nr_failed++;
+				goto out;
+			case -EAGAIN:
+				retry++;
+				break;
+			case MIGRATEPAGE_SUCCESS:
+				nr_succeeded++;
+				break;
+			default:
+				/*
+				 * Permanent failure (-EBUSY, -ENOSYS, etc.):
+				 * unlike -EAGAIN case, the failed page is
+				 * removed from migration page list and not
+				 * retried in the next outer loop.
+				 */
+				nr_failed++;
+				break;
+			}
+		}
+	}
+	nr_failed += retry;
+	rc = nr_failed;
+out:
+	mm->pages_migrated += nr_succeeded;
+
+	if(nr_succeeded)
+		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+			    "retry %d  pagecount %d\n", 
+			    mm->pages_migrated, nr_failed, retry,  pagecount);
+
+	if (nr_succeeded)
+		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
+	if (nr_failed)
+		count_vm_events(PGMIGRATE_FAIL, nr_failed);
+	trace_mm_migrate_pages(nr_succeeded, nr_failed, mode, reason);
+
+	/*Update the heteromem stats*/
+	mm->objaff_cache_len -= nr_succeeded;	
+
+	if (!swapwrite)
+		current->flags &= ~PF_SWAPWRITE;
+
+	return rc;
+}
+
+
+
