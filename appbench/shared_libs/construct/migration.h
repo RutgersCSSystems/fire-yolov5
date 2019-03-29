@@ -24,9 +24,16 @@ void stopmigrate();
 
 #define HETERO_MIGRATE_FREQ 17
 #define FREQ 5000
+#define HETERO_OBJ_AFF 18
+
 void set_migration_freq() {
     syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, FREQ);
 }
+
+void enable_object_affn() {
+    syscall(__NR_start_trace, HETERO_OBJ_AFF, HETERO_OBJ_AFF);
+}
+
 
 
 #ifdef __cplusplus

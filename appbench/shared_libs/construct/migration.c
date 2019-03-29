@@ -87,6 +87,7 @@ void con() {
 	a = syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
 
 	set_migration_freq();
+	enable_object_affn();
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
