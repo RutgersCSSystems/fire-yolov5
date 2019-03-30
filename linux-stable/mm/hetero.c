@@ -658,7 +658,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	struct rb_root *root;
 	struct address_space *mapping = (struct address_space *)map;
 	int destnode = get_slowmem_node();
-	int num_misses=0, num_hits=0;
+	int num_misses=0, threshold=0;
 
 	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
 		return;
@@ -666,14 +666,14 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		return;
 
 	//Calculate the number of misses and hits
-	num_misses = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
-	num_hits = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
+	threshold = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
+	//threshold = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
 
 	//Controls how frequently we should enable migration thread
-	if(!migrate_freq || !num_hits || (num_hits % migrate_freq != 0)) 
+	if(!migrate_freq || !threshold || (threshold % migrate_freq != 0)) 
 		return;
 
-	hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, num_hits);
+	hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, threshold);
 
 	
 #ifdef _ENABLE_HETERO_RBTREE
