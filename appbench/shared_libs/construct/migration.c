@@ -84,13 +84,8 @@ void con() {
 	syscall(__NR_start_trace, (int)pid);
 	syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
 
-#ifdef _ENABLE_MIGRATION
 	set_migration_freq();
-#endif
-
-#ifdef _ENABLE_OBJAFF
 	enable_object_affn();
-#endif
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
