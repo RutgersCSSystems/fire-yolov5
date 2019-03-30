@@ -10,9 +10,9 @@ SETUP(){
 
 SETENV() {
 	source scripts/setvars.sh
-	$APPBENCH/install_quartz.sh
-	$APPBENCH/throttle.sh
-	$APPBENCH/throttle.sh
+	$SCRIPTS/install_quartz.sh
+	$SCRIPTS/throttle.sh
+	$SCRIPTS/throttle.sh
 	mkdir $OUTPUTDIR/slowmem-obj-affinity
 	mkdir $OUTPUTDIR/slowmem-migration-only
 	mkdir $OUTPUTDIR/fastmem-only
