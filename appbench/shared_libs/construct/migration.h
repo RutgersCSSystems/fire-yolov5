@@ -23,12 +23,14 @@ void init_allocs();
 void stopmigrate();
 
 #define HETERO_MIGRATE_FREQ 17
-#define FREQ 5000
+#define FREQ 1000
 #define HETERO_OBJ_AFF 18
 
 void set_migration_freq() {
 #ifdef _MIGRATE
     syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, FREQ);
+#else
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, 9000000000);
 #endif
 }
 

@@ -89,12 +89,12 @@ INSTALL_ROCKSDB() {
 	git clone https://github.com/facebook/rocksdb
 	#cp $APPBENCH/apps/db_bench_tool.cc $APPBENCH/apps/rocksdb/tools/
 	cd rocksdb
-	mkdir build 
-	cd build
-	rm -rf CMakeCache.txt
-	cmake ..
-	make -j16
-	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
+	#mkdir build 
+	#cd build
+	#rm -rf CMakeCache.txt
+	#cmake ..
+	DEBUG_LEVEL=0 make shared_lib db_bench -j16
+	#cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
 }
 
 INSTALL_GFLAGS(){
@@ -120,11 +120,11 @@ git clone https://github.com/memcached/memcached.git
 
 
 INSTALL_SYSTEM_LIBS
-GETAPPS
-INSTALL_CMAKE
-exit
+#INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
+exit
+GETAPPS
 INSTALL_SYSBENCH
 INSTALL_MYSQL
 

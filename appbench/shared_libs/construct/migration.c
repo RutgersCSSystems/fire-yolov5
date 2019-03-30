@@ -35,7 +35,12 @@
 #define HETERO_RADIX 14
 #define HETERO_FULLKERN 15
 #define HETERO_SET_FASTMEM_NODE 16
+
+#ifndef _SLOWONLY
 #define HETERO_FASTMEM_NODE 0
+#else
+#define HETERO_FASTMEM_NODE 1
+#endif
 
 
 
@@ -67,6 +72,8 @@ void con() {
     struct sigaction action;
     pid_t pid = getpid();
 
+    /* Do not enable hetero if HETERO disabled */
+#ifndef _DISABLE_HETERO
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
         /*a = syscall(__NR_start_trace, COLLECT_TRACE);
@@ -92,7 +99,9 @@ void con() {
         action.sa_handler = sig_handler;
         sigaction(SIGKILL, &action, NULL);
         setinit = 1;
-     }  	
+     } 
+#endif
+ 	
 }
 
 

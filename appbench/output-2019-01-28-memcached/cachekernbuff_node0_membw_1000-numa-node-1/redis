@@ -1,169 +1,0 @@
-+ APPBASE=/users/skannan/ssd/NVM/appbench/redis-3.0.0/src
-+ APP=/users/skannan/ssd/NVM/appbench/redis-3.0.0/src/pagerank
-+ PARAM=1
-+ OUTPUT=/users/skannan/ssd/NVM/appbench/output/cachekernbuff_node0_membw_1000-numa-node-1/redis
-+ cd /users/skannan/ssd/NVM/appbench/redis-3.0.0/src
-+ /bin/rm dump.rdb
-+ rm -rf appendonly.aof
-+ killall redis-server
-redis-server: no process found
-+ sleep 5
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ alias rm=rm
-+ RUN
-+ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sleep 5
-+ numactl --membind=1 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-server /users/skannan/ssd/NVM/appbench/redis-3.0.0/redis.conf
-initiating tracing...
-initiating tracing...
-23725:M 28 Jan 18:06:54.569 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
-23725:M 28 Jan 18:06:54.576 # Redis can't set maximum open files to 10032 because of OS error: Operation not permitted.
-23725:M 28 Jan 18:06:54.576 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
-                _._                                                  
-           _.-``__ ''-._                                             
-      _.-``    `.  `_.  ''-._           Redis 3.0.0 (e6b2f285/1) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._                                   
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
- |    `-._   `._    /     _.-'    |     PID: 23725
-  `-._    `-._  `-./  _.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |           http://redis.io        
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |                                  
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
-      `-._    `-.__.-'    _.-'                                       
-          `-._        _.-'                                           
-              `-.__.-'                                               
-
-23725:M 28 Jan 18:06:54.577 # Server started, Redis version 3.0.0
-23725:M 28 Jan 18:06:54.577 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
-23725:M 28 Jan 18:06:54.577 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
-23725:M 28 Jan 18:06:54.577 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
-23725:M 28 Jan 18:06:54.577 * The server is now ready to accept connections on port 6379
-+ numactl --membind=1 /users/skannan/ssd/NVM/appbench/redis-3.0.0/src/redis-benchmark -r 2000000 -n 4000000 -c 100 -t get,set -P 16 -q -h 127.0.0.1 -p 6379 -d 1024
-SET: 0.00SET: 153333.3323725:M 28 Jan 18:07:00.102 * Starting automatic rewriting of AOF on 8225636500% growth
-SET: 153338.6623725:M 28 Jan 18:07:00.117 * Background append only file rewriting started by pid 23730
-SET: 130042.55SET: 111952.10SET: 99578.27SET: 101113.19SET: 102060.47SET: 102334.5023725:M 28 Jan 18:07:01.682 * AOF rewrite child asks to stop sending diffs.
-23730:C 28 Jan 18:07:01.683 * Parent agreed to stop sending diffs. Finalizing AOF...
-23730:C 28 Jan 18:07:01.683 * Concatenating 135.56 MB of AOF diff received from parent.
-SET: 100197.07SET: 103510.9823730:C 28 Jan 18:07:02.256 * SYNC append only file rewrite performed
-23730:C 28 Jan 18:07:02.267 * AOF rewrite: 189 MB of memory used by copy-on-write
-23725:M 28 Jan 18:07:02.279 * Background AOF buffer size: 74 MB
-23725:M 28 Jan 18:07:02.348 * Background AOF rewrite terminated with success
-SET: 106420.6323725:M 28 Jan 18:07:02.478 * Residual parent diff successfully flushed to the rewritten AOF (84.64 MB)
-23725:M 28 Jan 18:07:02.567 * Background AOF rewrite finished successfully
-SET: 98561.06SET: 99745.62SET: 104746.36SET: 109132.35SET: 112854.93SET: 116053.58SET: 119376.69SET: 122757.5223725:M 28 Jan 18:07:04.404 * Starting automatic rewriting of AOF on 101% growth
-23725:M 28 Jan 18:07:04.438 * Background append only file rewriting started by pid 23731
-SET: 118200.55SET: 113522.07SET: 110727.44SET: 108089.63SET: 105988.34SET: 104054.98SET: 101825.11SET: 99646.59SET: 97926.95SET: 96736.29SET: 95659.03SET: 94273.78SET: 93470.52SET: 92190.84SET: 91022.09SET: 90616.12SET: 89133.98SET: 89291.72SET: 89495.0123725:M 28 Jan 18:07:09.337 * AOF rewrite child asks to stop sending diffs.
-23731:C 28 Jan 18:07:09.337 * Parent agreed to stop sending diffs. Finalizing AOF...
-23731:C 28 Jan 18:07:09.338 * Concatenating 284.77 MB of AOF diff received from parent.
-SET: 89645.25SET: 89359.58SET: 89493.9523725:M 28 Jan 18:07:10.025 * Background AOF buffer size: 70 MB
-SET: 90409.89SET: 91274.7923731:C 28 Jan 18:07:10.551 * SYNC append only file rewrite performed
-23731:C 28 Jan 18:07:10.584 * AOF rewrite: 755 MB of memory used by copy-on-write
-SET: 91822.3623725:M 28 Jan 18:07:10.673 * Background AOF rewrite terminated with success
-SET: 90475.8023725:M 28 Jan 18:07:10.904 * Residual parent diff successfully flushed to the rewritten AOF (151.11 MB)
-23725:M 28 Jan 18:07:11.046 * Background AOF rewrite finished successfully
-SET: 89375.38SET: 90877.99SET: 92415.59SET: 93802.64SET: 95264.70SET: 96661.96SET: 98006.77SET: 99385.06SET: 100725.52SET: 101935.92SET: 102971.81SET: 104083.58SET: 104065.60SET: 104243.31SET: 104425.77SET: 104602.24SET: 104782.31SET: 105445.92SET: 106514.45SET: 107516.69SET: 108427.54SET: 109384.71SET: 110300.59SET: 111199.26SET: 112002.7423725:M 28 Jan 18:07:17.158 * Starting automatic rewriting of AOF on 100% growth
-23725:M 28 Jan 18:07:17.228 * Background append only file rewriting started by pid 23732
-SET: 110786.76SET: 109305.36SET: 107820.64SET: 106364.79SET: 105368.43SET: 104488.01SET: 103630.43SET: 103035.51SET: 102298.98SET: 101580.85SET: 100959.39SET: 100340.38SET: 99692.61SET: 99178.99SET: 98778.26SET: 98131.05SET: 97611.91SET: 97290.58SET: 96930.48SET: 96551.38SET: 96170.06SET: 95758.80SET: 95357.74SET: 94888.34SET: 94630.77SET: 94108.16SET: 93666.16SET: 93233.17SET: 92743.03SET: 92335.59SET: 92055.25SET: 91780.40SET: 91565.53SET: 91318.50SET: 90977.70SET: 90800.00SET: 90593.35SET: 90244.85SET: 90047.09SET: 89848.84SET: 89583.87SET: 89412.70SET: 89197.59SET: 89129.88SET: 89013.84SET: 88803.86SET: 88864.23SET: 88871.5523725:M 28 Jan 18:07:29.343 * AOF rewrite child asks to stop sending diffs.
-23732:C 28 Jan 18:07:29.343 * Parent agreed to stop sending diffs. Finalizing AOF...
-23732:C 28 Jan 18:07:29.343 * Concatenating 686.68 MB of AOF diff received from parent.
-SET: 88835.45SET: 88622.77SET: 88425.23SET: 88262.90SET: 88074.6223725:M 28 Jan 18:07:30.387 * Background AOF buffer size: 70 MB
-SET: 88190.06SET: 88458.70SET: 88793.1223725:M 28 Jan 18:07:31.203 * Background AOF buffer size: 170 MB
-SET: 89129.84SET: 89480.48SET: 89784.3423725:M 28 Jan 18:07:31.948 * Background AOF buffer size: 270 MB
-SET: 90121.8923732:C 28 Jan 18:07:32.345 * SYNC append only file rewrite performed
-SET: 90390.8223732:C 28 Jan 18:07:32.439 * AOF rewrite: 2092 MB of memory used by copy-on-write
-SET: 90307.3123725:M 28 Jan 18:07:32.752 * Background AOF rewrite terminated with success
-SET: 89920.3623725:M 28 Jan 18:07:33.122 * Residual parent diff successfully flushed to the rewritten AOF (357.25 MB)
-SET: 89249.77SET: 88589.1123725:M 28 Jan 18:07:33.624 * Background AOF rewrite finished successfully
-SET: 87972.49SET: 88370.44SET: 88863.66SET: 89385.68SET: 89889.73SET: 90388.62SET: 90878.51SET: 91361.55SET: 91837.89SET: 92308.98SET: 92780.64SET: 93238.92SET: 93722.13SET: 94207.02SET: 94647.91SET: 95080.43SET: 95546.40SET: 95923.92SET: 96343.89SET: 96754.73SET: 97196.80SET: 97600.66SET: 98004.26SET: 98425.30SET: 98809.92SET: 99202.47SET: 99250.66 requests per second
-GET: 331994.06GET: 344650.72GET: 347377.25GET: 348793.03GET: 349684.94GET: 350521.88GET: 350110.31GET: 350381.66GET: 351084.88GET: 351027.31GET: 350440.78GET: 349521.59GET: 349267.38GET: 348947.94GET: 348593.25GET: 348439.00GET: 348184.25GET: 347958.09GET: 347760.06GET: 347464.81GET: 347303.41GET: 347006.25GET: 346760.75GET: 346654.94GET: 346386.50GET: 345964.47GET: 345902.81GET: 345845.59GET: 345725.28GET: 345559.44GET: 345441.69GET: 345400.34GET: 344152.78GET: 344266.09GET: 344564.81GET: 344697.91GET: 344928.44GET: 345150.12GET: 345375.25GET: 345493.84GET: 345567.25GET: 345730.84GET: 345964.75GET: 346082.44GET: 346080.22GET: 346225.25GET: 346320.34 requests per second
-
-+ killall redis-server
-23725:signal-handler (1548724071) Received SIGTERM scheduling shutdown...
-23725:M 28 Jan 18:07:51.627 # User requested shutdown...
-23725:M 28 Jan 18:07:51.627 * Calling fsync() on the AOF file.
-23725:M 28 Jan 18:07:53.364 * Saving the final RDB snapshot before exiting.
-23725:M 28 Jan 18:07:57.927 * DB saved on disk
-23725:M 28 Jan 18:07:57.927 # Redis is now ready to exit, bye bye...
-application termination...
-s 0 
-[103704.783466]  
-[103704.783469] flag set to clear count 0
-[103704.783472] hetero_pid 23236 Curr 23236 Currname redis-server HeteroProcname redis-server user pages 1950638 kern pages 88
-[103705.083373] nvmemul: ioctl command: 0xc008aa02
-[103705.083378] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
-[103705.083384] nvmemul: ioctl command: 0x8008aa01
-[103705.083385] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
-[103705.083388] nvmemul: ioctl command: 0x8008aa01
-[103705.083390] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
-[103705.083392] nvmemul: ioctl command: 0x8008aa01
-[103705.083394] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
-[103705.083397] nvmemul: ioctl command: 0x8008aa01
-[103705.083398] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
-[103705.083401] nvmemul: ioctl command: 0xc008aa02
-[103705.083402] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
-[103705.083405] nvmemul: ioctl command: 0x8008aa01
-[103705.083406] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
-[103705.083409] nvmemul: ioctl command: 0x8008aa01
-[103705.083410] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
-[103705.083413] nvmemul: ioctl command: 0x8008aa01
-[103705.083414] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
-[103705.083417] nvmemul: ioctl command: 0x8008aa01
-[103705.083418] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
-[103722.404464] nvmemul: ioctl command: 0xc008aa02
-[103722.404469] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
-[103722.404487] nvmemul: ioctl command: 0x8008aa01
-[103722.404488] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
-[103722.404491] nvmemul: ioctl command: 0x8008aa01
-[103722.404492] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
-[103722.404495] nvmemul: ioctl command: 0x8008aa01
-[103722.404497] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
-[103722.404499] nvmemul: ioctl command: 0x8008aa01
-[103722.404500] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
-[103732.170628] nvmemul: ioctl command: 0xc008aa02
-[103732.170633] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
-[103732.170647] nvmemul: ioctl command: 0x8008aa01
-[103732.170649] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
-[103732.170651] nvmemul: ioctl command: 0x8008aa01
-[103732.170653] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
-[103732.170655] nvmemul: ioctl command: 0x8008aa01
-[103732.170657] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
-[103732.170659] nvmemul: ioctl command: 0x8008aa01
-[103732.170660] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
-[103765.627563] drop_caches: sh (23716): drop_caches: 3
-[103765.977245] drop_caches: sh (23724): drop_caches: 3
-[103766.021626] flag is set to collect hetero allocate  9 
-[103766.021628] flag is set to enable HETERO_PGCACHE 11 
-[103766.021629] flag is set to enable HETERO_BUFFER 12 
-[103766.021629] flag is set to enable HETERO_JOURNAL 13 
-[103766.021630] flag is set to enable HETERO_RADIX 14 
-[103766.021631] flag is set to enable HETERO_FULLKERN 15 
-[103766.021632] flag to set FASTMEM node to 0 
-[103766.021633] hetero_pid set to 23725 23725 procname numactl
-[103766.038082] flag is set to collect hetero allocate  9 
-[103766.038084] flag is set to enable HETERO_PGCACHE 11 
-[103766.038085] flag is set to enable HETERO_BUFFER 12 
-[103766.038086] flag is set to enable HETERO_JOURNAL 13 
-[103766.038086] flag is set to enable HETERO_RADIX 14 
-[103766.038087] flag is set to enable HETERO_FULLKERN 15 
-[103766.038088] flag to set FASTMEM node to 0 
-[103766.038089] hetero_pid set to 23725 23725 procname redis-server
-[103771.575241] __kmalloc : 4354 
-[103771.578681] __kmalloc : 4354 
-[103771.582103] __kmalloc : 4354 
-[103775.878039] __kmalloc : 4354 
-[103775.881455] __kmalloc : 4354 
-[103775.884882] __kmalloc : 4354 
-[103788.631280] __kmalloc : 4354 
-[103788.634701] __kmalloc : 4354 
-[103788.638111] __kmalloc : 4354 

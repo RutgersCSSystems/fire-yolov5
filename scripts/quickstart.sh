@@ -1,11 +1,71 @@
 #!/bin/bash
 cd $NVMBASE
-source scripts/setvars.sh
-$APPBENCH/install_quartz.sh
-$APPBENCH/throttle.sh
-$APPBENCH/throttle.sh
-$NVMBASE/scripts/mount_dax.sh
-$NVMBASE/scripts/set_appbench.sh
-$NVMBASE/scripts/createdata.sh
-$NVMBASE/compile_all.sh
-$APPBENCH/runapps.sh
+
+
+SETUP(){
+	scripts/clear_cache.sh
+	cd $SHARED_LIBS/construct
+	make clean
+}
+
+SETENV() {
+	source scripts/setvars.sh
+	$APPBENCH/install_quartz.sh
+	$APPBENCH/throttle.sh
+	$APPBENCH/throttle.sh
+	mkdir $OUTPUTDIR/slowmem-obj-affinity
+	mkdir $OUTPUTDIR/slowmem-migration-only
+	mkdir $OUTPUTDIR/fastmem-only
+	mkdir $OUTPUTDIR/naive-os-fastmem
+	mkdir $OUTPUTDIR/slowmem-only
+}
+
+
+COMPILE_SHAREDLIB() {
+	#Compile shared libs
+	cd $SHARED_LIBS/construct
+	make clean
+	make CFLAGS=$DEPFLAGS
+	sudo make install
+}
+
+RUNAPP() {
+	#Run application
+	cd $NVMBASE
+	$APPBENCH/apps/rocksdb/run.sh
+}
+
+
+#SETENV
+OUTPUT="slowmem-obj-affinity/db_bench.out"
+SETUP
+make CFLAGS="-D_MIGRATE -D_OBJAFF"
+export APPPREFIX="numactl --preferred=1"
+RUNAPP &> $OUTPUTDIR/$OUTPUT
+exit
+
+
+OUTPUT="slowmem-only/db_bench.out"
+SETUP
+make CFLAGS="-D_SLOWONLY"
+export APPPREFIX="numactl --membind=1"
+RUNAPP &> $OUTPUTDIR/$OUTPUT
+exit
+
+
+OUTPUT="slowmem-migration-only/db_bench.out"
+SETUP
+make CFLAGS="-D_MIGRATE"
+export APPPREFIX="numactl --preferred=1"
+RUNAPP &> $OUTPUTDIR/$OUTPUT
+
+
+OUTPUT="naive-os-fastmem/db_bench.out"
+SETUP
+make CFLAGS=""
+export APPPREFIX="numactl --preferred=1"
+RUNAPP &> $OUTPUTDIR/$OUTPUT
+
+
+#Disable hetero for fastmem only mode
+#make CFLAGS="-D_DISABLE_HETERO"
