@@ -13,11 +13,6 @@ SETENV() {
 	$SCRIPTS/install_quartz.sh
 	$SCRIPTS/throttle.sh
 	$SCRIPTS/throttle.sh
-	mkdir $OUTPUTDIR/slowmem-obj-affinity
-	mkdir $OUTPUTDIR/slowmem-migration-only
-	mkdir $OUTPUTDIR/fastmem-only
-	mkdir $OUTPUTDIR/naive-os-fastmem
-	mkdir $OUTPUTDIR/slowmem-only
 }
 
 
@@ -38,37 +33,37 @@ RUNAPP() {
 
 #SETENV
 
+mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/db_bench.out"
 SETUP
 make CFLAGS="-D_MIGRATE"
-export APPPREFIX="numactl --preferred=0"
+export APPPREFIX="numactl --preferred=1"
 RUNAPP &> $OUTPUTDIR/$OUTPUT
-exit
 
-
-
-OUTPUT="slowmem-only/db_bench.out"
-SETUP
-make CFLAGS="-D_SLOWONLY"
-export APPPREFIX="numactl --membind=1"
-RUNAPP &> $OUTPUTDIR/$OUTPUT
-exit
-
-
+mkdir $OUTPUTDIR/slowmem-obj-affinity
 OUTPUT="slowmem-obj-affinity/db_bench.out"
 SETUP
 make CFLAGS="-D_MIGRATE -D_OBJAFF"
 export APPPREFIX="numactl --preferred=1"
 RUNAPP &> $OUTPUTDIR/$OUTPUT
-exit
 
-
-
+#Don't do any migration
+mkdir $OUTPUTDIR/naive-os-fastmem
 OUTPUT="naive-os-fastmem/db_bench.out"
 SETUP
 make CFLAGS=""
-export APPPREFIX="numactl --preferred=0"
+export APPPREFIX="numactl --preferred=1"
 RUNAPP &> $OUTPUTDIR/$OUTPUT
+
+mkdir $OUTPUTDIR/slowmem-only
+OUTPUT="slowmem-only/db_bench.out"
+SETUP
+make CFLAGS="-D_SLOWONLY"
+export APPPREFIX="numactl --membind=1"
+RUNAPP &> $OUTPUTDIR/$OUTPUT
+
+#mkdir $OUTPUTDIR/fastmem-only
+exit
 
 
 #Disable hetero for fastmem only mode

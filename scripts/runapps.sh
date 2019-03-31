@@ -137,11 +137,5 @@ fi
 
 finish:
 $NVMBASE/scripts/reset.sh
-
 #currentDate=`date +"%D %T"`
-#cp -r $OUTPUTDIR $OUTPUTDIR"-"$currentDate
-	
-#APPBASE=$APPBENCH/$4
-#APP=$4
-#RUNAPP
 set +x
