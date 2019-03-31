@@ -58,6 +58,7 @@ int is_hetero_exit(struct task_struct *task);
 int get_fastmem_node(void);
 int get_slowmem_node(void);
 int is_hetero_obj(void *obj);
+int is_hetero_cacheobj(void *obj);
 int is_hetero_page(struct page *page, int nodeid);
 void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);

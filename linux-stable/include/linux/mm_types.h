@@ -368,7 +368,7 @@ struct mm_struct {
 
 #ifdef CONFIG_HETERO_ENABLE
         unsigned                        hetero_task;
-        void                            *hetero_obj;
+        //void                            *hetero_obj;
 	unsigned long 			pgcache_miss_cnt;
 	unsigned long 			pgcache_hits_cnt;
         unsigned long 			pgbuff_miss_cnt;

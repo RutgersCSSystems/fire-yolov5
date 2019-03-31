@@ -9,7 +9,7 @@ $APPBENCH/scripts/killqemu.sh
 
 #sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -smp maxcpus=16  -numa node,nodeid=0,cpus=0-4 -curses -vga std -numa node,nodeid=1,cpus=10-13
 
-sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-8,mem=1024M -numa node,nodeid=1,cpus=9-15,mem=2048M -smp sockets=2,cores=2,threads=2,maxcpus=16 -curses #-net user,hostfwd=tcp:127.0.0.1:2222-:22   #-netdev tap,id=mynet0,ifname=eth0 -device e1000,netdev=mynet0
+sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-8,mem=3G -numa node,nodeid=1,cpus=9-15,mem=13G -smp sockets=2,cores=2,threads=2,maxcpus=16 -curses #-net user,hostfwd=tcp:127.0.0.1:2222-:22   #-netdev tap,id=mynet0,ifname=eth0 -device e1000,netdev=mynet0
 
 #-nographic #-display curses
 #sudo qemu-system-x86_64 -nographic -kernel $KERNEL/vmlinuz-4.17.0 -hda qemu-image.img -append "root=/dev/sda rw console=ttyAMA0 console=ttyS0" --enable-kvm -m 16G -numa node,nodeid=0,cpus=0-4 -numa node,nodeid=1,cpus=10-13

@@ -135,7 +135,7 @@ static int page_cache_tree_insert(struct address_space *mapping,
 #ifdef CONFIG_HETERO_ENABLE
 	error = 1;
 	/* Set page to Hetero Object */
-	if (is_hetero_buffer_set() && is_hetero_obj(mapping->hetero_obj)){
+	if (is_hetero_buffer_set() && is_hetero_cacheobj(mapping->hetero_obj)){
 		page->hetero_obj = mapping->hetero_obj;	
 		error = __radix_tree_create_hetero(&mapping->i_pages, 
 						   page->index, 0,
@@ -1076,7 +1076,6 @@ struct page *__page_cache_alloc(gfp_t gfp)
 		return page;
 	}
 
-	
 	allocpage = alloc_pages(gfp, 0);
 
 #ifdef CONFIG_HETERO_STATS
@@ -1143,10 +1142,13 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		n = get_fastmem_node();
 		is_hetero_alloc = 1;
 	}
-#ifdef CONFIG_HETERO_DEBUG
+#if 1 //def CONFIG_HETERO_DEBUG
 	else if (is_hetero_pgcache_set()) {
-		dgb_target_hetero_obj(x);
-		dump_stack();
+		if(x && !is_hetero_obj(x->hetero_obj)) {
+			//debug_hetero_obj(x->hetero_obj);
+			set_fsmap_hetero_obj(x);
+		}
+		//dump_stack();
 	}
 #endif
 	if (cpuset_do_page_mem_spread()) {

@@ -2,7 +2,7 @@
 
 
 
-export NVMBASE=$HOME/ssd/NVM
+export NVMBASE=$HOME/NVM
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME=$1
@@ -17,7 +17,7 @@ export QEMU_IMG=$NVMBASE
 #export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
 export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
-export QEMUMEM="18432M"
+export QEMUMEM="16G"
 export KERNEL=$NVMBASE/KERNEL
 
 #BENCHMARKS AND LIBS

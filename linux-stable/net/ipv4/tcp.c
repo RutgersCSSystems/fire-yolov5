@@ -879,7 +879,7 @@ struct sk_buff *sk_stream_alloc_skb(struct sock *sk, int size, gfp_t gfp,
         /* Allocate hetero buffer */
 #ifdef CONFIG_HETERO_ENABLE
 	skb = NULL;
-	if(sk && is_hetero_buffer_set() && is_hetero_obj(sk->hetero_obj)) {
+	if(sk && is_hetero_buffer_set() && is_hetero_cacheobj(sk->hetero_obj)) {
 		skb = alloc_skb_fclone_hetero(size + sk->sk_prot->max_header, gfp,
 			sk->hetero_obj);
 	}	

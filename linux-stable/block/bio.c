@@ -675,7 +675,7 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
 			gfp_mask &= ~__GFP_DIRECT_RECLAIM;
 #ifdef CONFIG_HETERO_ENABLE
                 p = NULL;
-                if(is_hetero_buffer_set() && is_hetero_obj(hetero_obj)) {
+                if(is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)) {
                         p = mempool_alloc_hetero(bs->bio_pool, gfp_mask, 
 						 hetero_obj);
                 }
@@ -726,7 +726,7 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
 	bio->bi_max_vecs = nr_iovecs;
 	bio->bi_io_vec = bvl;
 #ifdef CONFIG_HETERO_ENABLE
-        if (is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
+        if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
                 hetero_dbg("%s:%d \n",__func__,__LINE__);
                 bio->hetero_obj = hetero_obj;
 		bs->hetero_obj = hetero_obj;

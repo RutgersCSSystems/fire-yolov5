@@ -738,7 +738,7 @@ slow_path:
 		/* Allocate buffer */
 #ifdef CONFIG_HETERO_ENABLE
 		skb2 = NULL;
-		if(sk && is_hetero_buffer_set() && is_hetero_obj(sk->hetero_obj)){
+		if(sk && is_hetero_buffer_set() && is_hetero_cacheobj(sk->hetero_obj)){
 			skb2 = alloc_skb_hetero(len + hlen + ll_rs, GFP_ATOMIC, 
 				sk->hetero_obj);
 		}
@@ -985,7 +985,7 @@ alloc_new_skb:
 
       			          /* Allocate buffer */
 #ifdef CONFIG_HETERO_ENABLE
-				if(sk && is_hetero_obj(sk->hetero_obj)){
+				if(sk && is_hetero_cacheobj(sk->hetero_obj)){
 					skb = alloc_skb_hetero(alloclen + hh_len + 15,
 						sk->sk_allocation, sk->hetero_obj);
 				}

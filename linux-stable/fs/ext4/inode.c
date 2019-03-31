@@ -6237,6 +6237,18 @@ int ext4_filemap_fault(struct vm_fault *vmf)
 	struct inode *inode = file_inode(vmf->vma->vm_file);
 	int err;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC) {
+
+		if(inode->i_mapping) {
+			is_hetero_obj(inode->i_mapping);
+		}
+                //if(!execute_ok(inode) && inode->i_mapping) 
+                  //   set_fsmap_hetero_obj(inode->i_mapping);
+        }
+#endif
+
 	down_read(&EXT4_I(inode)->i_mmap_sem);
 	err = filemap_fault(vmf);
 	up_read(&EXT4_I(inode)->i_mmap_sem);

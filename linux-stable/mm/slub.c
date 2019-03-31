@@ -2461,15 +2461,16 @@ void dgb_target_hetero_obj(void *hetero_obj){
 
         if(curr_inode) {
                 curr_dentry = d_find_any_alias(curr_inode);
-                printk("%s:%d Proc name %s is_hetero_obj %d "
+                printk("%s:%d Proc name %s is_hetero_cacheobj %d "
                        "inode %lu", __func__,__LINE__, current->comm,
-                       is_hetero_obj(hetero_obj),
+                       is_hetero_cacheobj(hetero_obj),
                        curr_inode->i_ino);
         }
         else
                 goto error;
 
-        hetero_inode = (struct inode *)current->mm->hetero_obj;
+        //hetero_inode = (struct inode *)current->mm->hetero_obj;
+	hetero_inode = (struct inode *)current->hetero_obj;
         if(hetero_inode) {
                 hetero_dentry = d_find_any_alias(hetero_inode);
                 if(hetero_dentry && curr_dentry)
@@ -2524,8 +2525,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* because we explicity redirected allocatio to 
 		* slow memory 
 		*/
-	        if(is_hetero_buffer_set()) {
-			//dump_stack();
+	        if(is_hetero_buffer_set() ) {
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
 #endif
@@ -2943,7 +2943,8 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 
 #ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
-	if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
+	if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+	//if(is_hetero_buffer_set()) {
 		node = get_fastmem_node();
 	}else {
 		node = get_fastmem_node();
@@ -2975,18 +2976,17 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		/* We set hetero_obj to page even if not in the desired 
 		 * memory node. We can later use this for migration.
 		 */
-		if(is_hetero_buffer_set() && is_hetero_obj(s->hetero_obj)) {
+		if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+		//if(is_hetero_buffer_set()) {
 			if(is_hetero_page(page, node))
 				set_hetero_obj_page(page, s->hetero_obj);	
+
+			/* Hit or miss to desired node */
+			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
-		/* Hit or miss to desired node */
-                if(is_hetero_buffer_set()  && is_hetero_obj(s->hetero_obj)) {
-			/* FIXME: Duplicate page to node check */
-		        update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
-			//if(get_fastmem_node() != page_to_nid(page))
-			//	dgb_target_hetero_obj(s->hetero_obj);
-			//dump_stack();
-		}
+		//if(is_hetero_buffer_set() && !is_hetero_cacheobj(s->hetero_obj)) {
+		//	debug_hetero_obj(obj);
+		//}
 #endif
         } else
                 freelist = NULL;

@@ -959,7 +959,7 @@ int __radix_tree_create_hetero(struct radix_tree_root *root, unsigned long index
 
 	/*Mark the cache that it belongs to Hetero targe object*/
 #ifdef CONFIG_HETERO_ENABLE
-        if (is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
+        if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
 		update_hetero_obj(radix_tree_node_cachep, hetero_obj);
 	}
 #endif
@@ -1213,14 +1213,9 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
 		unsigned offset;
 
 		if (node == RADIX_TREE_RETRY) {
-		//	if (global_flag == 4)
-		//		add_to_hashtable_node(node);
-
 			goto restart;
 		}
 		parent = entry_to_node(node);
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(parent);
 
 		offset = radix_tree_descend(parent, &node, index);
 		slot = parent->slots + offset;
@@ -1228,8 +1223,6 @@ void *__radix_tree_lookup(const struct radix_tree_root *root,
 
 	if (nodep) {
 		*nodep = parent;
-		//if (global_flag == 4)
-		//	add_to_hashtable_node(*nodep);
 	}
 	if (slotp)
 		*slotp = slot;

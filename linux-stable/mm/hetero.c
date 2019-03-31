@@ -192,8 +192,9 @@ void debug_hetero_obj(void *obj) {
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
 
-#ifdef CONFIG_HETERO_DEBUG
-	struct inode *currinode = (struct inode *)current->mm->hetero_obj;
+#if 1//def CONFIG_HETERO_DEBUG
+	//struct inode *currinode = (struct inode *)current->mm->hetero_obj;
+	struct inode *currinode = (struct inode *)current->hetero_obj;
 	if(inode && currinode) {
 
 		if(execute_ok(inode))
@@ -210,6 +211,11 @@ void debug_hetero_obj(void *obj) {
 }
 EXPORT_SYMBOL(debug_hetero_obj);
 
+int is_hetero_cacheobj(void *obj){
+	return 1;
+}
+EXPORT_SYMBOL(is_hetero_cacheobj);
+
 int is_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
@@ -219,15 +225,16 @@ int is_hetero_obj(void *obj)
 		return 1;
 #endif
 
-
 #ifdef CONFIG_HETERO_ENABLE
 	if(obj && current && current->mm && 
-		current->mm->hetero_obj && current->mm->hetero_obj == obj){
-		//debug_hetero_obj(current->mm->hetero_obj);
+		//current->mm->hetero_obj && current->mm->hetero_obj == obj){
+		current->hetero_obj && current->hetero_obj == obj){
+		//debug_hetero_obj(obj);
 		return 1;
-	}else if(obj && current && current->mm && current->mm->hetero_obj) {
+	//}else if(obj && current && current->mm && current->mm->hetero_obj) {
+	}else if(obj && current && current->hetero_obj) {
 		//dump_stack();
-       		debug_hetero_obj(obj);
+       		//debug_hetero_obj(obj);
         }
 
 #endif
@@ -258,7 +265,8 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 void set_curr_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_ENABLE
-        current->mm->hetero_obj = obj;
+        //current->mm->hetero_obj = obj;
+	current->hetero_obj = obj;
 #endif
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
@@ -282,6 +290,7 @@ set_fsmap_hetero_obj(void *mapobj)
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
 	struct dentry *res = NULL;
+	void *current_obj = current->hetero_obj;
 
 #ifdef CONFIG_HETERO_OBJAFF
         /*If we do not enable object affinity then we simply 
@@ -294,17 +303,23 @@ set_fsmap_hetero_obj(void *mapobj)
         mapping->hetero_obj = NULL;
 	inode = (struct inode *)mapping->host;
 
-	if(execute_ok(inode)) {
+	/*if(execute_ok(inode)) {
 		mapping->hetero_obj = NULL;
 		return;
-	}
+	}*/
+	if(!inode)
+		return;
 
-	if(current->mm->hetero_obj == (void *)inode)
+	if(current_obj && current_obj == (void *)inode)
 		return;
 
         if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+
                 mapping->hetero_obj = (void *)inode;
-                current->mm->hetero_obj = (void *)inode;
+
+                //current->mm->hetero_obj = (void *)inode;
+		current->hetero_obj = (void *)inode;
+
 #ifdef CONFIG_HETERO_DEBUG
 		if(mapping->host) {
 			res = d_find_any_alias(inode);
@@ -334,7 +349,10 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
         if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
 
 		sock->hetero_obj = (void *)inode;
-		current->mm->hetero_obj = (void *)inode;
+
+		//current->mm->hetero_obj = (void *)inode;
+		current->hetero_obj = (void *)inode;
+
 		sock->__sk_common.hetero_obj = (void *)inode;
 #ifdef CONFIG_HETERO_DEBUG
 		printk(KERN_ALERT "%s:%d Proc %s \n", __func__,__LINE__,
@@ -374,6 +392,7 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		current->mm->pgcache_hits_cnt += 1;
 	}else {
 		page->hetero = 0;
+		//dump_stack();
         	current->mm->pgcache_miss_cnt += 1;
 	}
 }
@@ -387,7 +406,6 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 		return;
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
-
 
 	//Check if page is in the write node and 
 	//we are not deleting and only inserting the page
@@ -656,25 +674,23 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
         struct page *newpg = NULL;
 	struct page *oldpage = NULL;
 	struct rb_root *root;
-	struct address_space *mapping = (struct address_space *)map;
 	int destnode = get_slowmem_node();
 	int num_misses=0, threshold=0;
-
-	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
-		return;
+#ifdef _ENABLE_HETERO_RBTREE
+	struct address_space *mapping = (struct address_space *)map;
 	if(!mapping) 
+		return;
+#endif
+	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
 		return;
 
 	//Calculate the number of misses and hits
-	threshold = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
-	//threshold = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
-
+	//threshold = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
+	threshold = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
 	//Controls how frequently we should enable migration thread
 	if(!migrate_freq || !threshold || (threshold % migrate_freq != 0)) 
 		return;
-
-	hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, threshold);
-
+	//hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, threshold);
 	
 #ifdef _ENABLE_HETERO_RBTREE
 	root = &current->mm->objaff_cache_rbroot;

@@ -921,7 +921,17 @@ int vfs_open(const struct path *path, struct file *file,
 		return PTR_ERR(dentry);
 
 	file->f_path = *path;
+#ifdef CONFIG_HETERO_ENABLE
+	int ret = 0;
+	struct inode *inode;
+	ret = do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+	inode = d_backing_inode(dentry);
+        //if(inode && !execute_ok(inode))
+          //      set_fsmap_hetero_obj(inode->i_mapping);
+	return ret;
+#else
 	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+#endif
 }
 
 struct file *dentry_open(const struct path *path, int flags,

@@ -691,7 +691,9 @@ struct task_struct {
 	/* Per-thread vma caching: */
 	struct vmacache			vmacache;
 
-
+#ifdef CONFIG_HETERO_ENABLE
+	void *hetero_obj;
+#endif
 
 #ifdef SPLIT_RSS_COUNTING
 	struct task_rss_stat		rss_stat;

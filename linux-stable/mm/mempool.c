@@ -522,7 +522,7 @@ void *mempool_alloc_hetero(mempool_t *pool, gfp_t gfp_mask, void *hetero_obj)
 
 repeat_alloc:
 #ifdef CONFIG_HETERO_ENABLE
-        if (hetero_obj && is_hetero_buffer_set() && is_hetero_obj(hetero_obj)){
+        if (hetero_obj && is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
 		struct kmem_cache *s = (struct kmem_cache *)pool->pool_data;
 		if(s) {
 			update_hetero_obj(s, hetero_obj);
