@@ -27,40 +27,42 @@ COMPILE_SHAREDLIB() {
 RUNAPP() {
 	#Run application
 	cd $NVMBASE
-	$APPBENCH/apps/rocksdb/run.sh
-}
+	$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+	sudo dmesg -c &>> $OUTPUTDIR/$OUTPUT
+}	
 
 
-#SETENV
-
-mkdir $OUTPUTDIR/slowmem-migration-only
-OUTPUT="slowmem-migration-only/db_bench.out"
-SETUP
-make CFLAGS="-D_MIGRATE"
-export APPPREFIX="numactl --preferred=1"
-RUNAPP &> $OUTPUTDIR/$OUTPUT
-
-mkdir $OUTPUTDIR/slowmem-obj-affinity
-OUTPUT="slowmem-obj-affinity/db_bench.out"
-SETUP
-make CFLAGS="-D_MIGRATE -D_OBJAFF"
-export APPPREFIX="numactl --preferred=1"
-RUNAPP &> $OUTPUTDIR/$OUTPUT
-
+SETENV
+OUTPUTDIR=$APPBENCH/output-rocksdb-trail2
 #Don't do any migration
 mkdir $OUTPUTDIR/naive-os-fastmem
 OUTPUT="naive-os-fastmem/db_bench.out"
 SETUP
 make CFLAGS=""
 export APPPREFIX="numactl --preferred=1"
-RUNAPP &> $OUTPUTDIR/$OUTPUT
+RUNAPP
 
 mkdir $OUTPUTDIR/slowmem-only
 OUTPUT="slowmem-only/db_bench.out"
 SETUP
 make CFLAGS="-D_SLOWONLY"
 export APPPREFIX="numactl --membind=1"
-RUNAPP &> $OUTPUTDIR/$OUTPUT
+RUNAPP 
+exit
+
+mkdir $OUTPUTDIR/slowmem-migration-only
+OUTPUT="slowmem-migration-only/db_bench.out"
+SETUP
+make CFLAGS="-D_MIGRATE"
+export APPPREFIX="numactl --preferred=1"
+RUNAPP
+
+mkdir $OUTPUTDIR/slowmem-obj-affinity
+OUTPUT="slowmem-obj-affinity/db_bench.out"
+SETUP
+make CFLAGS="-D_MIGRATE -D_OBJAFF"
+export APPPREFIX="numactl --preferred=1"
+RUNAPP
 
 #mkdir $OUTPUTDIR/fastmem-only
 exit
