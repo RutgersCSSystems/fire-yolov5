@@ -32,7 +32,16 @@ RUNAPP() {
 }	
 
 
-SETENV
+#SETENV
+mkdir $OUTPUTDIR/slowmem-only
+OUTPUT="slowmem-only/db_bench.out"
+SETUP
+make CFLAGS="-D_SLOWONLY -D_DISABLE_HETERO"
+export APPPREFIX="numactl --membind=1"
+RUNAPP 
+exit
+
+
 OUTPUTDIR=$APPBENCH/output-rocksdb-trail2
 #Don't do any migration
 mkdir $OUTPUTDIR/naive-os-fastmem
@@ -42,13 +51,6 @@ make CFLAGS=""
 export APPPREFIX="numactl --preferred=1"
 RUNAPP
 
-mkdir $OUTPUTDIR/slowmem-only
-OUTPUT="slowmem-only/db_bench.out"
-SETUP
-make CFLAGS="-D_SLOWONLY"
-export APPPREFIX="numactl --membind=1"
-RUNAPP 
-exit
 
 mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/db_bench.out"
