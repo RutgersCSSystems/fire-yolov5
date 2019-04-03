@@ -7982,7 +7982,7 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 #ifdef CONFIG_HETERO_NET_ENABLE
 		if (skb) {
 			printk(KERN_ALERT "skb is already allocated somewhere! %s:%d\n", __FUNCTION__, __LINE__);
-		} else if (is_hetero_buffer_set_new()) {
+		} else if (is_hetero_buffer_set_netdev()) {
 			struct net_device *netdev = NULL;
 			if (q_vector && q_vector->adapter)
 				netdev = q_vector->adapter->netdev;
