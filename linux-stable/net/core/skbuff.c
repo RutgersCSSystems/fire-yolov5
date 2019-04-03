@@ -818,7 +818,7 @@ struct sk_buff *build_skb_hetero(void *data, unsigned int frag_size, void* heter
 {
 	struct sk_buff *skb = __build_skb_hetero(data, frag_size, hetero_obj);
 
-	printk(KERN_ALERT "allocating skb ... %s:%d\n", __FUNCTION__,__LINE__);
+	//printk(KERN_ALERT "allocating skb ... %s:%d\n", __FUNCTION__,__LINE__);
 
 	if (skb && frag_size) {
 		skb->head_frag = 1;
