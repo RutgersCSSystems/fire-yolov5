@@ -1951,6 +1951,10 @@ struct net_device {
 	struct lock_class_key	*qdisc_tx_busylock;
 	struct lock_class_key	*qdisc_running_key;
 	bool			proto_down;
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+	struct sock *hetero_sock;
+#endif
 };
 #define to_net_dev(d) container_of(d, struct net_device, dev)
 

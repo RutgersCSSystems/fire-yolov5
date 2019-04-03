@@ -4364,6 +4364,74 @@ static struct sk_buff *e1000_copybreak(struct e1000_adapter *adapter,
 	return skb;
 }
 
+#ifdef CONFIG_HETERO_NET_ENABLE
+#if 0
+/**
+ * e1000_receive_skb - helper function to handle rx indications
+ * @adapter: board private structure
+ * @status: descriptor status field as written by hardware
+ * @vlan: descriptor vlan field as written by hardware (no le/be conversion)
+ * @skb: pointer to sk_buff to be indicated to stack
+ */
+static gro_result_t e1000_pre_parse_skb(struct e1000_adapter *adapter, u8 status,
+                              __le16 vlan, struct sk_buff *skb)
+{
+	skb->pre_parse = 1;
+    skb->protocol = eth_type_trans(skb, adapter->netdev);
+	
+	/*if (skb)
+		printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);*/
+
+    if (status & E1000_RXD_STAT_VP) {
+            u16 vid = le16_to_cpu(vlan) & E1000_RXD_SPC_VLAN_MASK;
+
+            __vlan_hwaccel_put_tag(skb, htons(ETH_P_8021Q), vid);
+    }
+    return napi_gro_receive_pre_parse(&adapter->napi, skb);
+
+	/*if (skb)
+		printk(KERN_ALERT "skb->sk = 0x%lx | %s:%d\n", skb->sk, __FUNCTION__, __LINE__);*/
+}
+#endif
+
+static struct sk_buff *e1000_alloc_rx_skb_hetero(struct e1000_adapter *adapter,
+					  unsigned int bufsz, void *hetero_obj)
+{
+	struct sk_buff *skb = napi_alloc_skb_hetero(&adapter->napi, bufsz, hetero_obj);
+
+	if (unlikely(!skb))
+		adapter->alloc_rx_buff_failed++;
+	return skb;
+}
+
+
+/* this should improve performance for small packets with large amounts
+ * of reassembly being done in the stack
+ */
+static struct sk_buff *e1000_copybreak_hetero(struct e1000_adapter *adapter,
+				       struct e1000_rx_buffer *buffer_info,
+				       u32 length, const void *data, void *hetero_obj)
+{
+	struct sk_buff *skb;
+
+	if (length > copybreak)
+		return NULL;
+
+	skb = e1000_alloc_rx_skb_hetero(adapter, length, hetero_obj);
+	if (!skb)
+		return NULL;
+
+	dma_sync_single_for_cpu(&adapter->pdev->dev, buffer_info->dma,
+				length, DMA_FROM_DEVICE);
+
+	skb_put_data(skb, data, length);
+
+	return skb;
+}
+
+#endif
+
+
 /**
  * e1000_clean_rx_irq - Send received data up the network stack; legacy
  * @adapter: board private structure
@@ -4390,7 +4458,7 @@ static bool e1000_clean_rx_irq(struct e1000_adapter *adapter,
 	buffer_info = &rx_ring->buffer_info[i];
 
 	while (rx_desc->status & E1000_RXD_STAT_DD) {
-		struct sk_buff *skb;
+		struct sk_buff *skb = NULL;
 		u8 *data;
 		u8 status;
 
@@ -4404,6 +4472,142 @@ static bool e1000_clean_rx_irq(struct e1000_adapter *adapter,
 
 		data = buffer_info->rxbuf.data;
 		prefetch(data);
+
+#if 0
+		if (is_hetero_buffer_set_new()) {
+				do_gettimeofday(&t0);			
+
+				if (!pre_skb) {	
+					pre_skb = e1000_copybreak(adapter, buffer_info, length, data);
+					/*pre_skb = e1000_alloc_rx_skb(adapter, length);
+					if (!pre_skb)
+						return NULL;
+
+					skb_put_data(pre_skb, data, length);*/
+					/*unsigned int frag_len = e1000_frag_len(adapter);
+
+					skb = build_skb(data - E1000_HEADROOM, frag_len);
+					if (!skb) {
+						adapter->alloc_rx_buff_failed++;
+						break;
+					}
+
+					skb_reserve(skb, E1000_HEADROOM);*/
+
+				}
+
+				dev_kfree_skb(pre_skb);
+				goto normal_allocation;
+
+				do_gettimeofday(&t1);
+
+				interval = (t1.tv_sec*1000000 + t1.tv_usec) - (t0.tv_sec*1000000 + t0.tv_usec);
+
+				printk(KERN_ALERT "copybreak OVERHEAD: %ld us\n", interval);
+
+
+				if (!pre_skb) {
+					/*adapter->alloc_rx_buff_failed++;
+					break;*/
+					goto normal_allocation;
+				}
+
+				do_gettimeofday(&t0);
+
+				u32 len = le16_to_cpu(rx_desc->length);
+
+				/* !EOP means multiple descriptors were used to store a single
+				 * packet, if thats the case we need to toss it.  In fact, we
+				 * to toss every packet with the EOP bit clear and the next
+				 * frame that _does_ have the EOP bit set, as it is by
+				 * definition only a frame fragment
+				 */
+				if (unlikely(!(status & E1000_RXD_STAT_EOP)))
+					adapter->discarding = true;
+
+				if (adapter->discarding) {
+					/* All receives must fit into a single buffer */
+					netdev_dbg(netdev, "Receive packet consumed multiple buffers\n");
+					dev_kfree_skb(pre_skb);
+					if (status & E1000_RXD_STAT_EOP)
+						adapter->discarding = false;
+					goto next_desc;
+				}
+
+				if (unlikely(rx_desc->errors & E1000_RXD_ERR_FRAME_ERR_MASK)) {
+					if (e1000_tbi_should_accept(adapter, status,
+									rx_desc->errors,
+									len, data)) {
+						len--;
+					} else if (netdev->features & NETIF_F_RXALL) {
+						goto process_pre_skb;
+					} else {
+						dev_kfree_skb(pre_skb);
+						goto next_desc;
+					}
+				}
+
+process_pre_skb:
+
+				if (likely(!(netdev->features & NETIF_F_RXFCS)))
+					/* adjust length to remove Ethernet CRC, this must be
+					 * done after the TBI_ACCEPT workaround above
+					 */
+					len -= 4;
+
+				if (buffer_info->rxbuf.data == NULL)
+					skb_put(pre_skb, len);
+				else /* copybreak skb */
+					skb_trim(pre_skb, len);
+
+				do_gettimeofday(&t1);
+
+				interval = (t1.tv_sec*1000000 + t1.tv_usec) - (t0.tv_sec*1000000 + t0.tv_usec);
+
+				printk(KERN_ALERT "process pre_skb OVERHEAD: %ld us\n", interval);
+
+				do_gettimeofday(&t0);			
+
+				/*if (GRO_DROP == e1000_pre_parse_skb(adapter, status, rx_desc->special, pre_skb))
+					goto normal_allocation;*/
+
+				do_gettimeofday(&t1);
+
+				interval = (t1.tv_sec*1000000 + t1.tv_usec) - (t0.tv_sec*1000000 + t0.tv_usec);
+
+				printk(KERN_ALERT "parse OVERHEAD: %ld us\n", interval);
+
+				//dev_kfree_skb(pre_skb);
+
+				sk = pre_skb->sk;
+
+				if (!sk) {
+					printk(KERN_ALERT "FAILED to find sock! | %s:%d \n", __FUNCTION__, __LINE__);
+					goto normal_allocation;
+				}
+
+				if (sk)
+					printk(KERN_ALERT "sk->hetero_obj = 0x%lx | %s:%d \n", sk->hetero_obj, __FUNCTION__, __LINE__);
+
+				if (sk && sk->hetero_obj) {
+					skb = e1000_copybreak_hetero(adapter, buffer_info, length, data, sk->hetero_obj);
+				}
+		}
+normal_allocation:
+		if (!skb)
+#endif
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+		if (is_hetero_buffer_set_netdev()) {
+			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
+				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
+				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
+				skb = e1000_copybreak_hetero(adapter, buffer_info, length, data, netdev->hetero_sock->hetero_obj);
+			}
+			//printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", netdev, __FUNCTION__, __LINE__);
+		}
+		if (!skb)
+#endif
 		skb = e1000_copybreak(adapter, buffer_info, length, data);
 		if (!skb) {
 			unsigned int frag_len = e1000_frag_len(adapter);

@@ -982,6 +982,11 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t priority, int flags,
 struct sk_buff *__build_skb(void *data, unsigned int frag_size);
 struct sk_buff *build_skb(void *data, unsigned int frag_size);
 
+#ifdef CONFIG_HETERO_NET_ENABLE
+struct sk_buff *__build_skb_hetero(void *data, unsigned int frag_size, void *hetero_obj);
+struct sk_buff *build_skb_hetero(void *data, unsigned int frag_size, void *hetero_obj);
+#endif
+
 static inline struct sk_buff *alloc_skb(unsigned int size,
 					gfp_t priority)
 {
@@ -2672,6 +2677,17 @@ void napi_consume_skb(struct sk_buff *skb, int budget);
 
 void __kfree_skb_flush(void);
 void __kfree_skb_defer(struct sk_buff *skb);
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+struct sk_buff *__napi_alloc_skb_hetero(struct napi_struct *napi,
+				 unsigned int length, gfp_t gfp_mask, void *hetero_obj);
+static inline struct sk_buff *napi_alloc_skb_hetero(struct napi_struct *napi,
+					     unsigned int length, void *hetero_obj)
+{
+	return __napi_alloc_skb_hetero(napi, length, GFP_ATOMIC, hetero_obj);
+}
+#endif
+
 
 /**
  * __dev_alloc_pages - allocate page for network Rx

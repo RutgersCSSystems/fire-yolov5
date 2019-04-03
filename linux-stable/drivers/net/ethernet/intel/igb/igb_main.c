@@ -7892,6 +7892,61 @@ static void igb_put_rx_buffer(struct igb_ring *rx_ring,
 	rx_buffer->page = NULL;
 }
 
+#ifdef CONFIG_HETERO_NET_ENABLE
+static struct sk_buff *igb_build_skb_hetero(struct igb_ring *rx_ring,
+				     struct igb_rx_buffer *rx_buffer,
+				     union e1000_adv_rx_desc *rx_desc,
+				     unsigned int size,
+					 void* hetero_obj)
+{
+	void *va = page_address(rx_buffer->page) + rx_buffer->page_offset;
+#if (PAGE_SIZE < 8192)
+	unsigned int truesize = igb_rx_pg_size(rx_ring) / 2;
+#else
+	unsigned int truesize = SKB_DATA_ALIGN(sizeof(struct skb_shared_info)) +
+				SKB_DATA_ALIGN(IGB_SKB_PAD + size);
+#endif
+	struct sk_buff *skb;
+
+	/* prefetch first cache line of first page */
+	prefetch(va);
+#if L1_CACHE_BYTES < 128
+	prefetch(va + L1_CACHE_BYTES);
+#endif
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+	if (hetero_obj) {
+		skb = build_skb_hetero(va - IGB_SKB_PAD, truesize, hetero_obj);
+	}
+	if (!skb)
+#endif
+	/* build an skb around the page buffer */
+	skb = build_skb(va - IGB_SKB_PAD, truesize);
+	if (unlikely(!skb))
+		return NULL;
+
+	/* update pointers within the skb to store the data */
+	skb_reserve(skb, IGB_SKB_PAD);
+	__skb_put(skb, size);
+
+	/* pull timestamp out of packet data */
+	if (igb_test_staterr(rx_desc, E1000_RXDADV_STAT_TSIP)) {
+		igb_ptp_rx_pktstamp(rx_ring->q_vector, skb->data, skb);
+		__skb_pull(skb, IGB_TS_HDR_LEN);
+	}
+
+	/* update buffer offset */
+#if (PAGE_SIZE < 8192)
+	rx_buffer->page_offset ^= truesize;
+#else
+	rx_buffer->page_offset += truesize;
+#endif
+
+	return skb;
+}
+
+#endif
+
 static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 {
 	struct igb_ring *rx_ring = q_vector->rx.ring;
@@ -7924,6 +7979,21 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 		rx_buffer = igb_get_rx_buffer(rx_ring, size);
 
 		/* retrieve a buffer from the ring */
+#ifdef CONFIG_HETERO_NET_ENABLE
+		if (skb) {
+			printk(KERN_ALERT "skb is already allocated somewhere! %s:%d\n", __FUNCTION__, __LINE__);
+		} else if (is_hetero_buffer_set_new()) {
+			struct net_device *netdev = NULL;
+			if (q_vector && q_vector->adapter)
+				netdev = q_vector->adapter->netdev;
+			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
+				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
+				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
+				skb = igb_build_skb_hetero(rx_ring, rx_buffer, rx_desc, size, netdev->hetero_sock->hetero_obj);
+			}
+			//printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", netdev, __FUNCTION__, __LINE__);
+		}
+#endif
 		if (skb)
 			igb_add_rx_frag(rx_ring, rx_buffer, skb, size);
 		else if (ring_uses_build_skb(rx_ring))

@@ -166,6 +166,9 @@ config HETERO_OBJAFF
         def_bool y
         depends on HETERO_ENABLE
 
+config HETERO_NET_ENABLE
+		def_bool y
+		depends on HETERO_ENABLE
 
 #
 # Only be set on architectures that have completely implemented memory hotplug

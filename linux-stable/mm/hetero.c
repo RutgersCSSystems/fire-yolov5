@@ -259,7 +259,11 @@ int is_hetero_buffer_set(void)
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
-
+int is_hetero_buffer_set_netdev(void)
+{
+    return enbl_hetero_buffer;
+}
+EXPORT_SYMBOL(is_hetero_buffer_set_netdev);
 
 /*Sets current task with hetero obj*/
 void set_curr_hetero_obj(void *obj) 
@@ -363,6 +367,33 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 }
 EXPORT_SYMBOL(set_sock_hetero_obj);
 
+void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)                                        
+{
+#ifdef CONFIG_HETERO_NET_ENABLE
+    struct sock *sock = NULL;
+	struct socket *socket = (struct socket *)socket_obj;
+	sock = (struct sock *)socket->sk;
+
+	if(!sock) {
+		printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
+		return;
+	}
+
+    if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+
+		sock->hetero_obj = (void *)inode;
+		//current->mm->hetero_obj = (void *)inode;
+		current->hetero_obj = (void *)inode;
+		sock->__sk_common.hetero_obj = (void *)inode;
+		if (sock->sk_dst_cache && sock->sk_dst_cache->dev) {
+			printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", sock->sk_dst_cache->dev, __FUNCTION__, __LINE__);
+			if (!sock->sk_dst_cache->dev->hetero_sock)
+				sock->sk_dst_cache->dev->hetero_sock = sock;
+		}
+	}
+#endif
+}
+EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 
 
 #ifdef CONFIG_HETERO_STATS
