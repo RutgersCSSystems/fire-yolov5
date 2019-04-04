@@ -3355,7 +3355,6 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
 		current->hetero_obj = (void *)mapping->host;
 	}*/
 #endif
-
 	page = pagecache_get_page(mapping, index, fgp_flags,
 			mapping_gfp_mask(mapping));
 

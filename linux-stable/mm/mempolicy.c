@@ -1109,7 +1109,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 		hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
-					MIGRATE_SYNC, MR_SYSCALL, mm);
+					MIGRATE_ASYNC, MR_SYSCALL, mm);
 		if (err)
 			putback_movable_pages(&pagelist);
 	}
