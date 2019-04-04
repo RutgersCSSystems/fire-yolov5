@@ -1009,6 +1009,11 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	pte_t *pte;
 	spinlock_t *ptl;
 
+	if(!vma || !vma->vm_file) {
+		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+		return 0;
+	}
+
 	ptl = pmd_trans_huge_lock(pmd, vma);
 	if (ptl) {
 		ret = queue_pages_pmd(pmd, ptl, addr, end, walk);
@@ -1024,12 +1029,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!pte_present(*pte))
 			continue;
 		page = vm_normal_page(vma, addr, *pte);
-		if (!page)
+		if (!page || (page->hetero != HETERO_PG_FLAG))
 			continue;
 
-		if(check_hetero_page(walk->mm, page)) {
-			continue;
-		}
+		//if(check_hetero_page(walk->mm, page)) {
+		//	continue;
+		//}
 		/*
 		 * vm_normal_page() filters out zero pages, but there might
 		 * still be PageReserved pages to skip, perhaps in a VDSO.
@@ -1038,15 +1043,11 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 			continue;
 		if (!queue_pages_required(page, qp))
 			continue;
-
 		//SetPageLRU(page);
 		migrate_page_add(page, qp->pagelist, flags);
 	}
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
-        //if (!list_empty(qp->pagelist))
-          //      printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);	
-
 	return 0;
 }
 

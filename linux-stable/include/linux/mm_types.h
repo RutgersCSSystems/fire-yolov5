@@ -320,6 +320,10 @@ struct vm_area_struct {
 		unsigned long rb_subtree_last;
 	} shared;
 
+        /* HeteroOS code */
+#ifdef CONFIG_HETERO_ENABLE
+        int hetero;
+#endif
 	/*
 	 * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_vma
 	 * list, after a COW of one of the file pages.	A MAP_SHARED vma

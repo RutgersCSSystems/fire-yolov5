@@ -58,6 +58,8 @@
 #include <linux/pfn_trace.h>
 #include <net/sock.h>
 #include <linux/migrate.h>
+//#include <sys/time.h>
+#include <linux/time64.h>
 
 #include "internal.h"
 
@@ -113,16 +115,17 @@ int hetero_pid = 0;
 int hetero_usrpg_cnt = 0;
 int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
+long migrate_time = 0;
 
 void print_hetero_stats(struct task_struct *task) {
        printk("Curr %d Currname %s HeteroProcname %s " 
 		"page_cache_hits %lu page_cache_miss %lu " 
 	      	"buff_page_hits %lu buff_page_miss %lu " 
-		"pages migrated %lu \n ", 
+		"pages migrated %lu total migrate time %ld \n ", 
 	  	current->pid, current->comm, procname, 
               	task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
 	      	task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt, 
-		task->mm->pages_migrated);
+		task->mm->pages_migrated, migrate_time);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
@@ -687,13 +690,22 @@ static int migration_thread_fn(void *arg) {
 
 	unsigned long count = 0;
 	struct mm_struct *mm = (struct mm_struct *)arg;
+	struct timeval start, end;
+
+        do_gettimeofday(&start);
+
 	migration_thrd_active = 1;
 	if(!mm) {
 		return 0;
 	}
+
 	count = migrate_to_node_hetero(mm, get_fastmem_node(), 
 			get_slowmem_node(),MPOL_MF_MOVE_ALL);
 	migration_thrd_active = 0;
+
+	do_gettimeofday(&end);
+	migrate_time += (end.tv_sec*1000000 + end.tv_usec) - 
+			(start.tv_sec*1000000 + start.tv_usec);
 }
 
 

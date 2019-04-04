@@ -3920,7 +3920,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(mm->migrate_attempt % 2 != 0)
 		return rc; */
 
-	for(pass = 0; pass < 5 && retry; pass++) {
+	for(pass = 0; pass < 1 && retry; pass++) {
 		retry = 0;
 		pagecount++;
 #if 0
