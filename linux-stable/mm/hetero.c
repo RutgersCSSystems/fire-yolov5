@@ -223,15 +223,16 @@ int
 is_hetero_vma(struct vm_area_struct *vma) {
 
 #ifdef CONFIG_HETERO_OBJAFF
-	 if(!enbl_hetero_objaff)(
+
+	 if(!enbl_hetero_objaff)
 		return 1;
-	}
+
         if(!vma || !vma->vm_file) {
                 //printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
                 return 0;
         }
-	return 1;
 #endif
+	return 1;
 }
 
 int is_hetero_obj(void *obj) 
@@ -743,8 +744,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		return;
 
 	//Calculate the number of misses and hits
-	//threshold = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
-	threshold = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
+	threshold = current->mm->pgcache_miss_cnt + current->mm->pgbuff_miss_cnt;
+	//threshold = current->mm->pgcache_hits_cnt + current->mm->pgbuff_hits_cnt;
 	//Controls how frequently we should enable migration thread
 	if(!migrate_freq || !threshold || (threshold % migrate_freq != 0)) 
 		return;
