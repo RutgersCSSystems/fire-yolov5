@@ -1,15 +1,15 @@
 #!/bin/bash -x
 set -x
 PROC=8
-CC=/usr/lib/ccache/bin/gcc make -j$PROC &>compile.out
+numactl --membind=1 make -j$PROC &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
-CC=/usr/lib/ccache/bin/gcc make bzImage -j$PROC &>>compile.out
+numactl --membind=1 make bzImage -j$PROC &>>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
-CC=/usr/lib/ccache/bin/gcc make  modules -j$PROC &>>compile.out
-CC=/usr/lib/ccache/bin/gcc make  modules_install -j$PROC &>> compile.out
-CC=/usr/lib/ccache/bin/gcc make install &>> compile.out
+numactl --membind=1 make  modules -j$PROC &>>compile.out
+numactl --membind=1 make  modules_install -j$PROC &>> compile.out
+numactl --membind=1 make install &>> compile.out
 
  y="4.17.0"	
    if [[ x$ == x ]];

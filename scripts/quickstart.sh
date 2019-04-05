@@ -36,12 +36,11 @@ RUNAPP() {
 }
 
 
-#SETENV
-
+SETENV
 OUTPUT="slowmem-migration-only/db_bench.out"
 SETUP
 make CFLAGS="-D_MIGRATE"
-export APPPREFIX="numactl --preferred=0"
+export APPPREFIX="numactl --membind=1"
 RUNAPP &> $OUTPUTDIR/$OUTPUT
 exit
 
