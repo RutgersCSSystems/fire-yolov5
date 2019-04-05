@@ -1692,6 +1692,14 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
 	struct rb_node **rb_link, *rb_parent;
 	unsigned long charged = 0;
 
+#ifdef CONFIG_HETERO_ENABLE
+        if(current && current->mm &&
+                current->mm->hetero_task == HETERO_PROC && 
+		file && file->f_mapping)  {
+                set_fsmap_hetero_obj(file->f_mapping);
+        }
+#endif
+
 	/* Check against address space limit. */
 	if (!may_expand_vm(mm, vm_flags, len >> PAGE_SHIFT)) {
 		unsigned long nr_pages;

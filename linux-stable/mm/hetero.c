@@ -219,6 +219,21 @@ int is_hetero_cacheobj(void *obj){
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
+int 
+is_hetero_vma(struct vm_area_struct *vma) {
+
+#ifdef CONFIG_HETERO_OBJAFF
+	 if(!enbl_hetero_objaff)(
+		return 1;
+	}
+        if(!vma || !vma->vm_file) {
+                //printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+                return 0;
+        }
+	return 1;
+#endif
+}
+
 int is_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
@@ -745,6 +760,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 #ifdef _ENABLE_HETERO_THREAD
 	if(!migration_thrd_active) {
+		//printk(KERN_ALERT "%s:%d num_online_cpus() %d\n", 
+		//	__func__, __LINE__, num_online_cpus());
 		migration_thread = kthread_run(migration_thread_fn, current->mm,
                                       "migration_thread");	
 	}

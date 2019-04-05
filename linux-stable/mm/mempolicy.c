@@ -1009,7 +1009,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	pte_t *pte;
 	spinlock_t *ptl;
 
-	if(!vma || !vma->vm_file) {
+	if(!is_hetero_vma(vma)) {
 		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
 		return 0;
 	}
