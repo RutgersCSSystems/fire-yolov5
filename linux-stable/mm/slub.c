@@ -2526,7 +2526,6 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* slow memory 
 		*/
 	        if(is_hetero_buffer_set() ) {
-			page->hetero = HETERO_PG_FLAG;
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
 #endif
@@ -2871,8 +2870,6 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 			goto out;
 		stat(s, ORDER_FALLBACK);
 	}
-	page->hetero = HETERO_PG_FLAG;
-
 	page->objects = oo_objects(oo);
 
 	order = compound_order(page);
@@ -2978,16 +2975,11 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		 * memory node. We can later use this for migration.
 		 */
 		if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
-		//if(is_hetero_buffer_set()) {
 			if(is_hetero_page(page, node))
 				set_hetero_obj_page(page, s->hetero_obj);	
-
 			/* Hit or miss to desired node */
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
-		//if(is_hetero_buffer_set() && !is_hetero_cacheobj(s->hetero_obj)) {
-		//	debug_hetero_obj(obj);
-		//}
 #endif
         } else
                 freelist = NULL;

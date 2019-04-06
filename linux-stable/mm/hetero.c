@@ -118,14 +118,22 @@ char procname[TASK_COMM_LEN];
 long migrate_time = 0;
 
 void print_hetero_stats(struct task_struct *task) {
+
+	unsigned long hits = task->mm->pgbuff_hits_cnt;
+	long avglife = 0;
+	if(hits) {
+		avglife = task->mm->avg_kbufpage_life/hits;
+	}
        printk("Curr %d Currname %s HeteroProcname %s " 
 		"page_cache_hits %lu page_cache_miss %lu " 
 	      	"buff_page_hits %lu buff_page_miss %lu " 
-		"pages migrated %lu total migrate time %ld \n ", 
+		"pages_migrated %lu migrate_time %ld " 
+                "avg_page_life_time %ld pages_deleted %lu \n ", 
 	  	current->pid, current->comm, procname, 
               	task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
 	      	task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt, 
-		task->mm->pages_migrated, migrate_time);
+		task->mm->pages_migrated, migrate_time, 
+                avglife, task->mm->pages_deleted);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
@@ -134,18 +142,28 @@ void reset_hetero_stats(struct task_struct *task) {
 	task->mm->pgcache_miss_cnt = 0;
 	task->mm->pgbuff_miss_cnt = 0;
 	task->mm->pgbuff_hits_cnt = 0;
+
+#ifdef CONFIG_HETERO_STATS
 	/* Represents pages migrated and 
 	* frequency of page migration attempts
 	*/
 	task->mm->pages_migrated = 0;
 	task->mm->migrate_attempt = 0;
+	task->mm->avg_kbufpage_life = 0;
+	task->mm->pages_deleted = 0;
+#endif
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
 long timediff (struct timeval *start, struct timeval *end) {
 	
-	long diff;
-	diff += (end->tv_sec*1000000 + end->tv_usec) - 
+	long diff = 0;
+
+	if(start->tv_sec*1000000 + start->tv_usec == 0) {
+		return 0;
+	}
+	
+	diff = (end->tv_sec*1000000 + end->tv_usec) - 
 			(start->tv_sec*1000000 + start->tv_usec);
 	return diff;
 }
@@ -463,38 +481,29 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	if(!page) 
 		return;
 
-	 if (page->hetero != HETERO_PG_FLAG)
-		return;
-
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
-
-#ifdef CONFIG_HETERO_STATS
-	if (page->hetero == HETERO_PG_FLAG) {
-		//Update death time of a page or creation time
-		if(delpage) {
-			 do_gettimeofday(&page->hetero_del_time);
-			//printk("Slab page life time %ld \n", 
-			//	timediff(&page->hetero_create_time, &page->hetero_del_time));
-		}
-		else 
-			do_gettimeofday(&page->hetero_create_time);
-	}
-#endif
 
 	//Check if page is in the correct node and 
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
 		current->mm->pgbuff_hits_cnt += 1;
 		page->hetero = HETERO_PG_FLAG;
-	}else if(!delpage) {
+		page->hetero_create_time = (struct timeval){0};
+		page->hetero_del_time = (struct timeval){0};
+		do_gettimeofday(&page->hetero_create_time);
+	}else if(!correct_node && !delpage) {
 		current->mm->pgbuff_miss_cnt += 1;
 		page->hetero = 0;
-	}else if(delpage) {
-		if( page->hetero != HETERO_PG_FLAG)
-			return;
+	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
+			&& delpage) {
+#ifdef CONFIG_HETERO_STATS
+			do_gettimeofday(&page->hetero_del_time);
+			current->mm->avg_kbufpage_life += 
+				timediff(&page->hetero_create_time, &page->hetero_del_time);
+			current->mm->pages_deleted++;
+#endif		
 	}
-
 	//Either if object affinity is disabled or page node is 
 	//incorrect, then return
 	if(!correct_node || !enbl_hetero_objaff)

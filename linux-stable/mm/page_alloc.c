@@ -4558,7 +4558,8 @@ void __free_pages(struct page *page, unsigned int order)
 
 #ifdef CONFIG_HETERO_ENABLE
 		spin_lock(&lock);
-		if(page != NULL && is_hetero_buffer_set()) {
+		if(page != NULL && page->hetero == HETERO_PG_FLAG 
+			&& is_hetero_buffer_set()) {
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
 		}
 		spin_unlock(&lock);
