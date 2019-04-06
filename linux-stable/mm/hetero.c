@@ -119,21 +119,28 @@ long migrate_time = 0;
 
 void print_hetero_stats(struct task_struct *task) {
 
-	unsigned long hits = task->mm->pgbuff_hits_cnt;
-	long avglife = 0;
-	if(hits) {
-		avglife = task->mm->avg_kbufpage_life/hits;
-	}
+	unsigned long buffpgs = task->mm->pgbuffdel;
+	unsigned long cachepgs = task->mm->pgcachedel;
+	long avgbuff_life = 0, avgcache_life = 0;
+
+	if(buffpgs) 
+		avgbuff_life = task->mm->avg_kbufpage_life/buffpgs;
+
+	if(cachepgs)	
+		avgcache_life = task->mm->avg_cachepage_life/cachepgs;
+
        printk("Curr %d Currname %s HeteroProcname %s " 
 		"page_cache_hits %lu page_cache_miss %lu " 
 	      	"buff_page_hits %lu buff_page_miss %lu " 
 		"pages_migrated %lu migrate_time %ld " 
-                "avg_page_life_time %ld pages_deleted %lu \n ", 
+                "avg_buffpage_life(us) %ld pgbuffdel %lu " 
+		"avg_cachepage_life(us) %ld pgcachedel %lu\n ", 
 	  	current->pid, current->comm, procname, 
               	task->mm->pgcache_hits_cnt, task->mm->pgcache_miss_cnt, 
 	      	task->mm->pgbuff_hits_cnt, task->mm->pgbuff_miss_cnt, 
 		task->mm->pages_migrated, migrate_time, 
-                avglife, task->mm->pages_deleted);
+                avgbuff_life, task->mm->pgbuffdel, avgcache_life, 
+		task->mm->pgcachedel);
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
@@ -150,7 +157,9 @@ void reset_hetero_stats(struct task_struct *task) {
 	task->mm->pages_migrated = 0;
 	task->mm->migrate_attempt = 0;
 	task->mm->avg_kbufpage_life = 0;
-	task->mm->pages_deleted = 0;
+	task->mm->avg_cachepage_life = 0;
+	task->mm->pgbuffdel = 0;
+	task->mm->pgcachedel = 0;
 #endif
 }
 EXPORT_SYMBOL(reset_hetero_stats);
@@ -445,9 +454,40 @@ EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 #ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
+	int correct_node = 0; 
+	if(!page) 
+		return;
 
-	//Enable only when object affinity is enabled
+	if(page_to_nid(page) == nodeid)
+		correct_node = 1;
+
+	//Check if page is in the correct node and 
+	//we are not deleting and only inserting the page
+	if(correct_node && !delpage) {
+		current->mm->pgcache_hits_cnt += 1;
+		page->hetero = HETERO_PG_FLAG;
+		page->hetero_create_time = (struct timeval){0};
+		page->hetero_del_time = (struct timeval){0};
+		do_gettimeofday(&page->hetero_create_time);
+	}else if(!correct_node && !delpage) {
+		current->mm->pgcache_miss_cnt += 1;
+		page->hetero = 0;
+	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
+			&& delpage) {
+#ifdef CONFIG_HETERO_STATS
+			do_gettimeofday(&page->hetero_del_time);
+			current->mm->avg_cachepage_life += 
+				timediff(&page->hetero_create_time, &page->hetero_del_time);
+			current->mm->pgcachedel++;
+#endif		
+	}
+	//Either if object affinity is disabled or page node is 
+	//incorrect, then return
+	if(!correct_node || !enbl_hetero_objaff)
+		goto ret_pgcache_stat;
+
 #ifdef _ENABLE_HETERO_RBTREE
+	//Enable only when object affinity is enabled
 	if(delpage && page->hetero == HETERO_PG_FLAG && 
 		 enbl_hetero_objaff) {	
 		//spin_lock(&current->mm->objaff_cache_lock);
@@ -455,23 +495,16 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		//spin_unlock(&current->mm->objaff_cache_lock);
 		return;
 	}
-#endif
         if(page && page_to_nid(page) == nodeid) {
-
-#ifdef _ENABLE_HETERO_RBTREE
 		if(enbl_hetero_objaff) {
 			//spin_lock(&current->mm->objaff_cache_lock);
 		        hetero_insert_cpage_rbtree(current, page);
 			//spin_unlock(&current->mm->objaff_cache_lock);	
 		}
-#endif
-		page->hetero = HETERO_PG_FLAG;
-		current->mm->pgcache_hits_cnt += 1;
-	}else {
-		page->hetero = 0;
-		//dump_stack();
-        	current->mm->pgcache_miss_cnt += 1;
 	}
+#endif
+ret_pgcache_stat:
+	return;
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
@@ -502,7 +535,7 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 			do_gettimeofday(&page->hetero_del_time);
 			current->mm->avg_kbufpage_life += 
 				timediff(&page->hetero_create_time, &page->hetero_del_time);
-			current->mm->pages_deleted++;
+			current->mm->pgbuffdel++;
 #endif		
 	}
 	//Either if object affinity is disabled or page node is 

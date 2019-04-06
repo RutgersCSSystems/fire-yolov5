@@ -395,7 +395,10 @@ struct mm_struct {
 	unsigned long			pages_migrated;
 	unsigned long			migrate_attempt;
 	long 				avg_kbufpage_life;
-	unsigned long 			pages_deleted;
+	long 				avg_cachepage_life;
+	/* Kernel buffer and cache pages deleted */
+	unsigned long 			pgbuffdel;
+	unsigned long 			pgcachedel;
 #endif
 
 #ifdef CONFIG_MMU
