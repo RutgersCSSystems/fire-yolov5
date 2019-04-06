@@ -431,7 +431,8 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 		current->hetero_obj = (void *)inode;
 		sock->__sk_common.hetero_obj = (void *)inode;
 		if (sock->sk_dst_cache && sock->sk_dst_cache->dev) {
-			printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", sock->sk_dst_cache->dev, __FUNCTION__, __LINE__);
+			hetero_dbg("net device is 0x%lx | %s:%d\n", 
+				sock->sk_dst_cache->dev, __FUNCTION__, __LINE__);
 			if (!sock->sk_dst_cache->dev->hetero_sock)
 				sock->sk_dst_cache->dev->hetero_sock = sock;
 		}

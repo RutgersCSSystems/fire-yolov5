@@ -4612,7 +4612,6 @@ normal_allocation:
 				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
 				skb = e1000_copybreak_hetero(adapter, buffer_info, length, data, netdev->hetero_sock->hetero_obj);
 			}
-			//printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", netdev, __FUNCTION__, __LINE__);
 		}
 		if (!skb)
 #endif

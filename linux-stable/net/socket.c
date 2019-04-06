@@ -1636,8 +1636,7 @@ int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
 #ifdef CONFIG_HETERO_NET_ENABLE
 	if ((is_hetero_buffer_set() || is_hetero_pgcache_set())
 		&& newsock->file->f_inode ) { 
-			printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
- 
+			//printk(KERN_ALERT "current process: %s | %s:%d\n", current->comm, __FUNCTION__, __LINE__);
 			set_sock_hetero_obj_netdev((void *)newsock, (void *)newsock->file->f_inode);
 	}
 #endif
