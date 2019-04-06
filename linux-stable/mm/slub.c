@@ -2870,6 +2870,8 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 			goto out;
 		stat(s, ORDER_FALLBACK);
 	}
+	page->hetero = HETERO_PG_FLAG;
+
 	page->objects = oo_objects(oo);
 
 	order = compound_order(page);
@@ -2950,9 +2952,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		node = get_fastmem_node();
 	}
 #endif
-
         freelist = get_partial(s, flags, node, c);
-
         if (freelist)
                 return freelist;
 

@@ -1,6 +1,6 @@
 #!/bin/bash -x
 set -x
-PROC=8
+PROC=40
 numactl --membind=1 make -j$PROC &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out

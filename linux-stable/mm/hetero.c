@@ -454,10 +454,24 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	int correct_node = 0; 
 	if(!page) 
 		return;
+
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
 
-	//Check if page is in the write node and 
+#ifdef CONFIG_HETERO_STATS
+	if (page->hetero == HETERO_PG_FLAG) {
+		//Update death time of a page or creation time
+		if(delpage) {
+			do_gettimeofday(&page->hetero_del_time);
+			printk("Slab page life time %ld \n", 
+				timediff(&page->hetero_create_time, &page->hetero_del_time));
+		}
+		else 
+			do_gettimeofday(&page->hetero_create_time);
+	}
+#endif
+
+	//Check if page is in the correct node and 
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
 		current->mm->pgbuff_hits_cnt += 1;
@@ -702,6 +716,14 @@ void hetero_del_from_list(struct page *page)
 }
 
 
+long timediff (struct timeval *start, struct timeval *end) {
+	
+	long diff;
+	diff += (*end.tv_sec*1000000 + *end.tv_usec) - 
+			(*start.tv_sec*1000000 + *start.tv_usec);
+	return diff;
+}
+
 static int migration_thread_fn(void *arg) {
 
 	unsigned long count = 0;
@@ -718,10 +740,11 @@ static int migration_thread_fn(void *arg) {
 	count = migrate_to_node_hetero(mm, get_fastmem_node(), 
 			get_slowmem_node(),MPOL_MF_MOVE_ALL);
 	migration_thrd_active = 0;
-
 	do_gettimeofday(&end);
-	migrate_time += (end.tv_sec*1000000 + end.tv_usec) - 
-			(start.tv_sec*1000000 + start.tv_usec);
+
+	migrate_time += timediff(&start, &end);
+
+	return 0;
 }
 
 

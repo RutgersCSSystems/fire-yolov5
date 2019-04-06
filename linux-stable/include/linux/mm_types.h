@@ -210,6 +210,11 @@ struct page {
         struct rb_node rb_node;
 	struct list_head hetero_list;
 #endif
+
+#ifdef CONFIG_HETERO_STATS
+        struct timeval hetero_create_time;
+        struct timeval hetero_del_time;
+#endif
 	/*
 	 * On machines where all RAM is mapped into kernel address space,
 	 * we can simply calculate the virtual address. On machines with
