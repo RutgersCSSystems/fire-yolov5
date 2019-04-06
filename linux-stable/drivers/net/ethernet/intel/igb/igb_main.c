@@ -7986,7 +7986,8 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 			struct net_device *netdev = NULL;
 			if (q_vector && q_vector->adapter)
 				netdev = q_vector->adapter->netdev;
-			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
+			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj 
+				&& is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
 				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
 				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
 				skb = igb_build_skb_hetero(rx_ring, rx_buffer, rx_desc, size, netdev->hetero_sock->hetero_obj);

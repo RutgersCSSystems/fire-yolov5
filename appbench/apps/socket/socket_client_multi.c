@@ -10,9 +10,10 @@
  
 #define PORT 8080
 
-#define THREAD_NUM 16
+#define TOTAL 32768
+#define THREAD_NUM 4
 #define SIZE 4096
-#define ITER 32768
+#define ITER 32768*64
 
 void* send_msg(void *arg){
 	uint16_t thread_num = (uint16_t)atoi(arg);
@@ -89,8 +90,8 @@ int main(int argc, char const *argv[])
 
 	t = (t1.tv_sec*1000 + t1.tv_usec/1000) - (t0.tv_sec*1000 + t0.tv_usec/1000);
 	
-	printf("Total time for sender is %3.3lf ms\n", t);
-	//printf("Aggregated Sender Throughput is %3.3lf MB/s")
+	printf("Total time for Client is %3.3lf ms\n", t);
+	printf("Aggregated Client Throughput is %3.3lf MB/s\n", (TOTAL * 1000) / t );
 
     return 0; 
 } 
