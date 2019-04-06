@@ -142,6 +142,14 @@ void reset_hetero_stats(struct task_struct *task) {
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
+long timediff (struct timeval *start, struct timeval *end) {
+	
+	long diff;
+	diff += (end->tv_sec*1000000 + end->tv_usec) - 
+			(start->tv_sec*1000000 + start->tv_usec);
+	return diff;
+}
+
 
 inline int check_hetero_proc (struct task_struct *task) 
 {
@@ -455,6 +463,9 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	if(!page) 
 		return;
 
+	 if (page->hetero != HETERO_PG_FLAG)
+		return;
+
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
 
@@ -462,9 +473,9 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	if (page->hetero == HETERO_PG_FLAG) {
 		//Update death time of a page or creation time
 		if(delpage) {
-			do_gettimeofday(&page->hetero_del_time);
-			printk("Slab page life time %ld \n", 
-				timediff(&page->hetero_create_time, &page->hetero_del_time));
+			 do_gettimeofday(&page->hetero_del_time);
+			//printk("Slab page life time %ld \n", 
+			//	timediff(&page->hetero_create_time, &page->hetero_del_time));
 		}
 		else 
 			do_gettimeofday(&page->hetero_create_time);
@@ -715,14 +726,6 @@ void hetero_del_from_list(struct page *page)
         //raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 
-
-long timediff (struct timeval *start, struct timeval *end) {
-	
-	long diff;
-	diff += (*end.tv_sec*1000000 + *end.tv_usec) - 
-			(*start.tv_sec*1000000 + *start.tv_usec);
-	return diff;
-}
 
 static int migration_thread_fn(void *arg) {
 

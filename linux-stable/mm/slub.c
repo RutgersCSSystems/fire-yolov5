@@ -2526,6 +2526,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		* slow memory 
 		*/
 	        if(is_hetero_buffer_set() ) {
+			page->hetero = HETERO_PG_FLAG;
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
 		}
 #endif
