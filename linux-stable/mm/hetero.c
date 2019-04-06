@@ -406,7 +406,7 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 		return;
 	}
 
-    if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+    if((is_hetero_buffer_set_netdev() || is_hetero_pgcache_set())){
 
 		sock->hetero_obj = (void *)inode;
 		//current->mm->hetero_obj = (void *)inode;

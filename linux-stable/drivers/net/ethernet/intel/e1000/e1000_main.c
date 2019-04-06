@@ -4421,6 +4421,13 @@ static struct sk_buff *e1000_copybreak_hetero(struct e1000_adapter *adapter,
 	if (!skb)
 		return NULL;
 
+	/*if (skb) {
+		printk("why???\n");
+		struct page *page = NULL;
+		page = virt_to_page(skb);
+		update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);   
+	}*/
+
 	dma_sync_single_for_cpu(&adapter->pdev->dev, buffer_info->dma,
 				length, DMA_FROM_DEVICE);
 
@@ -4599,7 +4606,8 @@ normal_allocation:
 
 #ifdef CONFIG_HETERO_NET_ENABLE
 		if (is_hetero_buffer_set_netdev()) {
-			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
+			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
+				 && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
 				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
 				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
 				skb = e1000_copybreak_hetero(adapter, buffer_info, length, data, netdev->hetero_sock->hetero_obj);

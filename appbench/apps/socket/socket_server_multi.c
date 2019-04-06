@@ -9,9 +9,10 @@
 
 #define PORT 8080
 
-#define THREAD_NUM 16
+#define TOTAL 32768
+#define THREAD_NUM 4
 #define SIZE 4096
-#define ITER 32768
+#define ITER 32768*64
 
 //the thread function
 void *connection_handler(void *);
@@ -21,6 +22,9 @@ int main(int argc , char *argv[])
     int socket_desc , client_sock[THREAD_NUM] , c;
     struct sockaddr_in server , client;
 	int i = 0;
+
+	struct timeval t0, t1;
+	double t;
 
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -50,6 +54,8 @@ int main(int argc , char *argv[])
     c = sizeof(struct sockaddr_in);
 	pthread_t thread_id;
 	
+	gettimeofday(&t0, NULL);
+
     //while ( (client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c)) ) {
 	for (i = 0; i < THREAD_NUM; ++i) {
 		client_sock[i] = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
@@ -69,6 +75,13 @@ int main(int argc , char *argv[])
 		pthread_join(thread_id , NULL);
 		close(client_sock[i]);
 	}
+
+	gettimeofday(&t1, NULL);
+
+	t = (t1.tv_sec*1000 + t1.tv_usec/1000) - (t0.tv_sec*1000 + t0.tv_usec/1000) - 2000;
+	
+	printf("Total time for Server is %3.3lf ms\n", t);
+	printf("Aggregated Server Throughput is %3.3lf MB/s\n", (TOTAL * 1000) / t );
 
     if (client_sock < 0) {
         perror("accept failed");

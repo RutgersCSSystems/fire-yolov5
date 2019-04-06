@@ -2946,7 +2946,11 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 
 #ifdef CONFIG_HETERO_ENABLE
         /* Check if we are allocating for targetted object */
-	if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+#ifdef CONFIG_HETERO_NET_ENABLE
+        if((is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) && is_hetero_cacheobj(s->hetero_obj)) {
+#else
+        if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+#endif
 	//if(is_hetero_buffer_set()) {
 		node = get_fastmem_node();
 	}else {
@@ -2977,7 +2981,11 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 		/* We set hetero_obj to page even if not in the desired 
 		 * memory node. We can later use this for migration.
 		 */
-		if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+#ifdef CONFIG_HETERO_NET_ENABLE
+                if((is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) && is_hetero_cacheobj(s->hetero_obj)) {
+#else
+                if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
+#endif
 		//if(is_hetero_buffer_set()) {
 			if(is_hetero_page(page, node))
 				set_hetero_obj_page(page, s->hetero_obj);	
@@ -3237,9 +3245,14 @@ static __always_inline void *slab_alloc_hetero(struct kmem_cache *s,
 
 void *kmem_cache_alloc_hetero(struct kmem_cache *s, gfp_t gfpflags)
 {
+#ifdef CONFIG_HETERO_NET_ENABLE
+        if(!(is_hetero_buffer_set_netdev() || is_hetero_buffer_set())) {
+#else
         if(!is_hetero_buffer_set()) {
+#endif
                 return kmem_cache_alloc(s, gfpflags); 
         }
+
 	void *ret = slab_alloc_hetero(s, gfpflags, _RET_IP_);
 	trace_kmem_cache_alloc(_RET_IP_, ret, s->object_size,
 				s->size, gfpflags);

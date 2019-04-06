@@ -4600,8 +4600,13 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 		    __GFP_NOMEMALLOC;
 
 #ifdef CONFIG_HETERO_ENABLE
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+	if(is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) {
+#else
 	if(is_hetero_buffer_set()) {
-		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
+#endif
+		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(get_fastmem_node(), gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
 	}else if(is_hetero_kernel_set()) {
@@ -4618,7 +4623,12 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 
 	if (unlikely(!page))
 #ifdef CONFIG_HETERO_ENABLE
+
+#ifdef CONFIG_HETERO_NET_ENABLE
+		if(is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) {
+#else
 		if(is_hetero_buffer_set()) {
+#endif
 			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			page = alloc_pages_node(get_fastmem_node(), gfp, 0);
 		}
@@ -4654,8 +4664,8 @@ void *page_frag_alloc(struct page_frag_cache *nc,
 	int offset;
 
 	if(is_hetero_kernel_set()) {
-                printk(KERN_ALERT "%s:%d Current %d taskname %s  \n",
-                        __func__, __LINE__, current->pid, current->comm);
+                /*printk(KERN_ALERT "%s:%d Current %d taskname %s  \n",
+                        __func__, __LINE__, current->pid, current->comm);*/
         }
 
 	if (unlikely(!nc->va)) {
