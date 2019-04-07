@@ -93,7 +93,7 @@ Move this to header file later.
 #define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
-struct task_struct *migration_thread;
+struct task_struct *migration_thread = NULL;
 int migration_thrd_active;
 #endif
 
@@ -145,6 +145,7 @@ void print_hetero_stats(struct task_struct *task) {
 EXPORT_SYMBOL(print_hetero_stats);
 
 void reset_hetero_stats(struct task_struct *task) {
+
         task->mm->pgcache_hits_cnt = 0;
 	task->mm->pgcache_miss_cnt = 0;
 	task->mm->pgbuff_miss_cnt = 0;
@@ -216,7 +217,8 @@ int is_hetero_exit(struct task_struct *task)
 	print_hetero_stats(task);
         //reset_hetero_stats(task);
 #ifdef _ENABLE_HETERO_THREAD
-	kthread_stop(migration_thread);
+	if(migration_thread)
+		kthread_stop(migration_thread);
 	migration_thread = NULL;
 #endif
     }
@@ -626,10 +628,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case CLEAR_COUNT:
 	    printk("flag set to clear count %d\n", flag);
 	    global_flag = CLEAR_COUNT;
-	    //rbtree_reset_counter();
-	    //btree_reset_counter();
-	    //radix_tree_reset_counter();
-
 	    /*reset hetero allocate flags */
 	    enbl_hetero_pgcache = 0;
 	    enbl_hetero_buffer = 0; 
@@ -638,8 +636,6 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             enbl_hetero_kernel = 0;
 	    reset_hetero_stats(current);	
 
-	    //if(enbl_hetero_objaff)		
-	    //	hetero_reset_rbtree(current);	
 	    enbl_hetero_objaff = 0;	
 
 	    hetero_pid = 0;
@@ -746,6 +742,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #endif
 	    hetero_pid = flag;
 #ifdef CONFIG_HETERO_ENABLE
+	    reset_hetero_stats(current);
 	    current->mm->hetero_task = HETERO_PROC;
 #endif
             memcpy(procname, current->comm, TASK_COMM_LEN);
@@ -839,7 +836,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	count = migrate_to_node_hetero(current->mm, get_fastmem_node(),
 					get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
-
 
 #ifdef _ENABLE_HETERO_RBTREE
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {

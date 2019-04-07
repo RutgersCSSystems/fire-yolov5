@@ -47,6 +47,7 @@ extern int hetero_dbgmask;
 #define hetero_warn(s, args ...)          pr_warning(s, ## args)
 #define hetero_info(s, args ...)          pr_info(s, ## args)
 
+struct vm_area_struct;
 
 int is_hetero_pgcache_set(void);
 int is_hetero_buffer_set(void);

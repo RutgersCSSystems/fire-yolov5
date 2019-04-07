@@ -1471,9 +1471,10 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
                    sk =  kmem_cache_alloc_hetero(slab, priority & ~__GFP_ZERO);
                if(!sk)
 #endif
-		sk = kmem_cache_alloc(slab, priority & ~__GFP_ZERO);
-		if (!sk)
+		    sk = kmem_cache_alloc(slab, priority & ~__GFP_ZERO);
+		    if (!sk)
 			return sk;
+
 		if (priority & __GFP_ZERO)
 			sk_prot_clear_nulls(sk, prot->obj_size);
 	} else {
