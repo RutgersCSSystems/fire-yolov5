@@ -286,7 +286,12 @@ static void unaccount_page_cache_page(struct address_space *mapping,
 void __delete_from_page_cache(struct page *page, void *shadow)
 {
 	struct address_space *mapping = page->mapping;
-
+#ifdef CONFIG_HETERO_STATS
+        if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
+		//printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
+        	update_hetero_pgcache(get_fastmem_node(), page, 1);
+	}
+#endif
 	trace_mm_filemap_delete_from_page_cache(page);
 
 	unaccount_page_cache_page(mapping, page);
@@ -308,14 +313,6 @@ static void page_cache_free_page(struct address_space *mapping,
 	} else {
 		put_page(page);
 	}
-#ifdef CONFIG_HETERO_STATS
-        if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
-		//unlock_page(page);
-		//printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
-        	update_hetero_pgcache(get_fastmem_node(), page, 1);
-	}
-#endif
-
 }
 
 /**
