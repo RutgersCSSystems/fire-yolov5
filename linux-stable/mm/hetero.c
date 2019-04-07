@@ -317,7 +317,8 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 
 int is_hetero_buffer_set_netdev(void)
 {
-    return enbl_hetero_buffer;
+	if(check_hetero_proc(current))	
+	    return enbl_hetero_buffer;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set_netdev);
 
