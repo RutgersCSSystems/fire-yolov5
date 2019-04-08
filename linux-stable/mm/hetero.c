@@ -183,9 +183,29 @@ inline int check_hetero_proc (struct task_struct *task)
 {
 #ifdef CONFIG_HETERO_ENABLE
     //f(current->pid == hetero_pid && hetero_pid){
+#ifdef CONFIG_HETERO_NET_ENABLE
+	/*if (task && 
+		((task->mm && task->mm->hetero_task == HETERO_PROC) || 
+		 (task->active_mm && task->active_mm->hetero_task == HETERO_PROC))){*/
+	
+	struct mm_struct *mm;
+	if (!task)
+		return 0;
+	mm = task->mm;
+	if (mm && mm->hetero_task == HETERO_PROC)
+		return 1;
+	// The following code is buggy, not sure the exact reason why it will cause
+	// kernel panic
+	/*mm = task->active_mm;
+	if (mm && mm->hetero_task == HETERO_PROC)
+		return 1;*/
+
+#else
     if (task && task->mm && (task->mm->hetero_task == HETERO_PROC)){
 	return 1;
     }
+#endif
+
 #endif
     return 0; 	
 }
@@ -319,6 +339,7 @@ int is_hetero_buffer_set_netdev(void)
 {
 	if(check_hetero_proc(current))	
 	    return enbl_hetero_buffer;
+	return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set_netdev);
 

@@ -4602,11 +4602,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 
 #ifdef CONFIG_HETERO_ENABLE
 
-#ifdef CONFIG_HETERO_NET_ENABLE
-	if(is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) {
-#else
 	if(is_hetero_buffer_set()) {
-#endif
 		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(get_fastmem_node(), gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
@@ -4625,11 +4621,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 	if (unlikely(!page))
 #ifdef CONFIG_HETERO_ENABLE
 
-#ifdef CONFIG_HETERO_NET_ENABLE
-		if(is_hetero_buffer_set_netdev() || is_hetero_buffer_set()) {
-#else
 		if(is_hetero_buffer_set()) {
-#endif
 			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			page = alloc_pages_node(get_fastmem_node(), gfp, 0);
 		}
