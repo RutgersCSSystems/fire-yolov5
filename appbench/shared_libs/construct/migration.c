@@ -98,7 +98,7 @@ void con() {
         memset(&action, 0, sizeof(struct sigaction));
         action.sa_handler = sig_handler;
         sigaction(SIGKILL, &action, NULL);
-        setinit = 1;
+        //setinit = 1;
      } 
 #endif
  	
