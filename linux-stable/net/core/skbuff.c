@@ -711,7 +711,7 @@ struct sk_buff *__build_skb_hetero(void *data, unsigned int frag_size, void *het
 
  #ifdef CONFIG_HETERO_NET_ENABLE
 	skb = NULL;
-	if (is_hetero_buffer_set_netdev() && is_hetero_cacheobj(hetero_obj)){
+	if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
 		skb = kmem_cache_alloc_hetero(skbuff_head_cache, GFP_KERNEL);
 	}
 	if (!skb)
@@ -782,7 +782,7 @@ struct sk_buff *__napi_alloc_skb_hetero(struct napi_struct *napi, unsigned int l
 		return NULL;
 
 #ifdef CONFIG_HETERO_NET_ENABLE
-	if (is_hetero_buffer_set_netdev() && is_hetero_cacheobj(hetero_obj)) {
+	if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)) {
 		skb = __build_skb_hetero(data, len, hetero_obj);
 
 		/*if (skb) {

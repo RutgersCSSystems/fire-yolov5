@@ -4607,7 +4607,7 @@ normal_allocation:
 			}
 		}*/
 
-		if (is_hetero_buffer_set_netdev()) {
+		if (is_hetero_buffer_set()) {
 			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
 				 && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
 				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
@@ -4622,7 +4622,7 @@ normal_allocation:
 			unsigned int frag_len = e1000_frag_len(adapter);
 
 #ifdef CONFIG_HETERO_NET_ENABLE
-			if (is_hetero_buffer_set_netdev()) {
+			if (is_hetero_buffer_set()) {
 				if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
 					&& is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
 					//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);

@@ -4608,8 +4608,8 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 				PAGE_FRAG_CACHE_MAX_ORDER);
 	}else if(is_hetero_kernel_set()) {
 
-		printk(KERN_ALERT "%s:%d Current %d taskname %s  \n", 
-			__func__, __LINE__, current->pid, current->comm);
+		/*printk(KERN_ALERT "%s:%d Current %d taskname %s  \n", 
+			__func__, __LINE__, current->pid, current->comm);*/
 	}
 	if(!page)
 #endif

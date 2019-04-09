@@ -52,7 +52,7 @@ int main(int argc , char *argv[])
     //Accept and incoming connection
     puts("Waiting for incoming connections...");
     c = sizeof(struct sockaddr_in);
-	pthread_t thread_id;
+	pthread_t thread_id[THREAD_NUM];
 	
 	gettimeofday(&t0, NULL);
 
@@ -62,7 +62,7 @@ int main(int argc , char *argv[])
 
         puts("Connection accepted");
          
-        if (pthread_create(&thread_id, NULL, connection_handler, (void*) &client_sock[i]) < 0) {
+        if (pthread_create(&thread_id[i], NULL, connection_handler, (void*) &client_sock[i]) < 0) {
             perror("could not create thread");
             return 1;
         }
@@ -72,7 +72,7 @@ int main(int argc , char *argv[])
     }
      
 	for (i = 0; i < THREAD_NUM; ++i) {
-		pthread_join(thread_id , NULL);
+		pthread_join(thread_id[i], NULL);
 		close(client_sock[i]);
 	}
 
