@@ -4484,8 +4484,8 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page) && check_fastmem_node(page)) {
-		//printk(KERN_ALERT "nr_free_pagecache_pages %lu \n", 
-		//		nr_free_pagecache_pages());
+		printk(KERN_ALERT "nr_free_pagecache_pages %lu \n", 
+				nr_free_pagecache_pages());
 		goto out;
 	}
 //#endif
