@@ -2857,6 +2857,11 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 	page = NULL;
 	if(!page)
 		page = alloc_slab_page(s, alloc_gfp, node, oo);
+#ifdef CONFIG_HETERO_ENABLE
+        //if(is_hetero_buffer_set() && page){
+          //      printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        //}
+#endif
 
 	if (unlikely(!page)) {
 		oo = s->min;

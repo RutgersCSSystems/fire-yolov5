@@ -4453,6 +4453,15 @@ out:
 EXPORT_SYMBOL(__alloc_pages_nodemask);
 
 #ifdef CONFIG_HETERO_ENABLE
+static int check_fastmem_node(struct page *page) {
+
+	if (page && page_to_nid(page) == get_fastmem_node())
+		return 1;
+	else 
+		return 0;
+}
+
+
 struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask)
@@ -4471,12 +4480,15 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	finalise_ac(gfp_mask, order, &ac);
 
-#ifndef CONFIG_HETERO_ENABLE
-	/* First allocation attempt */
+//#ifndef CONFIG_HETERO_ENABLE
+	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
-	if (likely(page))
+	if (likely(page) && check_fastmem_node(page)) {
+		//printk(KERN_ALERT "nr_free_pagecache_pages %lu \n", 
+		//		nr_free_pagecache_pages());
 		goto out;
-#endif
+	}
+//#endif
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
 	 * resp. GFP_NOIO which has to be inherited for all allocation requests
