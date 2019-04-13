@@ -4454,18 +4454,9 @@ EXPORT_SYMBOL(__alloc_pages_nodemask);
 
 #ifdef CONFIG_HETERO_ENABLE
 #define K(x) ((x) << (PAGE_SHIFT - 10))
+#define THRESHOLD 524288
+
 static int check_fastmem_node(struct page *page) {
-
-        struct sysinfo i;
-	int nid = get_fastmem_node();
-
-        si_meminfo_node(&i, nid);
-        printk(KERN_ALERT "Node %d MemTotal:       %8lu kB\n"
-                       "Node %d MemFree:        %8lu kB\n"
-                       "Node %d MemUsed:        %8lu kB\n",
-                       nid, K(i.totalram),
-                       nid, K(i.freeram),
-                       nid, K(i.totalram - i.freeram));
 
 	if (page && page_to_nid(page) == get_fastmem_node())
 		return 1;
@@ -4482,6 +4473,9 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
 	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
 	struct alloc_context ac = { };
+        struct sysinfo i;
+	int nid = get_fastmem_node();
+
 
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
@@ -4499,6 +4493,13 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 		goto out;
 	}
 //#endif
+
+        si_meminfo_node(&i, nid);
+	if(K(i.freeram) < THRESHOLD) {
+		return NULL;	
+	}
+
+
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
 	 * resp. GFP_NOIO which has to be inherited for all allocation requests
