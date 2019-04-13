@@ -4453,7 +4453,19 @@ out:
 EXPORT_SYMBOL(__alloc_pages_nodemask);
 
 #ifdef CONFIG_HETERO_ENABLE
+#define K(x) ((x) << (PAGE_SHIFT - 10))
 static int check_fastmem_node(struct page *page) {
+
+        struct sysinfo i;
+	int nid = get_fastmem_node();
+
+        si_meminfo_node(&i, nid);
+        printk(KERN_ALERT "Node %d MemTotal:       %8lu kB\n"
+                       "Node %d MemFree:        %8lu kB\n"
+                       "Node %d MemUsed:        %8lu kB\n",
+                       nid, K(i.totalram),
+                       nid, K(i.freeram),
+                       nid, K(i.totalram - i.freeram));
 
 	if (page && page_to_nid(page) == get_fastmem_node())
 		return 1;
@@ -4484,8 +4496,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page) && check_fastmem_node(page)) {
-		printk(KERN_ALERT "nr_free_pagecache_pages %lu \n", 
-				nr_free_pagecache_pages());
 		goto out;
 	}
 //#endif
