@@ -187,9 +187,9 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
                         //	__func__,__LINE__, current->comm);
 			if (is_hetero_obj(mapping->hetero_obj)) {
 		                page = __page_cache_alloc_hetero(gfp_mask, mapping);
-        	        	if(!page)  
-					printk(KERN_ALERT "%s:%d procname %s \n",
-					__func__,__LINE__, current->comm);
+        	        	//if(!page)  
+				//	printk(KERN_ALERT "%s:%d procname %s \n",
+				//	__func__,__LINE__, current->comm);
 			}		
 		}
 		if(!page)

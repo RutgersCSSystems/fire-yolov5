@@ -4496,10 +4496,9 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
         si_meminfo_node(&i, nid);
 	if(K(i.freeram) < THRESHOLD) {
-		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__); 
+		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__); 
 		return NULL;	
 	}
-
 
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
@@ -4627,12 +4626,10 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 #ifdef CONFIG_HETERO_ENABLE
 
 	if(is_hetero_buffer_set()) {
-		//p
-rintk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
+		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(get_fastmem_node(), gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
 	}else if(is_hetero_kernel_set()) {
-
 		/*printk(KERN_ALERT "%s:%d Current %d taskname %s  \n", 
 			__func__, __LINE__, current->pid, current->comm);*/
 	}
