@@ -3066,12 +3066,21 @@ load_freelist:
 	 * page is pointing to the page from which the objects are obtained.
 	 * That page must be frozen for per cpu allocations to work.
 	 */
+#ifdef CONFIG_HETERO_NET_ENABLE
+	if (c->page && page_to_nid(c->page) == get_fastmem_node() && c->page->hetero != HETERO_PG_FLAG)
+		update_hetero_pgbuff_stat(get_fastmem_node(), c->page, 0);
+#endif
+
 	VM_BUG_ON(!c->page->frozen);
 	c->freelist = get_freepointer(s, freelist);
 	c->tid = next_tid(c->tid);
 	return freelist;
 
 new_slab:
+#ifdef CONFIG_HETERO_NET_ENABLE
+	if (c->page && page_to_nid(c->page) == get_fastmem_node() && c->page->hetero != HETERO_PG_FLAG)
+		update_hetero_pgbuff_stat(get_fastmem_node(), c->page, 0);
+#endif
 
 	if (slub_percpu_partial(c)) {
 		page = c->page = slub_percpu_partial(c);
