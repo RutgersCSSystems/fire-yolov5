@@ -2808,10 +2808,6 @@ void free_unref_page_list(struct list_head *list)
 	list_for_each_entry_safe(page, next, list, lru) {
 		pfn = page_to_pfn(page);
 		if (!free_unref_page_prepare(page, pfn))
-#ifdef CONFIG_HETERO_ENABLE
-			//if(page->hetero == HETERO_PG_FLAG) 
-			//	unlock_page(page);
-#endif
 			list_del(&page->lru);
 
 		set_page_private(page, pfn);
@@ -4454,7 +4450,9 @@ EXPORT_SYMBOL(__alloc_pages_nodemask);
 
 #ifdef CONFIG_HETERO_ENABLE
 #define K(x) ((x) << (PAGE_SHIFT - 10))
+
 #define THRESHOLD 524288
+static int memcheckfreq = 0;
 
 static int check_fastmem_node(struct page *page) {
 
@@ -4494,10 +4492,14 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	}
 //#endif
 
-        si_meminfo_node(&i, nid);
-	if(K(i.freeram) < THRESHOLD) {
-		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__); 
-		return NULL;	
+	if(memcheckfreq % 1000 == 0) {
+	        si_meminfo_node(&i, nid);
+		if(K(i.freeram) < THRESHOLD) 
+			return NULL;
+
+		memcheckfreq = 1000;
+	}else {
+		memcheckfreq--;
 	}
 
 	/*
@@ -4629,10 +4631,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(get_fastmem_node(), gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
-	}else if(is_hetero_kernel_set()) {
-		/*printk(KERN_ALERT "%s:%d Current %d taskname %s  \n", 
-			__func__, __LINE__, current->pid, current->comm);*/
-	}
+	}	
 	if(!page)
 #endif
 	page = alloc_pages_node(NUMA_NO_NODE, gfp_mask,
