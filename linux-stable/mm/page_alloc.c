@@ -4452,6 +4452,8 @@ EXPORT_SYMBOL(__alloc_pages_nodemask);
 #define K(x) ((x) << (PAGE_SHIFT - 10))
 
 #define THRESHOLD 524288
+#define FREQCHECK 1000
+
 static int memcheckfreq = 0;
 
 static int check_fastmem_node(struct page *page) {
@@ -4492,12 +4494,12 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	}
 //#endif
 
-	if(memcheckfreq % 1000 == 0) {
+	if(memcheckfreq < 1) {
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) 
 			return NULL;
 
-		memcheckfreq = 1000;
+		memcheckfreq = FREQCHECK;
 	}else {
 		memcheckfreq--;
 	}
