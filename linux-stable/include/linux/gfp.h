@@ -482,6 +482,10 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 static inline struct page *
 __alloc_pages_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid)
 {
+
+#if 1
+	return __alloc_pages_nodemask(gfp_mask, order, preferred_nid, NULL);
+#endif
 	return __alloc_pages_nodemask_hetero(gfp_mask, order, preferred_nid, NULL);
 }
 
