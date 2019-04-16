@@ -908,6 +908,7 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 	if (groups_per_page > 1) {
 		i = sizeof(struct buffer_head *) * groups_per_page;
 #ifdef CONFIG_HETERO_ENABLE
+		bh = NULL;
                 if(is_hetero_buffer_set()) {
 			bh = kzalloc_hetero_buf(i, gfp);
                 }
@@ -2520,12 +2521,13 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
 
 #ifdef CONFIG_HETERO_ENABLE 
+	 meta_group_info[i] = NULL;
 	 if(is_hetero_buffer_set()) {
 		meta_group_info[i] = kmem_cache_zalloc_hetero(cachep, GFP_NOFS);
 	}
-#else
+	if(! meta_group_info[i])
+#endif
 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
-#endif 
 	if (meta_group_info[i] == NULL) {
 		ext4_msg(sb, KERN_ERR, "can't allocate buddy mem");
 		goto exit_group_info;
@@ -2554,14 +2556,15 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	{
 		struct buffer_head *bh;
 #ifdef CONFIG_HETERO_ENABLE
+		meta_group_info[i]->bb_bitmap = NULL;
                 if(is_hetero_buffer_set()) {
 			meta_group_info[i]->bb_bitmap =
 				kmalloc_hetero(sb->s_blocksize, GFP_NOFS);
                 }
-#else 
+		if(!meta_group_info[i]->bb_bitmap)
+#endif
 		meta_group_info[i]->bb_bitmap =
 			kmalloc(sb->s_blocksize, GFP_NOFS);
-#endif
 		BUG_ON(meta_group_info[i]->bb_bitmap == NULL);
 		bh = ext4_read_block_bitmap(sb, group);
 		BUG_ON(IS_ERR_OR_NULL(bh));
@@ -2693,12 +2696,13 @@ int ext4_mb_init(struct super_block *sb)
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_offsets);
 
 #ifdef CONFIG_HETERO_ENABLE
+	sbi->s_mb_offsets = NULL;
 	if(is_hetero_buffer_set()) {
 		 sbi->s_mb_offsets = kmalloc_hetero(i, GFP_KERNEL);
 	}
-#else 
-	sbi->s_mb_offsets = kmalloc(i, GFP_KERNEL);
+	if(!sbi->s_mb_offsets)
 #endif
+	sbi->s_mb_offsets = kmalloc(i, GFP_KERNEL);
 	if (sbi->s_mb_offsets == NULL) {
 		ret = -ENOMEM;
 		goto out;
