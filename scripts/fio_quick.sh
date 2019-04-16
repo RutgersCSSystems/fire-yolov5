@@ -34,22 +34,25 @@ RUNAPP() {
 
 OUTPUTDIR=$APPBENCH/output-fio-trail2
 mkdir $OUTPUTDIR
-SETENV
+#SETENV
 #Don't do any migration
-mkdir $OUTPUTDIR/slowmem-only
-OUTPUT="slowmem-only/fio.out"
-SETUP
-make CFLAGS="-D_SLOWONLY"
-export APPPREFIX="numactl --membind=1"
-RUNAPP 
-
-
 export APPPREFIX="numactl  --preferred=0"
 mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/fio.out"
 SETUP
 make CFLAGS="-D_MIGRATE"
 RUNAPP
+exit
+
+
+mkdir $OUTPUTDIR/slowmem-only
+OUTPUT="slowmem-only/fio.out"
+SETUP
+make CFLAGS="-D_SLOWONLY"
+export APPPREFIX="numactl --membind=1"
+RUNAPP 
+exit
+
 
 mkdir $OUTPUTDIR/naive-os-fastmem
 OUTPUT="naive-os-fastmem/fio.out"

@@ -2273,8 +2273,7 @@ struct page *alloc_pages_current_hetero(gfp_t gfp,
                 page cache*/
 		//if (is_hetero_kernel_set()) {
 		//policy_nodemask(gfp, pol)
-		//page = __alloc_pages_nodemask_hetero(gfp, order, nodeid, NULL);
-		page = __alloc_pages_nodemask(gfp, order, nodeid, NULL);
+		page = __alloc_pages_nodemask_hetero(gfp, order, nodeid, NULL);
 		if(!page) {
 			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
 				"\n", __func__, __LINE__);

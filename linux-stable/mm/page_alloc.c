@@ -4476,6 +4476,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         struct sysinfo i;
 	int nid = get_fastmem_node();
 
+	return __alloc_pages_nodemask(gfp_mask, order, preferred_nid, nodemask);
 
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;

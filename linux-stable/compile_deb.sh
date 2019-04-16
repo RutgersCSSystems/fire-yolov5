@@ -1,5 +1,5 @@
 #!/bin/bash -x
-sudo apt-get install libdpkg-dev kernel-package
+sudo apt-get install -y libdpkg-dev kernel-package
 export CONCURRENCY_LEVEL=40
 export CONCURRENCYLEVEL=40
 touch REPORTING-BUGS
