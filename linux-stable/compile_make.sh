@@ -1,6 +1,6 @@
 #!/bin/bash -x
 set -x
-PROC=12
+PROC=30
 CC=/usr/lib/ccache/bin/gcc make -j$PROC &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
