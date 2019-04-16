@@ -4479,7 +4479,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
-
 	if(memcheckfreq < 1) {
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) 
