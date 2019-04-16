@@ -4452,7 +4452,7 @@ EXPORT_SYMBOL(__alloc_pages_nodemask);
 #define K(x) ((x) << (PAGE_SHIFT - 10))
 
 #define THRESHOLD 524288
-#define FREQCHECK 1000
+#define FREQCHECK 100
 
 static int memcheckfreq = 0;
 
@@ -4476,10 +4476,20 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         struct sysinfo i;
 	int nid = get_fastmem_node();
 
-	return __alloc_pages_nodemask(gfp_mask, order, preferred_nid, nodemask);
-
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
+
+
+	if(memcheckfreq < 1) {
+	        si_meminfo_node(&i, nid);
+		if(K(i.freeram) < THRESHOLD) 
+			return NULL;
+		memcheckfreq = FREQCHECK;
+	}else {
+		memcheckfreq--;
+	}
+
+
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
 				nodemask, &ac, &alloc_mask, &alloc_flags))
@@ -4494,16 +4504,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 		goto out;
 	}
 //#endif
-
-	if(memcheckfreq < 1) {
-	        si_meminfo_node(&i, nid);
-		if(K(i.freeram) < THRESHOLD) 
-			return NULL;
-
-		memcheckfreq = FREQCHECK;
-	}else {
-		memcheckfreq--;
-	}
 
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS

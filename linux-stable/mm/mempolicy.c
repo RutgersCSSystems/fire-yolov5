@@ -2260,29 +2260,25 @@ struct page *alloc_pages_current_hetero(gfp_t gfp,
 	if (!in_interrupt() && !(gfp & __GFP_THISNODE))
 		pol = get_task_policy(current);
 
+	/*Check if we have enable customized HETERO allocation for
+	page cache*/
+	page = __alloc_pages_nodemask_hetero(gfp, order, nodeid, NULL);
+	if(!page) {
+		printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
+			"\n", __func__, __LINE__);
+	}
+	if(!page)
+		 page = __alloc_pages_nodemask(gfp, order,
+			policy_node(gfp, pol, numa_node_id()),
+			policy_nodemask(gfp, pol));
 	/*
 	 * No reference counting needed for current->mempolicy
 	 * nor system default_policy
 	 */
-	/*if (pol->mode == MPOL_INTERLEAVE) {
-                //printk(KERN_ALERT "%s : %d HETERO \n", __func__, __LINE__);
+	if (!page && pol->mode == MPOL_INTERLEAVE) {
+                hetero_dbg("%s : %d HETERO \n", __func__, __LINE__);
 		page = alloc_page_interleave(gfp, order, interleave_nodes(pol));
         }
-	else*/ {
-                /*Check if we have enable customized HETERO allocation for
-                page cache*/
-		//if (is_hetero_kernel_set()) {
-		//policy_nodemask(gfp, pol)
-		page = __alloc_pages_nodemask_hetero(gfp, order, nodeid, NULL);
-		if(!page) {
-			printk(KERN_ALERT "%s : %d FAILED HETERO ALLOC " 
-				"\n", __func__, __LINE__);
-                }
-                if(!page)
-  		         page = __alloc_pages_nodemask(gfp, order,
-				policy_node(gfp, pol, numa_node_id()),
-				policy_nodemask(gfp, pol));
-	}
 	return page;
 }
 EXPORT_SYMBOL(alloc_pages_current_hetero);
