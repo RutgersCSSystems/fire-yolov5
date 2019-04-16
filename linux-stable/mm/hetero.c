@@ -194,9 +194,7 @@ int check_hetero_page(struct mm_struct *mm, struct page *page) {
 
 	int rc = -1;
 
-
 	if(mm && (mm->hetero_task == HETERO_PROC) && page) {
-		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
 		if(page->hetero == HETERO_PG_FLAG) {
 			rc = 0;
 		}
@@ -448,6 +446,10 @@ EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 
 
 #ifdef CONFIG_HETERO_STATS
+
+/* Update STAT
+* TODO: Currently not setting HETERO_PG_FLAG for testing
+*/
 void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
 	int correct_node = 0; 
@@ -461,7 +463,7 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
 		current->active_mm->pgcache_hits_cnt += 1;
-		page->hetero = HETERO_PG_FLAG;
+		//page->hetero = HETERO_PG_FLAG;
 		page->hetero_create_time = (struct timeval){0};
 		page->hetero_del_time = (struct timeval){0};
 		do_gettimeofday(&page->hetero_create_time);
@@ -505,6 +507,9 @@ ret_pgcache_stat:
 EXPORT_SYMBOL(update_hetero_pgcache);
 
 
+/* Update STAT 
+* TODO: Currently not setting HETERO_PG_FLAG for testing 
+*/
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage) 
 {
 	int correct_node = 0; 
@@ -518,7 +523,7 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
 		current->active_mm->pgbuff_hits_cnt += 1;
-		page->hetero = HETERO_PG_FLAG;
+		//page->hetero = HETERO_PG_FLAG;
 		page->hetero_create_time = (struct timeval){0};
 		page->hetero_del_time = (struct timeval){0};
 		do_gettimeofday(&page->hetero_create_time);

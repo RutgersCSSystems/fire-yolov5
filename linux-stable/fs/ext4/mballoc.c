@@ -909,12 +909,11 @@ static int ext4_mb_init_cache(struct page *page, char *incore, gfp_t gfp)
 		i = sizeof(struct buffer_head *) * groups_per_page;
 #ifdef CONFIG_HETERO_ENABLE
                 if(is_hetero_buffer_set()) {
-                //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			bh = kzalloc_hetero_buf(i, gfp);
                 }
-		bh = kzalloc_hetero_buf(i, gfp);
-#else 
-		bh = kzalloc(i, gfp);
+		if(!bh)
 #endif
+		bh = kzalloc(i, gfp);
 		if (bh == NULL) {
 			err = -ENOMEM;
 			goto out;
@@ -2499,15 +2498,13 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		metalen = sizeof(*meta_group_info) <<
 			EXT4_DESC_PER_BLOCK_BITS(sb);
 #ifdef CONFIG_HETERO_ENABLE
+		meta_group_info = NULL;
 		if(is_hetero_buffer_set()) {
-		//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			meta_group_info = kmalloc_hetero(metalen, GFP_NOFS);
 		}
-		meta_group_info = kmalloc_hetero(metalen, GFP_NOFS);
-#else 
-		meta_group_info = kmalloc(metalen, GFP_NOFS);
+		if(!meta_group_info)
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_ext4_group_info(meta_group_info);
+		meta_group_info = kmalloc(metalen, GFP_NOFS);
 
 		if (meta_group_info == NULL) {
 			ext4_msg(sb, KERN_ERR, "can't allocate mem "
@@ -2523,7 +2520,9 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 	i = group & (EXT4_DESC_PER_BLOCK(sb) - 1);
 
 #ifdef CONFIG_HETERO_ENABLE 
-	meta_group_info[i] = kmem_cache_zalloc_hetero(cachep, GFP_NOFS);
+	 if(is_hetero_buffer_set()) {
+		meta_group_info[i] = kmem_cache_zalloc_hetero(cachep, GFP_NOFS);
+	}
 #else
 	meta_group_info[i] = kmem_cache_zalloc(cachep, GFP_NOFS);
 #endif 
@@ -2556,16 +2555,13 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 		struct buffer_head *bh;
 #ifdef CONFIG_HETERO_ENABLE
                 if(is_hetero_buffer_set()) {
-                //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			meta_group_info[i]->bb_bitmap =
+				kmalloc_hetero(sb->s_blocksize, GFP_NOFS);
                 }
-		meta_group_info[i]->bb_bitmap =
-			kmalloc_hetero(sb->s_blocksize, GFP_NOFS);
 #else 
 		meta_group_info[i]->bb_bitmap =
 			kmalloc(sb->s_blocksize, GFP_NOFS);
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_void(meta_group_info[i]->bb_bitmap);
 		BUG_ON(meta_group_info[i]->bb_bitmap == NULL);
 		bh = ext4_read_block_bitmap(sb, group);
 		BUG_ON(IS_ERR_OR_NULL(bh));
@@ -2698,15 +2694,11 @@ int ext4_mb_init(struct super_block *sb)
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
-	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		 sbi->s_mb_offsets = kmalloc_hetero(i, GFP_KERNEL);
 	}
-	sbi->s_mb_offsets = kmalloc_hetero(i, GFP_KERNEL);
 #else 
 	sbi->s_mb_offsets = kmalloc(i, GFP_KERNEL);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_unsigned_short(sbi->s_mb_offsets);
-
 	if (sbi->s_mb_offsets == NULL) {
 		ret = -ENOMEM;
 		goto out;
@@ -2715,15 +2707,11 @@ int ext4_mb_init(struct super_block *sb)
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_maxs);
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
-	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		sbi->s_mb_maxs = kmalloc_hetero(i, GFP_KERNEL);
 	}
-	sbi->s_mb_maxs = kmalloc_hetero(i, GFP_KERNEL);
 #else 
 	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_unsigned_int(sbi->s_mb_maxs);
-
 	if (sbi->s_mb_maxs == NULL) {
 		ret = -ENOMEM;
 		goto out;
@@ -3780,9 +3768,6 @@ ext4_mb_new_inode_pa(struct ext4_allocation_context *ac)
 #else 
 	pa = kmem_cache_alloc(ext4_pspace_cachep, GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_prealloc_space(pa);
-
 	if (pa == NULL)
 		return -ENOMEM;
 
@@ -4674,13 +4659,12 @@ ext4_fsblk_t ext4_mb_new_blocks(handle_t *handle,
 	}
 
 #ifdef CONFIG_HETERO_ENABLE
-	ac = kmem_cache_zalloc_hetero(ext4_ac_cachep, GFP_NOFS);
-#else 
-	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_NOFS);
+	ac = NULL;
+	if(is_hetero_buffer_set())
+		ac = kmem_cache_zalloc_hetero(ext4_ac_cachep, GFP_NOFS);
+	if(!ac)			
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_allocation_context(ac);
-
+	ac = kmem_cache_zalloc(ext4_ac_cachep, GFP_NOFS);
 	if (!ac) {
 		ar->len = 0;
 		*errp = -ENOMEM;
@@ -5032,6 +5016,7 @@ do_more:
 	    ((flags & EXT4_FREE_BLOCKS_METADATA) ||
 	     !ext4_should_writeback_data(inode))) {
 		struct ext4_free_data *new_entry;
+
 		/*
 		 * We use __GFP_NOFAIL because ext4_free_blocks() is not allowed
 		 * to fail.
