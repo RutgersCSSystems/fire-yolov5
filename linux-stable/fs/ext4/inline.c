@@ -349,9 +349,6 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
 #else 
 	value = kzalloc(len, GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_void(value);
-	
 	if (!value) {
 		error = -ENOMEM;
 		goto out;
@@ -1189,15 +1186,15 @@ static int ext4_convert_inline_data_nolock(handle_t *handle,
 
 	inline_size = ext4_get_inline_size(inode);
 #ifdef CONFIG_HETERO_ENABLE
+	buf = NULL;
 	if(is_hetero_buffer_set()) {
 		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+		buf = kmalloc_hetero(inline_size, GFP_NOFS);
+
 	}
-	buf = kmalloc_hetero(inline_size, GFP_NOFS);
-#else 
-	buf = kmalloc(inline_size, GFP_NOFS);
+	if(!buf)
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_void(buf);
+	buf = kmalloc(inline_size, GFP_NOFS);
 
 	if (!buf) {
 		error = -ENOMEM;
@@ -1380,9 +1377,6 @@ int htree_inlinedir_to_tree(struct file *dir_file,
 #else 
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_void(dir_buf);
-
 	if (!dir_buf) {
 		ret = -ENOMEM;
 		up_read(&EXT4_I(inode)->xattr_sem);
@@ -1499,9 +1493,6 @@ int ext4_read_inline_dir(struct file *file,
 #else 
 	dir_buf = kmalloc(inline_size, GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_void(dir_buf);
-
 	if (!dir_buf) {
 		ret = -ENOMEM;
 		up_read(&EXT4_I(inode)->xattr_sem);

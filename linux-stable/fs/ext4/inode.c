@@ -1250,16 +1250,6 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
 	pgoff_t index;
 	unsigned from, to;
 
-        /*Mark the mapping to Hetero target object*/
-#ifdef CONFIG_HETERO_ENABLE
-        if(current && current->mm &&
-                current->mm->hetero_task == HETERO_PROC) {
-		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		//try_hetero_migration(mapping, 0);
-		//if(!execute_ok(inode))
-		  //      set_fsmap_hetero_obj(mapping);
-	}
-#endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 
@@ -3024,18 +3014,10 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
 	struct inode *inode = mapping->host;
 	handle_t *handle;
 
-#ifdef CONFIG_HETERO_ENABLE
-        if(current && current->mm &&
-                current->mm->hetero_task == HETERO_PROC) {
-		//if(!execute_ok(inode))
-	          //      set_fsmap_hetero_obj(mapping);
-	}
-#endif
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 
 	index = pos >> PAGE_SHIFT;
-
 	if (ext4_nonda_switch(inode->i_sb) ||
 	    S_ISLNK(inode->i_mode)) {
 		*fsdata = (void *)FALL_BACK_TO_NONDELALLOC;
@@ -3202,10 +3184,8 @@ static int ext4_da_write_end(struct file *file,
 #ifdef CONFIG_HETERO_ENABLE
 	if(page && page->hetero == HETERO_PG_FLAG) {
 		page->hetero = HETERO_PG_FLAG;
-		//deactivate_file_page(page);
 		if(current && current->mm &&
 			current->mm->hetero_task == HETERO_PROC) {
-			//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 			try_hetero_migration(mapping, 0);
 		}
 	}

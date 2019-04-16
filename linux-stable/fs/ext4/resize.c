@@ -1035,9 +1035,6 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 #else 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_buffer_head(primary);
-
 	if (!primary)
 		return -ENOMEM;
 

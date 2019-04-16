@@ -838,6 +838,7 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 	while ((offset -= size) >= 0) {
 
 #ifdef CONFIG_HETERO_ENABLE
+		bh = NULL;
 		if (is_hetero_buffer_set()) {
 			if(page->mapping) {
 				hetero_dbg("%s:%d inode %lu\n",__func__,__LINE__, 
@@ -848,12 +849,9 @@ struct buffer_head *alloc_page_buffers(struct page *page, unsigned long size,
 				bh = alloc_buffer_head_hetero(gfp, NULL);
 			}
 		}
-		else
-			bh = alloc_buffer_head(gfp);
-#else
-		bh = alloc_buffer_head(gfp);
+		if (!bh)
 #endif
-
+		bh = alloc_buffer_head(gfp);
 		if (!bh)
 			goto no_grow;
 
@@ -3385,9 +3383,6 @@ struct buffer_head *alloc_buffer_head(gfp_t gfp_flags)
 {
 	struct buffer_head *ret = kmem_cache_zalloc(bh_cachep, gfp_flags);
 	
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_buffer_head(ret);
-
 	if (ret) {
 		INIT_LIST_HEAD(&ret->b_assoc_buffers);
 		preempt_disable();

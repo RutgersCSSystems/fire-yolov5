@@ -1599,10 +1599,6 @@ int isolate_lru_page(struct page *page)
 
 	if (PageLRU(page)) {
 
-		if(page->hetero == HETERO_PG_MIG_FLAG) {
-			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		}
-
 		struct zone *zone = page_zone(page);
 		struct lruvec *lruvec;
 

@@ -117,8 +117,11 @@ int hetero_kernpg_cnt = 0;
 char procname[TASK_COMM_LEN];
 long migrate_time = 0;
 
+#ifdef CONFIG_HETERO_ENABLE
+
 void print_hetero_stats(struct task_struct *task) {
 
+#ifdef CONFIG_HETERO_STATS
 	unsigned long buffpgs = task->active_mm->pgbuffdel;
 	unsigned long cachepgs = task->active_mm->pgcachedel;
 	long avgbuff_life = 0, avgcache_life = 0;
@@ -141,17 +144,19 @@ void print_hetero_stats(struct task_struct *task) {
 		task->active_mm->pages_migrated, migrate_time, 
                 avgbuff_life, task->active_mm->pgbuffdel, avgcache_life, 
 		task->active_mm->pgcachedel);
+#endif
 }
 EXPORT_SYMBOL(print_hetero_stats);
 
+
 void reset_hetero_stats(struct task_struct *task) {
 
+#ifdef CONFIG_HETERO_STATS
         task->active_mm->pgcache_hits_cnt = 0;
 	task->active_mm->pgcache_miss_cnt = 0;
 	task->active_mm->pgbuff_miss_cnt = 0;
 	task->active_mm->pgbuff_hits_cnt = 0;
 
-#ifdef CONFIG_HETERO_STATS
 	/* Represents pages migrated and 
 	* frequency of page migration attempts
 	*/
@@ -181,12 +186,10 @@ long timediff (struct timeval *start, struct timeval *end) {
 
 inline int check_hetero_proc (struct task_struct *task) 
 {
-#ifdef CONFIG_HETERO_ENABLE
     //f(current->pid == hetero_pid && hetero_pid){
     if (task && task->active_mm && (task->active_mm->hetero_task == HETERO_PROC)){
 		return 1;
     }
-#endif
     return 0; 	
 }
 
@@ -230,7 +233,7 @@ void debug_hetero_obj(void *obj) {
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
 
-#if 1//def CONFIG_HETERO_DEBUG
+#ifdef CONFIG_HETERO_DEBUG
 	//struct inode *currinode = (struct inode *)current->active_mm->hetero_obj;
 	struct inode *currinode = (struct inode *)current->hetero_obj;
 	if(inode && currinode) {
@@ -279,7 +282,6 @@ int is_hetero_obj(void *obj)
 		return 1;
 #endif
 
-#ifdef CONFIG_HETERO_ENABLE
 	if(obj && current && current->active_mm && 
 		//current->active_mm->hetero_obj && current->active_mm->hetero_obj == obj){
 		current->hetero_obj && current->hetero_obj == obj){
@@ -290,8 +292,6 @@ int is_hetero_obj(void *obj)
 		//dump_stack();
        		//debug_hetero_obj(obj);
         }
-
-#endif
 	return 0;
 }
 EXPORT_SYMBOL(is_hetero_obj);
@@ -316,10 +316,8 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 /*Sets current task with hetero obj*/
 void set_curr_hetero_obj(void *obj) 
 {
-#ifdef CONFIG_HETERO_ENABLE
         //current->active_mm->hetero_obj = obj;
 	current->hetero_obj = obj;
-#endif
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
@@ -327,9 +325,7 @@ EXPORT_SYMBOL(set_curr_hetero_obj);
 void 
 set_hetero_obj_page(struct page *page, void *obj)                          
 {
-#ifdef CONFIG_HETERO_ENABLE
         page->hetero_obj = obj;
-#endif
 }
 EXPORT_SYMBOL(set_hetero_obj_page);
 
@@ -338,7 +334,6 @@ void
 set_fsmap_hetero_obj(void *mapobj)                                        
 {
 
-#ifdef CONFIG_HETERO_ENABLE
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
 	struct dentry *res = NULL;
@@ -381,14 +376,12 @@ set_fsmap_hetero_obj(void *mapobj)
 		}
 #endif
         }
-#endif
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
 /* Mark the socket to Hetero target object */
 void set_sock_hetero_obj(void *socket_obj, void *inode)                                        
 {
-#ifdef CONFIG_HETERO_ENABLE
         struct sock *sock = NULL;
 	struct socket *socket = (struct socket *)socket_obj;
 	sock = (struct sock *)socket->sk;
@@ -411,7 +404,6 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 			current->comm);
 #endif
 	}
-#endif
 }
 EXPORT_SYMBOL(set_sock_hetero_obj);
 
@@ -619,141 +611,9 @@ int get_slowmem_node(void) {
 }
 
 
-/* start trace system call */
-SYSCALL_DEFINE2(start_trace, int, flag, int, val)
-{
-
-    switch(flag) {
-	case CLEAR_COUNT:
-	    printk("flag set to clear count %d\n", flag);
-	    global_flag = CLEAR_COUNT;
-	    /*reset hetero allocate flags */
-	    enbl_hetero_pgcache = 0;
-	    enbl_hetero_buffer = 0; 
-	    enbl_hetero_radix = 0;
-	    enbl_hetero_journal = 0; 
-            enbl_hetero_kernel = 0;
-	    reset_hetero_stats(current);	
-
-	    enbl_hetero_objaff = 0;	
-
-	    hetero_pid = 0;
-	    hetero_kernpg_cnt = 0;
-	    hetero_usrpg_cnt = 0;
-            memset(procname,'0', TASK_COMM_LEN);
-	    break;
-
-	case COLLECT_TRACE:
-	    printk("flag is set to collect trace %d\n", flag);
-	    global_flag = COLLECT_TRACE;
-	    return global_flag;
-	    break;
-	case PRINT_STATS:
-	    printk("flag is set to print stats %d\n", flag);
-	    global_flag = PRINT_STATS;
-	    print_rbtree_stat();
-	    //print_btree_stat();
-	    print_radix_tree_stat();
-	    is_hetero_exit(current);
-	    break;
-	//case DUMP_STACK:
-	//	printk("flag is set to dump stack %d\n", flag);
-	//	global_flag = DUMP_STACK;
-	//	return global_flag;
-	//	break;
-	
-	case PFN_TRACE:
-	    printk("flag is set to collect pfn trace %d\n", flag);
-	    global_flag = PFN_TRACE;
-	    return global_flag;
-	    break;
-	case PFN_STAT:
-	    printk("flag is set to print pfn stats %d\n", flag);
-	    print_pfn_hashtable();
-	    break;
-	case TIME_TRACE:
-	    printk("flag is set to collect time %d \n", flag);
-	    global_flag = TIME_TRACE;
-	    return global_flag;
-	    break;
-	case TIME_STATS:
-	    printk("flag is set to print time stats %d \n", flag);
-	    global_flag = TIME_STATS;
-	    print_rbtree_time_stat();
-	    break;
-	case TIME_RESET:
-	    printk("flag is set to reset time %d \n", flag);
-	    global_flag = TIME_RESET;
-	    rbtree_reset_time();
-	    break;
-	case COLLECT_ALLOCATE:
-	    printk("flag is set to collect hetero allocate  %d \n", flag);
-	    global_flag = COLLECT_ALLOCATE;
-	    return global_flag;
-	    break;
-	case PRINT_ALLOCATE:
-	    printk("flag is set to print hetero allocate stat %d \n", flag);
-	    global_flag = PRINT_ALLOCATE;
-	    print_hetero_stats(current);
-	    break;
-	case HETERO_PGCACHE:
-	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
-	    enbl_hetero_pgcache = 1;
-	    break;
-	case HETERO_BUFFER:
-	    printk("flag is set to enable HETERO_BUFFER %d \n", flag);
-	    enbl_hetero_buffer = 1;
-	    break;
-	case HETERO_JOURNAL:
-	    printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
-	    enbl_hetero_journal = 1;
-	    break;
-	case HETERO_RADIX:
-	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
-	    enbl_hetero_radix = 1;
-	    break;
-	case HETERO_FULLKERN:
-	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
-	    enbl_hetero_kernel = 1;
-	    break;
-	case HETERO_SET_FASTMEM_NODE:
-	    printk("flag to set FASTMEM node to %d \n", val);
-	    hetero_fastmem_node = val;
-	    break;
-	case HETERO_MIGRATE_FREQ:
-	     migrate_freq = val;
-	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
-	     break;	
-	case HETERO_OBJ_AFF:
-#ifdef _ENABLE_HETERO_RBTREE
-	     hetero_init_rbtree(current);
-#endif
-
-#ifdef CONFIG_HETERO_OBJAFF
-	    enbl_hetero_objaff = 1;
-	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
-#endif 
-	    break;	
-
-	default:
-#ifdef CONFIG_HETERO_DEBUG
-	   hetero_dbgmask = 1;	
-#endif
-	    hetero_pid = flag;
-#ifdef CONFIG_HETERO_ENABLE
-	    reset_hetero_stats(current);
-	    current->active_mm->hetero_task = HETERO_PROC;
-#endif
-            memcpy(procname, current->comm, TASK_COMM_LEN);
-	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
-	    break;
-    }
-    return 0;
-}
-
-
 
 void hetero_add_to_list(struct page *page, struct list_head *list_pages){
+
         list_add(&page->hetero_list, list_pages);
 }
 
@@ -820,14 +680,13 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	root = &current->active_mm->objaff_cache_rbroot;
         if(!root) {
                 printk("%s:%d NULL \n", __func__, __LINE__);
+		return;
         }
 #endif
 
 
 #ifdef _ENABLE_HETERO_THREAD
 	if(!migration_thrd_active) {
-		//printk(KERN_ALERT "%s:%d num_online_cpus() %d\n", 
-		//	__func__, __LINE__, num_online_cpus());
 		migration_thread = kthread_run(migration_thread_fn, current->active_mm,
                                       "migration_thread");	
 	}
@@ -856,11 +715,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
                 if (!newpg) 
                         goto out_try_migration;
 
-
-		/*if (WARN_ON(page_mapped(oldpage))) {
-			printk("%s:%d NULL \n", __func__, __LINE__);
-			continue;
-		}*/
 		if (WARN_ON(page_has_private(oldpage))) {
 			printk("%s:%d NULL \n", __func__, __LINE__);
 			continue;
@@ -874,30 +728,11 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 			continue;
 		}
 #endif
-
-		//TODO:Get rid of this code after testing
-#if 0
-		//if(migrate_onepage_hetero(oldpage, alloc_new_node_page, NULL, destnode,
-                  //       MIGRATE_SYNC, MR_SYSCALL, current)) {
-		//if (replace_page_cache_page_hetero(oldpage, newpg, gfp_mask)) {
-		if(migrate_page(oldpage->mapping, newpg, oldpage, MIGRATE_SYNC)) {
-			put_page(oldpage);
-		}else {
-			printk("%s:%d SUCCESS \n",__func__, __LINE__);
-			hetero_erase_cpage_rbtree(current, oldpage);
-			oldpage->mapping = NULL;
-			delme_counter++;
-		}
-                newpg = NULL;
-#endif
-
 out_try_migration:
-        //printk("%s:%d Num pages deleted from list %lu \n",
-        //        __func__, __LINE__, count);
         return 0;
 }
 EXPORT_SYMBOL(try_hetero_migration);
-
+#endif
 
 
 #ifdef _ENABLE_HETERO_RBTREE
@@ -911,17 +746,6 @@ int hetero_init_rbtree(struct task_struct *task) {
 	}
 }
 EXPORT_SYMBOL(hetero_init_rbtree);
-
-/* Delete this code */
-#if 0
-int hetero_reset_rbtree(struct task_struct *task) {
-        //hetero_erase_cache_rbree(task);
-	//hetero_erase_kbuff_rbree(task);
-	task->active_mm->objaff_root_init = 0;
-	return 0;
-}
-EXPORT_SYMBOL(hetero_reset_rbtree);
-#endif
 
 
 int hetero_insert_pg_rbtree(struct task_struct *task, struct page *page, 
@@ -1219,6 +1043,133 @@ del_list_from_rbtree(struct rb_root *root, struct list_head *list_pages){
 	return 0;
 }
 #endif
+
+/* start trace system call */
+SYSCALL_DEFINE2(start_trace, int, flag, int, val)
+{
+
+#ifdef CONFIG_HETERO_ENABLE
+    switch(flag) {
+	case CLEAR_COUNT:
+	    printk("flag set to clear count %d\n", flag);
+	    global_flag = CLEAR_COUNT;
+	    /*reset hetero allocate flags */
+	    enbl_hetero_pgcache = 0;
+	    enbl_hetero_buffer = 0; 
+	    enbl_hetero_radix = 0;
+	    enbl_hetero_journal = 0; 
+            enbl_hetero_kernel = 0;
+	    reset_hetero_stats(current);	
+
+	    enbl_hetero_objaff = 0;	
+
+	    hetero_pid = 0;
+	    hetero_kernpg_cnt = 0;
+	    hetero_usrpg_cnt = 0;
+            memset(procname,'0', TASK_COMM_LEN);
+	    break;
+
+	case COLLECT_TRACE:
+	    printk("flag is set to collect trace %d\n", flag);
+	    global_flag = COLLECT_TRACE;
+	    return global_flag;
+	    break;
+	case PRINT_STATS:
+	    printk("flag is set to print stats %d\n", flag);
+	    global_flag = PRINT_STATS;
+	    print_rbtree_stat();
+	    //print_btree_stat();
+	    print_radix_tree_stat();
+	    is_hetero_exit(current);
+	    break;
+	case PFN_TRACE:
+	    printk("flag is set to collect pfn trace %d\n", flag);
+	    global_flag = PFN_TRACE;
+	    return global_flag;
+	    break;
+	case PFN_STAT:
+	    printk("flag is set to print pfn stats %d\n", flag);
+	    print_pfn_hashtable();
+	    break;
+	case TIME_TRACE:
+	    printk("flag is set to collect time %d \n", flag);
+	    global_flag = TIME_TRACE;
+	    return global_flag;
+	    break;
+	case TIME_STATS:
+	    printk("flag is set to print time stats %d \n", flag);
+	    global_flag = TIME_STATS;
+	    print_rbtree_time_stat();
+	    break;
+	case TIME_RESET:
+	    printk("flag is set to reset time %d \n", flag);
+	    global_flag = TIME_RESET;
+	    rbtree_reset_time();
+	    break;
+	case COLLECT_ALLOCATE:
+	    printk("flag is set to collect hetero allocate  %d \n", flag);
+	    global_flag = COLLECT_ALLOCATE;
+	    return global_flag;
+	    break;
+	case PRINT_ALLOCATE:
+	    printk("flag is set to print hetero allocate stat %d \n", flag);
+	    global_flag = PRINT_ALLOCATE;
+	    print_hetero_stats(current);
+	    break;
+	case HETERO_PGCACHE:
+	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
+	    enbl_hetero_pgcache = 1;
+	    break;
+	case HETERO_BUFFER:
+	    printk("flag is set to enable HETERO_BUFFER %d \n", flag);
+	    enbl_hetero_buffer = 1;
+	    break;
+	case HETERO_JOURNAL:
+	    printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
+	    enbl_hetero_journal = 1;
+	    break;
+	case HETERO_RADIX:
+	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
+	    enbl_hetero_radix = 1;
+	    break;
+	case HETERO_FULLKERN:
+	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
+	    enbl_hetero_kernel = 1;
+	    break;
+	case HETERO_SET_FASTMEM_NODE:
+	    printk("flag to set FASTMEM node to %d \n", val);
+	    hetero_fastmem_node = val;
+	    break;
+	case HETERO_MIGRATE_FREQ:
+	     migrate_freq = val;
+	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
+	     break;	
+	case HETERO_OBJ_AFF:
+#ifdef _ENABLE_HETERO_RBTREE
+	     hetero_init_rbtree(current);
+#endif
+
+#ifdef CONFIG_HETERO_OBJAFF
+	    enbl_hetero_objaff = 1;
+	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
+#endif 
+	    break;	
+
+	default:
+#ifdef CONFIG_HETERO_DEBUG
+	   hetero_dbgmask = 1;	
+#endif
+	    hetero_pid = flag;
+	    reset_hetero_stats(current);
+	    current->active_mm->hetero_task = HETERO_PROC;
+            memcpy(procname, current->comm, TASK_COMM_LEN);
+	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
+	    break;
+    }
+#endif
+    return 0;
+}
+
 
 
 

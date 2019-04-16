@@ -5026,18 +5026,17 @@ do_more:
 		 * We use __GFP_NOFAIL because ext4_free_blocks() is not allowed
 		 * to fail.
 		 */
-#if 0 //def CONFIG_HETERO_ENABLE 
+#ifdef CONFIG_HETERO_ENABLE 
+		new_entry = NULL;
 		if (is_hetero_obj((void *)inode)){
 			update_hetero_obj(ext4_free_data_cachep, (void *)inode);
 		}
 		new_entry = kmem_cache_alloc_hetero(ext4_free_data_cachep,
 				GFP_NOFS|__GFP_NOFAIL);
-#else 
+		if(!new_entry)
+#endif
 		new_entry = kmem_cache_alloc(ext4_free_data_cachep,
 				GFP_NOFS|__GFP_NOFAIL);
-#endif 
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_ext4_free_data(new_entry);
 
 		new_entry->efd_start_cluster = bit;
 		new_entry->efd_group = block_group;

@@ -459,8 +459,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
 
 	if (!mapping) {
 
+#ifdef CONFIG_HETERO_ENABLE
 	        if(page->hetero == HETERO_PG_FLAG)
         	        hetero_dbg("%s:%d \n",__func__,__LINE__);
+#endif
 
 		/* Anonymous page without mapping */
 		if (page_count(page) != expected_count)
@@ -474,9 +476,6 @@ int migrate_page_move_mapping(struct address_space *mapping,
 
 		return MIGRATEPAGE_SUCCESS;
 	}
-
-        if(page->hetero == HETERO_PG_FLAG)
-                hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 	oldzone = page_zone(page);
 	newzone = page_zone(newpage);
@@ -554,8 +553,10 @@ int migrate_page_move_mapping(struct address_space *mapping,
 		SetPageDirty(newpage);
 	}
 
+#ifdef CONFIG_HETERO_ENABLE
         if(page->hetero == HETERO_PG_FLAG)
                hetero_dbg("%s:%d \n",__func__,__LINE__);
+#endif
 
 	radix_tree_replace_slot(&mapping->i_pages, pslot, newpage);
 	if (PageTransHuge(page)) {
@@ -1108,8 +1109,10 @@ static int move_to_new_page(struct page *newpage, struct page *page,
 			rc = fallback_migrate_page(mapping, newpage,
 							page, mode);
 
+#ifdef CONFIG_HETERO_ENABLE
 			if(page->hetero == HETERO_PG_FLAG)
                         	hetero_dbg("%s:%d \n",__func__,__LINE__);
+#endif
 		}
 	} else {
 		/*
@@ -1635,7 +1638,7 @@ out:
 
 
 
-
+#ifdef CONFIG_HETERO_ENABLE
 int migrate_pages_hetero_rbtree(struct rb_root *root, new_page_t get_new_page,
 		free_page_t put_new_page, unsigned long private,
 		enum migrate_mode mode, int reason, struct task_struct *task)
@@ -1761,7 +1764,7 @@ out:
 
 	return rc;
 }
-
+#endif
 
 
 
@@ -3888,6 +3891,7 @@ int migrate_vmalloc_pages(const void *addr, new_page_t get_new_page,
 EXPORT_SYMBOL(migrate_vmalloc_pages);
 
 
+#ifdef CONFIG_HETERO_ENABLE
 int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 		free_page_t put_new_page, unsigned long private,
 		enum migrate_mode mode, int reason, struct mm_struct *mm)
@@ -4032,5 +4036,5 @@ out:
 	return rc;
 }
 
-
+#endif
 

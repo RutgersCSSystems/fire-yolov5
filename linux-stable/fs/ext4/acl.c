@@ -102,16 +102,10 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
 #ifdef CONFIG_HETERO_ENABLE
 	ext_acl = kmalloc_hetero(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
-        if(is_hetero_buffer_set()) {
-        //        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-        }
 #else 
 	ext_acl = kmalloc(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_acl_header(ext_acl);
-
 	if (!ext_acl)
 		return ERR_PTR(-ENOMEM);
 	ext_acl->a_version = cpu_to_le32(EXT4_ACL_VERSION);
@@ -178,15 +172,11 @@ ext4_get_acl(struct inode *inode, int type)
 	if (retval > 0) {
 #ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()) {
-			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			value = kmalloc_hetero(retval, GFP_NOFS);
 		}
-		value = kmalloc_hetero(retval, GFP_NOFS);
 #else 
 		value = kmalloc(retval, GFP_NOFS);
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_char(value);
-
 		if (!value)
 			return ERR_PTR(-ENOMEM);
 		retval = ext4_xattr_get(inode, name_index, "", value, retval);

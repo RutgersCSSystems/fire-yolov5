@@ -394,7 +394,7 @@ void ext4_io_submit_init(struct ext4_io_submit *io,
 static int io_submit_init_bio(struct ext4_io_submit *io,
 			      struct buffer_head *bh)
 {
-	struct bio *bio;
+	struct bio *bio = NULL;
 #ifdef CONFIG_HETERO_ENABLE
 	struct page *page = NULL;
 #endif
@@ -405,11 +405,11 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
         if (is_hetero_buffer_set() && is_hetero_cacheobj(page->hetero_obj)){
 		bio = bio_alloc_hetero(GFP_NOIO, BIO_MAX_PAGES, page->hetero_obj);
         }
-#endif
 	if(!bio)
-		bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
-		if (!bio)
-			return -ENOMEM;
+#endif
+	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
+	if (!bio)
+		return -ENOMEM;
 
 	wbc_init_bio(io->io_wbc, bio);
 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);

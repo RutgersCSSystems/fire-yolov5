@@ -4365,21 +4365,6 @@ void *__kmalloc(size_t size, gfp_t flags)
 }
 EXPORT_SYMBOL(__kmalloc);
 
-/*
-int g_val=0;
-#ifdef _HETERO_MIGRATE
-        void *ret;
-
-        if(!g_val) {
-            ret = vmalloc(size);
-            printk(KERN_ALERT "%s : %d vmalloc: %lu \n",
-                __func__, __LINE__, (unsigned long)ret);
-            g_val = 1;
-            return ret;
-       }
-#endif
-*/
-
 /* heteroOS code */
 #ifdef CONFIG_HETERO_ENABLE
 void *__kmalloc_hetero(size_t size, gfp_t flags)

@@ -150,13 +150,15 @@ config MEMORY_ISOLATION
 	bool
 
 config HETERO_ENABLE
-        def_bool y
+        def_bool n
 
 config HETERO_STATS
 	def_bool y
+	depends on HETERO_ENABLE
 
 config HETERO_DEBUG
         def_bool n
+	depends on HETERO_ENABLE
 
 config HETERO_MIGRATE
         def_bool n
@@ -167,8 +169,8 @@ config HETERO_OBJAFF
         depends on HETERO_ENABLE
 
 config HETERO_NET_ENABLE
-		def_bool y
-		depends on HETERO_ENABLE
+	def_bool y
+	depends on HETERO_ENABLE
 
 #
 # Only be set on architectures that have completely implemented memory hotplug

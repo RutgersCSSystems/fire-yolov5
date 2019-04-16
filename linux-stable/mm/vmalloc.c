@@ -1972,7 +1972,7 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 		else {
 			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			page = alloc_pages_hetero_node(node, alloc_mask|highmem_mask, 0);
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 			if(page) {	
 				page->hetero = HETERO_PG_FLAG;
 				if(!init_hetero_zspool) {
@@ -2172,7 +2172,7 @@ static void __vunmap_hetero(const void *addr, int deallocate_pages)
 
 		for (i = 0; i < area->nr_pages; i++) {
 			struct page *page = area->pages[i];
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 			rb_erase(&page->rb_node, &pool_root);
 #endif
 			BUG_ON(!page);

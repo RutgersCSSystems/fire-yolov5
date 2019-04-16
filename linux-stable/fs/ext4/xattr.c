@@ -362,14 +362,6 @@ static void ext4_xattr_inode_set_hash(struct inode *ea_inode, u32 hash)
 	ea_inode->i_atime.tv_sec = hash;
 }
 
-#if 0
-static void add_to_hashtable_buffer_head(struct buffer_head **bh) {
-	unsigned long pfn = (__pa(bh) >> PAGE_SHIFT);
-	if (pfn <= max_pfn)
-		insert_pfn_hashtable(pfn);
-}
-#endif
-
 /*
  * Read the EA value from an inode.
  */
@@ -384,9 +376,6 @@ static int ext4_xattr_inode_read(struct inode *ea_inode, void *buf, size_t size)
 
 	if (bh_count > ARRAY_SIZE(bhs_inline)) {
 		bhs = kmalloc_array(bh_count, sizeof(*bhs), GFP_NOFS);
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_buffer_head(bhs);
-
 		if (!bhs)
 			return -ENOMEM;
 	}
@@ -2642,9 +2631,6 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 #endif
 		is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
 
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_xattr_ibody_find(is);
-
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
 		bs = kzalloc_hetero_buf(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
@@ -2652,17 +2638,12 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 #endif
 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
 
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_xattr_block_find(bs);
-
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
 		buffer = kmalloc_hetero(value_size, GFP_NOFS);
 	}else
 #endif
 	buffer = kmalloc(value_size, GFP_NOFS);
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_char(buffer);
 
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
@@ -2670,10 +2651,6 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	}else
 #endif
 	b_entry_name = kmalloc(entry->e_name_len + 1, GFP_NOFS);
-
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_char(b_entry_name);
-
 	if (!is || !bs || !buffer || !b_entry_name) {
 		error = -ENOMEM;
 		goto out;
@@ -2924,9 +2901,6 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 					 inodes[EIA_MASK]),
 				GFP_NOFS);
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_ext4_xattr_inode_array_double(ea_inode_array);
-
 		if (*ea_inode_array == NULL)
 			return -ENOMEM;
 		(*ea_inode_array)->count = 0;
@@ -2947,9 +2921,6 @@ ext4_expand_inode_array(struct ext4_xattr_inode_array **ea_inode_array,
 					 inodes[count + EIA_INCR]),
 				GFP_NOFS);
 #endif
-		//if (global_flag == PFN_TRACE)
-		//	add_to_hashtable_ext4_xattr_inode_array_single(new_array);
-
 		if (new_array == NULL)
 			return -ENOMEM;
 		memcpy(new_array, *ea_inode_array,

@@ -853,11 +853,10 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 #ifdef CONFIG_HETERO_ENABLE
 	rq = NULL;
         if(is_hetero_buffer_set()) {
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 		//rq = vmalloc_hetero(sizeof(struct request) + q->cmd_size);
 		if(!rq)
 #endif
-		//printk(KERN_ALERT "%s:%d size %zu \n", __func__, __LINE__, sizeof(struct request) + q->cmd_size);
 		rq = kmalloc_node_hetero(sizeof(struct request) + q->cmd_size, gfp_mask,
 				q->node);
         }
@@ -869,7 +868,7 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 	if (rq && q->init_rq_fn && q->init_rq_fn(q, rq, gfp_mask) < 0) {
 #ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()){
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 			//vfree_hetero(rq);
 			//rq = NULL;
 			//return rq;
@@ -890,16 +889,6 @@ static void free_request_size(void *element, void *data)
 	if (q->exit_rq_fn)
 		q->exit_rq_fn(q, element);
 
-#ifdef CONFIG_HETERO_ENABLE
-#ifdef _HETERO_MIGRATE
-	if(is_hetero_buffer_set()){
-		//vfree_hetero(element);
-	        //element = NULL;
-		//kfree(element);
-		//return;
-	}
-#endif
-#endif
 	if(element)
 		kfree(element);
 }

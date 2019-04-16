@@ -302,17 +302,11 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 				     uint64_t owner)
 {
 	struct ext4_fsmap *fsm;
-#ifdef ENABLE_HETERO
-	if(is_hetero_buffer_set()) {
-	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-	}
+#ifdef CONFIG_HETERO_ENABLE
 	fsm = kmalloc_hetero(sizeof(*fsm), GFP_NOFS);
 #else 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_fsmap(fsm);
-
 	if (!fsm)
 		return -ENOMEM;
 	fsm->fmr_device = 0;

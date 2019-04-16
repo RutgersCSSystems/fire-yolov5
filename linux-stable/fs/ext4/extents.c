@@ -887,7 +887,7 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 
 #ifdef CONFIG_HETERO_ENABLE 
 			if(is_hetero_buffer_set()) {
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 				vfree_hetero(path);
 #else
 				kfree(path);
@@ -903,7 +903,7 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 		/* account possible depth increase */
 #ifdef CONFIG_HETERO_ENABLE 
 		if(is_hetero_buffer_set()) {
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
 			path = vmalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 2));
 #else
 			path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 2),
@@ -964,7 +964,7 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 
 err:
 	ext4_ext_drop_refs(path);
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
         if(is_hetero_buffer_set()) {
 	    vfree_hetero(path);
         }
@@ -1110,9 +1110,6 @@ static int ext4_ext_split(handle_t *handle, struct inode *inode,
 #else 
 	ablocks = kzalloc(sizeof(ext4_fsblk_t) * depth, GFP_NOFS);
 #endif
-	//if (global_flag == PFN_TRACE)
-	//	add_to_hashtable_ext4_fsblk_t(ablocks);
-
 	if (!ablocks)
 		return -ENOMEM;
 
@@ -2971,6 +2968,7 @@ again:
 				le16_to_cpu(path[k].p_hdr->eh_entries)+1;
 	} else {
 #ifdef CONFIG_HETERO_ENABLE
+		path = NULL;
                 if(is_hetero_buffer_set()) {
 			path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
 				       GFP_NOFS);
@@ -4657,9 +4655,8 @@ out:
 out2:
 	ext4_ext_drop_refs(path);
 
-#ifdef _HETERO_MIGRATE
+#ifdef CONFIG_HETERO_MIGRATE
          if(is_hetero_buffer_set()) 
-          	//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
                 vfree_hetero(path);
 	else
 #endif
