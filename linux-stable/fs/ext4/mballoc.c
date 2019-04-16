@@ -2710,12 +2710,13 @@ int ext4_mb_init(struct super_block *sb)
 
 	i = (sb->s_blocksize_bits + 2) * sizeof(*sbi->s_mb_maxs);
 #ifdef CONFIG_HETERO_ENABLE
+	sbi->s_mb_maxs = NULL;
 	if(is_hetero_buffer_set()) {
 		sbi->s_mb_maxs = kmalloc_hetero(i, GFP_KERNEL);
 	}
-#else 
-	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);
+	if(!sbi->s_mb_maxs)
 #endif
+	sbi->s_mb_maxs = kmalloc(i, GFP_KERNEL);
 	if (sbi->s_mb_maxs == NULL) {
 		ret = -ENOMEM;
 		goto out;
