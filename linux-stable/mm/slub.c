@@ -4358,9 +4358,6 @@ void *__kmalloc(size_t size, gfp_t flags)
 
 	kasan_kmalloc(s, ret, size, flags);
 
-	//if(is_hetero_buffer_set())
-	//	printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-
 	return ret;
 }
 EXPORT_SYMBOL(__kmalloc);
@@ -4371,6 +4368,11 @@ void *__kmalloc_hetero(size_t size, gfp_t flags)
 {
 	struct kmem_cache *s;
 	void *ret;
+
+	/*revert to default allocation*/
+	if(!is_hetero_buffer_set())
+		__kmalloc(size, flags);
+
 
 	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
 		return kmalloc_large(size, flags);
@@ -4407,39 +4409,6 @@ static void *kmalloc_large_node(size_t size, gfp_t flags, int node)
 	return ptr;
 }
 
-#ifdef CONFIG_HETERO_ENABLE
-void *__kmalloc_node_hetero(size_t size, gfp_t flags, int node)
-{
-	struct kmem_cache *s;
-	void *ret;
-
-	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-		ret = kmalloc_large_node(size, flags, node);
-
-		trace_kmalloc_node(_RET_IP_, ret,
-				   size, PAGE_SIZE << get_order(size),
-				   flags, node);
-
-		return ret;
-	}
-
-	s = kmalloc_slab(size, flags);
-
-	if (unlikely(ZERO_OR_NULL_PTR(s)))
-		return s;
-
-	ret = slab_alloc_node_hetero(s, flags, node, _RET_IP_);
-
-	trace_kmalloc_node(_RET_IP_, ret, size, s->size, flags, node);
-
-	kasan_kmalloc(s, ret, size, flags);
-
-	return ret;
-}
-EXPORT_SYMBOL(__kmalloc_node_hetero);
-#endif
-
-
 void *__kmalloc_node(size_t size, gfp_t flags, int node)
 {
 	struct kmem_cache *s;
@@ -4469,6 +4438,41 @@ void *__kmalloc_node(size_t size, gfp_t flags, int node)
 	return ret;
 }
 EXPORT_SYMBOL(__kmalloc_node);
+
+#ifdef CONFIG_HETERO_ENABLE
+void *__kmalloc_node_hetero(size_t size, gfp_t flags, int node)
+{
+	struct kmem_cache *s;
+	void *ret;
+
+        /*revert to default allocation*/
+        if(!is_hetero_buffer_set())
+                __kmalloc_node(size, flags, node);
+
+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
+		ret = kmalloc_large_node(size, flags, node);
+
+		trace_kmalloc_node(_RET_IP_, ret,
+				   size, PAGE_SIZE << get_order(size),
+				   flags, node);
+		return ret;
+	}
+	s = kmalloc_slab(size, flags);
+
+	if (unlikely(ZERO_OR_NULL_PTR(s)))
+		return s;
+
+	ret = slab_alloc_node_hetero(s, flags, node, _RET_IP_);
+
+	trace_kmalloc_node(_RET_IP_, ret, size, s->size, flags, node);
+
+	kasan_kmalloc(s, ret, size, flags);
+
+	return ret;
+}
+EXPORT_SYMBOL(__kmalloc_node_hetero);
+#endif
+
 #endif
 
 #ifdef CONFIG_HARDENED_USERCOPY
