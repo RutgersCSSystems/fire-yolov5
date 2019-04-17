@@ -1131,16 +1131,19 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 	/*By default, allocate to HETERO_NODE */
         n = get_fastmem_node();
 
+	if (!is_hetero_pgcache_set()) {
+		return __page_cache_alloc(gfp, x);		
+	}
 
 	/* Check if  HETERO allocation enabled for page cache 
 	 * enabled 
          */
-	if (is_hetero_pgcache_set() && is_hetero_obj(x->hetero_obj)) {
+	if (is_hetero_obj(x->hetero_obj)) {
 		n = get_fastmem_node();
 		is_hetero_alloc = 1;
 	}
 #if 1 //def CONFIG_HETERO_DEBUG
-	else if (is_hetero_pgcache_set()) {
+	else {
 		if(x && !is_hetero_obj(x->hetero_obj)) {
 			//debug_hetero_obj(x->hetero_obj);
 			set_fsmap_hetero_obj(x);
@@ -1162,13 +1165,13 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
 	}
 #ifdef CONFIG_HETERO_STATS
-	if(allocpage && is_hetero_pgcache_set()) {
+	if(allocpage) {
 	    update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
 	}
 #endif
 
 #ifdef CONFIG_HETERO_OBJAFF
-	if(allocpage && is_hetero_pgcache_set()) {
+	if(allocpage) {
 		try_hetero_migration((void *)x,
 			 mapping_gfp_constraint(x, GFP_KERNEL));
 	}

@@ -2625,30 +2625,34 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 	int error;
 
 #ifdef CONFIG_HETERO_ENABLE 
-	if(is_hetero_buffer_set()) {
+	is = NULL;
+	if(is_hetero_buffer_set()) 
 		is = kzalloc_hetero_buf(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
-	} else
+	if(!is)
 #endif
-		is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
+	is = kzalloc(sizeof(struct ext4_xattr_ibody_find), GFP_NOFS);
 
 #ifdef CONFIG_HETERO_ENABLE
-	if(is_hetero_buffer_set()) {
+	bs = NULL;
+	if(is_hetero_buffer_set()) 
 		bs = kzalloc_hetero_buf(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
-	}else
+	if(!bs)
 #endif
 	bs = kzalloc(sizeof(struct ext4_xattr_block_find), GFP_NOFS);
 
 #ifdef CONFIG_HETERO_ENABLE
-        if(is_hetero_buffer_set()) {
+	buffer = NULL;
+        if(is_hetero_buffer_set()) 
 		buffer = kmalloc_hetero(value_size, GFP_NOFS);
-	}else
+	if(!buffer)
 #endif
 	buffer = kmalloc(value_size, GFP_NOFS);
 
 #ifdef CONFIG_HETERO_ENABLE
-        if(is_hetero_buffer_set()) {
+	b_entry_name = NULL;
+        if(is_hetero_buffer_set()) 
 		b_entry_name = kmalloc_hetero(entry->e_name_len + 1, GFP_NOFS);
-	}else
+	if(!b_entry_name)
 #endif
 	b_entry_name = kmalloc(entry->e_name_len + 1, GFP_NOFS);
 	if (!is || !bs || !buffer || !b_entry_name) {

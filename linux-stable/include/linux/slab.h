@@ -871,11 +871,10 @@ static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 {
 
 	/* If hetero_buffer not set, then continue in the default path*/
-       /*
 	if(!is_hetero_buffer_set()) {
            return kmalloc(size, flags);
 	}
-	*/
+	
 	if (__builtin_constant_p(size)) {
 		if (size > KMALLOC_MAX_CACHE_SIZE)
 			return kmalloc_large(size, flags);
@@ -900,8 +899,8 @@ static __always_inline void *kmalloc_hetero_buff(size_t size, gfp_t flags)
 {
 
 	/* If hetero_buffer not set, then continue in the default path*/
-       if(is_hetero_buffer_set()) {
-           return kmalloc_hetero(size, flags);
+       if(!is_hetero_buffer_set()) {
+           return kmalloc(size, flags);
 	}
 
 	if (__builtin_constant_p(size)) {

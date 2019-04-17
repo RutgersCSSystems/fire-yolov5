@@ -232,6 +232,9 @@ static inline struct page *__page_cache_alloc(gfp_t gfp)
 static inline struct page *__page_cache_alloc_hetero(gfp_t gfp,
 					struct address_space *x)
 {
+	if(!is_hetero_buffer_set())
+		return alloc_pages(gfp, 0);
+
 	return alloc_pages_hetero(gfp, 0);
 }
 #endif
@@ -244,6 +247,9 @@ static inline struct page *page_cache_alloc(struct address_space *x)
 #ifdef CONFIG_HETERO_ENABLE
 static inline struct page *page_cache_alloc_hetero(struct address_space *x)
 {
+	if(!is_hetero_buffer_set())
+		return __page_cache_alloc(mapping_gfp_mask(x));
+
         return __page_cache_alloc_hetero(mapping_gfp_mask(x), x);
 }
 #endif
