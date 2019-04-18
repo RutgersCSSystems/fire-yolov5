@@ -870,9 +870,8 @@ int slab_dead_cpu(unsigned int cpu);
 static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 {
 
-	/* If hetero_buffer not set, then continue in the default path*/
 	if(!is_hetero_buffer_set()) {
-           return kmalloc(size, flags);
+
 	}
 	
 	if (__builtin_constant_p(size)) {
@@ -890,7 +889,6 @@ static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 		}
 #endif
 	}
-
 	return __kmalloc_hetero(size, flags);
 }
 

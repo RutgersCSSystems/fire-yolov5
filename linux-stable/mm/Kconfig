@@ -150,7 +150,7 @@ config MEMORY_ISOLATION
 	bool
 
 config HETERO_ENABLE
-        def_bool n
+        def_bool y
 
 config HETERO_STATS
 	def_bool y
@@ -165,11 +165,11 @@ config HETERO_MIGRATE
         depends on HETERO_ENABLE
 
 config HETERO_OBJAFF
-        def_bool y
+        def_bool n
         depends on HETERO_ENABLE
 
 config HETERO_NET_ENABLE
-	def_bool y
+	def_bool n
 	depends on HETERO_ENABLE
 
 #

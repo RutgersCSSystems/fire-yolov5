@@ -3186,7 +3186,10 @@ static int ext4_da_write_end(struct file *file,
 		page->hetero = HETERO_PG_FLAG;
 		if(current && current->mm &&
 			current->mm->hetero_task == HETERO_PROC) {
+#ifdef CONFIG_HETERO_OBJAFF
 			try_hetero_migration(mapping, 0);
+#endif
+
 		}
 	}
 #endif

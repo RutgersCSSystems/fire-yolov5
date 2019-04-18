@@ -1132,7 +1132,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
         n = get_fastmem_node();
 
 	if (!is_hetero_pgcache_set()) {
-		return __page_cache_alloc(gfp, x);		
+		return __page_cache_alloc(gfp);		
 	}
 
 	/* Check if  HETERO allocation enabled for page cache 

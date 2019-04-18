@@ -34,7 +34,7 @@ RUNAPP() {
 
 OUTPUTDIR=$APPBENCH/output-rocksdb-trail5
 mkdir $OUTPUTDIR
-#SETENV
+SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
 
