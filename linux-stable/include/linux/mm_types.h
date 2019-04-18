@@ -205,10 +205,13 @@ struct page {
 	/* HeteroOS code */
 #ifdef CONFIG_HETERO_ENABLE
 	int hetero;
+
+#ifdef CONFIG_HETERO_OBJAFF
 	void *hetero_obj;
+#endif
         /* group service_tree member */
-        struct rb_node rb_node;
-	struct list_head hetero_list;
+        //struct rb_node rb_node;
+	//struct list_head hetero_list;
 #endif
 
 #ifdef CONFIG_HETERO_STATS
