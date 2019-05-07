@@ -325,7 +325,9 @@ EXPORT_SYMBOL(set_curr_hetero_obj);
 void 
 set_hetero_obj_page(struct page *page, void *obj)                          
 {
+#ifdef CONFIG_HETERO_OBJAFF
         page->hetero_obj = obj;
+#endif
 }
 EXPORT_SYMBOL(set_hetero_obj_page);
 
@@ -611,11 +613,12 @@ int get_slowmem_node(void) {
 }
 
 
-
+#ifdef CONFIG_HETERO_OBJAFF
 void hetero_add_to_list(struct page *page, struct list_head *list_pages){
 
         list_add(&page->hetero_list, list_pages);
 }
+#endif
 
 void hetero_del_from_list(struct page *page)
 {
@@ -995,7 +998,9 @@ gen_list_from_rbtree(struct rb_root *root, struct list_head *list_pages) {
 		new = rb_entry(n, struct page, rb_node);
 		if(new) {
 			if (trylock_page(new)) {
+#ifdef CONFIG_HETERO_OBJAFF
 				hetero_add_to_list(new, list_pages);
+#endif
 				unlock_page(new);
 				count++;
 			}
