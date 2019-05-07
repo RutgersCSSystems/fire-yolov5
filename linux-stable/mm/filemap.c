@@ -132,7 +132,7 @@ static int page_cache_tree_insert(struct address_space *mapping,
 	void **slot;
 	int error;
 
-#ifdef CONFIG_HETERO_ENABLE
+#ifdef CONFIG_HETERO_OBJAFF
 	error = 1;
 	/* Set page to Hetero Object */
 	if (is_hetero_buffer_set() && is_hetero_cacheobj(mapping->hetero_obj)){

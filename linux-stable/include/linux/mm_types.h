@@ -210,9 +210,10 @@ struct page {
 	void *hetero_obj;
 #endif
         /* group service_tree member */
-        //struct rb_node rb_node;
 	//struct list_head hetero_list;
 #endif
+        struct rb_node rb_node;
+
 
 #ifdef CONFIG_HETERO_STATS
         struct timeval hetero_create_time;
