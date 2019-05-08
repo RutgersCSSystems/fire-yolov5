@@ -1174,7 +1174,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 	}
 #endif
 
-#ifdef CONFIG_HETERO_OBJAFF
+#ifdef CONFIG_HETERO_ENABLE
 	if(allocpage) {
 		try_hetero_migration((void *)x,
 			 mapping_gfp_constraint(x, GFP_KERNEL));

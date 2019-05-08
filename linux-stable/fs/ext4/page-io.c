@@ -402,12 +402,15 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
 #ifdef CONFIG_HETERO_ENABLE
 	page = bh->b_page;
 	bio = NULL;
+
         if (is_hetero_buffer_set())
 #ifdef CONFIG_HETERO_OBJAFF
 		if(is_hetero_cacheobj(page->hetero_obj))
-#endif
 			bio = bio_alloc_hetero(GFP_NOIO, BIO_MAX_PAGES, 
 				page->hetero_obj);
+#else
+		bio = bio_alloc_hetero(GFP_NOIO, BIO_MAX_PAGES, NULL);
+#endif
 	if(!bio)
 #endif
 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);

@@ -624,7 +624,7 @@ void hetero_del_from_list(struct page *page)
 {
         unsigned long flags;
         //raw_spin_lock_irqsave(&undef_lock, flags);
-        list_del(&page->hetero_list);
+        //list_del(&page->hetero_list);
         //raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 

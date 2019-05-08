@@ -103,10 +103,10 @@ void update_hetero_pgcache(int node, struct page *, int delpage);
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
 #endif
 
-#ifdef CONFIG_HETERO_OBJAFF
+//#ifdef CONFIG_HETERO_OBJAFF
 void
 try_hetero_migration(void *map, gfp_t gfp_mask);
-#endif
+//#endif
 
 #endif /* _LINUX_NUMA_H */
 
