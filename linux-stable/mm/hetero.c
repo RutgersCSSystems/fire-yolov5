@@ -230,10 +230,10 @@ EXPORT_SYMBOL(is_hetero_exit);
 
 void debug_hetero_obj(void *obj) {
 
+#ifdef CONFIG_HETERO_DEBUG
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
 
-#ifdef CONFIG_HETERO_DEBUG
 	//struct inode *currinode = (struct inode *)current->active_mm->hetero_obj;
 	struct inode *currinode = (struct inode *)current->hetero_obj;
 	if(inode && currinode) {
@@ -316,8 +316,10 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 /*Sets current task with hetero obj*/
 void set_curr_hetero_obj(void *obj) 
 {
+#ifdef CONFIG_HETERO_OBJAFF
         //current->active_mm->hetero_obj = obj;
 	current->hetero_obj = obj;
+#endif
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
@@ -616,7 +618,7 @@ int get_slowmem_node(void) {
 #ifdef CONFIG_HETERO_OBJAFF
 void hetero_add_to_list(struct page *page, struct list_head *list_pages){
 
-        list_add(&page->hetero_list, list_pages);
+        //list_add(&page->hetero_list, list_pages);
 }
 #endif
 
@@ -730,6 +732,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 			printk("%s:%d NULL \n", __func__, __LINE__);
 			continue;
 		}
+	}
 #endif
 out_try_migration:
         return 0;

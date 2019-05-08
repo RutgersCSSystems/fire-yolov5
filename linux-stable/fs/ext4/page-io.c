@@ -399,7 +399,7 @@ static int io_submit_init_bio(struct ext4_io_submit *io,
 	struct page *page = NULL;
 #endif
 
-#ifdef CONFIG_HETERO_ENABLE
+#ifdef CONFIG_HETERO_OBJAFF
 	page = bh->b_page;
 	bio = NULL;
 
