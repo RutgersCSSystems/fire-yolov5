@@ -33,10 +33,19 @@ RUNAPP() {
 
 
 OUTPUTDIR=$APPBENCH/output-rocksdb-trail5
+
 mkdir $OUTPUTDIR
 SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+mkdir $OUTPUTDIR/slowmem-migration-only
+OUTPUT="slowmem-migration-only/db_bench.out"
+SETUP
+make CFLAGS="-D_MIGRATE"
+RUNAPP
+exit
+
+
 
 mkdir $OUTPUTDIR/slowmem-obj-affinity
 OUTPUT="slowmem-obj-affinity/db_bench.out"
@@ -51,12 +60,6 @@ make CFLAGS=""
 RUNAPP
 #exit
 
-mkdir $OUTPUTDIR/slowmem-migration-only
-OUTPUT="slowmem-migration-only/db_bench.out"
-SETUP
-make CFLAGS="-D_MIGRATE"
-RUNAPP
-#exit
 
 
 mkdir $OUTPUTDIR/slowmem-only
