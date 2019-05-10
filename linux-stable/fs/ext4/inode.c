@@ -3333,7 +3333,7 @@ static int ext4_readpage(struct file *file, struct page *page)
         if(current && current->mm && 
 		current->mm->hetero_task == HETERO_PROC) {
 		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		//try_hetero_migration(page->mapping, 0);
+		try_hetero_migration(page->mapping, 0);
 		//if(!execute_ok(inode))
 			//set_fsmap_hetero_obj(page->mapping);
 	}

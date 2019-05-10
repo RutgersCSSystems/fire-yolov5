@@ -455,6 +455,10 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
 
+	/*if(!correct_node)
+		printk("%s:%d INCORRECT NODE Miss count %lu \n",__func__, __LINE__, 
+			current->active_mm->pgcache_miss_cnt);*/
+
 	//Check if page is in the correct node and 
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
@@ -463,7 +467,8 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		page->hetero_create_time = (struct timeval){0};
 		page->hetero_del_time = (struct timeval){0};
 		do_gettimeofday(&page->hetero_create_time);
-	}else if(!correct_node && !delpage) {
+
+	} else if(!correct_node && !delpage) {
 		current->active_mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
@@ -475,8 +480,9 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 			current->active_mm->pgcachedel++;
 #endif		
 	}
-	//Either if object affinity is disabled or page node is 
-	//incorrect, then return
+
+	/* Either if object affinity is disabled or page node is 
+	incorrect, then return */
 	if(!correct_node || !enbl_hetero_objaff)
 		goto ret_pgcache_stat;
 
@@ -673,14 +679,19 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
 		return;
 
-	//Calculate the number of misses and hits
+	/*Calculate the number of misses and hits*/
 	threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
-	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
-	//Controls how frequently we should enable migration thread
-	if(!migrate_freq || !threshold || (threshold % migrate_freq != 0)) 
-		return;
-	//hetero_dbg("%s:%d Cache length %lu \n", __func__, __LINE__, threshold);
 	
+	if(current->active_mm->pgcache_miss_cnt)	
+		hetero_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
+			current->active_mm->pgcache_miss_cnt);
+
+	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
+
+	/*Controls how frequently we should enable migration thread*/
+	if(!migrate_freq || !threshold || (threshold < migrate_freq)) // (threshold % migrate_freq != 0)) 
+		return;
+
 #ifdef _ENABLE_HETERO_RBTREE
 	root = &current->active_mm->objaff_cache_rbroot;
         if(!root) {
@@ -689,6 +700,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
         }
 #endif
 
+	hetero_dbg("%s:%d \n", __func__, __LINE__);
 
 #ifdef _ENABLE_HETERO_THREAD
 	if(!migration_thrd_active) {

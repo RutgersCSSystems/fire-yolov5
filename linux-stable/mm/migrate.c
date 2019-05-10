@@ -3916,13 +3916,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(mm->hetero_task != HETERO_PROC)
 		return rc;
 
-	
-	//TODO: Remove these optimizations
-	/*if(mm->objaff_cache_len < 1000) {
-		return rc;
-	}
-	if(mm->migrate_attempt % 2 != 0)
-		return rc; */
+	hetero_dbg("%s:%d \n", __func__,__LINE__);
 
 	for(pass = 0; pass < 1 && retry; pass++) {
 		retry = 0;
@@ -3941,16 +3935,16 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 
 retry:
 			cond_resched();
-
 			/* Migrate only page cache pages*/
 			//if (PageAnon(page))
 			//	continue;
 
 			/* Not a Hetero page */
+#ifdef _USE_HETERO_PG_FLAG
 			if ((page->hetero != HETERO_PG_FLAG) || 
 				(page->hetero == HETERO_PG_DEL_FLAG) )
 				continue;
-
+#endif
 			if (page_to_nid(page) == get_slowmem_node()) {
 				continue;
 			}
@@ -4017,7 +4011,7 @@ out:
 	mm->pages_migrated += nr_succeeded;
 
 	if(nr_succeeded)
-		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+		hetero_force_dbg("nr_succeeded pages migrated %u nr_failed %u " 
 			    "retry %d  pagecount %d\n", 
 			    mm->pages_migrated, nr_failed, retry,  pagecount);
 

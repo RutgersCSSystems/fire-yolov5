@@ -947,12 +947,16 @@ struct page *alloc_new_node_page(struct page *page, unsigned long node)
 		return thp;
 	} else
 #ifdef CONFIG_HETERO_ENABLE
+
+#ifdef _USE_HETERO_PG_FLAG
         if(page && page->hetero == HETERO_PG_FLAG) {
                 hetero_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
 			__func__,__LINE__, page_to_nid(page), get_slowmem_node());
 		return __alloc_pages_node_hetero(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
 				__GFP_THISNODE, 0);
         }
+#endif
+
 #endif
 	return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
 				__GFP_THISNODE, 0);
@@ -1010,7 +1014,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	spinlock_t *ptl;
 
 	if(!is_hetero_vma(vma)) {
-		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+		printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
 		return 0;
 	}
 
@@ -1029,8 +1033,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!pte_present(*pte))
 			continue;
 		page = vm_normal_page(vma, addr, *pte);
-		if (!page || (page->hetero != HETERO_PG_FLAG))
+		if (!page)
 			continue;
+#ifdef _USE_HETERO_PG_FLAG	
+		if (page->hetero != HETERO_PG_FLAG)
+			continue;
+#endif
 
 		//if(check_hetero_page(walk->mm, page)) {
 		//	continue;
@@ -1043,7 +1051,8 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 			continue;
 		if (!queue_pages_required(page, qp))
 			continue;
-		//SetPageLRU(page);
+
+		hetero_dbg("%s:%d \n",__func__,__LINE__);
 		migrate_page_add(page, qp->pagelist, flags);
 	}
 	pte_unmap_unlock(pte - 1, ptl);
@@ -1107,7 +1116,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 
 	if (!list_empty(&pagelist)) {
 
-		hetero_dbg("%s:%d \n",__func__,__LINE__);
+		hetero_force_dbg("%s:%d \n",__func__,__LINE__);
 
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_ASYNC, MR_SYSCALL, mm);

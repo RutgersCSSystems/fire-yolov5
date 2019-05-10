@@ -43,6 +43,7 @@ extern int hetero_dbgmask;
 
 #define hetero_dbg(s, args ...)              \
         ((1 & hetero_dbgmask) ? pr_warning(s, ## args) : 0)
+#define hetero_force_dbg(s, args ...)     pr_warning(s, ## args)
 #define hetero_err(sb, s, args ...)       pmfs_error_mng(sb, s, ## args)
 #define hetero_warn(s, args ...)          pr_warning(s, ## args)
 #define hetero_info(s, args ...)          pr_info(s, ## args)
