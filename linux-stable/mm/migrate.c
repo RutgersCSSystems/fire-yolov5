@@ -4011,7 +4011,7 @@ out:
 	mm->pages_migrated += nr_succeeded;
 
 	if(nr_succeeded)
-		hetero_force_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
 			    "retry %d  pagecount %d\n", 
 			    mm->pages_migrated, nr_failed, retry,  pagecount);
 

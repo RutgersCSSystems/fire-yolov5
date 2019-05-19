@@ -340,10 +340,10 @@ set_fsmap_hetero_obj(void *mapobj)
 
         struct address_space *mapping = NULL;
 	struct inode *inode = NULL;
-	struct dentry *res = NULL;
 	void *current_obj = current->hetero_obj;
 
 #ifdef CONFIG_HETERO_OBJAFF
+	struct dentry *res = NULL;
         /*If we do not enable object affinity then we simply 
 	return true for all the case*/
 	if(!enbl_hetero_objaff)
@@ -630,7 +630,7 @@ void hetero_add_to_list(struct page *page, struct list_head *list_pages){
 
 void hetero_del_from_list(struct page *page)
 {
-        unsigned long flags;
+        //unsigned long flags;
         //raw_spin_lock_irqsave(&undef_lock, flags);
         //list_del(&page->hetero_list);
         //raw_spin_unlock_irqrestore(&undef_lock, flags);
@@ -664,14 +664,15 @@ static int migration_thread_fn(void *arg) {
 void 
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
+	int threshold=0;
+#ifdef _ENABLE_HETERO_RBTREE
+	int destnode = get_slowmem_node();
+	int num_misses=0;
         struct rb_node *n, *next;
-        unsigned long count = 0;
-        struct page *newpg = NULL;
 	struct page *oldpage = NULL;
 	struct rb_root *root;
-	int destnode = get_slowmem_node();
-	int num_misses=0, threshold=0;
-#ifdef _ENABLE_HETERO_RBTREE
+        unsigned long count = 0;
+        struct page *newpg = NULL;
 	struct address_space *mapping = (struct address_space *)map;
 	if(!mapping) 
 		return;
@@ -745,9 +746,9 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 			continue;
 		}
 	}
-#endif
 out_try_migration:
-        return 0;
+#endif
+        return;
 }
 EXPORT_SYMBOL(try_hetero_migration);
 #endif

@@ -4457,7 +4457,7 @@ EXPORT_SYMBOL(__alloc_pages_nodemask);
 #define THRESHOLD 524288
 #define FREQCHECK 100
 
-static int memcheckfreq = 0;
+static unsigned int node_checkfreq = 0;
 
 static int check_fastmem_node(struct page *page) {
 
@@ -4482,16 +4482,17 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
-	if(memcheckfreq < 1) {
+	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
-		if(K(i.freeram) < THRESHOLD) 
-			return NULL;
-		memcheckfreq = FREQCHECK;
+		if(K(i.freeram) < THRESHOLD) {
+			node_checkfreq = FREQCHECK;
+			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+			goto default_alloc;
+		}
+		node_checkfreq = FREQCHECK;
 	}else {
-		memcheckfreq--;
+		node_checkfreq--;
 	}
-
-
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
 				nodemask, &ac, &alloc_mask, &alloc_flags))
@@ -4524,6 +4525,8 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 		ac.nodemask = nodemask;
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
+
+default_alloc:
         if(!page) {
                 return __alloc_pages_nodemask(gfp_mask, order, 
 						     preferred_nid, nodemask);

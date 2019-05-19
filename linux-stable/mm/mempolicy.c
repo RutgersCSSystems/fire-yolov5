@@ -1116,7 +1116,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 
 	if (!list_empty(&pagelist)) {
 
-		hetero_force_dbg("%s:%d \n",__func__,__LINE__);
+		hetero_dbg("%s:%d \n",__func__,__LINE__);
 
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_ASYNC, MR_SYSCALL, mm);
