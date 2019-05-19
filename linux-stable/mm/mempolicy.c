@@ -947,16 +947,16 @@ struct page *alloc_new_node_page(struct page *page, unsigned long node)
 		return thp;
 	} else
 #ifdef CONFIG_HETERO_ENABLE
-
 #ifdef _USE_HETERO_PG_FLAG
         if(page && page->hetero == HETERO_PG_FLAG) {
-                hetero_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
+                hetero_force_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
 			__func__,__LINE__, page_to_nid(page), get_slowmem_node());
-		return __alloc_pages_node_hetero(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
+		//return __alloc_pages_node_hetero(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
+		//		__GFP_THISNODE, 0);
+		return __alloc_pages_node(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
 				__GFP_THISNODE, 0);
         }
 #endif
-
 #endif
 	return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
 				__GFP_THISNODE, 0);

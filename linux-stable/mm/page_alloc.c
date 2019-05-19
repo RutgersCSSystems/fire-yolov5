@@ -4486,7 +4486,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) {
 			node_checkfreq = FREQCHECK;
-			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+			//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			goto default_alloc;
 		}
 		node_checkfreq = FREQCHECK;
@@ -4500,13 +4500,12 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	finalise_ac(gfp_mask, order, &ac);
 
-//#ifndef CONFIG_HETERO_ENABLE
 	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page) && check_fastmem_node(page)) {
+		page->hetero == HETERO_PG_FLAG;
 		goto out;
 	}
-//#endif
 
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
@@ -4531,6 +4530,10 @@ default_alloc:
                 return __alloc_pages_nodemask(gfp_mask, order, 
 						     preferred_nid, nodemask);
         }
+
+	if(check_fastmem_node(page)) {
+		page->hetero == HETERO_PG_FLAG;
+	}
 
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
