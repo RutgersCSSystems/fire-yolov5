@@ -48,6 +48,7 @@
 #include <linux/sched/mm.h>
 #include <linux/ptrace.h>
 #include <linux/delay.h>
+#include <linux/hetero.h>
 
 #include <asm/tlbflush.h>
 
