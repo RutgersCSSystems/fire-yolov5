@@ -106,7 +106,7 @@
 #include "internal.h"
 
 #include <linux/numa.h>
-
+#include <linux/hetero.h>
 
 /* Internal flags */
 #define MPOL_MF_DISCONTIG_OK (MPOL_MF_INTERNAL << 0)	/* Skip checks for continuous vmas */
@@ -949,7 +949,7 @@ struct page *alloc_new_node_page(struct page *page, unsigned long node)
 #ifdef CONFIG_HETERO_ENABLE
 #ifdef _USE_HETERO_PG_FLAG
         if(page && page->hetero == HETERO_PG_FLAG) {
-                hetero_force_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
+                hetero_dbg("%s:%d Orig page node %d, Slow Node %d \n", 
 			__func__,__LINE__, page_to_nid(page), get_slowmem_node());
 		//return __alloc_pages_node_hetero(get_slowmem_node(), GFP_HIGHUSER_MOVABLE |
 		//		__GFP_THISNODE, 0);
@@ -1036,8 +1036,10 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!page)
 			continue;
 #ifdef _USE_HETERO_PG_FLAG	
-		if (page->hetero != HETERO_PG_FLAG)
+		if (page->hetero != HETERO_PG_FLAG) {
+			hetero_dbg("%s:%d \n",__func__,__LINE__);
 			continue;
+		}
 #endif
 
 		//if(check_hetero_page(walk->mm, page)) {
@@ -1052,7 +1054,6 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!queue_pages_required(page, qp))
 			continue;
 
-		hetero_dbg("%s:%d \n",__func__,__LINE__);
 		migrate_page_add(page, qp->pagelist, flags);
 	}
 	pte_unmap_unlock(pte - 1, ptl);
