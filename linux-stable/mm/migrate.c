@@ -1561,8 +1561,6 @@ int migrate_onepage_hetero(struct page *page, new_page_t get_new_page,
 retry:
 		cond_resched();
 
-		 printk(KERN_ALERT "%s:%d Trying to migrate %u\n", __func__,__LINE__, page_to_pfn(page));
-
 		if (PageHuge(page))
 			rc = unmap_and_move_huge_page(get_new_page,
 					put_new_page, private, page,
@@ -1574,9 +1572,6 @@ retry:
 
 		switch(rc) {
 		case -ENOMEM:
-
-			printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
-
 			/*
 			 * THP migration might be unsupported or the
 			 * allocation could've failed so we should
@@ -1650,10 +1645,10 @@ int migrate_pages_hetero_rbtree(struct rb_root *root, new_page_t get_new_page,
 	int nr_succeeded = 0;
 	int pass = 0;
 	struct page *page;
-	struct page *page2;
 	int swapwrite = current->flags & PF_SWAPWRITE;
 	int rc;
 	int maxpages = task->mm->objaff_cache_len;
+	struct rb_node *n, *next;
 
 	if (!swapwrite)
 		current->flags |= PF_SWAPWRITE;
@@ -1661,14 +1656,12 @@ int migrate_pages_hetero_rbtree(struct rb_root *root, new_page_t get_new_page,
 	hetero_page_migrate_cnt = 0;
 
 	for(pass = 0; pass < 1 && retry; pass++) {
+
 		retry = 0;
 
-		struct rb_node *n, *next;
 	        for (n = rb_first(root); n != NULL; n = rb_next(n)) {
-
         	        if(n == NULL) 
                 	        break;
-
 			if(maxpages <= hetero_page_migrate_cnt) {
 				printk(KERN_ALERT "%s:%d maxpages %d "
 					"hetero_page_migrate_cnt %d\n", __func__,__LINE__, 
