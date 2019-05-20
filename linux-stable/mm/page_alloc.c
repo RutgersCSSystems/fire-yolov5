@@ -4503,7 +4503,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page) && check_fastmem_node(page)) {
-		page->hetero == HETERO_PG_FLAG;
+		page->hetero = HETERO_PG_FLAG;
 		goto out;
 	}
 
@@ -4532,7 +4532,7 @@ default_alloc:
         }
 
 	if(check_fastmem_node(page)) {
-		page->hetero == HETERO_PG_FLAG;
+		page->hetero = HETERO_PG_FLAG;
 	}
 
 #ifdef CONFIG_HETERO_ENABLE

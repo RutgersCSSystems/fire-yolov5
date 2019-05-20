@@ -39,7 +39,7 @@ mkdir $OUTPUTDIR
 export APPPREFIX="numactl  --preferred=0"
 mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/fio.out"
-SETUP
+#SETUP
 make CFLAGS="-D_MIGRATE"
 RUNAPP
 exit
