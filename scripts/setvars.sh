@@ -1,7 +1,3 @@
-
-
-
-
 export NVMBASE=$HOME/ssd/NVM
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name

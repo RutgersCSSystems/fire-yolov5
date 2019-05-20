@@ -94,7 +94,7 @@ INSTALL_ROCKSDB() {
 	#rm -rf CMakeCache.txt
 	#cmake ..
 	DEBUG_LEVEL=0 make shared_lib db_bench -j16
-	#cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
+	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
 }
 
 INSTALL_GFLAGS(){
