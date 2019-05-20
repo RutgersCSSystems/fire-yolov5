@@ -3183,7 +3183,7 @@ static int ext4_da_write_end(struct file *file,
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(page && page->hetero == HETERO_PG_FLAG) {
-		page->hetero = HETERO_PG_FLAG;
+		//page->hetero = HETERO_PG_FLAG;
 		if(current && current->mm &&
 			current->mm->hetero_task == HETERO_PROC) {
 			try_hetero_migration(mapping, 0);

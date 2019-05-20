@@ -1974,7 +1974,7 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 			page = alloc_pages_hetero_node(node, alloc_mask|highmem_mask, 0);
 #ifdef CONFIG_HETERO_MIGRATE
 			if(page) {	
-				page->hetero = HETERO_PG_FLAG;
+				//page->hetero = HETERO_PG_FLAG;
 				if(!init_hetero_zspool) {
 					pool_root = RB_ROOT;
 					init_hetero_zspool = 1;

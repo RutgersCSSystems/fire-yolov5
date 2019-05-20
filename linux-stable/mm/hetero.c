@@ -462,7 +462,7 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	we are not deleting and only inserting the page*/
 	if(correct_node && !delpage) {
 		current->active_mm->pgcache_hits_cnt += 1;
-		page->hetero = HETERO_PG_FLAG;
+		//page->hetero = HETERO_PG_FLAG;
 		//page->hetero_create_time = (struct timeval){0};
 		//page->hetero_del_time = (struct timeval){0};
 		//do_gettimeofday(&page->hetero_create_time);
@@ -473,10 +473,10 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
 #ifdef CONFIG_HETERO_STATS
-			//do_gettimeofday(&page->hetero_del_time);
-			//current->active_mm->avg_cachepage_life += 
-			//	timediff(&page->hetero_create_time, &page->hetero_del_time);
-			current->active_mm->pgcachedel++;
+		//do_gettimeofday(&page->hetero_del_time);
+		//current->active_mm->avg_cachepage_life += 
+		//	timediff(&page->hetero_create_time, &page->hetero_del_time);
+		current->active_mm->pgcachedel++;
 #endif		
 	}
 

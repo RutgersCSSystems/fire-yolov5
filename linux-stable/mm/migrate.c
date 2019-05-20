@@ -3921,47 +3921,37 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	for(pass = 0; pass < 1 && retry; pass++) {
 		retry = 0;
 		pagecount++;
-#if 0
-                struct rb_node *n, *next;
-                for (n = rb_first(root); n != NULL; n = rb_next(n)) {
-                        if(n == NULL)
-                                break;
-			page = rb_entry(n, struct page, rb_node);
-                        if(!page || page->hetero != HETERO_PG_FLAG)
-                                continue;
-#else
-			list_for_each_entry_safe(page, page2, from, lru) {
-#endif
+		list_for_each_entry_safe(page, page2, from, lru) {
 
 retry:
-			cond_resched();
-			/* Migrate only page cache pages*/
-			//if (PageAnon(page))
-			//	continue;
+		cond_resched();
+		/* Migrate only page cache pages*/
+		//if (PageAnon(page))
+		//	continue;
 
-			/* Not a Hetero page */
+		/* Not a Hetero page */
 #ifdef _USE_HETERO_PG_FLAG
-			if ((page->hetero != HETERO_PG_FLAG) || 
-				(page->hetero == HETERO_PG_DEL_FLAG) )
-				continue;
+		if ((page->hetero != HETERO_PG_FLAG) || 
+			(page->hetero == HETERO_PG_DEL_FLAG) )
+			continue;
 #endif
-			if (page_to_nid(page) == get_slowmem_node()) {
-				continue;
-			}
-			pagecount++;
+		if (page_to_nid(page) == get_slowmem_node()) {
+			continue;
+		}
+		pagecount++;
 
 #ifdef CONFIG_HETERO_HUGEPAGE
-			if (PageHuge(page))
-				rc = unmap_and_move_huge_page(get_new_page,
-						put_new_page, private, page,
-						pass > 2, mode, reason);
-			else
+		if (PageHuge(page))
+			rc = unmap_and_move_huge_page(get_new_page,
+					put_new_page, private, page,
+					pass > 2, mode, reason);
+		else
 #endif
-				rc = unmap_and_move(get_new_page, put_new_page,
-						private, page, pass > 2, mode,
-						reason);
+			rc = unmap_and_move(get_new_page, put_new_page,
+					private, page, pass > 2, mode,
+					reason);
 
-			switch(rc) {
+		switch(rc) {
 			case -ENOMEM:
 				/*
 				 * THP migration might be unsupported or the
