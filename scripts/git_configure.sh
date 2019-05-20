@@ -1,5 +1,5 @@
 #!/bin/bash
-"Configure scripts to repo"
+echo "Configure scripts to repo"
 git config credential.helper store
 git config --global user.name "sudarsun"
 git config --global core.editor vim
