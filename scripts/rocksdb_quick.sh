@@ -32,12 +32,41 @@ RUNAPP() {
 }	
 
 
-OUTPUTDIR=$APPBENCH/output-rocksdb-trail5
+OUTPUTDIR=$APPBENCH/output
 
 mkdir $OUTPUTDIR
 #SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+mkdir $OUTPUTDIR/naive-os-fastmem
+OUTPUT="naive-os-fastmem/db_bench.out"
+SETUP
+make CFLAGS=""
+RUNAPP
+exit
+
+mkdir $OUTPUTDIR/slowmem-only
+OUTPUT="slowmem-only/db_bench.out"
+SETUP
+make CFLAGS="-D_SLOWONLY"
+export APPPREFIX="numactl --membind=1"
+RUNAPP 
+exit
+
+
+mkdir $OUTPUTDIR/optimal-os-fastmem
+export APPPREFIX="numactl  --membind=0"
+OUTPUT="optimal-os-fastmem/db_bench.out"
+SETUP
+make CFLAGS="-D_DISABLE_HETERO"
+RUNAPP
+exit
+
+
+
+
+
+
 mkdir $OUTPUTDIR/naive-os-fastmem
 OUTPUT="naive-os-fastmem/db_bench.out"
 SETUP
@@ -60,21 +89,10 @@ SETUP
 make CFLAGS="-D_MIGRATE -D_OBJAFF"
 RUNAPP
 
-mkdir $OUTPUTDIR/naive-os-fastmem
-OUTPUT="naive-os-fastmem/db_bench.out"
-SETUP
-make CFLAGS=""
-RUNAPP
 #exit
 
 
 
-mkdir $OUTPUTDIR/slowmem-only
-OUTPUT="slowmem-only/db_bench.out"
-SETUP
-make CFLAGS="-D_SLOWONLY"
-export APPPREFIX="numactl --membind=1"
-RUNAPP 
 #exit
 
 

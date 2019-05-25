@@ -18,6 +18,6 @@ VALSIZE=" --value_size=4096"
 rm -rf $STORAGE/rocksdb
 
 export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$ROCKSDB/db_bench --db=$STORAGE/rocksdb $OTHERPARAMS $NUMVALS $VALSIZE $BENCHMARK #$YCSBTRACE
+$APPPREFIX $ROCKSDB/db_bench --db=$STORAGE/rocksdb $OTHERPARAMS $NUMVALS $VALSIZE $BENCHMARK #$YCSBTRACE
 export LD_PRELOAD=""
 exit
