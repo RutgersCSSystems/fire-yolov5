@@ -35,7 +35,7 @@ RUNAPP() {
 OUTPUTDIR=$APPBENCH/output
 
 mkdir $OUTPUTDIR
-#SETENV
+SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
 mkdir $OUTPUTDIR/naive-os-fastmem
@@ -43,6 +43,7 @@ OUTPUT="naive-os-fastmem/db_bench.out"
 SETUP
 make CFLAGS=""
 RUNAPP
+$SCRIPTS/rocksdb_extract_result.sh
 exit
 
 mkdir $OUTPUTDIR/slowmem-only
