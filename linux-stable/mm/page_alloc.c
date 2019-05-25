@@ -4429,7 +4429,6 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
                 node_checkfreq_default--;
         }
 #endif
-
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
