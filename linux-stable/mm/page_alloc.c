@@ -4415,7 +4415,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 	struct alloc_context ac = { };
 
 #ifdef CONFIG_HETERO_ENABLE
-        struct sysinfo i;
+        /*struct sysinfo i;
         int nid = get_fastmem_node();
 
         if(!node_checkfreq_default) {
@@ -4427,7 +4427,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
                 node_checkfreq_default = FREQCHECK;
         }else {
                 node_checkfreq_default--;
-        }
+        }*/
 #endif
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
@@ -4497,6 +4497,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
 
+#if 0
         struct sysinfo i;
 	int nid = get_fastmem_node();
 
@@ -4512,6 +4513,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	}else {
 		node_checkfreq--;
 	}
+#endif
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
 				nodemask, &ac, &alloc_mask, &alloc_flags))
