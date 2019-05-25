@@ -4486,6 +4486,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) {
 			node_checkfreq = FREQCHECK;
+			preferred_nid = get_slowmem_node();	
 			//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			goto default_alloc;
 		}
@@ -4531,7 +4532,7 @@ default_alloc:
 						     preferred_nid, nodemask);
         }
 
-	if(check_fastmem_node(page)) {
+	if(page && check_fastmem_node(page)) {
 		page->hetero = HETERO_PG_FLAG;
 	}
 
