@@ -4384,6 +4384,24 @@ static inline void finalise_ac(gfp_t gfp_mask,
 					ac->high_zoneidx, ac->nodemask);
 }
 
+#ifdef CONFIG_HETERO_ENABLE
+#define K(x) ((x) << (PAGE_SHIFT - 10))
+
+#define THRESHOLD 524288
+#define FREQCHECK 100
+
+static unsigned int node_checkfreq = 0;
+static unsigned int node_checkfreq_default = 0;
+
+static int check_fastmem_node(struct page *page) {
+
+	if (page && page_to_nid(page) == get_fastmem_node())
+		return 1;
+	else 
+		return 0;
+}
+#endif
+
 /*
  * This is the 'heart' of the zoned buddy allocator.
  */
@@ -4396,8 +4414,24 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
 	struct alloc_context ac = { };
 
+#ifdef CONFIG_HETERO_ENABLE
+        struct sysinfo i;
+        int nid = get_fastmem_node();
+
+        if(!node_checkfreq_default) {
+                si_meminfo_node(&i, nid);
+                if(K(i.freeram) < THRESHOLD) {
+                        node_checkfreq_default = FREQCHECK;
+                        preferred_nid = get_slowmem_node();
+                }
+                node_checkfreq_default = FREQCHECK;
+        }else {
+                node_checkfreq_default--;
+        }
+#endif
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
+
 	if (!prepare_alloc_pages(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
 		return NULL;
 
@@ -4452,22 +4486,6 @@ out:
 EXPORT_SYMBOL(__alloc_pages_nodemask);
 
 #ifdef CONFIG_HETERO_ENABLE
-#define K(x) ((x) << (PAGE_SHIFT - 10))
-
-#define THRESHOLD 524288
-#define FREQCHECK 100
-
-static unsigned int node_checkfreq = 0;
-
-static int check_fastmem_node(struct page *page) {
-
-	if (page && page_to_nid(page) == get_fastmem_node())
-		return 1;
-	else 
-		return 0;
-}
-
-
 struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask)
@@ -4476,11 +4494,11 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
 	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
 	struct alloc_context ac = { };
-        struct sysinfo i;
-	int nid = get_fastmem_node();
-
 	gfp_mask &= gfp_allowed_mask;
 	alloc_mask = gfp_mask;
+
+        struct sysinfo i;
+	int nid = get_fastmem_node();
 
 	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
