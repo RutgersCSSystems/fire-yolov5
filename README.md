@@ -124,8 +124,13 @@ Step 4: Run the throttling script again to check the value
  $APPBENCH/throttle.sh
 ```
 
+### Compiling RocksDB build mode
 
-
+Change this line in make file and execute compile command
+```
+LDFLAGS += $(EXTRA_LDFLAGS) -L/usr/lib -lgflags
+DEBUG_LEVEL=0 make shared_lib db_bench -j32
+```
 
 
 
