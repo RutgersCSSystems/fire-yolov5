@@ -2,7 +2,7 @@
 set -x
 BASE=$CODEBASE
 cd $SHARED_LIBS
-sudo apt-get install cmake libconfig-dev uthash-dev libmpich-dev
+sudo apt-get install -y cmake libconfig-dev uthash-dev libmpich-dev
 git clone https://github.com/SudarsunKannan/quartz
 cd $SHARED_LIBS/quartz
 mkdir build
