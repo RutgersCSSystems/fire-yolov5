@@ -46,17 +46,9 @@ RUNAPP
 $SCRIPTS/rocksdb_extract_result.sh
 exit
 
-mkdir $OUTPUTDIR/slowmem-only
-OUTPUT="slowmem-only/db_bench.out"
-SETUP
-make CFLAGS="-D_SLOWONLY"
-export APPPREFIX="numactl --membind=1"
-RUNAPP 
-exit
-
 
 mkdir $OUTPUTDIR/optimal-os-fastmem
-export APPPREFIX="numactl  --membind=0"
+export APPPREFIX="numactl --membind=0"
 OUTPUT="optimal-os-fastmem/db_bench.out"
 SETUP
 make CFLAGS="-D_DISABLE_HETERO"
@@ -66,14 +58,22 @@ exit
 
 
 
-
-
-mkdir $OUTPUTDIR/naive-os-fastmem
-OUTPUT="naive-os-fastmem/db_bench.out"
+mkdir $OUTPUTDIR/slowmem-only
+OUTPUT="slowmem-only/db_bench.out"
 SETUP
-make CFLAGS=""
-RUNAPP
+make CFLAGS="-D_SLOWONLY"
+export APPPREFIX="numactl --membind=1"
+RUNAPP 
+$SCRIPTS/rocksdb_extract_result.sh
 exit
+
+
+
+
+
+
+
+
 
 mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/db_bench.out"

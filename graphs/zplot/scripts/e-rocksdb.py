@@ -6,8 +6,8 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=3500000
-yint=500000
+ymax=8000000
+yint=1000000
 xfield='ops'
 xlegend='DevFS techniques'
 barwidth = 0.9
