@@ -15,6 +15,10 @@ SETENV() {
 }
 
 SETUPEXTRAM() {
+	$SCRIPTS/umount_ext4ramdisk.sh
+	rm -rf  /mnt/ext4ramdisk/*
+	rm -rf  /mnt/ext4ramdisk/
+	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
 	let DISKSZ=$NUMAFREE-4096
 	echo $DISKSZ
@@ -40,11 +44,14 @@ RUNAPP() {
 
 OUTPUTDIR=$APPBENCH/output
 mkdir $OUTPUTDIR
-SETENV
-
-
+#SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+
+
+
+
+
 mkdir $OUTPUTDIR/slowmem-obj-affinity
 OUTPUT="slowmem-obj-affinity/db_bench.out"
 SETUP
@@ -53,7 +60,6 @@ SETUPEXTRAM
 RUNAPP
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-exit
 
 
 mkdir $OUTPUTDIR/naive-os-fastmem
@@ -64,7 +70,6 @@ SETUPEXTRAM
 RUNAPP
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-exit
 
 
 mkdir $OUTPUTDIR/optimal-os-fastmem
@@ -73,11 +78,11 @@ OUTPUT="optimal-os-fastmem/db_bench.out"
 SETUP
 make CFLAGS="-D_DISABLE_HETERO"
 $SCRIPTS/umount_ext4ramdisk.sh
-$SCRIPTS/mount_ext4ramdisk.sh 16384
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
 RUNAPP
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-exit
 
 
 mkdir $OUTPUTDIR/slowmem-only
@@ -85,6 +90,9 @@ OUTPUT="slowmem-only/db_bench.out"
 SETUP
 make CFLAGS="-D_SLOWONLY"
 export APPPREFIX="numactl --membind=1"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
 RUNAPP 
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
@@ -94,6 +102,7 @@ mkdir $OUTPUTDIR/slowmem-migration-only
 OUTPUT="slowmem-migration-only/db_bench.out"
 SETUP
 make CFLAGS="-D_MIGRATE"
+SETUPEXTRAM
 RUNAPP
 $SCRIPTS/clear_cache.sh
 exit

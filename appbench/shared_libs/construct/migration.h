@@ -23,7 +23,7 @@ void init_allocs();
 void stopmigrate();
 
 #define HETERO_MIGRATE_FREQ 17
-#define FREQ 100
+#define FREQ 2000
 #define HETERO_OBJ_AFF 18
 
 void set_migration_freq() {

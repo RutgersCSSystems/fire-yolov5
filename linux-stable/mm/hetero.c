@@ -111,11 +111,12 @@ int hetero_fastmem_node=0;
 int migrate_freq=0;
 int enbl_hetero_objaff=0;
 
-int hetero_pid = 0;
-int hetero_usrpg_cnt = 0;
-int hetero_kernpg_cnt = 0;
+int hetero_pid=0;
+int hetero_usrpg_cnt=0;
+int hetero_kernpg_cnt=0;
 char procname[TASK_COMM_LEN];
-long migrate_time = 0;
+long migrate_time=0;
+unsigned int attempts=0;
 
 #ifdef CONFIG_HETERO_ENABLE
 
@@ -664,13 +665,13 @@ void
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	int threshold=0;
+
 #ifdef _ENABLE_HETERO_RBTREE
 	int destnode = get_slowmem_node();
 	int num_misses=0;
         struct rb_node *n, *next;
 	struct page *oldpage = NULL;
 	struct rb_root *root;
-        unsigned long count = 0;
         struct page *newpg = NULL;
 	struct address_space *mapping = (struct address_space *)map;
 	if(!mapping) 
@@ -678,29 +679,21 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 #endif
 	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
 		return;
-
 	/*Calculate the number of misses and hits*/
 	threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
-	
+	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
 	if(current->active_mm->pgcache_miss_cnt)	
 		hetero_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
 			current->active_mm->pgcache_miss_cnt);
 
-	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
-
 	/*Controls how frequently we should enable migration thread*/
-	if(!migrate_freq || !threshold || (threshold < migrate_freq)) // (threshold % migrate_freq != 0)) 
+	if(!migrate_freq || !threshold) //|| (threshold < migrate_freq)) {	
 		return;
 
-#ifdef _ENABLE_HETERO_RBTREE
-	root = &current->active_mm->objaff_cache_rbroot;
-        if(!root) {
-                printk("%s:%d NULL \n", __func__, __LINE__);
+	if(attempts <  migrate_freq) {
+		attempts++;
 		return;
-        }
-#endif
-
-	hetero_dbg("%s:%d \n", __func__, __LINE__);
+	}
 
 #ifdef _ENABLE_HETERO_THREAD
 	if(!migration_thrd_active) {
@@ -711,8 +704,16 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	count = migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
 					get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
+	/*Reset attempts*/
+	attempts = 0;
 
 #ifdef _ENABLE_HETERO_RBTREE
+	root = &current->active_mm->objaff_cache_rbroot;
+        if(!root) {
+                printk("%s:%d NULL \n", __func__, __LINE__);
+		return;
+        }
+
         for (n = rb_first(root); n != NULL; n = rb_next(n)) {
 
                 if(n == NULL) 

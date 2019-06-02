@@ -1595,7 +1595,6 @@ retry:
 			nr_failed++;
 			goto out;
 		case -EAGAIN:
-			//printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 			retry++;
 			break;
 		case MIGRATEPAGE_SUCCESS:
