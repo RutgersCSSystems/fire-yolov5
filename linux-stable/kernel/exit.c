@@ -774,6 +774,8 @@ void __noreturn do_exit(long code)
 #ifdef CONFIG_HETERO_ENABLE
 	if(code == SIGKILL)
         	is_hetero_exit(tsk);
+	if(code == SIGUSR1)
+		is_hetero_exit(tsk);
 #endif
 	WARN_ON(blk_needs_flush_plug(tsk));
 

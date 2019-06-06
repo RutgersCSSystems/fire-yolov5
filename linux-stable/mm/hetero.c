@@ -219,9 +219,10 @@ int is_hetero_exit(struct task_struct *task)
 	print_hetero_stats(task);
         //reset_hetero_stats(task);
 #ifdef _ENABLE_HETERO_THREAD
-	if(migration_thread)
-		kthread_stop(migration_thread);
-	migration_thread = NULL;
+	if(migration_thread) {
+		//kthread_stop(migration_thread);
+		//migration_thread = NULL;
+	}
 #endif
     }
     return 0;
@@ -645,7 +646,7 @@ static int migration_thread_fn(void *arg) {
 
         do_gettimeofday(&start);
 
-	migration_thrd_active = 1;
+	//migration_thrd_active = 1;
 	if(!mm) {
 		return 0;
 	}
