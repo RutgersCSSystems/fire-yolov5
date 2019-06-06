@@ -34,11 +34,20 @@ PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 RANDOM_READ
 FlushDisk
 rm $DATA/*
-#exit
+
 TYPE=" --type DRBL"
 PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 RANDOM_READ
 FlushDisk
 rm $DATA/*
+
+TYPE=" --type DWOL"
+PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
+RANDOM_READ
+FlushDisk
+rm $DATA/*
+
+
+
 set +x
 

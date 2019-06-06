@@ -35,7 +35,8 @@ sudo apt-get install -y libgflags-dev
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y libbz2-dev
 sudo apt-get install -y libevent-dev
-sudo apt-get install memcached
+#sudo apt-get install memcached
+sudo apt-get install libaio*
 }
 
 INSTALL_SPARK(){

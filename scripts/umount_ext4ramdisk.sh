@@ -5,3 +5,5 @@
 sudo umount /mnt/ext4ramdisk
 sudo rm -rf /mnt/ramdisk/ext4.image
 sudo umount /mnt/ramdisk
+rm -rf $SHARED_DATA
+mkdir $SHARED_DATA

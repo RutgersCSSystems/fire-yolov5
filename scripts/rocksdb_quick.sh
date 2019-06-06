@@ -1,5 +1,8 @@
 #!/bin/bash
 cd $NVMBASE
+#APP="db_bench.out"
+#APP="fio.out"
+APP="filebench.out"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -20,7 +23,7 @@ SETUPEXTRAM() {
 	rm -rf  /mnt/ext4ramdisk/
 	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-	let DISKSZ=$NUMAFREE-4096
+	let DISKSZ=$NUMAFREE-5192
 	echo $DISKSZ
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
@@ -37,7 +40,9 @@ COMPILE_SHAREDLIB() {
 RUNAPP() {
 	#Run application
 	cd $NVMBASE
-	$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
+        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+	$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 	sudo dmesg -c &>> $OUTPUTDIR/$OUTPUT
 }	
 
@@ -49,11 +54,18 @@ mkdir $OUTPUTDIR
 export APPPREFIX="numactl  --preferred=0"
 
 
-
+mkdir $OUTPUTDIR/slowmem-migration-only
+OUTPUT="slowmem-migration-only/$APP"
+SETUP
+make CFLAGS="-D_MIGRATE"
+SETUPEXTRAM
+RUNAPP
+$SCRIPTS/clear_cache.sh
+exit
 
 
 mkdir $OUTPUTDIR/slowmem-obj-affinity
-OUTPUT="slowmem-obj-affinity/db_bench.out"
+OUTPUT="slowmem-obj-affinity/$APP"
 SETUP
 make CFLAGS="-D_MIGRATE -D_OBJAFF"
 SETUPEXTRAM
@@ -63,7 +75,7 @@ $SCRIPTS/clear_cache.sh
 
 
 mkdir $OUTPUTDIR/naive-os-fastmem
-OUTPUT="naive-os-fastmem/db_bench.out"
+OUTPUT="naive-os-fastmem/$APP"
 SETUP
 make CFLAGS=""
 SETUPEXTRAM
@@ -74,7 +86,7 @@ $SCRIPTS/clear_cache.sh
 
 mkdir $OUTPUTDIR/optimal-os-fastmem
 export APPPREFIX="numactl --membind=0"
-OUTPUT="optimal-os-fastmem/db_bench.out"
+OUTPUT="optimal-os-fastmem/$APP"
 SETUP
 make CFLAGS="-D_DISABLE_HETERO"
 $SCRIPTS/umount_ext4ramdisk.sh
@@ -86,7 +98,7 @@ $SCRIPTS/clear_cache.sh
 
 
 mkdir $OUTPUTDIR/slowmem-only
-OUTPUT="slowmem-only/db_bench.out"
+OUTPUT="slowmem-only/$APP"
 SETUP
 make CFLAGS="-D_SLOWONLY"
 export APPPREFIX="numactl --membind=1"
@@ -96,16 +108,6 @@ $SCRIPTS/mount_ext4ramdisk.sh 24000
 RUNAPP 
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-
-
-mkdir $OUTPUTDIR/slowmem-migration-only
-OUTPUT="slowmem-migration-only/db_bench.out"
-SETUP
-make CFLAGS="-D_MIGRATE"
-SETUPEXTRAM
-RUNAPP
-$SCRIPTS/clear_cache.sh
-exit
 
 
 

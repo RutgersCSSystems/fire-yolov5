@@ -24,6 +24,7 @@ d1 = table(file='data/e-rocksdb-naive-os-fastmem.data')
 d2 = table(file='data/e-rocksdb-slowmem-migration-only.data')
 d3 = table(file='data/e-rocksdb-slowmem-only.data')
 d4 = table(file='data/e-rocksdb-optimal-os-fastmem.data')
+d5 = table(file='data/e-rocksdb-slowmem-obj-affinity.data')
 
 app = ["RocksDB","filebench","Redis"]
 
@@ -46,6 +47,9 @@ p.verticalbars(drawable=d, table=d3, xfield='c0', yfield='c1', fill=True,
 p.verticalbars(drawable=d, table=d4, xfield='c0', yfield='c1', fill=True,
                fillcolor='black', barwidth=0.9, linewidth=0.5, yloval=0,
                legend=L, legendtext='Optimal Fastmem Only')
+p.verticalbars(drawable=d, table=d5, xfield='c0', yfield='c1', fill=True,
+               fillcolor='red', barwidth=0.9, linewidth=0.5, yloval=0,
+               legend=L, legendtext='Object Affinity')
 
 # a bit of a hack to get around that we don't support date fields (yet)
 axis(drawable=d, style='xy', xmanual=[[app[0],2.5],[app[1],7.5],[app[2],12.5]],
@@ -55,7 +59,7 @@ axis(drawable=d, style='xy', xmanual=[[app[0],2.5],[app[1],7.5],[app[2],12.5]],
      xtitle='Application', ytitle='Slowdown factor (AppFastMem-OSFastMem)',
      ytitlesize=yfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=4, skipspace=50)
+L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
 
 c.render()
 
