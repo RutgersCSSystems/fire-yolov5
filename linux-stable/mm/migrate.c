@@ -3909,9 +3909,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(mm->hetero_task != HETERO_PROC)
 		return rc;
 
-	hetero_dbg("%s:%d \n", __func__,__LINE__);
-
-	for(pass = 0; pass < 1 && retry; pass++) {
+	for(pass = 0; pass < 10 && retry; pass++) {
 		retry = 0;
 		pagecount++;
 		list_for_each_entry_safe(page, page2, from, lru) {
@@ -3990,10 +3988,14 @@ retry:
 	}
 	nr_failed += retry;
 	rc = nr_failed;
+	hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+		    "retry %d  pagecount %d\n", 
+		    mm->pages_migrated, nr_failed, retry,  pagecount);
+
 out:
 	mm->pages_migrated += nr_succeeded;
 
-	if(nr_succeeded)
+	if(nr_succeeded || nr_failed)
 		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
 			    "retry %d  pagecount %d\n", 
 			    mm->pages_migrated, nr_failed, retry,  pagecount);
