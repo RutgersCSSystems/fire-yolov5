@@ -51,7 +51,7 @@ extern int hetero_dbgmask;
 #define hetero_info(s, args ...)          pr_info(s, ## args)
 
 struct vm_area_struct;
-
+int check_hetero_proc (struct task_struct *task);
 int is_hetero_pgcache_set(void);
 int is_hetero_buffer_set(void);
 int is_hetero_journ_set(void);

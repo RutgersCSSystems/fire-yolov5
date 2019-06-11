@@ -186,7 +186,7 @@ long timediff (struct timeval *start, struct timeval *end) {
 }
 
 
-inline int check_hetero_proc (struct task_struct *task) 
+int check_hetero_proc (struct task_struct *task) 
 {
     //f(current->pid == hetero_pid && hetero_pid){
     if (task && task->active_mm && (task->active_mm->hetero_task == HETERO_PROC)){
@@ -194,6 +194,7 @@ inline int check_hetero_proc (struct task_struct *task)
     }
     return 0; 	
 }
+EXPORT_SYMBOL(check_hetero_proc);
 
 int check_hetero_page(struct mm_struct *mm, struct page *page) {
 
@@ -264,16 +265,20 @@ int is_hetero_cacheobj(void *obj){
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
+/*
+* Checked only for object affinity 
+* when CONFIG_HETERO_OBJAFF is enabled
+*
+*/
 int 
 is_hetero_vma(struct vm_area_struct *vma) {
 
 #ifdef CONFIG_HETERO_OBJAFF
-
-	 if(!enbl_hetero_objaff)
+	if(!enbl_hetero_objaff)
 		return 1;
-
         if(!vma || !vma->vm_file) {
-                //printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__,
+		//__LINE__);
                 return 0;
         }
 #endif
@@ -642,7 +647,35 @@ void hetero_del_from_list(struct page *page)
         //raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 
+#if 1
+static int migration_thread_fn(void *arg) {
 
+        unsigned long count = 0;
+        struct mm_struct *mm = (struct mm_struct *)arg;
+        struct timeval start, end;
+
+        do_gettimeofday(&start);
+
+        //migration_thrd_active = 1;
+        if(!mm) {
+                return 0;
+        }
+
+        count = migrate_to_node_hetero(mm, get_fastmem_node(),
+                        get_slowmem_node(),MPOL_MF_MOVE_ALL);
+
+#ifdef _ENABLE_HETERO_THREAD
+        migration_thrd_active = 0;
+#endif
+
+        do_gettimeofday(&end);
+
+        migrate_time += timediff(&start, &end);
+
+        return 0;
+}
+
+#else
 static int migration_thread_fn(void *arg) {
 
 	unsigned long count = 0;
@@ -674,6 +707,7 @@ static int migration_thread_fn(void *arg) {
 	hetero_force_dbg("%s:%d THREAD EXITING \n", __func__, __LINE__);
 	return 0;
 }
+#endif
 
 
 void 
@@ -711,15 +745,16 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	if(!migration_thrd_active && !migration_thread && !spinlock) {
+	//if(!migration_thrd_active && !migration_thread && !spinlock) {
+	 if(!migration_thrd_active) {
 		spinlock = 1;
 		migration_thread = kthread_run(migration_thread_fn, current->active_mm,
                                       "migration_thread");	
 	}
 	//spinlock = 1;
 #else
-	count = migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
-					get_slowmem_node(), MPOL_MF_MOVE_ALL);
+	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
+				get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
 	/*Reset attempts*/
 	attempts = 0;

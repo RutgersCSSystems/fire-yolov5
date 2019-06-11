@@ -1013,12 +1013,14 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	pte_t *pte;
 	spinlock_t *ptl;
 #ifdef CONFIG_HETERO_ENABLE
+	int pages_checked = 0;
 	int pages_added = 0;
 #endif
 	if(!is_hetero_vma(vma)) {
 		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
 		return 0;
 	}
+	//dump_stack();
 
 	ptl = pmd_trans_huge_lock(pmd, vma);
 	if (ptl) {
@@ -1037,6 +1039,11 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		page = vm_normal_page(vma, addr, *pte);
 		if (!page)
 			continue;
+
+		pages_checked++;
+
+#ifdef _DISABLE_HETERO_CHECKING
+
 #ifdef _USE_HETERO_PG_FLAG	
 		if (page->hetero != HETERO_PG_FLAG) {
 			hetero_dbg("%s:%d \n",__func__,__LINE__);
@@ -1052,20 +1059,41 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		 */
 		if (PageReserved(page))
 			continue;
+
 		if (!queue_pages_required(page, qp))
 			continue;
-#ifdef CONFIG_HETERO_ENABLE
-      		pages_added++;
-		//if(pages_added)
-		//	hetero_force_dbg("%s:%d pages added %d\n",
-		//	__func__,__LINE__, pages_added);
 #endif
+
+                if (page_to_nid(page) == get_slowmem_node()) {
+                        continue;
+                }
+		pages_added++;
+
 		migrate_page_add(page, qp->pagelist, flags);
 	}
+
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
+
+#ifdef CONFIG_HETERO_ENABLE
+	if(pages_checked > 500)
+		hetero_dbg("%s:%d pages_checked %d pages_added %d \n",
+		__func__,__LINE__, pages_checked, pages_added);
+#endif
 	return 0;
 }
+
+#ifdef CONFIG_HETERO_ENABLE
+int page_list_count(struct list_head *pagelist) {
+	struct page *page=NULL;
+	int pagecount = 0;
+	list_for_each_entry(page, pagelist, lru) {
+		pagecount++;
+	}
+	return pagecount;
+}
+#endif
+
 
 /*
  * Walk through page tables and collect pages to be migrated.
@@ -1079,6 +1107,10 @@ queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned lon
 		nodemask_t *nodes, unsigned long flags,
 		struct list_head *pagelist)
 {
+#ifdef CONFIG_HETERO_ENABLE
+	int count = 0;
+	int pagecount = 0;
+#endif
 	struct queue_pages qp = {
 		.pagelist = pagelist,
 		.flags = flags,
@@ -1092,8 +1124,20 @@ queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned lon
 		.mm = mm,
 		.private = &qp,
 	};
+#ifdef CONFIG_HETERO_ENABLE
+	count = walk_page_range(start, end, &queue_pages_walk);
 
+	//pagecount = page_list_count(pagelist);
+	//if(pagecount)
+	//	hetero_force_dbg("%s:%d pagecount %d count\n", 
+	//		__func__,__LINE__, pagecount);
+
+	//hetero_force_dbg("%s:%d pagecount %d count %d \n", 
+	//	__func__,__LINE__, page_list_count(pagelist), count);
+	return count;
+#else
 	return walk_page_range(start, end, &queue_pages_walk);
+#endif
 }
 
 
@@ -1107,6 +1151,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	nodemask_t nmask;
 	LIST_HEAD(pagelist);
 	int err = 0;
+	int pagecount = 0;
 
 	nodes_clear(nmask);
 	node_set(source, nmask);
@@ -1121,10 +1166,13 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
 
+	//pagecount = page_list_count(&pagelist);
+	//if(pagecount)
+	//	hetero_force_dbg("%s:%d pagecount %d count\n", 
+	//		__func__,__LINE__, pagecount);
+
+
 	if (!list_empty(&pagelist)) {
-
-		hetero_dbg("%s:%d \n",__func__,__LINE__);
-
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_ASYNC, MR_SYSCALL, mm);
 		if (err)

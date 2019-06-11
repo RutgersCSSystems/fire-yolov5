@@ -306,7 +306,18 @@ int walk_page_range(unsigned long start, unsigned long end,
 	VM_BUG_ON_MM(!rwsem_is_locked(&walk->mm->mmap_sem), walk->mm);
 
 	vma = find_vma(walk->mm, start);
+
 	do {
+
+#ifdef CONFIG_HETERO_ENABLE
+		if(vma && check_hetero_proc(current)) {
+			if(!is_hetero_vma(vma)) {
+				//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+				goto not_hetero;
+			}
+		}
+not_hetero:
+#endif
 		if (!vma) { /* after the last vma */
 			walk->vma = NULL;
 			next = end;
