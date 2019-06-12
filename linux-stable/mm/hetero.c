@@ -93,9 +93,17 @@ Move this to header file later.
 #define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
-struct task_struct *migration_thread = NULL;
+#define MAXTHREADS 12
+
+struct migrate_threads {
+	struct task_struct *thrd;
+};
+struct migrate_threads THREADS[MAXTHREADS] = {0};
+
+volatile int thrd_idx = 0;
 volatile int migration_thrd_active=0;
 volatile int spinlock=0;
+DEFINE_SPINLOCK(kthread_lock);
 #endif
 
 /* Hetero Stats information*/
@@ -210,18 +218,40 @@ int check_hetero_page(struct mm_struct *mm, struct page *page) {
 EXPORT_SYMBOL(check_hetero_page);
 
 
-/* Exit function called during process exit */
-int is_hetero_exit(struct task_struct *task) 
-{
+static int stop_threads(struct task_struct *task, int force) {
+
+	int idx = 0;
 
 #ifdef _ENABLE_HETERO_THREAD
-	if(migration_thread) {
-		migration_thrd_active=0;
-		printk(KERN_ALERT "%s:%d STOPPING THREAD \n", __func__,__LINE__);
-		kthread_stop(migration_thread);
-		migration_thread = NULL;
-	}
+        spin_lock(&kthread_lock);
+        for(idx = 0; idx < MAXTHREADS; idx++) {
+
+		if(force) {
+			if(THREADS[idx].thrd) {
+				kthread_stop(THREADS[idx].thrd);
+				THREADS[idx].thrd = NULL;
+		                thrd_idx--;
+			}
+		}else if(THREADS[idx].thrd == task) {
+			kthread_stop(THREADS[idx].thrd);
+			THREADS[idx].thrd = NULL;
+                        thrd_idx--;
+			break;
+		}
+		hetero_dbg("%s:%d STOPING THREAD IDX %d\n",
+		__func__,__LINE__, thrd_idx);
+        }
+        spin_unlock(&kthread_lock);
 #endif
+	return 0;
+}
+
+
+/* 
+* Exit function called during process exit 
+*/
+int is_hetero_exit(struct task_struct *task) 
+{
 
     if(check_hetero_proc(task)) {
 	/*printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
@@ -230,6 +260,19 @@ int is_hetero_exit(struct task_struct *task)
 	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
 	print_hetero_stats(task);
         //reset_hetero_stats(task);
+
+#ifdef _ENABLE_HETERO_THREAD
+	int idx = 0, idx_stopped=0;
+
+	spin_lock(&kthread_lock);
+
+	stop_threads(current, 0);
+
+	printk(KERN_ALERT "%s:%d REMAINING THREAD %d \n",
+			thrd_idx, __func__,__LINE__);
+
+	spin_unlock(&kthread_lock);
+#endif
     }
     return 0;
 }
@@ -260,15 +303,16 @@ void debug_hetero_obj(void *obj) {
 }
 EXPORT_SYMBOL(debug_hetero_obj);
 
+
 int is_hetero_cacheobj(void *obj){
 	return 1;
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
+
 /*
 * Checked only for object affinity 
 * when CONFIG_HETERO_OBJAFF is enabled
-*
 */
 int 
 is_hetero_vma(struct vm_area_struct *vma) {
@@ -284,6 +328,7 @@ is_hetero_vma(struct vm_area_struct *vma) {
 #endif
 	return 1;
 }
+
 
 int is_hetero_obj(void *obj) 
 {
@@ -308,7 +353,10 @@ int is_hetero_obj(void *obj)
 }
 EXPORT_SYMBOL(is_hetero_obj);
 
-/* Functions to test different allocation strategies */
+
+/* 
+* Functions to test different allocation strategies 
+*/
 int is_hetero_pgcache_set(void)
 {
         if(check_hetero_proc(current)) 
@@ -316,6 +364,7 @@ int is_hetero_pgcache_set(void)
         return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
+
 
 int is_hetero_buffer_set(void)
 {
@@ -325,7 +374,10 @@ int is_hetero_buffer_set(void)
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
-/*Sets current task with hetero obj*/
+
+/*
+* Sets current task with hetero obj
+*/
 void set_curr_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
@@ -335,7 +387,10 @@ void set_curr_hetero_obj(void *obj)
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
-/*Sets page with hetero obj*/
+
+/*
+* Sets page with hetero obj
+*/
 void 
 set_hetero_obj_page(struct page *page, void *obj)                          
 {
@@ -395,7 +450,10 @@ set_fsmap_hetero_obj(void *mapobj)
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
-/* Mark the socket to Hetero target object */
+
+/* 
+* Mark the socket to Hetero target object 
+*/
 void set_sock_hetero_obj(void *socket_obj, void *inode)                                        
 {
         struct sock *sock = NULL;
@@ -422,6 +480,7 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 	}
 }
 EXPORT_SYMBOL(set_sock_hetero_obj);
+
 
 void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)                                        
 {
@@ -520,7 +579,8 @@ ret_pgcache_stat:
 EXPORT_SYMBOL(update_hetero_pgcache);
 
 
-/* Update STAT 
+/* 
+* Update STAT 
 * TODO: Currently not setting HETERO_PG_FLAG for testing 
 */
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage) 
@@ -576,9 +636,10 @@ ret_pgbuff_stat:
 EXPORT_SYMBOL(update_hetero_pgbuff_stat);
 
 
-/*Simple miss increment; called specifically from 
-functions that do not explicity aim to place pages 
-on heterogeneous memory
+/* 
+* Simple miss increment; called specifically from 
+* functions that do not explicity aim to place pages 
+* on heterogeneous memory
 */
 void update_hetero_pgbuff_stat_miss(void) 
 {
@@ -587,7 +648,9 @@ void update_hetero_pgbuff_stat_miss(void)
 EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
 #endif
 
-/* Check if the designed node and current page location 
+
+/* 
+ * Check if the designed node and current page location 
  * match. Responsibility of the requester to pass nodeid
  */
 int is_hetero_page(struct page *page, int nodeid){
@@ -647,6 +710,9 @@ void hetero_del_from_list(struct page *page)
         //raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 
+
+
+
 #if 1
 static int migration_thread_fn(void *arg) {
 
@@ -665,16 +731,22 @@ static int migration_thread_fn(void *arg) {
                         get_slowmem_node(),MPOL_MF_MOVE_ALL);
 
 #ifdef _ENABLE_HETERO_THREAD
-        migration_thrd_active = 0;
+        //migration_thrd_active = 0;
 #endif
-
         do_gettimeofday(&end);
 
         migrate_time += timediff(&start, &end);
 
+#ifdef _ENABLE_HETERO_THREAD
+	//stop_threads(current, 0);
+	//if(kthread_should_stop()) {
+	//	do_exit(0);
+	//}
+	if(thrd_idx)
+		thrd_idx--;
+#endif
         return 0;
 }
-
 #else
 static int migration_thread_fn(void *arg) {
 
@@ -728,6 +800,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 #endif
 	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
 		return;
+
 	/*Calculate the number of misses and hits*/
 	threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
 	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
@@ -745,13 +818,20 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	//if(!migration_thrd_active && !migration_thread && !spinlock) {
-	 if(!migration_thrd_active) {
-		spinlock = 1;
-		migration_thread = kthread_run(migration_thread_fn, current->active_mm,
-                                      "migration_thread");	
+	if(thrd_idx >= MAXTHREADS) {
+		//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
+		//	__func__,__LINE__, thrd_idx);
+		return;
 	}
-	//spinlock = 1;
+
+	spin_lock(&kthread_lock);
+
+	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
+					current->active_mm, "HETEROTHRD");	
+	thrd_idx++;
+	//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
+	//	__func__,__LINE__, thrd_idx);
+	spin_unlock(&kthread_lock);
 #else
 	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);
@@ -1121,6 +1201,10 @@ del_list_from_rbtree(struct rb_root *root, struct list_head *list_pages){
 SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 {
 
+#ifdef _ENABLE_HETERO_THREAD
+	int idx = 0;
+#endif
+
 #ifdef CONFIG_HETERO_ENABLE
     switch(flag) {
 	case CLEAR_COUNT:
@@ -1239,6 +1323,12 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
 	    break;
     }
+#endif
+
+#ifdef _ENABLE_HETERO_THREAD
+	/*for(idx = 0; idx < MAXTHREADS; idx++) {
+		THREADS[idx].thrd = NULL;
+	}*/
 #endif
     return 0;
 }
