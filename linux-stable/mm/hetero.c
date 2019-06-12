@@ -819,8 +819,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 #ifdef _ENABLE_HETERO_THREAD
 	if(thrd_idx >= MAXTHREADS) {
-		//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
-		//	__func__,__LINE__, thrd_idx);
+		printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
+			__func__,__LINE__, thrd_idx);
 		return;
 	}
 
