@@ -4387,7 +4387,7 @@ static inline void finalise_ac(gfp_t gfp_mask,
 #ifdef CONFIG_HETERO_ENABLE
 #define K(x) ((x) << (PAGE_SHIFT - 10))
 
-#define THRESHOLD 324288
+#define THRESHOLD 100000
 #define FREQCHECK 50
 
 static unsigned int node_checkfreq = 0;

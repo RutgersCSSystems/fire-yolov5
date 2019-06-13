@@ -3906,6 +3906,7 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 		printk(KERN_ALERT "%s:%d \n", __func__,__LINE__);
 		return rc;
 	}
+	
 	if(mm->hetero_task != HETERO_PROC)
 		return rc;
 
@@ -3921,13 +3922,13 @@ retry:
 		//	continue;
 
 		/* Not a Hetero page */
-#ifdef _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
-		if ((page->hetero != HETERO_PG_FLAG) || 
-			(page->hetero == HETERO_PG_DEL_FLAG) )
+#if 1 //def _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
+		if ((page->hetero != HETERO_PG_FLAG))
+			//|| (page->hetero == HETERO_PG_DEL_FLAG) )
 			continue;
 #endif
 
-#ifdef _DISABLE_HETERO_CHECKING
+#if 1 //def _DISABLE_HETERO_CHECKING
 		if (page_to_nid(page) == get_slowmem_node()) {
 			continue;
 		}
@@ -3989,7 +3990,7 @@ retry:
 				break;
 			}
 		}
-		hetero_force_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
 			    "retry %d  pagecount %d\n", 
 			    nr_succeeded, nr_failed, retry,  pagecount);
 
@@ -4000,11 +4001,10 @@ retry:
 out:
 	mm->pages_migrated += nr_succeeded;
 
-	if(nr_succeeded || nr_failed)
-		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
-			    "retry %d  pagecount %d\n", 
-			    mm->pages_migrated, nr_failed, retry,  pagecount);
-
+	//if(nr_succeeded || nr_failed)
+	//	printk(KERN_ALERT "%s:%d nr_succeeded pages migrated %u nr_failed %u " 
+	//		    "retry %d  pagecount %d\n", __func__,__LINE__,
+	//		    nr_succeeded, nr_failed, retry,  pagecount);
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)

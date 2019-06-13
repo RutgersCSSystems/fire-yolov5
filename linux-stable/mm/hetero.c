@@ -93,7 +93,7 @@ Move this to header file later.
 #define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
-#define MAXTHREADS 12
+#define MAXTHREADS 100
 
 struct migrate_threads {
 	struct task_struct *thrd;
@@ -222,20 +222,18 @@ static int stop_threads(struct task_struct *task, int force) {
 
 	int idx = 0;
 
-#ifdef _ENABLE_HETERO_THREAD
+#if 0 //def _ENABLE_HETERO_THREAD
         spin_lock(&kthread_lock);
         for(idx = 0; idx < MAXTHREADS; idx++) {
-
-		if(force) {
-			if(THREADS[idx].thrd) {
-				kthread_stop(THREADS[idx].thrd);
-				THREADS[idx].thrd = NULL;
-		                thrd_idx--;
-			}
+		if(force && THREADS[idx].thrd) {
+			kthread_stop(THREADS[idx].thrd);
+			THREADS[idx].thrd = NULL;
+			thrd_idx--;
 		}else if(THREADS[idx].thrd == task) {
 			kthread_stop(THREADS[idx].thrd);
 			THREADS[idx].thrd = NULL;
-                        thrd_idx--;
+			if(thrd_idx > 0)
+	                        thrd_idx--;
 			break;
 		}
 		hetero_dbg("%s:%d STOPING THREAD IDX %d\n",
@@ -720,6 +718,9 @@ static int migration_thread_fn(void *arg) {
         struct mm_struct *mm = (struct mm_struct *)arg;
         struct timeval start, end;
 
+	if(mm->thrd_idx)
+		mm->thrd_idx--;
+
         do_gettimeofday(&start);
 
         //migration_thrd_active = 1;
@@ -742,8 +743,9 @@ static int migration_thread_fn(void *arg) {
 	//if(kthread_should_stop()) {
 	//	do_exit(0);
 	//}
-	if(thrd_idx)
-		thrd_idx--;
+	//spin_lock(&kthread_lock);
+	//spin_unlock(&kthread_lock);
+	//hetero_force_dbg("%s:%d THREAD EXITING %d\n", __func__, __LINE__, mm->thrd_idx);
 #endif
         return 0;
 }
@@ -818,20 +820,19 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	if(thrd_idx >= MAXTHREADS) {
-		printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
-			__func__,__LINE__, thrd_idx);
+	//spin_lock(&kthread_lock);
+	if(current->active_mm->thrd_idx >= MAXTHREADS) {
+		hetero_force_dbg("%s:%d STARTING THREAD IDX %d\n",
+			__func__,__LINE__, current->active_mm->thrd_idx);
+		//spin_unlock(&kthread_lock);
 		return;
 	}
-
-	spin_lock(&kthread_lock);
-
-	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
+	THREADS[current->active_mm->thrd_idx].thrd = kthread_run(migration_thread_fn,
 					current->active_mm, "HETEROTHRD");	
-	thrd_idx++;
+	current->active_mm->thrd_idx++;
 	//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
 	//	__func__,__LINE__, thrd_idx);
-	spin_unlock(&kthread_lock);
+	//spin_unlock(&kthread_lock);
 #else
 	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);

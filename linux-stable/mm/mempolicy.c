@@ -925,7 +925,9 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 			mod_node_page_state(page_pgdat(head),
 				NR_ISOLATED_ANON + page_is_file_cache(head),
 				hpage_nr_pages(head));
-		}	
+		}/*else if(page->hetero ==  HETERO_PG_FLAG) {
+			printk(KERN_ALERT "%s:%d Hetero Page not added\n", __func__, __LINE__);
+		}*/	
 	}
 }
 
@@ -1046,9 +1048,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 
 #ifdef _USE_HETERO_PG_FLAG	
 		if (page->hetero != HETERO_PG_FLAG) {
-			hetero_dbg("%s:%d \n",__func__,__LINE__);
+			//hetero_dbg("%s:%d \n",__func__,__LINE__);
 			continue;
 		}
+                if (page_to_nid(page) == get_slowmem_node()) {
+                        continue;
+                }
 #endif
 		//if(check_hetero_page(walk->mm, page)) {
 		//	continue;
@@ -1057,21 +1062,18 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		 * vm_normal_page() filters out zero pages, but there might
 		 * still be PageReserved pages to skip, perhaps in a VDSO.
 		 */
-		if (PageReserved(page))
+		if (PageReserved(page)) {
+			//hetero_force_dbg("%s:%d \n",__func__,__LINE__);
 			continue;
+		}
 
 		if (!queue_pages_required(page, qp))
 			continue;
 #endif
-
-                if (page_to_nid(page) == get_slowmem_node()) {
-                        continue;
-                }
 		pages_added++;
 
 		migrate_page_add(page, qp->pagelist, flags);
 	}
-
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 
@@ -1166,13 +1168,11 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
 
-	//pagecount = page_list_count(&pagelist);
-	//if(pagecount)
-	//	hetero_force_dbg("%s:%d pagecount %d count\n", 
-	//		__func__,__LINE__, pagecount);
-
-
 	if (!list_empty(&pagelist)) {
+		/*pagecount = page_list_count(&pagelist);
+		if(!pagecount)
+			printk(KERN_ALERT "%s:%d pagecount %d count\n", 
+				__func__,__LINE__, pagecount);*/
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
 					MIGRATE_ASYNC, MR_SYSCALL, mm);
 		if (err)

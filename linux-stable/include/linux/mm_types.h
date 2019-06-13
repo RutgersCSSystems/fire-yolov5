@@ -397,6 +397,7 @@ struct mm_struct {
 
 #ifdef CONFIG_HETERO_STATS
 	unsigned long			pages_migrated;
+	int 				thrd_idx;
 	unsigned long			migrate_attempt;
 	long 				avg_kbufpage_life;
 	long 				avg_cachepage_life;
