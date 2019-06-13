@@ -931,6 +931,38 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
 	}
 }
 
+
+static int hetero_migrate_page_add(struct page *page, struct list_head *pagelist,
+				unsigned long flags)
+{
+	struct page *head = compound_head(page);
+	int pagecount = 0;
+
+	/*if (PageLRU(page) && (page->hetero ==  HETERO_PG_FLAG)) {
+		SetPageLRU(page);
+		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
+	}*/
+
+	/*
+	 * Avoid migrating a page that is shared with others.
+	 */
+	if ((flags & MPOL_MF_MOVE_ALL) || page_mapcount(head) == 1) {
+
+		if (!isolate_lru_page(head)) {
+
+			list_add_tail(&head->lru, pagelist);
+			mod_node_page_state(page_pgdat(head),
+				NR_ISOLATED_ANON + page_is_file_cache(head),
+				hpage_nr_pages(head));
+			pagecount++;	
+		}/*else if(page->hetero ==  HETERO_PG_FLAG) {
+			printk(KERN_ALERT "%s:%d Hetero Page not added\n", __func__, __LINE__);
+		}*/	
+	}
+	return pagecount;
+}
+
+
 /* page allocation callback for NUMA node migration */
 struct page *alloc_new_node_page(struct page *page, unsigned long node)
 {
@@ -1070,15 +1102,13 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!queue_pages_required(page, qp))
 			continue;
 #endif
-		pages_added++;
-
-		migrate_page_add(page, qp->pagelist, flags);
+		pages_added = hetero_migrate_page_add(page, qp->pagelist, flags);
 	}
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 
 #ifdef CONFIG_HETERO_ENABLE
-	if(pages_checked > 500)
+	if((pages_checked > 500) && pages_added)
 		hetero_dbg("%s:%d pages_checked %d pages_added %d \n",
 		__func__,__LINE__, pages_checked, pages_added);
 #endif

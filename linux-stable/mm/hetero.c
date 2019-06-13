@@ -222,10 +222,10 @@ static int stop_threads(struct task_struct *task, int force) {
 
 	int idx = 0;
 
-#if 0 //def _ENABLE_HETERO_THREAD
+#ifdef _ENABLE_HETERO_THREAD
         spin_lock(&kthread_lock);
         for(idx = 0; idx < MAXTHREADS; idx++) {
-		if(force && THREADS[idx].thrd) {
+		/*if(force && THREADS[idx].thrd) {
 			kthread_stop(THREADS[idx].thrd);
 			THREADS[idx].thrd = NULL;
 			thrd_idx--;
@@ -235,8 +235,11 @@ static int stop_threads(struct task_struct *task, int force) {
 			if(thrd_idx > 0)
 	                        thrd_idx--;
 			break;
-		}
-		hetero_dbg("%s:%d STOPING THREAD IDX %d\n",
+		}*/
+		if(thrd_idx)
+			thrd_idx--;
+
+		printk(KERN_ALERT "%s:%d STOPING THREAD IDX %d\n",
 		__func__,__LINE__, thrd_idx);
         }
         spin_unlock(&kthread_lock);
@@ -260,16 +263,16 @@ int is_hetero_exit(struct task_struct *task)
         //reset_hetero_stats(task);
 
 #ifdef _ENABLE_HETERO_THREAD
-	int idx = 0, idx_stopped=0;
-
+	//int idx = 0, idx_stopped=0;
+	//spin_lock(&kthread_lock);
+	//stop_threads(current, 0);
+	//printk(KERN_ALERT "%s:%d REMAINING THREAD %d \n",
+	//		thrd_idx, __func__,__LINE__);
 	spin_lock(&kthread_lock);
-
-	stop_threads(current, 0);
-
-	printk(KERN_ALERT "%s:%d REMAINING THREAD %d \n",
-			thrd_idx, __func__,__LINE__);
-
+	if(thrd_idx)
+		thrd_idx--;
 	spin_unlock(&kthread_lock);
+
 #endif
     }
     return 0;
@@ -710,7 +713,6 @@ void hetero_del_from_list(struct page *page)
 
 
 
-
 #if 1
 static int migration_thread_fn(void *arg) {
 
@@ -718,26 +720,23 @@ static int migration_thread_fn(void *arg) {
         struct mm_struct *mm = (struct mm_struct *)arg;
         struct timeval start, end;
 
-	if(mm->thrd_idx)
-		mm->thrd_idx--;
-
-        do_gettimeofday(&start);
-
+        //do_gettimeofday(&start);
         //migration_thrd_active = 1;
         if(!mm) {
+		thrd_idx--;
                 return 0;
         }
 
         count = migrate_to_node_hetero(mm, get_fastmem_node(),
                         get_slowmem_node(),MPOL_MF_MOVE_ALL);
 
-#ifdef _ENABLE_HETERO_THREAD
-        //migration_thrd_active = 0;
-#endif
-        do_gettimeofday(&end);
+        spin_lock(&kthread_lock);
+	if(thrd_idx)
+		thrd_idx--;
+        spin_unlock(&kthread_lock); 
 
-        migrate_time += timediff(&start, &end);
-
+        //do_gettimeofday(&end);
+        //migrate_time += timediff(&start, &end);
 #ifdef _ENABLE_HETERO_THREAD
 	//stop_threads(current, 0);
 	//if(kthread_should_stop()) {
@@ -745,7 +744,8 @@ static int migration_thread_fn(void *arg) {
 	//}
 	//spin_lock(&kthread_lock);
 	//spin_unlock(&kthread_lock);
-	//hetero_force_dbg("%s:%d THREAD EXITING %d\n", __func__, __LINE__, mm->thrd_idx);
+	//printk(KERN_ALERT "%s:%d THREAD %d EXITING %d\n", 
+	//	__func__, __LINE__, current->pid, thrd_idx);
 #endif
         return 0;
 }
@@ -821,24 +821,25 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 #ifdef _ENABLE_HETERO_THREAD
 	//spin_lock(&kthread_lock);
-	if(current->active_mm->thrd_idx >= MAXTHREADS) {
-		hetero_force_dbg("%s:%d STARTING THREAD IDX %d\n",
-			__func__,__LINE__, current->active_mm->thrd_idx);
+	if(thrd_idx >= MAXTHREADS) {
+		printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
+			__func__,__LINE__, thrd_idx);
 		//spin_unlock(&kthread_lock);
 		return;
 	}
-	THREADS[current->active_mm->thrd_idx].thrd = kthread_run(migration_thread_fn,
-					current->active_mm, "HETEROTHRD");	
-	current->active_mm->thrd_idx++;
-	//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
-	//	__func__,__LINE__, thrd_idx);
-	//spin_unlock(&kthread_lock);
+	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
+				current->active_mm, "HETEROTHRD");	
+
+	spin_lock(&kthread_lock);
+	thrd_idx++;
+	spin_unlock(&kthread_lock);
 #else
 	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
 	/*Reset attempts*/
 	attempts = 0;
+
 
 #ifdef _ENABLE_HETERO_RBTREE
 	root = &current->active_mm->objaff_cache_rbroot;
