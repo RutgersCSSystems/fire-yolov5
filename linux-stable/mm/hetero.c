@@ -665,22 +665,6 @@ int get_slowmem_node(void) {
 }
 
 
-#ifdef CONFIG_HETERO_OBJAFF
-void hetero_add_to_list(struct page *page, struct list_head *list_pages){
-
-        //list_add(&page->hetero_list, list_pages);
-}
-#endif
-
-void hetero_del_from_list(struct page *page)
-{
-        //unsigned long flags;
-        //raw_spin_lock_irqsave(&undef_lock, flags);
-        //list_del(&page->hetero_list);
-        //raw_spin_unlock_irqrestore(&undef_lock, flags);
-}
-
-
 static int migration_thread_fn(void *arg) {
 
         unsigned long count = 0;
@@ -695,7 +679,6 @@ static int migration_thread_fn(void *arg) {
 #endif
                 return 0;
         }
-
         count = migrate_to_node_hetero(mm, get_fastmem_node(),
                         get_slowmem_node(),MPOL_MF_MOVE_ALL);
 
