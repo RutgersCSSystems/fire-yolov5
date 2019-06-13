@@ -90,7 +90,7 @@ Move this to header file later.
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
 //#define _ENABLE_HETERO_RBTREE
-#define _ENABLE_HETERO_THREAD
+//#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
@@ -712,8 +712,6 @@ void hetero_del_from_list(struct page *page)
 }
 
 
-
-#if 1
 static int migration_thread_fn(void *arg) {
 
         unsigned long count = 0;
@@ -723,21 +721,23 @@ static int migration_thread_fn(void *arg) {
         //do_gettimeofday(&start);
         //migration_thrd_active = 1;
         if(!mm) {
+#ifdef _ENABLE_HETERO_THREAD
 		thrd_idx--;
+#endif
                 return 0;
         }
 
         count = migrate_to_node_hetero(mm, get_fastmem_node(),
                         get_slowmem_node(),MPOL_MF_MOVE_ALL);
 
+#ifdef _ENABLE_HETERO_THREAD
         spin_lock(&kthread_lock);
 	if(thrd_idx)
 		thrd_idx--;
         spin_unlock(&kthread_lock); 
-
+#endif
         //do_gettimeofday(&end);
         //migrate_time += timediff(&start, &end);
-#ifdef _ENABLE_HETERO_THREAD
 	//stop_threads(current, 0);
 	//if(kthread_should_stop()) {
 	//	do_exit(0);
@@ -746,10 +746,10 @@ static int migration_thread_fn(void *arg) {
 	//spin_unlock(&kthread_lock);
 	//printk(KERN_ALERT "%s:%d THREAD %d EXITING %d\n", 
 	//	__func__, __LINE__, current->pid, thrd_idx);
-#endif
         return 0;
 }
-#else
+
+#if 0
 static int migration_thread_fn(void *arg) {
 
 	unsigned long count = 0;
