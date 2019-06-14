@@ -1604,7 +1604,7 @@ int isolate_lru_page(struct page *page)
 
 		spin_lock_irq(zone_lru_lock(zone));
 		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
-		if (PageLRU(page)) {
+		if (lruvec && PageLRU(page)) {
 			int lru = page_lru(page);
 			get_page(page);
 			ClearPageLRU(page);
@@ -1614,38 +1614,108 @@ int isolate_lru_page(struct page *page)
 		spin_unlock_irq(zone_lru_lock(zone));
 
 	}
-#if 0
-	else if(page->hetero == HETERO_PG_MIG_FLAG) {
+	return ret;
+exit_isolate:
+	return ret;
+}
 
+
+#ifdef CONFIG_HETERO_ENABLE
+/**
+ * hetero_isolate_lru_page - tries to isolate a page from its LRU list
+ * @page: page to isolate from its LRU list
+ *
+ * Isolates a @page from an LRU list, clears PageLRU and adjusts the
+ * vmstat statistic corresponding to whatever LRU list the page was on.
+ *
+ * Returns 0 if the page was removed from an LRU list.
+ * Returns -EBUSY if the page was not on an LRU list.
+ *
+ * The returned page will have PageLRU() cleared.  If it was found on
+ * the active list, it will have PageActive set.  If it was found on
+ * the unevictable list, it will have the PageUnevictable bit set. That flag
+ * may need to be cleared by the caller before letting the page go.
+ *
+ * The vmstat statistic corresponding to the list on which the page was
+ * found will be decremented.
+ *
+ * Restrictions:
+ *
+ * (1) Must be called with an elevated refcount on the page. This is a
+ *     fundamentnal difference from isolate_lru_pages (which is called
+ *     without a stable reference).
+ * (2) the lru_lock must not be held.
+ * (3) interrupts must be enabled.
+ */
+int hetero_isolate_lru_page(struct page *page)
+{
+	int ret = -EBUSY;
+	int isolated_pages = 0;
+
+	VM_BUG_ON_PAGE(!page_count(page), page);
+	WARN_RATELIMIT(PageTail(page), "trying to isolate tail page");
+
+	if(page && page->hetero == HETERO_PG_FLAG) {
+		if(page && PageActive(page) && !PageLRU(page) && !PageDirty(page)) {
+			hetero_deactivate_file_page(page);
+			//printk(KERN_ALERT "LRU page %s:%d \n", __func__, __LINE__);
+		}
+	}
+
+	if (PageLRU(page)) {
+		//printk(KERN_ALERT "PageLRU(page) LRU page %s:%d \n", __func__, __LINE__);
 		struct zone *zone = page_zone(page);
-		struct address_space *mapping = page_mapping(page);
+		struct lruvec *lruvec;
+
+		spin_lock_irq(zone_lru_lock(zone));
+		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+		if (lruvec && PageLRU(page)) {
+			int lru = page_lru(page);
+			get_page(page);
+			ClearPageLRU(page);
+			del_page_from_lru_list(page, lruvec, lru);
+			ret = 0;
+			isolated_pages++;
+		}
+		spin_unlock_irq(zone_lru_lock(zone));
+		//printk(KERN_ALERT "%s:%d Isolated LRU pages %d \n",
+		//	__func__, __LINE__, isolated_pages);
+	}
+#if 0
+	else if(page && page->hetero == HETERO_PG_FLAG) {
+
+		//struct zone *zone = page_zone(page);
+		//spin_lock_irq(zone_lru_lock(zone));
+
+		/*struct address_space *mapping = page_mapping(page);
 		if(!zone)
 			goto exit_isolate;
 		if(!mapping)
 			goto exit_isolate;
 
 		struct lruvec *lruvec;
-
 		spin_lock_irq(zone_lru_lock(zone));
-		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);
+		lruvec = mem_cgroup_page_lruvec(page, zone->zone_pgdat);*/
 		
-		if(PageActive(page)) {
+		/*if(PageActive(page)) {
 			//printk(KERN_ALERT "Active page %s:%d \n", __func__, __LINE__);
 		}
-		if(PageLRU(page)) {
-			 printk(KERN_ALERT "LRU page %s:%d \n", __func__, __LINE__);
+		if(!PageLRU(page)) {
+			 //printk(KERN_ALERT "Not LRU page %s:%d \n", __func__, __LINE__);
 		}
 		if(PageUnevictable(page)) {
-			 printk(KERN_ALERT "Unevictable page %s:%d \n", __func__, __LINE__);
+			 //printk(KERN_ALERT "Unevictable page %s:%d \n", __func__, __LINE__);
 		}
 		if(PageDirty(page)) {
-			printk(KERN_ALERT "Dirty page %s:%d \n", __func__, __LINE__);
-			hetero_replace_cache(GFP_KERNEL, page);
+			//printk(KERN_ALERT "Dirty page %s:%d \n", __func__, __LINE__);
 		}
-
 		if(PageWriteback(page)) {
-			printk(KERN_ALERT "Writeback page %s:%d \n", __func__, __LINE__);
-		}
+			//printk(KERN_ALERT "Writeback page %s:%d \n", __func__, __LINE__);
+		}*/
+		if(page && PageActive(page) && !PageLRU(page) && !PageDirty(page) )
+			hetero_deactivate_file_page(page);
+
+		//spin_unlock_irq(zone_lru_lock(zone));
 
 		/*if (PageLRU(page)) 
 		{
@@ -1655,7 +1725,7 @@ int isolate_lru_page(struct page *page)
 			del_page_from_lru_list(page, lruvec, lru);
 			ret = 0;
 		}*/
-		spin_unlock_irq(zone_lru_lock(zone));
+		//spin_unlock_irq(zone_lru_lock(zone));
 
 		//spin_lock_irq(zone_lru_lock(zone));
 		/*if(add_to_page_cache_lru(page, mapping, page->index,
@@ -1670,6 +1740,9 @@ int isolate_lru_page(struct page *page)
 exit_isolate:
 	return ret;
 }
+#endif
+
+
 
 /*
  * A direct reclaimer may isolate SWAP_CLUSTER_MAX pages from the LRU list and

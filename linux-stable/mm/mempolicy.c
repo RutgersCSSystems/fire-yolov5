@@ -929,26 +929,32 @@ static int hetero_migrate_page_add(struct page *page, struct list_head *pagelist
 	struct page *head = compound_head(page);
 	int pagecount = 0;
 
-	/*if (PageLRU(page) && (page->hetero ==  HETERO_PG_FLAG)) {
-		SetPageLRU(page);
+	//if ((page->hetero ==  HETERO_PG_FLAG)) {
+		//SetPageLRU(page);
 		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-	}*/
+	//}
 
 	/*
 	 * Avoid migrating a page that is shared with others.
 	 */
 	if ((flags & MPOL_MF_MOVE_ALL) || page_mapcount(head) == 1) {
 
-		if (!isolate_lru_page(head)) {
+		if (!hetero_isolate_lru_page(head)) {
 			list_add_tail(&head->lru, pagelist);
 			mod_node_page_state(page_pgdat(head),
 				NR_ISOLATED_ANON + page_is_file_cache(head),
 				hpage_nr_pages(head));
 			pagecount++;	
 		}/*else if(page->hetero ==  HETERO_PG_FLAG) {
-			printk(KERN_ALERT "%s:%d Hetero Page not added\n", __func__, __LINE__);
+			if (!PageLRU(page)) 
+			printk(KERN_ALERT "%s:%d Hetero Page not added\n", 
+				__func__, __LINE__);
 		}*/	
 	}
+	//if(pagecount)
+	//	printk(KERN_ALERT "%s:%d Hetero Page added %d\n", 
+        //		__func__, __LINE__, pagecount);
+
 	return pagecount;
 }
 
@@ -1044,8 +1050,6 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
 		return 0;
 	}
-	//dump_stack();
-
 	ptl = pmd_trans_huge_lock(pmd, vma);
 	if (ptl) {
 		ret = queue_pages_pmd(pmd, ptl, addr, end, walk);
@@ -1064,16 +1068,15 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!page)
 			continue;
 
-		pages_checked++;
-
 #ifdef _USE_HETERO_PG_FLAG	
-		if (page->hetero != HETERO_PG_FLAG) {
-			//hetero_dbg("%s:%d \n",__func__,__LINE__);
-			continue;
-		}
                 if (page_to_nid(page) == get_slowmem_node()) {
                         continue;
                 }
+
+		if (page->hetero != HETERO_PG_FLAG) {
+			//hetero_force_dbg("%s:%d \n",__func__,__LINE__);
+			continue;
+		}
 #endif
 		//if(check_hetero_page(walk->mm, page)) {
 		//	continue;
@@ -1089,14 +1092,14 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!queue_pages_required(page, qp))
 			continue;
 
-		pages_added = hetero_migrate_page_add(page, qp->pagelist, flags);
+		pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
 	}
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 
 #ifdef CONFIG_HETERO_ENABLE
-	if((pages_checked > 500) && pages_added)
-		hetero_dbg("%s:%d pages_checked %d pages_added %d \n",
+	if((pages_checked))
+		hetero_force_dbg("%s:%d pages_checked %d pages_added %d \n",
 		__func__,__LINE__, pages_checked, pages_added);
 #endif
 	return 0;

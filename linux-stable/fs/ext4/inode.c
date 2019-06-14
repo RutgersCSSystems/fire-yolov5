@@ -3360,7 +3360,7 @@ ext4_readpages(struct file *file, struct address_space *mapping,
 		//if(!execute_ok(inode))
                 	//set_fsmap_hetero_obj(mapping);
                 //printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-                //try_hetero_migration(mapping, 0);
+                try_hetero_migration(mapping, 0);
         }
 #endif
 	/* If the file has inline data, no need to do readpages. */

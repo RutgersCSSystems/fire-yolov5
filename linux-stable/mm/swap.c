@@ -615,23 +615,141 @@ void deactivate_file_page(struct page *page)
 	 * In a workload with many unevictable page such as mprotect,
 	 * unevictable page deactivation for accelerating reclaim is pointless.
 	 */
-	if (PageUnevictable(page))
+	if (PageUnevictable(page)) {
 		return;
+	}
 
 	if (likely(get_page_unless_zero(page))) {
 		struct pagevec *pvec = &get_cpu_var(lru_deactivate_file_pvecs);
 
-		if (!pagevec_add(pvec, page) || PageCompound(page))
+		if (!pagevec_add(pvec, page) || PageCompound(page)) {
 			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn, NULL);
-		put_cpu_var(lru_deactivate_file_pvecs);
+		}
 #ifdef CONFIG_HETERO_ENABLE
 		//dectivation function works
-		/*if(page && page->hetero == HETERO_PG_FLAG) {
-			printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-		}*/
+		if(page && page->hetero == HETERO_PG_FLAG) {
+			//printk(KERN_ALERT "%s:%d Evictable \n", __func__, __LINE__);
+			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn, NULL);
+		}
 #endif
+		put_cpu_var(lru_deactivate_file_pvecs);
 	}
 }
+
+
+
+#ifdef CONFIG_HETERO_ENABLE
+
+/*
+ * If the page can not be invalidated, it is moved to the
+ * inactive list to speed up its reclaim.  It is moved to the
+ * head of the list, rather than the tail, to give the flusher
+ * threads some time to write it out, as this is much more
+ * effective than the single-page writeout from reclaim.
+ *
+ * If the page isn't page_mapped and dirty/writeback, the page
+ * could reclaim asap using PG_reclaim.
+ *
+ * 1. active, mapped page -> none
+ * 2. active, dirty/writeback page -> inactive, head, PG_reclaim
+ * 3. inactive, mapped page -> none
+ * 4. inactive, dirty/writeback page -> inactive, head, PG_reclaim
+ * 5. inactive, clean -> inactive, tail
+ * 6. Others -> none
+ *
+ * In 4, why it moves inactive's head, the VM expects the page would
+ * be write it out by flusher threads as this is much more effective
+ * than the single-page writeout from reclaim.
+ */
+static void hetero_lru_deactivate_file_fn(struct page *page, struct lruvec *lruvec,
+			      void *arg)
+{
+	int lru, file;
+	bool active;
+
+	if (!PageLRU(page))
+		return;
+
+	if (PageUnevictable(page))
+		return;
+
+	/* Some processes are using the page */
+	if (page_mapped(page))
+		return;
+
+	active = PageActive(page);
+	file = page_is_file_cache(page);
+	lru = page_lru_base_type(page);
+
+	del_page_from_lru_list(page, lruvec, lru + active);
+	ClearPageActive(page);
+	ClearPageReferenced(page);
+	add_page_to_lru_list(page, lruvec, lru);
+	SetPageLRU(page);
+
+#if DISABLE_TESTING
+	if (PageWriteback(page) || PageDirty(page)) {
+		/*
+		 * PG_reclaim could be raced with end_page_writeback
+		 * It can make readahead confusing.  But race window
+		 * is _really_ small and  it's non-critical problem.
+		 */
+		SetPageReclaim(page);
+	} else {
+		/*
+		 * The page's writeback ends up during pagevec
+		 * We moves tha page into tail of inactive.
+		 */
+		list_move_tail(&page->lru, &lruvec->lists[lru]);
+		__count_vm_event(PGROTATED);
+	}
+
+	if (active)
+		__count_vm_event(PGDEACTIVATE);
+	update_page_reclaim_stat(lruvec, file, 0);
+#endif
+
+}
+
+
+/**
+ * deactivate_hetero_file_page - forcefully deactivate a file page
+ * @page: page to deactivate
+ *
+ * This function hints the VM that @page is a good reclaim candidate,
+ * for example if its invalidation fails due to the page being dirty
+ * or under writeback.
+ */
+void hetero_deactivate_file_page(struct page *page)
+{
+	/*
+	 * In a workload with many unevictable page such as mprotect,
+	 * unevictable page deactivation for accelerating reclaim is pointless.
+	 */
+	if (PageUnevictable(page)) {
+		return;
+	}
+
+	if (likely(get_page_unless_zero(page))) {
+		struct pagevec *pvec = &get_cpu_var(lru_deactivate_file_pvecs);
+
+		if (!pagevec_add(pvec, page) || PageCompound(page)) {
+			pagevec_lru_move_fn(pvec, lru_deactivate_file_fn, NULL);
+		}
+#ifdef CONFIG_HETERO_ENABLE
+		//dectivation function works
+		if(page && page->hetero == HETERO_PG_FLAG) {
+			//printk(KERN_ALERT "%s:%d Evictable \n", __func__, __LINE__);
+			pagevec_lru_move_fn(pvec, hetero_lru_deactivate_file_fn, NULL);
+		}
+#endif
+		put_cpu_var(lru_deactivate_file_pvecs);
+	}
+}
+
+#endif
+
+
 
 /**
  * mark_page_lazyfree - make an anon page lazyfree
