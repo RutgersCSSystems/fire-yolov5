@@ -3376,6 +3376,135 @@ try_this_zone:
 	return NULL;
 }
 
+#ifdef CONFIG_HETERO_ENABLE
+/*
+ * hetero_get_page_from_freelist goes through the zonelist trying to allocate
+ * a page.
+ */
+static struct page *
+hetero_get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
+						const struct alloc_context *ac)
+{
+	struct zoneref *z = ac->preferred_zoneref;
+	struct zone *zone;
+	struct pglist_data *last_pgdat_dirty_limit = NULL;
+	
+	/*
+	 * Scan zonelist, looking for a zone with enough free.
+	 * See also __cpuset_node_allowed() comment in kernel/cpuset.c.
+	 */
+	for_next_zone_zonelist_nodemask(zone, z, ac->zonelist, ac->high_zoneidx,
+								ac->nodemask) {
+		struct page *page;
+		unsigned long mark;
+
+		if (cpusets_enabled() &&
+			(alloc_flags & ALLOC_CPUSET) &&
+			!__cpuset_zone_allowed(zone, gfp_mask))
+				continue;
+		/*
+		 * When allocating a page cache page for writing, we
+		 * want to get it from a node that is within its dirty
+		 * limit, such that no single node holds more than its
+		 * proportional share of globally allowed dirty pages.
+		 * The dirty limits take into account the node's
+		 * lowmem reserves and high watermark so that kswapd
+		 * should be able to balance it without having to
+		 * write pages from its LRU list.
+		 *
+		 * XXX: For now, allow allocations to potentially
+		 * exceed the per-node dirty limit in the slowpath
+		 * (spread_dirty_pages unset) before going into reclaim,
+		 * which is important when on a NUMA setup the allowed
+		 * nodes are together not big enough to reach the
+		 * global limit.  The proper fix for these situations
+		 * will require awareness of nodes in the
+		 * dirty-throttling and the flusher threads.
+		 */
+		if (ac->spread_dirty_pages) {
+			//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+			if (last_pgdat_dirty_limit == zone->zone_pgdat)
+				continue;
+
+			if (!node_dirty_ok(zone->zone_pgdat)) {
+				last_pgdat_dirty_limit = zone->zone_pgdat;
+				continue;
+			}
+		}
+
+		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
+		if (!zone_watermark_fast(zone, order, mark,
+				       ac_classzone_idx(ac), alloc_flags)) {
+			int ret;
+
+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+			/*
+			 * Watermark failed for this zone, but see if we can
+			 * grow this zone if it contains deferred pages.
+			 */
+			if (static_branch_unlikely(&deferred_pages)) {
+				if (_deferred_grow_zone(zone, order))
+					goto try_this_zone;
+			}
+#endif
+			/* Checked here to keep the fast path fast */
+			BUILD_BUG_ON(ALLOC_NO_WATERMARKS < NR_WMARK);
+			if (alloc_flags & ALLOC_NO_WATERMARKS)
+				goto try_this_zone;
+
+			if (node_reclaim_mode == 0 ||
+			    !zone_allows_reclaim(ac->preferred_zoneref->zone, zone))
+				continue;
+
+			ret = node_reclaim(zone->zone_pgdat, gfp_mask, order);
+			switch (ret) {
+			case NODE_RECLAIM_NOSCAN:
+				/* did not scan */
+				continue;
+			case NODE_RECLAIM_FULL:
+				/* scanned but unreclaimable */
+				continue;
+			default:
+				/* did we reclaim enough */
+				if (zone_watermark_ok(zone, order, mark,
+						ac_classzone_idx(ac), alloc_flags))
+					goto try_this_zone;
+
+				continue;
+			}
+		}
+
+try_this_zone:
+		page = rmqueue(ac->preferred_zoneref->zone, zone, order,
+				gfp_mask, alloc_flags, ac->migratetype);
+		if (page) {
+			prep_new_page(page, order, gfp_mask, alloc_flags);
+
+			/*
+			 * If this is a high-order atomic allocation then check
+			 * if the pageblock should be reserved for the future
+			 */
+			if (unlikely(order && (alloc_flags & ALLOC_HARDER)))
+				reserve_highatomic_pageblock(page, zone, order);
+
+			return page;
+		} else {
+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+			/* Try again if zone has deferred pages */
+			if (static_branch_unlikely(&deferred_pages)) {
+				if (_deferred_grow_zone(zone, order))
+					goto try_this_zone;
+			}
+#endif
+		}
+	}
+
+	return NULL;
+}
+
+#endif
+
+
 /*
  * Large machines with many possible nodes should not always dump per-node
  * meminfo in irq context.
@@ -4463,7 +4592,7 @@ struct page *
 __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 							nodemask_t *nodemask)
 {
-	struct page *page;
+	struct page *page = NULL;
 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
 	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
 	struct alloc_context ac = { };
@@ -4472,7 +4601,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
         struct sysinfo i;
 	int nid = get_fastmem_node();
-
+	
 	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) {
@@ -4490,14 +4619,19 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 				nodemask, &ac, &alloc_mask, &alloc_flags))
 		return NULL;
 
+	ac.spread_dirty_pages = false;
+
+
 	finalise_ac(gfp_mask, order, &ac);
 
 	/* First allocation attempt from freelist and is a hetero page*/
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+	//page = hetero_get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page)) {
-		if(check_fastmem_node(page))
+		if(check_fastmem_node(page)) {
 			page->hetero = HETERO_PG_FLAG;
-		goto out;
+			goto out;
+		}
 	}
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
@@ -4518,13 +4652,15 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
 
 default_alloc:
-        if(!page) {
+        /*if(!page) {
                 return __alloc_pages_nodemask(gfp_mask, order, 
 						     preferred_nid, nodemask);
-        }
+        }*/
 
 	if(page && check_fastmem_node(page)) {
 		page->hetero = HETERO_PG_FLAG;
+	}else {
+		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 	}
 
 #ifdef CONFIG_HETERO_ENABLE

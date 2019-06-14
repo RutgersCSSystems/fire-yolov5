@@ -89,7 +89,7 @@ Move this to header file later.
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
-#define _ENABLE_HETERO_THREAD
+//#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
