@@ -1045,6 +1045,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 #ifdef CONFIG_HETERO_ENABLE
 	int pages_checked = 0;
 	int pages_added = 0;
+	struct address_space *mapping = NULL;
 #endif
 	if(!is_hetero_vma(vma)) {
 		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
@@ -1073,10 +1074,19 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
                         continue;
                 }
 
-		if (page->hetero != HETERO_PG_FLAG) {
-			//hetero_force_dbg("%s:%d \n",__func__,__LINE__);
-			continue;
-		}
+                if (page->hetero != HETERO_PG_FLAG && is_hetero_pgcache_set()) {
+                        if (PageWriteback(page) || !PageAnon(page)) {
+                                mapping = page_mapping(page);
+                                if(mapping && mapping->host) {
+                                        //dentry = d_find_any_alias(mapping->host);
+                                        //if(dentry)
+                                        //hetero_force_dbg("%s:%d \n",__func__,__LINE__);
+                                        page->hetero = HETERO_PG_FLAG;
+                                }
+                        }
+                        continue;
+                }
+                //pages_checked++;
 #endif
 		//if(check_hetero_page(walk->mm, page)) {
 		//	continue;
