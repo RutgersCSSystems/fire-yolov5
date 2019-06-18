@@ -3377,6 +3377,34 @@ try_this_zone:
 }
 
 #ifdef CONFIG_HETERO_ENABLE
+
+
+int check_free_fastmem_node(gfp_t gfp_mask, unsigned int order, int alloc_flags, 
+					const struct alloc_context *ac)
+{
+
+	struct zoneref *z = ac->preferred_zoneref;
+	struct zone *zone;
+
+	for_next_zone_zonelist_nodemask(zone, z, ac->zonelist, ac->high_zoneidx,
+								ac->nodemask) {
+		unsigned long mark;
+
+		if(zone_to_nid(zone) != get_fastmem_node()) {
+				continue;
+		}
+
+		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
+		if (!zone_watermark_fast(zone, order, mark,
+                       ac_classzone_idx(ac), alloc_flags)) {
+			continue;
+		}else {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 /*
  * hetero_get_page_from_freelist goes through the zonelist trying to allocate
  * a page.
@@ -3388,6 +3416,9 @@ hetero_get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flag
 	struct zoneref *z = ac->preferred_zoneref;
 	struct zone *zone;
 	struct pglist_data *last_pgdat_dirty_limit = NULL;
+	int alloc_from_fastmem = 0;
+
+	alloc_from_fastmem = check_free_fastmem_node(gfp_mask, order, alloc_flags, ac);
 	
 	/*
 	 * Scan zonelist, looking for a zone with enough free.
@@ -3421,8 +3452,9 @@ hetero_get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flag
 		 * will require awareness of nodes in the
 		 * dirty-throttling and the flusher threads.
 		 */
+
+#ifdef _RENABLE_THIS_CODE_HETERO
 		if (ac->spread_dirty_pages) {
-			//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
 			if (last_pgdat_dirty_limit == zone->zone_pgdat)
 				continue;
 
@@ -3430,6 +3462,14 @@ hetero_get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flag
 				last_pgdat_dirty_limit = zone->zone_pgdat;
 				continue;
 			}
+		}
+#endif
+
+		if((zone_to_nid(zone) != get_fastmem_node()) 
+			&& alloc_from_fastmem) {
+			printk(KERN_ALERT "HETERO zone_to_nid %d \n",
+				zone_to_nid(zone));
+			continue;
 		}
 
 		mark = zone->watermark[alloc_flags & ALLOC_WMARK_MASK];
@@ -4601,7 +4641,8 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
         struct sysinfo i;
 	int nid = get_fastmem_node();
-	
+
+#if 0	
 	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
 		if(K(i.freeram) < THRESHOLD) {
@@ -4614,6 +4655,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	}else {
 		node_checkfreq--;
 	}
+#endif
 
 	if (!prepare_alloc_pages_hetero(gfp_mask, order, preferred_nid, 
 				nodemask, &ac, &alloc_mask, &alloc_flags))
@@ -4621,17 +4663,17 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 
 	ac.spread_dirty_pages = false;
 
-
 	finalise_ac(gfp_mask, order, &ac);
 
 	/* First allocation attempt from freelist and is a hetero page*/
-	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
-	//page = hetero_get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+	//page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+	page = hetero_get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page)) {
 		if(check_fastmem_node(page)) {
 			page->hetero = HETERO_PG_FLAG;
-			goto out;
 		}
+		goto out;
+
 	}
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
