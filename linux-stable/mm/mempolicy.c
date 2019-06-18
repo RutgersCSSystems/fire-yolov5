@@ -1142,7 +1142,7 @@ gotohell:
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 #ifdef CONFIG_HETERO_ENABLE
-	if((g_pages_added && is_hetero_pgcache_set() && pages_added > 200))
+	if((is_hetero_pgcache_set() && pages_added > 200))
 		hetero_force_dbg("%s:%d pages_checked %d pagelist_count %d  "
 		"pagecache hits %d pagecache miss %d pages_added %d mgirated %d \n", 
 		__func__,__LINE__, pages_checked, page_list_count(qp->pagelist),
