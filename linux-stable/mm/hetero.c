@@ -89,7 +89,7 @@ Move this to header file later.
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
-//#define _ENABLE_HETERO_THREAD
+#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
@@ -238,8 +238,8 @@ static int stop_threads(struct task_struct *task, int force) {
 		if(thrd_idx)
 			thrd_idx--;
 
-		printk(KERN_ALERT "%s:%d STOPING THREAD IDX %d\n",
-		__func__,__LINE__, thrd_idx);
+		//printk(KERN_ALERT "%s:%d STOPING THREAD IDX %d\n",
+		//__func__,__LINE__, thrd_idx);
         }
         spin_unlock(&kthread_lock);
 #endif
@@ -762,12 +762,12 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 #ifdef _ENABLE_HETERO_THREAD
 	//spin_lock(&kthread_lock);
-	if(thrd_idx >= MAXTHREADS) {
-		printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
-			__func__,__LINE__, thrd_idx);
+	//if(thrd_idx >= MAXTHREADS) {
+		//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
+		//	__func__,__LINE__, thrd_idx);
 		//spin_unlock(&kthread_lock);
-		return;
-	}
+		//return;
+	//}
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
 				current->active_mm, "HETEROTHRD");	
 

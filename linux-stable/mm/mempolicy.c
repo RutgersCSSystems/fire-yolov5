@@ -1127,11 +1127,11 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
                 //}
 #endif
 		pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
-		if(pages_added > 200){	
+		/*if(pages_added > 200){	
 			hetero_force_dbg("%s:%d pages_added %d \n",
 				__func__,__LINE__,pages_added);
 			goto gotohell;
-		}
+		}*/
 		//if(is_hetero_pgcache_set())
 		//	hetero_force_dbg("%s:%d page_list_count %d \n",
 		//	__func__,__LINE__, page_list_count(qp->pagelist));
@@ -1143,7 +1143,7 @@ gotohell:
 	cond_resched();
 #ifdef CONFIG_HETERO_ENABLE
 	if((is_hetero_pgcache_set() && pages_added))
-		hetero_force_dbg("%s:%d pages_checked %d pagelist_count %d  "
+		hetero_dbg("%s:%d pages_checked %d pagelist_count %d  "
 		"pagecache hits %d pagecache miss %d pages_added %d mgirated %d \n", 
 		__func__,__LINE__, pages_checked, page_list_count(qp->pagelist),
 		current->active_mm->pgcache_hits_cnt, current->active_mm->pgcache_miss_cnt,
