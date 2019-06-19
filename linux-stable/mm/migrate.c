@@ -3930,7 +3930,7 @@ retry:
 
 
 		/* Not a Hetero page */
-#if 1 //def _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
+#ifdef _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
 		if ((page->hetero != HETERO_PG_FLAG)) {
                 	//struct address_space *mapping = NULL;
                         //mapping = page_mapping_file(page);
@@ -3944,8 +3944,6 @@ retry:
 			continue;
 		}
 #endif
-
-
 		pagecount++;
 
 #ifdef CONFIG_HETERO_HUGEPAGE
