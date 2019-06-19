@@ -1074,7 +1074,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	if (ptl) {
 		ret = queue_pages_pmd(pmd, ptl, addr, end, walk);
 		if (ret) {
-		        printk(KERN_ALERT "%s : %d \n",__func__, __LINE__);	
+		        //printk(KERN_ALERT "%s : %d \n",__func__, __LINE__);	
 			return 0;
 		}
 	}
@@ -1142,7 +1142,7 @@ gotohell:
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 #ifdef CONFIG_HETERO_ENABLE
-	if((is_hetero_pgcache_set() && pages_added > 200))
+	if((is_hetero_pgcache_set() && pages_added))
 		hetero_force_dbg("%s:%d pages_checked %d pagelist_count %d  "
 		"pagecache hits %d pagecache miss %d pages_added %d mgirated %d \n", 
 		__func__,__LINE__, pages_checked, page_list_count(qp->pagelist),
