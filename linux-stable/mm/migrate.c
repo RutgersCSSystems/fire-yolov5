@@ -3921,6 +3921,14 @@ retry:
 		//if (PageAnon(page))
 		//	continue;
 
+#if 1 //def _DISABLE_HETERO_CHECKING
+		if (page_to_nid(page) == get_slowmem_node()) {
+			//nr_failed++;
+			continue;
+		}
+#endif
+
+
 		/* Not a Hetero page */
 #if 1 //def _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
 		if ((page->hetero != HETERO_PG_FLAG)) {
@@ -3937,12 +3945,6 @@ retry:
 		}
 #endif
 
-#if 1 //def _DISABLE_HETERO_CHECKING
-		if (page_to_nid(page) == get_slowmem_node()) {
-			//nr_failed++;
-			continue;
-		}
-#endif
 
 		pagecount++;
 
