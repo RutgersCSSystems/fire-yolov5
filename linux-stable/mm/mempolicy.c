@@ -1114,9 +1114,10 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		pages_checked++;
 
                 if (is_hetero_pgcache_set()) {
-                        //if (!PageAnon(page)) {
-                                mapping = page_mapping(page);
-                                if(mapping && mapping->host) {
+                        if (!PageAnon(page)) {
+                                //mapping = page_mapping(page);
+                                //if(mapping && mapping->host) 
+				{
                                         //dentry = d_find_any_alias(mapping->host);
                                         //if(dentry)
                                         //hetero_force_dbg("%s:%d \n",__func__,__LINE__);
@@ -1124,18 +1125,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
                                 }
                         }
                         //continue;
-                //}
+                }
 #endif
 		pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
-		/*if(pages_added > 200){	
-			hetero_force_dbg("%s:%d pages_added %d \n",
-				__func__,__LINE__,pages_added);
-			goto gotohell;
-		}*/
 		//if(is_hetero_pgcache_set())
 		//	hetero_force_dbg("%s:%d page_list_count %d \n",
 		//	__func__,__LINE__, page_list_count(qp->pagelist));
-		 
 	}
 gotohell:
 	g_pages_added += pages_added;

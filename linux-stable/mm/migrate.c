@@ -4014,8 +4014,9 @@ out:
 
 	if(nr_succeeded || nr_failed)
 		printk(KERN_ALERT "%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
-			    "retry %d  pagecount %d\n", __func__,__LINE__,
-			    hetero_page_migrate_cnt, nr_failed, retry,  pagecount);
+			    "retry %d  pagecount %d cache pages %d\n", __func__,__LINE__,
+			    hetero_page_migrate_cnt, nr_failed, retry,  pagecount, 
+			    global_node_page_state(NR_FILE_PAGES));
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)
