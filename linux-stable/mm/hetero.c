@@ -89,7 +89,7 @@ Move this to header file later.
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
-#define _ENABLE_HETERO_THREAD
+//#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
@@ -142,17 +142,20 @@ void print_hetero_stats(struct task_struct *task) {
 		avgcache_life = task->active_mm->avg_cachepage_life/cachepgs;
 
        printk("Curr %d Currname %s HeteroProcname %s " 
-		"page_cache_hits %lu page_cache_miss %lu " 
-	      	"buff_page_hits %lu buff_page_miss %lu " 
-		"pages_migrated %lu migrate_time %ld " 
-                "avg_buffpage_life(us) %ld pgbuffdel %lu " 
-		"avg_cachepage_life(us) %ld pgcachedel %lu\n ", 
+		"cache-hits %lu cache-miss %lu " 
+	      	"buff-hits %lu buff-miss %lu " 
+		"migrated %lu migrate_time %ld " 
+                "avg_buff_life(us) %ld pgbuff-del %lu " 
+		"avg_cache_life(us) %ld pgcache-del %lu " 
+		"active-cache %lu\n ", 
 	  	current->pid, current->comm, procname, 
               	task->active_mm->pgcache_hits_cnt, task->active_mm->pgcache_miss_cnt, 
 	      	task->active_mm->pgbuff_hits_cnt, task->active_mm->pgbuff_miss_cnt, 
 		task->active_mm->pages_migrated, migrate_time, 
                 avgbuff_life, task->active_mm->pgbuffdel, avgcache_life, 
-		task->active_mm->pgcachedel);
+		task->active_mm->pgcachedel, 
+		(task->active_mm->pgcache_hits_cnt - task->active_mm->pgcachedel)
+	);
 #endif
 }
 EXPORT_SYMBOL(print_hetero_stats);

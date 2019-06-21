@@ -3910,6 +3910,11 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(mm->hetero_task != HETERO_PROC)
 		return rc;
 
+
+	hetero_force_dbg("%s:%d pagecount %d \n", __func__,__LINE__,
+			page_list_count(from));
+
+
 	for(pass = 0; pass < 2 && retry; pass++) {
 		retry = 0;
 
@@ -3936,11 +3941,11 @@ retry:
                         //mapping = page_mapping_file(page);
                         if(!page_anon_vma(page)) { 
 				break;
-			}/*else {
+			}else {
 	                        //hetero_force_dbg("%s:%d \n",__func__,__LINE__);
 				nr_failed++;
 				continue;
-			}*/
+			}
 			continue;
 		}
 #endif
@@ -4013,10 +4018,10 @@ out:
 	hetero_page_migrate_cnt += nr_succeeded;
 
 	if(nr_succeeded || nr_failed)
-		printk(KERN_ALERT "%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
-			    "retry %d  pagecount %d cache pages %d\n", __func__,__LINE__,
-			    hetero_page_migrate_cnt, nr_failed, retry,  pagecount, 
-			    global_node_page_state(NR_FILE_PAGES));
+		hetero_dbg("%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
+			    "retry %d  pagecount %d \n", __func__,__LINE__,
+			    hetero_page_migrate_cnt, nr_failed, retry,  pagecount); 
+
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
 	if (nr_failed)

@@ -932,6 +932,7 @@ int page_list_count(struct list_head *pagelist) {
 	}
 	return pagecount;
 }
+EXPORT_SYMBOL(page_list_count);
 #endif
 
 
@@ -1064,6 +1065,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 	int pages_checked = 0;
 	int pages_checked_temp = 0;
 	int pages_added = 0; 
+	g_pages_added = 0;
 #endif
 	if(!is_hetero_vma(vma)) {
 		printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
@@ -1093,8 +1095,6 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 		if (!page)
 			continue;
 
-                pages_checked++;
-
 #ifdef _USE_HETERO_PG_FLAG	
                 if (page_to_nid(page) == get_slowmem_node()) {
                         continue;
@@ -1108,41 +1108,39 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 			continue;
 		}
 
+		pages_checked++;
+
 		if (!queue_pages_required(page, qp))
 			continue;
 
-		pages_checked++;
 
                 if (is_hetero_pgcache_set()) {
-                        if (!PageAnon(page)) {
-                                //mapping = page_mapping(page);
-                                //if(mapping && mapping->host) 
-				{
-                                        //dentry = d_find_any_alias(mapping->host);
-                                        //if(dentry)
-                                        //hetero_force_dbg("%s:%d \n",__func__,__LINE__);
-                                        page->hetero = HETERO_PG_FLAG;
-                                }
+
+                	if (!PageAnon(page)) {
+				//dentry = d_find_any_alias(mapping->host);
+				//if(dentry)
+				//hetero_force_dbg("%s:%d \n",__func__,__LINE__);
+				page->hetero = HETERO_PG_FLAG;
+				pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
                         }
-                        //continue;
                 }
 #endif
-		pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
 		//if(is_hetero_pgcache_set())
 		//	hetero_force_dbg("%s:%d page_list_count %d \n",
 		//	__func__,__LINE__, page_list_count(qp->pagelist));
 	}
 gotohell:
-	g_pages_added += pages_added;
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
 #ifdef CONFIG_HETERO_ENABLE
-	if((is_hetero_pgcache_set() && pages_added))
-		hetero_dbg("%s:%d pages_checked %d pagelist_count %d  "
-		"pagecache hits %d pagecache miss %d pages_added %d mgirated %d \n", 
-		__func__,__LINE__, pages_checked, page_list_count(qp->pagelist),
-		current->active_mm->pgcache_hits_cnt, current->active_mm->pgcache_miss_cnt,
-		pages_added, current->active_mm->pages_migrated);
+	if((is_hetero_pgcache_set() && pages_added)) {
+
+		g_pages_added = page_list_count(qp->pagelist);
+		hetero_force_dbg("%s:%d Proc %s pages_checked %d pages_added %d "
+		"pagelist_count %d", __func__,__LINE__, current->comm, pages_checked, 
+		pages_added, page_list_count(qp->pagelist)); 
+		//print_hetero_stats(current);
+	}		
 #endif
 	return 0;
 }
@@ -1161,10 +1159,6 @@ queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned lon
 		nodemask_t *nodes, unsigned long flags,
 		struct list_head *pagelist)
 {
-#ifdef CONFIG_HETERO_ENABLE
-	//int count = 0;
-	//int pagecount = 0;
-#endif
 	struct queue_pages qp = {
 		.pagelist = pagelist,
 		.flags = flags,
@@ -1178,11 +1172,6 @@ queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned lon
 		.mm = mm,
 		.private = &qp,
 	};
-	//count = walk_page_range(start, end, &queue_pages_walk);
-	//pagecount = page_list_count(pagelist);
-	//if(pagecount)
-	//hetero_force_dbg("%s:%d\n", __func__,__LINE__);
-	//return count;
 	return walk_page_range(start, end, &queue_pages_walk);
 }
 
@@ -1218,8 +1207,8 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 
 	if((g_pages_added && is_hetero_pgcache_set())) {
 		pagecount = page_list_count(&pagelist);
-		//hetero_force_dbg("%s:%d pagecount %d count pages added %d\n",  
-		//	__func__,__LINE__, pagecount, g_pages_added);
+		hetero_force_dbg("%s:%d pagecount %d count pages added %d\n",  
+			__func__,__LINE__, pagecount, g_pages_added);
 	}
 
 	if (!list_empty(&pagelist)) {

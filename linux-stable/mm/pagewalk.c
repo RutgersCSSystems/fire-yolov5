@@ -256,6 +256,7 @@ static int __walk_page_range(unsigned long start, unsigned long end,
 	return err;
 }
 
+
 /**
  * walk_page_range - walk page table with caller specific callbacks
  * @start: start address of the virtual address range
@@ -308,8 +309,94 @@ int walk_page_range(unsigned long start, unsigned long end,
 	vma = find_vma(walk->mm, start);
 
 	do {
+		if (!vma) { /* after the last vma */
+			walk->vma = NULL;
+			next = end;
+		} else if (start < vma->vm_start) { /* outside vma */
+			walk->vma = NULL;
+			next = min(end, vma->vm_start);
+		} else { /* inside vma */
+			walk->vma = vma;
+			next = min(end, vma->vm_end);
+			vma = vma->vm_next;
 
-#ifdef CONFIG_HETERO_ENABLE
+			err = walk_page_test(start, next, walk);
+			if (err > 0) {
+				/*
+				 * positive return values are purely for
+				 * controlling the pagewalk, so should never
+				 * be passed to the callers.
+				 */
+				err = 0;
+				continue;
+			}
+			if (err < 0)
+				break;
+		}
+		if (walk->vma || walk->pte_hole)
+			err = __walk_page_range(start, next, walk);
+		if (err)
+			break;
+	} while (start = next, start < end);
+	return err;
+}
+
+
+
+/**
+ * walk_page_range_hetero - walk page table with caller specific callbacks
+ * @start: start address of the virtual address range
+ * @end: end address of the virtual address range
+ * @walk: mm_walk structure defining the callbacks and the target address space
+ *
+ * Recursively walk the page table tree of the process represented by @walk->mm
+ * within the virtual address range [@start, @end). During walking, we can do
+ * some caller-specific works for each entry, by setting up pmd_entry(),
+ * pte_entry(), and/or hugetlb_entry(). If you don't set up for some of these
+ * callbacks, the associated entries/pages are just ignored.
+ * The return values of these callbacks are commonly defined like below:
+ *
+ *  - 0  : succeeded to handle the current entry, and if you don't reach the
+ *         end address yet, continue to walk.
+ *  - >0 : succeeded to handle the current entry, and return to the caller
+ *         with caller specific value.
+ *  - <0 : failed to handle the current entry, and return to the caller
+ *         with error code.
+ *
+ * Before starting to walk page table, some callers want to check whether
+ * they really want to walk over the current vma, typically by checking
+ * its vm_flags. walk_page_test() and @walk->test_walk() are used for this
+ * purpose.
+ *
+ * struct mm_walk keeps current values of some common data like vma and pmd,
+ * which are useful for the access from callbacks. If you want to pass some
+ * caller-specific data to callbacks, @walk->private should be helpful.
+ *
+ * Locking:
+ *   Callers of walk_page_range() and walk_page_vma() should hold
+ *   @walk->mm->mmap_sem, because these function traverse vma list and/or
+ *   access to vma's data.
+ */
+int walk_page_range_hetero(unsigned long start, unsigned long end,
+		    struct mm_walk *walk)
+{
+	int err = 0;
+	unsigned long next;
+	struct vm_area_struct *vma;
+
+	if (start >= end)
+		return -EINVAL;
+
+	if (!walk->mm)
+		return -EINVAL;
+
+	VM_BUG_ON_MM(!rwsem_is_locked(&walk->mm->mmap_sem), walk->mm);
+
+	vma = find_vma(walk->mm, start);
+
+	do {
+
+#if 0 //def CONFIG_HETERO_ENABLE
 		if(vma && check_hetero_proc(current)) {
 			if(!is_hetero_vma(vma)) {
 				//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
@@ -349,6 +436,7 @@ not_hetero:
 	} while (start = next, start < end);
 	return err;
 }
+
 
 int walk_page_vma(struct vm_area_struct *vma, struct mm_walk *walk)
 {
