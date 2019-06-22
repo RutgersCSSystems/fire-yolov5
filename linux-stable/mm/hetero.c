@@ -76,7 +76,6 @@
 #define COLLECT_ALLOCATE 9
 #define PRINT_ALLOCATE 10
 
-
 /* 
 Flags to enable hetero allocations.
 Move this to header file later.
@@ -89,6 +88,7 @@ Move this to header file later.
 #define HETERO_SET_FASTMEM_NODE 16
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
+#define HETERO_DISABLE_MIGRATE 19
 //#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
@@ -118,6 +118,7 @@ int enbl_hetero_kernel=0;
 int hetero_fastmem_node=0;
 int migrate_freq=0;
 int enbl_hetero_objaff=0;
+int disabl_hetero_migrate=0;
 
 int hetero_pid=0;
 int hetero_usrpg_cnt=0;
@@ -774,6 +775,10 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	int threshold=0;
 
+	if(disabl_hetero_migrate) {
+		return;
+	}
+
 	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
 		return;
 
@@ -922,6 +927,10 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag to set FASTMEM node to %d \n", val);
 	    hetero_fastmem_node = val;
 	    break;
+	case HETERO_DISABLE_MIGRATE:
+	     printk("flag to disable migration %d \n", val);
+	     disabl_hetero_migrate = 1;
+	     break;	
 	case HETERO_MIGRATE_FREQ:
 	     migrate_freq = val;
 	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
