@@ -782,8 +782,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if(!g_cachemiss ||  (g_cachemiss % 100 != 0) || (g_cachemiss == g_lastcheck)) {
 		return;
 	}else {
-		hetero_force_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
-			 g_cachemiss);
+		//hetero_force_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
+		//	 g_cachemiss);
 		g_lastcheck =  g_cachemiss;
 	}
 
