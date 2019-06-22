@@ -70,6 +70,7 @@ void set_fsmap_hetero_obj(void *mapobj);
 void set_hetero_obj_page(struct page *page, void *obj);
 void debug_hetero_obj(void *obj);
 void print_hetero_stats(struct task_struct *task);
+void incr_global_stats(unsigned long *counter);
 void set_sock_hetero_obj(void *socket, void *inode);
 int hetero_init_rbtree(struct task_struct *task);
 void set_sock_hetero_obj_netdev(void *socket, void *inode);

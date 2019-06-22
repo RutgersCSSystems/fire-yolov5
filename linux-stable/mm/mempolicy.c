@@ -1132,13 +1132,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 gotohell:
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
-#ifdef CONFIG_HETERO_ENABLE
+#if 0 //def CONFIG_HETERO_ENABLE
 	if((is_hetero_pgcache_set() && pages_added)) {
-
 		g_pages_added = page_list_count(qp->pagelist);
-		hetero_force_dbg("%s:%d Proc %s pages_checked %d pages_added %d "
-		"pagelist_count %d", __func__,__LINE__, current->comm, pages_checked, 
-		pages_added, page_list_count(qp->pagelist)); 
+		hetero_force_dbg("%s Proc %s PID %d pages_checked %d pages_added %d "
+		"pagelist_count %d", __func__, current->comm, current->pid, 
+		pages_checked, pages_added, page_list_count(qp->pagelist)); 
 		//print_hetero_stats(current);
 	}		
 #endif
@@ -1201,15 +1200,11 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
 
-	//pagecount = page_list_count(&pagelist);
-	//hetero_force_dbg("%s:%d pagecount %d count\n", 
-	//	__func__,__LINE__, pagecount);
-
-	if((g_pages_added && is_hetero_pgcache_set())) {
+	/*if((g_pages_added && is_hetero_pgcache_set())) {
 		pagecount = page_list_count(&pagelist);
 		hetero_force_dbg("%s:%d pagecount %d count pages added %d\n",  
 			__func__,__LINE__, pagecount, g_pages_added);
-	}
+	}*/
 
 	if (!list_empty(&pagelist)) {
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,

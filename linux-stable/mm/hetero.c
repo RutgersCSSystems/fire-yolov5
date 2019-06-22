@@ -126,7 +126,35 @@ char procname[TASK_COMM_LEN];
 long migrate_time=0;
 unsigned int attempts=0;
 
+unsigned long g_cachehits=0;
+unsigned long g_cachemiss=0;
+unsigned long g_buffhits=0;
+unsigned long g_buffmiss=0;
+unsigned long g_migrated=0;
+unsigned long g_cachedel=0;
+unsigned long g_buffdel=0;
+DEFINE_SPINLOCK(stats_lock);
+
+
 #ifdef CONFIG_HETERO_ENABLE
+
+void incr_global_stats(unsigned long *counter){
+	spin_lock(&stats_lock);
+	*counter = *counter + 1;	
+	spin_unlock(&stats_lock);
+}
+
+void print_global_stats(void) {
+       printk("cache-hits %lu cache-miss %lu " 
+	      "buff-hits %lu buff-miss %lu " 
+	      "migrated %lu cache-del %lu " 
+	      "buff-del %lu \n", 
+		g_cachehits, g_cachemiss, g_buffhits, 
+		g_buffmiss, g_migrated, g_cachedel,
+		g_buffdel);
+}
+EXPORT_SYMBOL(print_global_stats);
+
 
 void print_hetero_stats(struct task_struct *task) {
 
@@ -536,22 +564,23 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	we are not deleting and only inserting the page*/
 	if(correct_node && !delpage) {
 		current->active_mm->pgcache_hits_cnt += 1;
-		//page->hetero = HETERO_PG_FLAG;
+		page->hetero = HETERO_PG_FLAG;
+		incr_global_stats(&g_cachehits);
 		//page->hetero_create_time = (struct timeval){0};
 		//page->hetero_del_time = (struct timeval){0};
 		//do_gettimeofday(&page->hetero_create_time);
-
+	
 	} else if(!correct_node && !delpage) {
 		current->active_mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
+		incr_global_stats(&g_cachemiss);
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
-#ifdef CONFIG_HETERO_STATS
 		//do_gettimeofday(&page->hetero_del_time);
 		//current->active_mm->avg_cachepage_life += 
 		//	timediff(&page->hetero_create_time, &page->hetero_del_time);
 		current->active_mm->pgcachedel++;
-#endif		
+		incr_global_stats(&g_cachedel);
 	}
 
 	/* Either if object affinity is disabled or page node is 
@@ -862,7 +891,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_ALLOCATE:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
-	    print_hetero_stats(current);
+	    //print_hetero_stats(current);
+	    print_global_stats();	
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);

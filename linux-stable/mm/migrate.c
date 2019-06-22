@@ -59,6 +59,7 @@
 int hetero_page_migrate_cnt=0;
 extern int g_nr_success_hetero_list;
 extern int g_freq_cnt;
+extern unsigned long g_migrated;
 #endif
 
 #include "internal.h"
@@ -3910,9 +3911,9 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	if(mm->hetero_task != HETERO_PROC)
 		return rc;
 
+	hetero_dbg("%s:%d Proc %s PID %d pagecount %d \n", 
+	__func__,__LINE__, current->comm, current->pid, page_list_count(from));
 
-	hetero_force_dbg("%s:%d pagecount %d \n", __func__,__LINE__,
-			page_list_count(from));
 
 
 	for(pass = 0; pass < 2 && retry; pass++) {
@@ -3993,6 +3994,11 @@ retry:
 				break;
 			case MIGRATEPAGE_SUCCESS:
 				nr_succeeded++;
+				incr_global_stats(&g_migrated);
+				/*hetero_force_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+					    "retry %d  pagecount %d\n", 
+					    g_migrated, nr_failed, retry,  pagecount);*/
+
 				break;
 			default:
 				/*
@@ -4016,6 +4022,7 @@ retry:
 out:
 	mm->pages_migrated += nr_succeeded;
 	hetero_page_migrate_cnt += nr_succeeded;
+
 
 	if(nr_succeeded || nr_failed)
 		hetero_dbg("%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
