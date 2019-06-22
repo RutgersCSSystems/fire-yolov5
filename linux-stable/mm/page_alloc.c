@@ -4661,7 +4661,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 				nodemask, &ac, &alloc_mask, &alloc_flags))
 		return NULL;
 
-	ac.spread_dirty_pages = false;
+	//ac.spread_dirty_pages = false;
 
 	finalise_ac(gfp_mask, order, &ac);
 
@@ -4675,6 +4675,7 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 		goto out;
 
 	}
+
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
 	 * resp. GFP_NOIO which has to be inherited for all allocation requests

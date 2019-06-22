@@ -133,6 +133,7 @@ unsigned long g_buffmiss=0;
 unsigned long g_migrated=0;
 unsigned long g_cachedel=0;
 unsigned long g_buffdel=0;
+unsigned long g_lastcheck=0;
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -778,10 +779,13 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	/*Calculate the number of misses and hits*/
 	threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
-	//threshold = current->active_mm->pgcache_hits_cnt + current->active_mm->pgbuff_hits_cnt;
-	if(current->active_mm->pgcache_miss_cnt)	
-		hetero_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
-			current->active_mm->pgcache_miss_cnt);
+	if(!g_cachemiss ||  (g_cachemiss % 100 != 0) || (g_cachemiss == g_lastcheck)) {
+		return;
+	}else {
+		hetero_force_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
+			 g_cachemiss);
+		g_lastcheck =  g_cachemiss;
+	}
 
 	/*Controls how frequently we should enable migration thread*/
 	if(!migrate_freq || !threshold) //|| (threshold < migrate_freq)) {	
