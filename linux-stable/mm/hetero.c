@@ -783,8 +783,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		return;
 
 	/*Calculate the number of misses and hits*/
-	threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
-	if(!g_cachemiss ||  (g_cachemiss % 100 != 0) || (g_cachemiss == g_lastcheck)) {
+	//threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
+	if(!g_cachemiss ||  (g_cachemiss % migrate_freq != 0) || (g_cachemiss == g_lastcheck)) {
 		return;
 	}else {
 		//hetero_force_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
@@ -793,13 +793,13 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 	/*Controls how frequently we should enable migration thread*/
-	if(!migrate_freq || !threshold) //|| (threshold < migrate_freq)) {	
+	/*if(!migrate_freq || !threshold) //|| (threshold < migrate_freq)) {	
 		return;
 
 	if(attempts <  migrate_freq) {
 		attempts++;
 		return;
-	}
+	}*/
 
 #ifdef _ENABLE_HETERO_THREAD
 	//spin_lock(&kthread_lock);
