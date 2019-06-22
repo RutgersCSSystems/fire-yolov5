@@ -41,8 +41,8 @@ RUNAPP() {
 	#Run application
 	cd $NVMBASE
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
-	$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
+        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 	sudo dmesg -c &>> $OUTPUTDIR/$OUTPUT
 }	
 
@@ -52,6 +52,15 @@ mkdir $OUTPUTDIR
 #SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+mkdir $OUTPUTDIR/naive-os-fastmem
+OUTPUT="naive-os-fastmem/$APP"
+SETUP
+make CFLAGS=""
+SETUPEXTRAM
+RUNAPP
+$SCRIPTS/rocksdb_extract_result.sh
+$SCRIPTS/clear_cache.sh
+exit
 
 
 mkdir $OUTPUTDIR/slowmem-migration-only
@@ -74,14 +83,6 @@ $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
 
 
-mkdir $OUTPUTDIR/naive-os-fastmem
-OUTPUT="naive-os-fastmem/$APP"
-SETUP
-make CFLAGS=""
-SETUPEXTRAM
-RUNAPP
-$SCRIPTS/rocksdb_extract_result.sh
-$SCRIPTS/clear_cache.sh
 
 
 mkdir $OUTPUTDIR/optimal-os-fastmem
