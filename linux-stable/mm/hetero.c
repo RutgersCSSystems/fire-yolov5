@@ -125,7 +125,6 @@ int hetero_usrpg_cnt=0;
 int hetero_kernpg_cnt=0;
 char procname[TASK_COMM_LEN];
 long migrate_time=0;
-unsigned int attempts=0;
 
 unsigned long g_cachehits=0;
 unsigned long g_cachemiss=0;
@@ -134,7 +133,6 @@ unsigned long g_buffmiss=0;
 unsigned long g_migrated=0;
 unsigned long g_cachedel=0;
 unsigned long g_buffdel=0;
-unsigned long g_lastcheck=0;
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -774,6 +772,8 @@ void
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
 	int threshold=0;
+	unsigned long *target=0;
+	unsigned long *cachemiss=0;
 
 	if(disabl_hetero_migrate) {
 		return;
@@ -782,24 +782,18 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
 		return;
 
-	/*Calculate the number of misses and hits*/
-	//threshold = current->active_mm->pgcache_miss_cnt + current->active_mm->pgbuff_miss_cnt;
-	if(!g_cachemiss ||  (g_cachemiss % migrate_freq != 0) || (g_cachemiss == g_lastcheck)) {
+	if(!g_cachemiss) {
 		return;
-	}else {
-		//hetero_force_dbg("%s:%d pgcache_miss_cnt %lu \n", __func__, __LINE__,
-		//	 g_cachemiss);
-		g_lastcheck =  g_cachemiss;
 	}
 
-	/*Controls how frequently we should enable migration thread*/
-	/*if(!migrate_freq || !threshold) //|| (threshold < migrate_freq)) {	
-		return;
+	cachemiss = &current->active_mm->pgcache_miss_cnt;
+	target = &current->active_mm->migrate_attempt;
 
-	if(attempts <  migrate_freq) {
-		attempts++;
+	if(*cachemiss <  *target) {
 		return;
-	}*/
+	}else {
+		*target = *target + migrate_freq;
+	}
 
 #ifdef _ENABLE_HETERO_THREAD
 	//spin_lock(&kthread_lock);
@@ -819,8 +813,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
-	/*Reset attempts*/
-	attempts = 0;
         return;
 }
 EXPORT_SYMBOL(try_hetero_migration);
