@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 # Simple thermal throttling script for Intel Xeon (Nehalem-based) 
 # Authors Sudarsun Kannan (sudarsun@gatech,edu), Vishal Gupta
 
@@ -34,9 +34,10 @@ apply='0x2'
 
 RUNSTREAM() {
   #Compile stream
-  cd stream && make && cd ..
+  cd $APPBENCH/stream && make clean && make
   numactl --membind=0 stream/stream_c.exe &> throttle.out
   numactl --membind=1 stream/stream_c.exe &>> throttle.out
+  cd $NVMBASE
 }
 
 #Throttle Values. Modify values specific to your platforms using 
@@ -99,7 +100,7 @@ INSTALL_THROTTLE_QUARTZ() {
     sudo apt-get install libconfig-dev libmpich-dev uthash-dev
     cd $SHARED_LIBS
     git clone https://github.com/SudarsunKannan/quartz
-    cd $APPBENCH && ./install_quartz.sh
+    $SCRIPTS/install_quartz.sh
 }
 
 
@@ -124,8 +125,6 @@ PERFORM_THROTTLE_QUARTZ() {
          cp /tmp/mc_pci_bus $APPBENCH/
      fi
 }
-
-cd $APPBENCH
 
 RUNSTREAM
 echo " "

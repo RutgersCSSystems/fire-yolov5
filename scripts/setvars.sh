@@ -13,7 +13,7 @@ export QEMU_IMG=$NVMBASE
 #export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
 export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
-export QEMUMEM="62G"
+export QEMUMEM="40G"
 #export QEMUMEM="24G"
 export KERNEL=$NVMBASE/KERNEL
 

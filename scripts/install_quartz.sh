@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 BASE=$CODEBASE
 cd $SHARED_LIBS
 sudo apt-get install -y cmake libconfig-dev uthash-dev libmpich-dev
@@ -7,6 +7,7 @@ git clone https://github.com/SudarsunKannan/quartz
 cd $SHARED_LIBS/quartz
 mkdir build
 cd build
+rm CMakeCache.txt
 cmake ..
 make clean all
 sudo $SHARED_LIBS/quartz/scripts/setupdev.sh unload

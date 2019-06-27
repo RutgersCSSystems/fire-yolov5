@@ -569,7 +569,7 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		//page->hetero_create_time = (struct timeval){0};
 		//page->hetero_del_time = (struct timeval){0};
 		//do_gettimeofday(&page->hetero_create_time);
-	
+		//printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
 	} else if(!correct_node && !delpage) {
 		current->active_mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
@@ -774,6 +774,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	int threshold=0;
 	unsigned long *target=0;
 	unsigned long *cachemiss=0;
+        unsigned long *buffmiss=0;
 
 	if(disabl_hetero_migrate) {
 		return;
@@ -787,9 +788,11 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 	cachemiss = &current->active_mm->pgcache_miss_cnt;
+        buffmiss = &current->active_mm->pgbuff_miss_cnt;
+
 	target = &current->active_mm->migrate_attempt;
 
-	if(*cachemiss <  *target) {
+	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
 	}else {
 		*target = *target + migrate_freq;
@@ -798,8 +801,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 #ifdef _ENABLE_HETERO_THREAD
 	//spin_lock(&kthread_lock);
 	//if(thrd_idx >= MAXTHREADS) {
-		//printk(KERN_ALERT "%s:%d STARTING THREAD IDX %d\n",
-		//	__func__,__LINE__, thrd_idx);
 		//spin_unlock(&kthread_lock);
 		//return;
 	//}
@@ -892,7 +893,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_ALLOCATE:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
-	    //print_hetero_stats(current);
+	    print_hetero_stats(current);
 	    print_global_stats();	
 	    break;
 	case HETERO_PGCACHE:

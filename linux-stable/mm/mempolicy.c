@@ -1100,6 +1100,8 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
                         continue;
                 }
 
+		pages_checked++;
+
 		/*
 		 * vm_normal_page() filters out zero pages, but there might
 		 * still be PageReserved pages to skip, perhaps in a VDSO.
@@ -1108,34 +1110,26 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 			continue;
 		}
 
-		pages_checked++;
-
 		if (!queue_pages_required(page, qp))
 			continue;
 
 
                 if (is_hetero_pgcache_set()) {
 
-                	if (!PageAnon(page)) {
-				//dentry = d_find_any_alias(mapping->host);
-				//if(dentry)
-				//hetero_force_dbg("%s:%d \n",__func__,__LINE__);
-				page->hetero = HETERO_PG_FLAG;
+                	if (!PageAnon(page) || (page->hetero == HETERO_PG_FLAG)) {
+				//page->hetero = HETERO_PG_FLAG;
 				pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
                         }
                 }
 #endif
-		//if(is_hetero_pgcache_set())
-		//	hetero_force_dbg("%s:%d page_list_count %d \n",
-		//	__func__,__LINE__, page_list_count(qp->pagelist));
 	}
 gotohell:
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
-#if 0 //def CONFIG_HETERO_ENABLE
+#ifdef CONFIG_HETERO_ENABLE
 	if((is_hetero_pgcache_set() && pages_added)) {
 		g_pages_added = page_list_count(qp->pagelist);
-		hetero_force_dbg("%s Proc %s PID %d pages_checked %d pages_added %d "
+		hetero_dbg("%s Proc %s PID %d pages_checked %d pages_added %d "
 		"pagelist_count %d", __func__, current->comm, current->pid, 
 		pages_checked, pages_added, page_list_count(qp->pagelist)); 
 		//print_hetero_stats(current);

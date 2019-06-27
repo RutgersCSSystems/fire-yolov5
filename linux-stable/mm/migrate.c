@@ -3914,27 +3914,18 @@ int migrate_pages_hetero_list(struct list_head *from, new_page_t get_new_page,
 	hetero_dbg("%s:%d Proc %s PID %d pagecount %d \n", 
 	__func__,__LINE__, current->comm, current->pid, page_list_count(from));
 
-
-
 	for(pass = 0; pass < 2 && retry; pass++) {
 		retry = 0;
 
 		list_for_each_entry_safe(page, page2, from, lru) {
-
 retry:
 		cond_resched();
-		/* Migrate only page cache pages*/
-		//if (PageAnon(page))
-		//	continue;
-
 #if 1 //def _DISABLE_HETERO_CHECKING
 		if (page_to_nid(page) == get_slowmem_node()) {
 			//nr_failed++;
 			continue;
 		}
 #endif
-
-
 		/* Not a Hetero page */
 #ifdef _DISABLE_HETERO_CHECKING  //_USE_HETERO_PG_FLAG
 		if ((page->hetero != HETERO_PG_FLAG)) {
