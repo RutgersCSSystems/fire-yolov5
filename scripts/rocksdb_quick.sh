@@ -3,6 +3,8 @@ cd $NVMBASE
 #APP="db_bench.out"
 #APP="fio.out"
 APP="filebench.out"
+APP="redis.out"
+
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -23,7 +25,7 @@ SETUPEXTRAM() {
 	rm -rf  /mnt/ext4ramdisk/
 	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-	let DISKSZ=$NUMAFREE-5192
+	let DISKSZ=$NUMAFREE-3192
 	echo $DISKSZ
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
@@ -40,20 +42,28 @@ COMPILE_SHAREDLIB() {
 RUNAPP() {
 	#Run application
 	cd $NVMBASE
+
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-	sudo dmesg -c &>> $OUTPUTDIR/$OUTPUT
+
+	$APPBENCH/redis*/src/run.sh &> $OUTPUT
+	sudo dmesg -c &>> $OUTPUT
 }	
 
 
 OUTPUTDIR=$APPBENCH/output
 mkdir $OUTPUTDIR
+BASE=$OUTPUTDIR
+
 #SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+
+OUTPUTDIR=$BASE
 mkdir $OUTPUTDIR/naive-os-fastmem
-OUTPUT="naive-os-fastmem/$APP"
+export OUTPUTDIR=$OUTPUTDIR/naive-os-fastmem
+OUTPUT="$OUTPUTDIR/$APP"
 SETUP
 make CFLAGS=""
 SETUPEXTRAM
@@ -63,14 +73,20 @@ $SCRIPTS/clear_cache.sh
 exit
 
 
+OUTPUTDIR=$BASE
 mkdir $OUTPUTDIR/slowmem-migration-only
-OUTPUT="slowmem-migration-only/$APP"
+export OUTPUTDIR=$OUTPUTDIR/slowmem-migration-only
+OUTPUT="$OUTPUTDIR/$APP"
 SETUP
 make CFLAGS="-D_MIGRATE"
 SETUPEXTRAM
 RUNAPP
+$SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
 exit
+
+
+
 
 
 mkdir $OUTPUTDIR/slowmem-obj-affinity
