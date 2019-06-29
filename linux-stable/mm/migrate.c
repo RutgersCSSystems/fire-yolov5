@@ -4016,9 +4016,9 @@ out:
 
 
 	if(nr_succeeded || nr_failed)
-		hetero_dbg("%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
+		hetero_force_dbg("%s:%d hetero_page_migrate_cnt pages migrated %u nr_failed %u " 
 			    "retry %d  pagecount %d \n", __func__,__LINE__,
-			    hetero_page_migrate_cnt, nr_failed, retry,  pagecount); 
+			    mm->pages_migrated, nr_failed, retry,  pagecount); 
 
 	if (nr_succeeded)
 		count_vm_events(PGMIGRATE_SUCCESS, nr_succeeded);
