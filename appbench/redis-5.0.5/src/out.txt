@@ -1,0 +1,254 @@
++ REDISROOT=/users/skannan/ssd/NVM/appbench/redis-5.0.5
++ REDISCONF=/users/skannan/ssd/NVM/appbench/redis-5.0.5/config
++ APPBASE=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ APP=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/pagerank
++ PARAM=
++ OUTPUT=
++ READS=2000000
++ KEYS=4000000
++ CLIPREFIX='numactl --preferred=0'
++ PHYSCPU=--physcpubind
++ let MAXINST=2
++ let STARTPORT=6378
++ let SERVERCPU=20
++ let DATASIZE=2048
++ let physcpu=0
++ let physcpu2=1
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ CLEAN
++ (( b=1 ))
++ (( b<=2 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=2 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=2 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sleep 5
++ PREPARE
++ (( inst=1 ))
++ (( inst<=2 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server1 redis-benchmark1
++ cp redis-server redis-server1
++ cp redis-benchmark redis-benchmark1
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=2 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server2 redis-benchmark2
++ cp redis-server redis-server2
++ cp redis-benchmark redis-benchmark2
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=2 ))
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ cd /users/skannan/ssd/NVM/appbench/shared_data
++ RUN
++ let port=6378
++ let physcpu=20
++ let physcpu2=20+1
++ (( r=1 ))
++ (( r<=2 ))
++ let port=6378+1
++ let physcpu=20+2
++ let physcpu2=21+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=20,21 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6378.conf
+initiating tracing...
+initiating tracing...
+31326:C 27 Jun 2019 12:34:19.942 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+31326:C 27 Jun 2019 12:34:19.942 # Redis version=5.0.5, bits=64, commit=2a7e05ee, modified=1, pid=31326, just started
+31326:C 27 Jun 2019 12:34:19.942 # Configuration loaded
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (2a7e05ee/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6378
+ |    `-._   `._    /     _.-'    |     PID: 31326
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+31326:M 27 Jun 2019 12:34:19.945 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+31326:M 27 Jun 2019 12:34:19.945 # Server initialized
+31326:M 27 Jun 2019 12:34:19.945 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+31326:M 27 Jun 2019 12:34:19.945 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+31326:M 27 Jun 2019 12:34:19.945 * Reading RDB preamble from AOF file...
++ (( r++ ))
++ (( r<=2 ))
++ let port=6379+1
++ let physcpu=22+2
++ let physcpu2=23+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=22,23 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6379.conf
+initiating tracing...
+initiating tracing...
+31331:C 27 Jun 2019 12:34:20.891 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+31331:C 27 Jun 2019 12:34:20.891 # Redis version=5.0.5, bits=64, commit=2a7e05ee, modified=1, pid=31331, just started
+31331:C 27 Jun 2019 12:34:20.891 # Configuration loaded
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (2a7e05ee/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 31331
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+31331:M 27 Jun 2019 12:34:20.892 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+31331:M 27 Jun 2019 12:34:20.892 # Server initialized
+31331:M 27 Jun 2019 12:34:20.892 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+31331:M 27 Jun 2019 12:34:20.892 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+31331:M 27 Jun 2019 12:34:20.892 * Reading RDB preamble from AOF file...
++ (( r++ ))
++ (( r<=2 ))
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ sleep 10
+31326:M 27 Jun 2019 12:34:31.306 * Reading the remaining AOF tail...
++ RUNCLIENT
++ let port=6378
++ let physcpu=2
++ let physcpu2=3
++ PARAMS=' -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d 2048'
++ (( c=1 ))
++ (( c<2 ))
++ let port=6378+1
++ let physcpu=2+1
++ let physcpu2=3+2
++ (( c++ ))
++ (( c<2 ))
++ numactl --preferred=0 --physcpubind=3 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark2 -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 2048 -p 6379
++ numactl --preferred=0 --physcpubind=2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark1 -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 2048 -p 6378
+31331:M 27 Jun 2019 12:34:33.375 * Reading the remaining AOF tail...
+31326:M 27 Jun 2019 12:34:46.223 * DB loaded from append only file: 26.278 seconds
+31326:M 27 Jun 2019 12:34:46.223 * Ready to accept connections
+31331:M 27 Jun 2019 12:34:46.829 * DB loaded from append only file: 25.936 seconds
+31331:M 27 Jun 2019 12:34:46.829 * Ready to accept connections
+31326:M 27 Jun 2019 12:35:20.035 * 10000 changes in 60 seconds. Saving...
+31326:M 27 Jun 2019 12:35:20.101 * Background saving started by pid 31344
+31331:M 27 Jun 2019 12:35:21.087 * 10000 changes in 60 seconds. Saving...
+31331:M 27 Jun 2019 12:35:21.155 * Background saving started by pid 31345
+31331:M 27 Jun 2019 12:35:44.345 # Background saving terminated by signal 9
+31331:M 27 Jun 2019 12:35:44.610 * 10000 changes in 60 seconds. Saving...
+31331:M 27 Jun 2019 12:35:44.701 * Background saving started by pid 31348
+31344:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
+31344:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
+31326:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
+31326:M 27 Jun 2019 12:37:02.542 # User requested shutdown...
+31326:M 27 Jun 2019 12:37:02.542 # There is a child saving an .rdb. Killing it!
+31326:M 27 Jun 2019 12:37:02.543 * Calling fsync() on the AOF file.
+31326:M 27 Jun 2019 12:37:02.545 * Saving the final RDB snapshot before exiting.
+31348:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
+31348:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
+./run.sh: line 73: 31331 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
++ sleep 5
+./run.sh: line 73: 31326 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
++ ps aux
++ grep redis-server
++ awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+31494
+31495
+./run.sh: line 73: 31493 Done                    ps aux
+     31494                       | grep redis-server
+     31495 Killed                  | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
++ CLEAN
++ (( b=1 ))
++ (( b<=2 ))
++ rm -rf temp-31326.rdb
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=2 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ sudo killall redis-server2
+31348:signal-handler (1561660627) Received SIGTERM scheduling shutdown...
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=2 ))
++ sudo killall redis-benchmark
+31348:signal-handler (1561660627) Received SIGTERM scheduling shutdown...
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ CLEAN
++ (( b=1 ))
++ (( b<=2 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=2 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ sudo killall redis-server2
+31348:signal-handler (1561660628) Received SIGTERM scheduling shutdown...
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=2 ))
++ sudo killall redis-benchmark
+31348:signal-handler (1561660628) Received SIGTERM scheduling shutdown...
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ set +x
+31348:signal-handler (1561660630) Received SIGTERM scheduling shutdown...
+31348:signal-handler (1561660630) Received SIGTERM scheduling shutdown...
+31348:signal-handler (1561660650) Received SIGTERM scheduling shutdown...
