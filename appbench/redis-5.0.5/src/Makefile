@@ -38,7 +38,7 @@ MALLOC=libc
 ifneq ($(uname_M),armv6l)
 ifneq ($(uname_M),armv7l)
 ifeq ($(uname_S),Linux)
-	MALLOC=jemalloc
+	#MALLOC=jemalloc
 endif
 endif
 endif

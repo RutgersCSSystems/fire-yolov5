@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 cd $NVMBASE
 #APP="db_bench.out"
 #APP="fio.out"
@@ -15,8 +17,8 @@ SETUP(){
 SETENV() {
 	source scripts/setvars.sh
 	$SCRIPTS/install_quartz.sh
-	$SCRIPTS/throttle.sh
-	$SCRIPTS/throttle.sh
+	#$SCRIPTS/throttle.sh
+	#$SCRIPTS/throttle.sh
 }
 
 SETUPEXTRAM() {
@@ -47,29 +49,36 @@ RUNAPP() {
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 
-	$APPBENCH/redis*/src/run.sh &> $OUTPUT
+	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 	sudo dmesg -c &>> $OUTPUT
-}	
-
+}
 
 OUTPUTDIR=$APPBENCH/output
 mkdir $OUTPUTDIR
-BASE=$OUTPUTDIR
+
+SET_RUN_APP() {	
+	BASE=$OUTPUTDIR
+	mkdir $OUTPUTDIR/$1
+	export OUTPUTDIR=$OUTPUTDIR/$1
+	OUTPUT="$OUTPUTDIR/$APP"
+
+        $NVMBASE/scripts/clear_cache.sh
+        cd $SHARED_LIBS/construct
+        make clean
+	make CFLAGS="$2"
+
+	SETUPEXTRAM
+	RUNAPP
+	$SCRIPTS/rocksdb_extract_result.sh
+	$SCRIPTS/clear_cache.sh
+	export OUTPUTDIR=$BASE
+	set +x
+}
 
 #SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
-
-OUTPUTDIR=$BASE
-mkdir $OUTPUTDIR/naive-os-fastmem
-export OUTPUTDIR=$OUTPUTDIR/naive-os-fastmem
-OUTPUT="$OUTPUTDIR/$APP"
-SETUP
-make CFLAGS=""
-SETUPEXTRAM
-RUNAPP
-$SCRIPTS/rocksdb_extract_result.sh
-$SCRIPTS/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
 exit
 
 
@@ -89,14 +98,20 @@ exit
 
 
 
-mkdir $OUTPUTDIR/slowmem-obj-affinity
-OUTPUT="slowmem-obj-affinity/$APP"
+
+OUTPUTDIR=$BASE
+mkdir $OUTPUTDIR/naive-os-fastmem
+export OUTPUTDIR=$OUTPUTDIR/naive-os-fastmem
+OUTPUT="$OUTPUTDIR/$APP"
 SETUP
-make CFLAGS="-D_MIGRATE -D_OBJAFF"
+make CFLAGS=""
 SETUPEXTRAM
 RUNAPP
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
+exit
+
+
 
 
 
