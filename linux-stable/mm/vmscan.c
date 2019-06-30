@@ -1615,8 +1615,6 @@ int isolate_lru_page(struct page *page)
 
 	}
 	return ret;
-exit_isolate:
-	return ret;
 }
 
 
@@ -1735,9 +1733,6 @@ int hetero_isolate_lru_page(struct page *page)
 		//spin_unlock_irq(zone_lru_lock(zone));
 	}
 #endif
-	return ret;
-
-exit_isolate:
 	return ret;
 }
 #endif

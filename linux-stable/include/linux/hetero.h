@@ -51,7 +51,11 @@ extern int hetero_dbgmask;
 #define hetero_info(s, args ...)          pr_info(s, ## args)
 
 struct vm_area_struct;
+
 int check_hetero_proc (struct task_struct *task);
+int check_listcnt_threshold(unsigned int listcount);
+extern int page_list_count(struct list_head *pagelist);
+
 int is_hetero_pgcache_set(void);
 int is_hetero_buffer_set(void);
 int is_hetero_journ_set(void);
@@ -59,12 +63,13 @@ int is_hetero_radix_set(void);
 int is_hetero_kernel_set(void);
 int is_hetero_pgtbl_set(void);
 int is_hetero_exit(struct task_struct *task);
-int get_fastmem_node(void);
-int get_slowmem_node(void);
 int is_hetero_obj(void *obj);
 int is_hetero_cacheobj(void *obj);
 int is_hetero_vma(struct vm_area_struct *);
 int is_hetero_page(struct page *page, int nodeid);
+
+int get_fastmem_node(void);
+int get_slowmem_node(void);
 void set_curr_hetero_obj(void *obj);
 void set_fsmap_hetero_obj(void *mapobj);
 void set_hetero_obj_page(struct page *page, void *obj);
@@ -75,25 +80,23 @@ void set_sock_hetero_obj(void *socket, void *inode);
 int hetero_init_rbtree(struct task_struct *task);
 void set_sock_hetero_obj_netdev(void *socket, void *inode);
 
-extern int page_list_count(struct list_head *pagelist);
 
-int
+int check_hetero_page(struct mm_struct *mm, struct page *page);
+#ifdef CONFIG_HETERO_STATS
+void update_hetero_pgcache(int node, struct page *, int delpage);
+void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
+#endif
+void try_hetero_migration(void *map, gfp_t gfp_mask);
+
+/* rbtree */
+int 
 hetero_insert_cpage_rbtree(struct task_struct *task, struct page *page);
 int 
 hetero_insert_kpage_rbtree(struct task_struct *task, struct page *page);
-
-int 
-check_hetero_page(struct mm_struct *mm, struct page *page);
-
-//hetero_insert_pg_rbtree
-//
-struct page *hetero_search_pg_rbtree(struct task_struct *task, 
-				     struct page *page);
-
-/* Erase pages of rbtree */
 void hetero_erase_cpage_rbtree(struct task_struct *task, struct page *page);
 void hetero_erase_kpage_rbtree(struct task_struct *task, struct page *page);
-
+struct page *hetero_search_pg_rbtree(struct task_struct *task, 
+				     struct page *page);
 /* Erase full rbtree */
 void hetero_erase_cache_rbree(struct task_struct *task);
 void hetero_erase_kbuff_rbree(struct task_struct *task);
@@ -104,15 +107,6 @@ void
 hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
 
-#ifdef CONFIG_HETERO_STATS
-void update_hetero_pgcache(int node, struct page *, int delpage);
-void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
-#endif
-
-//#ifdef CONFIG_HETERO_OBJAFF
-void
-try_hetero_migration(void *map, gfp_t gfp_mask);
-//#endif
 
 #endif /* _LINUX_NUMA_H */
 

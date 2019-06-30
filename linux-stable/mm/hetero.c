@@ -89,6 +89,7 @@ Move this to header file later.
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
+#define HETERO_MIGRATE_LISTCNT 20
 //#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
@@ -116,9 +117,14 @@ int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
 int hetero_fastmem_node=0;
-int migrate_freq=0;
 int enbl_hetero_objaff=0;
 int disabl_hetero_migrate=0;
+
+//Frequency of migration
+int g_migrate_freq=0;
+//Migration list threshold
+int min_migrate_cnt=0;
+
 
 int hetero_pid=0;
 int hetero_usrpg_cnt=0;
@@ -222,6 +228,15 @@ long timediff (struct timeval *start, struct timeval *end) {
 			(start->tv_sec*1000000 + start->tv_usec);
 	return diff;
 }
+
+int check_listcnt_threshold (unsigned int count){
+
+	if(min_migrate_cnt > count) 
+		return 0;
+	else
+		return 1;
+}
+EXPORT_SYMBOL(check_listcnt_threshold);
 
 
 int check_hetero_proc (struct task_struct *task) 
@@ -795,7 +810,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
 	}else {
-		*target = *target + migrate_freq;
+		*target = *target + g_migrate_freq;
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
@@ -920,13 +935,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag to set FASTMEM node to %d \n", val);
 	    hetero_fastmem_node = val;
 	    break;
-	case HETERO_DISABLE_MIGRATE:
-	     printk("flag to disable migration %d \n", val);
-	     disabl_hetero_migrate = 1;
-	     break;	
 	case HETERO_MIGRATE_FREQ:
-	     migrate_freq = val;
-	     printk("flag to set MIGRATION FREQ to %d \n", migrate_freq);
+	     g_migrate_freq = val;
+	     printk("flag to set MIGRATION FREQ to %d \n", g_migrate_freq);
 	     break;	
 	case HETERO_OBJ_AFF:
 #ifdef CONFIG_HETERO_OBJAFF
@@ -934,6 +945,14 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
 #endif 
 	    break;	
+	case HETERO_DISABLE_MIGRATE:
+	     printk("flag to disable migration %d \n", val);
+	     disabl_hetero_migrate = 1;
+	     break;	
+	case HETERO_MIGRATE_LISTCNT:
+	     printk("flag to MIGRATE_LISTCNT %d \n", val);
+	     min_migrate_cnt = val;
+	     break;	
 
 	default:
 #ifdef CONFIG_HETERO_DEBUG

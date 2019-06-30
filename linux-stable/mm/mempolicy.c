@@ -415,6 +415,9 @@ struct queue_pages {
 	unsigned long flags;
 	nodemask_t *nmask;
 	struct vm_area_struct *prev;
+#ifdef CONFIG_HETERO_ENABLE
+	unsigned int *listcnt;
+#endif
 };
 
 /*
@@ -943,11 +946,6 @@ static int hetero_migrate_page_add(struct page *page, struct list_head *pagelist
 	struct page *head = compound_head(page);
 	int pagecount = 0;
 
-	//if ((page->hetero ==  HETERO_PG_FLAG)) {
-		//SetPageLRU(page);
-		//printk(KERN_ALERT "%s:%d \n", __func__, __LINE__);
-	//}
-
 	/*
 	 * Avoid migrating a page that is shared with others.
 	 */
@@ -965,12 +963,6 @@ static int hetero_migrate_page_add(struct page *page, struct list_head *pagelist
 				__func__, __LINE__);
 		}*/	
 	}
-	/*if(pagecount) {
-		pagecount = page_list_count(pagelist);
-		hetero_force_dbg("%s:%d Hetero Page added %d\n", 
-        		__func__, __LINE__, pagecount);
-	}*/
-
 	return pagecount;
 }
 
@@ -1048,8 +1040,6 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
  * Scan through pages checking if pages follow certain conditions,
  * and move them to the pagelist if they do.
  */
-int g_pages_added = 0;
-
 static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 			unsigned long end, struct mm_walk *walk)
 {
@@ -1063,14 +1053,12 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 #ifdef CONFIG_HETERO_ENABLE
 	struct address_space *mapping = NULL;
 	int pages_checked = 0;
-	int pages_checked_temp = 0;
-	int pages_added = 0; 
-	g_pages_added = 0;
+	unsigned int *pages_added = qp->listcnt; 
 #endif
-	if(!is_hetero_vma(vma)) {
-		printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
+	/*if(!is_hetero_vma(vma)) {
+		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__, __LINE__);
 		return 0;
-	}
+	}*/
 
 	ptl = pmd_trans_huge_lock(pmd, vma);
 	if (ptl) {
@@ -1115,10 +1103,9 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 
 
                 if (is_hetero_pgcache_set()) {
-
                 	if (!PageAnon(page) || (page->hetero == HETERO_PG_FLAG)) {
 				//page->hetero = HETERO_PG_FLAG;
-				pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
+				*pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
                         }
                 }
 #endif
@@ -1126,8 +1113,8 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 gotohell:
 	pte_unmap_unlock(pte - 1, ptl);
 	cond_resched();
-#ifdef CONFIG_HETERO_ENABLE
-	if((is_hetero_pgcache_set() && pages_added)) {
+#if 0//def CONFIG_HETERO_ENABLE
+	if((is_hetero_pgcache_set() && *pages_added)) {
 		g_pages_added = page_list_count(qp->pagelist);
 		hetero_dbg("%s Proc %s PID %d pages_checked %d pages_added %d "
 		"pagelist_count %d", __func__, current->comm, current->pid, 
@@ -1150,13 +1137,14 @@ gotohell:
 static int
 queue_pages_range_hetero(struct mm_struct *mm, unsigned long start, unsigned long end,
 		nodemask_t *nodes, unsigned long flags,
-		struct list_head *pagelist)
+		struct list_head *pagelist, unsigned int *cnt)
 {
 	struct queue_pages qp = {
 		.pagelist = pagelist,
 		.flags = flags,
 		.nmask = nodes,
 		.prev = NULL,
+		.listcnt = cnt,
 	};
 	struct mm_walk queue_pages_walk = {
 		.hugetlb_entry = queue_pages_hugetlb,
@@ -1179,7 +1167,7 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	nodemask_t nmask;
 	LIST_HEAD(pagelist);
 	int err = 0;
-	int pagecount = 0;
+	unsigned int pagecount = 0;
 
 	nodes_clear(nmask);
 	node_set(source, nmask);
@@ -1192,17 +1180,16 @@ int migrate_to_node_hetero(struct mm_struct *mm, int source, int dest,
 	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
 
 	queue_pages_range_hetero(mm, mm->mmap->vm_start, mm->task_size, &nmask,
-			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
+			flags | MPOL_MF_DISCONTIG_OK, &pagelist, &pagecount);
 
-	/*if((g_pages_added && is_hetero_pgcache_set())) {
-		pagecount = page_list_count(&pagelist);
-		hetero_force_dbg("%s:%d pagecount %d count pages added %d\n",  
-			__func__,__LINE__, pagecount, g_pages_added);
+	/*if((pagecount && is_hetero_pgcache_set())) {
+		hetero_force_dbg("%s:%d pagecount %d listcount %d\n", 
+			__func__,__LINE__, pagecount, page_list_count(&pagelist));
 	}*/
 
 	if (!list_empty(&pagelist)) {
 		err = migrate_pages_hetero_list(&pagelist, alloc_new_node_page, NULL, dest,
-					MIGRATE_ASYNC, MR_SYSCALL, mm);
+					MIGRATE_ASYNC, MR_SYSCALL, mm, pagecount);
 		if (err)
 			putback_movable_pages(&pagelist);
 	}
