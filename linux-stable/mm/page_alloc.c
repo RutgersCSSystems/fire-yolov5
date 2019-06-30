@@ -4702,9 +4702,9 @@ default_alloc:
 
 	if(page && check_fastmem_node(page)) {
 		page->hetero = HETERO_PG_FLAG;
-	}else {
+	}/*else {
 		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
-	}
+	}*/
 
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
