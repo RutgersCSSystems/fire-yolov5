@@ -2,11 +2,7 @@
 set -x
 
 cd $NVMBASE
-#APP="db_bench.out"
-#APP="fio.out"
-APP="filebench.out"
-APP="redis.out"
-
+APP=""
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -48,8 +44,9 @@ RUNAPP() {
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
+	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
-	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	sudo dmesg -c &>> $OUTPUT
 }
 
@@ -75,11 +72,23 @@ SET_RUN_APP() {
 	set +x
 }
 
+#APP="db_bench.out"
+#APP="fio.out"
+#APP="filebench.out"
+#APP="redis.out"
+APP=fxmark
+
+
 #SETENV
 #Don't do any migration
 export APPPREFIX="numactl  --preferred=0"
+SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
+exit
+
+export APPPREFIX="numactl  --preferred=0"
 SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
 exit
+
 
 
 OUTPUTDIR=$BASE

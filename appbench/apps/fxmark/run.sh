@@ -9,6 +9,12 @@ TYPE=" --type DRBL"
 PARAM="$TYPE --ncore 8 --nbg 1 --duration 30 --directio 0 --root=$DATA"
 
 OUTPUT=$2
+
+if [ -z "$DATA" ]
+then
+      DATA=$PWD/data
+fi
+
 mkdir $DATA
 
 FlushDisk()
