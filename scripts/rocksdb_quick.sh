@@ -1,10 +1,10 @@
 #!/bin/bash
-set -x
+#set -x
 
 cd $NVMBASE
 #APP="db_bench.out"
 #APP="fio.out"
-APP="filebench.out"
+#APP="filebench.out"
 APP="redis.out"
 
 
@@ -49,7 +49,8 @@ RUNAPP() {
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 
-	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
 	sudo dmesg -c &>> $OUTPUT
 }
 
@@ -75,44 +76,18 @@ SET_RUN_APP() {
 	set +x
 }
 
-#SETENV
-#Don't do any migration
-export APPPREFIX="numactl  --preferred=0"
+SETENV
+
+export APPPREFIX="numactl --preferred=0"
+SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
+
+export APPPREFIX="numactl --preferred=0"
 SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
 exit
 
-
-OUTPUTDIR=$BASE
-mkdir $OUTPUTDIR/slowmem-migration-only
-export OUTPUTDIR=$OUTPUTDIR/slowmem-migration-only
-OUTPUT="$OUTPUTDIR/$APP"
-SETUP
-make CFLAGS="-D_MIGRATE"
-SETUPEXTRAM
-RUNAPP
-$SCRIPTS/rocksdb_extract_result.sh
-$SCRIPTS/clear_cache.sh
+export APPPREFIX="numactl --preferred=0"
+SET_RUN_APP "naive-os-fastmem" "-D_DISABLE_MIGRATE"
 exit
-
-
-
-
-
-
-OUTPUTDIR=$BASE
-mkdir $OUTPUTDIR/naive-os-fastmem
-export OUTPUTDIR=$OUTPUTDIR/naive-os-fastmem
-OUTPUT="$OUTPUTDIR/$APP"
-SETUP
-make CFLAGS=""
-SETUPEXTRAM
-RUNAPP
-$SCRIPTS/rocksdb_extract_result.sh
-$SCRIPTS/clear_cache.sh
-exit
-
-
-
 
 
 

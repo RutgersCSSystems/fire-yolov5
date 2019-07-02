@@ -12,7 +12,7 @@ CLIPREFIX="numactl --membind=0"
 PHYSCPU="--physcpubind"
 
 cd $APPBASE
-let MAXINST=2
+let MAXINST=4
 let STARTPORT=6378
 let SERVERCPU=20
 
