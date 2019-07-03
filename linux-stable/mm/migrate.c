@@ -4009,7 +4009,7 @@ retry:
 				break;
 			}
 		}
-		hetero_dbg("nr_succeeded pages migrated %u nr_failed %u " 
+		hetero_force_dbg("nr_succeeded pages migrated %u nr_failed %u " 
 			    "retry %d  pages_iterated %d\n", 
 			    nr_succeeded, nr_failed, retry,  pages_iterated);
 
