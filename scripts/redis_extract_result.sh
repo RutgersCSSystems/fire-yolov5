@@ -1,36 +1,44 @@
 #!/bin/bash
 TARGET=$OUTPUTDIR
-APP="rocksdb"
+APP="redis"
 
 EXTRACT_RESULT() {
 
 	i=0
 	j=0
+	k=6
 	files=""
 	file1=""
 	rm $APP".data"
-	rm "num.data"
+	rm "num*.data"
 
 	for dir in $TARGET/*
 	do
 		#dir=$OUTPUTDIR
 		echo $(basename $dir)
 		outfile=$(basename $dir)
-		APPFILE=rocksdb.out
+		APPFILE=redis.out
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			cat $dir/$APP* | grep -a "SET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-SET.data"
+			cat $dir/$APP* | grep -a "SET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'
 			((j++))
 			echo $j &> "num.data"
+
+			cat $dir/$APP* | grep -a "GET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-GET.data"
+			cat $dir/$APP* | grep -a "GET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'
+			((k++))
+			echo $k &> "num1.data"
 		fi
-	        #files="$file1 output$i"	
-		#file1=$files
 		((i++))
-		rm $NVMBASE/graphs/zplot/data/$APP"-"$outfile".data"
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/graphs/zplot/data/$APP-$outfile".data"
+		rm graphs/zplot/data/$APP-$outfile"-SET.data"
+		rm graphs/zplot/data/$APP-$outfile"-GET.data"
+		paste "num.data" $APP"-SET.data" &> graphs/zplot/data/$APP-$outfile"-SET.data"
+		paste "num1.data" $APP"-GET.data" &> graphs/zplot/data/$APP-$outfile"-GET.data"
+		echo graphs/zplot/data/$APP-$outfile"-GET.data"
 	done
 	#echo $files
-}
 
+}
 
 EXTRACT_INFO() {
 	dir=$1
@@ -76,9 +84,9 @@ EXTRACT_KERNSTAT(){
 EXTRACT_RESULT
 #cd $NVMBASE/graphs/zplot/
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
-#EXTRACT_KERNSTAT
+#EXTRACT_KERNSTTCT_RESULT
 
-
+set +x
 
 
 

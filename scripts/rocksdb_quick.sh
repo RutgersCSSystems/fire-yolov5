@@ -42,12 +42,12 @@ RUNAPP() {
 	cd $NVMBASE
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUTDIR/$OUTPUT
+        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
-	$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
-	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
+	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
+	$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
 	sudo dmesg -c &>> $OUTPUT
 }
 
@@ -65,7 +65,6 @@ SET_RUN_APP() {
         make clean
 	make CFLAGS="$2"
 
-	SETUPEXTRAM
 	RUNAPP
 	$SCRIPTS/rocksdb_extract_result.sh
 	$SCRIPTS/clear_cache.sh
@@ -73,38 +72,40 @@ SET_RUN_APP() {
 	set +x
 }
 
-#APP="db_bench.out"
+#APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-#APP="redis.out"
-APP=fxmark
+APP="redis.out"
+#APP=fxmark
 
 
 #SETENV
 #Don't do any migration
-export APPPREFIX="numactl  --preferred=0"
-SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
+export APPPREFIX="numactl --membind=0"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "optimal-os-fastmem" "-D_DISABLE_HETERO"
 exit
 
+
 export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
 exit
 
 export APPPREFIX="numactl --preferred=0"
 SET_RUN_APP "naive-os-fastmem" "-D_DISABLE_MIGRATE"
 exit
 
-mkdir $OUTPUTDIR/optimal-os-fastmem
-export APPPREFIX="numactl --membind=0"
-OUTPUT="optimal-os-fastmem/$APP"
-SETUP
-make CFLAGS="-D_DISABLE_HETERO"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-RUNAPP
-$SCRIPTS/rocksdb_extract_result.sh
-$SCRIPTS/clear_cache.sh
+
+
+
+
 
 
 mkdir $OUTPUTDIR/slowmem-only
