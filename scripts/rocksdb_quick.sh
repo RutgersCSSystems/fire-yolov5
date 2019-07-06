@@ -3,6 +3,8 @@
 
 cd $NVMBASE
 APP=""
+TYPE="SSD"
+#TYPE="NVM"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -27,6 +29,16 @@ SETUPEXTRAM() {
 	echo $DISKSZ
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
+
+	#Enable for Ramdisk
+	if [ "NVM" -eq "$TYPE" ]
+	then
+		sudo ln -s /mnt/ext4ramdisk $APPBENCH/shared_data
+	else
+		#Enable for SSD
+		echo "Running for SSD"
+		mkdir $APPBENCH/shared_data
+	fi
 }
 
 COMPILE_SHAREDLIB() {
@@ -42,12 +54,12 @@ RUNAPP() {
 	cd $NVMBASE
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
-	$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
+	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
 	sudo dmesg -c &>> $OUTPUT
 }
 
@@ -58,7 +70,14 @@ SET_RUN_APP() {
 	BASE=$OUTPUTDIR
 	mkdir $OUTPUTDIR/$1
 	export OUTPUTDIR=$OUTPUTDIR/$1
-	OUTPUT="$OUTPUTDIR/$APP"
+
+	if [ "NVM" -eq "$TYPE" ]
+	then
+		OUTPUT="$OUTPUTDIR/$APP"
+	else
+		echo "Running for SSD"
+		OUTPUT="$OUTPUTDIR/$APP-SSD"
+	fi
 
         $NVMBASE/scripts/clear_cache.sh
         cd $SHARED_LIBS/construct
@@ -72,23 +91,15 @@ SET_RUN_APP() {
 	set +x
 }
 
-#APP="rocksdb.out"
+APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-APP="redis.out"
+#APP="redis.out"
 #APP=fxmark
 
 
 #SETENV
 #Don't do any migration
-export APPPREFIX="numactl --membind=0"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-SET_RUN_APP "optimal-os-fastmem" "-D_DISABLE_HETERO"
-exit
-
-
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
@@ -96,13 +107,21 @@ SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
-exit
 
 export APPPREFIX="numactl --preferred=0"
+SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem" "-D_DISABLE_MIGRATE"
 exit
 
+export APPPREFIX="numactl --membind=0"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "optimal-os-fastmem" "-D_DISABLE_HETERO"
 
+
+export APPPREFIX="numactl --membind=1"
+SET_RUN_APP "slowmem-only" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 
 
 
@@ -119,13 +138,6 @@ $SCRIPTS/mount_ext4ramdisk.sh 24000
 RUNAPP 
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-
-
-
-#exit
-
-
-
 #exit
 
 

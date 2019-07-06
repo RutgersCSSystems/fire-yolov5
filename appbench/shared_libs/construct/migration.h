@@ -28,7 +28,7 @@ void stopmigrate();
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
 
-#define MIGRATE_LIST_CNT 100
+#define MIGRATE_LIST_CNT 1000
 
 
 void set_migration_freq() {

@@ -120,6 +120,9 @@ git clone https://github.com/memcached/memcached.git
 }
 
 
+INSTALL_ROCKSDB
+exit
+
 INSTALL_SYSTEM_LIBS
 INSTALL_CMAKE
 INSTALL_GFLAGS

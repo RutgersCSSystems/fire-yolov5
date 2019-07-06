@@ -1,6 +1,8 @@
 #!/bin/bash
 TARGET=$OUTPUTDIR
 APP="rocksdb"
+TYPE="SSD"
+
 
 EXTRACT_RESULT() {
 
@@ -11,24 +13,46 @@ EXTRACT_RESULT() {
 	rm $APP".data"
 	rm "num.data"
 
+	TYPE="NVM"
 	for dir in $TARGET/*
 	do
-		#dir=$OUTPUTDIR
-		echo $(basename $dir)
+	 if [[ $dir != *"SSD"* ]]; 
+ 	 then
 		outfile=$(basename $dir)
+		outputfile=$APP-$outfile".data"
+
 		APPFILE=rocksdb.out
+
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			cat $dir/$APPFILE | grep "random" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
 			((j++))
 			echo $j &> "num.data"
 		fi
-	        #files="$file1 output$i"	
-		#file1=$files
-		((i++))
-		rm $NVMBASE/graphs/zplot/data/$APP"-"$outfile".data"
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/graphs/zplot/data/$APP-$outfile".data"
+		rm $NVMBASE/graphs/zplot/data/$outputfile
+		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
+		echo $NVMBASE/graphs/zplot/data/$outputfile
+	fi
 	done
-	#echo $files
+
+	 TYPE="SSD"
+	for dir in $TARGET/*
+	do
+	if [[ $dir == *"SSD"* ]];
+	 then
+		outfile=$(basename $dir)
+		outputfile=$APP-$outfile".data"
+		APPFILE=rocksdb.out*
+
+		if [ -f $dir/$APPFILE ]; then
+			cat $dir/$APPFILE | grep "random" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			((j++))
+			echo $j &> "num.data"
+		fi
+		rm $NVMBASE/graphs/zplot/data/$outputfile
+		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
+		echo $NVMBASE/graphs/zplot/data/$outputfile
+	fi
+	done
 }
 
 

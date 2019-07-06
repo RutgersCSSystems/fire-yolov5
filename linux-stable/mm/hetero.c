@@ -792,7 +792,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
         unsigned long *buffmiss=0;
 
 	if(disabl_hetero_migrate) {
-		printk(KERN_ALERT "disabl_hetero_migrate flag set \n");
 		return;
 	}
 
