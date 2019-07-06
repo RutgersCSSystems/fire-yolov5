@@ -814,11 +814,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	//spin_lock(&kthread_lock);
-	//if(thrd_idx >= MAXTHREADS) {
-		//spin_unlock(&kthread_lock);
-		//return;
-	//}
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
 				current->active_mm, "HETEROTHRD");	
 
@@ -967,10 +962,5 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
     }
 #endif
 
-#ifdef _ENABLE_HETERO_THREAD
-	/*for(idx = 0; idx < MAXTHREADS; idx++) {
-		THREADS[idx].thrd = NULL;
-	}*/
-#endif
     return 0;
 }
