@@ -89,7 +89,7 @@ Move this to header file later.
 #define HETERO_MIGRATE_FREQ 17
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
-//#define _ENABLE_HETERO_THREAD
+#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
@@ -799,11 +799,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	//spin_lock(&kthread_lock);
-	//if(thrd_idx >= MAXTHREADS) {
-		//spin_unlock(&kthread_lock);
-		//return;
-	//}
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
 				current->active_mm, "HETEROTHRD");	
 
@@ -948,10 +943,5 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
     }
 #endif
 
-#ifdef _ENABLE_HETERO_THREAD
-	/*for(idx = 0; idx < MAXTHREADS; idx++) {
-		THREADS[idx].thrd = NULL;
-	}*/
-#endif
     return 0;
 }
