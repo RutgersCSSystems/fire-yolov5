@@ -90,7 +90,7 @@ Move this to header file later.
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
-//#define _ENABLE_HETERO_THREAD
+#define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
