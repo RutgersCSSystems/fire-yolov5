@@ -89,7 +89,8 @@ int migrate_onepage_hetero(struct page *page, new_page_t get_new_page,
 
 int migrate_pages_hetero_list(struct list_head *l, new_page_t get_new_page,
                 free_page_t put_new_page, unsigned long private,
-                enum migrate_mode mode, int reason, struct mm_struct *mm);
+                enum migrate_mode mode, int reason, struct mm_struct *mm, 
+		unsigned int list_cnt);
 
 
 extern int isolate_movable_page(struct page *page, isolate_mode_t mode);

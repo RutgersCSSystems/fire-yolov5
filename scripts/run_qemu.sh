@@ -9,7 +9,7 @@ $APPBENCH/scripts/killqemu.sh
 
 #sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -smp maxcpus=16  -numa node,nodeid=0,cpus=0-4 -curses -vga std -numa node,nodeid=1,cpus=10-13
 
-sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-8,mem=25G -numa node,nodeid=1,cpus=9-15,mem=15G -smp sockets=2,cores=2,threads=2,maxcpus=16 -curses -nic user,hostfwd=tcp::10000-:22
+sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -numa node,nodeid=0,cpus=0-8,mem=25G -numa node,nodeid=1,cpus=9-15,mem=15G -smp sockets=2,cores=2,threads=2,maxcpus=16 -curses -net user,hostfwd=tcp::10000-:22
 
 
 #-device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::5555-:22 -redir tcp:4444::4444 -redir tcp:3333::3333 #-net user,hostfwd=tcp:127.0.0.1:2222-:22   #-netdev tap,id=mynet0,ifname=eth0 -device e1000,netdev=mynet0

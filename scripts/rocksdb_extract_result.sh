@@ -1,6 +1,6 @@
 #!/bin/bash
 TARGET=$OUTPUTDIR
-APP="e-rocksdb-"
+APP="rocksdb"
 
 EXTRACT_RESULT() {
 
@@ -16,7 +16,7 @@ EXTRACT_RESULT() {
 		#dir=$OUTPUTDIR
 		echo $(basename $dir)
 		outfile=$(basename $dir)
-		APPFILE=db_bench.out
+		APPFILE=rocksdb.out
 		if [ -f $dir/$APPFILE ]; then
 			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
 			((j++))
@@ -25,12 +25,12 @@ EXTRACT_RESULT() {
 	        #files="$file1 output$i"	
 		#file1=$files
 		((i++))
-		rm graphs/zplot/data/$APP$outfile".data"
-		paste "num.data" $APP".data" &> graphs/zplot/data/$APP$outfile".data"
+		rm $NVMBASE/graphs/zplot/data/$APP"-"$outfile".data"
+		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/graphs/zplot/data/$APP-$outfile".data"
 	done
 	#echo $files
-
 }
+
 
 EXTRACT_INFO() {
 	dir=$1
@@ -73,12 +73,10 @@ EXTRACT_KERNSTAT(){
 
 }
 
-#EXTRACT_RESULT
+EXTRACT_RESULT
 #cd $NVMBASE/graphs/zplot/
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
-
-
-EXTRACT_KERNSTAT
+#EXTRACT_KERNSTAT
 
 
 
