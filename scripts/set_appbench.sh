@@ -120,27 +120,20 @@ git clone https://github.com/memcached/memcached.git
 }
 
 
-INSTALL_ROCKSDB
-exit
-
 INSTALL_SYSTEM_LIBS
 INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
 GETAPPS
-exit
-INSTALL_SYSBENCH
-INSTALL_MYSQL
-
+#INSTALL_SYSBENCH
+#INSTALL_MYSQL
 # Set variable, setup packages and generate data
 $SCRIPTS/compile_sharedlib.sh
-$APPBENCH/setup.sh
-$APPBENCH/compile_all.sh
-
+#$APPBENCH/setup.sh
+#$APPBENCH/compile_all.sh
 #Compile Linux Kernel
-#cd $KERN_SRC
-#$SCRIPTS/compile_deb.sh
-
+cd $KERN_SRC
+$SCRIPTS/compile_deb.sh
 #Changing bandwidth of a NUMA node
 $APPBENCH/install_quartz.sh
 $APPBENCH/throttle.sh
