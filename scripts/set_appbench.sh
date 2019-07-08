@@ -94,6 +94,7 @@ INSTALL_ROCKSDB() {
 	#cd build
 	#rm -rf CMakeCache.txt
 	#cmake ..
+	git checkout a8975b62455cb73a8e23ff6be709df1b97859d2d
 	DEBUG_LEVEL=0 make shared_lib db_bench -j16
 	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
 }
@@ -121,13 +122,15 @@ git clone https://github.com/memcached/memcached.git
 
 
 INSTALL_SYSTEM_LIBS
-INSTALL_CMAKE
+#INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
 GETAPPS
+exit
 #INSTALL_SYSBENCH
 #INSTALL_MYSQL
 # Set variable, setup packages and generate data
+source scripts/setvars.sh
 $SCRIPTS/compile_sharedlib.sh
 #$APPBENCH/setup.sh
 #$APPBENCH/compile_all.sh

@@ -6,8 +6,8 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=400000
-yint=40000
+ymax=25000
+yint=5000
 xfield='ops'
 xlegend='DevFS techniques'
 barwidth = 0.9
@@ -21,11 +21,11 @@ xycord = [60,20]
 
 dlist = []
 
-dlist.append(table(file='data/rocksdb-naive-os-fastmem.data'))
-dlist.append(table(file='data/rocksdb-optimal-os-fastmem.data'))
-dlist.append(table(file='data/rocksdb-slowmem-migration-only.data'))
-dlist.append(table(file='data/rocksdb-slowmem-obj-affinity.data'))
-dlist.append(table(file='data/rocksdb-slowmem-only.data'))
+dlist.append(table(file='data/rocksdb-naive-os-fastmem-NVM.data'))
+dlist.append(table(file='data/rocksdb-optimal-os-fastmem-NVM.data'))
+dlist.append(table(file='data/rocksdb-slowmem-migration-only-NVM.data'))
+dlist.append(table(file='data/rocksdb-slowmem-obj-affinity-NVM.data'))
+dlist.append(table(file='data/rocksdb-slowmem-only-NVM.data'))
 
 dlist.append(table(file='data/rocksdb-naive-os-fastmem-SSD.data'))
 dlist.append(table(file='data/rocksdb-optimal-os-fastmem-SSD.data'))
@@ -35,7 +35,7 @@ dlist.append(table(file='data/rocksdb-slowmem-only-SSD.data'))
 
 
 color=['white', 'lightgrey', 'darkgray', 'black', 'red']
-legendtext=['Naive-OS-FastMem', 'All-FastMem', 'Migration-Only', 'Object-Affinity', 'All-SlowMem', 'Naive-OS-FastMem', 'All-FastMem', 'Migration-Only', 'Object-Affinity', 'All-SlowMem']
+legendtext=['Naive-OS-FastMem', 'All-FastMem', 'Migration-Only', 'Object-Affinity', 'All-SlowMem']
 
 app = ["RocksDB-NVM", "RocksDB-SSD"]
 
@@ -48,7 +48,8 @@ p = plotter()
 i=0
 nolegend_idx=5
 
-for x in legendtext:
+
+for x in range(0, len(dlist)):
 
 	if (i >= nolegend_idx):
 		p.verticalbars(drawable=d, table=dlist[i], xfield='c0', yfield='c1', fill=True,

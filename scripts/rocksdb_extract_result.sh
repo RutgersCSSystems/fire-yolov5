@@ -16,15 +16,15 @@ EXTRACT_RESULT() {
 	TYPE="NVM"
 	for dir in $TARGET/*
 	do
-	 if [[ $dir != *"SSD"* ]]; 
+	 if [[ $dir == *"NVM"* ]]; 
  	 then
 		outfile=$(basename $dir)
 		outputfile=$APP-$outfile".data"
 
-		APPFILE=rocksdb.out
+		APPFILE=rocksdb.out-NVM
 
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "random" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
 			((j++))
 			echo $j &> "num.data"
 		fi
@@ -41,10 +41,10 @@ EXTRACT_RESULT() {
 	 then
 		outfile=$(basename $dir)
 		outputfile=$APP-$outfile".data"
-		APPFILE=rocksdb.out*
+		APPFILE=rocksdb.out-SSD
 
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "random" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
 			((j++))
 			echo $j &> "num.data"
 		fi

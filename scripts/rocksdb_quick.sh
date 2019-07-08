@@ -31,8 +31,9 @@ SETUPEXTRAM() {
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
 
 	#Enable for Ramdisk
-	if [ "NVM" -eq "$TYPE" ]
+	if [ "NVM" = "$TYPE" ]
 	then
+		echo "Running for NVM"
 		sudo ln -s /mnt/ext4ramdisk $APPBENCH/shared_data
 	else
 		#Enable for SSD
@@ -71,9 +72,10 @@ SET_RUN_APP() {
 	mkdir $OUTPUTDIR/$1
 	export OUTPUTDIR=$OUTPUTDIR/$1
 
-	if [ "NVM" -eq "$TYPE" ]
+	if [ "NVM" = "$TYPE" ]
 	then
-		OUTPUT="$OUTPUTDIR/$APP"
+		echo "Running for NVM"
+		OUTPUT="$OUTPUTDIR/$APP-NVM"
 	else
 		echo "Running for SSD"
 		OUTPUT="$OUTPUTDIR/$APP-SSD"
@@ -98,31 +100,34 @@ APP="rocksdb.out"
 #APP=fxmark
 
 
-#SETENV
 #Don't do any migration
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity" "-D_MIGRATE -D_OBJAFF"
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only" "-D_MIGRATE"
-
-export APPPREFIX="numactl --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem" "-D_DISABLE_MIGRATE"
-exit
-
 export APPPREFIX="numactl --membind=0"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
-SET_RUN_APP "optimal-os-fastmem" "-D_DISABLE_HETERO"
+SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+#exit
+
+SETENV
+exit
+
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+
+export APPPREFIX="numactl --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 
 
 export APPPREFIX="numactl --membind=1"
-SET_RUN_APP "slowmem-only" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+exit
 
 
 
