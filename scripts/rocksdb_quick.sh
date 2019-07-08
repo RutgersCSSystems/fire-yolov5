@@ -3,7 +3,7 @@
 
 cd $NVMBASE
 APP=""
-TYPE="SSD"
+TYPE="NVM"
 #TYPE="NVM"
 
 SETUP(){
@@ -12,12 +12,21 @@ SETUP(){
 	make clean
 }
 
-SETENV() {
+THROTTLE() {
 	source scripts/setvars.sh
+	cp $SCRIPTS/nvmemul-throttle.ini $QUARTZ/nvmemul.ini
 	$SCRIPTS/install_quartz.sh
 	#$SCRIPTS/throttle.sh
 	#$SCRIPTS/throttle.sh
 }
+
+DISABLE_THROTTLE() {
+	source scripts/setvars.sh
+	cp $SCRIPTS/nvmemul-nothrottle.ini $QUARTZ/nvmemul.ini
+	$SCRIPTS/throttle.sh
+	#$SCRIPTS/throttle.sh
+}
+
 
 SETUPEXTRAM() {
 	$SCRIPTS/umount_ext4ramdisk.sh
@@ -105,12 +114,12 @@ export APPPREFIX="numactl --membind=0"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
+DISABLE_THROTTLE
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 #exit
-
-SETENV
 exit
 
+THROTTLE
 
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM

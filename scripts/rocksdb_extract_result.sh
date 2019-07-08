@@ -98,8 +98,8 @@ EXTRACT_KERNSTAT(){
 }
 
 EXTRACT_RESULT
-#cd $NVMBASE/graphs/zplot/
-#python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+cd $NVMBASE/graphs/zplot/
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
 #EXTRACT_KERNSTAT
 
 

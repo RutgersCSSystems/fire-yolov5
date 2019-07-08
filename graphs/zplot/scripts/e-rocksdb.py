@@ -6,7 +6,7 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=25000
+ymax=35000
 yint=5000
 xfield='ops'
 xlegend='DevFS techniques'
