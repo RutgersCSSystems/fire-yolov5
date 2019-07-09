@@ -3,8 +3,8 @@
 
 cd $NVMBASE
 APP=""
-#TYPE="NVM"
-TYPE="SSD"
+TYPE="NVM"
+#TYPE="SSD"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -108,6 +108,12 @@ SET_RUN_APP() {
 APP="redis.out"
 #APP=fxmark
 
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+exit
+
+
 
 #Don't do any migration
 export APPPREFIX="numactl --membind=0"
@@ -130,10 +136,6 @@ export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
 
 
 
