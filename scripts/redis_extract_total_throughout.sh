@@ -1,44 +1,64 @@
 #!/bin/bash
 TARGET=$OUTPUTDIR
 APP="redis"
-REDISDATA="graphs/zplot/data/redis"
-mkdir -p $REDISDATA
+TYPE="SSD"
+RESULT=$NVMBASE/graphs/zplot/data/redis
+mkdir -p $RESULT
 
 EXTRACT_RESULT() {
 
 	i=0
 	j=0
-	k=6
 	files=""
 	file1=""
 	rm $APP".data"
-	rm "num*.data"
+	rm "num.data"
 
+	TYPE="NVM"
 	for dir in $TARGET/*
 	do
-		#dir=$OUTPUTDIR
-		echo $(basename $dir)
+	 if [[ $dir == *"NVM"* ]]; 
+ 	 then
 		outfile=$(basename $dir)
-		APPFILE=redis.out
+		outputfile=$APP-$outfile".data"
+
+		APPFILE=redis.out-NVM
+
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APP* | grep -a "SET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-SET.data"
-			cat $dir/$APP* | grep -a "SET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'
+			cat $dir/$APP* | grep -a "ET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
 			((j++))
 			echo $j &> "num.data"
-
-			cat $dir/$APP* | grep -a "GET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-GET.data"
-			cat $dir/$APP* | grep -a "GET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'
-			((k++))
-			echo $k &> "num1.data"
 		fi
-		((i++))
-		rm $REDISDATA/$APP-$outfile"-SET.data"
-		rm $REDISDATA/$APP-$outfile"-GET.data"
-		paste "num.data" $APP"-SET.data" &> $REDISDATA/$APP-$outfile"-SET.data"
-		paste "num1.data" $APP"-GET.data" &> $REDISDATA/$APP-$outfile"-GET.data"
-		echo $REDISDATA/$APP-$outfile"-GET.data"
+		rm $RESULT/$outputfile
+		paste "num.data" $APP"-TOTAL.data" &> $RESULT/$outputfile
+		echo $RESULT/$outputfile
+	fi
+	done
+
+	#Some gap
+	((j++))
+
+	 TYPE="SSD"
+	for dir in $TARGET/*
+	do
+	if [[ $dir == *"SSD"* ]];
+	 then
+		outfile=$(basename $dir)
+		outputfile=$APP-$outfile".data"
+		APPFILE=redis.out-SSD
+
+		if [ -f $dir/$APPFILE ]; then
+			cat $dir/$APP* | grep -a "ET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
+			((j++))
+			echo $j &> "num.data"
+		fi
+		rm $RESULT/$outputfile
+		paste "num.data"  $APP"-TOTAL.data" &> $RESULT/$outputfile
+		echo $RESULT/$outputfile
+	fi
 	done
 }
+
 
 EXTRACT_INFO() {
 	dir=$1
@@ -82,11 +102,11 @@ EXTRACT_KERNSTAT(){
 }
 
 EXTRACT_RESULT
-#cd $NVMBASE/graphs/zplot/
+cd $NVMBASE/graphs/zplot/
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
-#EXTRACT_KERNSTTCT_RESULT
+#EXTRACT_KERNSTAT
 
-set +x
+
 
 
 

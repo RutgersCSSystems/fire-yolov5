@@ -8,7 +8,7 @@ APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
 READS=1000000
-KEYS=3000000
+KEYS=1000000
 CLIPREFIX="numactl --preferred=0"
 PHYSCPU="--physcpubind"
 
@@ -80,14 +80,16 @@ RUNCLIENT(){
 
   for (( c=1; c<$MAXINST; c++))
   do
-    $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
-    #$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    #$CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    $CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=10 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt" &
     let port=$port+1
     let physcpu=$physcpu+1
     let physcpu2=$physcpu2+2   	
   done
-  $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
-  #$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
+  #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=10 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt"
+  #$CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
+  $CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
 
   sleep 5
   ps aux | grep redis-server | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'

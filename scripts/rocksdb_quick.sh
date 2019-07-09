@@ -3,8 +3,8 @@
 
 cd $NVMBASE
 APP=""
-TYPE="NVM"
 #TYPE="NVM"
+TYPE="SSD"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -64,9 +64,9 @@ RUNAPP() {
 	cd $NVMBASE
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
@@ -102,10 +102,10 @@ SET_RUN_APP() {
 	set +x
 }
 
-APP="rocksdb.out"
+#APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-#APP="redis.out"
+APP="redis.out"
 #APP=fxmark
 
 
@@ -116,28 +116,24 @@ sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 DISABLE_THROTTLE
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-#exit
-exit
 
 THROTTLE
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+export APPPREFIX="numactl --membind=1"
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 
 export APPPREFIX="numactl --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 
 
-export APPPREFIX="numactl --membind=1"
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
 exit
-
 
 
 
