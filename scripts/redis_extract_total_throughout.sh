@@ -1,9 +1,13 @@
 #!/bin/bash
+#set -x
+
 TARGET=$OUTPUTDIR
 APP="redis"
 TYPE="SSD"
 RESULT=$NVMBASE/graphs/zplot/data/redis
+SEARCH="requests per second"
 mkdir -p $RESULT
+
 
 EXTRACT_RESULT() {
 
@@ -17,6 +21,17 @@ EXTRACT_RESULT() {
 	TYPE="NVM"
 	for dir in $TARGET/*
 	do
+	
+	rm  $dir/*cleaned*
+	
+	for file in $dir/*
+	do
+		cat $file | grep -a "$SEARCH" &> tmp.txt
+		sed -i 's/\r/\n/g' tmp.txt && cat tmp.txt | grep "SET:" | tail -1 &> tmp1.txt && cat tmp.txt | grep "GET:" | tail -1 &>> tmp1.txt
+		cat tmp1.txt &> $file"-cleaned"
+	done
+
+
 	 if [[ $dir == *"NVM"* ]]; 
  	 then
 		outfile=$(basename $dir)
@@ -25,7 +40,7 @@ EXTRACT_RESULT() {
 		APPFILE=redis.out-NVM
 
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APP* | grep -a "ET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
+			cat $dir/$APP*-cleaned | grep -a "$SEARCH" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
 			((j++))
 			echo $j &> "num.data"
 		fi
@@ -48,7 +63,7 @@ EXTRACT_RESULT() {
 		APPFILE=redis.out-SSD
 
 		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APP* | grep -a "ET:" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
+			cat $dir/$APP*-cleaned | grep -a "$SEARCH" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
 			((j++))
 			echo $j &> "num.data"
 		fi

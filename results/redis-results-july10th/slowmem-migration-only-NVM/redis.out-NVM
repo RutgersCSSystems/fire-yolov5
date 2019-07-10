@@ -1,0 +1,912 @@
++ REDISROOT=/users/skannan/ssd/NVM/appbench/redis-5.0.5
++ REDISCONF=/users/skannan/ssd/NVM/appbench/redis-5.0.5/config
++ APPBASE=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ APP=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/pagerank
++ PARAM=
++ OUTPUT=
++ READS=1000000
++ KEYS=1000000
++ CLIPREFIX='numactl --preferred=0'
++ PHYSCPU=--physcpubind
++ let MAXINST=4
++ let STARTPORT=6378
++ let SERVERCPU=20
++ let DATASIZE=4096
++ let physcpu=0
++ let physcpu2=1
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+redis-server3: no process found
++ sudo killall redis-server3
+redis-server3: no process found
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
+redis-server4: no process found
++ sudo killall redis-server4
+redis-server4: no process found
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sleep 5
++ PREPARE
++ (( inst=1 ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server1 redis-benchmark1
++ cp redis-server redis-server1
++ cp redis-benchmark redis-benchmark1
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server2 redis-benchmark2
++ cp redis-server redis-server2
++ cp redis-benchmark redis-benchmark2
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server3 redis-benchmark3
++ cp redis-server redis-server3
++ cp redis-benchmark redis-benchmark3
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server4 redis-benchmark4
++ cp redis-server redis-server4
++ cp redis-benchmark redis-benchmark4
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ cd /users/skannan/ssd/NVM/appbench/shared_data
++ RUN
++ let port=6378
++ let physcpu=20
++ let physcpu2=20+1
++ (( r=1 ))
++ (( r<=4 ))
++ let port=6378+1
++ let physcpu=20+2
++ let physcpu2=21+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --preferred=0 --physcpubind=20,21 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6378.conf
+initiating tracing...
+initiating tracing...
+25954:C 10 Jul 2019 09:12:33.502 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+25954:C 10 Jul 2019 09:12:33.502 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=25954, just started
+25954:C 10 Jul 2019 09:12:33.502 # Configuration loaded
+25954:M 10 Jul 2019 09:12:33.502 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+25954:M 10 Jul 2019 09:12:33.502 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+25954:M 10 Jul 2019 09:12:33.502 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6378
+ |    `-._   `._    /     _.-'    |     PID: 25954
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+25954:M 10 Jul 2019 09:12:33.517 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+25954:M 10 Jul 2019 09:12:33.518 # Server initialized
+25954:M 10 Jul 2019 09:12:33.518 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+25954:M 10 Jul 2019 09:12:33.518 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+25954:M 10 Jul 2019 09:12:33.518 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6379+1
++ let physcpu=22+2
++ let physcpu2=23+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --preferred=0 --physcpubind=22,23 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6379.conf
+initiating tracing...
+initiating tracing...
+25959:C 10 Jul 2019 09:12:34.480 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+25959:C 10 Jul 2019 09:12:34.480 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=25959, just started
+25959:C 10 Jul 2019 09:12:34.480 # Configuration loaded
+25959:M 10 Jul 2019 09:12:34.481 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+25959:M 10 Jul 2019 09:12:34.481 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+25959:M 10 Jul 2019 09:12:34.481 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 25959
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+25959:M 10 Jul 2019 09:12:34.483 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+25959:M 10 Jul 2019 09:12:34.483 # Server initialized
+25959:M 10 Jul 2019 09:12:34.483 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+25959:M 10 Jul 2019 09:12:34.483 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+25959:M 10 Jul 2019 09:12:34.483 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6380+1
++ let physcpu=24+2
++ let physcpu2=25+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --preferred=0 --physcpubind=24,25 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server3 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6380.conf
+initiating tracing...
+initiating tracing...
+25964:C 10 Jul 2019 09:12:35.482 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+25964:C 10 Jul 2019 09:12:35.482 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=25964, just started
+25964:C 10 Jul 2019 09:12:35.482 # Configuration loaded
+25964:M 10 Jul 2019 09:12:35.482 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+25964:M 10 Jul 2019 09:12:35.482 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+25964:M 10 Jul 2019 09:12:35.482 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
+ |    `-._   `._    /     _.-'    |     PID: 25964
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+25964:M 10 Jul 2019 09:12:35.484 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+25964:M 10 Jul 2019 09:12:35.484 # Server initialized
+25964:M 10 Jul 2019 09:12:35.484 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+25964:M 10 Jul 2019 09:12:35.484 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+25964:M 10 Jul 2019 09:12:35.484 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6381+1
++ let physcpu=26+2
++ let physcpu2=27+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --preferred=0 --physcpubind=26,27 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server4 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6381.conf
+initiating tracing...
+initiating tracing...
+25969:C 10 Jul 2019 09:12:36.484 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+25969:C 10 Jul 2019 09:12:36.484 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=25969, just started
+25969:C 10 Jul 2019 09:12:36.484 # Configuration loaded
+25969:M 10 Jul 2019 09:12:36.484 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+25969:M 10 Jul 2019 09:12:36.484 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+25969:M 10 Jul 2019 09:12:36.484 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 25969
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+25969:M 10 Jul 2019 09:12:36.486 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+25969:M 10 Jul 2019 09:12:36.486 # Server initialized
+25969:M 10 Jul 2019 09:12:36.486 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+25969:M 10 Jul 2019 09:12:36.486 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+25969:M 10 Jul 2019 09:12:36.486 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ sleep 10
++ RUNCLIENT
++ let port=6378
++ let physcpu=2
++ let physcpu2=3
++ PARAMS=' -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d 4096'
++ (( c=1 ))
++ (( c<4 ))
++ let port=6378+1
++ let physcpu=2+1
++ let physcpu2=3+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6378
++ let port=6379+1
++ let physcpu=3+1
++ let physcpu2=5+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6379
++ let port=6380+1
++ let physcpu=4+1
++ let physcpu2=7+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6381
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6380
+25964:M 10 Jul 2019 09:12:47.709 * Starting automatic rewriting of AOF on 7502666000% growth
+25959:M 10 Jul 2019 09:12:47.709 * Starting automatic rewriting of AOF on 8018634600% growth
+25964:M 10 Jul 2019 09:12:47.710 * Background append only file rewriting started by pid 25979
+25959:M 10 Jul 2019 09:12:47.710 * Background append only file rewriting started by pid 25980
+25969:M 10 Jul 2019 09:12:47.711 * Starting automatic rewriting of AOF on 7446762500% growth
+25969:M 10 Jul 2019 09:12:47.712 * Background append only file rewriting started by pid 25981
+25954:M 10 Jul 2019 09:12:47.747 * Starting automatic rewriting of AOF on 9303172800% growth
+25954:M 10 Jul 2019 09:12:47.748 * Background append only file rewriting started by pid 25982
+25954:M 10 Jul 2019 09:12:48.363 * AOF rewrite child asks to stop sending diffs.
+25982:C 10 Jul 2019 09:12:48.363 * Parent agreed to stop sending diffs. Finalizing AOF...
+25982:C 10 Jul 2019 09:12:48.363 * Concatenating 86.75 MB of AOF diff received from parent.
+25959:M 10 Jul 2019 09:12:48.379 * AOF rewrite child asks to stop sending diffs.
+25980:C 10 Jul 2019 09:12:48.379 * Parent agreed to stop sending diffs. Finalizing AOF...
+25980:C 10 Jul 2019 09:12:48.379 * Concatenating 111.30 MB of AOF diff received from parent.
+25969:M 10 Jul 2019 09:12:48.391 * AOF rewrite child asks to stop sending diffs.
+25981:C 10 Jul 2019 09:12:48.391 * Parent agreed to stop sending diffs. Finalizing AOF...
+25981:C 10 Jul 2019 09:12:48.391 * Concatenating 115.56 MB of AOF diff received from parent.
+25964:M 10 Jul 2019 09:12:48.426 * AOF rewrite child asks to stop sending diffs.
+25979:C 10 Jul 2019 09:12:48.426 * Parent agreed to stop sending diffs. Finalizing AOF...
+25979:C 10 Jul 2019 09:12:48.426 * Concatenating 132.00 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:12:48.664 * Background AOF buffer size: 80 MB
+25969:M 10 Jul 2019 09:12:48.688 * Background AOF buffer size: 80 MB
+25964:M 10 Jul 2019 09:12:48.827 * Background AOF buffer size: 80 MB
+25959:M 10 Jul 2019 09:12:48.882 * Background AOF buffer size: 80 MB
+25954:M 10 Jul 2019 09:12:51.021 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25959:M 10 Jul 2019 09:12:51.032 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25969:M 10 Jul 2019 09:12:51.066 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25964:M 10 Jul 2019 09:12:51.095 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25954:M 10 Jul 2019 09:12:52.006 * Background AOF buffer size: 180 MB
+25969:M 10 Jul 2019 09:12:52.075 * Background AOF buffer size: 180 MB
+25964:M 10 Jul 2019 09:12:52.320 * Background AOF buffer size: 180 MB
+25959:M 10 Jul 2019 09:12:52.466 * Background AOF buffer size: 180 MB
+25980:C 10 Jul 2019 09:12:52.579 * SYNC append only file rewrite performed
+25981:C 10 Jul 2019 09:12:52.579 * SYNC append only file rewrite performed
+25979:C 10 Jul 2019 09:12:52.579 * SYNC append only file rewrite performed
+25982:C 10 Jul 2019 09:12:52.579 * SYNC append only file rewrite performed
+25982:C 10 Jul 2019 09:12:52.589 * AOF rewrite: 104 MB of memory used by copy-on-write
+25981:C 10 Jul 2019 09:12:52.589 * AOF rewrite: 135 MB of memory used by copy-on-write
+25980:C 10 Jul 2019 09:12:52.589 * AOF rewrite: 128 MB of memory used by copy-on-write
+25979:C 10 Jul 2019 09:12:52.590 * AOF rewrite: 156 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:12:52.675 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:12:52.677 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:12:52.679 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:12:52.681 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:12:53.388 * Residual parent diff successfully flushed to the rewritten AOF (197.68 MB)
+25969:M 10 Jul 2019 09:12:53.424 * Residual parent diff successfully flushed to the rewritten AOF (211.72 MB)
+25959:M 10 Jul 2019 09:12:53.453 * Residual parent diff successfully flushed to the rewritten AOF (188.12 MB)
+25954:M 10 Jul 2019 09:12:53.478 * Residual parent diff successfully flushed to the rewritten AOF (210.26 MB)
+25964:M 10 Jul 2019 09:12:53.619 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:12:53.674 * Background AOF rewrite finished successfully
+25959:M 10 Jul 2019 09:12:53.774 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:12:53.898 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:12:54.002 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25959:M 10 Jul 2019 09:12:54.003 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25954:M 10 Jul 2019 09:12:54.005 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25964:M 10 Jul 2019 09:12:54.107 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25959:M 10 Jul 2019 09:12:57.379 * Starting automatic rewriting of AOF on 105% growth
+25954:M 10 Jul 2019 09:12:57.429 * Starting automatic rewriting of AOF on 127% growth
+25959:M 10 Jul 2019 09:12:57.437 * Background append only file rewriting started by pid 25983
+25964:M 10 Jul 2019 09:12:57.484 * Starting automatic rewriting of AOF on 118% growth
+25954:M 10 Jul 2019 09:12:57.503 * Background append only file rewriting started by pid 25984
+25964:M 10 Jul 2019 09:12:57.537 * Background append only file rewriting started by pid 25985
+25969:M 10 Jul 2019 09:12:57.552 * Starting automatic rewriting of AOF on 123% growth
+25969:M 10 Jul 2019 09:12:57.629 * Background append only file rewriting started by pid 25986
+25959:M 10 Jul 2019 09:13:02.036 * AOF rewrite child asks to stop sending diffs.
+25983:C 10 Jul 2019 09:13:02.036 * Parent agreed to stop sending diffs. Finalizing AOF...
+25983:C 10 Jul 2019 09:13:02.037 * Concatenating 15.69 MB of AOF diff received from parent.
+25983:C 10 Jul 2019 09:13:02.448 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:02.517 * AOF rewrite child asks to stop sending diffs.
+25985:C 10 Jul 2019 09:13:02.517 * Parent agreed to stop sending diffs. Finalizing AOF...
+25985:C 10 Jul 2019 09:13:02.518 * Concatenating 27.25 MB of AOF diff received from parent.
+25983:C 10 Jul 2019 09:13:02.559 * AOF rewrite: 154 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:13:02.712 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:13:02.903 * AOF rewrite child asks to stop sending diffs.
+25984:C 10 Jul 2019 09:13:02.903 * Parent agreed to stop sending diffs. Finalizing AOF...
+25984:C 10 Jul 2019 09:13:02.904 * Concatenating 28.94 MB of AOF diff received from parent.
+25985:C 10 Jul 2019 09:13:03.029 * SYNC append only file rewrite performed
+25985:C 10 Jul 2019 09:13:03.114 * AOF rewrite: 121 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:13:03.144 * Residual parent diff successfully flushed to the rewritten AOF (61.49 MB)
+25959:M 10 Jul 2019 09:13:03.225 * Background AOF rewrite finished successfully
+25984:C 10 Jul 2019 09:13:03.307 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:03.362 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:13:03.375 * AOF rewrite child asks to stop sending diffs.
+25986:C 10 Jul 2019 09:13:03.376 * Parent agreed to stop sending diffs. Finalizing AOF...
+25986:C 10 Jul 2019 09:13:03.376 * Concatenating 33.06 MB of AOF diff received from parent.
+25984:C 10 Jul 2019 09:13:03.421 * AOF rewrite: 173 MB of memory used by copy-on-write
+25964:M 10 Jul 2019 09:13:03.503 * Residual parent diff successfully flushed to the rewritten AOF (47.61 MB)
+25964:M 10 Jul 2019 09:13:03.526 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:13:03.559 * Background AOF rewrite terminated with success
+25986:C 10 Jul 2019 09:13:03.876 * SYNC append only file rewrite performed
+25954:M 10 Jul 2019 09:13:03.936 * Residual parent diff successfully flushed to the rewritten AOF (60.90 MB)
+25986:C 10 Jul 2019 09:13:03.979 * AOF rewrite: 141 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:13:04.027 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:13:04.196 * Background AOF buffer size: 79 MB
+25969:M 10 Jul 2019 09:13:04.279 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:13:04.445 * Starting automatic rewriting of AOF on 100% growth
+25969:M 10 Jul 2019 09:13:04.512 * Residual parent diff successfully flushed to the rewritten AOF (80.55 MB)
+25959:M 10 Jul 2019 09:13:04.547 * Background append only file rewriting started by pid 25987
+25969:M 10 Jul 2019 09:13:04.547 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:13:04.568 * Starting automatic rewriting of AOF on 122% growth
+25964:M 10 Jul 2019 09:13:04.695 * Background append only file rewriting started by pid 25988
+25954:M 10 Jul 2019 09:13:05.589 * Starting automatic rewriting of AOF on 109% growth
+25954:M 10 Jul 2019 09:13:05.692 * Background append only file rewriting started by pid 25989
+25969:M 10 Jul 2019 09:13:07.000 * Starting automatic rewriting of AOF on 102% growth
+25969:M 10 Jul 2019 09:13:07.172 * Background append only file rewriting started by pid 25990
+25959:M 10 Jul 2019 09:13:10.728 * AOF rewrite child asks to stop sending diffs.
+25987:C 10 Jul 2019 09:13:10.728 * Parent agreed to stop sending diffs. Finalizing AOF...
+25987:C 10 Jul 2019 09:13:10.729 * Concatenating 35.62 MB of AOF diff received from parent.
+25964:M 10 Jul 2019 09:13:11.833 * Background AOF buffer size: 71 MB
+25987:C 10 Jul 2019 09:13:11.840 * SYNC append only file rewrite performed
+25987:C 10 Jul 2019 09:13:12.016 * AOF rewrite: 216 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:13:12.547 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:13:12.650 * Background AOF buffer size: 78 MB
+25964:M 10 Jul 2019 09:13:12.752 * AOF rewrite child asks to stop sending diffs.
+25988:C 10 Jul 2019 09:13:12.752 * Parent agreed to stop sending diffs. Finalizing AOF...
+25988:C 10 Jul 2019 09:13:12.753 * Concatenating 33.44 MB of AOF diff received from parent.
+25959:M 10 Jul 2019 09:13:12.976 * Residual parent diff successfully flushed to the rewritten AOF (64.77 MB)
+25954:M 10 Jul 2019 09:13:13.029 * AOF rewrite child asks to stop sending diffs.
+25989:C 10 Jul 2019 09:13:13.029 * Parent agreed to stop sending diffs. Finalizing AOF...
+25989:C 10 Jul 2019 09:13:13.030 * Concatenating 46.19 MB of AOF diff received from parent.
+25959:M 10 Jul 2019 09:13:13.095 * Background AOF rewrite finished successfully
+25988:C 10 Jul 2019 09:13:13.417 * SYNC append only file rewrite performed
+25988:C 10 Jul 2019 09:13:13.586 * AOF rewrite: 176 MB of memory used by copy-on-write
+25989:C 10 Jul 2019 09:13:13.885 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:13.937 * Background AOF rewrite terminated with success
+25989:C 10 Jul 2019 09:13:14.029 * AOF rewrite: 204 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:13:14.460 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:13:14.732 * Residual parent diff successfully flushed to the rewritten AOF (127.53 MB)
+25964:M 10 Jul 2019 09:13:14.890 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:13:14.906 * Residual parent diff successfully flushed to the rewritten AOF (64.79 MB)
+25959:M 10 Jul 2019 09:13:15.013 * Starting automatic rewriting of AOF on 103% growth
+25954:M 10 Jul 2019 09:13:15.031 * Background AOF rewrite finished successfully
+25959:M 10 Jul 2019 09:13:15.122 * Background append only file rewriting started by pid 25991
+25969:M 10 Jul 2019 09:13:15.432 * AOF rewrite child asks to stop sending diffs.
+25990:C 10 Jul 2019 09:13:15.432 * Parent agreed to stop sending diffs. Finalizing AOF...
+25990:C 10 Jul 2019 09:13:15.432 * Concatenating 98.19 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:13:17.508 * Starting automatic rewriting of AOF on 100% growth
+25990:C 10 Jul 2019 09:13:17.620 * SYNC append only file rewrite performed
+25954:M 10 Jul 2019 09:13:17.746 * Background append only file rewriting started by pid 25993
+25990:C 10 Jul 2019 09:13:17.803 * AOF rewrite: 284 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:13:17.946 * Background AOF buffer size: 80 MB
+25969:M 10 Jul 2019 09:13:18.254 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:13:19.082 * Residual parent diff successfully flushed to the rewritten AOF (96.77 MB)
+25969:M 10 Jul 2019 09:13:19.264 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:13:19.559 * Starting automatic rewriting of AOF on 107% growth
+25964:M 10 Jul 2019 09:13:19.793 * Background append only file rewriting started by pid 25994
+25959:M 10 Jul 2019 09:13:20.811 * Background AOF buffer size: 72 MB
+25959:M 10 Jul 2019 09:13:23.230 * AOF rewrite child asks to stop sending diffs.
+25991:C 10 Jul 2019 09:13:23.231 * Parent agreed to stop sending diffs. Finalizing AOF...
+25991:C 10 Jul 2019 09:13:23.233 * Concatenating 42.81 MB of AOF diff received from parent.
+25991:C 10 Jul 2019 09:13:24.327 * SYNC append only file rewrite performed
+25991:C 10 Jul 2019 09:13:24.544 * AOF rewrite: 234 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:13:24.966 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:13:25.635 * Background AOF buffer size: 71 MB
+25959:M 10 Jul 2019 09:13:26.302 * Residual parent diff successfully flushed to the rewritten AOF (148.55 MB)
+25969:M 10 Jul 2019 09:13:26.409 * Starting automatic rewriting of AOF on 103% growth
+25969:M 10 Jul 2019 09:13:26.612 * Background append only file rewriting started by pid 25995
+25959:M 10 Jul 2019 09:13:26.634 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:13:26.906 * AOF rewrite child asks to stop sending diffs.
+25993:C 10 Jul 2019 09:13:26.906 * Parent agreed to stop sending diffs. Finalizing AOF...
+25993:C 10 Jul 2019 09:13:26.907 * Concatenating 42.44 MB of AOF diff received from parent.
+25993:C 10 Jul 2019 09:13:27.763 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:27.773 * AOF rewrite child asks to stop sending diffs.
+25994:C 10 Jul 2019 09:13:27.773 * Parent agreed to stop sending diffs. Finalizing AOF...
+25994:C 10 Jul 2019 09:13:27.774 * Concatenating 48.88 MB of AOF diff received from parent.
+25993:C 10 Jul 2019 09:13:28.017 * AOF rewrite: 527 MB of memory used by copy-on-write
+25994:C 10 Jul 2019 09:13:28.459 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:28.639 * Background AOF buffer size: 79 MB
+25994:C 10 Jul 2019 09:13:28.644 * AOF rewrite: 375 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:13:28.716 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:13:28.997 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:13:29.254 * Residual parent diff successfully flushed to the rewritten AOF (146.11 MB)
+25954:M 10 Jul 2019 09:13:29.398 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:13:29.555 * Residual parent diff successfully flushed to the rewritten AOF (124.72 MB)
+25964:M 10 Jul 2019 09:13:29.701 * Background AOF rewrite finished successfully
+25959:M 10 Jul 2019 09:13:30.937 * Starting automatic rewriting of AOF on 106% growth
+25959:M 10 Jul 2019 09:13:31.227 * Background append only file rewriting started by pid 25996
+25964:M 10 Jul 2019 09:13:32.469 * Starting automatic rewriting of AOF on 107% growth
+25954:M 10 Jul 2019 09:13:32.611 * Starting automatic rewriting of AOF on 100% growth
+25964:M 10 Jul 2019 09:13:32.768 * Background append only file rewriting started by pid 25997
+25954:M 10 Jul 2019 09:13:33.047 * Background append only file rewriting started by pid 25998
+25969:M 10 Jul 2019 09:13:34.425 * Background AOF buffer size: 74 MB
+25969:M 10 Jul 2019 09:13:34.831 * AOF rewrite child asks to stop sending diffs.
+25995:C 10 Jul 2019 09:13:34.832 * Parent agreed to stop sending diffs. Finalizing AOF...
+25995:C 10 Jul 2019 09:13:34.832 * Concatenating 61.75 MB of AOF diff received from parent.
+25995:C 10 Jul 2019 09:13:36.339 * SYNC append only file rewrite performed
+25995:C 10 Jul 2019 09:13:36.681 * AOF rewrite: 281 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:13:37.466 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:13:39.015 * Residual parent diff successfully flushed to the rewritten AOF (153.95 MB)
+25969:M 10 Jul 2019 09:13:39.351 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:13:39.458 * 10000 changes in 60 seconds. Saving...
+25969:M 10 Jul 2019 09:13:39.876 * Background saving started by pid 25999
+25959:M 10 Jul 2019 09:13:45.621 * AOF rewrite child asks to stop sending diffs.
+25996:C 10 Jul 2019 09:13:45.622 * Parent agreed to stop sending diffs. Finalizing AOF...
+25996:C 10 Jul 2019 09:13:45.622 * Concatenating 81.94 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:13:46.952 * AOF rewrite child asks to stop sending diffs.
+25998:C 10 Jul 2019 09:13:46.952 * Parent agreed to stop sending diffs. Finalizing AOF...
+25998:C 10 Jul 2019 09:13:46.953 * Concatenating 74.69 MB of AOF diff received from parent.
+25964:M 10 Jul 2019 09:13:47.007 * AOF rewrite child asks to stop sending diffs.
+25997:C 10 Jul 2019 09:13:47.008 * Parent agreed to stop sending diffs. Finalizing AOF...
+25997:C 10 Jul 2019 09:13:47.009 * Concatenating 60.62 MB of AOF diff received from parent.
+25996:C 10 Jul 2019 09:13:47.713 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:13:48.004 * Background AOF buffer size: 75 MB
+25954:M 10 Jul 2019 09:13:48.297 * Background AOF buffer size: 70 MB
+25996:C 10 Jul 2019 09:13:48.306 * AOF rewrite: 296 MB of memory used by copy-on-write
+25997:C 10 Jul 2019 09:13:48.665 * SYNC append only file rewrite performed
+25998:C 10 Jul 2019 09:13:48.847 * SYNC append only file rewrite performed
+25959:M 10 Jul 2019 09:13:49.015 * Background AOF buffer size: 80 MB
+25959:M 10 Jul 2019 09:13:49.107 * Background AOF rewrite terminated with success
+25997:C 10 Jul 2019 09:13:49.141 * AOF rewrite: 319 MB of memory used by copy-on-write
+25998:C 10 Jul 2019 09:13:49.260 * AOF rewrite: 311 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:13:49.735 * Residual parent diff successfully flushed to the rewritten AOF (87.58 MB)
+25959:M 10 Jul 2019 09:13:49.890 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:13:49.959 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:13:49.994 * 10000 changes in 60 seconds. Saving...
+25954:M 10 Jul 2019 09:13:50.062 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:13:50.365 * Background saving started by pid 26000
+25964:M 10 Jul 2019 09:13:50.785 * Residual parent diff successfully flushed to the rewritten AOF (157.97 MB)
+25954:M 10 Jul 2019 09:13:51.003 * Residual parent diff successfully flushed to the rewritten AOF (148.54 MB)
+25964:M 10 Jul 2019 09:13:51.052 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:13:51.338 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:13:51.447 * 10000 changes in 60 seconds. Saving...
+25954:M 10 Jul 2019 09:13:51.448 * 10000 changes in 60 seconds. Saving...
+25954:M 10 Jul 2019 09:13:51.828 * Background saving started by pid 26001
+25964:M 10 Jul 2019 09:13:51.840 * Background saving started by pid 26002
+25999:C 10 Jul 2019 09:13:51.919 * DB saved on disk
+25999:C 10 Jul 2019 09:13:52.401 * RDB: 492 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:13:53.138 * Background saving terminated with success
+25969:M 10 Jul 2019 09:13:53.315 * Starting automatic rewriting of AOF on 196% growth
+25969:M 10 Jul 2019 09:13:53.727 * Background append only file rewriting started by pid 26003
+25969:M 10 Jul 2019 09:14:02.935 * Background AOF buffer size: 70 MB
+25969:M 10 Jul 2019 09:14:03.362 * Background AOF buffer size: 79 MB
+26000:C 10 Jul 2019 09:14:03.447 * DB saved on disk
+26000:C 10 Jul 2019 09:14:03.920 * RDB: 438 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:14:04.982 * Background saving terminated with success
+25959:M 10 Jul 2019 09:14:05.092 * Starting automatic rewriting of AOF on 276% growth
+25959:M 10 Jul 2019 09:14:05.582 * Background append only file rewriting started by pid 26004
+26001:C 10 Jul 2019 09:14:05.773 * DB saved on disk
+26001:C 10 Jul 2019 09:14:06.481 * RDB: 492 MB of memory used by copy-on-write
+26002:C 10 Jul 2019 09:14:07.383 * DB saved on disk
+25954:M 10 Jul 2019 09:14:07.802 * Background saving terminated with success
+26002:C 10 Jul 2019 09:14:07.818 * RDB: 547 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:14:07.909 * Starting automatic rewriting of AOF on 186% growth
+25954:M 10 Jul 2019 09:14:08.502 * Background append only file rewriting started by pid 26005
+25964:M 10 Jul 2019 09:14:09.300 * Background saving terminated with success
+25964:M 10 Jul 2019 09:14:09.401 * Starting automatic rewriting of AOF on 221% growth
+25964:M 10 Jul 2019 09:14:09.950 * Background append only file rewriting started by pid 26006
+25969:M 10 Jul 2019 09:14:12.314 * AOF rewrite child asks to stop sending diffs.
+26003:C 10 Jul 2019 09:14:12.314 * Parent agreed to stop sending diffs. Finalizing AOF...
+26003:C 10 Jul 2019 09:14:12.315 * Concatenating 68.75 MB of AOF diff received from parent.
+26003:C 10 Jul 2019 09:14:14.162 * SYNC append only file rewrite performed
+25969:M 10 Jul 2019 09:14:14.588 * Background AOF buffer size: 176 MB
+26003:C 10 Jul 2019 09:14:14.768 * AOF rewrite: 433 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:14:15.944 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:14:18.547 * Residual parent diff successfully flushed to the rewritten AOF (220.66 MB)
+25969:M 10 Jul 2019 09:14:19.120 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:14:19.240 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25954:M 10 Jul 2019 09:14:20.886 * Background AOF buffer size: 71 MB
+25959:M 10 Jul 2019 09:14:24.455 * AOF rewrite child asks to stop sending diffs.
+26004:C 10 Jul 2019 09:14:24.456 * Parent agreed to stop sending diffs. Finalizing AOF...
+26004:C 10 Jul 2019 09:14:24.457 * Concatenating 99.00 MB of AOF diff received from parent.
+26004:C 10 Jul 2019 09:14:27.006 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:14:27.106 * Background AOF buffer size: 71 MB
+26004:C 10 Jul 2019 09:14:27.679 * AOF rewrite: 353 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:14:27.859 * Background AOF buffer size: 80 MB
+25964:M 10 Jul 2019 09:14:28.772 * Background AOF buffer size: 74 MB
+25959:M 10 Jul 2019 09:14:28.816 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:14:29.381 * Starting automatic rewriting of AOF on 100% growth
+25954:M 10 Jul 2019 09:14:29.911 * AOF rewrite child asks to stop sending diffs.
+26005:C 10 Jul 2019 09:14:29.911 * Parent agreed to stop sending diffs. Finalizing AOF...
+26005:C 10 Jul 2019 09:14:29.912 * Concatenating 103.44 MB of AOF diff received from parent.
+25959:M 10 Jul 2019 09:14:29.917 * Residual parent diff successfully flushed to the rewritten AOF (111.51 MB)
+25969:M 10 Jul 2019 09:14:29.961 * Background append only file rewriting started by pid 26007
+25959:M 10 Jul 2019 09:14:30.135 * Background AOF rewrite finished successfully
+25959:M 10 Jul 2019 09:14:30.254 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+25964:M 10 Jul 2019 09:14:30.665 * AOF rewrite child asks to stop sending diffs.
+26006:C 10 Jul 2019 09:14:30.665 * Parent agreed to stop sending diffs. Finalizing AOF...
+26006:C 10 Jul 2019 09:14:30.666 * Concatenating 93.50 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:14:31.500 * Background AOF buffer size: 170 MB
+26005:C 10 Jul 2019 09:14:32.628 * SYNC append only file rewrite performed
+26005:C 10 Jul 2019 09:14:33.397 * AOF rewrite: 471 MB of memory used by copy-on-write
+26006:C 10 Jul 2019 09:14:33.410 * SYNC append only file rewrite performed
+25964:M 10 Jul 2019 09:14:34.020 * Background AOF buffer size: 170 MB
+26006:C 10 Jul 2019 09:14:34.209 * AOF rewrite: 448 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:14:34.790 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:14:35.602 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:14:36.932 * Starting automatic rewriting of AOF on 101% growth
+25954:M 10 Jul 2019 09:14:37.077 * Residual parent diff successfully flushed to the rewritten AOF (258.93 MB)
+25959:M 10 Jul 2019 09:14:37.520 * Background append only file rewriting started by pid 26008
+25954:M 10 Jul 2019 09:14:37.592 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:14:37.675 * Residual parent diff successfully flushed to the rewritten AOF (225.05 MB)
+25964:M 10 Jul 2019 09:14:38.477 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:14:40.854 * Background AOF buffer size: 70 MB
+25969:M 10 Jul 2019 09:14:41.610 * Background AOF buffer size: 76 MB
+25969:M 10 Jul 2019 09:14:49.365 * AOF rewrite child asks to stop sending diffs.
+26007:C 10 Jul 2019 09:14:49.365 * Parent agreed to stop sending diffs. Finalizing AOF...
+26007:C 10 Jul 2019 09:14:49.366 * Concatenating 89.75 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:14:49.385 * Starting automatic rewriting of AOF on 100% growth
+25964:M 10 Jul 2019 09:14:49.802 * Starting automatic rewriting of AOF on 100% growth
+25969:M 10 Jul 2019 09:14:49.893 * Background AOF buffer size: 170 MB
+25954:M 10 Jul 2019 09:14:50.059 * Background append only file rewriting started by pid 26009
+25959:M 10 Jul 2019 09:14:50.064 * Background AOF buffer size: 72 MB
+25959:M 10 Jul 2019 09:14:50.503 * Background AOF buffer size: 80 MB
+25964:M 10 Jul 2019 09:14:50.670 * Background append only file rewriting started by pid 26010
+26007:C 10 Jul 2019 09:14:51.612 * SYNC append only file rewrite performed
+26007:C 10 Jul 2019 09:14:52.483 * AOF rewrite: 546 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:14:54.148 * Background AOF buffer size: 270 MB
+25969:M 10 Jul 2019 09:14:54.171 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:14:57.616 * Residual parent diff successfully flushed to the rewritten AOF (271.02 MB)
+25969:M 10 Jul 2019 09:14:58.397 * Background AOF rewrite finished successfully
+25969:M 10 Jul 2019 09:14:58.509 * 10000 changes in 60 seconds. Saving...
+25969:M 10 Jul 2019 09:14:59.504 * Background saving started by pid 26012
+25959:M 10 Jul 2019 09:15:01.741 * AOF rewrite child asks to stop sending diffs.
+26008:C 10 Jul 2019 09:15:01.741 * Parent agreed to stop sending diffs. Finalizing AOF...
+26008:C 10 Jul 2019 09:15:01.743 * Concatenating 103.50 MB of AOF diff received from parent.
+25959:M 10 Jul 2019 09:15:02.999 * Background AOF buffer size: 170 MB
+26008:C 10 Jul 2019 09:15:04.899 * SYNC append only file rewrite performed
+26008:C 10 Jul 2019 09:15:05.853 * AOF rewrite: 527 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:15:07.840 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:15:11.002 * Residual parent diff successfully flushed to the rewritten AOF (269.87 MB)
+25959:M 10 Jul 2019 09:15:11.712 * Background AOF rewrite finished successfully
+25959:M 10 Jul 2019 09:15:11.814 * 10000 changes in 60 seconds. Saving...
+25954:M 10 Jul 2019 09:15:12.148 * Background AOF buffer size: 71 MB
+25959:M 10 Jul 2019 09:15:12.783 * Background saving started by pid 26013
+25954:M 10 Jul 2019 09:15:15.285 * AOF rewrite child asks to stop sending diffs.
+26009:C 10 Jul 2019 09:15:15.285 * Parent agreed to stop sending diffs. Finalizing AOF...
+26009:C 10 Jul 2019 09:15:15.286 * Concatenating 91.94 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:15:15.553 * Background AOF buffer size: 76 MB
+26009:C 10 Jul 2019 09:15:17.966 * SYNC append only file rewrite performed
+26009:C 10 Jul 2019 09:15:18.854 * AOF rewrite: 785 MB of memory used by copy-on-write
+25964:M 10 Jul 2019 09:15:19.565 * AOF rewrite child asks to stop sending diffs.
+26010:C 10 Jul 2019 09:15:19.565 * Parent agreed to stop sending diffs. Finalizing AOF...
+26010:C 10 Jul 2019 09:15:19.566 * Concatenating 119.06 MB of AOF diff received from parent.
+25954:M 10 Jul 2019 09:15:20.813 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:15:22.766 * Residual parent diff successfully flushed to the rewritten AOF (174.13 MB)
+25964:M 10 Jul 2019 09:15:22.776 * Background AOF buffer size: 80 MB
+25954:M 10 Jul 2019 09:15:22.832 * Background AOF rewrite finished successfully
+25954:M 10 Jul 2019 09:15:22.938 * 10000 changes in 60 seconds. Saving...
+26010:C 10 Jul 2019 09:15:23.249 * SYNC append only file rewrite performed
+26012:C 10 Jul 2019 09:15:23.451 * DB saved on disk
+25954:M 10 Jul 2019 09:15:23.846 * Background saving started by pid 26015
+26010:C 10 Jul 2019 09:15:24.007 * AOF rewrite: 800 MB of memory used by copy-on-write
+26012:C 10 Jul 2019 09:15:24.268 * RDB: 939 MB of memory used by copy-on-write
+25964:M 10 Jul 2019 09:15:25.732 * Background AOF buffer size: 180 MB
+25964:M 10 Jul 2019 09:15:25.958 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:15:26.419 * Background saving terminated with success
+25969:M 10 Jul 2019 09:15:26.521 * Starting automatic rewriting of AOF on 169% growth
+25969:M 10 Jul 2019 09:15:27.240 * Background append only file rewriting started by pid 26016
+25964:M 10 Jul 2019 09:15:27.530 * Residual parent diff successfully flushed to the rewritten AOF (193.32 MB)
+25964:M 10 Jul 2019 09:15:27.819 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:15:27.940 * 10000 changes in 60 seconds. Saving...
+25964:M 10 Jul 2019 09:15:28.844 * Background saving started by pid 26017
+25969:M 10 Jul 2019 09:15:36.406 * Background AOF buffer size: 71 MB
+26013:C 10 Jul 2019 09:15:38.783 * DB saved on disk
+26013:C 10 Jul 2019 09:15:39.645 * RDB: 1065 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:15:41.745 * Background saving terminated with success
+25959:M 10 Jul 2019 09:15:41.850 * Starting automatic rewriting of AOF on 205% growth
+25959:M 10 Jul 2019 09:15:42.618 * Background append only file rewriting started by pid 26018
+26015:C 10 Jul 2019 09:15:49.857 * DB saved on disk
+26015:C 10 Jul 2019 09:15:50.773 * RDB: 992 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:15:53.026 * Background saving terminated with success
+25954:M 10 Jul 2019 09:15:53.136 * Starting automatic rewriting of AOF on 207% growth
+25954:M 10 Jul 2019 09:15:53.815 * Background append only file rewriting started by pid 26019
+25969:M 10 Jul 2019 09:15:54.057 * AOF rewrite child asks to stop sending diffs.
+26016:C 10 Jul 2019 09:15:54.058 * Parent agreed to stop sending diffs. Finalizing AOF...
+26016:C 10 Jul 2019 09:15:54.058 * Concatenating 106.38 MB of AOF diff received from parent.
+26016:C 10 Jul 2019 09:15:56.069 * SYNC append only file rewrite performed
+26017:C 10 Jul 2019 09:15:56.212 * DB saved on disk
+26016:C 10 Jul 2019 09:15:56.677 * AOF rewrite: 390 MB of memory used by copy-on-write
+26017:C 10 Jul 2019 09:15:56.862 * RDB: 831 MB of memory used by copy-on-write
+25969:M 10 Jul 2019 09:15:57.927 * Background AOF rewrite terminated with success
+25969:M 10 Jul 2019 09:15:58.000 * Residual parent diff successfully flushed to the rewritten AOF (30.36 MB)
+25969:M 10 Jul 2019 09:15:58.006 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:15:58.330 * Background saving terminated with success
+25964:M 10 Jul 2019 09:15:58.435 * Starting automatic rewriting of AOF on 138% growth
+25964:M 10 Jul 2019 09:15:58.868 * Background append only file rewriting started by pid 26020
+25959:M 10 Jul 2019 09:16:01.542 * AOF rewrite child asks to stop sending diffs.
+26018:C 10 Jul 2019 09:16:01.542 * Parent agreed to stop sending diffs. Finalizing AOF...
+26018:C 10 Jul 2019 09:16:01.542 * Concatenating 85.46 MB of AOF diff received from parent.
+26018:C 10 Jul 2019 09:16:02.214 * SYNC append only file rewrite performed
+26018:C 10 Jul 2019 09:16:02.610 * AOF rewrite: 304 MB of memory used by copy-on-write
+25959:M 10 Jul 2019 09:16:03.396 * Background AOF rewrite terminated with success
+25959:M 10 Jul 2019 09:16:03.396 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)
+25959:M 10 Jul 2019 09:16:03.396 * Background AOF rewrite finished successfully
++ sleep 5
+25954:M 10 Jul 2019 09:16:06.071 * AOF rewrite child asks to stop sending diffs.
+26019:C 10 Jul 2019 09:16:06.071 * Parent agreed to stop sending diffs. Finalizing AOF...
+26019:C 10 Jul 2019 09:16:06.071 * Concatenating 0.00 MB of AOF diff received from parent.
+26019:C 10 Jul 2019 09:16:06.071 * SYNC append only file rewrite performed
+26019:C 10 Jul 2019 09:16:06.160 * AOF rewrite: 5 MB of memory used by copy-on-write
+25954:M 10 Jul 2019 09:16:06.295 * Background AOF rewrite terminated with success
+25954:M 10 Jul 2019 09:16:06.296 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)
+25954:M 10 Jul 2019 09:16:06.296 * Background AOF rewrite finished successfully
+25964:M 10 Jul 2019 09:16:07.045 * AOF rewrite child asks to stop sending diffs.
+26020:C 10 Jul 2019 09:16:07.045 * Parent agreed to stop sending diffs. Finalizing AOF...
+26020:C 10 Jul 2019 09:16:07.045 * Concatenating 0.00 MB of AOF diff received from parent.
+26020:C 10 Jul 2019 09:16:07.045 * SYNC append only file rewrite performed
+26020:C 10 Jul 2019 09:16:07.117 * AOF rewrite: 4 MB of memory used by copy-on-write
+25964:M 10 Jul 2019 09:16:07.280 * Background AOF rewrite terminated with success
+25964:M 10 Jul 2019 09:16:07.280 * Residual parent diff successfully flushed to the rewritten AOF (0.00 MB)
+25964:M 10 Jul 2019 09:16:07.280 * Background AOF rewrite finished successfully
++ ps aux
++ grep redis-server
++ awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+25954
+25959
+25964
+25969
+26023
+26024
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 73: 26022 Done                    ps aux
+     26023                       | grep redis-server
+     26024 Killed                  | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf dump.rdb
++ rm -rf appendonly-6378.aof appendonly-6379.aof appendonly-6380.aof appendonly-6381.aof
++ sudo killall redis-server1
++ sudo killall redis-server1
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ sudo killall redis-server2
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
++ sudo killall redis-server3
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
++ sudo killall redis-server4
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
++ sudo killall redis-server1
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ sudo killall redis-server2
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
++ sudo killall redis-server3
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
++ sudo killall redis-server4
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ set +x
+[52933.295279] Curr 25646 Currname redis-server4 HeteroProcname redis-server4 cache-hits 334180 cache-miss 959464 buff-hits 22643 buff-miss 1234611 migrated 0 migrate_time 0 avg_buff_life(us) 266021230 pgbuff-del 2246 avg_cache_life(us) 0 pgcache-del 0 active-cache 334180
+[52933.295279]  
+[52935.669511] drop_caches: sh (25810): drop_caches: 3
+[52937.371198] drop_caches: sh (25818): drop_caches: 3
+[52980.752146] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[52982.167737] drop_caches: sh (25875): drop_caches: 3
+[52983.811211] drop_caches: sh (25883): drop_caches: 3
+[52991.872770] drop_caches: sh (25945): drop_caches: 3
+[52993.651325] drop_caches: sh (25953): drop_caches: 3
+[52993.714673] flag is set to collect hetero allocate  9 
+[52993.714675] flag is set to enable HETERO_PGCACHE 11 
+[52993.714676] flag is set to enable HETERO_BUFFER 12 
+[52993.714677] flag is set to enable HETERO_JOURNAL 13 
+[52993.714677] flag is set to enable HETERO_RADIX 14 
+[52993.714678] flag is set to enable HETERO_FULLKERN 15 
+[52993.714679] flag to set FASTMEM node to 0 
+[52993.714681] hetero_pid set to 25954 25954 procname numactl
+[52993.714682] flag to set FASTMEM node to 0 
+[52993.714683] flag to set MIGRATION FREQ to 10000 
+[52993.714684] flag to MIGRATE_LISTCNT 1000 
+[52993.735846] flag is set to collect hetero allocate  9 
+[52993.735847] flag is set to enable HETERO_PGCACHE 11 
+[52993.735848] flag is set to enable HETERO_BUFFER 12 
+[52993.735849] flag is set to enable HETERO_JOURNAL 13 
+[52993.735850] flag is set to enable HETERO_RADIX 14 
+[52993.735850] flag is set to enable HETERO_FULLKERN 15 
+[52993.735851] flag to set FASTMEM node to 0 
+[52993.735853] hetero_pid set to 25954 25954 procname redis-server1
+[52993.735853] flag to set FASTMEM node to 0 
+[52993.735854] flag to set MIGRATION FREQ to 10000 
+[52993.735855] flag to MIGRATE_LISTCNT 1000 
+[52994.716165] flag is set to collect hetero allocate  9 
+[52994.716168] flag is set to enable HETERO_PGCACHE 11 
+[52994.716169] flag is set to enable HETERO_BUFFER 12 
+[52994.716170] flag is set to enable HETERO_JOURNAL 13 
+[52994.716170] flag is set to enable HETERO_RADIX 14 
+[52994.716172] flag is set to enable HETERO_FULLKERN 15 
+[52994.716173] flag to set FASTMEM node to 0 
+[52994.716174] hetero_pid set to 25959 25959 procname numactl
+[52994.716175] flag to set FASTMEM node to 0 
+[52994.716176] flag to set MIGRATION FREQ to 10000 
+[52994.716178] flag to MIGRATE_LISTCNT 1000 
+[52994.718482] flag is set to collect hetero allocate  9 
+[52994.718483] flag is set to enable HETERO_PGCACHE 11 
+[52994.718484] flag is set to enable HETERO_BUFFER 12 
+[52994.718485] flag is set to enable HETERO_JOURNAL 13 
+[52994.718486] flag is set to enable HETERO_RADIX 14 
+[52994.718486] flag is set to enable HETERO_FULLKERN 15 
+[52994.718487] flag to set FASTMEM node to 0 
+[52994.718488] hetero_pid set to 25959 25959 procname redis-server2
+[52994.718489] flag to set FASTMEM node to 0 
+[52994.718490] flag to set MIGRATION FREQ to 10000 
+[52994.718492] flag to MIGRATE_LISTCNT 1000 
+[52995.717849] flag is set to collect hetero allocate  9 
+[52995.717852] flag is set to enable HETERO_PGCACHE 11 
+[52995.717853] flag is set to enable HETERO_BUFFER 12 
+[52995.717854] flag is set to enable HETERO_JOURNAL 13 
+[52995.717855] flag is set to enable HETERO_RADIX 14 
+[52995.717856] flag is set to enable HETERO_FULLKERN 15 
+[52995.717857] flag to set FASTMEM node to 0 
+[52995.717859] hetero_pid set to 25964 25964 procname numactl
+[52995.717860] flag to set FASTMEM node to 0 
+[52995.717861] flag to set MIGRATION FREQ to 10000 
+[52995.717862] flag to MIGRATE_LISTCNT 1000 
+[52995.720135] flag is set to collect hetero allocate  9 
+[52995.720137] flag is set to enable HETERO_PGCACHE 11 
+[52995.720138] flag is set to enable HETERO_BUFFER 12 
+[52995.720139] flag is set to enable HETERO_JOURNAL 13 
+[52995.720140] flag is set to enable HETERO_RADIX 14 
+[52995.720140] flag is set to enable HETERO_FULLKERN 15 
+[52995.720141] flag to set FASTMEM node to 0 
+[52995.720142] hetero_pid set to 25964 25964 procname redis-server3
+[52995.720143] flag to set FASTMEM node to 0 
+[52995.720144] flag to set MIGRATION FREQ to 10000 
+[52995.720146] flag to MIGRATE_LISTCNT 1000 
+[52996.719561] flag is set to collect hetero allocate  9 
+[52996.719565] flag is set to enable HETERO_PGCACHE 11 
+[52996.719566] flag is set to enable HETERO_BUFFER 12 
+[52996.719566] flag is set to enable HETERO_JOURNAL 13 
+[52996.719567] flag is set to enable HETERO_RADIX 14 
+[52996.719569] flag is set to enable HETERO_FULLKERN 15 
+[52996.719569] flag to set FASTMEM node to 0 
+[52996.719571] hetero_pid set to 25969 25969 procname numactl
+[52996.719572] flag to set FASTMEM node to 0 
+[52996.719574] flag to set MIGRATION FREQ to 10000 
+[52996.719575] flag to MIGRATE_LISTCNT 1000 
+[52996.721911] flag is set to collect hetero allocate  9 
+[52996.721913] flag is set to enable HETERO_PGCACHE 11 
+[52996.721913] flag is set to enable HETERO_BUFFER 12 
+[52996.721914] flag is set to enable HETERO_JOURNAL 13 
+[52996.721915] flag is set to enable HETERO_RADIX 14 
+[52996.721916] flag is set to enable HETERO_FULLKERN 15 
+[52996.721917] flag to set FASTMEM node to 0 
+[52996.721918] hetero_pid set to 25969 25969 procname redis-server4
+[52996.721919] flag to set FASTMEM node to 0 
+[52996.721920] flag to set MIGRATION FREQ to 10000 
+[52996.721921] flag to MIGRATE_LISTCNT 1000 
+[53210.858669] Curr 25957 Currname redis-server1 HeteroProcname redis-server4 cache-hits 233226 cache-miss 1049800 buff-hits 21023 buff-miss 1354234 migrated 0 migrate_time 0 avg_buff_life(us) 66139526 pgbuff-del 8182 avg_cache_life(us) 0 pgcache-del 0 active-cache 233226
+[53210.858669]  
+[53210.858674] Curr 25956 Currname redis-server1 HeteroProcname redis-server4 cache-hits 233226 cache-miss 1049800 buff-hits 21023 buff-miss 1354234 migrated 0 migrate_time 0 avg_buff_life(us) 66139526 pgbuff-del 8182 avg_cache_life(us) 0 pgcache-del 0 active-cache 233226
+[53210.858674]  
+[53210.858709] Curr 25958 Currname redis-server1 HeteroProcname redis-server4 cache-hits 233226 cache-miss 1049800 buff-hits 21023 buff-miss 1354234 migrated 0 migrate_time 0 avg_buff_life(us) 66131444 pgbuff-del 8183 avg_cache_life(us) 0 pgcache-del 0 active-cache 233226
+[53210.858709]  
+[53210.858729] Curr 25954 Currname redis-server1 HeteroProcname redis-server4 cache-hits 233226 cache-miss 1049800 buff-hits 21023 buff-miss 1354234 migrated 0 migrate_time 0 avg_buff_life(us) 66123363 pgbuff-del 8184 avg_cache_life(us) 0 pgcache-del 0 active-cache 233226
+[53210.858729]  
+[53210.865958] Curr 25962 Currname redis-server2 HeteroProcname redis-server4 cache-hits 234476 cache-miss 1014821 buff-hits 20070 buff-miss 1314384 migrated 0 migrate_time 0 avg_buff_life(us) 108011277 pgbuff-del 7155 avg_cache_life(us) 0 pgcache-del 0 active-cache 234476
+[53210.865958]  
+[53210.865972] Curr 25961 Currname redis-server2 HeteroProcname redis-server4 cache-hits 234476 cache-miss 1014821 buff-hits 20070 buff-miss 1314384 migrated 0 migrate_time 0 avg_buff_life(us) 108036746 pgbuff-del 7156 avg_cache_life(us) 0 pgcache-del 0 active-cache 234476
+[53210.865972]  
+[53210.865986] Curr 25963 Currname redis-server2 HeteroProcname redis-server4 cache-hits 234476 cache-miss 1014821 buff-hits 20070 buff-miss 1314384 migrated 0 migrate_time 0 avg_buff_life(us) 108036746 pgbuff-del 7156 avg_cache_life(us) 0 pgcache-del 0 active-cache 234476
+[53210.865986]  
+[53210.866001] Curr 25959 Currname redis-server2 HeteroProcname redis-server4 cache-hits 234476 cache-miss 1014821 buff-hits 20070 buff-miss 1314384 migrated 0 migrate_time 0 avg_buff_life(us) 108036746 pgbuff-del 7156 avg_cache_life(us) 0 pgcache-del 0 active-cache 234476
+[53210.866001]  
+[53210.873016] Curr 25964 Currname redis-server3 HeteroProcname redis-server4 cache-hits 281425 cache-miss 1004074 buff-hits 22143 buff-miss 1303561 migrated 0 migrate_time 0 avg_buff_life(us) 65724528 pgbuff-del 8317 avg_cache_life(us) 0 pgcache-del 0 active-cache 281425
+[53210.873016]  
+[53210.873021] Curr 25966 Currname redis-server3 HeteroProcname redis-server4 cache-hits 281425 cache-miss 1004074 buff-hits 22143 buff-miss 1303561 migrated 0 migrate_time 0 avg_buff_life(us) 65724528 pgbuff-del 8317 avg_cache_life(us) 0 pgcache-del 0 active-cache 281425
+[53210.873021]  
+[53210.873135] Curr 25967 Currname redis-server3 HeteroProcname redis-server4 cache-hits 281425 cache-miss 1004074 buff-hits 22143 buff-miss 1303561 migrated 0 migrate_time 0 avg_buff_life(us) 65724528 pgbuff-del 8317 avg_cache_life(us) 0 pgcache-del 0 active-cache 281425
+[53210.873135]  
+[53210.873184] Curr 25968 Currname redis-server3 HeteroProcname redis-server4 cache-hits 281425 cache-miss 1004074 buff-hits 22143 buff-miss 1303561 migrated 0 migrate_time 0 avg_buff_life(us) 65724528 pgbuff-del 8317 avg_cache_life(us) 0 pgcache-del 0 active-cache 281425
+[53210.873184]  
+[53210.880307] Curr 25969 Currname redis-server4 HeteroProcname redis-server4 cache-hits 251316 cache-miss 1025684 buff-hits 19869 buff-miss 1404867 migrated 0 migrate_time 0 avg_buff_life(us) 117329212 pgbuff-del 7586 avg_cache_life(us) 0 pgcache-del 0 active-cache 251316
+[53210.880307]  
+[53210.880311] Curr 25971 Currname redis-server4 HeteroProcname redis-server4 cache-hits 251316 cache-miss 1025684 buff-hits 19869 buff-miss 1404867 migrated 0 migrate_time 0 avg_buff_life(us) 117329212 pgbuff-del 7586 avg_cache_life(us) 0 pgcache-del 0 active-cache 251316
+[53210.880311]  
+[53210.880394] Curr 25972 Currname redis-server4 HeteroProcname redis-server4 cache-hits 251316 cache-miss 1025684 buff-hits 19869 buff-miss 1404867 migrated 0 migrate_time 0 avg_buff_life(us) 117329212 pgbuff-del 7586 avg_cache_life(us) 0 pgcache-del 0 active-cache 251316
+[53210.880394]  

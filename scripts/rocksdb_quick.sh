@@ -3,8 +3,8 @@
 
 cd $NVMBASE
 APP=""
-TYPE="NVM"
-#TYPE="SSD"
+#TYPE="NVM"
+TYPE="SSD"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -108,13 +108,6 @@ SET_RUN_APP() {
 APP="redis.out"
 #APP=fxmark
 
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
-
-
-
 #Don't do any migration
 export APPPREFIX="numactl --membind=0"
 $SCRIPTS/umount_ext4ramdisk.sh
@@ -122,8 +115,16 @@ sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 DISABLE_THROTTLE
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+exit
+
 
 THROTTLE
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+
+
 export APPPREFIX="numactl --membind=1"
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 
