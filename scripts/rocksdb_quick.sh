@@ -63,6 +63,9 @@ RUNAPP() {
 	#Run application
 	cd $NVMBASE
 
+	/bin/ls
+	exit
+
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
@@ -108,21 +111,11 @@ SET_RUN_APP() {
 APP="redis.out"
 #APP=fxmark
 
-#Don't do any migration
-export APPPREFIX="numactl --membind=0"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-DISABLE_THROTTLE
-SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-exit
-
-
 THROTTLE
-
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+exit
 
 
 export APPPREFIX="numactl --membind=1"
@@ -136,6 +129,15 @@ SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+
+#Don't do any migration
+export APPPREFIX="numactl --membind=0"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+DISABLE_THROTTLE
+SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+exit
 
 
 

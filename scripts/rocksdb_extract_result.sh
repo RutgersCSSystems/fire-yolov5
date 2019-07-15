@@ -3,6 +3,40 @@ TARGET=$OUTPUTDIR
 APP="rocksdb"
 TYPE="SSD"
 
+STATTYPE="APP"
+STATTYPE="KERNEL"
+
+## declare an array variable
+declare -a arr=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated")
+
+
+EXTRACT_KERNINFO() {
+	dir=$1
+	APP=$2
+	awkidx=10
+
+	if [ -f $dir/$APP ]; then
+
+	for term in "${arr[@]}"
+		do
+			echo "----------------------------"$APP"----------------"
+			search="$"$awkidx
+			echo $search
+			#cat $dir/$APP | grep $term | awk -v myvar="$search" '{sum += myvar } END {print "page_cache_hits: " sum}'
+			cat $dir/$APP | grep Currname | awk -v myvar="$search" '{sum += myvar } END {print "page_cache_hits: " sum}'
+
+			#cat $dir/$APP | grep "page_cache_hits" | awk '{sum += $9} END {print "page_cache_hits: " sum}'
+			#cat $dir/$APP | grep "page_cache_miss" | awk '{sum += $11} END {print "page_cache_miss: " sum}'
+			#cat $dir/$APP | grep "buff_page_hits" | awk '{sum += $13} END {print "buff_page_hits: " sum}'
+			#cat $dir/$APP | grep "buff_buffer_miss" | awk '{sum += $15} END {print "buff_buffer_miss: " sum}'
+			((awkidx++))
+			((awkidx++))
+		done
+	fi
+	
+	
+}
+
 
 EXTRACT_RESULT() {
 
@@ -31,10 +65,11 @@ EXTRACT_RESULT() {
 		rm $NVMBASE/graphs/zplot/data/$outputfile
 		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
 		echo $NVMBASE/graphs/zplot/data/$outputfile
+		EXTRACT_KERNINFO $dir $APPFILE
 	fi
 	done
 
-	 TYPE="SSD"
+	TYPE="SSD"
 	for dir in $TARGET/*
 	do
 	if [[ $dir == *"SSD"* ]];
@@ -56,17 +91,6 @@ EXTRACT_RESULT() {
 }
 
 
-EXTRACT_INFO() {
-	dir=$1
-	APP=$2
-	if [ -f $dir/$APP ]; then
-		echo "----------------------------"$APP"----------------"
-		cat $dir/$APP | grep "page_cache_hits" | awk '{sum += $9} END {print "page_cache_hits: " sum}'
-		cat $dir/$APP | grep "page_cache_miss" | awk '{sum += $11} END {print "page_cache_miss: " sum}'
-		cat $dir/$APP | grep "buff_page_hits" | awk '{sum += $13} END {print "buff_page_hits: " sum}'
-		cat $dir/$APP | grep "buff_buffer_miss" | awk '{sum += $15} END {print "buff_buffer_miss: " sum}'
-	fi
-}
 
 EXTRACT_INFO_OLD() {
 	dir=$1
