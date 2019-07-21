@@ -63,13 +63,20 @@ RUNAPP() {
 	#Run application
 	cd $NVMBASE
 
-	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
+	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
-	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+
+	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+	#$APPBENCH/apps/pigz/run.sh &> $OUTPUT
+
+	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
+
+	$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+
 	sudo dmesg -c &>> $OUTPUT
 }
 
@@ -105,10 +112,31 @@ SET_RUN_APP() {
 #APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-APP="redis.out"
+#APP="redis.out"
 #APP=fxmark
+#APP="flash.out"
+APP="cassandra.out"
 
+#THROTTLE
 #Don't do any migration
+export APPPREFIX="numactl  --preferred=0"
+#SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+exit
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+
+export APPPREFIX="numactl --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
+
+
+export APPPREFIX="numactl --membind=1"
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+
 export APPPREFIX="numactl --membind=0"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
@@ -117,25 +145,6 @@ DISABLE_THROTTLE
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
 
-
-THROTTLE
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-
-
-export APPPREFIX="numactl --membind=1"
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-
-export APPPREFIX="numactl --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 
 
 
