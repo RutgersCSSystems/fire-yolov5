@@ -4514,12 +4514,14 @@ static inline bool prepare_alloc_pages_hetero(gfp_t gfp_mask, unsigned int order
 
         if (cpusets_enabled()) {
          
+#if 0
                 printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
                 *alloc_mask |= __GFP_HARDWALL;
                 if (!ac->nodemask)
                         ac->nodemask = &cpuset_current_mems_allowed;
                 else
                         *alloc_flags |= ALLOC_CPUSET;
+#endif
         }
 
         fs_reclaim_acquire(gfp_mask);

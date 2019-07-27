@@ -63,7 +63,7 @@ INSTALL_CMAKE(){
     ./configure
     ./bootstrap
     make -j16
-    make install
+    sudo make install
 }
 
 INSTALL_SYSBENCH() {
@@ -134,8 +134,10 @@ INSTALL_CASSANDRA
 
 
 INSTALL_SYSTEM_LIBS
-#INSTALL_CMAKE
+INSTALL_CMAKE
 INSTALL_GFLAGS
+exit
+
 INSTALL_ROCKSDB
 GETAPPS
 exit
