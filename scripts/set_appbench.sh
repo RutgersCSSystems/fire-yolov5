@@ -35,6 +35,7 @@ sudo apt-get install -y libgflags-dev
 sudo apt-get install -y zlib1g-dev
 sudo apt-get install -y libbz2-dev
 sudo apt-get install -y libevent-dev
+sudo apt-get install -y systemd
 #sudo apt-get install memcached
 sudo apt-get install libaio*
 }
@@ -85,6 +86,16 @@ INSTALL_MYSQL() {
 	sudo systemctl start mysql
 }
 
+INSTALL_CASSANDRA() {
+	cd $APPBENCH/apps
+	git clone https://github.com/SudarsunKannan/butterflyeffect
+	cd butterflyeffect/code
+	source scripts/setvars.sh
+	scripts/install_cassandra.sh
+	source $CODE/scripts/setvars.sh
+	cp $CODE/cassandra.sh $CSRC/bin/cassandra
+}
+
 INSTALL_ROCKSDB() {
 	cd $APPBENCH/apps
 	git clone https://github.com/facebook/rocksdb
@@ -118,6 +129,7 @@ cd $APPBENCH/apps
 git clone https://github.com/SudarsunKannan/fio
 cd $APPBENCH/apps
 git clone https://github.com/memcached/memcached.git
+INSTALL_CASSANDRA
 }
 
 INSTALL_ROCKSDB

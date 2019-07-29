@@ -5,6 +5,7 @@ TYPE="SSD"
 
 STATTYPE="APP"
 STATTYPE="KERNEL"
+ZPLOT="$NVMBASE/graphs/zplot"
 
 ## declare an array variable
 declare -a arr=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated")
@@ -38,6 +39,97 @@ EXTRACT_KERNINFO() {
 }
 
 
+
+PULL_RESULT() {
+
+	APP=$1
+	dir=$2
+        j=$3      
+	basename=$4
+	APPFILE=$5
+
+	outputfile=$APP-$outfile".data"
+	outfile=$(basename $dir)
+	outputfile=$APP-$outfile".data"
+	rm -rf $ZPLOT/data/$outputfile
+	rm -rf "num.data"
+
+	if [ -f $dir/$APPFILE ]; then
+		echo $dir/$APPFILE
+		cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
+		((j++))
+		echo $j &> "num.data"
+		paste "num.data" $APP".data" &> $ZPLOT/data/$outputfile
+		echo $ZPLOT/data/$outputfile
+	fi
+}
+
+
+declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq")
+
+PULL_RESULT_PATTERN() {
+
+	APP=$1
+	dir=$2
+        j=$3      
+	basename=$4
+	APPFILE=$5
+	access=$6
+	resultdir=$ZPLOT/data/patern
+	mkdir -p $resultdir	
+
+	outputfile=$APP-$outfile
+	outfile=$(basename $dir)
+	rm -rf $resultdir/$outputfile
+	rm -rf "num.data"
+	resultfile="$APP"-"$access.data"
+
+	if [ -f $dir/$APPFILE ]; then
+		cat $dir/$APPFILE | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $resultfile
+		((j++))
+		echo $j &> "num.data"
+		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
+		cat $resultdir/$outputfile"-"$access".data"
+		rm -rf "num.data" $resultfile
+	fi
+}
+
+
+EXTRACT_BREAKDOWN_RESULT() {
+	i=0
+	j=0
+	files=""
+	rm $APP".data"
+
+	for accesstype in "${pattern[@]}"
+	do
+		TYPE="NVM"
+		for dir in $TARGET/*
+		do
+		 if [[ $dir = *"NVM"* ]]; 
+		 then
+			APPFILE=rocksdb.out-NVM
+			#PULL_RESULT_PATTERN $APP $dir $j $basename $APPFILE $accesstype
+		fi
+		done
+
+		APPFILE=""
+		TYPE="SSD"
+		for dir in $TARGET/*
+		do
+		if [[ $dir == *"SSD"* ]];
+		 then
+			echo $dir
+			APPFILE=rocksdb.out-SSD
+			#PULL_RESULT $APP $dir $j $basename $APPFILE
+			PULL_RESULT_PATTERN $APP $dir $j $basename $APPFILE $accesstype
+		fi
+		done
+		((j++))
+	done
+}
+
+
 EXTRACT_RESULT() {
 
 	i=0
@@ -50,46 +142,26 @@ EXTRACT_RESULT() {
 	TYPE="NVM"
 	for dir in $TARGET/*
 	do
-	 if [[ $dir == *"NVM"* ]]; 
+	 if [[ $dir = *"NVM"* ]]; 
  	 then
-		outfile=$(basename $dir)
-		outputfile=$APP-$outfile".data"
-
 		APPFILE=rocksdb.out-NVM
-
-		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
-			((j++))
-			echo $j &> "num.data"
-		fi
-		rm $NVMBASE/graphs/zplot/data/$outputfile
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
-		echo $NVMBASE/graphs/zplot/data/$outputfile
-		EXTRACT_KERNINFO $dir $APPFILE
+		#EXTRACT_KERNINFO $dir $APPFILE
+		PULL_RESULT $APP $dir $j $basename $APPFILE
 	fi
 	done
 
+	APPFILE=""
 	TYPE="SSD"
 	for dir in $TARGET/*
 	do
 	if [[ $dir == *"SSD"* ]];
 	 then
-		outfile=$(basename $dir)
-		outputfile=$APP-$outfile".data"
 		APPFILE=rocksdb.out-SSD
-
-		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
-			((j++))
-			echo $j &> "num.data"
-		fi
-		rm $NVMBASE/graphs/zplot/data/$outputfile
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
-		echo $NVMBASE/graphs/zplot/data/$outputfile
+		#PULL_RESULT $APP $dir $j $basename $APPFILE
+		PULL_RESULT_PATTERN $APP $dir $j $basename $APPFILE
 	fi
 	done
 }
-
 
 
 EXTRACT_INFO_OLD() {
@@ -121,9 +193,12 @@ EXTRACT_KERNSTAT(){
 
 }
 
-EXTRACT_RESULT
-cd $NVMBASE/graphs/zplot/
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+#EXTRACT_RESULT
+EXTRACT_BREAKDOWN_RESULT
+#cd $NVMBASE/graphs/zplot/
+#python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-breakdown.py
 #EXTRACT_KERNSTAT
 
 

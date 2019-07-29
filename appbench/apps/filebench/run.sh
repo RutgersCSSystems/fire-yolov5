@@ -34,7 +34,7 @@ RANDOM_MONGO(){
 	echo "Running Random Write"
 	#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
-	LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f workloads/fileserver.f
+	LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f workloads/varmail.f
 	#export LD_PRELOAD=""
 }
 

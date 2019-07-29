@@ -23,8 +23,8 @@
 # Use is subject to license terms.
 #
 
-set $dir=/users/kannan11/ssd/NVM/appbench/shared_data
-set $nfiles=1000
+set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $nfiles=100000
 set $meandirwidth=20
 set $filesize=cvar(type=cvar-gamma,parameters=mean:16384;gamma:1.5)
 set $nthreads=100

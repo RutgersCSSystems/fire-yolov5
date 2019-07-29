@@ -33,9 +33,9 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
 
-#export APPPREFIX="numactl --preferred=1"
-export APPPREFIX="numactl --membind=1"
-export APP_PREFIX="numactl --membind=1"
+export APPPREFIX="numactl --preferred=0"
+#export APPPREFIX="numactl --membind=1"
+#export APP_PREFIX="numactl --membind=1"
 
 export OUTPUTDIR=$APPBENCH/output
 export TEST_TMPDIR=/mnt/pmemdir

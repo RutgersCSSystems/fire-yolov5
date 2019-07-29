@@ -1,0 +1,105 @@
+++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/FlashX
+++ STORAGE=/users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=1 /users/skannan/ssd/NVM/appbench/apps/FlashX/build/flash-graph/test-algs/test_algs /users/skannan/ssd/NVM/appbench/apps/FlashX/flash-graph/conf/run_test.txt /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.adj /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.index wcc
+initiating tracing...
+initiating tracing...
+Initialize ops. There are 11 types
+SAFS runs on 1 NUMA nodes
+The root conf file: FG_TOP/flash-graph/conf/data_files.txt
+FG_TOP/flash-graph/conf/data_files.txt doesn't exist
+FlashGraph: fail to initialize SAFS
+FlashMatrix runs on 4 threads and 1 NUMA nodes
+reserved 0 bytes are associated with NUMA nodes and 0 bytes aren't
+
+FlashGraph runs on 4 threads and 1 nodes
+Configuration parameters in graph algorithm.
+	threads: 4
+	prof_file: 
+	trace_file: 
+	max_processing_vertices: 2000
+	enable_elevator: 0
+	part_range_size_log: 10
+	preload: 0
+	index_file_weight: 10
+	in_mem_graph: 0
+	num_vparts: 1
+	min_vpart_degree: 2147483647
+	serial_run: 1
+	vertex_merge_gap: 0
+load a graph of 17444610048 bytes
+load vertex index: file size: 329686816, index size: 329686816
+init from a compressed vertex index
+There are 848507 large in-vertices and 1350523 large out-vertices
+init in-mem compressed index takes 0.940031 seconds
+There are 124836180 vertices
+It takes 2.27222 seconds to initialize the graph engine
+weakly connected components starts
+Iter 0 takes 172.293 seconds, and 65608366 vertices are in iter 1
+Iter 1 takes 3.38681 seconds, and 9817116 vertices are in iter 2
+Iter 2 takes 0.623778 seconds, and 349369 vertices are in iter 3
+Iter 3 takes 0.088737 seconds, and 89526 vertices are in iter 4
+Iter 4 takes 0.032722 seconds, and 28490 vertices are in iter 5
+Iter 5 takes 0.014565 seconds, and 9398 vertices are in iter 6
+Iter 6 takes 0.010315 seconds, and 3285 vertices are in iter 7
+Iter 7 takes 0.00677 seconds, and 1231 vertices are in iter 8
+Iter 8 takes 0.000553 seconds, and 451 vertices are in iter 9
+Iter 9 takes 0.000376 seconds, and 173 vertices are in iter 10
+Iter 10 takes 0.000348 seconds, and 59 vertices are in iter 11
+Iter 11 takes 0.000319 seconds, and 36 vertices are in iter 12
+Iter 12 takes 0.000338 seconds, and 17 vertices are in iter 13
+Iter 13 takes 0.000314 seconds, and 7 vertices are in iter 14
+Iter 14 takes 0.001077 seconds, and 4 vertices are in iter 15
+Iter 15 takes 0.002072 seconds, and 3 vertices are in iter 16
+Iter 16 takes 0.001122 seconds, and 1 vertices are in iter 17
+Iter 17 takes 0.000305 seconds, and 0 vertices are in iter 18
+The graph engine takes 176.465 seconds to complete
+WCC takes 176.465 seconds in total
+There are 2 components (exclude empty vertices), and largest comp has -8436461943459969370 vertices
+reserved 536870912 bytes are associated with NUMA nodes and 0 bytes aren't
+
+I/O system is destroyed
+I/O threads get 0 reads (0 bytes) and 0 writes (0 bytes)
+
+
+application termination...
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+[ 7389.947342] drop_caches: sh (11696): drop_caches: 3
+[ 7392.518373] drop_caches: sh (11705): drop_caches: 3
+[ 7394.193593] drop_caches: sh (11710): drop_caches: 3
+[ 7395.804107] drop_caches: sh (11718): drop_caches: 3
+[ 7398.187700] flag is set to collect hetero allocate  9 
+[ 7398.187703] flag is set to enable HETERO_PGCACHE 11 
+[ 7398.187704] flag is set to enable HETERO_BUFFER 12 
+[ 7398.187705] flag is set to enable HETERO_JOURNAL 13 
+[ 7398.187705] flag is set to enable HETERO_RADIX 14 
+[ 7398.187706] flag is set to enable HETERO_FULLKERN 15 
+[ 7398.187707] flag to set FASTMEM node to 1 
+[ 7398.187709] hetero_pid set to 11736 11736 procname numactl
+[ 7398.187710] flag to set FASTMEM node to 1 
+[ 7398.187711] flag to set MIGRATION FREQ to 410065408 
+[ 7398.187712] flag to disable migration 19 
+[ 7398.187713] flag to MIGRATE_LISTCNT 410065408 
+[ 7398.453684] flag is set to collect hetero allocate  9 
+[ 7398.453688] flag is set to enable HETERO_PGCACHE 11 
+[ 7398.453689] flag is set to enable HETERO_BUFFER 12 
+[ 7398.453691] flag is set to enable HETERO_JOURNAL 13 
+[ 7398.453692] flag is set to enable HETERO_RADIX 14 
+[ 7398.453693] flag is set to enable HETERO_FULLKERN 15 
+[ 7398.453695] flag to set FASTMEM node to 1 
+[ 7398.453697] hetero_pid set to 11736 11736 procname test_algs
+[ 7398.453699] flag to set FASTMEM node to 1 
+[ 7398.453701] flag to set MIGRATION FREQ to 410065408 
+[ 7398.453703] flag to disable migration 19 
+[ 7398.453705] flag to MIGRATE_LISTCNT 410065408 
+[ 7622.301238] flag is set to print hetero allocate stat 10 
+[ 7622.301242] Curr 11736 Currname test_algs HeteroProcname test_algs cache-hits 4340892 cache-miss 0 buff-hits 2501 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 4340892
+[ 7622.301242]  
+[ 7622.301244] cache-hits 12300209 cache-miss 8479040 buff-hits 0 buff-miss 0 migrated 0 cache-del 732999 buff-del 0 
+[ 7622.301246] flag set to clear count 0
