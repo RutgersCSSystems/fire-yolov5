@@ -6,8 +6,8 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=1200
-yint=200
+ymax=3000
+yint=500
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
@@ -22,10 +22,10 @@ xycord = [45,20]
 xlabel = ['writerand', 'readrand', 'writerseq', 'readseq']
 pattern = ['fillrandom', 'readrandom', 'fillseq', 'readseq']
 mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only',
-        'slowmem-obj-affinity', 'slowmem-obj-affinity-prefetch']
+        'slowmem-obj-affinity', 'slowmem-obj-affinity-prefetch', 'slowmem-only']
 mechnames = ['Naive', 'Optimal', 'Migration-only', 'Obj-affinity',
-        'Obj-affinity-prefetch']
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red']
+        'Obj-affinity-prefetch', 'SlowMem-only']
+colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/patern/rocksdb'
 yname="Throughput (OPS/sec)"
 storage="SSD"

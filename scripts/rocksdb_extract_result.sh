@@ -55,17 +55,19 @@ PULL_RESULT() {
 	rm -rf "num.data"
 
 	if [ -f $dir/$APPFILE ]; then
-		echo $dir/$APPFILE
+		#echo $dir/$APPFILE
 		cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $APP".data" &> $ZPLOT/data/$outputfile
-		echo $ZPLOT/data/$outputfile
+		#echo $ZPLOT/data/$outputfile
 	fi
 }
 
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq")
+#declare -a pattern=("fillrandom")
+
 
 PULL_RESULT_PATTERN() {
 
@@ -76,20 +78,25 @@ PULL_RESULT_PATTERN() {
 	APPFILE=$5
 	access=$6
 	resultdir=$ZPLOT/data/patern
-	mkdir -p $resultdir	
+	mkdir -p $resultdir
 
-	outputfile=$APP-$outfile
 	outfile=$(basename $dir)
+	outputfile=$APP-$outfile
 	rm -rf $resultdir/$outputfile
 	rm -rf "num.data"
 	resultfile="$APP"-"$access.data"
 
 	if [ -f $dir/$APPFILE ]; then
-		cat $dir/$APPFILE | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $resultfile
+
+		if [ "$access" = 'readseq' ]; then
+			cat $dir/$APPFILE | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM/10}' &> $resultfile
+		else
+			cat $dir/$APPFILE | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $resultfile
+		fi
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
-		cat $resultdir/$outputfile"-"$access".data"
+		echo $resultdir/$outputfile"-"$access".data"
 		rm -rf "num.data" $resultfile
 	fi
 }
@@ -119,7 +126,7 @@ EXTRACT_BREAKDOWN_RESULT() {
 		do
 		if [[ $dir == *"SSD"* ]];
 		 then
-			echo $dir
+			#echo $dir
 			APPFILE=rocksdb.out-SSD
 			#PULL_RESULT $APP $dir $j $basename $APPFILE
 			PULL_RESULT_PATTERN $APP $dir $j $basename $APPFILE $accesstype
