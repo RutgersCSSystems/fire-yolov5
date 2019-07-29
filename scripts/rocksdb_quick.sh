@@ -67,9 +67,9 @@ RUNAPP() {
 	exit
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
@@ -111,7 +111,7 @@ SET_RUN_APP() {
 APP="redis.out"
 #APP=fxmark
 
-THROTTLE
+#THROTTLE
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"

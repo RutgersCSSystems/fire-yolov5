@@ -120,15 +120,15 @@ cd $APPBENCH/apps
 git clone https://github.com/memcached/memcached.git
 }
 
+INSTALL_ROCKSDB
+GETAPPS
+exit
 
 INSTALL_SYSTEM_LIBS
 INSTALL_CMAKE
 INSTALL_GFLAGS
 exit
 
-INSTALL_ROCKSDB
-GETAPPS
-exit
 #INSTALL_SYSBENCH
 #INSTALL_MYSQL
 # Set variable, setup packages and generate data
