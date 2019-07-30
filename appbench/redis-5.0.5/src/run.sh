@@ -26,8 +26,11 @@ CLEAN() {
 		rm -rf *.rdb
 		rm -rf *.aof
 		sudo killall "redis-server$b"
+		appname="redis-server$b"
+		sudo kill -9 $appname
 		sudo killall "redis-server$b"
 		echo "KILLING redis-server$b"
+		sudo kill -9 $appname
 	done
 	sudo killall redis-benchmark
 	sudo killall redis-benchmark

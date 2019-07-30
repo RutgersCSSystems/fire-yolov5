@@ -6,7 +6,7 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=1500000
+ymax=1000000
 yint=200000
 xfield='ops'
 xlegend='DevFS techniques'
@@ -15,42 +15,46 @@ lwidth = 0.3
 xfontsize=10.0
 yfontsize=9.0
 xlabelsize=10.0
-xydim=[250, 210]
-xystart=[220,170]
-xylegend=[70,200]
-xycord = [60,20]
+xydim=[300, 200]
+xystart=[150,100]
+xylegend=[130,170]
+xycord = [45,20]
+xmanualarr = []
+xmanualstart=2.5
+xmanualint=7
 
-xlabel = ['NVM', 'SSD']
-pattern = ['NVM', 'SSD']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only',
-        'slowmem-obj-affinity', 'slowmem-only']
-mechnames = ['Naive', 'Optimal', 'Migration-only', 'Obj-affinity',
-      'slowmem-only']
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red']
-path='data/redis/redis'
+
+mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context', 'All-SlowMem']
+xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
+pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
+
+mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only','slowmem-obj-affinity', 'slowmem-only']
+storage=["SSD", "NVM"]
+
+
+colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
+path='/users/skannan/ssd/NVM/graphs/zplot/data/patern/redis'
 yname="Throughput (OPS/sec)"
-
 
 dseq = []
 L=legend()
 p = plotter()
-xmanualarr = []
-xmanualstart=2.5
-xmanualint=5
 
-c = canvas('pdf', title='redis', dimensions=xydim)
-d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord,
-             dimensions=xystart)
+c = canvas('pdf', title='e-redis-breakdown', dimensions=xydim)
+d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord, dimensions=xystart)
 
+for j in range(0, len(xlabel)):
 
-for j in range(0, len(pattern)):
-    #label=pattern[j] + "," + str(xmanualstart)
-    #xmanualarr[j]=[pattern[j], xmanualstart]
-    #print(xmanualarr[j])
+    xmanualarr.append((xlabel[j],xmanualstart))
+    xmanualstart = xmanualstart + xmanualint
+
     for i in range(0, len(mech)):
-        dseq.append(table(file=path+'-'+mech[i]+'-'+ pattern[j]+'.data'))
+	print path+'-'+mech[i]+"-" + pattern[j]+'.data'
+        dseq.append(table(file=path+'-'+mech[i] + "-" + pattern[j]+'.data'))
+	
 
 s=0
+print  xmanualarr
 
 for k in range(0, len(pattern)):
     for j in range(0, len(mech)):
@@ -58,15 +62,15 @@ for k in range(0, len(pattern)):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)
         else:
-            p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
+           p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0,
-                   legend=L, legendtext=mechnames[j])
+                   legend=L, legendtext=mechnames[j], fillskip=4)
         s=s+1
 
 # a bit of a hack to get around that we don't support date fields (yet)
 axis(drawable=d, style='xy',
-        xmanual=[[pattern[0],2.5],[pattern[1],7.5]],
-     yauto=[0,ymax,yint],
+     xmanual=xmanualarr,
+     yauto=[0,ymax, yint],
      linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-2,-10], 
      xtitle='Application', ytitle=yname,
      ytitlesize=yfontsize)
@@ -74,7 +78,3 @@ axis(drawable=d, style='xy',
 L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
 
 c.render()
-
-
-
-

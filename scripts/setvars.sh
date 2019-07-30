@@ -1,4 +1,4 @@
-export NVMBASE=$HOME/ssd/NVM
+export NVMBASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME=$1

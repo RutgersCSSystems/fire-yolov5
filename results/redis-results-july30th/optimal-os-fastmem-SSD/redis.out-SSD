@@ -1,0 +1,646 @@
++ REDISROOT=/users/skannan/ssd/NVM/appbench/redis-5.0.5
++ REDISCONF=/users/skannan/ssd/NVM/appbench/redis-5.0.5/config
++ APPBASE=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ APP=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/pagerank
++ PARAM=
++ OUTPUT=
++ READS=1000000
++ KEYS=1000000
++ CLIPREFIX='numactl --preferred=0'
++ PHYSCPU=--physcpubind
++ let MAXINST=4
++ let STARTPORT=6378
++ let SERVERCPU=20
++ let DATASIZE=4096
++ let physcpu=0
++ let physcpu2=1
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+redis-server3: no process found
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+redis-server3: no process found
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
+redis-server4: no process found
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
+redis-server4: no process found
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sleep 5
++ PREPARE
++ (( inst=1 ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server1 redis-benchmark1
++ cp redis-server redis-server1
++ cp redis-benchmark redis-benchmark1
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server2 redis-benchmark2
++ cp redis-server redis-server2
++ cp redis-benchmark redis-benchmark2
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server3 redis-benchmark3
++ cp redis-server redis-server3
++ cp redis-benchmark redis-benchmark3
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server4 redis-benchmark4
++ cp redis-server redis-server4
++ cp redis-benchmark redis-benchmark4
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ cd /users/skannan/ssd/NVM/appbench/shared_data
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 106: cd: /users/skannan/ssd/NVM/appbench/shared_data: No such file or directory
++ RUN
++ let port=6378
++ let physcpu=20
++ let physcpu2=20+1
++ (( r=1 ))
++ (( r<=4 ))
++ let port=6378+1
++ let physcpu=20+2
++ let physcpu2=21+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 --physcpubind=20,21 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6378.conf
+18691:C 29 Jul 2019 06:51:02.258 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+18691:C 29 Jul 2019 06:51:02.258 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=18691, just started
+18691:C 29 Jul 2019 06:51:02.258 # Configuration loaded
+18691:M 29 Jul 2019 06:51:02.259 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+18691:M 29 Jul 2019 06:51:02.259 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+18691:M 29 Jul 2019 06:51:02.259 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6378
+ |    `-._   `._    /     _.-'    |     PID: 18691
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+18691:M 29 Jul 2019 06:51:02.274 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+18691:M 29 Jul 2019 06:51:02.274 # Server initialized
+18691:M 29 Jul 2019 06:51:02.274 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+18691:M 29 Jul 2019 06:51:02.274 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+18691:M 29 Jul 2019 06:51:02.274 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6379+1
++ let physcpu=22+2
++ let physcpu2=23+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 --physcpubind=22,23 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6379.conf
+18696:C 29 Jul 2019 06:51:03.227 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+18696:C 29 Jul 2019 06:51:03.227 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=18696, just started
+18696:C 29 Jul 2019 06:51:03.227 # Configuration loaded
+18696:M 29 Jul 2019 06:51:03.228 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+18696:M 29 Jul 2019 06:51:03.228 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+18696:M 29 Jul 2019 06:51:03.228 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 18696
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+18696:M 29 Jul 2019 06:51:03.229 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+18696:M 29 Jul 2019 06:51:03.229 # Server initialized
+18696:M 29 Jul 2019 06:51:03.229 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+18696:M 29 Jul 2019 06:51:03.229 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+18696:M 29 Jul 2019 06:51:03.229 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6380+1
++ let physcpu=24+2
++ let physcpu2=25+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 --physcpubind=24,25 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server3 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6380.conf
+18701:C 29 Jul 2019 06:51:04.228 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+18701:C 29 Jul 2019 06:51:04.228 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=18701, just started
+18701:C 29 Jul 2019 06:51:04.228 # Configuration loaded
+18701:M 29 Jul 2019 06:51:04.229 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+18701:M 29 Jul 2019 06:51:04.229 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+18701:M 29 Jul 2019 06:51:04.229 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
+ |    `-._   `._    /     _.-'    |     PID: 18701
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+18701:M 29 Jul 2019 06:51:04.230 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+18701:M 29 Jul 2019 06:51:04.230 # Server initialized
+18701:M 29 Jul 2019 06:51:04.230 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+18701:M 29 Jul 2019 06:51:04.230 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+18701:M 29 Jul 2019 06:51:04.230 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6381+1
++ let physcpu=26+2
++ let physcpu2=27+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=0 --physcpubind=26,27 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server4 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6381.conf
+18706:C 29 Jul 2019 06:51:05.230 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+18706:C 29 Jul 2019 06:51:05.230 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=18706, just started
+18706:C 29 Jul 2019 06:51:05.230 # Configuration loaded
+18706:M 29 Jul 2019 06:51:05.231 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+18706:M 29 Jul 2019 06:51:05.231 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+18706:M 29 Jul 2019 06:51:05.231 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 18706
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+18706:M 29 Jul 2019 06:51:05.232 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+18706:M 29 Jul 2019 06:51:05.232 # Server initialized
+18706:M 29 Jul 2019 06:51:05.232 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+18706:M 29 Jul 2019 06:51:05.232 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+18706:M 29 Jul 2019 06:51:05.232 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ sleep 10
++ RUNCLIENT
++ let port=6378
++ let physcpu=2
++ let physcpu2=3
++ PARAMS=' -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d 4096'
++ (( c=1 ))
++ (( c<4 ))
++ let port=6378+1
++ let physcpu=2+1
++ let physcpu2=3+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6378
++ let port=6379+1
++ let physcpu=3+1
++ let physcpu2=5+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6379
++ let port=6380+1
++ let physcpu=4+1
++ let physcpu2=7+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6381
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 1000000 -n 1000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6380
+18706:M 29 Jul 2019 06:51:16.454 * Starting automatic rewriting of AOF on 7951550400% growth
+18706:M 29 Jul 2019 06:51:16.455 * Background append only file rewriting started by pid 18716
+18701:M 29 Jul 2019 06:51:16.456 * Starting automatic rewriting of AOF on 8096071300% growth
+18701:M 29 Jul 2019 06:51:16.457 * Background append only file rewriting started by pid 18717
+18696:M 29 Jul 2019 06:51:16.457 * Starting automatic rewriting of AOF on 8028987100% growth
+18696:M 29 Jul 2019 06:51:16.459 * Background append only file rewriting started by pid 18718
+18691:M 29 Jul 2019 06:51:16.502 * Starting automatic rewriting of AOF on 9680003800% growth
+18691:M 29 Jul 2019 06:51:16.504 * Background append only file rewriting started by pid 18719
+18701:M 29 Jul 2019 06:51:17.585 * AOF rewrite child asks to stop sending diffs.
+18717:C 29 Jul 2019 06:51:17.585 * Parent agreed to stop sending diffs. Finalizing AOF...
+18717:C 29 Jul 2019 06:51:17.585 * Concatenating 246.38 MB of AOF diff received from parent.
+18696:M 29 Jul 2019 06:51:17.585 * AOF rewrite child asks to stop sending diffs.
+18718:C 29 Jul 2019 06:51:17.585 * Parent agreed to stop sending diffs. Finalizing AOF...
+18718:C 29 Jul 2019 06:51:17.585 * Concatenating 259.00 MB of AOF diff received from parent.
+18706:M 29 Jul 2019 06:51:17.586 * AOF rewrite child asks to stop sending diffs.
+18716:C 29 Jul 2019 06:51:17.586 * Parent agreed to stop sending diffs. Finalizing AOF...
+18716:C 29 Jul 2019 06:51:17.586 * Concatenating 247.56 MB of AOF diff received from parent.
+18691:M 29 Jul 2019 06:51:17.648 * AOF rewrite child asks to stop sending diffs.
+18719:C 29 Jul 2019 06:51:17.648 * Parent agreed to stop sending diffs. Finalizing AOF...
+18719:C 29 Jul 2019 06:51:17.648 * Concatenating 242.06 MB of AOF diff received from parent.
+18701:M 29 Jul 2019 06:51:17.836 * Background AOF buffer size: 80 MB
+18706:M 29 Jul 2019 06:51:17.838 * Background AOF buffer size: 80 MB
+18696:M 29 Jul 2019 06:51:17.838 * Background AOF buffer size: 80 MB
+18691:M 29 Jul 2019 06:51:17.904 * Background AOF buffer size: 80 MB
+18701:M 29 Jul 2019 06:51:18.153 * Background AOF buffer size: 180 MB
+18706:M 29 Jul 2019 06:51:18.157 * Background AOF buffer size: 180 MB
+18696:M 29 Jul 2019 06:51:18.329 * Background AOF buffer size: 180 MB
+18701:M 29 Jul 2019 06:51:18.493 * Background AOF buffer size: 280 MB
+18706:M 29 Jul 2019 06:51:18.497 * Background AOF buffer size: 280 MB
+18691:M 29 Jul 2019 06:51:18.646 * Background AOF buffer size: 180 MB
+18691:M 29 Jul 2019 06:51:19.151 * Background AOF buffer size: 280 MB
+18696:M 29 Jul 2019 06:51:19.258 * Background AOF buffer size: 280 MB
+18706:M 29 Jul 2019 06:51:19.331 * Background AOF buffer size: 380 MB
+18701:M 29 Jul 2019 06:51:19.338 * Background AOF buffer size: 380 MB
+18691:M 29 Jul 2019 06:51:19.497 * Background AOF buffer size: 380 MB
+18696:M 29 Jul 2019 06:51:19.602 * Background AOF buffer size: 380 MB
+18706:M 29 Jul 2019 06:51:19.675 * Background AOF buffer size: 480 MB
+18701:M 29 Jul 2019 06:51:19.681 * Background AOF buffer size: 480 MB
+18691:M 29 Jul 2019 06:51:19.842 * Background AOF buffer size: 480 MB
+18696:M 29 Jul 2019 06:51:19.946 * Background AOF buffer size: 480 MB
+18691:M 29 Jul 2019 06:51:20.014 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:51:20.270 * Background AOF buffer size: 580 MB
+18701:M 29 Jul 2019 06:51:20.283 * Background AOF buffer size: 580 MB
+18696:M 29 Jul 2019 06:51:20.565 * Background AOF buffer size: 580 MB
+18706:M 29 Jul 2019 06:51:20.589 * Background AOF buffer size: 680 MB
+18701:M 29 Jul 2019 06:51:20.606 * Background AOF buffer size: 680 MB
+18691:M 29 Jul 2019 06:51:20.832 * Background AOF buffer size: 580 MB
+18696:M 29 Jul 2019 06:51:20.873 * Background AOF buffer size: 680 MB
+18706:M 29 Jul 2019 06:51:20.897 * Background AOF buffer size: 780 MB
+18701:M 29 Jul 2019 06:51:20.910 * Background AOF buffer size: 780 MB
+18696:M 29 Jul 2019 06:51:21.038 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:51:21.040 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:21.053 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:51:21.153 * Background AOF buffer size: 680 MB
+18691:M 29 Jul 2019 06:51:21.457 * Background AOF buffer size: 780 MB
+18691:M 29 Jul 2019 06:51:21.761 * Background AOF buffer size: 880 MB
+18706:M 29 Jul 2019 06:51:21.875 * Background AOF buffer size: 880 MB
+18696:M 29 Jul 2019 06:51:21.966 * Background AOF buffer size: 780 MB
+18701:M 29 Jul 2019 06:51:21.983 * Background AOF buffer size: 880 MB
+18706:M 29 Jul 2019 06:51:22.270 # Background AOF buffer size: 980 MB
+18701:M 29 Jul 2019 06:51:22.281 # Background AOF buffer size: 980 MB
+18691:M 29 Jul 2019 06:51:22.346 # Background AOF buffer size: 980 MB
+18717:C 29 Jul 2019 06:51:22.396 * SYNC append only file rewrite performed
+18717:C 29 Jul 2019 06:51:22.400 * AOF rewrite: 310 MB of memory used by copy-on-write
+18701:M 29 Jul 2019 06:51:22.421 * Background AOF rewrite terminated with success
+18696:M 29 Jul 2019 06:51:22.561 * Background AOF buffer size: 880 MB
+18706:M 29 Jul 2019 06:51:22.582 * Background AOF buffer size: 1080 MB
+18691:M 29 Jul 2019 06:51:22.651 * Background AOF buffer size: 1080 MB
+18706:M 29 Jul 2019 06:51:22.982 * Background AOF buffer size: 1180 MB
+18691:M 29 Jul 2019 06:51:23.050 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18696:M 29 Jul 2019 06:51:23.077 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:51:23.078 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:23.309 * Residual parent diff successfully flushed to the rewritten AOF (1025.98 MB)
+18696:M 29 Jul 2019 06:51:23.534 # Background AOF buffer size: 980 MB
+18696:M 29 Jul 2019 06:51:23.818 * Background AOF buffer size: 1080 MB
+18706:M 29 Jul 2019 06:51:24.107 * Background AOF buffer size: 1280 MB
+18696:M 29 Jul 2019 06:51:24.116 * Background AOF buffer size: 1180 MB
+18691:M 29 Jul 2019 06:51:24.117 * Background AOF buffer size: 1180 MB
+18706:M 29 Jul 2019 06:51:24.409 * Background AOF buffer size: 1380 MB
+18696:M 29 Jul 2019 06:51:24.412 * Background AOF buffer size: 1280 MB
+18691:M 29 Jul 2019 06:51:24.419 * Background AOF buffer size: 1280 MB
+18696:M 29 Jul 2019 06:51:24.705 * Background AOF buffer size: 1380 MB
+18706:M 29 Jul 2019 06:51:24.709 * Background AOF buffer size: 1480 MB
+18691:M 29 Jul 2019 06:51:24.720 * Background AOF buffer size: 1380 MB
+18696:M 29 Jul 2019 06:51:25.003 * Background AOF buffer size: 1480 MB
+18706:M 29 Jul 2019 06:51:25.006 * Background AOF buffer size: 1580 MB
+18691:M 29 Jul 2019 06:51:25.017 * Background AOF buffer size: 1480 MB
+18696:M 29 Jul 2019 06:51:25.039 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:51:25.080 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:51:25.105 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:51:25.649 * Background AOF buffer size: 1580 MB
+18706:M 29 Jul 2019 06:51:25.677 * Background AOF buffer size: 1680 MB
+18696:M 29 Jul 2019 06:51:25.817 * Background AOF buffer size: 1580 MB
+18691:M 29 Jul 2019 06:51:25.952 * Background AOF buffer size: 1680 MB
+18706:M 29 Jul 2019 06:51:25.981 * Background AOF buffer size: 1780 MB
+18696:M 29 Jul 2019 06:51:26.113 * Background AOF buffer size: 1680 MB
+18691:M 29 Jul 2019 06:51:26.252 * Background AOF buffer size: 1780 MB
+18706:M 29 Jul 2019 06:51:26.283 * Background AOF buffer size: 1880 MB
+18696:M 29 Jul 2019 06:51:26.409 * Background AOF buffer size: 1780 MB
+18691:M 29 Jul 2019 06:51:26.555 * Background AOF buffer size: 1880 MB
+18706:M 29 Jul 2019 06:51:26.582 # Background AOF buffer size: 1980 MB
+18696:M 29 Jul 2019 06:51:26.703 * Background AOF buffer size: 1880 MB
+18691:M 29 Jul 2019 06:51:26.855 # Background AOF buffer size: 1980 MB
+18706:M 29 Jul 2019 06:51:26.881 * Background AOF buffer size: 2080 MB
+18696:M 29 Jul 2019 06:51:27.008 # Background AOF buffer size: 1980 MB
+18691:M 29 Jul 2019 06:51:27.010 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18696:M 29 Jul 2019 06:51:27.060 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:51:27.081 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18718:C 29 Jul 2019 06:51:27.696 * SYNC append only file rewrite performed
+18716:C 29 Jul 2019 06:51:27.696 * SYNC append only file rewrite performed
+18719:C 29 Jul 2019 06:51:27.696 * SYNC append only file rewrite performed
+18719:C 29 Jul 2019 06:51:27.701 * AOF rewrite: 326 MB of memory used by copy-on-write
+18716:C 29 Jul 2019 06:51:27.701 * AOF rewrite: 317 MB of memory used by copy-on-write
+18718:C 29 Jul 2019 06:51:27.701 * AOF rewrite: 329 MB of memory used by copy-on-write
+18701:M 29 Jul 2019 06:51:27.725 * Background AOF rewrite finished successfully
+18706:M 29 Jul 2019 06:51:27.747 * Background AOF buffer size: 2180 MB
+18691:M 29 Jul 2019 06:51:27.751 * Background AOF buffer size: 2080 MB
+18691:M 29 Jul 2019 06:51:27.757 * Background AOF rewrite terminated with success
+18696:M 29 Jul 2019 06:51:27.778 * Background AOF rewrite terminated with success
+18706:M 29 Jul 2019 06:51:27.816 * Background AOF rewrite terminated with success
+18696:M 29 Jul 2019 06:51:29.588 * Residual parent diff successfully flushed to the rewritten AOF (2054.61 MB)
+18691:M 29 Jul 2019 06:51:30.475 * Residual parent diff successfully flushed to the rewritten AOF (2081.69 MB)
+18706:M 29 Jul 2019 06:51:31.072 * Residual parent diff successfully flushed to the rewritten AOF (2199.60 MB)
+18701:M 29 Jul 2019 06:51:31.084 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:33.066 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:35.019 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:35.589 * Starting automatic rewriting of AOF on 131% growth
+18701:M 29 Jul 2019 06:51:35.745 * Background append only file rewriting started by pid 18722
+18701:M 29 Jul 2019 06:51:36.326 * Background AOF buffer size: 80 MB
+18701:M 29 Jul 2019 06:51:36.910 * Background AOF buffer size: 180 MB
+18701:M 29 Jul 2019 06:51:37.059 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:37.852 * Background AOF buffer size: 280 MB
+18696:M 29 Jul 2019 06:51:38.091 * Background AOF rewrite finished successfully
+18701:M 29 Jul 2019 06:51:38.351 * Background AOF buffer size: 380 MB
+18701:M 29 Jul 2019 06:51:38.681 * Background AOF buffer size: 480 MB
+18701:M 29 Jul 2019 06:51:39.004 * Background AOF buffer size: 580 MB
+18701:M 29 Jul 2019 06:51:39.037 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:51:39.646 * Background AOF buffer size: 680 MB
+18701:M 29 Jul 2019 06:51:39.968 * Background AOF buffer size: 780 MB
+18701:M 29 Jul 2019 06:51:40.286 * Background AOF buffer size: 880 MB
+18701:M 29 Jul 2019 06:51:41.082 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:51:48.730 * Background AOF rewrite finished successfully
+18706:M 29 Jul 2019 06:51:57.235 * Background AOF rewrite finished successfully
+18691:M 29 Jul 2019 06:51:57.280 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18706:M 29 Jul 2019 06:52:01.018 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:52:01.029 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18696:M 29 Jul 2019 06:52:01.106 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18691:M 29 Jul 2019 06:52:03.047 * 10000 changes in 60 seconds. Saving...
+18691:M 29 Jul 2019 06:52:03.101 * Background saving started by pid 18723
+18691:M 29 Jul 2019 06:52:04.006 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18696:M 29 Jul 2019 06:52:04.038 * 10000 changes in 60 seconds. Saving...
+18706:M 29 Jul 2019 06:52:04.075 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18696:M 29 Jul 2019 06:52:04.090 * Background saving started by pid 18724
+18696:M 29 Jul 2019 06:52:04.090 * Asynchronous AOF fsync is taking too long (disk is busy?). Writing the AOF buffer without waiting for fsync to complete, this may slow down Redis.
+18701:M 29 Jul 2019 06:52:04.529 * AOF rewrite child asks to stop sending diffs.
+18722:C 29 Jul 2019 06:52:04.529 * Parent agreed to stop sending diffs. Finalizing AOF...
+18722:C 29 Jul 2019 06:52:04.529 * Concatenating 452.75 MB of AOF diff received from parent.
+18706:M 29 Jul 2019 06:52:06.025 * 10000 changes in 60 seconds. Saving...
+18706:M 29 Jul 2019 06:52:06.077 * Background saving started by pid 18725
++ sleep 5
+18723:C 29 Jul 2019 06:52:09.204 * DB saved on disk
+18723:C 29 Jul 2019 06:52:09.248 * RDB: 710 MB of memory used by copy-on-write
+18691:M 29 Jul 2019 06:52:09.404 * Background saving terminated with success
+18722:C 29 Jul 2019 06:52:09.665 * SYNC append only file rewrite performed
+18722:C 29 Jul 2019 06:52:09.700 * AOF rewrite: 1859 MB of memory used by copy-on-write
+18701:M 29 Jul 2019 06:52:09.903 * Background AOF rewrite terminated with success
+18701:M 29 Jul 2019 06:52:10.234 * Residual parent diff successfully flushed to the rewritten AOF (442.36 MB)
+18701:M 29 Jul 2019 06:52:11.733 * Background AOF rewrite finished successfully
+18724:C 29 Jul 2019 06:52:11.740 * DB saved on disk
+18724:C 29 Jul 2019 06:52:11.804 * RDB: 379 MB of memory used by copy-on-write
+18701:M 29 Jul 2019 06:52:11.840 * 10000 changes in 60 seconds. Saving...
+18701:M 29 Jul 2019 06:52:11.914 * Background saving started by pid 18727
+18725:C 29 Jul 2019 06:52:11.943 * DB saved on disk
+18696:M 29 Jul 2019 06:52:11.980 * Background saving terminated with success
+18725:C 29 Jul 2019 06:52:11.994 * RDB: 16 MB of memory used by copy-on-write
+18706:M 29 Jul 2019 06:52:12.093 * Background saving terminated with success
++ ps aux
++ grep redis-server
++ awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+18691
+18696
+18701
+18706
+18729
+18730
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 76: 18728 Done                    ps aux
+     18729                       | grep redis-server
+     18730 Killed                  | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf dump.rdb temp-18727.rdb
++ rm -rf appendonly-6378.aof appendonly-6379.aof appendonly-6380.aof appendonly-6381.aof
++ sudo killall redis-server1
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 23: 18701 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+18727:signal-handler (1564404733) Received SIGTERM scheduling shutdown...
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+18727:signal-handler (1564404733) Received SIGTERM scheduling shutdown...
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+18727:signal-handler (1564404733) Received SIGTERM scheduling shutdown...
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+18727:signal-handler (1564404733) Received SIGTERM scheduling shutdown...
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ set +x
+18727:C 29 Jul 2019 06:52:15.582 # Error moving temp DB file temp-18727.rdb on the final destination dump.rdb (in server root dir /users/skannan/ssd/NVM/appbench): No such file or directory
+) 25941182 pgbuff-del 6130 avg_cache_life(us) 0 pgcache-del 0 active-cache 273378
+[30377.826716]  
+[30380.100637] drop_caches: sh (17883): drop_caches: 3
+[30382.216227] drop_caches: sh (17891): drop_caches: 3
+[32170.157367] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[32175.690985] nvmemul: ioctl command: 0xc008aa02
+[32175.690992] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[32175.691003] nvmemul: ioctl command: 0x8008aa01
+[32175.691005] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[32175.691011] nvmemul: ioctl command: 0x8008aa01
+[32175.691012] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[32175.691017] nvmemul: ioctl command: 0x8008aa01
+[32175.691019] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[32175.691024] nvmemul: ioctl command: 0x8008aa01
+[32175.691026] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[32175.691030] nvmemul: ioctl command: 0x8008aa01
+[32175.691032] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[32175.691037] nvmemul: ioctl command: 0x8008aa01
+[32175.691038] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[32175.691043] nvmemul: ioctl command: 0x8008aa01
+[32175.691045] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[32175.691061] nvmemul: ioctl command: 0x8008aa01
+[32175.691062] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[32181.669570] drop_caches: sh (18593): drop_caches: 3
+[32183.945349] drop_caches: sh (18602): drop_caches: 3
+[32191.249079] drop_caches: sh (18682): drop_caches: 3
+[32193.840923] drop_caches: sh (18690): drop_caches: 3

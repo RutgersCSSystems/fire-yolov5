@@ -3,8 +3,8 @@
 
 cd $NVMBASE
 APP=""
-#TYPE="NVM"
-TYPE="SSD"
+TYPE="NVM"
+#TYPE="SSD"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -31,8 +31,9 @@ DISABLE_THROTTLE() {
 SETUPEXTRAM() {
 
 	kill -9 `pidof neo4j`
-	sudo killal java
+	sudo killall java
 	sudo kill -9 `pidof neo4j`
+	sudo killall java
 
 	$SCRIPTS/umount_ext4ramdisk.sh
 	rm -rf  /mnt/ext4ramdisk/*
@@ -69,19 +70,15 @@ RUNAPP() {
 	cd $NVMBASE
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
-	#$APPBENCH/apps/fio/run.sh &> $OUTPUTDIR/$OUTPUT
-
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
-	$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
 	#$APPBENCH/apps/pigz/run.sh &> $OUTPUT
-
-	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
-
+	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
-
 	#$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
 
 	sudo dmesg -c &>> $OUTPUT
@@ -119,15 +116,30 @@ SET_RUN_APP() {
 #APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-#APP="redis.out"
+APP="redis.out"
 #APP=fxmark
-APP="flash.out"
+#APP="flash.out"
 #APP="cassandra.out"
+
+THROTTLE
+export APPPREFIX="numactl --membind=1"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+
 export APPPREFIX="numactl  --preferred=0"
-#export APPPREFIX=""
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+
+export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
+
+export APPPREFIX="numactl --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
@@ -135,25 +147,6 @@ $SCRIPTS/mount_ext4ramdisk.sh 24000
 DISABLE_THROTTLE
 export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-
-THROTTLE
-export APPPREFIX="numactl --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
-exit
-
-
-
-export APPPREFIX="numactl --membind=1"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 exit
 
 
