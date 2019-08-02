@@ -27,7 +27,6 @@ xmanualint=7
 mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context', 'All-SlowMem']
 xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
 pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
-
 mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only','slowmem-obj-affinity', 'slowmem-only']
 storage=["SSD", "NVM"]
 
