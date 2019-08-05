@@ -1,4 +1,5 @@
 #!/bin/bash
+
 TARGET=$OUTPUTDIR
 APP="rocksdb"
 TYPE="SSD"
@@ -318,7 +319,6 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
 EXTRACT_KERNSTAT "rocksdb"
 cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 200 -r 40 -s "SSD"
-exit
 
 EXTRACT_RESULT
 cd $ZPLOT
@@ -327,7 +327,7 @@ python $NVMBASE/graphs/zplot/scripts/e-rocksdb-total.py
 EXTRACT_BREAKDOWN_RESULT
 cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-rocksdb-breakdown.py
-
+exit
 
 
 EXTRACT_KERNSTAT "redis"

@@ -3,8 +3,8 @@
 
 cd $NVMBASE
 APP=""
+TYPE="NVM"
 #TYPE="NVM"
-TYPE="SSD"
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -72,6 +72,8 @@ RUNAPP() {
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
         $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
+
 
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
@@ -122,27 +124,30 @@ APP="rocksdb.out"
 #APP="flash.out"
 #APP="cassandra.out"
 
-#THROTTLE
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
-
+if [ -z "$1" ]
+  then
+    THROTTLE
+  else
+    echo "Don't throttle"
+fi
 
 export APPPREFIX="numactl --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 
 export APPPREFIX="numactl --membind=1"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
@@ -151,6 +156,20 @@ DISABLE_THROTTLE
 export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
+
+THROTTLE
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+exit
+
+
+
+
+exit
+
+
+
 
 
 
