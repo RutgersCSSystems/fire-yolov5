@@ -370,11 +370,11 @@ OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT "filebench"
 
-OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-july30th"
+#OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-july30th"
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
 TARGET=$OUTPUTDIR
 APP='redis'
 EXTRACT_RESULT_REDIS "redis"
-
 
 APP='rocksdb'
 OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"

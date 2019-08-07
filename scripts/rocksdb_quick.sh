@@ -72,8 +72,8 @@ RUNAPP() {
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
 
         #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
-	$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
-	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+	$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 
         #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
 	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
@@ -120,8 +120,8 @@ mkdir -f $OUTPUTDIR
 #APP="rocksdb.out"
 #APP="fio.out"
 #APP="flashx.out"
-#APP="filebench.out"
-APP="redis.out"
+APP="filebench.out"
+#APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
 #APP="cassandra.out"
@@ -133,15 +133,22 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+exit
+
+
 export APPPREFIX="numactl --membind=1"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
 
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
@@ -150,10 +157,6 @@ SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 export APPPREFIX="numactl --preferred=0"
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
 
 
 $SCRIPTS/umount_ext4ramdisk.sh
