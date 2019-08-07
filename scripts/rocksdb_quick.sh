@@ -65,15 +65,25 @@ COMPILE_SHAREDLIB() {
 	sudo make install
 }
 
+APP="rocksdb.out"
+#APP="fio.out"
+#APP="flashx.out"
+#APP="filebench.out"
+#APP="redis.out"
+#APP=fxmark
+#APP="flash.out"
+#APP="cassandra.out"
+
+
 RUNAPP() {
 	#Run application
 	cd $NVMBASE
 
 	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
 
-        #$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
 	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
-	$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 
         #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
 	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
@@ -117,14 +127,6 @@ OUTPUTDIR=$APPBENCH/output
 mkdir -f $OUTPUTDIR
 
 
-#APP="rocksdb.out"
-#APP="fio.out"
-#APP="flashx.out"
-APP="filebench.out"
-#APP="redis.out"
-#APP=fxmark
-#APP="flash.out"
-#APP="cassandra.out"
 
 if [ -z "$1" ]
   then
@@ -132,6 +134,14 @@ if [ -z "$1" ]
   else
     echo "Don't throttle"
 fi
+
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+DISABLE_THROTTLE
+export APPPREFIX="numactl --membind=0"
+SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+exit
 
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
@@ -159,12 +169,6 @@ SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 
 
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-DISABLE_THROTTLE
-export APPPREFIX="numactl --membind=0"
-SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
 
 

@@ -13,7 +13,10 @@ ZPLOT="$NVMBASE/graphs/zplot"
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
 
-let SCALE_FILEBENCH_GRAPH=10
+let SCALE_FILEBENCH_GRAPH=1000
+let SCALE_REDIS_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=10000
+
 
 let INCR_KERN_BAR_SPACE=2
 let INCR_FULL_BAR_SPACE=2
@@ -95,16 +98,18 @@ PULL_RESULT() {
 		if [ "$APP" = 'redis' ]; 
 		then
 			val=`cat $dir/$APPFILE | grep -a "ET" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'`
-			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.3f\n",$1*$2}')
+			scaled_value=$(echo $val $SCALE_REDIS_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
 
 		elif [  "$APP" = 'filebench' ]; 
 		then
 			val=`cat $dir/$APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
-			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.3f\n",$1*$2}')
+			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
 		else
-			cat $dir/$APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}' &> $APP".data"
+			val=`cat $dir/$APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
 		fi
 		((j++))
 		echo $j &> "num.data"
