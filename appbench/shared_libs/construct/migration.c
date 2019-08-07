@@ -54,6 +54,44 @@ static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
 
+#define HETERO_MIGRATE_FREQ 17
+#define FREQ 1000
+#define HETERO_OBJ_AFF 18
+#define HETERO_DISABLE_MIGRATE 19
+#define HETERO_MIGRATE_LISTCNT 20
+#define MIGRATE_LIST_CNT 10
+
+
+void set_migration_freq() {
+#ifdef _MIGRATE
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, FREQ);
+#else
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, 9000000000);
+#endif
+}
+
+void set_migrate_list_cnt() {
+#ifdef _MIGRATE
+        syscall(__NR_start_trace, HETERO_MIGRATE_LISTCNT, MIGRATE_LIST_CNT);
+#else
+        syscall(__NR_start_trace, HETERO_MIGRATE_LISTCNT, 9000000000);
+#endif
+}
+
+void enable_object_affn() {
+#ifdef _OBJAFF
+    syscall(__NR_start_trace, HETERO_OBJ_AFF, HETERO_OBJ_AFF);
+#endif
+}
+
+void disable_migration() {
+#ifdef _DISABLE_MIGRATE
+    syscall(__NR_start_trace, HETERO_DISABLE_MIGRATE, HETERO_DISABLE_MIGRATE);
+#endif
+}
+
+
+
 
 void dest() {
     fprintf(stderr, "application termination...\n");
@@ -106,6 +144,9 @@ void con() {
  	
 }
 
+void init_allocs() {
+	con();
+}
 
 void sig_handler(int sig) {
   
