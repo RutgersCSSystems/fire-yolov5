@@ -40,6 +40,19 @@ export APPPREFIX="numactl --preferred=0"
 export OUTPUTDIR=$APPBENCH/output
 export TEST_TMPDIR=/mnt/pmemdir
 
+
+
+
+export CODE="/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code"
+export CSRC=$CODE/cassandra
+export SERVERS=`ifconfig | grep "inet addr" | head -1 | awk '{print $2}' | cut -d ":" -f2`
+export YCSBHOME=$CODE/mapkeeper/ycsb/YCSB
+export DATASRC=""
+
+
+
+
+
 #Commands
 mkdir $OUTPUTDIR
 mkdir $KERNEL

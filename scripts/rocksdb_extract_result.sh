@@ -12,19 +12,27 @@ ZPLOT="$NVMBASE/graphs/zplot"
 
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
-
 let SCALE_FILEBENCH_GRAPH=1000
 let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=10000
+let SCALE_CASSANDRA_GRAPH=100
 
 
 let INCR_KERN_BAR_SPACE=2
 let INCR_FULL_BAR_SPACE=2
+let INCR_ONE_SPACE=2
 
 
 ## declare an array variable
 declare -a kernstat=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated")
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq")
+
+declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+#declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
+
+
+declare -a placearr=("APPSLOW-OSSLOW" "APPSLOW-OSFAST" "APPFAST-OSFAST")
+# "APPFAST-OSSLOW"
 
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
@@ -80,20 +88,21 @@ EXTRACT_KERNINFO() {
 
 
 PULL_RESULT() {
-
 	APP=$1
 	dir=$2
         j=$3      
 	APPFILE=$4
+	GRAPHDATA=$5
+	EXT=$6
 
-	outputfile=$APP-$outfile".data"
 	outfile=$(basename $dir)
-	outputfile=$APP-$outfile".data"
-	rm -rf $ZPLOT/data/$outputfile
+	outputfile=$APP"-"$outfile$EXT".data"
+	resultfile=$ZPLOT/data/$GRAPHDATA/$outputfile
+	mkdir -p $ZPLOT/data/$GRAPHDATA
+	rm -rf $resultfile
 	rm -rf "num.data"
 
 	if [ -f $dir/$APPFILE ]; then
-
 
 		if [ "$APP" = 'redis' ]; 
 		then
@@ -101,6 +110,11 @@ PULL_RESULT() {
 			scaled_value=$(echo $val $SCALE_REDIS_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
 
+		elif [  "$APP" = 'cassandra' ];
+		then
+			val=`cat $dir/$APPFILE | grep "Throughput" |  tail -1 | awk '{printf "%5.0f\n", $3}'`
+			scaled_value=$(echo $val $SCALE_CASSANDRA_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
 		elif [  "$APP" = 'filebench' ]; 
 		then
 			val=`cat $dir/$APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
@@ -113,11 +127,12 @@ PULL_RESULT() {
 		fi
 		((j++))
 		echo $j &> "num.data"
-		paste "num.data" $APP".data" &> $ZPLOT/data/$outputfile
-		#echo "$ZPLOT/data/$outputfile"
-		#cat $ZPLOT/data/$outputfile	
+		paste "num.data" $APP".data" &> $resultfile
 	fi
 }
+
+
+
 
 
 
@@ -254,8 +269,12 @@ REDIS_CONSOLIDATE_RESULT() {
 	let instances=4
 
         rm -rf $dir/$APP-"all.out"
+
+	cat $dir
+
         for file in $dir/$APP*.txt
         do
+	
                 search=$APP
                 if [[ $file == *"$search"*".txt" ]];
                 then
@@ -343,14 +362,92 @@ EXTRACT_RESULT() {
 			else
 				APPFILE=$APP".out-"$TYPE
 			fi
-			PULL_RESULT $APP $dir $j $APPFILE
+			PULL_RESULT $APP $dir $j $APPFILE ""
 		done
 		j=$((j+$INCR_FULL_BAR_SPACE))
 	done
 }
 
 
-EXTRACT_RESULT_REDIS() {
+EXTRACT_RESULT_SENSITIVE() {
+        rm $APP".data"
+        rm "num.data"
+        exclude=0
+
+        for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=""
+
+                for BW in "${configarr[@]}"
+                do
+                        for placement in "${placearr[@]}"
+                        do
+                                for dir in $TARGET/$BW*/*$placement*$device
+                                do
+                                        echo $dir
+                                        exlude=0
+                                        EXCLUDE_DIR $exlude $dir excludefullstat
+                                        if [ $exlude -ge 1 ]; then
+                                                echo "EXCLUDING" $dir
+                                                continue;
+                                        fi
+
+                                        if [ "$APP" = 'redis' ]; then
+                                                APPFILE=$APP"-all.out-"$TYPE
+                                        else
+                                                APPFILE=$APP".out-"$TYPE
+                                        fi
+                                        PULL_RESULT $APP $dir $j $APPFILE "motivate-sensitivity" "-"$BW
+                                done
+                        done
+                        j=$((j+$INCR_ONE_SPACE))
+                done
+        done
+}
+
+
+EXTRACT_RESULT_COMPARE() {
+        rm $APP".data"
+        rm "num.data"
+        exclude=0
+
+        for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=""
+
+                for BW in "${configarr[@]}"
+                do
+                        for placement in "${placearr[@]}"
+                        do
+                                for dir in $TARGET/$BW*/*$placement*$device
+                                do
+                                        echo $dir
+                                        exlude=0
+                                        EXCLUDE_DIR $exlude $dir excludefullstat
+                                        if [ $exlude -ge 1 ]; then
+                                                echo "EXCLUDING" $dir
+                                                continue;
+                                        fi
+
+                                        if [ "$APP" = 'redis' ]; then
+
+						REDIS_CONSOLIDATE_RESULT $dir $APP
+						echo $dir
+                                                APPFILE=$APP"-all.out-"$TYPE
+                                        else
+                                                APPFILE=$APP".out-"$TYPE
+                                        fi
+                                        PULL_RESULT $APP $dir $j $APPFILE "motivate" "-"$BW
+                                done
+                        done
+                        j=$((j+$INCR_ONE_SPACE))
+                done
+        done
+}
+
+FORMAT_RESULT_REDIS() {
         files=""
 	APP=$1
         rm $APP".data"
@@ -366,8 +463,39 @@ EXTRACT_RESULT_REDIS() {
 			REDIS_CONSOLIDATE_RESULT $dir $APP
 		done
 	done
-	EXTRACT_RESULT
 }
+
+
+######################################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_SENSITIVE "rocksdb"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
+exit
+
+####################MOTIVATION ANALYSIS########################
+
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "rocksdb"
+
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "redis"
+
+
+APP='filebench'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "filebench"
+
+
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
+exit
+######################################################
 
 j=0
 APP='filebench'
@@ -379,12 +507,19 @@ EXTRACT_RESULT "filebench"
 OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
 TARGET=$OUTPUTDIR
 APP='redis'
-EXTRACT_RESULT_REDIS "redis"
+FORMAT_RESULT_REDIS "redis"
+EXTRACT_RESULT "redis"
 
 APP='rocksdb'
 OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT "rocksdb"
+
+APP='cassandra'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "cassandra"
+
 
 cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
