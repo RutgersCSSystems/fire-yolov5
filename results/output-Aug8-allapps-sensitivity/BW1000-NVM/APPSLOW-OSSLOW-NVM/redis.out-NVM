@@ -1,0 +1,639 @@
++ REDISROOT=/users/skannan/ssd/NVM/appbench/redis-5.0.5
++ REDISCONF=/users/skannan/ssd/NVM/appbench/redis-5.0.5/config
++ APPBASE=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ APP=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/pagerank
++ PARAM=
++ OUTPUT=
++ READS=10000
++ KEYS=20000
++ CLIPREFIX='numactl --preferred=0'
++ PHYSCPU=--physcpubind
++ let MAXINST=4
++ let STARTPORT=6378
++ let SERVERCPU=20
++ let DATASIZE=4096
++ let physcpu=0
++ let physcpu2=1
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+redis-server3: no process found
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+redis-server3: no process found
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
+redis-server4: no process found
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
+redis-server4: no process found
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sleep 5
++ PREPARE
++ (( inst=1 ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server1 redis-benchmark1
++ cp redis-server redis-server1
++ cp redis-benchmark redis-benchmark1
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server2 redis-benchmark2
++ cp redis-server redis-server2
++ cp redis-benchmark redis-benchmark2
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server3 redis-benchmark3
++ cp redis-server redis-server3
++ cp redis-benchmark redis-benchmark3
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
++ sudo rm redis-server4 redis-benchmark4
++ cp redis-server redis-server4
++ cp redis-benchmark redis-benchmark4
++ cd /users/skannan/ssd/NVM/appbench
++ (( inst++  ))
++ (( inst<=4 ))
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ cd /users/skannan/ssd/NVM/appbench/shared_data
++ RUN
++ let port=6378
++ let physcpu=20
++ let physcpu2=20+1
++ (( r=1 ))
++ (( r<=4 ))
++ let port=6378+1
++ let physcpu=20+2
++ let physcpu2=21+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=20,21 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6378.conf
+initiating tracing...
+initiating tracing...
+15048:C 09 Aug 2019 11:45:29.284 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+15048:C 09 Aug 2019 11:45:29.284 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=15048, just started
+15048:C 09 Aug 2019 11:45:29.284 # Configuration loaded
+15048:M 09 Aug 2019 11:45:29.285 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+15048:M 09 Aug 2019 11:45:29.285 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+15048:M 09 Aug 2019 11:45:29.285 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6378
+ |    `-._   `._    /     _.-'    |     PID: 15048
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+15048:M 09 Aug 2019 11:45:29.302 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+15048:M 09 Aug 2019 11:45:29.302 # Server initialized
+15048:M 09 Aug 2019 11:45:29.302 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+15048:M 09 Aug 2019 11:45:29.302 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+15048:M 09 Aug 2019 11:45:29.302 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6379+1
++ let physcpu=22+2
++ let physcpu2=23+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=22,23 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6379.conf
+initiating tracing...
+initiating tracing...
+15053:C 09 Aug 2019 11:45:30.275 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+15053:C 09 Aug 2019 11:45:30.275 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=15053, just started
+15053:C 09 Aug 2019 11:45:30.275 # Configuration loaded
+15053:M 09 Aug 2019 11:45:30.276 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+15053:M 09 Aug 2019 11:45:30.276 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+15053:M 09 Aug 2019 11:45:30.276 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 15053
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+15053:M 09 Aug 2019 11:45:30.277 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+15053:M 09 Aug 2019 11:45:30.277 # Server initialized
+15053:M 09 Aug 2019 11:45:30.277 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+15053:M 09 Aug 2019 11:45:30.277 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+15053:M 09 Aug 2019 11:45:30.277 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6380+1
++ let physcpu=24+2
++ let physcpu2=25+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=24,25 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server3 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6380.conf
+initiating tracing...
+initiating tracing...
+15058:C 09 Aug 2019 11:45:31.277 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+15058:C 09 Aug 2019 11:45:31.277 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=15058, just started
+15058:C 09 Aug 2019 11:45:31.277 # Configuration loaded
+15058:M 09 Aug 2019 11:45:31.278 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+15058:M 09 Aug 2019 11:45:31.278 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+15058:M 09 Aug 2019 11:45:31.278 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6380
+ |    `-._   `._    /     _.-'    |     PID: 15058
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+15058:M 09 Aug 2019 11:45:31.279 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+15058:M 09 Aug 2019 11:45:31.279 # Server initialized
+15058:M 09 Aug 2019 11:45:31.279 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+15058:M 09 Aug 2019 11:45:31.279 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+15058:M 09 Aug 2019 11:45:31.279 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ let port=6381+1
++ let physcpu=26+2
++ let physcpu2=27+2
++ sleep 1
++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
++ numactl --membind=1 --physcpubind=26,27 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server4 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6381.conf
+initiating tracing...
+initiating tracing...
+15063:C 09 Aug 2019 11:45:32.279 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+15063:C 09 Aug 2019 11:45:32.279 # Redis version=5.0.5, bits=64, commit=ca9ca7e7, modified=1, pid=15063, just started
+15063:C 09 Aug 2019 11:45:32.279 # Configuration loaded
+15063:M 09 Aug 2019 11:45:32.279 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.
+15063:M 09 Aug 2019 11:45:32.279 # Server can't set maximum open files to 10032 because of OS error: Operation not permitted.
+15063:M 09 Aug 2019 11:45:32.279 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase 'ulimit -n'.
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 5.0.5 (ca9ca7e7/1) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6381
+ |    `-._   `._    /     _.-'    |     PID: 15063
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+15063:M 09 Aug 2019 11:45:32.281 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
+15063:M 09 Aug 2019 11:45:32.281 # Server initialized
+15063:M 09 Aug 2019 11:45:32.281 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+15063:M 09 Aug 2019 11:45:32.281 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
+15063:M 09 Aug 2019 11:45:32.281 * Ready to accept connections
++ (( r++ ))
++ (( r<=4 ))
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ sleep 10
++ RUNCLIENT
++ let port=6378
++ let physcpu=2
++ let physcpu2=3
++ PARAMS=' -r 10000 -n 20000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d 4096'
++ (( c=1 ))
++ (( c<4 ))
++ let port=6378+1
++ let physcpu=2+1
++ let physcpu2=3+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 10000 -n 20000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6378
++ let port=6379+1
++ let physcpu=3+1
++ let physcpu2=5+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 10000 -n 20000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6379
++ let port=6380+1
++ let physcpu=4+1
++ let physcpu2=7+2
++ (( c++ ))
++ (( c<4 ))
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 10000 -n 20000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6381
++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark -r 10000 -n 20000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 4096 -p 6380
+15063:M 09 Aug 2019 11:45:44.024 * Starting automatic rewriting of AOF on 6797039600% growth
+15053:M 09 Aug 2019 11:45:44.031 * Starting automatic rewriting of AOF on 6837207300% growth
+15063:M 09 Aug 2019 11:45:44.032 * Background append only file rewriting started by pid 15073
+15058:M 09 Aug 2019 11:45:44.034 * Starting automatic rewriting of AOF on 6815260000% growth
+15053:M 09 Aug 2019 11:45:44.038 * Background append only file rewriting started by pid 15074
+15058:M 09 Aug 2019 11:45:44.045 * Background append only file rewriting started by pid 15075
+15048:M 09 Aug 2019 11:45:44.068 * Starting automatic rewriting of AOF on 6956468100% growth
+15048:M 09 Aug 2019 11:45:44.081 * Background append only file rewriting started by pid 15076
+15048:M 09 Aug 2019 11:45:45.285 * AOF rewrite child asks to stop sending diffs.
+15076:C 09 Aug 2019 11:45:45.285 * Parent agreed to stop sending diffs. Finalizing AOF...
+15076:C 09 Aug 2019 11:45:45.286 * Concatenating 1.44 MB of AOF diff received from parent.
+15076:C 09 Aug 2019 11:45:45.320 * SYNC append only file rewrite performed
+15076:C 09 Aug 2019 11:45:45.331 * AOF rewrite: 24 MB of memory used by copy-on-write
+15053:M 09 Aug 2019 11:45:45.422 * AOF rewrite child asks to stop sending diffs.
+15074:C 09 Aug 2019 11:45:45.422 * Parent agreed to stop sending diffs. Finalizing AOF...
+15074:C 09 Aug 2019 11:45:45.424 * Concatenating 1.50 MB of AOF diff received from parent.
+15063:M 09 Aug 2019 11:45:45.425 * AOF rewrite child asks to stop sending diffs.
+15073:C 09 Aug 2019 11:45:45.425 * Parent agreed to stop sending diffs. Finalizing AOF...
+15073:C 09 Aug 2019 11:45:45.427 * Concatenating 1.75 MB of AOF diff received from parent.
+15058:M 09 Aug 2019 11:45:45.438 * AOF rewrite child asks to stop sending diffs.
+15075:C 09 Aug 2019 11:45:45.438 * Parent agreed to stop sending diffs. Finalizing AOF...
+15075:C 09 Aug 2019 11:45:45.439 * Concatenating 1.31 MB of AOF diff received from parent.
+15048:M 09 Aug 2019 11:45:45.509 * Background AOF rewrite terminated with success
+15075:C 09 Aug 2019 11:45:45.558 * SYNC append only file rewrite performed
+15073:C 09 Aug 2019 11:45:45.565 * SYNC append only file rewrite performed
+15074:C 09 Aug 2019 11:45:45.565 * SYNC append only file rewrite performed
+15075:C 09 Aug 2019 11:45:45.566 * AOF rewrite: 23 MB of memory used by copy-on-write
+15074:C 09 Aug 2019 11:45:45.575 * AOF rewrite: 23 MB of memory used by copy-on-write
+15073:C 09 Aug 2019 11:45:45.575 * AOF rewrite: 24 MB of memory used by copy-on-write
+15058:M 09 Aug 2019 11:45:45.585 * Background AOF rewrite terminated with success
+15048:M 09 Aug 2019 11:45:45.635 * Residual parent diff successfully flushed to the rewritten AOF (11.84 MB)
+15048:M 09 Aug 2019 11:45:45.643 * Background AOF rewrite finished successfully
+15053:M 09 Aug 2019 11:45:45.644 * Background AOF rewrite terminated with success
+15058:M 09 Aug 2019 11:45:45.648 * Residual parent diff successfully flushed to the rewritten AOF (13.27 MB)
+15058:M 09 Aug 2019 11:45:45.658 * Background AOF rewrite finished successfully
+15063:M 09 Aug 2019 11:45:45.660 * Background AOF rewrite terminated with success
+15063:M 09 Aug 2019 11:45:45.746 * Residual parent diff successfully flushed to the rewritten AOF (13.06 MB)
+15053:M 09 Aug 2019 11:45:45.752 * Residual parent diff successfully flushed to the rewritten AOF (12.77 MB)
+15063:M 09 Aug 2019 11:45:45.754 * Background AOF rewrite finished successfully
+15053:M 09 Aug 2019 11:45:45.763 * Background AOF rewrite finished successfully
++ sleep 5
++ ps aux
++ grep redis-server
++ awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+15048
+15053
+15058
+15063
+15079
+15080
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 78: 15048 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 78: 15053 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 78: 15058 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 78: 15063 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
+/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/run.sh: line 78: 15078 Done                    ps aux
+     15079                       | grep redis-server
+     15080 Killed                  | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf appendonly-6378.aof appendonly-6379.aof appendonly-6380.aof appendonly-6381.aof
++ sudo killall redis-server1
+redis-server1: no process found
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+redis-server3: no process found
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+redis-server3: no process found
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
+redis-server4: no process found
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
+redis-server4: no process found
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ CLEAN
++ (( b=1 ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server1
+redis-server1: no process found
++ appname=redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ sudo killall redis-server1
+redis-server1: no process found
++ echo 'KILLING redis-server1'
+KILLING redis-server1
++ sudo kill -9 redis-server1
+kill: failed to parse argument: 'redis-server1'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server2
+redis-server2: no process found
++ appname=redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ sudo killall redis-server2
+redis-server2: no process found
++ echo 'KILLING redis-server2'
+KILLING redis-server2
++ sudo kill -9 redis-server2
+kill: failed to parse argument: 'redis-server2'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server3
+redis-server3: no process found
++ appname=redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ sudo killall redis-server3
+redis-server3: no process found
++ echo 'KILLING redis-server3'
+KILLING redis-server3
++ sudo kill -9 redis-server3
+kill: failed to parse argument: 'redis-server3'
++ (( b++  ))
++ (( b<=4 ))
++ rm -rf '*.rdb'
++ rm -rf '*.aof'
++ sudo killall redis-server4
+redis-server4: no process found
++ appname=redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ sudo killall redis-server4
+redis-server4: no process found
++ echo 'KILLING redis-server4'
+KILLING redis-server4
++ sudo kill -9 redis-server4
+kill: failed to parse argument: 'redis-server4'
++ (( b++  ))
++ (( b<=4 ))
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ sudo killall redis-benchmark
+redis-benchmark: no process found
++ set +x
+[17360.427651] Curr 14809 Currname redis-server4 HeteroProcname redis-server4 cache-hits 22088 cache-miss 0 buff-hits 717 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 121156935 pgbuff-del 9 avg_cache_life(us) 0 pgcache-del 0 active-cache 22088
+[17360.427651]  
+[17361.136337] drop_caches: sh (14938): drop_caches: 3
+[17361.730549] drop_caches: sh (14946): drop_caches: 3
+[17362.328575] drop_caches: sh (14952): drop_caches: 3
+[17362.924237] drop_caches: sh (14960): drop_caches: 3
+[17370.124731] drop_caches: sh (15039): drop_caches: 3
+[17370.842856] drop_caches: sh (15047): drop_caches: 3
+[17370.896439] flag is set to collect hetero allocate  9 
+[17370.896441] flag is set to enable HETERO_PGCACHE 11 
+[17370.896442] flag is set to enable HETERO_BUFFER 12 
+[17370.896442] flag is set to enable HETERO_JOURNAL 13 
+[17370.896443] flag is set to enable HETERO_RADIX 14 
+[17370.896444] flag is set to enable HETERO_FULLKERN 15 
+[17370.896444] flag to set FASTMEM node to 1 
+[17370.896446] hetero_pid set to 15048 15048 procname numactl
+[17370.896447] flag to set FASTMEM node to 1 
+[17370.896448] flag to set MIGRATION FREQ to 410065408 
+[17370.896449] flag to disable migration 19 
+[17370.896450] flag to MIGRATE_LISTCNT 410065408 
+[17370.901908] flag is set to collect hetero allocate  9 
+[17370.901910] flag is set to enable HETERO_PGCACHE 11 
+[17370.901911] flag is set to enable HETERO_BUFFER 12 
+[17370.901912] flag is set to enable HETERO_JOURNAL 13 
+[17370.901912] flag is set to enable HETERO_RADIX 14 
+[17370.901913] flag is set to enable HETERO_FULLKERN 15 
+[17370.901914] flag to set FASTMEM node to 1 
+[17370.901915] hetero_pid set to 15048 15048 procname redis-server1
+[17370.901916] flag to set FASTMEM node to 1 
+[17370.901917] flag to set MIGRATION FREQ to 410065408 
+[17370.901918] flag to disable migration 19 
+[17370.901919] flag to MIGRATE_LISTCNT 410065408 
+[17371.897548] flag is set to collect hetero allocate  9 
+[17371.897551] flag is set to enable HETERO_PGCACHE 11 
+[17371.897552] flag is set to enable HETERO_BUFFER 12 
+[17371.897552] flag is set to enable HETERO_JOURNAL 13 
+[17371.897553] flag is set to enable HETERO_RADIX 14 
+[17371.897554] flag is set to enable HETERO_FULLKERN 15 
+[17371.897554] flag to set FASTMEM node to 1 
+[17371.897556] hetero_pid set to 15053 15053 procname numactl
+[17371.897557] flag to set FASTMEM node to 1 
+[17371.897558] flag to set MIGRATION FREQ to 410065408 
+[17371.897559] flag to disable migration 19 
+[17371.897560] flag to MIGRATE_LISTCNT 410065408 
+[17371.899555] flag is set to collect hetero allocate  9 
+[17371.899557] flag is set to enable HETERO_PGCACHE 11 
+[17371.899558] flag is set to enable HETERO_BUFFER 12 
+[17371.899559] flag is set to enable HETERO_JOURNAL 13 
+[17371.899559] flag is set to enable HETERO_RADIX 14 
+[17371.899560] flag is set to enable HETERO_FULLKERN 15 
+[17371.899561] flag to set FASTMEM node to 1 
+[17371.899562] hetero_pid set to 15053 15053 procname redis-server2
+[17371.899563] flag to set FASTMEM node to 1 
+[17371.899564] flag to set MIGRATION FREQ to 410065408 
+[17371.899565] flag to disable migration 19 
+[17371.899566] flag to MIGRATE_LISTCNT 410065408 
+[17372.899091] flag is set to collect hetero allocate  9 
+[17372.899095] flag is set to enable HETERO_PGCACHE 11 
+[17372.899095] flag is set to enable HETERO_BUFFER 12 
+[17372.899096] flag is set to enable HETERO_JOURNAL 13 
+[17372.899097] flag is set to enable HETERO_RADIX 14 
+[17372.899098] flag is set to enable HETERO_FULLKERN 15 
+[17372.899098] flag to set FASTMEM node to 1 
+[17372.899100] hetero_pid set to 15058 15058 procname numactl
+[17372.899100] flag to set FASTMEM node to 1 
+[17372.899102] flag to set MIGRATION FREQ to 410065408 
+[17372.899103] flag to disable migration 19 
+[17372.899104] flag to MIGRATE_LISTCNT 410065408 
+[17372.901343] flag is set to collect hetero allocate  9 
+[17372.901345] flag is set to enable HETERO_PGCACHE 11 
+[17372.901345] flag is set to enable HETERO_BUFFER 12 
+[17372.901346] flag is set to enable HETERO_JOURNAL 13 
+[17372.901347] flag is set to enable HETERO_RADIX 14 
+[17372.901348] flag is set to enable HETERO_FULLKERN 15 
+[17372.901348] flag to set FASTMEM node to 1 
+[17372.901350] hetero_pid set to 15058 15058 procname redis-server3
+[17372.901351] flag to set FASTMEM node to 1 
+[17372.901352] flag to set MIGRATION FREQ to 410065408 
+[17372.901353] flag to disable migration 19 
+[17372.901354] flag to MIGRATE_LISTCNT 410065408 
+[17373.900333] flag is set to collect hetero allocate  9 
+[17373.900336] flag is set to enable HETERO_PGCACHE 11 
+[17373.900337] flag is set to enable HETERO_BUFFER 12 
+[17373.900338] flag is set to enable HETERO_JOURNAL 13 
+[17373.900338] flag is set to enable HETERO_RADIX 14 
+[17373.900339] flag is set to enable HETERO_FULLKERN 15 
+[17373.900340] flag to set FASTMEM node to 1 
+[17373.900341] hetero_pid set to 15063 15063 procname numactl
+[17373.900342] flag to set FASTMEM node to 1 
+[17373.900343] flag to set MIGRATION FREQ to 410065408 
+[17373.900345] flag to disable migration 19 
+[17373.900346] flag to MIGRATE_LISTCNT 410065408 
+[17373.902779] flag is set to collect hetero allocate  9 
+[17373.902781] flag is set to enable HETERO_PGCACHE 11 
+[17373.902782] flag is set to enable HETERO_BUFFER 12 
+[17373.902783] flag is set to enable HETERO_JOURNAL 13 
+[17373.902783] flag is set to enable HETERO_RADIX 14 
+[17373.902784] flag is set to enable HETERO_FULLKERN 15 
+[17373.902785] flag to set FASTMEM node to 1 
+[17373.902786] hetero_pid set to 15063 15063 procname redis-server4
+[17373.902787] flag to set FASTMEM node to 1 
+[17373.902788] flag to set MIGRATION FREQ to 410065408 
+[17373.902789] flag to disable migration 19 
+[17373.902790] flag to MIGRATE_LISTCNT 410065408 
+[17393.039467] Curr 15052 Currname redis-server1 HeteroProcname redis-server4 cache-hits 23861 cache-miss 0 buff-hits 757 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 27053097 pgbuff-del 32 avg_cache_life(us) 0 pgcache-del 0 active-cache 23861
+[17393.039467]  
+[17393.039483] Curr 15050 Currname redis-server1 HeteroProcname redis-server4 cache-hits 23861 cache-miss 0 buff-hits 757 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 27053097 pgbuff-del 32 avg_cache_life(us) 0 pgcache-del 0 active-cache 23861
+[17393.039483]  
+[17393.039508] Curr 15051 Currname redis-server1 HeteroProcname redis-server4 cache-hits 23861 cache-miss 0 buff-hits 757 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 27053097 pgbuff-del 32 avg_cache_life(us) 0 pgcache-del 0 active-cache 23861
+[17393.039508]  
+[17393.039526] Curr 15048 Currname redis-server1 HeteroProcname redis-server4 cache-hits 23861 cache-miss 0 buff-hits 757 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 27053097 pgbuff-del 32 avg_cache_life(us) 0 pgcache-del 0 active-cache 23861
+[17393.039526]  
+[17393.046927] Curr 15057 Currname redis-server2 HeteroProcname redis-server4 cache-hits 24026 cache-miss 0 buff-hits 690 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 48002747 pgbuff-del 25 avg_cache_life(us) 0 pgcache-del 0 active-cache 24026
+[17393.046927]  
+[17393.046933] Curr 15056 Currname redis-server2 HeteroProcname redis-server4 cache-hits 24026 cache-miss 0 buff-hits 690 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 48002747 pgbuff-del 25 avg_cache_life(us) 0 pgcache-del 0 active-cache 24026
+[17393.046933]  
+[17393.046987] Curr 15055 Currname redis-server2 HeteroProcname redis-server4 cache-hits 24026 cache-miss 0 buff-hits 690 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 48002747 pgbuff-del 25 avg_cache_life(us) 0 pgcache-del 0 active-cache 24026
+[17393.046987]  
+[17393.047006] Curr 15053 Currname redis-server2 HeteroProcname redis-server4 cache-hits 24026 cache-miss 0 buff-hits 690 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 48002747 pgbuff-del 25 avg_cache_life(us) 0 pgcache-del 0 active-cache 24026
+[17393.047006]  
+[17393.054686] Curr 15058 Currname redis-server3 HeteroProcname redis-server4 cache-hits 24181 cache-miss 0 buff-hits 776 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 50024994 pgbuff-del 23 avg_cache_life(us) 0 pgcache-del 0 active-cache 24181
+[17393.054686]  
+[17393.054692] Curr 15062 Currname redis-server3 HeteroProcname redis-server4 cache-hits 24181 cache-miss 0 buff-hits 776 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 50024994 pgbuff-del 23 avg_cache_life(us) 0 pgcache-del 0 active-cache 24181
+[17393.054692]  
+[17393.054829] Curr 15061 Currname redis-server3 HeteroProcname redis-server4 cache-hits 24181 cache-miss 0 buff-hits 776 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 44252879 pgbuff-del 26 avg_cache_life(us) 0 pgcache-del 0 active-cache 24181
+[17393.054829]  
+[17393.054864] Curr 15060 Currname redis-server3 HeteroProcname redis-server4 cache-hits 24181 cache-miss 0 buff-hits 776 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 41091959 pgbuff-del 28 avg_cache_life(us) 0 pgcache-del 0 active-cache 24181
+[17393.054864]  
+[17393.061682] Curr 15063 Currname redis-server4 HeteroProcname redis-server4 cache-hits 24121 cache-miss 0 buff-hits 694 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 99677664 pgbuff-del 17 avg_cache_life(us) 0 pgcache-del 0 active-cache 24121
+[17393.061682]  
+[17393.061690] Curr 15067 Currname redis-server4 HeteroProcname redis-server4 cache-hits 24121 cache-miss 0 buff-hits 694 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 99677664 pgbuff-del 17 avg_cache_life(us) 0 pgcache-del 0 active-cache 24121
+[17393.061690]  
+[17393.061780] Curr 15066 Currname redis-server4 HeteroProcname redis-server4 cache-hits 24121 cache-miss 0 buff-hits 695 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 84726014 pgbuff-del 20 avg_cache_life(us) 0 pgcache-del 0 active-cache 24121
+[17393.061780]  
