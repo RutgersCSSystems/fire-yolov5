@@ -359,6 +359,7 @@ struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t gfp_mask,
         skb = NULL;
 	if(is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
 	        update_hetero_obj(cache, hetero_obj);
+		//printk(KERN_ALERT "allocating skb ... %s:%d\n", __FUNCTION__,__LINE__);
      	        skb = kmem_cache_alloc_node_hetero(cache, gfp_mask & ~__GFP_DMA, node);
 	}
 	if(!skb)

@@ -4625,7 +4625,7 @@ normal_allocation:
 			if (is_hetero_buffer_set()) {
 				if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
 					&& is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
-					//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
+					printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
 					//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
 					skb = build_skb_hetero(data - E1000_HEADROOM, frag_len, netdev->hetero_sock->hetero_obj);
 				}
