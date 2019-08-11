@@ -4599,19 +4599,10 @@ normal_allocation:
 
 
 #ifdef CONFIG_HETERO_NET_ENABLE
-		/*if (!is_hetero_buffer_set_netdev()) {
-			if (current->active_mm) {
-				printk("current = %s, current->active_mm->hetero_task = %d\n", current->comm, current->active_mm->hetero_task);
-			} else {
-				printk("get some issue\n");
-			}
-		}*/
-
 		if (is_hetero_buffer_set()) {
 			if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
 				 && is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
-				//printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
-				//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
+				printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
 				skb = e1000_copybreak_hetero(adapter, buffer_info, length, data, netdev->hetero_sock->hetero_obj);
 			}
 		}
@@ -4625,8 +4616,7 @@ normal_allocation:
 			if (is_hetero_buffer_set()) {
 				if (netdev && netdev->hetero_sock && netdev->hetero_sock->hetero_obj
 					&& is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
-					printk(KERN_ALERT "hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
-					//printk(KERN_ALERT "hetero_obj = 0x%lx | %s:%d \n", netdev->hetero_sock->hetero_obj, __FUNCTION__, __LINE__);
+					hetero_force_dbg("hetero_sock = 0x%lx | %s:%d \n", netdev->hetero_sock, __FUNCTION__, __LINE__);
 					skb = build_skb_hetero(data - E1000_HEADROOM, frag_len, netdev->hetero_sock->hetero_obj);
 				}
 			}

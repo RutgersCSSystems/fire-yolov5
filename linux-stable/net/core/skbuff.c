@@ -359,7 +359,6 @@ struct sk_buff *__alloc_skb_hetero(unsigned int size, gfp_t gfp_mask,
         skb = NULL;
 	if(is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
 	        update_hetero_obj(cache, hetero_obj);
-		//printk(KERN_ALERT "allocating skb ... %s:%d\n", __FUNCTION__,__LINE__);
      	        skb = kmem_cache_alloc_node_hetero(cache, gfp_mask & ~__GFP_DMA, node);
 	}
 	if(!skb)
@@ -785,12 +784,6 @@ struct sk_buff *__napi_alloc_skb_hetero(struct napi_struct *napi, unsigned int l
 #ifdef CONFIG_HETERO_NET_ENABLE
 	if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)) {
 		skb = __build_skb_hetero(data, len, hetero_obj);
-
-		/*if (skb) {
-			struct page *page = NULL;
-			page = virt_to_page(skb);
-			update_hetero_pgbuff_stat(get_fastmem_node(), page, 0);
-		}*/
 	}
 	if (!skb)
 #endif
@@ -799,9 +792,6 @@ struct sk_buff *__napi_alloc_skb_hetero(struct napi_struct *napi, unsigned int l
 		skb_free_frag(data);
 		return NULL;
 	}
-
-	//printk(KERN_ALERT "allocating skb ... %s:%d\n", __FUNCTION__,__LINE__);
-
 	/* use OR instead of assignment to avoid clearing of bits in mask */
 	if (nc->page.pfmemalloc)
 		skb->pfmemalloc = 1;

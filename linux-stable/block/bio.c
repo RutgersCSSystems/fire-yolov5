@@ -621,8 +621,8 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
 			return NULL;
 
                 p = NULL;
-		if(is_hetero_buffer_set()) {
 
+		if(is_hetero_buffer_set()) {
 #ifdef CONFIG_HETERO_MIGRATE
 		        printk(KERN_ALERT "%s : %d size %d \n",
 				 __func__, __LINE__, sizeof(struct bio) + 
@@ -726,7 +726,7 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
 	bio->bi_io_vec = bvl;
 #ifdef CONFIG_HETERO_ENABLE
         if (is_hetero_buffer_set() && is_hetero_cacheobj(hetero_obj)){
-                hetero_dbg("%s:%d \n",__func__,__LINE__);
+                hetero_force_dbg("%s:%d \n",__func__,__LINE__);
                 bio->hetero_obj = hetero_obj;
 		bs->hetero_obj = hetero_obj;
         }

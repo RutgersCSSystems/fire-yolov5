@@ -7980,9 +7980,7 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 
 		/* retrieve a buffer from the ring */
 #ifdef CONFIG_HETERO_NET_ENABLE
-		if (skb) {
-			//printk(KERN_ALERT "skb is already allocated somewhere! %s:%d\n", __FUNCTION__, __LINE__);
-		} else if (is_hetero_buffer_set()) {
+		if (!skb && is_hetero_buffer_set()) {
 			struct net_device *netdev = NULL;
 			if (q_vector && q_vector->adapter)
 				netdev = q_vector->adapter->netdev;
@@ -7990,7 +7988,6 @@ static int igb_clean_rx_irq(struct igb_q_vector *q_vector, const int budget)
 				&& is_hetero_cacheobj(netdev->hetero_sock->hetero_obj)) {
 				skb = igb_build_skb_hetero(rx_ring, rx_buffer, rx_desc, size, netdev->hetero_sock->hetero_obj);
 			}
-			//printk(KERN_ALERT "net device is 0x%lx | %s:%d\n", netdev, __FUNCTION__, __LINE__);
 		}
 #endif
 		if (skb)

@@ -91,7 +91,7 @@ Move this to header file later.
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
 #define HETERO_SET_CONTEXT 21
-#define HETERO_OBJAFF_NET 22
+#define HETERO_NET 22
 
 
 //#define _ENABLE_HETERO_THREAD
@@ -122,7 +122,7 @@ int enbl_hetero_set_context=0;
 int hetero_fastmem_node=0;
 int enbl_hetero_objaff=0;
 int disabl_hetero_migrate=0;
-int enbl_hetero_objaff_net=0;
+int enbl_hetero_net=0;
 
 //Frequency of migration
 int g_migrate_freq=0;
@@ -354,8 +354,13 @@ void debug_hetero_obj(void *obj) {
 EXPORT_SYMBOL(debug_hetero_obj);
 
 
+
 int is_hetero_cacheobj(void *obj){
-	return 1;
+
+	if(!enbl_hetero_net)
+		return 0;
+
+	return enbl_hetero_net;
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
@@ -853,7 +858,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
-	    enbl_hetero_objaff_net = 0;
+	    enbl_hetero_net = 0;
 	    /* Enable application defined context */
 	    enbl_hetero_set_context = 0;
 	    reset_hetero_stats(current);	
@@ -963,9 +968,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     enbl_hetero_set_context = 1;
 	     break;
 
-	case HETERO_OBJAFF_NET:
-	     printk("flag to set HETERO_OBJAFF_NET with %d \n", val);
-	     enbl_hetero_objaff_net = 1;
+	case HETERO_NET:
+	     printk("flag to set HETERO_NET with %d \n", val);
+	     enbl_hetero_net = 1;
 	     break;		
 
 	default:
