@@ -33,15 +33,15 @@
 # 10 seconds. Thus the write bandwidth will be set as $filesize/$repintval.
 #
 
-set $dir=/tmp
+set $dir=/users/skannan/ssd/NVM/appbench/shared_data
 set $eventrate=96
-set $filesize=10g
-set $nthreads=48
-set $numactivevids=32
-set $numpassivevids=194
+set $filesize=1g
+set $nthreads=16
+set $numactivevids=4
+set $numpassivevids=12
 set $reuseit=false
 set $readiosize=256k
-set $writeiosize=1m
+set $writeiosize=16k
 
 set $passvidsname=passivevids
 set $actvidsname=activevids
@@ -49,7 +49,6 @@ set $actvidsname=activevids
 set $repintval=10
 
 eventgen rate=$eventrate
-
 define fileset name=$actvidsname,path=$dir,size=$filesize,entries=$numactivevids,dirwidth=4,prealloc,paralloc,reuse=$reuseit
 define fileset name=$passvidsname,path=$dir,size=$filesize,entries=$numpassivevids,dirwidth=20,prealloc=50,paralloc,reuse=$reuseit
 
@@ -75,3 +74,4 @@ define process name=vidreaders,instances=1
 }
 
 echo  "Video Server Version 3.0 personality successfully loaded"
+run 20

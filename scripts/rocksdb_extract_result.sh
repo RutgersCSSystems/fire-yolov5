@@ -1,129 +1,556 @@
 #!/bin/bash
+
 TARGET=$OUTPUTDIR
-APP="rocksdb"
-TYPE="SSD"
+#APP="rocksdb"
+APP="redis"
+#TYPE="SSD"
+TYPE="NVM"
 
 STATTYPE="APP"
 STATTYPE="KERNEL"
+ZPLOT="$NVMBASE/graphs/zplot"
+
+## Scaling Kernel Stats Graph
+let SCALE_KERN_GRAPH=100000
+let SCALE_FILEBENCH_GRAPH=1000
+let SCALE_REDIS_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=10000
+let SCALE_CASSANDRA_GRAPH=100
+
+
+let INCR_KERN_BAR_SPACE=2
+let INCR_FULL_BAR_SPACE=2
+let INCR_ONE_SPACE=2
+
 
 ## declare an array variable
-declare -a arr=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated")
+declare -a kernstat=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated")
+declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq")
+
+declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+#declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
+
+
+declare -a placearr=("APPSLOW-OSSLOW" "APPSLOW-OSFAST" "APPFAST-OSFAST")
+# "APPFAST-OSSLOW"
+
+#declare -a devices=("SSD" "NVM")
+declare -a devices=("NVM")
+
+declare -a excludekernstat=("prefetch" "slowmem-only" "optimal" "obj-affinity-NVM1")
+declare -a excludefullstat=("prefetch" "NVM1")
+
+declare -a redispattern=("SET" "GET")
 
 
 EXTRACT_KERNINFO() {
-	dir=$1
-	APP=$2
-	awkidx=10
 
-	if [ -f $dir/$APP ]; then
+        APP=$1
+        dir=$2
+	j=$3
+        APPFILE=$4
+	awkidx=$5
+	stattype=$6
+	file=$APPFILE
+        resultdir=$ZPLOT/data/kernstat
+        mkdir -p $resultdir
 
-	for term in "${arr[@]}"
-		do
-			echo "----------------------------"$APP"----------------"
-			search="$"$awkidx
-			echo $search
-			#cat $dir/$APP | grep $term | awk -v myvar="$search" '{sum += myvar } END {print "page_cache_hits: " sum}'
-			cat $dir/$APP | grep Currname | awk -v myvar="$search" '{sum += myvar } END {print "page_cache_hits: " sum}'
+        outfile=$(basename $dir)
+        outputfile=$APP-$outfile"-"$stattype".data"
+        rm -rf $resultdir/$outputfile
+        rm -rf "num.data"
 
-			#cat $dir/$APP | grep "page_cache_hits" | awk '{sum += $9} END {print "page_cache_hits: " sum}'
-			#cat $dir/$APP | grep "page_cache_miss" | awk '{sum += $11} END {print "page_cache_miss: " sum}'
-			#cat $dir/$APP | grep "buff_page_hits" | awk '{sum += $13} END {print "buff_page_hits: " sum}'
-			#cat $dir/$APP | grep "buff_buffer_miss" | awk '{sum += $15} END {print "buff_buffer_miss: " sum}'
-			((awkidx++))
-			((awkidx++))
-		done
+        if [ "$APP" == "redis" ]
+	then
+		target=$dir/$APP"-kernel.out"
+	else
+		target=$dir/$file
 	fi
-	
-	
+
+	if [ -f $target ]; then
+
+		search="$"$awkidx
+	        if [ "$APP" == "redis" ]
+		then
+			let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "BEGIN {SUM=0}; {SUM=SUM+$search}; END {print SUM}"`  
+		else
+			let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "{print $search}"`  
+		fi
+
+		let scaled_value=$val/$SCALE_KERN_GRAPH
+		echo $scaled_value &> $APP"kern.data"
+		((j++))
+		echo $j &> "num.data"
+		paste "num.data" $APP"kern.data" &> $resultdir/$outputfile
+		rm -rf "num.data" $APP"kern.data"
+	fi
 }
 
 
-EXTRACT_RESULT() {
+PULL_RESULT() {
+	APP=$1
+	dir=$2
+        j=$3      
+	APPFILE=$4
+	GRAPHDATA=$5
+	EXT=$6
 
+	outfile=$(basename $dir)
+	outputfile=$APP"-"$outfile$EXT".data"
+	resultfile=$ZPLOT/data/$GRAPHDATA/$outputfile
+	mkdir -p $ZPLOT/data/$GRAPHDATA
+	rm -rf $resultfile
+	rm -rf "num.data"
+
+	if [ -f $dir/$APPFILE ]; then
+
+		if [ "$APP" = 'redis' ]; 
+		then
+			val=`cat $dir/$APPFILE | grep -a "ET" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'`
+			scaled_value=$(echo $val $SCALE_REDIS_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
+
+		elif [  "$APP" = 'cassandra' ];
+		then
+			val=`cat $dir/$APPFILE | grep "Throughput" |  tail -1 | awk '{printf "%5.0f\n", $3}'`
+			scaled_value=$(echo $val $SCALE_CASSANDRA_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
+		elif [  "$APP" = 'filebench' ]; 
+		then
+			val=`cat $dir/$APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
+			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
+		else
+			val=`cat $dir/$APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value &> $APP".data"
+		fi
+		((j++))
+		echo $j &> "num.data"
+		paste "num.data" $APP".data" &> $resultfile
+	fi
+}
+
+
+
+
+
+
+PULL_RESULT_PATTERN() {
+
+	APP=$1
+	dir=$2
+        j=$3      
+	APPFILE=$4
+	access=$5
+	resultdir=$ZPLOT/data/patern
+	mkdir -p $resultdir
+
+	outfile=$(basename $dir)
+	outputfile=$APP-$outfile
+	rm -rf $resultdir/$outputfile
+	rm -rf "num.data"
+	resultfile="$APP"-"$access.data"
+
+	if [ -f $dir/$APPFILE ]; then
+
+		file=$dir/$APPFILE
+		
+		if [ "$APP" = 'redis' ]; then
+			cat $file | grep -a "$SEARCH" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $resultfile
+		else
+			if [ "$access" = 'readseq' ]; then
+				cat $file | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM/10}' &> $resultfile
+			else
+				cat $file | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $resultfile
+			fi
+		fi
+
+		((j++))
+		echo $j &> "num.data"
+		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
+		rm -rf "num.data" $resultfile
+	fi
+}
+
+function EXCLUDE_DIR  {
+
+	exlude=$1
+	dir=$2
+	local -n list=$3
+
+	for check in "${list[@]}"
+	do
+		if [[ $dir == *"$check"* ]]; then
+			((exlude++))	
+		fi
+	done
+}
+
+
+
+EXTRACT_BREAKDOWN_RESULT() {
 	i=0
 	j=0
 	files=""
-	file1=""
+	rm $APP".data"
+
+	APPFILE=""
+	TYPE="NVM"
+
+	for device in "${devices[@]}"
+	do
+		TYPE=$device
+		APPFILE=$APP".out-"$device
+
+		for accesstype in "${pattern[@]}"
+		do
+			for dir in $TARGET/*$device*
+			do
+				PULL_RESULT_PATTERN $APP $dir $j $basename $APPFILE $accesstype
+			done
+		done
+		((j++))
+	done
+}
+
+
+
+
+EXTRACT_KERNSTAT() {
+
+	j=0
+	exlude=0
+	APP=$1
 	rm $APP".data"
 	rm "num.data"
 
-	TYPE="NVM"
-	for dir in $TARGET/*
+	for device in "${devices[@]}"
 	do
-	 if [[ $dir == *"NVM"* ]]; 
- 	 then
-		outfile=$(basename $dir)
-		outputfile=$APP-$outfile".data"
+		TYPE=$device
+		APPFILE=$APP".out-"$device
 
-		APPFILE=rocksdb.out-NVM
+		 if [ $TYPE == "SSD" ]; then
+			awkidx=10
+		 else
+			awkidx=9
+		 fi
 
-		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
-			((j++))
-			echo $j &> "num.data"
+		if [ "$APP" == "redis" ]
+		then
+			awkidx=8
 		fi
-		rm $NVMBASE/graphs/zplot/data/$outputfile
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
-		echo $NVMBASE/graphs/zplot/data/$outputfile
-		EXTRACT_KERNINFO $dir $APPFILE
-	fi
-	done
 
-	TYPE="SSD"
-	for dir in $TARGET/*
-	do
-	if [[ $dir == *"SSD"* ]];
-	 then
-		outfile=$(basename $dir)
-		outputfile=$APP-$outfile".data"
-		APPFILE=rocksdb.out-SSD
-
-		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APPFILE | grep "micros" | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM}' &> $APP".data"
-			((j++))
-			echo $j &> "num.data"
-		fi
-		rm $NVMBASE/graphs/zplot/data/$outputfile
-		paste "num.data" $APP".data" &> $NVMBASE/graphs/zplot/data/$outputfile
-		echo $NVMBASE/graphs/zplot/data/$outputfile
-	fi
+		for stattype in "${kernstat[@]}"
+		do
+			for dir in $TARGET/*$device*
+			do
+				exlude=0
+				EXCLUDE_DIR $exlude $dir excludekernstat
+				if [ $exlude -ge 1 ]; then
+					echo "EXCLUDING" $dir
+					continue;
+				fi
+				#echo $dir
+				EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
+			done
+			((awkidx++))
+			((awkidx++))
+			j=$((j+$INCR_KERN_BAR_SPACE))
+		done
 	done
 }
 
 
+REDIS_CONSOLIDATE_RESULT() {
 
-EXTRACT_INFO_OLD() {
-	dir=$1
-	APP=$2
-	if [ -f $dir/$APP ]; then
-		echo "----------------------------"$APP"----------------"
-		cat $dir/$APP | grep "cache" | awk '{sum += $13} END {print "page_cache_hits: " sum}'
-		cat $dir/$APP | grep "cache miss" | awk '{sum += $16} END {print "page_cache_miss: " sum}'
-		cat $dir/$APP | grep "buffer page hits" | awk '{sum += $20} END {print "buff_page_hits: " sum}'
-		cat $dir/$APP | grep "miss" | awk '{sum += $24} END {print "buff_buffer_miss: " sum}'
-	fi
-}
+        dir=$1
+        APP=$2
+	let instances=4
 
-EXTRACT_KERNSTAT(){
+        rm -rf $dir/$APP-"all.out"
+
+	cat $dir
+
+        for file in $dir/$APP*.txt
+        do
 	
-	for dir in $TARGET/*
-	do 
-		echo $dir
-		APP=db_bench 
-		EXTRACT_INFO_OLD $dir $APP
+                search=$APP
+                if [[ $file == *"$search"*".txt" ]];
+                then
+			rm -rf $dir/$APP"-all.out-"$device
+                        cat $file | grep "ET:" &> tmp.txt
+                        sed -i 's/\r/\n/g' tmp.txt
+                        cat tmp.txt | grep "SET:" | tail -1 &>> $dir/$APP"-all.out-"$device
+                        cat tmp.txt | grep "GET:" | tail -1 &>> $dir/$APP"-all.out-"$device
+                fi
+        done
+        rm -rf tmp.txt
 
-		APP=redis
-		EXTRACT_INFO_OLD $dir $APP
-
-		APP=filebench
-		EXTRACT_INFO_OLD $dir $APP
+	for file in $dir/$APP".out-"*
+	do
+		if [ -f $file ]; then
+			text="Currname\sredis-server"
+			awkidx=10
+			rm -rf $dir/$APP"-kernel.out"
+			for i in $(seq 1 $instances);
+			do
+				 cat $file | sed 's/\[[^]]*\]//g' | sed 's/ Curr /Curr /g' |  grep $text$i | tail -1 &>> $dir/$APP"-kernel.out"
+			done
+		fi
 	done
 
 }
+
+
+
+EXTRACT_REDIS_BREAKDOWN_RESULT() {
+        j=0
+        files=""
+	APP=$1
+        rm $APP".data"
+        APPFILE=""
+
+	for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=$APP".out-"$device
+
+		for dir in $TARGET/*$TYPE*
+		do
+			REDIS_CONSOLIDATE_RESULT $dir $APP
+		done
+	done
+
+        for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=$APP".out-"$device
+
+		for accesstype in "${redispattern[@]}"
+		do
+			for dir in $TARGET/*$device*
+			do
+				PULL_RESULT_PATTERN $APP $dir $j $APP"-all.out-"$TYPE $accesstype
+			done
+			((j++))
+		done
+	done
+}
+
+EXTRACT_RESULT() {
+	rm $APP".data"
+	rm "num.data"
+	exclude=0
+
+	for device in "${devices[@]}"
+	do
+		TYPE=$device
+		APPFILE=""
+
+		for dir in $TARGET/*$TYPE*
+		do
+			exlude=0
+			EXCLUDE_DIR $exlude $dir excludefullstat
+			if [ $exlude -ge 1 ]; then
+				echo "EXCLUDING" $dir
+				continue;
+			fi
+
+			if [ "$APP" = 'redis' ]; then
+				APPFILE=$APP"-all.out-"$TYPE
+			else
+				APPFILE=$APP".out-"$TYPE
+			fi
+			PULL_RESULT $APP $dir $j $APPFILE ""
+		done
+		j=$((j+$INCR_FULL_BAR_SPACE))
+	done
+}
+
+
+EXTRACT_RESULT_SENSITIVE() {
+        rm $APP".data"
+        rm "num.data"
+        exclude=0
+
+        for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=""
+
+                for BW in "${configarr[@]}"
+                do
+                        for placement in "${placearr[@]}"
+                        do
+                                for dir in $TARGET/$BW*/*$placement*$device
+                                do
+                                        echo $dir
+                                        exlude=0
+                                        EXCLUDE_DIR $exlude $dir excludefullstat
+                                        if [ $exlude -ge 1 ]; then
+                                                echo "EXCLUDING" $dir
+                                                continue;
+                                        fi
+
+                                        if [ "$APP" = 'redis' ]; then
+                                                APPFILE=$APP"-all.out-"$TYPE
+                                        else
+                                                APPFILE=$APP".out-"$TYPE
+                                        fi
+                                        PULL_RESULT $APP $dir $j $APPFILE "motivate-sensitivity" "-"$BW
+                                done
+                        done
+                        j=$((j+$INCR_ONE_SPACE))
+                done
+        done
+}
+
+
+EXTRACT_RESULT_COMPARE() {
+        rm $APP".data"
+        rm "num.data"
+        exclude=0
+
+        for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=""
+
+                for BW in "${configarr[@]}"
+                do
+                        for placement in "${placearr[@]}"
+                        do
+                                for dir in $TARGET/$BW*/*$placement*$device
+                                do
+                                        echo $dir
+                                        exlude=0
+                                        EXCLUDE_DIR $exlude $dir excludefullstat
+                                        if [ $exlude -ge 1 ]; then
+                                                echo "EXCLUDING" $dir
+                                                continue;
+                                        fi
+
+                                        if [ "$APP" = 'redis' ]; then
+
+						REDIS_CONSOLIDATE_RESULT $dir $APP
+						echo $dir
+                                                APPFILE=$APP"-all.out-"$TYPE
+                                        else
+                                                APPFILE=$APP".out-"$TYPE
+                                        fi
+                                        PULL_RESULT $APP $dir $j $APPFILE "motivate" "-"$BW
+                                done
+                        done
+                        j=$((j+$INCR_ONE_SPACE))
+                done
+        done
+}
+
+FORMAT_RESULT_REDIS() {
+        files=""
+	APP=$1
+        rm $APP".data"
+        APPFILE=""
+
+	for device in "${devices[@]}"
+        do
+                TYPE=$device
+                APPFILE=$APP".out-"$device
+
+		for dir in $TARGET/*$TYPE*
+		do
+			REDIS_CONSOLIDATE_RESULT $dir $APP
+		done
+	done
+}
+
+
+######################################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_SENSITIVE "rocksdb"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
+exit
+
+####################MOTIVATION ANALYSIS########################
+
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "rocksdb"
+
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "redis"
+
+
+APP='filebench'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+EXTRACT_RESULT_COMPARE "filebench"
+
+
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
+exit
+######################################################
+
+j=0
+APP='filebench'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "filebench"
+
+#OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-july30th"
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+APP='redis'
+FORMAT_RESULT_REDIS "redis"
+EXTRACT_RESULT "redis"
+
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "rocksdb"
+
+APP='cassandra'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "cassandra"
+
+
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
+exit
+
 
 EXTRACT_RESULT
-cd $NVMBASE/graphs/zplot/
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-total.py
+exit
+
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 200 -r 40 -s "SSD"
+
+EXTRACT_BREAKDOWN_RESULT
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-breakdown.py
+exit
+
+
+EXTRACT_KERNSTAT "redis"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
+
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+exit
+
+
 #EXTRACT_KERNSTAT
 
 

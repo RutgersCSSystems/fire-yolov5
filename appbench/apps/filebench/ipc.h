@@ -74,7 +74,7 @@
  * has to increase these values
  */
 #define	FILEBENCH_NFILESETS		(16)
-#define	FILEBENCH_NFILESETENTRIES	(1024 * 1024)
+#define	FILEBENCH_NFILESETENTRIES	(1024 * 1024 * 100)
 #define	FILEBENCH_NPROCFLOWS		(1024)
 #define	FILEBENCH_NTHREADFLOWS 		(1024)
 /* 16 flowops per threadflow seems reasonable */

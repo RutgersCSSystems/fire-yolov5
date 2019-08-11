@@ -92,12 +92,9 @@ Move this to header file later.
 #define HETERO_MIGRATE_LISTCNT 20
 #define HETERO_SET_CONTEXT 21
 
-
-#define _ENABLE_HETERO_THREAD
-
+//#define _ENABLE_HETERO_THREAD
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
-
 struct migrate_threads {
 	struct task_struct *thrd;
 };

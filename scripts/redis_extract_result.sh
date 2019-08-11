@@ -82,8 +82,8 @@ EXTRACT_KERNSTAT(){
 }
 
 EXTRACT_RESULT
-#cd $NVMBASE/graphs/zplot/
-#python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+cd $NVMBASE/graphs/zplot/
+python $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
 #EXTRACT_KERNSTTCT_RESULT
 
 set +x

@@ -1,0 +1,97 @@
+++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/FlashX
+++ STORAGE=/users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=1 /users/skannan/ssd/NVM/appbench/apps/FlashX/build/flash-graph/test-algs/test_algs /users/skannan/ssd/NVM/appbench/apps/FlashX/flash-graph/conf/run_test.txt /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.adj /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.index wcc
+Initialize ops. There are 11 types
+SAFS runs on 1 NUMA nodes
+The root conf file: FG_TOP/flash-graph/conf/data_files.txt
+FG_TOP/flash-graph/conf/data_files.txt doesn't exist
+FlashGraph: fail to initialize SAFS
+FlashMatrix runs on 4 threads and 1 NUMA nodes
+reserved 0 bytes are associated with NUMA nodes and 0 bytes aren't
+
+FlashGraph runs on 4 threads and 1 nodes
+Configuration parameters in graph algorithm.
+	threads: 4
+	prof_file: 
+	trace_file: 
+	max_processing_vertices: 2000
+	enable_elevator: 0
+	part_range_size_log: 10
+	preload: 0
+	index_file_weight: 10
+	in_mem_graph: 0
+	num_vparts: 1
+	min_vpart_degree: 2147483647
+	serial_run: 1
+	vertex_merge_gap: 0
+load a graph of 17444610048 bytes
+load vertex index: file size: 329686816, index size: 329686816
+init from a compressed vertex index
+There are 848507 large in-vertices and 1350523 large out-vertices
+init in-mem compressed index takes 0.650563 seconds
+There are 124836180 vertices
+It takes 0.945941 seconds to initialize the graph engine
+weakly connected components starts
+Iter 0 takes 42.5213 seconds, and 65608366 vertices are in iter 1
+Iter 1 takes 2.04784 seconds, and 7939180 vertices are in iter 2
+Iter 2 takes 0.294823 seconds, and 276998 vertices are in iter 3
+Iter 3 takes 0.044571 seconds, and 77441 vertices are in iter 4
+Iter 4 takes 0.014389 seconds, and 25257 vertices are in iter 5
+Iter 5 takes 0.005409 seconds, and 8643 vertices are in iter 6
+Iter 6 takes 0.002645 seconds, and 3114 vertices are in iter 7
+Iter 7 takes 0.00168 seconds, and 1152 vertices are in iter 8
+Iter 8 takes 0.00046 seconds, and 448 vertices are in iter 9
+Iter 9 takes 0.000356 seconds, and 180 vertices are in iter 10
+Iter 10 takes 0.000347 seconds, and 89 vertices are in iter 11
+Iter 11 takes 0.000305 seconds, and 45 vertices are in iter 12
+Iter 12 takes 0.000294 seconds, and 20 vertices are in iter 13
+Iter 13 takes 0.000586 seconds, and 9 vertices are in iter 14
+Iter 14 takes 0.000813 seconds, and 5 vertices are in iter 15
+Iter 15 takes 0.000575 seconds, and 1 vertices are in iter 16
+Iter 16 takes 0.000812 seconds, and 0 vertices are in iter 17
+The graph engine takes 44.9379 seconds to complete
+WCC takes 44.938 seconds in total
+There are 2 components (exclude empty vertices), and largest comp has -8436461943459969370 vertices
+reserved 536870912 bytes are associated with NUMA nodes and 0 bytes aren't
+
+I/O system is destroyed
+I/O threads get 0 reads (0 bytes) and 0 writes (0 bytes)
+
+
+application termination...
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+[ 8334.750432] drop_caches: sh (5214): drop_caches: 3
+[ 8337.202972] drop_caches: sh (5222): drop_caches: 3
+[ 8556.741838] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[ 8562.038108] nvmemul: ioctl command: 0xc008aa02
+[ 8562.038112] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[ 8562.038118] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038119] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[ 8562.038122] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038123] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[ 8562.038125] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038127] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[ 8562.038129] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038130] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[ 8562.038132] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038133] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[ 8562.038135] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038136] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[ 8562.038139] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038140] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[ 8562.038142] nvmemul: ioctl command: 0x8008aa01
+[ 8562.038143] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[ 8567.891239] drop_caches: sh (5449): drop_caches: 3
+[ 8570.250834] drop_caches: sh (5457): drop_caches: 3
+[ 8660.009938] flag is set to print hetero allocate stat 10 
+[ 8660.009943] Curr 5475 Currname test_algs HeteroProcname 0000000000000000 cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 0
+[ 8660.009943]  
+[ 8660.009945] cache-hits 1634989 cache-miss 10101964 buff-hits 0 buff-miss 0 migrated 6050 cache-del 0 buff-del 0 
+[ 8660.009946] flag set to clear count 0

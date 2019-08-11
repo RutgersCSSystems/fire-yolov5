@@ -22,33 +22,39 @@ EXTRACT_RESULT() {
 	for dir in $TARGET/*
 	do
 	
-	rm  $dir/*cleaned*
-	
-	for file in $dir/*
-	do
-		cat $file | grep -a "$SEARCH" &> tmp.txt
-		sed -i 's/\r/\n/g' tmp.txt && cat tmp.txt | grep "SET:" | tail -1 &> tmp1.txt && cat tmp.txt | grep "GET:" | tail -1 &>> tmp1.txt
-		cat tmp1.txt &> $file"-cleaned"
-	done
+		rm  -rf $dir/*cleaned*
+		
+		for file in $dir/*
+		do
+			search=$APP".out-$TYPE"
+			echo $search $file
+			if [[ $file == *"$search"* ]];
+			then
+				echo $file
+				cat $file | grep -a "$SEARCH" &> tmp.txt
+				sed -i 's/\r/\n/g' tmp.txt && cat tmp.txt | grep "SET:" | tail -1 &> tmp1.txt && cat tmp.txt | grep "GET:" | tail -1 &>> tmp1.txt
+				cat tmp1.txt &> $file"-cleaned"
+			fi
+		done
 
 
-	 if [[ $dir == *"NVM"* ]]; 
- 	 then
-		outfile=$(basename $dir)
-		outputfile=$APP-$outfile".data"
+		 if [[ $dir == *"NVM"* ]]; 
+		 then
+			outfile=$(basename $dir)
+			outputfile=$APP-$outfile".data"
+			rm -rf $RESULT/$outputfile
 
-		APPFILE=redis.out-NVM
+			APPFILE=redis.out-NVM
 
-		if [ -f $dir/$APPFILE ]; then
-			cat $dir/$APP*-cleaned | grep -a "$SEARCH" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
-			((j++))
-			echo $j &> "num.data"
+			if [ -f $dir/$APPFILE ]; then
+				cat $dir/$APP*-cleaned | grep -a "$SEARCH" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
+				((j++))
+				echo $j &> "num.data"
+				paste "num.data" $APP"-TOTAL.data" &> $RESULT/$outputfile
+				echo $RESULT/$outputfile
+			fi
 		fi
-		rm $RESULT/$outputfile
-		paste "num.data" $APP"-TOTAL.data" &> $RESULT/$outputfile
-		echo $RESULT/$outputfile
-	fi
-	done
+		done
 
 	#Some gap
 	((j++))
@@ -61,15 +67,15 @@ EXTRACT_RESULT() {
 		outfile=$(basename $dir)
 		outputfile=$APP-$outfile".data"
 		APPFILE=redis.out-SSD
+		rm -rf $RESULT/$outputfile
 
 		if [ -f $dir/$APPFILE ]; then
 			cat $dir/$APP*-cleaned | grep -a "$SEARCH" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $APP"-TOTAL.data"
 			((j++))
 			echo $j &> "num.data"
+			paste "num.data"  $APP"-TOTAL.data" &> $RESULT/$outputfile
+			echo $RESULT/$outputfile
 		fi
-		rm $RESULT/$outputfile
-		paste "num.data"  $APP"-TOTAL.data" &> $RESULT/$outputfile
-		echo $RESULT/$outputfile
 	fi
 	done
 }
@@ -118,7 +124,7 @@ EXTRACT_KERNSTAT(){
 
 EXTRACT_RESULT
 cd $NVMBASE/graphs/zplot/
-#python $NVMBASE/graphs/zplot/scripts/e-rocksdb.py
+python $NVMBASE/graphs/zplot/scripts/e-redis.py
 #EXTRACT_KERNSTAT
 
 

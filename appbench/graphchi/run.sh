@@ -2,10 +2,12 @@
 set -x
 #DATA=com-friendster.ungraph.txt
 #DATA=sx-stackoverflow.txt
-DATA=com-orkut.ungraph.txt
-INPUT=$SHARED_DATA/$DATA
+#DATA=com-orkut.ungraph.txt
+DATA=$SHARED_DATA
+INPUT=/users/skannan/ssd/flashxdata/com-friendster.ungraph.txt
+#INPUT=/mnt/ext4ramdisk/com-friendster.ungraph.txt
 APPBASE=$APPBENCH/graphchi/graphchi-cpp/bin/example_apps
-APP=$APPBASE/pagerank
+APP=$APPBASE/connectedcomponents
 #APP=$APPBASE/randomwalks
 #APP=$APPBASE/connectedcomponents
 PARAM=$1
@@ -21,10 +23,10 @@ FlushDisk()
 
 RUN(){
 rm -rf $SHARED_DATA/$DATA.*
-#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 #/usr/bin/time -v
-echo "edgelist" | LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX /usr/bin/time -v $APP file $INPUT niters 32
-#echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 32
+#echo "edgelist" | LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX /usr/bin/time -v $APP file $INPUT niters 4
+echo "edgelist" | /usr/bin/time -v $APPPREFIX $APP file $INPUT niters 4
 export LD_PRELOAD=""
 rm -rf $SHARED_DATA/$DATA.*
 }

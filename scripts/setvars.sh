@@ -1,4 +1,4 @@
-export NVMBASE=$HOME/ssd/NVM
+export NVMBASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME=$1
@@ -33,12 +33,25 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
 
-#export APPPREFIX="numactl --preferred=1"
-export APPPREFIX="numactl --membind=1"
-export APP_PREFIX="numactl --membind=1"
+export APPPREFIX="numactl --preferred=0"
+#export APPPREFIX="numactl --membind=1"
+#export APP_PREFIX="numactl --membind=1"
 
 export OUTPUTDIR=$APPBENCH/output
 export TEST_TMPDIR=/mnt/pmemdir
+
+
+
+
+export CODE="/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code"
+export CSRC=$CODE/cassandra
+export SERVERS=`ifconfig | grep "inet addr" | head -1 | awk '{print $2}' | cut -d ":" -f2`
+export YCSBHOME=$CODE/mapkeeper/ycsb/YCSB
+export DATASRC=""
+
+
+
+
 
 #Commands
 mkdir $OUTPUTDIR

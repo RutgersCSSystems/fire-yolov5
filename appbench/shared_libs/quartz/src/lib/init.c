@@ -99,7 +99,7 @@ void init()
 
     if ((cpu = cpu_model()) == NULL) {
         DBG_LOG(ERROR, "No supported processor found\n");
-        goto error;
+        //goto error;
     }
 
     init_virtual_topology(&cfg, cpu, &virtual_topology);

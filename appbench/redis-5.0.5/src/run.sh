@@ -7,8 +7,10 @@ APPBASE=$REDISROOT/src
 APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
-READS=1000000
-KEYS=1000000
+#READS=1000000
+#KEYS=2000000
+READS=10000
+KEYS=20000
 CLIPREFIX="numactl --preferred=0"
 PHYSCPU="--physcpubind"
 
@@ -26,8 +28,11 @@ CLEAN() {
 		rm -rf *.rdb
 		rm -rf *.aof
 		sudo killall "redis-server$b"
+		appname="redis-server$b"
+		sudo kill -9 $appname
 		sudo killall "redis-server$b"
 		echo "KILLING redis-server$b"
+		sudo kill -9 $appname
 	done
 	sudo killall redis-benchmark
 	sudo killall redis-benchmark
