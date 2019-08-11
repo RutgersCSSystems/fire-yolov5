@@ -28,6 +28,7 @@ declare -a kernstat=("cache-hits" "cache-miss" "buff-hits" "buff-miss" "migrated
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq")
 
 declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+#declare -a configarr=("BW1000")
 #declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 
@@ -83,6 +84,8 @@ EXTRACT_KERNINFO() {
 		echo $j &> "num.data"
 		paste "num.data" $APP"kern.data" &> $resultdir/$outputfile
 		rm -rf "num.data" $APP"kern.data"
+		echo  $resultdir/$outputfile
+		echo $scaled_value
 	fi
 }
 
@@ -128,6 +131,8 @@ PULL_RESULT() {
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $APP".data" &> $resultfile
+		echo $resultfile
+		cat $resultfile
 	fi
 }
 
@@ -233,7 +238,7 @@ EXTRACT_KERNSTAT() {
 		 if [ $TYPE == "SSD" ]; then
 			awkidx=10
 		 else
-			awkidx=9
+			awkidx=10
 		 fi
 
 		if [ "$APP" == "redis" ]
@@ -248,10 +253,10 @@ EXTRACT_KERNSTAT() {
 				exlude=0
 				EXCLUDE_DIR $exlude $dir excludekernstat
 				if [ $exlude -ge 1 ]; then
-					echo "EXCLUDING" $dir
+					#echo "EXCLUDING" $dir
 					continue;
 				fi
-				#echo $dir
+				echo $dir
 				EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
 			done
 			((awkidx++))
@@ -269,8 +274,6 @@ REDIS_CONSOLIDATE_RESULT() {
 	let instances=4
 
         rm -rf $dir/$APP-"all.out"
-
-	cat $dir
 
         for file in $dir/$APP*.txt
         do
@@ -423,7 +426,6 @@ EXTRACT_RESULT_COMPARE() {
                         do
                                 for dir in $TARGET/$BW*/*$placement*$device
                                 do
-                                        echo $dir
                                         exlude=0
                                         EXCLUDE_DIR $exlude $dir excludefullstat
                                         if [ $exlude -ge 1 ]; then
@@ -466,7 +468,35 @@ FORMAT_RESULT_REDIS() {
 }
 
 
+#EXTRACT_KERNSTAT "redis"
+#cd $ZPLOT
+#python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
+
 ######################################################
+j=0
+APP='rocksdb'
+OUTPUTDIR=" /users/skannan/ssd/NVM/results/rocksdb_filebench_Aug6"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+
+######################################################
+
+
+j=0
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-july30th"
+TARGET=$OUTPUTDIR
+#FORMAT_RESULT_REDIS
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+exit
+
+
+
 j=0
 APP='rocksdb'
 OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
@@ -475,20 +505,24 @@ cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
 exit
 
+
 ####################MOTIVATION ANALYSIS########################
 
 j=0
 APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
+TARGET=$OUTPUTDIR
 EXTRACT_RESULT_COMPARE "rocksdb"
 
 APP='redis'
-OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
+TARGET=$OUTPUTDIR
 EXTRACT_RESULT_COMPARE "redis"
 
 
 APP='filebench'
-OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
+TARGET=$OUTPUTDIR
 EXTRACT_RESULT_COMPARE "filebench"
 
 
@@ -496,6 +530,10 @@ cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
 exit
 ######################################################
+
+
+
+
 
 j=0
 APP='filebench'
@@ -531,9 +569,6 @@ cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-rocksdb-total.py
 exit
 
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 200 -r 40 -s "SSD"
 
 EXTRACT_BREAKDOWN_RESULT
 cd $ZPLOT
@@ -541,14 +576,6 @@ python $NVMBASE/graphs/zplot/scripts/e-rocksdb-breakdown.py
 exit
 
 
-EXTRACT_KERNSTAT "redis"
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
-
-EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
-exit
 
 
 #EXTRACT_KERNSTAT

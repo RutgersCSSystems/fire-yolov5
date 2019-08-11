@@ -810,6 +810,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
 	}else {
+		hetero_force_dbg("%s:%d TARGET %lu \n", 
+			__func__, __LINE__, *target);		
 		*target = *target + g_migrate_freq;
 	}
 

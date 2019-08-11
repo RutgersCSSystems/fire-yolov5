@@ -6,8 +6,8 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=1000000
-yint=200000
+ymax=250000
+yint=50000
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
@@ -24,11 +24,13 @@ xmanualstart=2.5
 xmanualint=7
 
 
-mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context', 'All-SlowMem']
-xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
-pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only','slowmem-obj-affinity', 'slowmem-only']
-storage=["SSD", "NVM"]
+mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-nomig', 'Hetero-Context', 'All-SlowMem']
+#xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
+#pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
+xlabel = ['SET', 'GET']
+pattern = ['NVM-SET', 'NVM-GET']
+mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-only']
+storage=["NVM"]
 
 
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']

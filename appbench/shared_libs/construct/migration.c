@@ -119,6 +119,7 @@ void con() {
         a = syscall(__NR_start_trace, COLLECT_TRACE);
         a = syscall(__NR_start_trace, PFN_TRACE);
         a = syscall(__NR_start_trace, TIME_TRACE);*/
+	syscall(__NR_start_trace, CLEAR_COUNT, 0);
         syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
         syscall(__NR_start_trace, HETERO_PGCACHE, 0);
         syscall(__NR_start_trace, HETERO_BUFFER, 0);
