@@ -90,6 +90,9 @@ Move this to header file later.
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
+#define HETERO_SET_CONTEXT 21
+
+
 #define _ENABLE_HETERO_THREAD
 
 #ifdef _ENABLE_HETERO_THREAD
@@ -116,9 +119,11 @@ int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
+int enbl_hetero_set_context=0;
 int hetero_fastmem_node=0;
 int enbl_hetero_objaff=0;
 int disabl_hetero_migrate=0;
+
 
 //Frequency of migration
 int g_migrate_freq=0;
@@ -948,6 +953,12 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     printk("flag to MIGRATE_LISTCNT %d \n", val);
 	     min_migrate_cnt = val;
 	     break;	
+
+	/* Set current file context */
+	case HETERO_SET_CONTEXT:
+	     printk("flag to set HETERO_SET_CONTEXT with fd %d \n", val);
+	     enbl_hetero_set_context = 1;
+	     break;
 
 	default:
 #ifdef CONFIG_HETERO_DEBUG
