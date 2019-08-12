@@ -92,6 +92,7 @@ Move this to header file later.
 #define HETERO_MIGRATE_LISTCNT 20
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
+#define HETERO_PGCACHE_READAHEAD 23
 
 
 //#define _ENABLE_HETERO_THREAD
@@ -123,6 +124,7 @@ int hetero_fastmem_node=0;
 int enbl_hetero_objaff=0;
 int disabl_hetero_migrate=0;
 int enbl_hetero_net=0;
+int enbl_hetero_pgcache_readahead=0;
 
 //Frequency of migration
 int g_migrate_freq=0;
@@ -419,6 +421,14 @@ int is_hetero_pgcache_set(void)
         return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
+
+
+int is_hetero_pgcache_readahead_set(void)
+{
+	if(check_hetero_proc(current))
+		return enbl_hetero_pgcache_readahead;
+}
+EXPORT_SYMBOL(is_hetero_pgcache_readahead_set);
 
 
 int is_hetero_buffer_set(void)
@@ -859,6 +869,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
 	    enbl_hetero_net = 0;
+	    enbl_hetero_pgcache_readahead=0;
 	    /* Enable application defined context */
 	    enbl_hetero_set_context = 0;
 	    reset_hetero_stats(current);	
@@ -972,6 +983,11 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     printk("flag to set HETERO_NET with %d \n", val);
 	     enbl_hetero_net = 1;
 	     break;		
+
+	case HETERO_PGCACHE_READAHEAD:
+	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
+	     enbl_hetero_pgcache_readahead = 1;	
+	     break;	
 
 	default:
 #ifdef CONFIG_HETERO_DEBUG

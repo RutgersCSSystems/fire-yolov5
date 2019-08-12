@@ -1103,7 +1103,7 @@ static int queue_pages_pte_range_hetero(pmd_t *pmd, unsigned long addr,
 
 
                 if (is_hetero_pgcache_set()) {
-                	if (!PageAnon(page) || (page->hetero == HETERO_PG_FLAG)) {
+                	if (!PageAnon(page)) { //|| (page->hetero == HETERO_PG_FLAG)) {
 				//page->hetero = HETERO_PG_FLAG;
 				*pages_added += hetero_migrate_page_add(page, qp->pagelist, flags);
                         }
