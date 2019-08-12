@@ -2948,7 +2948,6 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
 
         /* Check if we are allocating for targetted object */
         if(is_hetero_buffer_set() && is_hetero_cacheobj(s->hetero_obj)) {
-	//if(is_hetero_buffer_set()) {
 		node = get_fastmem_node();
 	}else {
 		node = get_fastmem_node();

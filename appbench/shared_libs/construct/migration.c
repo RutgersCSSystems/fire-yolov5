@@ -55,10 +55,12 @@ static void dest() __attribute__((destructor));
 
 
 #define HETERO_MIGRATE_FREQ 17
-#define FREQ 100000
+#define FREQ 50000
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
+#define HETERO_SET_CONTEXT 21
+#define HETERO_NET 22
 #define MIGRATE_LIST_CNT 1000
 
 
@@ -90,8 +92,11 @@ void disable_migration() {
 #endif
 }
 
-
-
+void enbl_hetero_net() {
+#ifdef _NET
+    syscall(__NR_start_trace, HETERO_NET, HETERO_NET);
+#endif	
+}
 
 void dest() {
     fprintf(stderr, "application termination...\n");
@@ -134,6 +139,7 @@ void con() {
 	enable_object_affn();
 	disable_migration();
 	set_migrate_list_cnt();
+	enbl_hetero_net();
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));

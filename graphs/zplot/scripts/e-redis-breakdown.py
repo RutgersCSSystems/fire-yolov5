@@ -6,8 +6,8 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=250000
-yint=50000
+ymax=3000
+yint=500
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
@@ -15,34 +15,34 @@ lwidth = 0.3
 xfontsize=10.0
 yfontsize=9.0
 xlabelsize=10.0
-xydim=[300, 200]
-xystart=[150,100]
-xylegend=[130,170]
+xydim=[200, 200]
+xystart=[100,100]
+xylegend=[50,195]
 xycord = [45,20]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=7
 
 
-mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-nomig', 'Hetero-Context', 'All-SlowMem']
+mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-nomig', 'Hetero-Context', 'Hetero-Context-N/W', 'All-SlowMem']
 #xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
 #pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
 xlabel = ['SET', 'GET']
 pattern = ['NVM-SET', 'NVM-GET']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-only']
+mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-obj-affinity-net', 'slowmem-only']
 storage=["NVM"]
 
 
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
+colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'green', 'blue']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/patern/redis'
-yname="Throughput (OPS/sec)"
+yname="Throughput (in 100K OPS/sec)"
 
 dseq = []
 L=legend()
 p = plotter()
 
 c = canvas('pdf', title='e-redis-breakdown', dimensions=xydim)
-d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord, dimensions=xystart)
+d = drawable(canvas=c, xrange=[0,10], yrange=[0,ymax], coord=xycord, dimensions=xystart)
 
 for j in range(0, len(xlabel)):
 
@@ -61,11 +61,11 @@ for k in range(0, len(pattern)):
     for j in range(0, len(mech)):
         if(s >= len(mech)):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
-                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)
+                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0, labelfield='c1', labelsize=7)
         else:
            p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0,
-                   legend=L, legendtext=mechnames[j], fillskip=4)
+                   legend=L, legendtext=mechnames[j], fillskip=4, labelfield='c1', labelsize=7)
         s=s+1
 
 # a bit of a hack to get around that we don't support date fields (yet)
@@ -76,6 +76,6 @@ axis(drawable=d, style='xy',
      xtitle='Application', ytitle=yname,
      ytitlesize=yfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
+L.draw(canvas=c, coord=xylegend, skipnext=9, skipspace=50)
 
 c.render()

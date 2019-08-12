@@ -43,6 +43,8 @@ declare -a excludefullstat=("prefetch" "NVM1")
 
 declare -a redispattern=("SET" "GET")
 
+declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
+
 
 EXTRACT_KERNINFO() {
 
@@ -162,7 +164,14 @@ PULL_RESULT_PATTERN() {
 		file=$dir/$APPFILE
 		
 		if [ "$APP" = 'redis' ]; then
-			cat $file | grep -a "$SEARCH" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}' &> $resultfile
+			val=`cat $file | grep -a "$SEARCH" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'`
+			#if [ "$access" == "ET" ]; 
+			#then
+				scaled_value=$(echo $val 100 | awk '{printf "%4.0f\n",$1/$2}')
+				echo $scaled_value &> $resultfile
+			#else
+				#echo $val &> $resultfile
+			#fi
 		else
 			if [ "$access" = 'readseq' ]; then
 				cat $file | grep $access" " | awk 'BEGIN {SUM=0}; {SUM=SUM+$7}; END {print SUM/10}' &> $resultfile
@@ -175,6 +184,8 @@ PULL_RESULT_PATTERN() {
 		echo $j &> "num.data"
 		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
 		rm -rf "num.data" $resultfile
+		echo $resultdir/$outputfile"-"$access".data"
+		cat $resultdir/$outputfile"-"$access".data"
 	fi
 }
 
@@ -277,7 +288,8 @@ REDIS_CONSOLIDATE_RESULT() {
 
         for file in $dir/$APP*.txt
         do
-	
+		echo $dir/$APP"-all.out-"$device
+
                 search=$APP
                 if [[ $file == *"$search"*".txt" ]];
                 then
@@ -286,9 +298,9 @@ REDIS_CONSOLIDATE_RESULT() {
                         sed -i 's/\r/\n/g' tmp.txt
                         cat tmp.txt | grep "SET:" | tail -1 &>> $dir/$APP"-all.out-"$device
                         cat tmp.txt | grep "GET:" | tail -1 &>> $dir/$APP"-all.out-"$device
+			rm -rf tmp.txt
                 fi
         done
-        rm -rf tmp.txt
 
 	for file in $dir/$APP".out-"*
 	do
@@ -319,9 +331,13 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
                 TYPE=$device
                 APPFILE=$APP".out-"$device
 
-		for dir in $TARGET/*$TYPE*
+		for array in "${mechnames[@]}"
 		do
-			REDIS_CONSOLIDATE_RESULT $dir $APP
+			for dir in $TARGET/$array"-"$device
+			do
+				REDIS_CONSOLIDATE_RESULT $dir $APP
+				echo $dir
+			done
 		done
 	done
 
@@ -332,9 +348,12 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
 
 		for accesstype in "${redispattern[@]}"
 		do
-			for dir in $TARGET/*$device*
+			for array in "${mechnames[@]}"
 			do
-				PULL_RESULT_PATTERN $APP $dir $j $APP"-all.out-"$TYPE $accesstype
+				for dir in $TARGET/$array"-"$device
+				do
+					PULL_RESULT_PATTERN $APP $dir $j $APP"-all.out-"$TYPE $accesstype
+				done
 			done
 			((j++))
 		done
@@ -471,6 +490,18 @@ FORMAT_RESULT_REDIS() {
 #EXTRACT_KERNSTAT "redis"
 #cd $ZPLOT
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
+
+
+
+######################################################
+j=0
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+TARGET=$OUTPUTDIR
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+exit
 
 ######################################################
 j=0
