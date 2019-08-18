@@ -61,6 +61,7 @@ static void dest() __attribute__((destructor));
 #define HETERO_MIGRATE_LISTCNT 20
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
+#define HETERO_PGCACHE_READAHEAD 23
 #define MIGRATE_LIST_CNT 1000
 
 
@@ -97,6 +98,15 @@ void enbl_hetero_net() {
     syscall(__NR_start_trace, HETERO_NET, HETERO_NET);
 #endif	
 }
+
+int enbl_hetero_pgcache_readahead_set(void)
+{
+#ifdef _PREFETCH
+	syscall(__NR_start_trace, HETERO_PGCACHE_READAHEAD, HETERO_PGCACHE_READAHEAD);
+#endif
+}
+
+
 
 void dest() {
     fprintf(stderr, "application termination...\n");
@@ -140,6 +150,7 @@ void con() {
 	disable_migration();
 	set_migrate_list_cnt();
 	enbl_hetero_net();
+	enbl_hetero_pgcache_readahead_set();
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));

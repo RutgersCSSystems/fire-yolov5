@@ -4,6 +4,7 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="NVM"
+CAPACITY=3192
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -40,7 +41,7 @@ SETUPEXTRAM() {
 	rm -rf  /mnt/ext4ramdisk/
 	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-	let DISKSZ=$NUMAFREE-4096
+	let DISKSZ=$NUMAFREE-$CAPACITY
 	echo $DISKSZ
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
@@ -66,12 +67,12 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="rocksdb.out"
+#APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
 #APP=fxmark
-#APP="flash.out"
+APP="flash.out"
 #APP="cassandra.out"
 
 
@@ -91,7 +92,11 @@ RUNAPP() {
                 $APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
         fi
         #$APPBENCH/apps/filebench/run.sh &> $OUTPUT
-        #$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+
+	if [ "$APP" = "flash.out" ]
+	then
+        	$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+	fi
         #$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
         #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
@@ -103,9 +108,11 @@ RUNAPP() {
         then
                 $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
         fi
+
         #$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
         #$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
         sudo dmesg -c &>> $OUTPUT
+
 }
 
 
@@ -132,7 +139,11 @@ SET_RUN_APP() {
 	RUNAPP
 	$SCRIPTS/rocksdb_extract_result.sh
 	$SCRIPTS/clear_cache.sh
+
+	#cp -r $OUTPUTDIR $BASE/"CAP"$CAPACITY-$TYPE/$1
 	export OUTPUTDIR=$BASE
+
+
 	set +x
 }
 
@@ -149,45 +160,36 @@ if [ -z "$1" ]
 fi
 
 
-export APPPREFIX=""
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
-
-
-export APPPREFIX=""
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE -D_NET"
-exit
-
+#### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-net-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH -D_NET"
 $NVMBASE/scripts/clear_cache.sh
 
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-$NVMBASE/scripts/clear_cache.sh
-
+#### MIGRATION ONLY NO PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
 
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+
+#### OBJ AFFINITY NO MIGRATION NO PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF -D_NET"
+SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+
 
 export APPPREFIX="numactl --membind=1"
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-
 
 
 $SCRIPTS/umount_ext4ramdisk.sh
@@ -197,6 +199,26 @@ DISABLE_THROTTLE
 export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
+
+
+#### WITHOUT PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+
+
+
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-net-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+
+
 
 exit
 

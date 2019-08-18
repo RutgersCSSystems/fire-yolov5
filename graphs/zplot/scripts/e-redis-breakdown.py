@@ -12,19 +12,19 @@ xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xfontsize=10.0
+xfontsize=9.0
 yfontsize=9.0
-xlabelsize=10.0
-xydim=[200, 200]
-xystart=[100,100]
-xylegend=[50,195]
-xycord = [45,20]
+xlabelsize=9.0
+xydim=[240, 190]
+xystart=[120,100]
+xylegend=[50,180]
+xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=7
 
 
-mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-nomig', 'Hetero-Context', 'Hetero-Context-N/W', 'All-SlowMem']
+mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-NoMigrate', 'Hetero-Context', 'Hetero-Context-N/W', 'All-SlowMem']
 #xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
 #pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
 xlabel = ['SET', 'GET']
@@ -72,8 +72,8 @@ for k in range(0, len(pattern)):
 axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-2,-10], 
-     xtitle='Application', ytitle=yname,
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-2,0], 
+     xtitle='Operation Type', ytitle=yname,
      ytitlesize=yfontsize)
 
 L.draw(canvas=c, coord=xylegend, skipnext=9, skipspace=50)

@@ -9,7 +9,8 @@ EXPTYPE="CAP"
 
 #TYPE="SSD"
 #declare -a bwarr=("4000" "1000" "2000" "500")
-declare -a caparr=("2048" "4096" "8192" "10240")
+#declare -a caparr=("2048" "4096" "8192" "10240")
+declare -a caparr=("2048")
 declare -a bwarr=("1000")
 let CAPACITY=2048
 
@@ -97,7 +98,8 @@ RUNAPP() {
 
 	if [ "$APP" = "rocksdb.out" ]
 	then
-		$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+		#$APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+		/bin/ls &> $OUTPUT
 	fi
         #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
 
@@ -105,7 +107,6 @@ RUNAPP() {
 	then
 		$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
 	fi
-
 
 	#$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
@@ -116,8 +117,6 @@ RUNAPP() {
 	then
 		$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 	fi
-
-
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
 
@@ -154,10 +153,6 @@ SET_RUN_APP() {
 	cp  $OUTPUTDIR/redis*.txt  $DIR/$2/
 }
 
-#$SCRIPTS/umount_ext4ramdisk.sh
-#sleep 5
-#$SCRIPTS/mount_ext4ramdisk.sh 24000
-
 for bw  in "${bwarr[@]}"
 do
 	sed -i "/read =/c\read = $bw" $SCRIPTS/nvmemul-throttle-bw.ini
@@ -171,6 +166,7 @@ do
 			OUTPUTDIR=$APPBENCH/output/BW"$bw-"$TYPE
 			mkdir $OUTPUTDIR
 			export OUTPUTDIR=$APPBENCH/output/BW"$bw-"$TYPE
+			SETUPEXTRAM
 		else
 			OUTPUTDIR=$APPBENCH/output/CAP"$CAPACITY-"$TYPE
 			mkdir $OUTPUTDIR
@@ -179,28 +175,17 @@ do
 		fi
 		echo $OUTPUTDIR
 
-		export APPPREFIX="numactl --preferred=0"
-		SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
-
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
-		
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+		export APPPREFIX="numactl  --preferred=0"
+		$NVMBASE/scripts/clear_cache.sh
+		SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH -D_NET"
+		$NVMBASE/scripts/clear_cache.sh
 	done
 done
 	exit
+
 	sed -i "/read =/c\read = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
 	sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
 	export APPPREFIX="numactl --membind=0"
 	DISABLE_THROTTLE
 	SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-	exit
-
-	$SCRIPTS/umount_ext4ramdisk.sh
-	sleep 5
-	$SCRIPTS/mount_ext4ramdisk.sh 24000
-	DISABLE_THROTTLE
-	export APPPREFIX="numactl --membind=0"
-	SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 	exit

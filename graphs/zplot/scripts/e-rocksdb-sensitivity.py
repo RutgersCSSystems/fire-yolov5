@@ -6,22 +6,22 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=500
-yint=100
+ymax=600
+yint=200
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xfontsize=10.0
+xfontsize=9.0
 yfontsize=9.0
-xlabelsize=10.0
-xydim=[180, 190]
+xlabelsize=9.0
+xydim=[200, 170]
 xystart=[100,100]
-xylegend=[50,180]
+xylegend=[50,160]
 xycord = [50,30]
 xmanualarr = []
 xmanualstart=2.5
-xmanualint=5
+xmanualint=6
 
 #graphname='m-all-sensitivity-CAP'
 graphname='m-all-sensitivity-BW'
@@ -36,8 +36,8 @@ xname="Bandwidth Relative to Fast Memory"
 
 #'APP Fast-OS Slow'
 #'APPFAST-OSSLOW', 
-mechnames = ['App Slow-OS Slow', 'App Slow-OS Fast', 'App Fast-OS Fast' ]
-mech = ['APPSLOW-OSSLOW', 'APPSLOW-OSFAST', 'APPFAST-OSFAST']
+mechnames = ['App Slow-OS Slow', 'App Slow-OS Fast', 'App Fast-OS Slow',  'App Fast-OS Fast' ]
+mech = ['APPSLOW-OSSLOW', 'APPSLOW-OSFAST', 'APPFAST-OSSLOW',  'APPFAST-OSFAST']
 
 
 xlabel = ["1/16", "1/8", "1/4", "1/2"]
@@ -47,7 +47,7 @@ pattern = ["NVM", "NVM", "NVM", "NVM"]
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/motivate-sensitivity/'
 APPS="rocksdb"
-yname="Throughput (MB/sec)"
+yname="Throughput (10K Ops/sec)"
 
 dseq = []
 L=legend()
