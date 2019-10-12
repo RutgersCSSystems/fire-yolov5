@@ -113,15 +113,17 @@ APP="rocksdb.out"
 #APP="flash.out"
 #APP="cassandra.out"
 
-<<<<<<< HEAD
 #THROTTLE
 export APPPREFIX="numactl  --preferred=0"
-=======
-THROTTLE
+SETUPEXTRAM
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
+exit
+
+
 export APPPREFIX="numactl --preferred=0"
->>>>>>> a030593ffa460c87ad3e6638cac4ccff6c93db72
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
 
 export APPPREFIX="numactl --membind=1"
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
@@ -151,10 +153,6 @@ SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
 exit
 
 
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
 
 
 
