@@ -90,11 +90,14 @@ Move this to header file later.
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
-//#define _ENABLE_HETERO_THREAD
+#define HETERO_SET_CONTEXT 21
+#define HETERO_NET 22
+#define HETERO_PGCACHE_READAHEAD 23
 
+
+//#define _ENABLE_HETERO_THREAD
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 100
-
 struct migrate_threads {
 	struct task_struct *thrd;
 };
@@ -116,9 +119,12 @@ int enbl_hetero_buffer=0;
 int enbl_hetero_journal=0;
 int enbl_hetero_radix=0;
 int enbl_hetero_kernel=0;
+int enbl_hetero_set_context=0;
 int hetero_fastmem_node=0;
 int enbl_hetero_objaff=0;
 int disabl_hetero_migrate=0;
+int enbl_hetero_net=0;
+int enbl_hetero_pgcache_readahead=0;
 
 //Frequency of migration
 int g_migrate_freq=0;
@@ -350,8 +356,13 @@ void debug_hetero_obj(void *obj) {
 EXPORT_SYMBOL(debug_hetero_obj);
 
 
+
 int is_hetero_cacheobj(void *obj){
-	return 1;
+
+	if(!enbl_hetero_net)
+		return 0;
+
+	return enbl_hetero_net;
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
@@ -410,6 +421,14 @@ int is_hetero_pgcache_set(void)
         return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
+
+
+int is_hetero_pgcache_readahead_set(void)
+{
+	if(check_hetero_proc(current))
+		return enbl_hetero_pgcache_readahead;
+}
+EXPORT_SYMBOL(is_hetero_pgcache_readahead_set);
 
 
 int is_hetero_buffer_set(void)
@@ -541,7 +560,6 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 	}
 
     if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
-
 		sock->hetero_obj = (void *)inode;
 		//current->active_mm->hetero_obj = (void *)inode;
 		current->hetero_obj = (void *)inode;
@@ -810,6 +828,8 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
 	}else {
+		//hetero_force_dbg("%s:%d TARGET %lu \n", 
+		//	__func__, __LINE__, *target);		
 		*target = *target + g_migrate_freq;
 	}
 
@@ -848,6 +868,10 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_radix = 0;
 	    enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
+	    enbl_hetero_net = 0;
+	    enbl_hetero_pgcache_readahead=0;
+	    /* Enable application defined context */
+	    enbl_hetero_set_context = 0;
 	    reset_hetero_stats(current);	
 
 	    enbl_hetero_objaff = 0;	
@@ -947,6 +971,22 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case HETERO_MIGRATE_LISTCNT:
 	     printk("flag to MIGRATE_LISTCNT %d \n", val);
 	     min_migrate_cnt = val;
+	     break;	
+
+	/* Set current file context */
+	case HETERO_SET_CONTEXT:
+	     printk("flag to set HETERO_SET_CONTEXT with fd %d \n", val);
+	     enbl_hetero_set_context = 1;
+	     break;
+
+	case HETERO_NET:
+	     printk("flag to set HETERO_NET with %d \n", val);
+	     enbl_hetero_net = 1;
+	     break;		
+
+	case HETERO_PGCACHE_READAHEAD:
+	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
+	     enbl_hetero_pgcache_readahead = 1;	
 	     break;	
 
 	default:

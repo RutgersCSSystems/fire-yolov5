@@ -23,25 +23,26 @@
 # Use is subject to license terms.
 #
 
-set $dir=/tmp
-set $filesize=5g
+set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $filesize=10g
 set $iosize=8k
-set $nthreads=1
-set $workingset=0
+set $nthreads=8
+set $workingset=4g
 set $directio=0
 
 define file name=largefile1,path=$dir,size=$filesize,prealloc,reuse,paralloc
 
 define process name=rand-rw,instances=1
 {
-  thread name=rand-r-thread,memsize=5m,instances=$nthreads
+  thread name=rand-r-thread,memsize=500m,instances=$nthreads
   {
     flowop read name=rand-read1,filename=largefile1,iosize=$iosize,random,workingset=$workingset,directio=$directio
   }
-  thread name=rand-w-thread,memsize=5m,instances=$nthreads
+  thread name=rand-w-thread,memsize=500m,instances=$nthreads
   {
     flowop write name=rand-write1,filename=largefile1,iosize=$iosize,random,workingset=$workingset,directio=$directio
   }
 }
 
 echo "Random RW Version 3.0 personality successfully loaded"
+run 60

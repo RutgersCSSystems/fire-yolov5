@@ -23,7 +23,7 @@
 # Use is subject to license terms.
 #
 
-set $dir=/tmp
+set $dir=/users/skannan/ssd/NVM/appbench/shared_data
 set $eventrate=0
 set $runtime=30
 set $iosize=2k

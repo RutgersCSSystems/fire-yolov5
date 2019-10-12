@@ -67,6 +67,7 @@ int is_hetero_obj(void *obj);
 int is_hetero_cacheobj(void *obj);
 int is_hetero_vma(struct vm_area_struct *);
 int is_hetero_page(struct page *page, int nodeid);
+int is_hetero_pgcache_readahead_set(void);
 
 int get_fastmem_node(void);
 int get_slowmem_node(void);

@@ -1,10 +1,10 @@
 #!/bin/bash
 #set -x
-
 cd $NVMBASE
 APP=""
+TYPE="NVM"
 #TYPE="NVM"
-TYPE="SSD"
+CAPACITY=3192
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -29,12 +29,19 @@ DISABLE_THROTTLE() {
 
 
 SETUPEXTRAM() {
+
+	kill -9 `pidof neo4j`
+	sudo killall java
+	sudo kill -9 `pidof neo4j`
+	sudo kill -9 `pidof postgres`
+	sudo kilall postgres
+
 	$SCRIPTS/umount_ext4ramdisk.sh
 	rm -rf  /mnt/ext4ramdisk/*
 	rm -rf  /mnt/ext4ramdisk/
 	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-	let DISKSZ=$NUMAFREE-3192
+	let DISKSZ=$NUMAFREE-$CAPACITY
 	echo $DISKSZ
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
@@ -59,25 +66,55 @@ COMPILE_SHAREDLIB() {
 	sudo make install
 }
 
+
+#APP="rocksdb.out"
+#APP="fio.out"
+#APP="filebench.out"
+#APP="redis.out"
+#APP=fxmark
+APP="flash.out"
+#APP="cassandra.out"
+
+
+
 RUNAPP() {
-	#Run application
-	cd $NVMBASE
+        #Run application
+        cd $NVMBASE
+        #/bin/ls &> $OUTPUT
+        #$APPBENCH/apps/fio/run.sh &> $OUTPUT
+        if [ "$APP" = "rocksdb.out" ]
+        then
+                $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
+        fi
+        #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
+        if [ "$APP" = "cassandra.out" ]
+        then
+                $APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+        fi
+        #$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 
-	#$APPBENCH/apps/fio/run.sh &> $OUTPUT
-        $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
-	#$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-	#$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
-	#$APPBENCH/apps/pigz/run.sh &> $OUTPUT
-	#$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
-	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
-	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
-	#$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+	if [ "$APP" = "flash.out" ]
+	then
+        	$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
+	fi
+        #$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
+        #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
-	sudo dmesg -c &>> $OUTPUT
+        #cd $APPBENCH/butterflyeffect/code
+        #source scripts/setvars.sh
+        #$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+
+        if [ "$APP" = "redis.out" ]
+        then
+                $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+        fi
+
+        #$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
+        #$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
+        sudo dmesg -c &>> $OUTPUT
+
 }
 
-OUTPUTDIR=$APPBENCH/output
-mkdir $OUTPUTDIR
 
 SET_RUN_APP() {	
 	BASE=$OUTPUTDIR
@@ -97,22 +134,46 @@ SET_RUN_APP() {
         cd $SHARED_LIBS/construct
         make clean
 	make CFLAGS="$2"
+	sudo make install
 
 	RUNAPP
 	$SCRIPTS/rocksdb_extract_result.sh
 	$SCRIPTS/clear_cache.sh
+
+	#cp -r $OUTPUTDIR $BASE/"CAP"$CAPACITY-$TYPE/$1
 	export OUTPUTDIR=$BASE
+
+
 	set +x
 }
 
-APP="rocksdb.out"
-#APP="fio.out"
-#APP="filebench.out"
-#APP="redis.out"
-#APP=fxmark
-#APP="flash.out"
-#APP="cassandra.out"
+OUTPUTDIR=$APPBENCH/output
+mkdir -f $OUTPUTDIR
 
+
+
+if [ -z "$1" ]
+  then
+    THROTTLE
+  else
+    echo "Don't throttle"
+fi
+
+
+#### WITH PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+#### MIGRATION ONLY NO PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+
+<<<<<<< HEAD
 #THROTTLE
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
@@ -121,36 +182,63 @@ exit
 
 
 export APPPREFIX="numactl --preferred=0"
+=======
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+>>>>>>> 8ba8c2ed04eec0c1927925de7a0be07ab9b34bac
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 exit
 
-export APPPREFIX="numactl --membind=1"
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-
-export APPPREFIX="numactl --membind=0"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-DISABLE_THROTTLE
-SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-
-
-#Don't do any migration
-export APPPREFIX="numactl --membind=0"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-DISABLE_THROTTLE
-SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-exit
-
-
-
+#### OBJ AFFINITY NO MIGRATION NO PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE"
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+
+
+export APPPREFIX="numactl --membind=1"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
+
+
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+DISABLE_THROTTLE
+export APPPREFIX="numactl --membind=0"
+SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
+
+
+#### WITHOUT PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+
+
+
+<<<<<<< HEAD
+=======
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-net-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+
+
+
+exit
+>>>>>>> 8ba8c2ed04eec0c1927925de7a0be07ab9b34bac
+
+
+
 
 
 
@@ -170,7 +258,11 @@ $SCRIPTS/mount_ext4ramdisk.sh 24000
 RUNAPP 
 $SCRIPTS/rocksdb_extract_result.sh
 $SCRIPTS/clear_cache.sh
-#exit
+exit
+
+#Don't do any migration
+
+
 
 
 #mkdir $OUTPUTDIR/fastmem-only

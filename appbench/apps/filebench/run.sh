@@ -1,8 +1,4 @@
 #!/bin/bash
-
-
-
-
 set -x
 APPBASE=$APPBENCH/apps/filebench
 APP=$APPBASE/filebench
@@ -34,7 +30,11 @@ RANDOM_MONGO(){
 	echo "Running Random Write"
 	#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
-	LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f workloads/varmail.f
+	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
+	$APPPREFIX $APP -f workloads/mongo.f
+	#$APPPREFIX $APP -f workloads/videoserver.f
+	#$APPPREFIX $APP -f workloads/oltp.f
+	#$APPPREFIX $APP -f workloads/randomrw.f
 	#export LD_PRELOAD=""
 }
 

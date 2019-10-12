@@ -54,6 +54,59 @@ static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
 
+#define HETERO_MIGRATE_FREQ 17
+#define FREQ 50000
+#define HETERO_OBJ_AFF 18
+#define HETERO_DISABLE_MIGRATE 19
+#define HETERO_MIGRATE_LISTCNT 20
+#define HETERO_SET_CONTEXT 21
+#define HETERO_NET 22
+#define HETERO_PGCACHE_READAHEAD 23
+#define MIGRATE_LIST_CNT 1000
+
+
+void set_migration_freq() {
+#ifdef _MIGRATE
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, FREQ);
+#else
+    syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, 9000000000);
+#endif
+}
+
+void set_migrate_list_cnt() {
+#ifdef _MIGRATE
+        syscall(__NR_start_trace, HETERO_MIGRATE_LISTCNT, MIGRATE_LIST_CNT);
+#else
+        syscall(__NR_start_trace, HETERO_MIGRATE_LISTCNT, 9000000000);
+#endif
+}
+
+void enable_object_affn() {
+#ifdef _OBJAFF
+    syscall(__NR_start_trace, HETERO_OBJ_AFF, HETERO_OBJ_AFF);
+#endif
+}
+
+void disable_migration() {
+#ifdef _DISABLE_MIGRATE
+    syscall(__NR_start_trace, HETERO_DISABLE_MIGRATE, HETERO_DISABLE_MIGRATE);
+#endif
+}
+
+void enbl_hetero_net() {
+#ifdef _NET
+    syscall(__NR_start_trace, HETERO_NET, HETERO_NET);
+#endif	
+}
+
+int enbl_hetero_pgcache_readahead_set(void)
+{
+#ifdef _PREFETCH
+	syscall(__NR_start_trace, HETERO_PGCACHE_READAHEAD, HETERO_PGCACHE_READAHEAD);
+#endif
+}
+
+
 
 void dest() {
     fprintf(stderr, "application termination...\n");
@@ -81,6 +134,7 @@ void con() {
         a = syscall(__NR_start_trace, COLLECT_TRACE);
         a = syscall(__NR_start_trace, PFN_TRACE);
         a = syscall(__NR_start_trace, TIME_TRACE);*/
+	syscall(__NR_start_trace, CLEAR_COUNT, 0);
         syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
         syscall(__NR_start_trace, HETERO_PGCACHE, 0);
         syscall(__NR_start_trace, HETERO_BUFFER, 0);
@@ -95,6 +149,8 @@ void con() {
 	enable_object_affn();
 	disable_migration();
 	set_migrate_list_cnt();
+	enbl_hetero_net();
+	enbl_hetero_pgcache_readahead_set();
 
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
@@ -106,6 +162,9 @@ void con() {
  	
 }
 
+void init_allocs() {
+	con();
+}
 
 void sig_handler(int sig) {
   

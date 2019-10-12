@@ -20,12 +20,12 @@ xylegend=[70,200]
 xycord = [60,20]
 
 
-d1 = table(file='data/redis-optimal-os-fastmem-SET.data')
-d2 = table(file='data/redis-slowmem-migration-only-SET.data')
-d3 = table(file='data/redis-slowmem-obj-affinity-SET.data')
-d4 = table(file='data/redis-optimal-os-fastmem-GET.data')
-d5 = table(file='data/redis-slowmem-migration-only-GET.data')
-d6 = table(file='data/redis-slowmem-obj-affinity-GET.data')
+d1 = table(file='data/redis/redis-optimal-os-fastmem-SSD-SET.data')
+d2 = table(file='data/redis/redis-slowmem-migration-only-SSD-SET.data')
+d3 = table(file='data/redis/redis-slowmem-obj-affinity-SSD-SET.data')
+d4 = table(file='data/redis/redis-optimal-os-fastmem-SSD-GET.data')
+d5 = table(file='data/redis/redis-slowmem-migration-only-SSD-GET.data')
+d6 = table(file='data/redis/redis-slowmem-obj-affinity-SSD-GET.data')
 
 app = ["RocksDB","filebench","Redis"]
 
@@ -45,7 +45,6 @@ p.verticalbars(drawable=d, table=d2, xfield='c0', yfield='c1', fill=True,
 p.verticalbars(drawable=d, table=d3, xfield='c0', yfield='c1', fill=True,
                fillcolor='darkgray', barwidth=0.9, linewidth=0.5, yloval=0,
                legend=L, legendtext='Object Affinity')
-
 p.verticalbars(drawable=d, table=d4, xfield='c0', yfield='c1', fill=True,
                fillcolor='black', barwidth=0.9, linewidth=0.5, yloval=0)
 p.verticalbars(drawable=d, table=d5, xfield='c0', yfield='c1', fill=True,

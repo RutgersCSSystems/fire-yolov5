@@ -24,10 +24,10 @@
 #
 # ident	"%Z%%M%	%I%	%E% SMI"
 
-set $dir=/users/kannan11/ssd/NVM/appbench/shared_data
-set $nfiles=800000
+set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $nfiles=200000
 set $dirwidth=20
-set $filesize=16k
+set $filesize=32k
 set $nthreads=8
 set $meaniosize=16k
 set $readiosize=1m

@@ -182,7 +182,7 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 
 #ifdef CONFIG_HETERO_ENABLE
 		page = NULL;
-		if(mapping && is_hetero_pgcache_set()) {
+		if(mapping && is_hetero_pgcache_set() && is_hetero_pgcache_readahead_set()) {
 			if (is_hetero_obj(mapping->hetero_obj)) {
 		                page = __page_cache_alloc_hetero(gfp_mask, mapping);
 			}		

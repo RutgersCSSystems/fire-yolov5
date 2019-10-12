@@ -1,0 +1,96 @@
+++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/FlashX
+++ STORAGE=/users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --preferred=0 /users/skannan/ssd/NVM/appbench/apps/FlashX/flash-graph/test-algs/test_algs /users/skannan/ssd/NVM/appbench/apps/FlashX/flash-graph/conf/run_test.txt /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.adj /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.index pagerank -i 20
+initiating tracing...
+initiating tracing...
+Initialize ops. There are 11 types
+SAFS runs on 2 NUMA nodes
+The root conf file: FG_TOP/flash-graph/conf/data_files.txt
+FG_TOP/flash-graph/conf/data_files.txt doesn't exist
+FlashGraph: fail to initialize SAFS
+FlashMatrix runs on 4 threads and 1 NUMA nodes
+reserved 0 bytes are associated with NUMA nodes and 0 bytes aren't
+
+FlashGraph runs on 4 threads and 2 nodes
+Configuration parameters in graph algorithm.
+	threads: 4
+	prof_file: 
+	trace_file: 
+	max_processing_vertices: 2000
+	enable_elevator: 0
+	part_range_size_log: 10
+	preload: 0
+	index_file_weight: 10
+	in_mem_graph: 0
+	num_vparts: 1
+	min_vpart_degree: 2147483647
+	serial_run: 1
+	vertex_merge_gap: 0
+load a graph of 17444610048 bytes
+load vertex index: file size: 329686816, index size: 329686816
+init from a compressed vertex index
+There are 848507 large in-vertices and 1350523 large out-vertices
+init in-mem compressed index takes 0.847056 seconds
+There are 124836180 vertices
+It takes 1.70261 seconds to initialize the graph engine
+Pagerank (at maximal 20 iterations) starting
+prof_file: 
+Iter 0 takes 12.217 seconds, and 0 vertices are in iter 1
+The graph engine takes 12.2177 seconds to complete
+Iter 0 takes 59.8056 seconds, and 63958915 vertices are in iter 1
+Iter 1 takes 56.7092 seconds, and 52698177 vertices are in iter 2
+Iter 2 takes 51.5176 seconds, and 26947557 vertices are in iter 3
+Iter 3 takes 40.1668 seconds, and 9193424 vertices are in iter 4
+Iter 4 takes 20.763 seconds, and 3206193 vertices are in iter 5
+Iter 5 takes 8.71816 seconds, and 1226746 vertices are in iter 6
+Iter 6 takes 3.74369 seconds, and 491835 vertices are in iter 7
+Iter 7 takes 1.63199 seconds, and 196246 vertices are in iter 8
+Iter 8 takes 0.545426 seconds, and 124368 vertices are in iter 9
+Iter 9 takes 0.316604 seconds, and 68099 vertices are in iter 10
+Iter 10 takes 0.209019 seconds, and 20201 vertices are in iter 11
+Iter 11 takes 0.064609 seconds, and 7965 vertices are in iter 12
+Iter 12 takes 0.022367 seconds, and 3256 vertices are in iter 13
+Iter 13 takes 0.011494 seconds, and 1049 vertices are in iter 14
+Iter 14 takes 0.001781 seconds, and 240 vertices are in iter 15
+Iter 15 takes 0.000691 seconds, and 24 vertices are in iter 16
+Iter 16 takes 0.000367 seconds, and 0 vertices are in iter 17
+The graph engine takes 244.229 seconds to complete
+/users/skannan/ssd/NVM/appbench/apps/FlashX/run.sh: line 12: 11210 Segmentation fault      $APPPREFIX $APPBASE/flash-graph/test-algs/test_algs $APPBASE/flash-graph/conf/run_test.txt $APPBASE/build/data/com-friendster.ungraph.adj $APPBASE/build/data/com-friendster.ungraph.index pagerank -i 20
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+[16125.850697] drop_caches: sh (11080): drop_caches: 3
+[16127.609932] drop_caches: sh (11096): drop_caches: 3
+[16172.449190] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[16173.968509] drop_caches: sh (11166): drop_caches: 3
+[16175.716681] drop_caches: sh (11175): drop_caches: 3
+[16177.358028] flag is set to collect hetero allocate  9 
+[16177.358031] flag is set to enable HETERO_PGCACHE 11 
+[16177.358032] flag is set to enable HETERO_BUFFER 12 
+[16177.358033] flag is set to enable HETERO_JOURNAL 13 
+[16177.358034] flag is set to enable HETERO_RADIX 14 
+[16177.358035] flag is set to enable HETERO_FULLKERN 15 
+[16177.358035] flag to set FASTMEM node to 0 
+[16177.358037] hetero_pid set to 11210 11210 procname numactl
+[16177.358037] flag to set FASTMEM node to 0 
+[16177.358039] flag to set MIGRATION FREQ to 410065408 
+[16177.358040] flag to disable migration 19 
+[16177.358040] flag to MIGRATE_LISTCNT 410065408 
+[16177.514147] flag is set to collect hetero allocate  9 
+[16177.514149] flag is set to enable HETERO_PGCACHE 11 
+[16177.514149] flag is set to enable HETERO_BUFFER 12 
+[16177.514150] flag is set to enable HETERO_JOURNAL 13 
+[16177.514151] flag is set to enable HETERO_RADIX 14 
+[16177.514152] flag is set to enable HETERO_FULLKERN 15 
+[16177.514152] flag to set FASTMEM node to 0 
+[16177.514154] hetero_pid set to 11210 11210 procname test_algs
+[16177.514155] flag to set FASTMEM node to 0 
+[16177.514156] flag to set MIGRATION FREQ to 410065408 
+[16177.514157] flag to disable migration 19 
+[16177.514158] flag to MIGRATE_LISTCNT 410065408 
+[16475.338252] test_algs[11210]: segfault at 2 ip 0000000000ab5419 sp 00007fffe6774d70 error 4 in test_algs[400000+900000]

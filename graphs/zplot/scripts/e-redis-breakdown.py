@@ -6,75 +6,76 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=1500000
-yint=200000
+ymax=3000
+yint=500
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xfontsize=10.0
+xfontsize=9.0
 yfontsize=9.0
-xlabelsize=10.0
-xydim=[250, 210]
-xystart=[220,170]
-xylegend=[70,200]
-xycord = [60,20]
+xlabelsize=9.0
+xydim=[240, 190]
+xystart=[120,100]
+xylegend=[50,180]
+xycord = [45,30]
+xmanualarr = []
+xmanualstart=2.5
+xmanualint=7
 
-xlabel = ['NVM', 'SSD']
-pattern = ['NVM', 'SSD']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only',
-        'slowmem-obj-affinity', 'slowmem-only']
-mechnames = ['Naive', 'Optimal', 'Migration-only', 'Obj-affinity',
-      'slowmem-only']
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red']
-path='data/redis/redis'
-yname="Throughput (OPS/sec)"
 
+mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-NoMigrate', 'Hetero-Context', 'Hetero-Context-N/W', 'All-SlowMem']
+#xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
+#pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
+xlabel = ['SET', 'GET']
+pattern = ['NVM-SET', 'NVM-GET']
+mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-obj-affinity-net', 'slowmem-only']
+storage=["NVM"]
+
+
+colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'green', 'blue']
+path='/users/skannan/ssd/NVM/graphs/zplot/data/patern/redis'
+yname="Throughput (in 100K OPS/sec)"
 
 dseq = []
 L=legend()
 p = plotter()
-xmanualarr = []
-xmanualstart=2.5
-xmanualint=5
 
-c = canvas('pdf', title='redis', dimensions=xydim)
-d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord,
-             dimensions=xystart)
+c = canvas('pdf', title='e-redis-breakdown', dimensions=xydim)
+d = drawable(canvas=c, xrange=[0,10], yrange=[0,ymax], coord=xycord, dimensions=xystart)
 
+for j in range(0, len(xlabel)):
 
-for j in range(0, len(pattern)):
-    #label=pattern[j] + "," + str(xmanualstart)
-    #xmanualarr[j]=[pattern[j], xmanualstart]
-    #print(xmanualarr[j])
+    xmanualarr.append((xlabel[j],xmanualstart))
+    xmanualstart = xmanualstart + xmanualint
+
     for i in range(0, len(mech)):
-        dseq.append(table(file=path+'-'+mech[i]+'-'+ pattern[j]+'.data'))
+	print path+'-'+mech[i]+"-" + pattern[j]+'.data'
+        dseq.append(table(file=path+'-'+mech[i] + "-" + pattern[j]+'.data'))
+	
 
 s=0
+print  xmanualarr
 
 for k in range(0, len(pattern)):
     for j in range(0, len(mech)):
         if(s >= len(mech)):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
-                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)
+                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0, labelfield='c1', labelsize=7)
         else:
-            p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
+           p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0,
-                   legend=L, legendtext=mechnames[j])
+                   legend=L, legendtext=mechnames[j], fillskip=4, labelfield='c1', labelsize=7)
         s=s+1
 
 # a bit of a hack to get around that we don't support date fields (yet)
 axis(drawable=d, style='xy',
-        xmanual=[[pattern[0],2.5],[pattern[1],7.5]],
-     yauto=[0,ymax,yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-2,-10], 
-     xtitle='Application', ytitle=yname,
+     xmanual=xmanualarr,
+     yauto=[0,ymax, yint],
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-2,0], 
+     xtitle='Operation Type', ytitle=yname,
      ytitlesize=yfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
+L.draw(canvas=c, coord=xylegend, skipnext=9, skipspace=50)
 
 c.render()
-
-
-
-

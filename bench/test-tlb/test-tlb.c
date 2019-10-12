@@ -239,6 +239,7 @@ int main(int argc, char **argv)
 	const char *arg;
 	void *map;
 	double cycles;
+	int i =0, j=0;
 
 	srandom(time(NULL));
 
@@ -270,14 +271,14 @@ int main(int argc, char **argv)
 
 	map = NULL;
 	cycles = 1e10;
-	for (int i = 0; i < 5; i++) {
+	for (i = 0; i < 5; i++) {
 		double d;
 
 		map = create_map(map, size, stride);
 		if (random_list)
 			randomize_map(map, size, stride);
 
-		for (int j = 0; j < 1000; j++) {
+		for (j = 0; j < 1000; j++) {
 			d = do_test(map);
 			if (d < cycles)
 				cycles = d;

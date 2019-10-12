@@ -1,0 +1,200 @@
+++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/FlashX
+++ STORAGE=/users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ BENCHMARK=' --benchmarks=fillrandom,readrandom,fillseq,readseq'
+++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/rocksdb/DATA
+++ export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
+++ numactl --membind=1 /users/skannan/ssd/NVM/appbench/apps/FlashX/build/flash-graph/test-algs/test_algs /users/skannan/ssd/NVM/appbench/apps/FlashX/flash-graph/conf/run_test.txt /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.adj /users/skannan/ssd/NVM/appbench/apps/FlashX/build/data/com-friendster.ungraph.index pagerank
+initiating tracing...
+initiating tracing...
+Initialize ops. There are 11 types
+SAFS runs on 1 NUMA nodes
+The root conf file: FG_TOP/flash-graph/conf/data_files.txt
+FG_TOP/flash-graph/conf/data_files.txt doesn't exist
+FlashGraph: fail to initialize SAFS
+FlashMatrix runs on 4 threads and 1 NUMA nodes
+reserved 0 bytes are associated with NUMA nodes and 0 bytes aren't
+
+FlashGraph runs on 4 threads and 1 nodes
+Configuration parameters in graph algorithm.
+	threads: 4
+	prof_file: 
+	trace_file: 
+	max_processing_vertices: 2000
+	enable_elevator: 0
+	part_range_size_log: 10
+	preload: 0
+	index_file_weight: 10
+	in_mem_graph: 0
+	num_vparts: 1
+	min_vpart_degree: 2147483647
+	serial_run: 1
+	vertex_merge_gap: 0
+load a graph of 17444610048 bytes
+load vertex index: file size: 329686816, index size: 329686816
+init from a compressed vertex index
+There are 848507 large in-vertices and 1350523 large out-vertices
+init in-mem compressed index takes 1.23482 seconds
+There are 124836180 vertices
+It takes 1.56311 seconds to initialize the graph engine
+Pagerank (at maximal 30 iterations) starting
+prof_file: 
+Iter 0 takes 12.0111 seconds, and 0 vertices are in iter 1
+The graph engine takes 12.014 seconds to complete
+Iter 0 takes 46.9783 seconds, and 64001956 vertices are in iter 1
+Iter 1 takes 41.4861 seconds, and 38099239 vertices are in iter 2
+Iter 2 takes 34.8069 seconds, and 7769354 vertices are in iter 3
+Iter 3 takes 15.3464 seconds, and 1943816 vertices are in iter 4
+Iter 4 takes 5.21158 seconds, and 493390 vertices are in iter 5
+Iter 5 takes 1.45474 seconds, and 223518 vertices are in iter 6
+Iter 6 takes 0.510362 seconds, and 108400 vertices are in iter 7
+Iter 7 takes 0.246786 seconds, and 49508 vertices are in iter 8
+Iter 8 takes 0.119366 seconds, and 13070 vertices are in iter 9
+Iter 9 takes 0.028021 seconds, and 5388 vertices are in iter 10
+Iter 10 takes 0.011023 seconds, and 2633 vertices are in iter 11
+Iter 11 takes 0.005961 seconds, and 827 vertices are in iter 12
+Iter 12 takes 0.001335 seconds, and 440 vertices are in iter 13
+Iter 13 takes 0.000687 seconds, and 36 vertices are in iter 14
+Iter 14 takes 0.000377 seconds, and 0 vertices are in iter 15
+The graph engine takes 146.212 seconds to complete
+It takes 158.226 seconds in total
+The sum of pagerank of all vertices: 36268804.000000
+v124378151: 725.916382
+v124397694: 729.137512
+v117643203: 734.372131
+v117757131: 750.365295
+v124439113: 789.929382
+v117735467: 795.942322
+v117927534: 825.906067
+v124545342: 872.846130
+v124242676: 951.427551
+v124511661: 1356.593018
+reserved 536870912 bytes are associated with NUMA nodes and 0 bytes aren't
+
+I/O system is destroyed
+I/O threads get 0 reads (0 bytes) and 0 writes (0 bytes)
+
+
+application termination...
+
+real	3m28.556s
+user	10m44.173s
+sys	0m20.010s
+++ export LD_PRELOAD=
+++ LD_PRELOAD=
+++ exit
+[ 3712.808703] drop_caches: sh (5950): drop_caches: 3
+[ 3715.004030] drop_caches: sh (5958): drop_caches: 3
+[ 4053.877209] nvmemul: ioctl command: 0xc008aa02
+[ 4053.877215] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[ 4053.877225] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877228] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[ 4053.877233] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877235] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[ 4053.877240] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877242] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[ 4053.877247] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877249] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[ 4053.877254] nvmemul: ioctl command: 0xc008aa02
+[ 4053.877256] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[ 4053.877261] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877263] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[ 4053.877268] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877270] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[ 4053.877275] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877277] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[ 4053.877282] nvmemul: ioctl command: 0x8008aa01
+[ 4053.877283] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[ 4072.273583] nvmemul: ioctl command: 0xc008aa02
+[ 4072.273597] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[ 4072.273659] nvmemul: ioctl command: 0x8008aa01
+[ 4072.273666] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[ 4072.273675] nvmemul: ioctl command: 0x8008aa01
+[ 4072.273676] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[ 4072.273697] nvmemul: ioctl command: 0x8008aa01
+[ 4072.273704] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[ 4072.273718] nvmemul: ioctl command: 0x8008aa01
+[ 4072.273720] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[ 4083.337315] nvmemul: ioctl command: 0xc008aa02
+[ 4083.337327] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[ 4083.337338] nvmemul: ioctl command: 0x8008aa01
+[ 4083.337339] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[ 4083.337342] nvmemul: ioctl command: 0x8008aa01
+[ 4083.337343] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[ 4083.337346] nvmemul: ioctl command: 0x8008aa01
+[ 4083.337347] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[ 4083.337351] nvmemul: ioctl command: 0x8008aa01
+[ 4083.337351] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[ 4102.358793] nvmemul: ioctl command: 0xc008aa02
+[ 4102.358798] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[ 4102.358804] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358805] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[ 4102.358808] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358809] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[ 4102.358811] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358812] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[ 4102.358815] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358816] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[ 4102.358819] nvmemul: ioctl command: 0xc008aa02
+[ 4102.358820] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[ 4102.358823] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358824] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[ 4102.358826] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358827] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[ 4102.358830] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358831] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[ 4102.358833] nvmemul: ioctl command: 0x8008aa01
+[ 4102.358834] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[ 4120.415164] nvmemul: ioctl command: 0xc008aa02
+[ 4120.415175] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[ 4120.415182] nvmemul: ioctl command: 0x8008aa01
+[ 4120.415183] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[ 4120.415186] nvmemul: ioctl command: 0x8008aa01
+[ 4120.415187] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[ 4120.415196] nvmemul: ioctl command: 0x8008aa01
+[ 4120.415197] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[ 4120.415204] nvmemul: ioctl command: 0x8008aa01
+[ 4120.415210] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[ 4131.378671] nvmemul: ioctl command: 0xc008aa02
+[ 4131.378677] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[ 4131.378689] nvmemul: ioctl command: 0x8008aa01
+[ 4131.378692] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[ 4131.378695] nvmemul: ioctl command: 0x8008aa01
+[ 4131.378696] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[ 4131.378703] nvmemul: ioctl command: 0x8008aa01
+[ 4131.378707] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[ 4131.378722] nvmemul: ioctl command: 0x8008aa01
+[ 4131.378723] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[ 4226.138336] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[ 4226.619402] drop_caches: sh (6874): drop_caches: 3
+[ 4228.975835] drop_caches: sh (6882): drop_caches: 3
+[ 4230.430557] flag is set to collect hetero allocate  9 
+[ 4230.430560] flag is set to enable HETERO_PGCACHE 11 
+[ 4230.430561] flag is set to enable HETERO_BUFFER 12 
+[ 4230.430562] flag is set to enable HETERO_JOURNAL 13 
+[ 4230.430562] flag is set to enable HETERO_RADIX 14 
+[ 4230.430563] flag is set to enable HETERO_FULLKERN 15 
+[ 4230.430564] flag to set FASTMEM node to 1 
+[ 4230.430566] hetero_pid set to 6900 6900 procname numactl
+[ 4230.430567] flag to set FASTMEM node to 1 
+[ 4230.430568] flag to set MIGRATION FREQ to 410065408 
+[ 4230.430569] flag to disable migration 19 
+[ 4230.430571] flag to MIGRATE_LISTCNT 410065408 
+[ 4230.726756] flag is set to collect hetero allocate  9 
+[ 4230.726758] flag is set to enable HETERO_PGCACHE 11 
+[ 4230.726758] flag is set to enable HETERO_BUFFER 12 
+[ 4230.726759] flag is set to enable HETERO_JOURNAL 13 
+[ 4230.726760] flag is set to enable HETERO_RADIX 14 
+[ 4230.726761] flag is set to enable HETERO_FULLKERN 15 
+[ 4230.726761] flag to set FASTMEM node to 1 
+[ 4230.726763] hetero_pid set to 6900 6900 procname test_algs
+[ 4230.726764] flag to set FASTMEM node to 1 
+[ 4230.726765] flag to set MIGRATION FREQ to 410065408 
+[ 4230.726766] flag to disable migration 19 
+[ 4230.726767] flag to MIGRATE_LISTCNT 410065408 
+[ 4438.948993] flag is set to print hetero allocate stat 10 
+[ 4438.949000] Curr 6900 Currname test_algs HeteroProcname test_algs cache-hits 4340744 cache-miss 0 buff-hits 2474 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 7569 avg_cache_life(us) 0 pgcache-del 0 active-cache 4340744
+[ 4438.949000]  
+[ 4438.949003] cache-hits 15293826 cache-miss 2164411 buff-hits 0 buff-miss 0 migrated 942590 cache-del 23798 buff-del 0 
+[ 4438.949005] flag set to clear count 0

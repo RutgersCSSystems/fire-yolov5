@@ -8,14 +8,16 @@ APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
 READS=1000000
-KEYS=1000000
+KEYS=4000000
+#READS=10000
+#KEYS=20000
 CLIPREFIX="numactl --preferred=0"
 PHYSCPU="--physcpubind"
 
 let MAXINST=4
 let STARTPORT=6378
 let SERVERCPU=20
-let DATASIZE=4096
+let DATASIZE=1024
 let physcpu=0
 let physcpu2=1
 
@@ -26,8 +28,11 @@ CLEAN() {
 		rm -rf *.rdb
 		rm -rf *.aof
 		sudo killall "redis-server$b"
+		appname="redis-server$b"
+		sudo kill -9 $appname
 		sudo killall "redis-server$b"
 		echo "KILLING redis-server$b"
+		sudo kill -9 $appname
 	done
 	sudo killall redis-benchmark
 	sudo killall redis-benchmark
@@ -76,20 +81,20 @@ RUNCLIENT(){
   let physcpu=2
   let physcpu2=3
 
-  PARAMS=" -r $READS -n $KEYS -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d $DATASIZE"
+  PARAMS=" -r $READS -n $KEYS -c 100 -t get,set -P 16 -q  -h 127.0.0.1 -d $DATASIZE"
 
   for (( c=1; c<$MAXINST; c++))
   do
-    #$CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
-    $CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
-    #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=10 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt" &
+    $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    #$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=50 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt"  --data-size=4096 &
+
     let port=$port+1
     let physcpu=$physcpu+1
     let physcpu2=$physcpu2+2   	
   done
-  #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=10 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt"
-  #$CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
-  $CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
+  $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
+  ###$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
 
   sleep 5
   ps aux | grep redis-server | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'

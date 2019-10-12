@@ -1,254 +1,428 @@
-+ REDISROOT=/users/skannan/ssd/NVM/appbench/redis-5.0.5
-+ REDISCONF=/users/skannan/ssd/NVM/appbench/redis-5.0.5/config
-+ APPBASE=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src
-+ APP=/users/skannan/ssd/NVM/appbench/redis-5.0.5/src/pagerank
-+ PARAM=
-+ OUTPUT=
-+ READS=2000000
-+ KEYS=4000000
-+ CLIPREFIX='numactl --preferred=0'
-+ PHYSCPU=--physcpubind
-+ let MAXINST=2
-+ let STARTPORT=6378
-+ let SERVERCPU=20
-+ let DATASIZE=2048
-+ let physcpu=0
-+ let physcpu2=1
-+ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
-+ CLEAN
-+ (( b=1 ))
-+ (( b<=2 ))
-+ rm -rf '*.rdb'
-+ rm -rf '*.aof'
-+ sudo killall redis-server1
-redis-server1: no process found
-+ sudo killall redis-server1
-redis-server1: no process found
-+ echo 'KILLING redis-server1'
-KILLING redis-server1
-+ (( b++  ))
-+ (( b<=2 ))
-+ rm -rf '*.rdb'
-+ rm -rf '*.aof'
-+ sudo killall redis-server2
-redis-server2: no process found
-+ sudo killall redis-server2
-redis-server2: no process found
-+ echo 'KILLING redis-server2'
-KILLING redis-server2
-+ (( b++  ))
-+ (( b<=2 ))
-+ sudo killall redis-benchmark
-redis-benchmark: no process found
-+ sudo killall redis-benchmark
-redis-benchmark: no process found
-+ sleep 5
-+ PREPARE
-+ (( inst=1 ))
-+ (( inst<=2 ))
-+ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
-+ sudo rm redis-server1 redis-benchmark1
-+ cp redis-server redis-server1
-+ cp redis-benchmark redis-benchmark1
-+ cd /users/skannan/ssd/NVM/appbench
-+ (( inst++  ))
-+ (( inst<=2 ))
-+ cd /users/skannan/ssd/NVM/appbench/redis-5.0.5/src
-+ sudo rm redis-server2 redis-benchmark2
-+ cp redis-server redis-server2
-+ cp redis-benchmark redis-benchmark2
-+ cd /users/skannan/ssd/NVM/appbench
-+ (( inst++  ))
-+ (( inst<=2 ))
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ cd /users/skannan/ssd/NVM/appbench/shared_data
-+ RUN
-+ let port=6378
-+ let physcpu=20
-+ let physcpu2=20+1
-+ (( r=1 ))
-+ (( r<=2 ))
-+ let port=6378+1
-+ let physcpu=20+2
-+ let physcpu2=21+2
-+ sleep 1
-+ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ numactl --membind=1 --physcpubind=20,21 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server1 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6378.conf
-initiating tracing...
-initiating tracing...
-31326:C 27 Jun 2019 12:34:19.942 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-31326:C 27 Jun 2019 12:34:19.942 # Redis version=5.0.5, bits=64, commit=2a7e05ee, modified=1, pid=31326, just started
-31326:C 27 Jun 2019 12:34:19.942 # Configuration loaded
-                _._                                                  
-           _.-``__ ''-._                                             
-      _.-``    `.  `_.  ''-._           Redis 5.0.5 (2a7e05ee/1) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._                                   
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6378
- |    `-._   `._    /     _.-'    |     PID: 31326
-  `-._    `-._  `-./  _.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |           http://redis.io        
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |                                  
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
-      `-._    `-.__.-'    _.-'                                       
-          `-._        _.-'                                           
-              `-.__.-'                                               
-
-31326:M 27 Jun 2019 12:34:19.945 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
-31326:M 27 Jun 2019 12:34:19.945 # Server initialized
-31326:M 27 Jun 2019 12:34:19.945 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
-31326:M 27 Jun 2019 12:34:19.945 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
-31326:M 27 Jun 2019 12:34:19.945 * Reading RDB preamble from AOF file...
-+ (( r++ ))
-+ (( r<=2 ))
-+ let port=6379+1
-+ let physcpu=22+2
-+ let physcpu2=23+2
-+ sleep 1
-+ LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ numactl --membind=1 --physcpubind=22,23 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-server2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/config/redis-6379.conf
-initiating tracing...
-initiating tracing...
-31331:C 27 Jun 2019 12:34:20.891 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
-31331:C 27 Jun 2019 12:34:20.891 # Redis version=5.0.5, bits=64, commit=2a7e05ee, modified=1, pid=31331, just started
-31331:C 27 Jun 2019 12:34:20.891 # Configuration loaded
-                _._                                                  
-           _.-``__ ''-._                                             
-      _.-``    `.  `_.  ''-._           Redis 5.0.5 (2a7e05ee/1) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._                                   
- (    '      ,       .-`  | `,    )     Running in standalone mode
- |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
- |    `-._   `._    /     _.-'    |     PID: 31331
-  `-._    `-._  `-./  _.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |           http://redis.io        
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |                                  
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
-      `-._    `-.__.-'    _.-'                                       
-          `-._        _.-'                                           
-              `-.__.-'                                               
-
-31331:M 27 Jun 2019 12:34:20.892 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.
-31331:M 27 Jun 2019 12:34:20.892 # Server initialized
-31331:M 27 Jun 2019 12:34:20.892 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
-31331:M 27 Jun 2019 12:34:20.892 # WARNING you have Transparent Huge Pages (THP) support enabled in your kernel. This will create latency and memory usage issues with Redis. To fix this issue run the command 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' as root, and add it to your /etc/rc.local in order to retain the setting after a reboot. Redis must be restarted after THP is disabled.
-31331:M 27 Jun 2019 12:34:20.892 * Reading RDB preamble from AOF file...
-+ (( r++ ))
-+ (( r<=2 ))
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sleep 10
-31326:M 27 Jun 2019 12:34:31.306 * Reading the remaining AOF tail...
-+ RUNCLIENT
-+ let port=6378
-+ let physcpu=2
-+ let physcpu2=3
-+ PARAMS=' -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q  -h 127.0.0.1 -d 2048'
-+ (( c=1 ))
-+ (( c<2 ))
-+ let port=6378+1
-+ let physcpu=2+1
-+ let physcpu2=3+2
-+ (( c++ ))
-+ (( c<2 ))
-+ numactl --preferred=0 --physcpubind=3 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark2 -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 2048 -p 6379
-+ numactl --preferred=0 --physcpubind=2 /users/skannan/ssd/NVM/appbench/redis-5.0.5/src/redis-benchmark1 -r 2000000 -n 4000000 -c 50 -t get,set -P 16 -q -h 127.0.0.1 -d 2048 -p 6378
-31331:M 27 Jun 2019 12:34:33.375 * Reading the remaining AOF tail...
-31326:M 27 Jun 2019 12:34:46.223 * DB loaded from append only file: 26.278 seconds
-31326:M 27 Jun 2019 12:34:46.223 * Ready to accept connections
-31331:M 27 Jun 2019 12:34:46.829 * DB loaded from append only file: 25.936 seconds
-31331:M 27 Jun 2019 12:34:46.829 * Ready to accept connections
-31326:M 27 Jun 2019 12:35:20.035 * 10000 changes in 60 seconds. Saving...
-31326:M 27 Jun 2019 12:35:20.101 * Background saving started by pid 31344
-31331:M 27 Jun 2019 12:35:21.087 * 10000 changes in 60 seconds. Saving...
-31331:M 27 Jun 2019 12:35:21.155 * Background saving started by pid 31345
-31331:M 27 Jun 2019 12:35:44.345 # Background saving terminated by signal 9
-31331:M 27 Jun 2019 12:35:44.610 * 10000 changes in 60 seconds. Saving...
-31331:M 27 Jun 2019 12:35:44.701 * Background saving started by pid 31348
-31344:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
-31344:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
-31326:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
-31326:M 27 Jun 2019 12:37:02.542 # User requested shutdown...
-31326:M 27 Jun 2019 12:37:02.542 # There is a child saving an .rdb. Killing it!
-31326:M 27 Jun 2019 12:37:02.543 * Calling fsync() on the AOF file.
-31326:M 27 Jun 2019 12:37:02.545 * Saving the final RDB snapshot before exiting.
-31348:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
-31348:signal-handler (1561660622) Received SIGTERM scheduling shutdown...
-./run.sh: line 73: 31331 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
-+ sleep 5
-./run.sh: line 73: 31326 Killed                  LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf"
-+ ps aux
-+ grep redis-server
-+ awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
-31494
-31495
-./run.sh: line 73: 31493 Done                    ps aux
-     31494                       | grep redis-server
-     31495 Killed                  | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
-+ CLEAN
-+ (( b=1 ))
-+ (( b<=2 ))
-+ rm -rf temp-31326.rdb
-+ rm -rf '*.aof'
-+ sudo killall redis-server1
-redis-server1: no process found
-+ sudo killall redis-server1
-redis-server1: no process found
-+ echo 'KILLING redis-server1'
-KILLING redis-server1
-+ (( b++  ))
-+ (( b<=2 ))
-+ rm -rf '*.rdb'
-+ rm -rf '*.aof'
-+ sudo killall redis-server2
-+ sudo killall redis-server2
-31348:signal-handler (1561660627) Received SIGTERM scheduling shutdown...
-+ echo 'KILLING redis-server2'
-KILLING redis-server2
-+ (( b++  ))
-+ (( b<=2 ))
-+ sudo killall redis-benchmark
-31348:signal-handler (1561660627) Received SIGTERM scheduling shutdown...
-redis-benchmark: no process found
-+ sudo killall redis-benchmark
-redis-benchmark: no process found
-+ CLEAN
-+ (( b=1 ))
-+ (( b<=2 ))
-+ rm -rf '*.rdb'
-+ rm -rf '*.aof'
-+ sudo killall redis-server1
-redis-server1: no process found
-+ sudo killall redis-server1
-redis-server1: no process found
-+ echo 'KILLING redis-server1'
-KILLING redis-server1
-+ (( b++  ))
-+ (( b<=2 ))
-+ rm -rf '*.rdb'
-+ rm -rf '*.aof'
-+ sudo killall redis-server2
-+ sudo killall redis-server2
-31348:signal-handler (1561660628) Received SIGTERM scheduling shutdown...
-+ echo 'KILLING redis-server2'
-KILLING redis-server2
-+ (( b++  ))
-+ (( b<=2 ))
-+ sudo killall redis-benchmark
-31348:signal-handler (1561660628) Received SIGTERM scheduling shutdown...
-redis-benchmark: no process found
-+ sudo killall redis-benchmark
-redis-benchmark: no process found
-+ set +x
-31348:signal-handler (1561660630) Received SIGTERM scheduling shutdown...
-31348:signal-handler (1561660630) Received SIGTERM scheduling shutdown...
-31348:signal-handler (1561660650) Received SIGTERM scheduling shutdown...
+[  368.878256] Curr 3982 Currname redis-server1 HeteroProcname redis-server4 cache-hits 49814 cache-miss 0 buff-hits 318983 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49814
+[  368.878256]  
+[  368.878263] Curr 3986 Currname redis-server1 HeteroProcname redis-server4 cache-hits 49814 cache-miss 0 buff-hits 318983 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49814
+[  368.878263]  
+[  368.878402] Curr 3984 Currname redis-server1 HeteroProcname redis-server4 cache-hits 49814 cache-miss 0 buff-hits 318984 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49814
+[  368.878402]  
+[  368.878507] Curr 3985 Currname redis-server1 HeteroProcname redis-server4 cache-hits 49814 cache-miss 0 buff-hits 318984 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49814
+[  368.878507]  
+[  368.884923] Curr 3993 Currname redis-server2 HeteroProcname redis-server4 cache-hits 49667 cache-miss 0 buff-hits 271168 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49667
+[  368.884923]  
+[  368.884935] Curr 3991 Currname redis-server2 HeteroProcname redis-server4 cache-hits 49667 cache-miss 0 buff-hits 271168 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49667
+[  368.884935]  
+[  368.885002] Curr 3989 Currname redis-server2 HeteroProcname redis-server4 cache-hits 49667 cache-miss 0 buff-hits 271169 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49667
+[  368.885002]  
+[  368.885010] Curr 3992 Currname redis-server2 HeteroProcname redis-server4 cache-hits 49667 cache-miss 0 buff-hits 271169 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49667
+[  368.885010]  
+[  368.891649] Curr 3994 Currname redis-server3 HeteroProcname redis-server4 cache-hits 49698 cache-miss 0 buff-hits 259324 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49698
+[  368.891649]  
+[  368.891655] Curr 3998 Currname redis-server3 HeteroProcname redis-server4 cache-hits 49698 cache-miss 0 buff-hits 259324 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49698
+[  368.891655]  
+[  368.891731] Curr 3996 Currname redis-server3 HeteroProcname redis-server4 cache-hits 49698 cache-miss 0 buff-hits 259326 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49698
+[  368.891731]  
+[  368.891810] Curr 3997 Currname redis-server3 HeteroProcname redis-server4 cache-hits 49698 cache-miss 0 buff-hits 259326 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49698
+[  368.891810]  
+[  368.898114] Curr 4003 Currname redis-server4 HeteroProcname redis-server4 cache-hits 49680 cache-miss 0 buff-hits 309912 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49680
+[  368.898114]  
+[  368.898119] Curr 4005 Currname redis-server4 HeteroProcname redis-server4 cache-hits 49680 cache-miss 0 buff-hits 309912 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49680
+[  368.898119]  
+[  368.898182] Curr 4001 Currname redis-server4 HeteroProcname redis-server4 cache-hits 49680 cache-miss 0 buff-hits 309914 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49680
+[  368.898182]  
+[  368.898190] Curr 4004 Currname redis-server4 HeteroProcname redis-server4 cache-hits 49680 cache-miss 0 buff-hits 309914 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 49680
+[  368.898190]  
+[  453.371553] drop_caches: sh (4254): drop_caches: 3
+[  454.986658] drop_caches: sh (4262): drop_caches: 3
+[  455.064699] flag set to clear count 0
+[  455.064701] flag is set to collect hetero allocate  9 
+[  455.064702] flag is set to enable HETERO_PGCACHE 11 
+[  455.064702] flag is set to enable HETERO_BUFFER 12 
+[  455.064703] flag is set to enable HETERO_JOURNAL 13 
+[  455.064704] flag is set to enable HETERO_RADIX 14 
+[  455.064705] flag is set to enable HETERO_FULLKERN 15 
+[  455.064705] flag to set FASTMEM node to 0 
+[  455.064706] hetero_pid set to 4263 4263 procname numactl
+[  455.064707] flag to set FASTMEM node to 0 
+[  455.064708] flag to set MIGRATION FREQ to 100000 
+[  455.064708] flag enables HETERO_OBJAFF 1 
+[  455.064709] flag to MIGRATE_LISTCNT 1000 
+[  455.079017] flag set to clear count 0
+[  455.079018] flag is set to collect hetero allocate  9 
+[  455.079019] flag is set to enable HETERO_PGCACHE 11 
+[  455.079020] flag is set to enable HETERO_BUFFER 12 
+[  455.079020] flag is set to enable HETERO_JOURNAL 13 
+[  455.079021] flag is set to enable HETERO_RADIX 14 
+[  455.079021] flag is set to enable HETERO_FULLKERN 15 
+[  455.079022] flag to set FASTMEM node to 0 
+[  455.079023] hetero_pid set to 4263 4263 procname redis-server1
+[  455.079023] flag to set FASTMEM node to 0 
+[  455.079024] flag to set MIGRATION FREQ to 100000 
+[  455.079025] flag enables HETERO_OBJAFF 1 
+[  455.079026] flag to MIGRATE_LISTCNT 1000 
+[  456.065650] flag set to clear count 0
+[  456.065652] flag is set to collect hetero allocate  9 
+[  456.065653] flag is set to enable HETERO_PGCACHE 11 
+[  456.065653] flag is set to enable HETERO_BUFFER 12 
+[  456.065654] flag is set to enable HETERO_JOURNAL 13 
+[  456.065666] flag is set to enable HETERO_RADIX 14 
+[  456.065666] flag is set to enable HETERO_FULLKERN 15 
+[  456.065667] flag to set FASTMEM node to 0 
+[  456.065668] hetero_pid set to 4268 4268 procname numactl
+[  456.065668] flag to set FASTMEM node to 0 
+[  456.065669] flag to set MIGRATION FREQ to 100000 
+[  456.065670] flag enables HETERO_OBJAFF 1 
+[  456.065671] flag to MIGRATE_LISTCNT 1000 
+[  456.067660] flag set to clear count 0
+[  456.067662] flag is set to collect hetero allocate  9 
+[  456.067663] flag is set to enable HETERO_PGCACHE 11 
+[  456.067663] flag is set to enable HETERO_BUFFER 12 
+[  456.067664] flag is set to enable HETERO_JOURNAL 13 
+[  456.067665] flag is set to enable HETERO_RADIX 14 
+[  456.067666] flag is set to enable HETERO_FULLKERN 15 
+[  456.067666] flag to set FASTMEM node to 0 
+[  456.067667] hetero_pid set to 4268 4268 procname redis-server2
+[  456.067668] flag to set FASTMEM node to 0 
+[  456.067669] flag to set MIGRATION FREQ to 100000 
+[  456.067670] flag enables HETERO_OBJAFF 1 
+[  456.067671] flag to MIGRATE_LISTCNT 1000 
+[  457.066930] flag set to clear count 0
+[  457.066932] flag is set to collect hetero allocate  9 
+[  457.066933] flag is set to enable HETERO_PGCACHE 11 
+[  457.066946] flag is set to enable HETERO_BUFFER 12 
+[  457.066947] flag is set to enable HETERO_JOURNAL 13 
+[  457.066948] flag is set to enable HETERO_RADIX 14 
+[  457.066948] flag is set to enable HETERO_FULLKERN 15 
+[  457.066949] flag to set FASTMEM node to 0 
+[  457.066950] hetero_pid set to 4274 4274 procname numactl
+[  457.066951] flag to set FASTMEM node to 0 
+[  457.066952] flag to set MIGRATION FREQ to 100000 
+[  457.066953] flag enables HETERO_OBJAFF 1 
+[  457.066954] flag to MIGRATE_LISTCNT 1000 
+[  457.069147] flag set to clear count 0
+[  457.069149] flag is set to collect hetero allocate  9 
+[  457.069149] flag is set to enable HETERO_PGCACHE 11 
+[  457.069150] flag is set to enable HETERO_BUFFER 12 
+[  457.069151] flag is set to enable HETERO_JOURNAL 13 
+[  457.069152] flag is set to enable HETERO_RADIX 14 
+[  457.069152] flag is set to enable HETERO_FULLKERN 15 
+[  457.069153] flag to set FASTMEM node to 0 
+[  457.069154] hetero_pid set to 4274 4274 procname redis-server3
+[  457.069155] flag to set FASTMEM node to 0 
+[  457.069155] flag to set MIGRATION FREQ to 100000 
+[  457.069156] flag enables HETERO_OBJAFF 1 
+[  457.069157] flag to MIGRATE_LISTCNT 1000 
+[  458.068298] flag set to clear count 0
+[  458.068300] flag is set to collect hetero allocate  9 
+[  458.068301] flag is set to enable HETERO_PGCACHE 11 
+[  458.068315] flag is set to enable HETERO_BUFFER 12 
+[  458.068315] flag is set to enable HETERO_JOURNAL 13 
+[  458.068316] flag is set to enable HETERO_RADIX 14 
+[  458.068317] flag is set to enable HETERO_FULLKERN 15 
+[  458.068317] flag to set FASTMEM node to 0 
+[  458.068318] hetero_pid set to 4279 4279 procname numactl
+[  458.068319] flag to set FASTMEM node to 0 
+[  458.068320] flag to set MIGRATION FREQ to 100000 
+[  458.068321] flag enables HETERO_OBJAFF 1 
+[  458.068322] flag to MIGRATE_LISTCNT 1000 
+[  458.070619] flag set to clear count 0
+[  458.070621] flag is set to collect hetero allocate  9 
+[  458.070622] flag is set to enable HETERO_PGCACHE 11 
+[  458.070623] flag is set to enable HETERO_BUFFER 12 
+[  458.070623] flag is set to enable HETERO_JOURNAL 13 
+[  458.070624] flag is set to enable HETERO_RADIX 14 
+[  458.070625] flag is set to enable HETERO_FULLKERN 15 
+[  458.070625] flag to set FASTMEM node to 0 
+[  458.070626] hetero_pid set to 4279 4279 procname redis-server4
+[  458.070627] flag to set FASTMEM node to 0 
+[  458.070628] flag to set MIGRATION FREQ to 100000 
+[  458.070629] flag enables HETERO_OBJAFF 1 
+[  458.070630] flag to MIGRATE_LISTCNT 1000 
+[  520.929497] Curr 4268 Currname redis-server2 HeteroProcname redis-server4 cache-hits 3613079 cache-miss 0 buff-hits 347255 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 1284 avg_cache_life(us) 0 pgcache-del 0 active-cache 3613079
+[  520.929497]  
+[  521.003750] flag is set to print hetero allocate stat 10 
+[  521.003754] Curr 4279 Currname redis-server4 HeteroProcname redis-server4 cache-hits 3607920 cache-miss 0 buff-hits 341616 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 1336 avg_cache_life(us) 0 pgcache-del 0 active-cache 3607920
+[  521.003754]  
+[  521.003755] cache-hits 14982547 cache-miss 1 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  521.003756] flag set to clear count 0
+[  521.003806] flag is set to print hetero allocate stat 10 
+[  521.003809] Curr 4268 Currname redis-server2 HeteroProcname 0000000000000000 cache-hits 3615205 cache-miss 0 buff-hits 347334 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 1284 avg_cache_life(us) 0 pgcache-del 0 active-cache 3615205
+[  521.003809]  
+[  521.003811] cache-hits 14982548 cache-miss 1 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  521.003812] flag set to clear count 0
+[  521.014010] flag is set to print hetero allocate stat 10 
+[  521.014012] Curr 4274 Currname redis-server3 HeteroProcname 0000000000000000 cache-hits 3634643 cache-miss 0 buff-hits 317894 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 1359 avg_cache_life(us) 0 pgcache-del 0 active-cache 3634643
+[  521.014012]  
+[  521.014014] cache-hits 14982548 cache-miss 1 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  521.014015] flag set to clear count 0
+[  521.037764] flag is set to print hetero allocate stat 10 
+[  521.037768] Curr 4263 Currname redis-server1 HeteroProcname 0000000000000000 cache-hits 3618409 cache-miss 0 buff-hits 315590 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 1405 avg_cache_life(us) 0 pgcache-del 0 active-cache 3618409
+[  521.037768]  
+[  521.037769] cache-hits 14982548 cache-miss 1 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  521.037770] flag set to clear count 0
+[  565.769390] drop_caches: sh (4980): drop_caches: 3
+[  567.290986] drop_caches: sh (4988): drop_caches: 3
+[  567.367318] flag set to clear count 0
+[  567.367320] flag is set to collect hetero allocate  9 
+[  567.367320] flag is set to enable HETERO_PGCACHE 11 
+[  567.367321] flag is set to enable HETERO_BUFFER 12 
+[  567.367322] flag is set to enable HETERO_JOURNAL 13 
+[  567.367334] flag is set to enable HETERO_RADIX 14 
+[  567.367334] flag is set to enable HETERO_FULLKERN 15 
+[  567.367335] flag to set FASTMEM node to 0 
+[  567.367336] hetero_pid set to 4989 4989 procname numactl
+[  567.367336] flag to set FASTMEM node to 0 
+[  567.367337] flag to set MIGRATION FREQ to 100000 
+[  567.367338] flag enables HETERO_OBJAFF 1 
+[  567.367339] flag to MIGRATE_LISTCNT 1000 
+[  567.379221] flag set to clear count 0
+[  567.379222] flag is set to collect hetero allocate  9 
+[  567.379223] flag is set to enable HETERO_PGCACHE 11 
+[  567.379223] flag is set to enable HETERO_BUFFER 12 
+[  567.379224] flag is set to enable HETERO_JOURNAL 13 
+[  567.379225] flag is set to enable HETERO_RADIX 14 
+[  567.379225] flag is set to enable HETERO_FULLKERN 15 
+[  567.379226] flag to set FASTMEM node to 0 
+[  567.379227] hetero_pid set to 4989 4989 procname redis-server1
+[  567.379227] flag to set FASTMEM node to 0 
+[  567.379228] flag to set MIGRATION FREQ to 100000 
+[  567.379229] flag enables HETERO_OBJAFF 1 
+[  567.379230] flag to MIGRATE_LISTCNT 1000 
+[  568.368671] flag set to clear count 0
+[  568.368687] flag is set to collect hetero allocate  9 
+[  568.368689] flag is set to enable HETERO_PGCACHE 11 
+[  568.368689] flag is set to enable HETERO_BUFFER 12 
+[  568.368690] flag is set to enable HETERO_JOURNAL 13 
+[  568.368691] flag is set to enable HETERO_RADIX 14 
+[  568.368692] flag is set to enable HETERO_FULLKERN 15 
+[  568.368692] flag to set FASTMEM node to 0 
+[  568.368693] hetero_pid set to 4995 4995 procname numactl
+[  568.368694] flag to set FASTMEM node to 0 
+[  568.368695] flag to set MIGRATION FREQ to 100000 
+[  568.368696] flag enables HETERO_OBJAFF 1 
+[  568.368697] flag to MIGRATE_LISTCNT 1000 
+[  568.370777] flag set to clear count 0
+[  568.370779] flag is set to collect hetero allocate  9 
+[  568.370780] flag is set to enable HETERO_PGCACHE 11 
+[  568.370781] flag is set to enable HETERO_BUFFER 12 
+[  568.370781] flag is set to enable HETERO_JOURNAL 13 
+[  568.370782] flag is set to enable HETERO_RADIX 14 
+[  568.370783] flag is set to enable HETERO_FULLKERN 15 
+[  568.370783] flag to set FASTMEM node to 0 
+[  568.370784] hetero_pid set to 4995 4995 procname redis-server2
+[  568.370785] flag to set FASTMEM node to 0 
+[  568.370785] flag to set MIGRATION FREQ to 100000 
+[  568.370786] flag enables HETERO_OBJAFF 1 
+[  568.370787] flag to MIGRATE_LISTCNT 1000 
+[  569.370550] flag set to clear count 0
+[  569.370554] flag is set to collect hetero allocate  9 
+[  569.370555] flag is set to enable HETERO_PGCACHE 11 
+[  569.370556] flag is set to enable HETERO_BUFFER 12 
+[  569.370557] flag is set to enable HETERO_JOURNAL 13 
+[  569.370558] flag is set to enable HETERO_RADIX 14 
+[  569.370559] flag is set to enable HETERO_FULLKERN 15 
+[  569.370559] flag to set FASTMEM node to 0 
+[  569.370560] hetero_pid set to 5000 5000 procname numactl
+[  569.370561] flag to set FASTMEM node to 0 
+[  569.370562] flag to set MIGRATION FREQ to 100000 
+[  569.370563] flag enables HETERO_OBJAFF 1 
+[  569.370564] flag to MIGRATE_LISTCNT 1000 
+[  569.372926] flag set to clear count 0
+[  569.372929] flag is set to collect hetero allocate  9 
+[  569.372931] flag is set to enable HETERO_PGCACHE 11 
+[  569.372931] flag is set to enable HETERO_BUFFER 12 
+[  569.372932] flag is set to enable HETERO_JOURNAL 13 
+[  569.372933] flag is set to enable HETERO_RADIX 14 
+[  569.372934] flag is set to enable HETERO_FULLKERN 15 
+[  569.372935] flag to set FASTMEM node to 0 
+[  569.372936] hetero_pid set to 5000 5000 procname redis-server3
+[  569.372937] flag to set FASTMEM node to 0 
+[  569.372938] flag to set MIGRATION FREQ to 100000 
+[  569.372938] flag enables HETERO_OBJAFF 1 
+[  569.372939] flag to MIGRATE_LISTCNT 1000 
+[  570.372316] flag set to clear count 0
+[  570.372320] flag is set to collect hetero allocate  9 
+[  570.372321] flag is set to enable HETERO_PGCACHE 11 
+[  570.372322] flag is set to enable HETERO_BUFFER 12 
+[  570.372323] flag is set to enable HETERO_JOURNAL 13 
+[  570.372324] flag is set to enable HETERO_RADIX 14 
+[  570.372324] flag is set to enable HETERO_FULLKERN 15 
+[  570.372325] flag to set FASTMEM node to 0 
+[  570.372326] hetero_pid set to 5005 5005 procname numactl
+[  570.372326] flag to set FASTMEM node to 0 
+[  570.372328] flag to set MIGRATION FREQ to 100000 
+[  570.372328] flag enables HETERO_OBJAFF 1 
+[  570.372329] flag to MIGRATE_LISTCNT 1000 
+[  570.374838] flag set to clear count 0
+[  570.374841] flag is set to collect hetero allocate  9 
+[  570.374842] flag is set to enable HETERO_PGCACHE 11 
+[  570.374842] flag is set to enable HETERO_BUFFER 12 
+[  570.374843] flag is set to enable HETERO_JOURNAL 13 
+[  570.374844] flag is set to enable HETERO_RADIX 14 
+[  570.374845] flag is set to enable HETERO_FULLKERN 15 
+[  570.374845] flag to set FASTMEM node to 0 
+[  570.374847] hetero_pid set to 5005 5005 procname redis-server4
+[  570.374847] flag to set FASTMEM node to 0 
+[  570.374849] flag to set MIGRATION FREQ to 100000 
+[  570.374849] flag enables HETERO_OBJAFF 1 
+[  570.374850] flag to MIGRATE_LISTCNT 1000 
+[  582.457829] tcp_input: request_sock_TCP: Possible SYN flooding on port 6378. Sending cookies.  Check SNMP counters.
+[  582.457933] tcp_input: request_sock_TCP: Possible SYN flooding on port 6379. Sending cookies.  Check SNMP counters.
+[  582.457945] tcp_input: request_sock_TCP: Possible SYN flooding on port 6380. Sending cookies.  Check SNMP counters.
+[  582.461967] tcp_input: request_sock_TCP: Possible SYN flooding on port 6381. Sending cookies.  Check SNMP counters.
+[  740.898382] Curr 4989 Currname redis-server1 HeteroProcname redis-server4 cache-hits 6961303 cache-miss 3226976 buff-hits 988267 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 3717103 pgbuff-del 18041 avg_cache_life(us) 0 pgcache-del 0 active-cache 6961303
+[  740.898382]  
+[  741.003853] flag is set to print hetero allocate stat 10 
+[  741.003857] Curr 5005 Currname redis-server4 HeteroProcname redis-server4 cache-hits 6750708 cache-miss 4171421 buff-hits 1086943 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 2969074 pgbuff-del 17186 avg_cache_life(us) 0 pgcache-del 0 active-cache 6750708
+[  741.003857]  
+[  741.003858] cache-hits 42754382 cache-miss 14351333 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  741.003859] flag set to clear count 0
+[  741.003905] flag is set to print hetero allocate stat 10 
+[  741.003907] Curr 4995 Currname redis-server2 HeteroProcname 0000000000000000 cache-hits 6799081 cache-miss 3623557 buff-hits 989076 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 3422906 pgbuff-del 18322 avg_cache_life(us) 0 pgcache-del 0 active-cache 6799081
+[  741.003907]  
+[  741.003909] cache-hits 42754382 cache-miss 14351333 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  741.003910] flag set to clear count 0
+[  741.032508] flag is set to print hetero allocate stat 10 
+[  741.032511] Curr 4989 Currname redis-server1 HeteroProcname 0000000000000000 cache-hits 6971143 cache-miss 3226976 buff-hits 988552 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 3729236 pgbuff-del 18047 avg_cache_life(us) 0 pgcache-del 0 active-cache 6971143
+[  741.032511]  
+[  741.032513] cache-hits 42754382 cache-miss 14351333 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  741.032514] flag set to clear count 0
+[  741.085718] flag is set to print hetero allocate stat 10 
+[  741.085722] Curr 5000 Currname redis-server3 HeteroProcname 0000000000000000 cache-hits 7213097 cache-miss 3298478 buff-hits 1039376 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 3236255 pgbuff-del 18623 avg_cache_life(us) 0 pgcache-del 0 active-cache 7213097
+[  741.085722]  
+[  741.085724] cache-hits 42754382 cache-miss 14351333 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[  741.085725] flag set to clear count 0
+[ 7714.608261] drop_caches: sh (7424): drop_caches: 3
+[ 7716.211438] drop_caches: sh (7432): drop_caches: 3
+[ 7716.279210] flag set to clear count 0
+[ 7716.279212] flag is set to collect hetero allocate  9 
+[ 7716.279213] flag is set to enable HETERO_PGCACHE 11 
+[ 7716.279214] flag is set to enable HETERO_BUFFER 12 
+[ 7716.279215] flag is set to enable HETERO_JOURNAL 13 
+[ 7716.279215] flag is set to enable HETERO_RADIX 14 
+[ 7716.279216] flag is set to enable HETERO_FULLKERN 15 
+[ 7716.279216] flag to set FASTMEM node to 0 
+[ 7716.279217] hetero_pid set to 7433 7433 procname numactl
+[ 7716.279218] flag to set FASTMEM node to 0 
+[ 7716.279219] flag to set MIGRATION FREQ to 100000 
+[ 7716.279219] flag enables HETERO_OBJAFF 1 
+[ 7716.279220] flag to MIGRATE_LISTCNT 1000 
+[ 7716.293500] flag set to clear count 0
+[ 7716.293502] flag is set to collect hetero allocate  9 
+[ 7716.293503] flag is set to enable HETERO_PGCACHE 11 
+[ 7716.293504] flag is set to enable HETERO_BUFFER 12 
+[ 7716.293504] flag is set to enable HETERO_JOURNAL 13 
+[ 7716.293505] flag is set to enable HETERO_RADIX 14 
+[ 7716.293505] flag is set to enable HETERO_FULLKERN 15 
+[ 7716.293506] flag to set FASTMEM node to 0 
+[ 7716.293507] hetero_pid set to 7433 7433 procname redis-server1
+[ 7716.293507] flag to set FASTMEM node to 0 
+[ 7716.293508] flag to set MIGRATION FREQ to 100000 
+[ 7716.293509] flag enables HETERO_OBJAFF 1 
+[ 7716.293510] flag to MIGRATE_LISTCNT 1000 
+[ 7717.280574] flag set to clear count 0
+[ 7717.280577] flag is set to collect hetero allocate  9 
+[ 7717.280590] flag is set to enable HETERO_PGCACHE 11 
+[ 7717.280591] flag is set to enable HETERO_BUFFER 12 
+[ 7717.280592] flag is set to enable HETERO_JOURNAL 13 
+[ 7717.280592] flag is set to enable HETERO_RADIX 14 
+[ 7717.280593] flag is set to enable HETERO_FULLKERN 15 
+[ 7717.280594] flag to set FASTMEM node to 0 
+[ 7717.280595] hetero_pid set to 7438 7438 procname numactl
+[ 7717.280595] flag to set FASTMEM node to 0 
+[ 7717.280596] flag to set MIGRATION FREQ to 100000 
+[ 7717.280597] flag enables HETERO_OBJAFF 1 
+[ 7717.280609] flag to MIGRATE_LISTCNT 1000 
+[ 7717.282784] flag set to clear count 0
+[ 7717.282787] flag is set to collect hetero allocate  9 
+[ 7717.282787] flag is set to enable HETERO_PGCACHE 11 
+[ 7717.282788] flag is set to enable HETERO_BUFFER 12 
+[ 7717.282789] flag is set to enable HETERO_JOURNAL 13 
+[ 7717.282789] flag is set to enable HETERO_RADIX 14 
+[ 7717.282790] flag is set to enable HETERO_FULLKERN 15 
+[ 7717.282790] flag to set FASTMEM node to 0 
+[ 7717.282791] hetero_pid set to 7438 7438 procname redis-server2
+[ 7717.282792] flag to set FASTMEM node to 0 
+[ 7717.282793] flag to set MIGRATION FREQ to 100000 
+[ 7717.282794] flag enables HETERO_OBJAFF 1 
+[ 7717.282794] flag to MIGRATE_LISTCNT 1000 
+[ 7718.282264] flag set to clear count 0
+[ 7718.282268] flag is set to collect hetero allocate  9 
+[ 7718.282269] flag is set to enable HETERO_PGCACHE 11 
+[ 7718.282269] flag is set to enable HETERO_BUFFER 12 
+[ 7718.282270] flag is set to enable HETERO_JOURNAL 13 
+[ 7718.282271] flag is set to enable HETERO_RADIX 14 
+[ 7718.282285] flag is set to enable HETERO_FULLKERN 15 
+[ 7718.282285] flag to set FASTMEM node to 0 
+[ 7718.282287] hetero_pid set to 7443 7443 procname numactl
+[ 7718.282287] flag to set FASTMEM node to 0 
+[ 7718.282288] flag to set MIGRATION FREQ to 100000 
+[ 7718.282289] flag enables HETERO_OBJAFF 1 
+[ 7718.282290] flag to MIGRATE_LISTCNT 1000 
+[ 7718.291133] flag set to clear count 0
+[ 7718.291136] flag is set to collect hetero allocate  9 
+[ 7718.291137] flag is set to enable HETERO_PGCACHE 11 
+[ 7718.291137] flag is set to enable HETERO_BUFFER 12 
+[ 7718.291138] flag is set to enable HETERO_JOURNAL 13 
+[ 7718.291139] flag is set to enable HETERO_RADIX 14 
+[ 7718.291140] flag is set to enable HETERO_FULLKERN 15 
+[ 7718.291140] flag to set FASTMEM node to 0 
+[ 7718.291141] hetero_pid set to 7443 7443 procname redis-server3
+[ 7718.291142] flag to set FASTMEM node to 0 
+[ 7718.291143] flag to set MIGRATION FREQ to 100000 
+[ 7718.291144] flag enables HETERO_OBJAFF 1 
+[ 7718.291145] flag to MIGRATE_LISTCNT 1000 
+[ 7719.284115] flag set to clear count 0
+[ 7719.284118] flag is set to collect hetero allocate  9 
+[ 7719.284120] flag is set to enable HETERO_PGCACHE 11 
+[ 7719.284120] flag is set to enable HETERO_BUFFER 12 
+[ 7719.284122] flag is set to enable HETERO_JOURNAL 13 
+[ 7719.284122] flag is set to enable HETERO_RADIX 14 
+[ 7719.284123] flag is set to enable HETERO_FULLKERN 15 
+[ 7719.284124] flag to set FASTMEM node to 0 
+[ 7719.284125] hetero_pid set to 7448 7448 procname numactl
+[ 7719.284125] flag to set FASTMEM node to 0 
+[ 7719.284127] flag to set MIGRATION FREQ to 100000 
+[ 7719.284127] flag enables HETERO_OBJAFF 1 
+[ 7719.284128] flag to MIGRATE_LISTCNT 1000 
+[ 7719.286687] flag set to clear count 0
+[ 7719.286690] flag is set to collect hetero allocate  9 
+[ 7719.286691] flag is set to enable HETERO_PGCACHE 11 
+[ 7719.286692] flag is set to enable HETERO_BUFFER 12 
+[ 7719.286693] flag is set to enable HETERO_JOURNAL 13 
+[ 7719.286693] flag is set to enable HETERO_RADIX 14 
+[ 7719.286694] flag is set to enable HETERO_FULLKERN 15 
+[ 7719.286695] flag to set FASTMEM node to 0 
+[ 7719.286696] hetero_pid set to 7448 7448 procname redis-server4
+[ 7719.286697] flag to set FASTMEM node to 0 
+[ 7719.286698] flag to set MIGRATION FREQ to 100000 
+[ 7719.286699] flag enables HETERO_OBJAFF 1 
+[ 7719.286700] flag to MIGRATE_LISTCNT 1000 
+[ 7735.814570] Curr 7433 Currname redis-server1 HeteroProcname redis-server4 cache-hits 90596 cache-miss 0 buff-hits 2185 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 3 avg_cache_life(us) 0 pgcache-del 0 active-cache 90596
+[ 7735.814570]  
+[ 7735.814577] Curr 7437 Currname redis-server1 HeteroProcname redis-server4 cache-hits 90596 cache-miss 0 buff-hits 2185 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 3 avg_cache_life(us) 0 pgcache-del 0 active-cache 90596
+[ 7735.814577]  
+[ 7735.814648] Curr 7436 Currname redis-server1 HeteroProcname redis-server4 cache-hits 90596 cache-miss 0 buff-hits 2185 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 3 avg_cache_life(us) 0 pgcache-del 0 active-cache 90596
+[ 7735.814648]  
+[ 7735.814661] Curr 7435 Currname redis-server1 HeteroProcname redis-server4 cache-hits 90596 cache-miss 0 buff-hits 2185 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 4 avg_cache_life(us) 0 pgcache-del 0 active-cache 90596
+[ 7735.814661]  
+[ 7735.820377] Curr 7438 Currname redis-server2 HeteroProcname redis-server4 cache-hits 69606 cache-miss 0 buff-hits 2383 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 2339018381 pgbuff-del 9 avg_cache_life(us) 0 pgcache-del 0 active-cache 69606
+[ 7735.820377]  
+[ 7735.820386] Curr 7440 Currname redis-server2 HeteroProcname redis-server4 cache-hits 69606 cache-miss 0 buff-hits 2383 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 2339018381 pgbuff-del 9 avg_cache_life(us) 0 pgcache-del 0 active-cache 69606
+[ 7735.820386]  
+[ 7735.820449] Curr 7441 Currname redis-server2 HeteroProcname redis-server4 cache-hits 69606 cache-miss 0 buff-hits 2383 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 2339018381 pgbuff-del 9 avg_cache_life(us) 0 pgcache-del 0 active-cache 69606
+[ 7735.820449]  
+[ 7735.820517] Curr 7442 Currname redis-server2 HeteroProcname redis-server4 cache-hits 69606 cache-miss 0 buff-hits 2383 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 2339018381 pgbuff-del 9 avg_cache_life(us) 0 pgcache-del 0 active-cache 69606
+[ 7735.820517]  
+[ 7735.825898] Curr 7443 Currname redis-server3 HeteroProcname redis-server4 cache-hits 50771 cache-miss 0 buff-hits 2278 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50771
+[ 7735.825898]  
+[ 7735.825906] Curr 7445 Currname redis-server3 HeteroProcname redis-server4 cache-hits 50771 cache-miss 0 buff-hits 2278 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50771
+[ 7735.825906]  
+[ 7735.825951] Curr 7447 Currname redis-server3 HeteroProcname redis-server4 cache-hits 50771 cache-miss 0 buff-hits 2278 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50771
+[ 7735.825951]  
+[ 7735.825972] Curr 7446 Currname redis-server3 HeteroProcname redis-server4 cache-hits 50771 cache-miss 0 buff-hits 2278 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50771
+[ 7735.825972]  
+[ 7735.831596] Curr 7448 Currname redis-server4 HeteroProcname redis-server4 cache-hits 50669 cache-miss 0 buff-hits 2290 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50669
+[ 7735.831596]  
+[ 7735.831602] Curr 7450 Currname redis-server4 HeteroProcname redis-server4 cache-hits 50669 cache-miss 0 buff-hits 2290 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50669
+[ 7735.831602]  
+[ 7735.831653] Curr 7451 Currname redis-server4 HeteroProcname redis-server4 cache-hits 50669 cache-miss 0 buff-hits 2290 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 5 avg_cache_life(us) 0 pgcache-del 0 active-cache 50669
+[ 7735.831653]  
