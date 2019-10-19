@@ -29,6 +29,9 @@ sudo apt-get install -y msrtool
 sudo pip install psutil
 #sudo pip install thrift_compiler
 #INSTALL_JAVA
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install -y openjdk-8-jdk
 sudo apt-get -y install build-essential
 sudo apt-get -y install libssl-dev
 sudo apt-get install -y libgflags-dev
@@ -38,6 +41,7 @@ sudo apt-get install -y libevent-dev
 sudo apt-get install -y systemd
 #sudo apt-get install memcached
 sudo apt-get install libaio*
+sudo apt-get install software-properties-common
 }
 
 INSTALL_SPARK(){
@@ -85,6 +89,45 @@ INSTALL_MYSQL() {
 	sudo mkdir /var/lib/mysql/mysql -p
 	sudo systemctl start mysql
 }
+
+ADD_SPARK_TO_BASHRC() {
+	echo "export SPARK_HOME=/users/skannan/ssd/NVM/appbench/apps/spark" &>> ~/.bashrc
+	echo "export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin" &>> ~/.bashrc
+	echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre" &>> ~/.bashrc
+	echo "export HADOOP_HOME=$SPARK_HOME/hadoop-3.2.1" &>> ~/.bashrc
+	echo "export HADOOP_INSTALL=$HADOOP_HOME" &>> ~/.bashrc
+	echo "export HADOOP_MAPRED_HOME=$HADOOP_HOME" &>> ~/.bashrc
+	echo "export HADOOP_COMMON_HOME=$HADOOP_HOME" &>> ~/.bashrc
+	echo "export HADOOP_HDFS_HOME=$HADOOP_HOME" &>> ~/.bashrc
+	echo "export YARN_HOME=$HADOOP_HOME" &>> ~/.bashrc
+	echo "export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native" &>> ~/.bashrc
+	echo "export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin" &>> ~/.bashrc
+	echo "export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"" &>> ~/.bashrc
+}
+
+INSTALL_SPARK_HIBENCH(){
+	cd $APPBENCH/apps
+	SPARKFILE=spark-2.4.4-bin-hadoop2.7.tgz
+	SPARKDIR=$APPBENCH/apps/spark
+	HIBENCH=$SPARKDIR/HiBench
+        SPARKFILES=$APPBENCH/apps/spark_files
+	HADOOP_DIR=$SPARKDIR/hadoop-3.2.1
+
+       ADD_SPARK_TO_BASHRC
+
+	wget https://www.apache.org/dist/spark/spark-2.4.4/$SPARKFILE
+	tar -xvzf $SPARKFILE
+	rm $SPARKFILE
+	mv spark-2.4.4* $SPARKDIR
+	cd $SPARKDIR
+	wget http://apache.mirrors.pair.com/hadoop/common/hadoop-3.2.1/hadoop-3.2.1.tar.gz
+        git clone https://github.com/Intel-bigdata/HiBench
+        cd $HIBENCH
+	mvn -Dspark=2.1 -Dscala=2.11 clean package
+	cp $SPARKFILES/hadoop-3.2.1/etc/* $HADOOP_DIR/etc/
+        cp $SPARKFILES/HiBench/conf/* $HIBENCH/conf/ 
+}
+
 
 INSTALL_CASSANDRA() {
 	cd $APPBENCH/apps

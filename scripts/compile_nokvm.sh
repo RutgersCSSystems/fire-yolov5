@@ -1,10 +1,16 @@
 #!/bin/bash
 set -x
 
-#make menuconfig
-#make olddefconfig
 #Compile the kernel
 cd $KERN_SRC
+
+if [[ $1 == "makemenu" ]];
+then
+	make menuconfig
+fi
+
+
+
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA &> compile.out
 grep -r "error:" compile.out &> errors.out
