@@ -116,12 +116,28 @@ INSTALL_SPARK_HIBENCH(){
 
        ADD_SPARK_TO_BASHRC
 
-	wget https://www.apache.org/dist/spark/spark-2.4.4/$SPARKFILE
-	tar -xvzf $SPARKFILE
-	rm $SPARKFILE
-	mv spark-2.4.4* $SPARKDIR
+	# Check if Spark file exists?
+	if [ -f $SPARKFILE ]; then
+	  	  echo "$SPARKFILE exist"
+	else 
+		wget https://www.apache.org/dist/spark/spark-2.4.4/$SPARKFILE
+		tar -xvzf $SPARKFILE
+	fi
+
+	if [ -d $SPARKDIR ]; then
+		echo "$SPARKDIR exist"
+	else
+		mv spark-2.4.4* $SPARKDIR
+	fi
 	cd $SPARKDIR
-	wget http://apache.mirrors.pair.com/hadoop/common/$HADOOP/$HADOOP".tar.gz"
+
+	if [ -f $HADOOP".tar.gz" ]; then
+  	  echo "$HADOOP".tar.gz" exist"
+	else 
+	    wget http://apache.mirrors.pair.com/hadoop/common/$HADOOP/$HADOOP".tar.gz"
+	    tar -xvzf $HADOOP".tar.gz"
+	fi
+	
         git clone https://github.com/Intel-bigdata/HiBench
         cd $HIBENCHDIR
 	mvn -Dspark=2.1 -Dscala=2.11 clean package
