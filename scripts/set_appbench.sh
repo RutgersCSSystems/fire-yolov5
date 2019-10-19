@@ -103,6 +103,8 @@ ADD_SPARK_TO_BASHRC() {
 	echo "export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native" &>> ~/.bashrc
 	echo "export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin" &>> ~/.bashrc
 	echo "export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"" &>> ~/.bashrc
+	ssh-keygen
+	cat ~/.ssh/id_rsa.pub &>> ~/.ssh/authorized_keys
 }
 
 INSTALL_SPARK_HIBENCH(){
