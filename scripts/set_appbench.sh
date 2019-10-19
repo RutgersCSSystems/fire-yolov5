@@ -109,9 +109,10 @@ INSTALL_SPARK_HIBENCH(){
 	cd $APPBENCH/apps
 	SPARKFILE=spark-2.4.4-bin-hadoop2.7.tgz
 	SPARKDIR=$APPBENCH/apps/spark
-	HIBENCH=$SPARKDIR/HiBench
+	HIBENCHDIR=$SPARKDIR/HiBench
         SPARKFILES=$APPBENCH/apps/spark_files
-	HADOOP_DIR=$SPARKDIR/hadoop-3.2.1
+	HADOOP="hadoop-3.2.1"
+	HADOOP_DIR=$SPARKDIR/$HADOOP
 
        ADD_SPARK_TO_BASHRC
 
@@ -120,12 +121,12 @@ INSTALL_SPARK_HIBENCH(){
 	rm $SPARKFILE
 	mv spark-2.4.4* $SPARKDIR
 	cd $SPARKDIR
-	wget http://apache.mirrors.pair.com/hadoop/common/hadoop-3.2.1/hadoop-3.2.1.tar.gz
+	wget http://apache.mirrors.pair.com/hadoop/common/$HADOOP/$HADOOP".tar.gz"
         git clone https://github.com/Intel-bigdata/HiBench
-        cd $HIBENCH
+        cd $HIBENCHDIR
 	mvn -Dspark=2.1 -Dscala=2.11 clean package
-	cp $SPARKFILES/hadoop-3.2.1/etc/* $HADOOP_DIR/etc/
-        cp $SPARKFILES/HiBench/conf/* $HIBENCH/conf/ 
+	cp $SPARKFILES/$HADOOP/etc/* $HADOOP_DIR/etc/
+        cp $SPARKFILES/HiBench/conf/* $HIBENCHDIR/conf/ 
 }
 
 
@@ -176,6 +177,9 @@ INSTALL_CASSANDRA
 }
 
 INSTALL_SYSTEM_LIBS
+INSTALL_SPARK_HIBENCH
+exit
+
 INSTALL_CMAKE
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
