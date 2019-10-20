@@ -1,6 +1,14 @@
 #!/bin/bash
 set -x
 
+QEMU_SET() {
+	echo "export HDFS_NAMENODE_USER="root"" &>> ~/.bashrc
+	echo "export HDFS_DATANODE_USER="root"" &>> ~/.bashrc
+	echo "export HDFS_SECONDARYNAMENODE_USER="root"" &>> ~/.bashrc
+	echo "export YARN_RESOURCEMANAGER_USER="root"" &>> ~/.bashrc
+	echo "export YARN_NODEMANAGER_USER="root"" &>> ~/.bashrc
+}
+
 ADD_SPARK_TO_BASHRC() {
 	SPARK_HOME=$APPBENCH/apps/spark
 	HADOOP_HOME=$SPARK_HOME/hadoop-3.2.1
@@ -62,3 +70,4 @@ INSTALL_SPARK_HIBENCH(){
 
 source scripts/setvars.sh
 INSTALL_SPARK_HIBENCH
+QEMU_SET
