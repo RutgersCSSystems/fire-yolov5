@@ -2,6 +2,8 @@
 set -x
 
 ADD_SPARK_TO_BASHRC() {
+	SPARK_HOME=$APPBENCH/apps/spark
+	HADOOP_HOME=$SPARK_HOME/hadoop-3.2.1
 	echo "export SPARK_HOME=/users/skannan/ssd/NVM/appbench/apps/spark" &>> ~/.bashrc
 	echo "export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin" &>> ~/.bashrc
 	echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre" &>> ~/.bashrc

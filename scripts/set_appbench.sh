@@ -148,8 +148,6 @@ INSTALL_ROCKSDB
 GETAPPS
 exit
 
-exit
-
 #INSTALL_SYSBENCH
 #INSTALL_MYSQL
 # Set variable, setup packages and generate data
@@ -165,7 +163,3 @@ $APPBENCH/install_quartz.sh
 $APPBENCH/throttle.sh
 $APPBENCH/throttle.sh
 exit
-
-INSTALL_SPARK
-exit
-
