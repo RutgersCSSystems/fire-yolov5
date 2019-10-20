@@ -222,20 +222,23 @@ void reset_hetero_stats(struct task_struct *task) {
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
-long timediff (struct timeval *start, struct timeval *end) {
-	
+long 
+timediff (struct timeval *start, struct timeval *end) 
+{
 	long diff = 0;
 
 	if(start->tv_sec*1000000 + start->tv_usec == 0) {
 		return 0;
 	}
-	
 	diff = (end->tv_sec*1000000 + end->tv_usec) - 
 			(start->tv_sec*1000000 + start->tv_usec);
 	return diff;
 }
 
-int check_listcnt_threshold (unsigned int count){
+
+int 
+check_listcnt_threshold (unsigned int count)
+{
 
 	if(min_migrate_cnt > count) 
 		return 0;
@@ -244,18 +247,23 @@ int check_listcnt_threshold (unsigned int count){
 }
 EXPORT_SYMBOL(check_listcnt_threshold);
 
-
-int check_hetero_proc (struct task_struct *task) 
+/*
+ * Check whether is a hetero process 
+ */
+int 
+check_hetero_proc (struct task_struct *task) 
 {
-    //f(current->pid == hetero_pid && hetero_pid){
-    if (task && task->active_mm && (task->active_mm->hetero_task == HETERO_PROC)){
+    if (task && task->active_mm && (task->active_mm->hetero_task == HETERO_PROC)) {
+	if(!strcmp(task->comm, "java")) 	
 		return 1;
     }
     return 0; 	
 }
 EXPORT_SYMBOL(check_hetero_proc);
 
-int check_hetero_page(struct mm_struct *mm, struct page *page) {
+
+int 
+check_hetero_page(struct mm_struct *mm, struct page *page) {
 
 	int rc = -1;
 
@@ -269,7 +277,8 @@ int check_hetero_page(struct mm_struct *mm, struct page *page) {
 EXPORT_SYMBOL(check_hetero_page);
 
 
-static int stop_threads(struct task_struct *task, int force) {
+static int 
+stop_threads(struct task_struct *task, int force) {
 
 	int idx = 0;
 
@@ -289,9 +298,6 @@ static int stop_threads(struct task_struct *task, int force) {
 		}*/
 		if(thrd_idx)
 			thrd_idx--;
-
-		//printk(KERN_ALERT "%s:%d STOPING THREAD IDX %d\n",
-		//__func__,__LINE__, thrd_idx);
         }
         spin_unlock(&kthread_lock);
 #endif
@@ -302,7 +308,8 @@ static int stop_threads(struct task_struct *task, int force) {
 /* 
 * Exit function called during process exit 
 */
-int is_hetero_exit(struct task_struct *task) 
+int 
+is_hetero_exit(struct task_struct *task) 
 {
 
     if(check_hetero_proc(task)) {
@@ -852,6 +859,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #ifdef _ENABLE_HETERO_THREAD
 	int idx = 0;
 #endif
+
+	if(strcmp(current->comm, "java"))
+		return;
 
 #ifdef CONFIG_HETERO_ENABLE
     switch(flag) {

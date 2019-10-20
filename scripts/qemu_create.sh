@@ -34,6 +34,8 @@ IMAGE_CREATE() {
 	#Chroot and Now install all your required packages; lets start with vim and build_esstentials.
 	sudo chroot $MOUNT_DIR && sudo apt-get install vim && sudo apt-get install build-essential && sudo apt-get install ssh
 	#You are all set. Now unmount your image file from the directory.
+        
+	sudo cp /etc/apt/source.list
 }
 
 
