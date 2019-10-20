@@ -314,11 +314,6 @@ int is_hetero_exit(struct task_struct *task)
         //reset_hetero_stats(task);
 
 #ifdef _ENABLE_HETERO_THREAD
-	//int idx = 0, idx_stopped=0;
-	//spin_lock(&kthread_lock);
-	//stop_threads(current, 0);
-	//printk(KERN_ALERT "%s:%d REMAINING THREAD %d \n",
-	//		thrd_idx, __func__,__LINE__);
 	spin_lock(&kthread_lock);
 	if(thrd_idx)
 		thrd_idx--;
@@ -387,7 +382,8 @@ is_hetero_vma(struct vm_area_struct *vma) {
 }
 
 
-int is_hetero_obj(void *obj) 
+int 
+is_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
         /*If we do not enable object affinity then we simply 
@@ -397,7 +393,6 @@ int is_hetero_obj(void *obj)
 #endif
 
 	if(obj && current && current->active_mm && 
-		//current->active_mm->hetero_obj && current->active_mm->hetero_obj == obj){
 		current->hetero_obj && current->hetero_obj == obj){
 		//debug_hetero_obj(obj);
 		return 1;
@@ -592,6 +587,9 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 
 	if (!current || !current->active_mm)
 		return;
+
+	if ((current->active_mm->pgcache_hits_cnt % 100) == 0)
+		print_hetero_stats(current);
 
 	/*Check if page is in the correct node and 
 	we are not deleting and only inserting the page*/
@@ -828,8 +826,6 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
 	}else {
-		//hetero_force_dbg("%s:%d TARGET %lu \n", 
-		//	__func__, __LINE__, *target);		
 		*target = *target + g_migrate_freq;
 	}
 

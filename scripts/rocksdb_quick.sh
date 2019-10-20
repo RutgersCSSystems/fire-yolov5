@@ -162,10 +162,11 @@ fi
 
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
+#SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH -D_NET"
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH"
 $NVMBASE/scripts/clear_cache.sh
+exit
 
 #### MIGRATION ONLY NO PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
