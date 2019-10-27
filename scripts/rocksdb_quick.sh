@@ -67,8 +67,8 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="rocksdb.out"
-#APP="HiBench.out"
+#APP="rocksdb.out"
+APP="HiBench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
@@ -113,7 +113,7 @@ RUNAPP() {
 	if [ "$APP" = "HiBench.out" ]
 	then
 		cd $APPBENCH/apps/spark/HiBench
-		$APPBENCH/apps/spark/HiBench/run.sh &> $OUTPUT
+		$APPBENCH/apps/spark/HiBench/run.sh #&> $OUTPUT
 	fi
         #$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
         #$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
