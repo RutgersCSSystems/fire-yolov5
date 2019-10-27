@@ -1698,6 +1698,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
 		file && file->f_mapping)  {
                 set_fsmap_hetero_obj(file->f_mapping);
         }
+        if(current && current->mm && current->comm && !strcmp(current->comm, "java"))  {
+		current->mm->hetero_task = HETERO_PROC;
+        }
+
 #endif
 
 	/* Check against address space limit. */
@@ -3133,7 +3137,7 @@ void exit_mmap(struct mm_struct *mm)
 	}
 	vm_unacct_memory(nr_accounted);
 #ifdef CONFIG_HETERO_ENABLE
-	//is_hetero_exit();
+	is_hetero_exit(current);
 #endif
 }
 

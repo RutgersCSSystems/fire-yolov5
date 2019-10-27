@@ -7,6 +7,7 @@ override CFLAGS += -Wall -fpic
 
 migration: migration.c
 	$(CC) $(CFLAGS) -c migration.c $(LIBS) -D_STOPMIGRATION #-D_STOPONDEMAND
+	$(CC) reset.c -o reset $(LIBS)
 	$(CC) $(CFLAGS) -shared -o libmigration.so migration.o $(LIBS)
 
 install:
@@ -19,4 +20,4 @@ install:
 clean:
 	rm -rf *.o
 	rm -rf *.so
-
+	rm -rf reset

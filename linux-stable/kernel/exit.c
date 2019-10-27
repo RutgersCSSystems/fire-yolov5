@@ -771,12 +771,6 @@ void __noreturn do_exit(long code)
 	profile_task_exit(tsk);
 	kcov_task_exit(tsk);
 
-#ifdef CONFIG_HETERO_ENABLE
-	if(code == SIGKILL)
-        	is_hetero_exit(tsk);
-	if(code == SIGUSR1)
-		is_hetero_exit(tsk);
-#endif
 	WARN_ON(blk_needs_flush_plug(tsk));
 
 	if (unlikely(in_interrupt()))
@@ -929,6 +923,14 @@ void __noreturn do_exit(long code)
 
 	lockdep_free_task(tsk);
 	do_task_dead();
+
+#ifdef CONFIG_HETERO_ENABLE
+	//if(code == SIGKILL)
+        is_hetero_exit(tsk);
+	//if(code == SIGUSR1)
+	//	is_hetero_exit(tsk);
+#endif
+
 }
 EXPORT_SYMBOL_GPL(do_exit);
 

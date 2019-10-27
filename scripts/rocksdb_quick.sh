@@ -1,10 +1,10 @@
 #!/bin/bash
-#set -x
+set -x
 cd $NVMBASE
 APP=""
-TYPE="NVM"
 #TYPE="NVM"
-CAPACITY=3192
+TYPE="SSD"
+CAPACITY=3912
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -67,12 +67,13 @@ COMPILE_SHAREDLIB() {
 }
 
 
-#APP="rocksdb.out"
+APP="rocksdb.out"
+#APP="HiBench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
 #APP=fxmark
-APP="flash.out"
+#APP="flash.out"
 #APP="cassandra.out"
 
 
@@ -109,6 +110,11 @@ RUNAPP() {
                 $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
         fi
 
+	if [ "$APP" = "HiBench.out" ]
+	then
+		cd $APPBENCH/apps/spark/HiBench
+		$APPBENCH/apps/spark/HiBench/run.sh &> $OUTPUT
+	fi
         #$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
         #$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
         sudo dmesg -c &>> $OUTPUT
@@ -159,43 +165,19 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
-
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
-#SETUPEXTRAM
+SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_PREFETCH"
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
 $NVMBASE/scripts/clear_cache.sh
 exit
 
-#### MIGRATION ONLY NO PREFETCH #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
-
-<<<<<<< HEAD
-#THROTTLE
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF"
-exit
-
-
-export APPPREFIX="numactl --preferred=0"
-=======
 #### NAIVE PLACEMENT #############
+
 export APPPREFIX="numactl  --preferred=0"
->>>>>>> 8ba8c2ed04eec0c1927925de7a0be07ab9b34bac
 SETUPEXTRAM
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
-
-#### OBJ AFFINITY NO MIGRATION NO PREFETCH #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
 
 
 export APPPREFIX="numactl --membind=1"
@@ -213,6 +195,22 @@ export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
 
+#### MIGRATION ONLY NO PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+
+
+#### OBJ AFFINITY NO MIGRATION NO PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+
+
+
+
 
 #### WITHOUT PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
@@ -220,29 +218,6 @@ SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
 $NVMBASE/scripts/clear_cache.sh
-
-
-
-
-<<<<<<< HEAD
-=======
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-net-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
-$NVMBASE/scripts/clear_cache.sh
-
-
-
-
-exit
->>>>>>> 8ba8c2ed04eec0c1927925de7a0be07ab9b34bac
-
-
-
-
-
-
 
 
 

@@ -111,7 +111,7 @@ INSTALL_ROCKSDB() {
 	#cd build
 	#rm -rf CMakeCache.txt
 	#cmake ..
-	git checkout a8975b62455cb73a8e23ff6be709df1b97859d2d
+	#git checkout a8975b62455cb73a8e23ff6be709df1b97859d2d
 	DEBUG_LEVEL=0 make shared_lib db_bench -j16
 	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
 }
@@ -138,13 +138,14 @@ GETAPPS(){
 	INSTALL_CASSANDRA
 }
 
+INSTALL_ROCKSDB
+exit
 INSTALL_SYSTEM_LIBS
 scripts/set_spark.sh
 exit
 
 INSTALL_CMAKE
 INSTALL_GFLAGS
-INSTALL_ROCKSDB
 GETAPPS
 exit
 

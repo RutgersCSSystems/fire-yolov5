@@ -55,7 +55,7 @@ static void dest() __attribute__((destructor));
 
 
 #define HETERO_MIGRATE_FREQ 17
-#define FREQ 50000
+#define FREQ 10000
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
@@ -107,17 +107,15 @@ int enbl_hetero_pgcache_readahead_set(void)
 }
 
 
-
 void dest() {
     fprintf(stderr, "application termination...\n");
-
     /*a = syscall(__NR_start_trace, PRINT_STATS);
     a = syscall(__NR_start_trace, CLEAR_COUNT);
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
-    a = syscall(__NR_start_trace, TIME_RESET);*/
+    a = syscall(__NR_start_trace, TIME_RESET);
     syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
-    syscall(__NR_start_trace, CLEAR_COUNT, 0);
+    syscall(__NR_start_trace, CLEAR_COUNT, 0);*/
 }
 
 void con() {
@@ -129,13 +127,8 @@ void con() {
 #ifndef _DISABLE_HETERO
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
-        /*a = syscall(__NR_start_trace, COLLECT_TRACE);
-        a = syscall(__NR_start_trace, PFN_TRACE);
-        a = syscall(__NR_start_trace, COLLECT_TRACE);
-        a = syscall(__NR_start_trace, PFN_TRACE);
-        a = syscall(__NR_start_trace, TIME_TRACE);*/
-	syscall(__NR_start_trace, CLEAR_COUNT, 0);
-        syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);
+	/*syscall(__NR_start_trace, CLEAR_COUNT, 0);
+        syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);*/
         syscall(__NR_start_trace, HETERO_PGCACHE, 0);
         syscall(__NR_start_trace, HETERO_BUFFER, 0);
         syscall(__NR_start_trace, HETERO_JOURNAL, 0);

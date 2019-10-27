@@ -64,9 +64,9 @@
 #include "internal.h"
 
 /* start_trace flag option */
-#define CLEAR_COUNT	0
+#define CLEAR_GLOBALCOUNT 0
 #define COLLECT_TRACE 1
-#define PRINT_STATS 2
+#define PRINT_GLOBAL_STATS 2
 #define DUMP_STACK 3
 #define PFN_TRACE 4
 #define PFN_STAT 5
@@ -135,7 +135,6 @@ int min_migrate_cnt=0;
 int hetero_pid=0;
 int hetero_usrpg_cnt=0;
 int hetero_kernpg_cnt=0;
-char procname[TASK_COMM_LEN];
 long migrate_time=0;
 
 unsigned long g_cachehits=0;
@@ -167,35 +166,58 @@ void print_global_stats(void) {
 }
 EXPORT_SYMBOL(print_global_stats);
 
+struct mm_struct* 
+getmm(struct task_struct *task) 
+{
+        struct mm_struct *mm = NULL;
 
-void print_hetero_stats(struct task_struct *task) {
+        if(task->mm) {
+                mm = task->mm;
+	}
+        else if(task->active_mm) {
+                mm = task->active_mm;
+	}
+	return mm;
+}
 
+
+void 
+print_hetero_stats(struct task_struct *task) 
+{
 #ifdef CONFIG_HETERO_STATS
-	unsigned long buffpgs = task->active_mm->pgbuffdel;
-	unsigned long cachepgs = task->active_mm->pgcachedel;
+	unsigned long buffpgs = 0;
+	unsigned long cachepgs = 0;
+	struct mm_struct *mm = NULL;
 	long avgbuff_life = 0, avgcache_life = 0;
 
+	mm = getmm(task);
+	if(!mm)
+		return;
+
+	buffpgs = mm->pgbuffdel;
+	cachepgs = mm->pgcachedel;
+
 	if(buffpgs) 
-		avgbuff_life = task->active_mm->avg_kbufpage_life/buffpgs;
+		avgbuff_life = mm->avg_kbufpage_life/buffpgs;
 
 	if(cachepgs)	
-		avgcache_life = task->active_mm->avg_cachepage_life/cachepgs;
+		avgcache_life = mm->avg_cachepage_life/cachepgs;
 
-       printk("Curr %d Currname %s HeteroProcname %s " 
+        printk("EXITING PROCESS PID %d Currname %s " 
 		"cache-hits %lu cache-miss %lu " 
 	      	"buff-hits %lu buff-miss %lu " 
 		"migrated %lu migrate_time %ld " 
                 "avg_buff_life(us) %ld pgbuff-del %lu " 
 		"avg_cache_life(us) %ld pgcache-del %lu " 
 		"active-cache %lu\n ", 
-	  	current->pid, current->comm, procname, 
-              	task->active_mm->pgcache_hits_cnt, task->active_mm->pgcache_miss_cnt, 
-	      	task->active_mm->pgbuff_hits_cnt, task->active_mm->pgbuff_miss_cnt, 
-		task->active_mm->pages_migrated, migrate_time, 
-                avgbuff_life, task->active_mm->pgbuffdel, avgcache_life, 
-		task->active_mm->pgcachedel, 
-		(task->active_mm->pgcache_hits_cnt - task->active_mm->pgcachedel)
-	);
+	  	task->pid, task->comm, mm->pgcache_hits_cnt, 
+		mm->pgcache_miss_cnt, 
+	      	mm->pgbuff_hits_cnt, mm->pgbuff_miss_cnt, 
+		mm->pages_migrated, migrate_time, 
+                avgbuff_life, mm->pgbuffdel, avgcache_life, 
+		mm->pgcachedel, 
+		(mm->pgcache_hits_cnt - mm->pgcachedel)
+       );
 #endif
 }
 EXPORT_SYMBOL(print_hetero_stats);
@@ -204,20 +226,13 @@ EXPORT_SYMBOL(print_hetero_stats);
 void reset_hetero_stats(struct task_struct *task) {
 
 #ifdef CONFIG_HETERO_STATS
-        task->active_mm->pgcache_hits_cnt = 0;
-	task->active_mm->pgcache_miss_cnt = 0;
-	task->active_mm->pgbuff_miss_cnt = 0;
-	task->active_mm->pgbuff_hits_cnt = 0;
-
-	/* Represents pages migrated and 
-	* frequency of page migration attempts
-	*/
-	task->active_mm->pages_migrated = 0;
-	task->active_mm->migrate_attempt = 0;
-	task->active_mm->avg_kbufpage_life = 0;
-	task->active_mm->avg_cachepage_life = 0;
-	task->active_mm->pgbuffdel = 0;
-	task->active_mm->pgcachedel = 0;
+	g_cachehits = 0;
+	g_cachemiss = 0;
+	g_buffhits = 0;
+	g_buffmiss = 0;
+	g_migrated = 0;
+	g_cachedel = 0;
+	g_buffdel = 0;
 #endif
 }
 EXPORT_SYMBOL(reset_hetero_stats);
@@ -248,15 +263,66 @@ check_listcnt_threshold (unsigned int count)
 EXPORT_SYMBOL(check_listcnt_threshold);
 
 /*
+* Callers responsibility to check mm is not NULL
+*/
+int
+check_parent_hetero (struct task_struct *task, struct mm_struct *mm) 
+{
+	struct task_struct *realp = NULL;
+	struct task_struct *parent = NULL;
+	struct task_struct *group_leader = NULL;
+	struct mm_struct *parent_mm = NULL;
+
+
+
+	realp  = task->real_parent;
+	parent = task->parent;
+	group_leader = task->group_leader;
+	if(realp) {
+		parent_mm = getmm(realp); 
+	}/*else if (parent) {
+		parent_mm = getmm(parent);
+	}else if (group_leader) {
+		parent_mm = getmm(group_leader);
+	}*/
+
+	if(strcmp(realp->comm, "java")) {
+		return 0;
+        }
+
+	if(parent_mm && parent_mm->hetero_task == HETERO_PROC) {
+		mm->hetero_task = HETERO_PROC;
+		return 1;
+	}
+	return 0;
+}
+
+
+/*
  * Check whether is a hetero process 
  */
 int 
 check_hetero_proc (struct task_struct *task) 
 {
-    if (task && task->active_mm && (task->active_mm->hetero_task == HETERO_PROC)) {
-	if(!strcmp(task->comm, "java")) 	
-		return 1;
+    struct mm_struct *mm = NULL; 
+    
+    mm = getmm(task);
+    if(!mm ) 
+	return 0;
+
+    if (mm->hetero_task == HETERO_PROC) {
+	return 1;
     }
+
+    /*if (check_parent_hetero(task, mm)) {
+	return 1;
+    }*/
+
+    if(!strcmp(task->comm, "java")) {
+	mm->hetero_task = HETERO_PROC;
+	return 1;
+    }
+
     return 0; 	
 }
 EXPORT_SYMBOL(check_hetero_proc);
@@ -278,11 +344,12 @@ EXPORT_SYMBOL(check_hetero_page);
 
 
 static int 
-stop_threads(struct task_struct *task, int force) {
-
-	int idx = 0;
+stop_threads(struct task_struct *task, int force) 
+{
 
 #ifdef _ENABLE_HETERO_THREAD
+	int idx = 0;
+
         spin_lock(&kthread_lock);
         for(idx = 0; idx < MAXTHREADS; idx++) {
 		/*if(force && THREADS[idx].thrd) {
@@ -311,15 +378,8 @@ stop_threads(struct task_struct *task, int force) {
 int 
 is_hetero_exit(struct task_struct *task) 
 {
-
-    if(check_hetero_proc(task)) {
-	/*printk("hetero_pid %d Curr %d Currname %s HeteroProcname %s " 
-		"user pages %d kern pages %d\n",
-		hetero_pid, current->pid, current->comm, procname,  
-	        hetero_usrpg_cnt, hetero_kernpg_cnt);*/
+    if(task && check_hetero_proc(task)) {
 	print_hetero_stats(task);
-        //reset_hetero_stats(task);
-
 #ifdef _ENABLE_HETERO_THREAD
 	spin_lock(&kthread_lock);
 	if(thrd_idx)
@@ -333,13 +393,15 @@ is_hetero_exit(struct task_struct *task)
 EXPORT_SYMBOL(is_hetero_exit);
 
 
-void debug_hetero_obj(void *obj) {
+void 
+debug_hetero_obj(void *obj) 
+{
 
 #ifdef CONFIG_HETERO_DEBUG
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
 
-	//struct inode *currinode = (struct inode *)current->active_mm->hetero_obj;
+	//struct inode *currinode = (struct inode *)current->mm->hetero_obj;
 	struct inode *currinode = (struct inode *)current->hetero_obj;
 	if(inode && currinode) {
 
@@ -350,7 +412,7 @@ void debug_hetero_obj(void *obj) {
 		curr_dentry = d_find_any_alias(currinode);
 		printk(KERN_ALERT "%s:%d Proc %s Hetero Proc? %d Inode %lu FNAME %s "
 		 "current->heterobj_name %s Write access? %d \n",
-		__func__,__LINE__,current->comm, current->active_mm->hetero_task, inode->i_ino, 
+		__func__,__LINE__,current->comm, current->mm->hetero_task, inode->i_ino, 
 		dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
 	}
 #endif
@@ -358,9 +420,9 @@ void debug_hetero_obj(void *obj) {
 EXPORT_SYMBOL(debug_hetero_obj);
 
 
-
-int is_hetero_cacheobj(void *obj){
-
+int 
+is_hetero_cacheobj(void *obj)
+{
 	if(!enbl_hetero_net)
 		return 0;
 
@@ -374,8 +436,8 @@ EXPORT_SYMBOL(is_hetero_cacheobj);
 * when CONFIG_HETERO_OBJAFF is enabled
 */
 int 
-is_hetero_vma(struct vm_area_struct *vma) {
-
+is_hetero_vma(struct vm_area_struct *vma) 
+{
 #ifdef CONFIG_HETERO_OBJAFF
 	if(!enbl_hetero_objaff)
 		return 1;
@@ -399,11 +461,11 @@ is_hetero_obj(void *obj)
 		return 1;
 #endif
 
-	if(obj && current && current->active_mm && 
+	if(obj && current && current->mm && 
 		current->hetero_obj && current->hetero_obj == obj){
 		//debug_hetero_obj(obj);
 		return 1;
-	//}else if(obj && current && current->active_mm && current->active_mm->hetero_obj) {
+	//}else if(obj && current && current->mm && current->mm->hetero_obj) {
 	}else if(obj && current && current->hetero_obj) {
 		//dump_stack();
        		//debug_hetero_obj(obj);
@@ -429,6 +491,7 @@ int is_hetero_pgcache_readahead_set(void)
 {
 	if(check_hetero_proc(current))
 		return enbl_hetero_pgcache_readahead;
+	return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_readahead_set);
 
@@ -448,7 +511,7 @@ EXPORT_SYMBOL(is_hetero_buffer_set);
 void set_curr_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
-        //current->active_mm->hetero_obj = obj;
+        //current->mm->hetero_obj = obj;
 	current->hetero_obj = obj;
 #endif
 }
@@ -476,8 +539,11 @@ set_fsmap_hetero_obj(void *mapobj)
 	struct inode *inode = NULL;
 	void *current_obj = current->hetero_obj;
 
-#ifdef CONFIG_HETERO_OBJAFF
+#ifdef CONFIG_HETERO_DEBUG
 	struct dentry *res = NULL;
+#endif
+
+#ifdef CONFIG_HETERO_OBJAFF
         /*If we do not enable object affinity then we simply 
 	return true for all the case*/
 	if(!enbl_hetero_objaff)
@@ -502,7 +568,7 @@ set_fsmap_hetero_obj(void *mapobj)
 
                 mapping->hetero_obj = (void *)inode;
 
-                //current->active_mm->hetero_obj = (void *)inode;
+                //current->mm->hetero_obj = (void *)inode;
 		current->hetero_obj = (void *)inode;
 
 #ifdef CONFIG_HETERO_DEBUG
@@ -536,7 +602,7 @@ void set_sock_hetero_obj(void *socket_obj, void *inode)
 
 		sock->hetero_obj = (void *)inode;
 
-		//current->active_mm->hetero_obj = (void *)inode;
+		//current->mm->hetero_obj = (void *)inode;
 		current->hetero_obj = (void *)inode;
 
 		sock->__sk_common.hetero_obj = (void *)inode;
@@ -563,7 +629,7 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 
     if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
 		sock->hetero_obj = (void *)inode;
-		//current->active_mm->hetero_obj = (void *)inode;
+		//current->mm->hetero_obj = (void *)inode;
 		current->hetero_obj = (void *)inode;
 		sock->__sk_common.hetero_obj = (void *)inode;
 		if (sock->sk_dst_cache && sock->sk_dst_cache->dev) {
@@ -586,22 +652,25 @@ EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
 	int correct_node = 0; 
+	struct mm_struct *mm = NULL;
+
 	if(!page) 
 		return;
 
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
 
-	if (!current || !current->active_mm)
+	if (!current)
 		return;
 
-	if ((current->active_mm->pgcache_hits_cnt % 100) == 0)
-		print_hetero_stats(current);
+	mm = getmm(current);
+	if(!mm)
+		return;
 
 	/*Check if page is in the correct node and 
 	we are not deleting and only inserting the page*/
 	if(correct_node && !delpage) {
-		current->active_mm->pgcache_hits_cnt += 1;
+		mm->pgcache_hits_cnt += 1;
 		page->hetero = HETERO_PG_FLAG;
 		incr_global_stats(&g_cachehits);
 		//page->hetero_create_time = (struct timeval){0};
@@ -609,15 +678,15 @@ void update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 		//do_gettimeofday(&page->hetero_create_time);
 		//printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
 	} else if(!correct_node && !delpage) {
-		current->active_mm->pgcache_miss_cnt += 1;
+		mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
 		incr_global_stats(&g_cachemiss);
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
 		//do_gettimeofday(&page->hetero_del_time);
-		//current->active_mm->avg_cachepage_life += 
+		//current->mm->avg_cachepage_life += 
 		//	timediff(&page->hetero_create_time, &page->hetero_del_time);
-		current->active_mm->pgcachedel++;
+		mm->pgcachedel++;
 		incr_global_stats(&g_cachedel);
 	}
 
@@ -639,30 +708,36 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage) 
 {
 	int correct_node = 0; 
+	struct mm_struct *mm = NULL;
+
 	if(!page) 
 		return;
 
 	if(page_to_nid(page) == nodeid)
 		correct_node = 1;
 
+	mm = getmm(current);
+	if(!mm)
+		return;
+
 	//Check if page is in the correct node and 
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
-		current->active_mm->pgbuff_hits_cnt += 1;
+		mm->pgbuff_hits_cnt += 1;
 		//page->hetero = HETERO_PG_FLAG;
-		page->hetero_create_time = (struct timeval){0};
-		page->hetero_del_time = (struct timeval){0};
-		do_gettimeofday(&page->hetero_create_time);
+		//page->hetero_create_time = (struct timeval){0};
+		//page->hetero_del_time = (struct timeval){0};
+		//do_gettimeofday(&page->hetero_create_time);
 	}else if(!correct_node && !delpage) {
-		current->active_mm->pgbuff_miss_cnt += 1;
+		mm->pgbuff_miss_cnt += 1;
 		page->hetero = 0;
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
 #ifdef CONFIG_HETERO_STATS
 			do_gettimeofday(&page->hetero_del_time);
-			current->active_mm->avg_kbufpage_life += 
+			mm->avg_kbufpage_life += 
 				timediff(&page->hetero_create_time, &page->hetero_del_time);
-			current->active_mm->pgbuffdel++;
+			mm->pgbuffdel++;
 #endif		
 	}
 	//Either if object affinity is disabled or page node is 
@@ -683,7 +758,7 @@ EXPORT_SYMBOL(update_hetero_pgbuff_stat);
 */
 void update_hetero_pgbuff_stat_miss(void) 
 {
-        current->active_mm->pgbuff_miss_cnt += 1;
+        current->mm->pgbuff_miss_cnt += 1;
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
 #endif
@@ -739,7 +814,7 @@ static int migration_thread_fn(void *arg) {
 
         unsigned long count = 0;
         struct mm_struct *mm = (struct mm_struct *)arg;
-        struct timeval start, end;
+        //struct timeval start, end;
 
         //do_gettimeofday(&start);
         //migration_thrd_active = 1;
@@ -809,7 +884,7 @@ static int migration_thread_fn(void *arg) {
 void 
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
-	int threshold=0;
+	//int threshold=0;
 	unsigned long *target=0;
 	unsigned long *cachemiss=0;
         unsigned long *buffmiss=0;
@@ -818,17 +893,16 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 		return;
 	}
 
-	if(!current->active_mm || (current->active_mm->hetero_task != HETERO_PROC))
+	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
 		return;
 
 	if(!g_cachemiss) {
 		return;
 	}
 
-	cachemiss = &current->active_mm->pgcache_miss_cnt;
-        buffmiss = &current->active_mm->pgbuff_miss_cnt;
-
-	target = &current->active_mm->migrate_attempt;
+	cachemiss = &current->mm->pgcache_miss_cnt;
+        buffmiss = &current->mm->pgbuff_miss_cnt;
+	target = &current->mm->migrate_attempt;
 
 	if((*cachemiss +  *buffmiss) <  *target) {
 		return;
@@ -838,13 +912,14 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 
 #ifdef _ENABLE_HETERO_THREAD
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
-				current->active_mm, "HETEROTHRD");	
+				current->mm, "HETEROTHRD");	
 
 	spin_lock(&kthread_lock);
 	thrd_idx++;
 	spin_unlock(&kthread_lock);
 #else
-	migrate_to_node_hetero(current->active_mm, get_fastmem_node(),
+	print_hetero_stats(current);
+	migrate_to_node_hetero(current->mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
         return;
@@ -859,15 +934,14 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 #ifdef _ENABLE_HETERO_THREAD
 	int idx = 0;
 #endif
-
-	if(strcmp(current->comm, "java"))
-		return;
+        /*if(strcmp(current->comm, "java"))
+	        return;*/
 
 #ifdef CONFIG_HETERO_ENABLE
     switch(flag) {
-	case CLEAR_COUNT:
+	case CLEAR_GLOBALCOUNT:
 	    printk("flag set to clear count %d\n", flag);
-	    global_flag = CLEAR_COUNT;
+	    global_flag = CLEAR_GLOBALCOUNT;
 	    /*reset hetero allocate flags */
 	    enbl_hetero_pgcache = 0;
 	    enbl_hetero_buffer = 0; 
@@ -878,14 +952,11 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    enbl_hetero_pgcache_readahead=0;
 	    /* Enable application defined context */
 	    enbl_hetero_set_context = 0;
-	    reset_hetero_stats(current);	
-
 	    enbl_hetero_objaff = 0;	
-
 	    hetero_pid = 0;
 	    hetero_kernpg_cnt = 0;
 	    hetero_usrpg_cnt = 0;
-            memset(procname,'0', TASK_COMM_LEN);
+	    reset_hetero_stats(current);	
 	    break;
 
 	case COLLECT_TRACE:
@@ -893,13 +964,10 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    global_flag = COLLECT_TRACE;
 	    return global_flag;
 	    break;
-	case PRINT_STATS:
+	case PRINT_GLOBAL_STATS:
 	    printk("flag is set to print stats %d\n", flag);
-	    global_flag = PRINT_STATS;
-	    print_rbtree_stat();
-	    //print_btree_stat();
-	    print_radix_tree_stat();
-	    is_hetero_exit(current);
+	    global_flag = PRINT_GLOBAL_STATS;
+	    print_global_stats();
 	    break;
 	case PFN_TRACE:
 	    printk("flag is set to collect pfn trace %d\n", flag);
@@ -933,8 +1001,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_ALLOCATE:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
-	    print_hetero_stats(current);
-	    print_global_stats();	
+	    //print_hetero_stats(current);
+	    //print_global_stats();	
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
@@ -1000,10 +1068,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	   hetero_dbgmask = 1;	
 #endif
 	    hetero_pid = flag;
-	    reset_hetero_stats(current);
-	    current->active_mm->hetero_task = HETERO_PROC;
-            memcpy(procname, current->comm, TASK_COMM_LEN);
-	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid, current->pid, procname);			
+	    current->mm->hetero_task = HETERO_PROC;
+	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid,
+		current->pid, current->comm);			
 	    break;
     }
 #endif
