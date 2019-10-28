@@ -67,8 +67,9 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="rocksdb.out"
+#APP="rocksdb.out"
 #APP="HiBench.out"
+APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
@@ -110,10 +111,10 @@ RUNAPP() {
                 $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
         fi
 
-	if [ "$APP" = "HiBench.out" ]
+	if [ "$APP" = "spark-bench.out" ]
 	then
-		cd $APPBENCH/apps/spark/HiBench
-		$APPBENCH/apps/spark/HiBench/run.sh &> $OUTPUT
+		cd $APPBENCH/apps/spark/spark-bench
+		$APPBENCH/apps/spark/spark-bench/run.sh &> $OUTPUT
 	fi
         #$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
         #$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
@@ -169,11 +170,9 @@ fi
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH"
 $NVMBASE/scripts/clear_cache.sh
 exit
-
-
 
 #### NAIVE PLACEMENT #############
 export APPPREFIX="numactl  --preferred=0"
@@ -189,9 +188,6 @@ DISABLE_THROTTLE
 export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
-
-
-
 
 
 export APPPREFIX="numactl --membind=1"
@@ -214,7 +210,15 @@ SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
 
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+DISABLE_THROTTLE
+export APPPREFIX="numactl --membind=0"
+SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 
+
+exit
 
 
 
