@@ -34,7 +34,7 @@
 # may want to provide OVERWRITING values on the command line.
 # For example:
 #
-#  JAVA_HOME=/usr/java/testing hdfs dfs -ls
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
 #
 # Therefore, the vast majority (BUT NOT ALL!) of these defaults
 # are configured for substitution and not append.  If append
@@ -65,7 +65,7 @@
 # /etc/profile.d or equivalent.  Some options (such as
 # --config) may react strangely otherwise.
 #
-export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
+# export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
 
 # The maximum amount of heap to use (Java -Xmx).  If no unit
 # is provided, it will be converted to MB.  Daemons will
@@ -184,7 +184,7 @@ export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 # Where (primarily) daemon log files are stored.
 # ${HADOOP_HOME}/logs by default.
 # Java property: hadoop.log.dir
-export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
+# export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
 
 # A string representing this instance of hadoop. $USER by default.
 # This is used in writing log and pid files, so keep that in mind!
@@ -415,5 +415,3 @@ export HADOOP_LOG_DIR=${HADOOP_HOME}/logs
 #
 # For example, to limit who can execute the namenode command,
 # export HDFS_NAMENODE_USER=hdfs
-JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
