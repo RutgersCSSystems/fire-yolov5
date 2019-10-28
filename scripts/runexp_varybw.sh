@@ -3,15 +3,16 @@
 
 cd $NVMBASE
 APP=""
-TYPE="NVM"
-EXPTYPE="CAP"
-#EXPTYPE="BW"
+TYPE="SSD"
+#EXPTYPE="CAP"
+EXPTYPE="BW"
 
 #TYPE="SSD"
-#declare -a bwarr=("4000" "1000" "2000" "500")
-declare -a caparr=("2048" "4096" "8192" "10240")
-declare -a bwarr=("1000")
-let CAPACITY=2048
+declare -a bwarr=("4000" "1000" "2000" "500")
+#declare -a caparr=("2048" "4096" "8192" "10240")
+declare -a caparr=("3192")
+#declare -a bwarr=("1000")
+let CAPACITY=3192
 
 
 OUTPUTDIR=$APPBENCH/output
@@ -180,13 +181,15 @@ do
 		echo $OUTPUTDIR
 
 		export APPPREFIX="numactl --preferred=0"
-		SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
+		#SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
+		SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
+		#export APPPREFIX="numactl --membind=1"
+		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
 		
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
+		#export APPPREFIX="numactl --membind=1"
+		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 	done
 done
 	exit
