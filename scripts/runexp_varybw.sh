@@ -79,7 +79,8 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="rocksdb.out"
+APP="spark-bench.out"
+#APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
@@ -118,6 +119,11 @@ RUNAPP() {
 		$APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
 	fi
 
+	if [ "$APP" = "spark-bench.out" ]
+	then
+		cd $APPBENCH/apps/spark/spark-bench
+		$APPBENCH/apps/spark/spark-bench/run.sh &> $OUTPUT
+	fi
 
 	#$APPBENCH/apps/fxmark/run.sh &> $OUTPUT
 	#$APPBENCH/redis-3.0.0/src/run.sh &> $OUTPUT
@@ -181,8 +187,8 @@ do
 		echo $OUTPUTDIR
 
 		export APPPREFIX="numactl --preferred=0"
-		#SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
-		SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+		SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
+		#SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 
 		#export APPPREFIX="numactl --membind=1"

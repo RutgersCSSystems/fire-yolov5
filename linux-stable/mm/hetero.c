@@ -202,7 +202,7 @@ print_hetero_stats(struct task_struct *task)
 
 	if(cachepgs)	
 		avgcache_life = mm->avg_cachepage_life/cachepgs;
-
+#if 0
         printk("EXITING PROCESS PID %d Currname %s " 
 		"cache-hits %lu cache-miss %lu " 
 	      	"buff-hits %lu buff-miss %lu " 
@@ -218,6 +218,7 @@ print_hetero_stats(struct task_struct *task)
 		mm->pgcachedel, 
 		(mm->pgcache_hits_cnt - mm->pgcachedel)
        );
+#endif
 #endif
 }
 EXPORT_SYMBOL(print_hetero_stats);

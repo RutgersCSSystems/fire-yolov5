@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 TARGET=$OUTPUTDIR
 #APP="rocksdb"
@@ -20,8 +21,8 @@ let SCALE_CASSANDRA_GRAPH=100
 
 let INCR_KERN_BAR_SPACE=3
 let INCR_BREAKDOWN_BAR_SPACE=2
-let INCR_FULL_BAR_SPACE=2
-let INCR_ONE_SPACE=2
+let INCR_FULL_BAR_SPACE=1
+let INCR_ONE_SPACE=1
 
 
 ## declare an array variable
@@ -568,6 +569,32 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+####################ALL APPS##########################
+j=0
+APP='filebench'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "filebench"
+
+APP='redis'
+FORMAT_RESULT_REDIS "redis"
+EXTRACT_RESULT "redis"
+
+APP='rocksdb'
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "rocksdb"
+
+APP='cassandra'
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "cassandra"
+
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
+exit
+
+
+
+
 #####################REDIS NETWORK##############################
 j=0
 APP='redis'
@@ -639,30 +666,6 @@ EXTRACT_KERNSTAT "rocksdb"
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 exit
-
-####################ALL APPS##########################
-j=0
-APP='filebench'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "filebench"
-
-APP='redis'
-FORMAT_RESULT_REDIS "redis"
-EXTRACT_RESULT "redis"
-
-APP='rocksdb'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "rocksdb"
-
-APP='cassandra'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "cassandra"
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
-
-
 
 
 ######################################################
