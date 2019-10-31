@@ -3,7 +3,8 @@
 
 cd $NVMBASE
 APP=""
-TYPE="SSD"
+#TYPE="SSD"
+TYPE="NVM"
 #EXPTYPE="CAP"
 EXPTYPE="BW"
 
@@ -79,8 +80,8 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="spark-bench.out"
-#APP="rocksdb.out"
+#APP="spark-bench.out"
+APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
@@ -178,6 +179,7 @@ do
 			OUTPUTDIR=$APPBENCH/output/BW"$bw-"$TYPE
 			mkdir $OUTPUTDIR
 			export OUTPUTDIR=$APPBENCH/output/BW"$bw-"$TYPE
+			SETUPEXTRAM
 		else
 			OUTPUTDIR=$APPBENCH/output/CAP"$CAPACITY-"$TYPE
 			mkdir $OUTPUTDIR
@@ -188,12 +190,14 @@ do
 
 		export APPPREFIX="numactl --preferred=0"
 		SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
-		#SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+		SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+		SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+		export APPPREFIX="numactl --preferred=1"
+		SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
+		
 		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
-
 		#export APPPREFIX="numactl --membind=1"
 		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
-		
 		#export APPPREFIX="numactl --membind=1"
 		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 	done

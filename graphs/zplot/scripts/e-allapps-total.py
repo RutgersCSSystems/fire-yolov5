@@ -15,9 +15,9 @@ lwidth = 0.3
 xfontsize=10.0
 yfontsize=9.0
 xlabelsize=10.0
-xydim=[250, 190]
+xydim=[270, 170]
 xystart=[100,100]
-xylegend=[50,170]
+xylegend=[50,160]
 xycord = [40,20]
 xmanualarr = []
 xmanualstart=2.5
@@ -30,8 +30,8 @@ mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-NoMigrate
 mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig', 'slowmem-obj-affinity', 'slowmem-only']
 storage=["SSD", "NVM"]
 pattern = "NVM"
-APPS = ["filebench", "redis", "rocksdb", "cassandra"]
-xlabel = ["filebench", "redis", "rocksdb", "cassandra"]
+APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
+xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
 
 
 
@@ -48,7 +48,7 @@ d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord, dimensions=
 
 for j in range(0, len(xlabel)):
 
-    xmanualarr.append((xlabel[j],xmanualstart))
+    xmanualarr.append((APPS[j],xmanualstart))
     xmanualstart = xmanualstart + xmanualint
 
     for i in range(0, len(mech)):

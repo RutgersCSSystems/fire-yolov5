@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 TARGET=$OUTPUTDIR
 #APP="rocksdb"
@@ -17,6 +17,8 @@ let SCALE_FILEBENCH_GRAPH=1000
 let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=10000
 let SCALE_CASSANDRA_GRAPH=100
+let SCALE_SPARK_GRAPH=50000
+
 
 
 let INCR_KERN_BAR_SPACE=3
@@ -94,8 +96,8 @@ EXTRACT_KERNINFO() {
 		echo $j &> "num.data"
 		paste "num.data" $APP"kern.data" &> $resultdir/$outputfile
 		rm -rf "num.data" $APP"kern.data"
-		echo $resultdir/$outputfile
-		cat  $resultdir/$outputfile
+		#echo $resultdir/$outputfile
+		#cat  $resultdir/$outputfile
 	fi
 }
 
@@ -133,6 +135,13 @@ PULL_RESULT() {
 			val=`cat $dir/$APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
+
+	       elif [  "$APP" = 'spark-bench' ];
+	       then
+                        val=`cat $dir/$APPFILE | grep "Elapsed" | awk '{print $8}' | awk -F: '{ print ($1 * 60) + ($2) + $3 }'`
+                        scaled_value=$(echo $val $SCALE_SPARK_GRAPH | awk '{printf "%4.0f\n", $2/$1}')
+			echo $dir/$APPFILE" "$val" "$scaled_value
+                        echo $scaled_value &> $APP".data"
 		else
 			val=`cat $dir/$APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
@@ -141,8 +150,8 @@ PULL_RESULT() {
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $APP".data" &> $resultfile
-		echo $resultfile
-		cat $resultfile
+		#echo $resultfile
+		#cat $resultfile
 	fi
 }
 
@@ -192,7 +201,7 @@ PULL_RESULT_PATTERN() {
 		echo $j &> "num.data"
 		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
 		rm -rf "num.data" $resultfile
-		echo $resultdir/$outputfile"-"$access".data"
+		#echo $resultdir/$outputfile"-"$access".data"
 		cat $resultdir/$outputfile"-"$access".data"
 	fi
 }
@@ -284,7 +293,7 @@ EXTRACT_KERNSTAT() {
 					#echo "EXCLUDING" $dir
 					continue;
 				fi
-				echo $dir
+				#echo $dir
 				EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
 			done
 		
@@ -458,7 +467,7 @@ EXTRACT_RESULT() {
 			exlude=0
 			EXCLUDE_DIR $exlude $dir excludefullstat
 			if [ $exlude -ge 1 ]; then
-				echo "EXCLUDING" $dir
+				#echo "EXCLUDING" $dir
 				continue;
 			fi
 
@@ -587,6 +596,11 @@ EXTRACT_RESULT "rocksdb"
 APP='cassandra'
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT "cassandra"
+
+
+APP='spark-bench'
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT "spark-bench"
 
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
