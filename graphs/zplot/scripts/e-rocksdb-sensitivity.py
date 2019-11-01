@@ -24,28 +24,24 @@ xmanualstart=2.5
 xmanualint=6
 
 #graphname='m-all-sensitivity-CAP'
-graphname='m-all-sensitivity-BW'
-
-CONFIG = ['BW500', 'BW1000', 'BW2000', 'BW4000']
-#CONFIG = ['CAP2048', 'CAP4096', 'CAP8192', 'CAP10240']
+graphname='e-rocks-sensitivity-BW'
 
 xname="Bandwidth Relative to Fast Memory"
 #xname="Capacity Relative to All Fast Memory"
 
+CONFIG = ['BW500', 'BW1000', 'BW2000', 'BW4000']
+#CONFIG = ['CAP2048', 'CAP4096', 'CAP8192', 'CAP10240']
 
-
-#'APP Fast-OS Slow'
-#'APPFAST-OSSLOW', 
-mechnames = ['App Slow-OS Slow', 'App Slow-OS Fast', 'App Fast-OS Slow',  'App Fast-OS Fast' ]
-mech = ['APPSLOW-OSSLOW', 'APPSLOW-OSFAST', 'APPFAST-OSSLOW',  'APPFAST-OSFAST']
+mechnames = ['All-SlowMem', 'Naive', 'Migration-only', 'Hetero-Context', 'All-FastMem']
+mech = ['slowmem-only', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch', 'optimal-os-fastmem']
 
 
 xlabel = ["1/16", "1/8", "1/4", "1/2"]
 storage=["NVM"]
-pattern = ["NVM", "NVM", "NVM", "NVM"]
+pattern = ["NVM", "NVM", "NVM", "NVM", "NVM"]
 
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
-path='/users/skannan/ssd/NVM/graphs/zplot/data/motivate-sensitivity/'
+path='/users/skannan/ssd/NVM/graphs/zplot/data/result-sensitivity/'
 APPS="rocksdb"
 yname="Throughput (10K Ops/sec)"
 

@@ -15,7 +15,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=1000
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=10000
+let SCALE_ROCKSDB_GRAPH=1000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -34,18 +34,18 @@ declare -a excludekernstat=("prefetch" "slowmem-only" "optimal" "obj-affinity-NV
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
 
-#declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
-declare -a configarr=("BW1000")
+declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+#declare -a configarr=("BW1000")
 #declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 
-declare -a placearr=("APPSLOW-OSSLOW" "APPSLOW-OSFAST" "APPFAST-OSSLOW" "APPFAST-OSFAST")
+declare -a placearr=('slowmem-only'  'naive-os-fastmem' 'slowmem-migration-only'  'slowmem-obj-affinity-prefetch' 'optimal-os-fastmem' )
 # "APPFAST-OSSLOW"
 
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
 
-declare -a excludefullstat=("prefetch" "NVM1")
+declare -a excludefullstat=("NVM1")
 declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "slowmem-only" "optimal")
 
 declare -a redispattern=("SET" "GET")
@@ -143,9 +143,12 @@ PULL_RESULT() {
 			echo $dir/$APPFILE" "$val" "$scaled_value
                         echo $scaled_value &> $APP".data"
 		else
-			val=`cat $dir/$APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+			cp $dir/$APPFILE $dir/$APPFILE".txt"
+			sed -i "/readseq/c\ " $dir/$APPFILE".txt"
+			val=`cat $dir/$APPFILE".txt" | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
+			echo $APP".data"
 		fi
 		((j++))
 		echo $j &> "num.data"
@@ -512,7 +515,7 @@ EXTRACT_RESULT_SENSITIVE() {
                                         else
                                                 APPFILE=$APP".out-"$TYPE
                                         fi
-                                        PULL_RESULT $APP $dir $j $APPFILE "motivate-sensitivity" "-"$BW
+                                        PULL_RESULT $APP $dir $j $APPFILE "result-sensitivity" "-"$BW
                                 done
                         done
                         j=$((j+$INCR_ONE_SPACE))
@@ -578,6 +581,16 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_SENSITIVE "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
+exit
+
+
 ####################ALL APPS##########################
 j=0
 APP='filebench'
@@ -637,14 +650,6 @@ exit
 #EXTRACT_KERNSTAT "redis"
 #cd $ZPLOT
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
-j=0
-APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug12"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
-exit
 
 
 ####################MOTIVATION ANALYSIS########################
