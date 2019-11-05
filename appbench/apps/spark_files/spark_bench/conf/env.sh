@@ -1,22 +1,22 @@
 # global settings
 
-master="localhost"
+master="172.16.70.56"
 #A list of machines where the spark cluster is running
-MC_LIST="localhost"
+MC_LIST="172.16.70.56"
 
 
 [ -z "$HADOOP_HOME" ] &&     export HADOOP_HOME=/YOUR/HADOOP
-
-export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 # base dir for DataSet
-HDFS_URL="hdfs://${master}:9000"
-SPARK_HADOOP_FS_LOCAL_BLOCK_SIZE=536870912
+HDFS_URL="hdfs://${master}:8020"
+SPARK_HADOOP_FS_LOCAL_BLOCK_SIZE=1536870912
 
-# DATA_HDFS="hdfs://${master}:9000/SparkBench", "file:///home/`whoami`/SparkBench"
+# DATA_HDFS="hdfs://${master}:8020/SparkBench", "file:///home/`whoami`/SparkBench"
 DATA_HDFS="hdfs://${master}:8020/SparkBench"
 
 #Local dataset optional
-DATASET_DIR=/users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/dataset
+DATASET_DIR=/home/`whoami`/SparkBench/dataset
+
+HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 
 SPARK_VERSION=2.0.1  #1.5.1
 [ -z "$SPARK_HOME" ] &&     export SPARK_HOME=/YOUR/SPARK
@@ -29,7 +29,7 @@ SPARK_MASTER=local[*]
 ##SPARK_MASTER=yarn-client
 #SPARK_MASTER=yarn
 #MASTER=yarn
-#YARN_DEPLOY_MODE=client # or cluster, this will go to spark submit as --deploy-mode
+YARN_DEPLOY_MODE=client # or cluster, this will go to spark submit as --deploy-mode
 SPARK_RPC_ASKTIMEOUT=500
 #SPARK_MASTER=spark://${master}:7077
 
@@ -59,12 +59,12 @@ SPARK_EXECUTOR_MEMORY=7g
 #export EXECUTOR_GLOBAL_MEM=2g
 #export executor_cores=2
 export SPARK_DRIVER_MEMORY=7g
-export SPARK_EXECUTOR_INSTANCES=2
-export SPARK_EXECUTOR_CORES=4
+export SPARK_EXECUTOR_INSTANCES=8
+export SPARK_EXECUTOR_CORES=8
 
 # Storage levels, see http://spark.apache.org/docs/latest/api/java/org/apache/spark/api/java/StorageLevels.html
 # - STORAGE_LEVEL, set MEMORY_AND_DISK, MEMORY_AND_DISK_SER, MEMORY_ONLY, MEMORY_ONLY_SER, or DISK_ONLY
-STORAGE_LEVEL=DISK_ONLY
+STORAGE_LEVEL=MEMORY_AND_DISK
 
 # for data generation
 NUM_OF_PARTITIONS=2
