@@ -37,7 +37,7 @@ INSTALL_SPARK_HIBENCH(){
 	HADOOP="hadoop-3.2.1"
 	HADOOP_DIR=$SPARKDIR/$HADOOP
 
-       ADD_SPARK_TO_BASHRC
+        #ADD_SPARK_TO_BASHRC
 
 	# Check if Spark file exists?
 	if [ -f $SPARKFILE ]; then
@@ -50,7 +50,7 @@ INSTALL_SPARK_HIBENCH(){
 	if [ -d $SPARKDIR ]; then
 		echo "$SPARKDIR exist"
 	else
-		mv spark-2.4.4* $SPARKDIR
+		mv spark-2.4.4-bin-hadoop2.7 $SPARKDIR
 	fi
 	cd $SPARKDIR
 
