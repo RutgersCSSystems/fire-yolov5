@@ -2,11 +2,11 @@
 set -x
 
 QEMU_SET() {
-	echo "export HDFS_NAMENODE_USER="root"" &>> ~/.bashrc
-	echo "export HDFS_DATANODE_USER="root"" &>> ~/.bashrc
-	echo "export HDFS_SECONDARYNAMENODE_USER="root"" &>> ~/.bashrc
-	echo "export YARN_RESOURCEMANAGER_USER="root"" &>> ~/.bashrc
-	echo "export YARN_NODEMANAGER_USER="root"" &>> ~/.bashrc
+	echo "export HDFS_NAMENODE_USER="skannan"" &>> ~/.bashrc
+	echo "export HDFS_DATANODE_USER="skannan"" &>> ~/.bashrc
+	echo "export HDFS_SECONDARYNAMENODE_USER="skannan"" &>> ~/.bashrc
+	echo "export YARN_RESOURCEMANAGER_USER="skannan"" &>> ~/.bashrc
+	echo "export YARN_NODEMANAGER_USER="skannan"" &>> ~/.bashrc
 }
 
 ADD_SPARK_TO_BASHRC() {
