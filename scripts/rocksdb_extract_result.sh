@@ -40,9 +40,9 @@ declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
 #declare -a configarr=("BW1000")
 #declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
-
 declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only'  'slowmem-obj-affinity-prefetch')
-# "APPFAST-OSSLOW"
+
+declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
 
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
@@ -53,7 +53,6 @@ declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "sl
 declare -a redispattern=("SET" "GET")
 
 
-declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
 declare -a mech_redis_prefetch=('slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch')
 
 
@@ -66,6 +65,7 @@ EXTRACT_KERNINFO() {
         APPFILE=$4
 	awkidx=$5
 	stattype=$6
+	localtype=$6
 	file=$APPFILE
         resultdir=$ZPLOT/data/kernstat
         mkdir -p $resultdir
@@ -92,23 +92,23 @@ EXTRACT_KERNINFO() {
 
 			if [[ $dir == *"slowmem-only"*  ]]; then
 				if [[ $stattype == "cache-miss"  ]]; then
-					stattype="cache-hits"
+					localtype="cache-hits"
 				fi	
 			fi
 
-			grep -r $stattype $target | tail -1 &> out.txt
-			temp=`grep -Eo "$stattype([[:space:]]+[^[:space:]]+){1}" < out.txt`
+			grep -r $localtype $target | tail -1 &> out.txt
+			temp=`grep -Eo "$localtype([[:space:]]+[^[:space:]]+){1}" < out.txt`
 			val=`echo $temp | awk '{print $2}'`
 
 			if [[ $dir == *"optimal"*  ]]; then
-				if [[ $stattype == *"cache-miss"*  ]]; then
+				if [[ $localtype == *"cache-miss"*  ]]; then
 					val=0
 				fi	
 			fi
 		fi
 
 		let scaled_value=$val/$SCALE_KERN_GRAPH
-		echo $dir"    "$stattype"    "$scaled_value
+		echo $dir"    "$localtype"    "$scaled_value
 
 
 		echo $scaled_value &> $APP"kern.data"
@@ -306,18 +306,23 @@ EXTRACT_KERNSTAT() {
 
 		for stattype in "${kernstat[@]}"
 		do
-			for dir in $TARGET/*$device*
-			do
-				exlude=0
-				EXCLUDE_DIR $exlude $dir excludekernstat
-				if [ $exlude -ge 1 ]; then
-					#echo "EXCLUDING" $dir
-					continue;
-				fi
-				#echo $dir
-				EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
+
+                        for placement in "${placearr[@]}"
+                        do
+                                for dir in $TARGET/*$placement*$device
+                                do
+
+					exlude=0
+					EXCLUDE_DIR $exlude $dir excludekernstat
+					if [ $exlude -ge 1 ]; then
+						#echo "EXCLUDING" $dir
+						continue;
+					fi
+					#echo $dir
+					EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
+				done
+			
 			done
-		
 			if [ "$stattype" == "buff-miss" ];
 			then
 				((awkidx++))
@@ -330,6 +335,7 @@ EXTRACT_KERNSTAT() {
 			fi
 
 			j=$((j+$INCR_KERN_BAR_SPACE))
+
 		done
 	done
 }
