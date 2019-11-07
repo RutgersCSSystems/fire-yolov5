@@ -168,6 +168,9 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
+
+
+
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
@@ -176,13 +179,27 @@ SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJ
 $NVMBASE/scripts/clear_cache.sh
 exit
 
-
 #### OBJAFF NO PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+exit
 
+
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
+
+
+export APPPREFIX="numactl --membind=1"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
@@ -192,12 +209,6 @@ export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
 
-export APPPREFIX="numactl --membind=1"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-exit
 
 
 
@@ -208,12 +219,6 @@ $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
 
 
-#### NAIVE PLACEMENT #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
 
 
 

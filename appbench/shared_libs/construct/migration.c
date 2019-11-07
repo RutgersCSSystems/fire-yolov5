@@ -62,7 +62,7 @@ static void dest() __attribute__((destructor));
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
-#define MIGRATE_LIST_CNT 1000
+#define MIGRATE_LIST_CNT 500
 
 
 void set_migration_freq() {

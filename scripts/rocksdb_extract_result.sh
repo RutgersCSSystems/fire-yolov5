@@ -29,7 +29,9 @@ let INCR_ONE_SPACE=1
 
 ## declare an array variable
 declare -a kernstat=("cache-miss" "buff-miss" "migrated")
-declare -a excludekernstat=("prefetch" "slowmem-only" "optimal" "obj-affinity-NVM1")
+declare -a excludekernstat=("obj-affinity-NVM1")
+##use this for storing some state
+let slowmemhists=0
 
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
@@ -39,7 +41,7 @@ declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
 #declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 
-declare -a placearr=('slowmem-only'  'naive-os-fastmem' 'slowmem-migration-only'  'slowmem-obj-affinity-prefetch' 'optimal-os-fastmem' )
+declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only'  'slowmem-obj-affinity-prefetch')
 # "APPFAST-OSSLOW"
 
 #declare -a devices=("SSD" "NVM")
@@ -87,17 +89,33 @@ EXTRACT_KERNINFO() {
 		then
 			let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "BEGIN {SUM=0}; {SUM=SUM+$search}; END {print SUM}"`  
 		else
-			let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed -i 's/\[ /\[/g' orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "BEGIN {SUM=0}; {SUM=SUM+$search}; END {print SUM}"`
+
+			if [[ $dir == *"slowmem-only"*  ]]; then
+				if [[ $stattype == "cache-miss"  ]]; then
+					stattype="cache-hits"
+				fi	
+			fi
+
+			grep -r $stattype $target | tail -1 &> out.txt
+			temp=`grep -Eo "$stattype([[:space:]]+[^[:space:]]+){1}" < out.txt`
+			val=`echo $temp | awk '{print $2}'`
+
+			if [[ $dir == *"optimal"*  ]]; then
+				if [[ $stattype == *"cache-miss"*  ]]; then
+					val=0
+				fi	
+			fi
 		fi
 
 		let scaled_value=$val/$SCALE_KERN_GRAPH
+		echo $dir"    "$stattype"    "$scaled_value
+
+
 		echo $scaled_value &> $APP"kern.data"
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $APP"kern.data" &> $resultdir/$outputfile
 		rm -rf "num.data" $APP"kern.data"
-		#echo $resultdir/$outputfile
-		#cat  $resultdir/$outputfile
 	fi
 }
 
@@ -581,6 +599,20 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+
+
+####################KERNEL STAT ################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity/BW1000-NVM"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+
+
+
 j=0
 APP='rocksdb'
 OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity"
@@ -676,17 +708,6 @@ exit
 
 
 
-####################KERNEL STAT ################################
-j=0
-APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-exit
-
-
 ######################################################
 j=0
 APP='redis'
@@ -738,4 +759,5 @@ exit
 
 
 
+			#let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed -i 's/\[ /\[/g' orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "BEGIN {SUM=0}; {SUM=SUM+$search}; END {print SUM}"`
 

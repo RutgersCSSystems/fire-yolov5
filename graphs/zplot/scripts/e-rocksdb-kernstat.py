@@ -21,27 +21,24 @@ xylegend=[50,160]
 xycord = [50,30]
 xmanualarr = []
 xmanualstart=2.5
-xmanualint=6
+xmanualint=10
 
 #graphname='m-all-sensitivity-CAP'
-graphname='e-rocks-sensitivity-BW'
+graphname='e-rocks-kernstat'
 
 xname="Bandwidth Relative to Fast Memory"
 #xname="Capacity Relative to All Fast Memory"
 
-CONFIG = ['BW500', 'BW1000', 'BW2000', 'BW4000']
-#CONFIG = ['CAP2048', 'CAP4096', 'CAP8192', 'CAP10240']
 
 mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'Hetero-Context']
 mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch']
 
-
-xlabel = ["1/16", "1/8", "1/4", "1/2"]
+CONFIG = ['cache-miss', 'buff-miss', 'migrated']
+xlabel = ["Cache Misses", "Buffer Misses", "Migrated"]
 storage=["NVM"]
 pattern = ["NVM", "NVM", "NVM", "NVM", "NVM"]
-
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
-path='/users/skannan/ssd/NVM/graphs/zplot/data/result-sensitivity/'
+path='/users/skannan/ssd/NVM/graphs/zplot/data/kernstat/'
 APPS="rocksdb"
 yname="Throughput (10K Ops/sec)"
 
