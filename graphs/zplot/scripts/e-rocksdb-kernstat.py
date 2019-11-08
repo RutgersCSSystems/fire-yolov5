@@ -6,7 +6,7 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=600
+ymax=800
 yint=200
 xfield='ops'
 xlegend='DevFS techniques'
@@ -18,7 +18,7 @@ xlabelsize=9.0
 xydim=[225, 170]
 xystart=[100,100]
 xylegend=[50,160]
-xycord = [50,30]
+xycord = [50,38]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=10
@@ -26,21 +26,21 @@ xmanualint=10
 #graphname='m-all-sensitivity-CAP'
 graphname='e-rocks-kernstat'
 
-xname="Bandwidth Relative to Fast Memory"
+xname="Slow Memory Pages Used"
 #xname="Capacity Relative to All Fast Memory"
 
 
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'Hetero-Context']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC']
 mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch']
 
 CONFIG = ['cache-miss', 'buff-miss', 'migrated']
-xlabel = ["Cache Misses", "Buffer Misses", "Migrated"]
+xlabel = ["Page Cache", "Buffer Pages", "Migrated Pages"]
 storage=["NVM"]
 pattern = ["NVM", "NVM", "NVM", "NVM", "NVM"]
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/kernstat/'
 APPS="rocksdb"
-yname="Throughput (10K Ops/sec)"
+yname="Page Count (in 100K)"
 
 dseq = []
 L=legend()
@@ -95,9 +95,9 @@ for k in range(0, len(CONFIG)):
 axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,0],
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,-5],
      xtitle=xname, ytitle=yname,
-     ytitlesize=yfontsize)
+     ytitlesize=yfontsize, xtitlesize=xfontsize)
 
 L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=85)
 

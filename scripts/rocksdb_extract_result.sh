@@ -30,24 +30,28 @@ let INCR_ONE_SPACE=1
 ## declare an array variable
 declare -a kernstat=("cache-miss" "buff-miss" "migrated")
 declare -a excludekernstat=("obj-affinity-NVM1")
+
 ##use this for storing some state
 let slowmemhists=0
 
+#declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity'  'slowmem-obj-affinity-prefetch')
+declare -a placearr=('APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST' 'APPSLOW-OSSLOW')
+
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
-
-declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
-#declare -a configarr=("BW1000")
+#declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+declare -a configarr=("BW1000")
 #declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
-declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only'  'slowmem-obj-affinity-prefetch')
 
 declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
+
 
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
 
-declare -a excludefullstat=("NVM1")
+declare -a excludefullstat=("NVM1" "prefetch")
+
 declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "slowmem-only" "optimal")
 
 declare -a redispattern=("SET" "GET")
@@ -96,7 +100,7 @@ EXTRACT_KERNINFO() {
 				fi	
 			fi
 
-			grep -r $localtype $target | tail -1 &> out.txt
+			grep -r "HeteroProcname" $target  &> out.txt
 			temp=`grep -Eo "$localtype([[:space:]]+[^[:space:]]+){1}" < out.txt`
 			val=`echo $temp | awk '{print $2}'`
 
@@ -108,9 +112,6 @@ EXTRACT_KERNINFO() {
 		fi
 
 		let scaled_value=$val/$SCALE_KERN_GRAPH
-		echo $dir"    "$localtype"    "$scaled_value
-
-
 		echo $scaled_value &> $APP"kern.data"
 		((j++))
 		echo $j &> "num.data"
@@ -136,7 +137,6 @@ PULL_RESULT() {
 	rm -rf "num.data"
 
 	if [ -f $dir/$APPFILE ]; then
-
 		if [ "$APP" = 'redis' ]; 
 		then
 			val=`cat $dir/$APPFILE | grep -a "ET" | grep $access":" | awk 'BEGIN {SUM=0}; {SUM+=$2}; END {printf "%5.3f\n", SUM}'`
@@ -166,13 +166,10 @@ PULL_RESULT() {
 			val=`cat $dir/$APPFILE".txt" | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
-			echo $APP".data"
 		fi
 		((j++))
 		echo $j &> "num.data"
 		paste "num.data" $APP".data" &> $resultfile
-		#echo $resultfile
-		#cat $resultfile
 	fi
 }
 
@@ -222,8 +219,6 @@ PULL_RESULT_PATTERN() {
 		echo $j &> "num.data"
 		paste "num.data" $resultfile &> $resultdir/$outputfile"-"$access".data"
 		rm -rf "num.data" $resultfile
-		#echo $resultdir/$outputfile"-"$access".data"
-		cat $resultdir/$outputfile"-"$access".data"
 	fi
 }
 
@@ -315,10 +310,8 @@ EXTRACT_KERNSTAT() {
 					exlude=0
 					EXCLUDE_DIR $exlude $dir excludekernstat
 					if [ $exlude -ge 1 ]; then
-						#echo "EXCLUDING" $dir
 						continue;
 					fi
-					#echo $dir
 					EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
 				done
 			
@@ -351,8 +344,6 @@ REDIS_CONSOLIDATE_RESULT() {
 
         for file in $dir/$APP*.txt
         do
-		echo $dir/$APP"-all.out-"$device
-
                 search=$APP
                 if [[ $file == *"$search"*".txt" ]];
                 then
@@ -397,7 +388,6 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
 			for dir in $TARGET/$array"-"$device
 			do
 				REDIS_CONSOLIDATE_RESULT $dir $APP
-				echo $dir
 			done
 		done
 	done
@@ -447,7 +437,6 @@ EXTRACT_REDIS_PREFETCH_BREAKDOWN_RESULT() {
 				fi
 
 				REDIS_CONSOLIDATE_RESULT $dir $APP
-				echo $dir
 			done
 		done
 	done
@@ -489,24 +478,28 @@ EXTRACT_RESULT() {
 		TYPE=$device
 		APPFILE=""
 
-		for dir in $TARGET/*$TYPE*
+		for placement in "${placearr[@]}"
 		do
-			exlude=0
-			EXCLUDE_DIR $exlude $dir excludefullstat
-			if [ $exlude -ge 1 ]; then
-				#echo "EXCLUDING" $dir
-				continue;
-			fi
+			for dir in $TARGET/*$placement*$device
+			do
+				exlude=0
+				EXCLUDE_DIR $exlude $dir excludefullstat
+				if [ $exlude -ge 1 ]; then
+					continue;
+				fi
 
-			if [ "$APP" = 'redis' ]; then
-				APPFILE=$APP"-all.out-"$TYPE
-			else
-				APPFILE=$APP".out-"$TYPE
-			fi
-			PULL_RESULT $APP $dir $j $APPFILE ""
+				if [ "$APP" = 'redis' ]; then
+					APPFILE=$APP"-all.out-"$TYPE
+				else
+					APPFILE=$APP".out-"$TYPE
+				fi
+				
+				PULL_RESULT $APP $dir $j $APPFILE ""
+			done
 		done
-		j=$((j+$INCR_FULL_BAR_SPACE))
 	done
+	j=$((j+$INCR_FULL_BAR_SPACE))
+
 }
 
 
@@ -526,7 +519,6 @@ EXTRACT_RESULT_SENSITIVE() {
                         do
                                 for dir in $TARGET/$BW*/*$placement*$device
                                 do
-                                        echo $dir
                                         exlude=0
                                         EXCLUDE_DIR $exlude $dir excludefullstat
                                         if [ $exlude -ge 1 ]; then
@@ -572,10 +564,8 @@ EXTRACT_RESULT_COMPARE() {
                                         fi
 
                                         if [ "$APP" = 'redis' ]; then
-
 						REDIS_CONSOLIDATE_RESULT $dir $APP
-						echo $dir
-                                                APPFILE=$APP"-all.out-"$TYPE
+						APPFILE=$APP"-all.out-"$TYPE
                                         else
                                                 APPFILE=$APP".out-"$TYPE
                                         fi
@@ -605,28 +595,28 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
-
-
-####################KERNEL STAT ################################
-j=0
-APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity/BW1000-NVM"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-exit
-
-
+####################MOTIVATION ANALYSIS########################
 
 j=0
 APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity"
+OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
 TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE "rocksdb"
+EXTRACT_RESULT_COMPARE "rocksdb"
+
+APP='redis'
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_COMPARE "redis"
+
+
+APP='filebench'
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_COMPARE "filebench"
+
 cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
+python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
 exit
+
+
 
 
 ####################ALL APPS##########################
@@ -656,6 +646,33 @@ EXTRACT_RESULT "spark-bench"
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
 exit
+
+
+j=0
+APP='rocksdb'
+OUTPUTDIR="results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+
+
+
+
+
+
+
+
+####################KERNEL STAT ################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_SENSITIVE "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
+
 
 
 
@@ -688,29 +705,6 @@ exit
 #EXTRACT_KERNSTAT "redis"
 #cd $ZPLOT
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"
-
-
-####################MOTIVATION ANALYSIS########################
-
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "rocksdb"
-
-APP='redis'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "redis"
-
-
-APP='filebench'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "filebench"
-
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
-exit
 
 
 

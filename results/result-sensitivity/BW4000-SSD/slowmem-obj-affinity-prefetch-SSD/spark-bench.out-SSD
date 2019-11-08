@@ -1,0 +1,901 @@
++ sudo dmesg -c
+[45152.918223] nvmemul: ioctl command: 0xc008aa02
+[45152.918329] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[45152.918508] nvmemul: ioctl command: 0x8008aa01
+[45152.918513] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[45152.918517] nvmemul: ioctl command: 0x8008aa01
+[45152.918522] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[45152.918525] nvmemul: ioctl command: 0x8008aa01
+[45152.918527] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[45152.918531] nvmemul: ioctl command: 0x8008aa01
+[45152.918533] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[45166.183355] perf: interrupt took too long (45641 > 44520), lowering kernel.perf_event_max_sample_rate to 4250
+[45178.333407] nvmemul: ioctl command: 0xc008aa02
+[45178.333475] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[45178.333583] nvmemul: ioctl command: 0x8008aa01
+[45178.333598] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[45178.333622] nvmemul: ioctl command: 0x8008aa01
+[45178.333623] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[45178.333653] nvmemul: ioctl command: 0x8008aa01
+[45178.333676] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[45178.333684] nvmemul: ioctl command: 0x8008aa01
+[45178.333698] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[45195.435378] nvmemul: ioctl command: 0xc008aa02
+[45195.435407] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[45195.435484] nvmemul: ioctl command: 0x8008aa01
+[45195.435498] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[45195.435514] nvmemul: ioctl command: 0x8008aa01
+[45195.435516] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[45195.435529] nvmemul: ioctl command: 0x8008aa01
+[45195.435531] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[45195.435553] nvmemul: ioctl command: 0x8008aa01
+[45195.435554] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[45208.989105] nvmemul: ioctl command: 0xc008aa02
+[45208.989142] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[45208.989196] nvmemul: ioctl command: 0x8008aa01
+[45208.989203] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[45208.989219] nvmemul: ioctl command: 0x8008aa01
+[45208.989220] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[45208.989233] nvmemul: ioctl command: 0x8008aa01
+[45208.989235] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[45208.989243] nvmemul: ioctl command: 0x8008aa01
+[45208.989244] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[45220.669879] nvmemul: ioctl command: 0xc008aa02
+[45220.669922] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[45220.669969] nvmemul: ioctl command: 0x8008aa01
+[45220.669977] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x805a
+[45220.669993] nvmemul: ioctl command: 0x8008aa01
+[45220.669995] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x805a
+[45220.670002] nvmemul: ioctl command: 0x8008aa01
+[45220.670008] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x805a
+[45220.670023] nvmemul: ioctl command: 0x8008aa01
+[45220.670024] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x805a
+[45231.372645] nvmemul: ioctl command: 0xc008aa02
+[45231.372684] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x805a
+[45231.372714] nvmemul: ioctl command: 0x8008aa01
+[45231.372737] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8069
+[45231.372752] nvmemul: ioctl command: 0x8008aa01
+[45231.372753] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8069
+[45231.372767] nvmemul: ioctl command: 0x8008aa01
+[45231.372769] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8069
+[45231.372777] nvmemul: ioctl command: 0x8008aa01
+[45231.372783] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8069
+[45241.264406] nvmemul: ioctl command: 0xc008aa02
+[45241.264437] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8069
+[45241.264468] nvmemul: ioctl command: 0x8008aa01
+[45241.264483] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8078
+[45241.264491] nvmemul: ioctl command: 0x8008aa01
+[45241.264493] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8078
+[45241.264497] nvmemul: ioctl command: 0x8008aa01
+[45241.264498] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8078
+[45241.264502] nvmemul: ioctl command: 0x8008aa01
+[45241.264504] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8078
+[45250.605194] nvmemul: ioctl command: 0xc008aa02
+[45250.605218] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8078
+[45250.605249] nvmemul: ioctl command: 0x8008aa01
+[45250.605270] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8087
+[45250.605280] nvmemul: ioctl command: 0x8008aa01
+[45250.605287] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8087
+[45250.605302] nvmemul: ioctl command: 0x8008aa01
+[45250.605309] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8087
+[45250.605318] nvmemul: ioctl command: 0x8008aa01
+[45250.605326] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8087
+[45259.577924] nvmemul: ioctl command: 0xc008aa02
+[45259.577948] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8087
+[45259.577985] nvmemul: ioctl command: 0x8008aa01
+[45259.578001] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8096
+[45259.578017] nvmemul: ioctl command: 0x8008aa01
+[45259.578019] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8096
+[45259.578031] nvmemul: ioctl command: 0x8008aa01
+[45259.578032] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8096
+[45259.578048] nvmemul: ioctl command: 0x8008aa01
+[45259.578062] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8096
+[45268.066509] nvmemul: ioctl command: 0xc008aa02
+[45268.066532] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8096
+[45268.066562] nvmemul: ioctl command: 0x8008aa01
+[45268.066569] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80a5
+[45268.066584] nvmemul: ioctl command: 0x8008aa01
+[45268.066585] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80a5
+[45268.066607] nvmemul: ioctl command: 0x8008aa01
+[45268.066608] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80a5
+[45268.066623] nvmemul: ioctl command: 0x8008aa01
+[45268.066624] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80a5
+[45276.361011] nvmemul: ioctl command: 0xc008aa02
+[45276.361033] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80a5
+[45276.361055] nvmemul: ioctl command: 0x8008aa01
+[45276.361063] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80b4
+[45276.361072] nvmemul: ioctl command: 0x8008aa01
+[45276.361079] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80b4
+[45276.361093] nvmemul: ioctl command: 0x8008aa01
+[45276.361095] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80b4
+[45276.361109] nvmemul: ioctl command: 0x8008aa01
+[45276.361117] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80b4
+[45284.439515] nvmemul: ioctl command: 0xc008aa02
+[45284.439537] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80b4
+[45284.439567] nvmemul: ioctl command: 0x8008aa01
+[45284.439582] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80c3
+[45284.439597] nvmemul: ioctl command: 0x8008aa01
+[45284.439598] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80c3
+[45284.439612] nvmemul: ioctl command: 0x8008aa01
+[45284.439614] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80c3
+[45284.439629] nvmemul: ioctl command: 0x8008aa01
+[45284.439630] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80c3
+[45292.336135] nvmemul: ioctl command: 0xc008aa02
+[45292.336164] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80c3
+[45292.336180] nvmemul: ioctl command: 0x8008aa01
+[45292.336189] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80d2
+[45292.336198] nvmemul: ioctl command: 0x8008aa01
+[45292.336203] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80d2
+[45292.336211] nvmemul: ioctl command: 0x8008aa01
+[45292.336212] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80d2
+[45292.336226] nvmemul: ioctl command: 0x8008aa01
+[45292.336227] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80d2
+[45299.956656] nvmemul: ioctl command: 0xc008aa02
+[45299.956675] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80d2
+[45299.956691] nvmemul: ioctl command: 0x8008aa01
+[45299.956698] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80e1
+[45299.956707] nvmemul: ioctl command: 0x8008aa01
+[45299.956708] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80e1
+[45299.956721] nvmemul: ioctl command: 0x8008aa01
+[45299.956728] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80e1
+[45299.956736] nvmemul: ioctl command: 0x8008aa01
+[45299.956738] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80e1
+[45307.429932] nvmemul: ioctl command: 0xc008aa02
+[45307.429948] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80e1
+[45307.429971] nvmemul: ioctl command: 0x8008aa01
+[45307.429978] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80f0
+[45307.429987] nvmemul: ioctl command: 0x8008aa01
+[45307.429988] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80f0
+[45307.429996] nvmemul: ioctl command: 0x8008aa01
+[45307.430002] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80f0
+[45307.430011] nvmemul: ioctl command: 0x8008aa01
+[45307.430017] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80f0
+[45314.765795] nvmemul: ioctl command: 0xc008aa02
+[45314.765813] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80f0
+[45314.765844] nvmemul: ioctl command: 0x8008aa01
+[45314.765857] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80ff
+[45314.765865] nvmemul: ioctl command: 0x8008aa01
+[45314.765873] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80ff
+[45314.765889] nvmemul: ioctl command: 0x8008aa01
+[45314.765897] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80ff
+[45314.765912] nvmemul: ioctl command: 0x8008aa01
+[45314.765920] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80ff
+[45321.980734] nvmemul: ioctl command: 0xc008aa02
+[45321.980750] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80ff
+[45321.980772] nvmemul: ioctl command: 0x8008aa01
+[45321.980774] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x810e
+[45321.980782] nvmemul: ioctl command: 0x8008aa01
+[45321.980789] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x810e
+[45321.980796] nvmemul: ioctl command: 0x8008aa01
+[45321.980797] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x810e
+[45321.980811] nvmemul: ioctl command: 0x8008aa01
+[45321.980818] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x810e
+[45328.980275] nvmemul: ioctl command: 0xc008aa02
+[45328.980292] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x810e
+[45328.980314] nvmemul: ioctl command: 0x8008aa01
+[45328.980321] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x811d
+[45328.980329] nvmemul: ioctl command: 0x8008aa01
+[45328.980331] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x811d
+[45328.980339] nvmemul: ioctl command: 0x8008aa01
+[45328.980340] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x811d
+[45328.980353] nvmemul: ioctl command: 0x8008aa01
+[45328.980360] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x811d
+[45335.905738] nvmemul: ioctl command: 0xc008aa02
+[45335.905753] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x811d
+[45335.905775] nvmemul: ioctl command: 0x8008aa01
+[45335.905783] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x812c
+[45335.905791] nvmemul: ioctl command: 0x8008aa01
+[45335.905792] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x812c
+[45335.905800] nvmemul: ioctl command: 0x8008aa01
+[45335.905801] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x812c
+[45335.905807] nvmemul: ioctl command: 0x8008aa01
+[45335.905808] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x812c
+[45342.750067] nvmemul: ioctl command: 0xc008aa02
+[45342.750079] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x812c
+[45342.750088] nvmemul: ioctl command: 0x8008aa01
+[45342.750094] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x813b
+[45342.750101] nvmemul: ioctl command: 0x8008aa01
+[45342.750102] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x813b
+[45342.750109] nvmemul: ioctl command: 0x8008aa01
+[45342.750110] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x813b
+[45342.750117] nvmemul: ioctl command: 0x8008aa01
+[45342.750118] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x813b
+[45349.485011] nvmemul: ioctl command: 0xc008aa02
+[45349.485026] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x813b
+[45349.485043] nvmemul: ioctl command: 0x8008aa01
+[45349.485048] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x814a
+[45349.485055] nvmemul: ioctl command: 0x8008aa01
+[45349.485056] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x814a
+[45349.485064] nvmemul: ioctl command: 0x8008aa01
+[45349.485065] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x814a
+[45349.485072] nvmemul: ioctl command: 0x8008aa01
+[45349.485079] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x814a
+[45356.117489] nvmemul: ioctl command: 0xc008aa02
+[45356.117500] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x814a
+[45356.117515] nvmemul: ioctl command: 0x8008aa01
+[45356.117517] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8159
+[45356.117525] nvmemul: ioctl command: 0x8008aa01
+[45356.117526] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8159
+[45356.117532] nvmemul: ioctl command: 0x8008aa01
+[45356.117534] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8159
+[45356.117540] nvmemul: ioctl command: 0x8008aa01
+[45356.117541] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8159
+[45362.695940] nvmemul: ioctl command: 0xc008aa02
+[45362.695955] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8159
+[45362.695978] nvmemul: ioctl command: 0x8008aa01
+[45362.695986] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8168
+[45362.695994] nvmemul: ioctl command: 0x8008aa01
+[45362.695995] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8168
+[45362.696003] nvmemul: ioctl command: 0x8008aa01
+[45362.696008] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8168
+[45362.696016] nvmemul: ioctl command: 0x8008aa01
+[45362.696017] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8168
+[45369.248721] nvmemul: ioctl command: 0xc008aa02
+[45369.248729] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8168
+[45369.248744] nvmemul: ioctl command: 0x8008aa01
+[45369.248749] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8177
+[45369.248757] nvmemul: ioctl command: 0x8008aa01
+[45369.248758] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8177
+[45369.248765] nvmemul: ioctl command: 0x8008aa01
+[45369.248766] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8177
+[45369.248773] nvmemul: ioctl command: 0x8008aa01
+[45369.248774] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8177
+[45375.661292] nvmemul: ioctl command: 0xc008aa02
+[45375.661299] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8177
+[45375.661314] nvmemul: ioctl command: 0x8008aa01
+[45375.661319] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8186
+[45375.661327] nvmemul: ioctl command: 0x8008aa01
+[45375.661328] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8186
+[45375.661336] nvmemul: ioctl command: 0x8008aa01
+[45375.661337] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8186
+[45375.661343] nvmemul: ioctl command: 0x8008aa01
+[45375.661344] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8186
+[45392.537766] nvmemul: ioctl command: 0xc008aa02
+[45392.537772] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8186
+[45392.537782] nvmemul: ioctl command: 0x8008aa01
+[45392.537784] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[45392.537788] nvmemul: ioctl command: 0x8008aa01
+[45392.537789] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[45392.537793] nvmemul: ioctl command: 0x8008aa01
+[45392.537794] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[45392.537798] nvmemul: ioctl command: 0x8008aa01
+[45392.537800] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[45392.537803] nvmemul: ioctl command: 0xc008aa02
+[45392.537805] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[45392.537808] nvmemul: ioctl command: 0x8008aa01
+[45392.537810] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[45392.537813] nvmemul: ioctl command: 0x8008aa01
+[45392.537815] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[45392.537818] nvmemul: ioctl command: 0x8008aa01
+[45392.537820] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[45392.537823] nvmemul: ioctl command: 0x8008aa01
+[45392.537825] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[45416.188816] perf: interrupt took too long (58639 > 57051), lowering kernel.perf_event_max_sample_rate to 3250
+[45436.393541] perf: interrupt took too long (75732 > 73298), lowering kernel.perf_event_max_sample_rate to 2500
+[45454.572421] nvmemul: ioctl command: 0xc008aa02
+[45454.572575] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[45454.572766] nvmemul: ioctl command: 0x8008aa01
+[45454.572843] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[45454.572851] nvmemul: ioctl command: 0x8008aa01
+[45454.572852] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[45454.572859] nvmemul: ioctl command: 0x8008aa01
+[45454.572860] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[45454.572864] nvmemul: ioctl command: 0x8008aa01
+[45454.572865] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[45480.188341] nvmemul: ioctl command: 0xc008aa02
+[45480.188411] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[45480.188542] nvmemul: ioctl command: 0x8008aa01
+[45480.188565] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[45480.188596] nvmemul: ioctl command: 0x8008aa01
+[45480.188597] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[45480.188611] nvmemul: ioctl command: 0x8008aa01
+[45480.188613] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[45480.188649] nvmemul: ioctl command: 0x8008aa01
+[45480.188650] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[45497.207247] nvmemul: ioctl command: 0xc008aa02
+[45497.207270] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[45497.207323] nvmemul: ioctl command: 0x8008aa01
+[45497.207330] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[45497.207346] nvmemul: ioctl command: 0x8008aa01
+[45497.207347] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[45497.207370] nvmemul: ioctl command: 0x8008aa01
+[45497.207377] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[45497.207391] nvmemul: ioctl command: 0x8008aa01
+[45497.207392] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[45511.108065] nvmemul: ioctl command: 0xc008aa02
+[45511.108110] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[45511.108137] nvmemul: ioctl command: 0x8008aa01
+[45511.108149] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[45511.108163] nvmemul: ioctl command: 0x8008aa01
+[45511.108165] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[45511.108175] nvmemul: ioctl command: 0x8008aa01
+[45511.108179] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[45511.108191] nvmemul: ioctl command: 0x8008aa01
+[45511.108196] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[45523.109863] nvmemul: ioctl command: 0xc008aa02
+[45523.109900] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[45523.109945] nvmemul: ioctl command: 0x8008aa01
+[45523.109968] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x805a
+[45523.109984] nvmemul: ioctl command: 0x8008aa01
+[45523.109985] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x805a
+[45523.109999] nvmemul: ioctl command: 0x8008aa01
+[45523.110008] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x805a
+[45523.110037] nvmemul: ioctl command: 0x8008aa01
+[45523.110046] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x805a
+[45534.039817] nvmemul: ioctl command: 0xc008aa02
+[45534.039848] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x805a
+[45534.039879] nvmemul: ioctl command: 0x8008aa01
+[45534.039887] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8069
+[45534.039909] nvmemul: ioctl command: 0x8008aa01
+[45534.039910] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8069
+[45534.039932] nvmemul: ioctl command: 0x8008aa01
+[45534.039934] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8069
+[45534.039955] nvmemul: ioctl command: 0x8008aa01
+[45534.040024] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8069
+[45544.170591] nvmemul: ioctl command: 0xc008aa02
+[45544.170614] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8069
+[45544.170659] nvmemul: ioctl command: 0x8008aa01
+[45544.170682] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8078
+[45544.170699] nvmemul: ioctl command: 0x8008aa01
+[45544.170706] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8078
+[45544.170728] nvmemul: ioctl command: 0x8008aa01
+[45544.170737] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8078
+[45544.170752] nvmemul: ioctl command: 0x8008aa01
+[45544.170767] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8078
+[45553.733916] nvmemul: ioctl command: 0xc008aa02
+[45553.733945] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8078
+[45553.733990] nvmemul: ioctl command: 0x8008aa01
+[45553.733998] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8087
+[45553.734021] nvmemul: ioctl command: 0x8008aa01
+[45553.734030] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8087
+[45553.734046] nvmemul: ioctl command: 0x8008aa01
+[45553.734053] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8087
+[45553.734067] nvmemul: ioctl command: 0x8008aa01
+[45553.734069] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8087
+[45562.803748] nvmemul: ioctl command: 0xc008aa02
+[45562.803770] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8087
+[45562.803807] nvmemul: ioctl command: 0x8008aa01
+[45562.803815] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8096
+[45562.803831] nvmemul: ioctl command: 0x8008aa01
+[45562.803839] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8096
+[45562.803854] nvmemul: ioctl command: 0x8008aa01
+[45562.803855] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8096
+[45562.803876] nvmemul: ioctl command: 0x8008aa01
+[45562.803877] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8096
+[45571.593033] nvmemul: ioctl command: 0xc008aa02
+[45571.593061] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8096
+[45571.593109] nvmemul: ioctl command: 0x8008aa01
+[45571.593123] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80a5
+[45571.593138] nvmemul: ioctl command: 0x8008aa01
+[45571.593145] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80a5
+[45571.593154] nvmemul: ioctl command: 0x8008aa01
+[45571.593162] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80a5
+[45571.593184] nvmemul: ioctl command: 0x8008aa01
+[45571.593185] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80a5
+[45580.099531] nvmemul: ioctl command: 0xc008aa02
+[45580.099559] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80a5
+[45580.099582] nvmemul: ioctl command: 0x8008aa01
+[45580.099591] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80b4
+[45580.099605] nvmemul: ioctl command: 0x8008aa01
+[45580.099607] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80b4
+[45580.099621] nvmemul: ioctl command: 0x8008aa01
+[45580.099628] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80b4
+[45580.099636] nvmemul: ioctl command: 0x8008aa01
+[45580.099638] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80b4
+[45588.436638] nvmemul: ioctl command: 0xc008aa02
+[45588.436666] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80b4
+[45588.436683] nvmemul: ioctl command: 0x8008aa01
+[45588.436697] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80c3
+[45588.436712] nvmemul: ioctl command: 0x8008aa01
+[45588.436713] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80c3
+[45588.436728] nvmemul: ioctl command: 0x8008aa01
+[45588.436735] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80c3
+[45588.436743] nvmemul: ioctl command: 0x8008aa01
+[45588.436745] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80c3
+[45596.501080] nvmemul: ioctl command: 0xc008aa02
+[45596.501103] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80c3
+[45596.501133] nvmemul: ioctl command: 0x8008aa01
+[45596.501148] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80d2
+[45596.501163] nvmemul: ioctl command: 0x8008aa01
+[45596.501164] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80d2
+[45596.501179] nvmemul: ioctl command: 0x8008aa01
+[45596.501186] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80d2
+[45596.501194] nvmemul: ioctl command: 0x8008aa01
+[45596.501202] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80d2
+[45604.303765] nvmemul: ioctl command: 0xc008aa02
+[45604.303782] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80d2
+[45604.303799] nvmemul: ioctl command: 0x8008aa01
+[45604.303805] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80e1
+[45604.303813] nvmemul: ioctl command: 0x8008aa01
+[45604.303820] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80e1
+[45604.303828] nvmemul: ioctl command: 0x8008aa01
+[45604.303836] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80e1
+[45604.303850] nvmemul: ioctl command: 0x8008aa01
+[45604.303851] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80e1
+[45612.152373] nvmemul: ioctl command: 0xc008aa02
+[45612.152397] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80e1
+[45612.152412] nvmemul: ioctl command: 0x8008aa01
+[45612.152419] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80f0
+[45612.152428] nvmemul: ioctl command: 0x8008aa01
+[45612.152429] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80f0
+[45612.152442] nvmemul: ioctl command: 0x8008aa01
+[45612.152444] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80f0
+[45612.152457] nvmemul: ioctl command: 0x8008aa01
+[45612.152459] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80f0
+[45619.720256] nvmemul: ioctl command: 0xc008aa02
+[45619.720273] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80f0
+[45619.720302] nvmemul: ioctl command: 0x8008aa01
+[45619.720310] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x80ff
+[45619.720318] nvmemul: ioctl command: 0x8008aa01
+[45619.720320] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x80ff
+[45619.720333] nvmemul: ioctl command: 0x8008aa01
+[45619.720334] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x80ff
+[45619.720342] nvmemul: ioctl command: 0x8008aa01
+[45619.720343] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x80ff
+[45627.194708] nvmemul: ioctl command: 0xc008aa02
+[45627.194729] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x80ff
+[45627.194751] nvmemul: ioctl command: 0x8008aa01
+[45627.194753] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x810e
+[45627.194761] nvmemul: ioctl command: 0x8008aa01
+[45627.194763] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x810e
+[45627.194768] nvmemul: ioctl command: 0x8008aa01
+[45627.194775] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x810e
+[45627.194782] nvmemul: ioctl command: 0x8008aa01
+[45627.194784] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x810e
+[45634.447813] nvmemul: ioctl command: 0xc008aa02
+[45634.447827] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x810e
+[45634.447851] nvmemul: ioctl command: 0x8008aa01
+[45634.447858] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x811d
+[45634.447866] nvmemul: ioctl command: 0x8008aa01
+[45634.447868] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x811d
+[45634.447875] nvmemul: ioctl command: 0x8008aa01
+[45634.447881] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x811d
+[45634.447890] nvmemul: ioctl command: 0x8008aa01
+[45634.447896] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x811d
+[45641.586018] nvmemul: ioctl command: 0xc008aa02
+[45641.586031] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x811d
+[45641.586048] nvmemul: ioctl command: 0x8008aa01
+[45641.586054] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x812c
+[45641.586061] nvmemul: ioctl command: 0x8008aa01
+[45641.586063] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x812c
+[45641.586069] nvmemul: ioctl command: 0x8008aa01
+[45641.586071] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x812c
+[45641.586079] nvmemul: ioctl command: 0x8008aa01
+[45641.586080] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x812c
+[45648.658087] nvmemul: ioctl command: 0xc008aa02
+[45648.658100] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x812c
+[45648.658115] nvmemul: ioctl command: 0x8008aa01
+[45648.658117] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x813b
+[45648.658124] nvmemul: ioctl command: 0x8008aa01
+[45648.658125] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x813b
+[45648.658131] nvmemul: ioctl command: 0x8008aa01
+[45648.658133] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x813b
+[45648.658139] nvmemul: ioctl command: 0x8008aa01
+[45648.658140] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x813b
+[45655.726332] nvmemul: ioctl command: 0xc008aa02
+[45655.726347] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x813b
+[45655.726361] nvmemul: ioctl command: 0x8008aa01
+[45655.726363] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x814a
+[45655.726371] nvmemul: ioctl command: 0x8008aa01
+[45655.726372] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x814a
+[45655.726378] nvmemul: ioctl command: 0x8008aa01
+[45655.726379] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x814a
+[45655.726386] nvmemul: ioctl command: 0x8008aa01
+[45655.726392] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x814a
+[45662.667609] nvmemul: ioctl command: 0xc008aa02
+[45662.667621] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x814a
+[45662.667636] nvmemul: ioctl command: 0x8008aa01
+[45662.667638] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8159
+[45662.667646] nvmemul: ioctl command: 0x8008aa01
+[45662.667647] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8159
+[45662.667652] nvmemul: ioctl command: 0x8008aa01
+[45662.667659] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8159
+[45662.667666] nvmemul: ioctl command: 0x8008aa01
+[45662.667667] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8159
+[45669.460520] nvmemul: ioctl command: 0xc008aa02
+[45669.460528] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8159
+[45669.460545] nvmemul: ioctl command: 0x8008aa01
+[45669.460550] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8168
+[45669.460557] nvmemul: ioctl command: 0x8008aa01
+[45669.460559] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8168
+[45669.460565] nvmemul: ioctl command: 0x8008aa01
+[45669.460567] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8168
+[45669.460573] nvmemul: ioctl command: 0x8008aa01
+[45669.460575] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8168
+[45676.274779] nvmemul: ioctl command: 0xc008aa02
+[45676.274792] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8168
+[45676.274807] nvmemul: ioctl command: 0x8008aa01
+[45676.274809] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8177
+[45676.274817] nvmemul: ioctl command: 0x8008aa01
+[45676.274819] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8177
+[45676.274825] nvmemul: ioctl command: 0x8008aa01
+[45676.274826] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8177
+[45676.274832] nvmemul: ioctl command: 0x8008aa01
+[45676.274833] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8177
+[45683.021050] nvmemul: ioctl command: 0xc008aa02
+[45683.021062] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8177
+[45683.021077] nvmemul: ioctl command: 0x8008aa01
+[45683.021084] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8186
+[45683.021092] nvmemul: ioctl command: 0x8008aa01
+[45683.021093] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8186
+[45683.021100] nvmemul: ioctl command: 0x8008aa01
+[45683.021101] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8186
+[45683.021108] nvmemul: ioctl command: 0x8008aa01
+[45683.021109] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8186
+[45696.225242] drop_caches: sh (10481): drop_caches: 3
+[45697.473602] drop_caches: sh (10492): drop_caches: 3
++ /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
++ cd /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench
++ stop-dfs.sh
+Stopping namenodes on [localhost]
+Stopping datanodes
+Stopping secondary namenodes [localhost]
+application termination...
++ stop-yarn.sh
+Stopping nodemanagers
+Stopping resourcemanager
++ rm -rf /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/datanode /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/namenode /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/tmp
++ hadoop namenode -format
+WARNING: Use of this script to execute namenode is deprecated.
+WARNING: Attempting to execute replacement "hdfs namenode" instead.
+
+2019-10-30 07:58:30,998 INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************
+STARTUP_MSG: Starting NameNode
+STARTUP_MSG:   host = node-1.16-04-kernel.fsperfatscale-pg0.wisc.cloudlab.us/127.0.0.1
+STARTUP_MSG:   args = [-format]
+STARTUP_MSG:   version = 3.2.1
+STARTUP_MSG:   classpath = /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/etc/hadoop:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jul-to-slf4j-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-api-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsp-api-2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-kms-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-simple-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okio-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okhttp-2.7.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/leveldbjni-all-1.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-ajax-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-all-4.0.52.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-daemon-1.0.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/junit-4.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/hamcrest-core-1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-shuffle-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-nativetask-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-plugins-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-uploader-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-app-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/geronimo-jcache_1.0_spec-1.0-alpha-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-client-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-json-provider-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcprov-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/javax.inject-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-module-jaxb-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/java-util-1.9.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-servlet-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-base-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/HikariCP-java7-2.4.12.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/json-io-2.5.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/snakeyaml-1.16.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/aopalliance-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/objenesis-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcpkix-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/ehcache-3.3.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/fst-2.50.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-guice-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/swagger-annotations-1.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-unmanaged-am-launcher-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-timeline-pluginstorage-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-applicationhistoryservice-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-router-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-tests-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-registry-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-distributedshell-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-submarine-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-nodemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-resourcemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-sharedcachemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-web-proxy-3.2.1.jar
+STARTUP_MSG:   build = https://gitbox.apache.org/repos/asf/hadoop.git -r b3cbbb467e22ea829b3808f4b7b01d07e0bf3842; compiled by 'rohithsharmaks' on 2019-09-10T15:56Z
+STARTUP_MSG:   java = 1.8.0_222
+************************************************************/
+2019-10-30 07:58:31,035 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
+2019-10-30 07:58:31,262 INFO namenode.NameNode: createNameNode [-format]
+Formatting using clusterid: CID-0ba2afc2-e7e1-466b-9f9c-f20f6369e916
+2019-10-30 07:58:32,628 INFO namenode.FSEditLog: Edit logging is async:true
+2019-10-30 07:58:32,670 INFO namenode.FSNamesystem: KeyProvider: null
+2019-10-30 07:58:32,674 INFO namenode.FSNamesystem: fsLock is fair: true
+2019-10-30 07:58:32,676 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
+2019-10-30 07:58:32,686 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
+2019-10-30 07:58:32,686 INFO namenode.FSNamesystem: supergroup          = supergroup
+2019-10-30 07:58:32,686 INFO namenode.FSNamesystem: isPermissionEnabled = true
+2019-10-30 07:58:32,686 INFO namenode.FSNamesystem: HA Enabled: false
+2019-10-30 07:58:32,806 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
+2019-10-30 07:58:32,841 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
+2019-10-30 07:58:32,841 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
+2019-10-30 07:58:32,853 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
+2019-10-30 07:58:32,854 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Oct 30 07:58:32
+2019-10-30 07:58:32,858 INFO util.GSet: Computing capacity for map BlocksMap
+2019-10-30 07:58:32,858 INFO util.GSet: VM type       = 64-bit
+2019-10-30 07:58:32,860 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
+2019-10-30 07:58:32,860 INFO util.GSet: capacity      = 2^26 = 67108864 entries
+2019-10-30 07:58:33,084 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
+2019-10-30 07:58:33,084 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
+2019-10-30 07:58:33,098 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
+2019-10-30 07:58:33,099 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
+2019-10-30 07:58:33,099 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
+2019-10-30 07:58:33,099 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: defaultReplication         = 1
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: maxReplication             = 512
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: minReplication             = 1
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
+2019-10-30 07:58:33,101 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
+2019-10-30 07:58:33,172 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
+2019-10-30 07:58:33,172 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
+2019-10-30 07:58:33,172 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
+2019-10-30 07:58:33,172 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
+2019-10-30 07:58:33,203 INFO util.GSet: Computing capacity for map INodeMap
+2019-10-30 07:58:33,204 INFO util.GSet: VM type       = 64-bit
+2019-10-30 07:58:33,204 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
+2019-10-30 07:58:33,204 INFO util.GSet: capacity      = 2^25 = 33554432 entries
+2019-10-30 07:58:34,207 INFO namenode.FSDirectory: ACLs enabled? false
+2019-10-30 07:58:34,208 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
+2019-10-30 07:58:34,208 INFO namenode.FSDirectory: XAttrs enabled? true
+2019-10-30 07:58:34,208 INFO namenode.NameNode: Caching file names occurring more than 10 times
+2019-10-30 07:58:34,222 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
+2019-10-30 07:58:34,226 INFO snapshot.SnapshotManager: SkipList is disabled
+2019-10-30 07:58:34,238 INFO util.GSet: Computing capacity for map cachedBlocks
+2019-10-30 07:58:34,238 INFO util.GSet: VM type       = 64-bit
+2019-10-30 07:58:34,238 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
+2019-10-30 07:58:34,238 INFO util.GSet: capacity      = 2^23 = 8388608 entries
+2019-10-30 07:58:34,281 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
+2019-10-30 07:58:34,282 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
+2019-10-30 07:58:34,282 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
+2019-10-30 07:58:34,291 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+2019-10-30 07:58:34,291 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
+2019-10-30 07:58:34,295 INFO util.GSet: Computing capacity for map NameNodeRetryCache
+2019-10-30 07:58:34,295 INFO util.GSet: VM type       = 64-bit
+2019-10-30 07:58:34,295 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
+2019-10-30 07:58:34,295 INFO util.GSet: capacity      = 2^20 = 1048576 entries
+2019-10-30 07:58:34,359 INFO namenode.FSImage: Allocated new BlockPoolId: BP-1109132706-127.0.0.1-1572443914345
+2019-10-30 07:58:34,399 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/namenode has been successfully formatted.
+2019-10-30 07:58:34,497 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
+2019-10-30 07:58:34,814 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 399 bytes saved in 0 seconds .
+2019-10-30 07:58:34,841 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
+2019-10-30 07:58:34,854 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
+2019-10-30 07:58:34,854 INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************
+SHUTDOWN_MSG: Shutting down NameNode at node-1.16-04-kernel.fsperfatscale-pg0.wisc.cloudlab.us/127.0.0.1
+************************************************************/
++ sleep 2
++ start-dfs.sh
+Starting namenodes on [localhost]
+Starting datanodes
+Starting secondary namenodes [localhost]
+application termination...
++ start-yarn.sh
+Starting resourcemanager
+Starting nodemanagers
++ Terasort/bin/gen_data.sh
+========== preparing Terasort data ==========
+application termination...
+Master:
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  10000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-10-30-07:59:03.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortDataGen --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar 10000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+2019-10-30 07:59:07,876 WARN util.Utils: Your hostname, node-1.16-04-kernel.fsperfatscale-pg0.wisc.cloudlab.us resolves to a loopback address: 127.0.0.1; using 128.105.145.84 instead (on interface enp1s0f0)
+2019-10-30 07:59:07,878 WARN util.Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+2019-10-30 07:59:08,897 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-10-30 07:59:11,274 INFO util.log: Logging initialized @5142ms
+2019-10-30 07:59:11,399 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-10-30 07:59:11,443 INFO server.Server: Started @5312ms
+2019-10-30 07:59:11,483 INFO server.AbstractConnector: Started ServerConnector@5300f14a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-10-30 07:59:11,555 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d0ec63{/jobs,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,556 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/jobs/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,557 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/jobs/job,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,559 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,573 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/stages,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,574 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/stages/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,575 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages/stage,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,577 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,577 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/stages/pool,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,578 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,579 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/storage,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,580 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/storage/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,588 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage/rdd,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,589 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,590 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/environment,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,591 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/environment/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,592 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/executors,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,593 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/executors/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,593 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,594 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,608 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/static,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,609 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1f12e153{/,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,611 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@389562d6{/api,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,612 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3a60c416{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-10-30 07:59:11,613 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@60f2e0bd{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-10-30 07:59:12,359 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@67440de6{/metrics/json,null,AVAILABLE,@Spark}
+===========================================================================
+===========================================================================
+Input size: 1000MB
+Total number of records: 10000000
+Number of output partitions: 10
+Number of records/ partition:   1000000
+===========================================================================
+===========================================================================
+2019-10-30 07:59:13,165 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,521 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,491 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,527 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,530 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,531 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,534 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,535 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,535 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,535 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,536 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,536 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,536 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,538 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,539 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,539 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,540 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,540 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,541 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,555 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:16,556 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-10-30 07:59:21,404 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000000
+2019-10-30 07:59:21,442 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000005
+2019-10-30 07:59:21,442 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000003
+2019-10-30 07:59:21,498 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000007
+2019-10-30 07:59:21,498 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000006
+2019-10-30 07:59:21,862 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000008
+2019-10-30 07:59:21,899 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000004
+2019-10-30 07:59:21,948 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000009
+2019-10-30 07:59:21,954 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000001
+2019-10-30 07:59:21,960 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191030075913_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191030075913_0001_r_000002
+Number of records written: 10000000
+2019-10-30 07:59:23,560 INFO server.AbstractConnector: Stopped Spark@5300f14a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+application termination...
+application termination...
+application termination...
++ /usr/bin/time -v Terasort/bin/run.sh
+========== running Terasort benchmark ==========
+application termination...
+application termination...
+Master:
+Terasort opt hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output 
+application termination...
+Connection to localhost closed.
+data purged on localhost
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-10-30-07:59:44.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortApp --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+2019-10-30 07:59:49,564 WARN util.Utils: Your hostname, node-1.16-04-kernel.fsperfatscale-pg0.wisc.cloudlab.us resolves to a loopback address: 127.0.0.1; using 128.105.145.84 instead (on interface enp1s0f0)
+2019-10-30 07:59:49,567 WARN util.Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+2019-10-30 07:59:50,841 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-10-30 07:59:53,408 INFO util.log: Logging initialized @5631ms
+2019-10-30 07:59:53,564 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-10-30 07:59:53,666 INFO server.Server: Started @5891ms
+2019-10-30 07:59:53,706 INFO server.AbstractConnector: Started ServerConnector@51745f40{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-10-30 07:59:53,796 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2fb5fe30{/jobs,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,798 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/jobs/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,799 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/jobs/job,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,801 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,801 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/stages,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,802 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/stages/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,803 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/stages/stage,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,806 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,807 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/stages/pool,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,808 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,809 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/storage,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,809 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/storage/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,810 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3e6f3bae{/storage/rdd,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,811 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@12477988{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,812 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2caf6912{/environment,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,813 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73d69c0f{/environment/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,813 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@34237b90{/executors,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,814 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1d01dfa5{/executors/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,818 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a31c2ee{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,819 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,830 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/static,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,832 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@e8fadb0{/,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,833 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d64b553{/api,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,834 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@26a94fa5{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-10-30 07:59:53,835 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@464a4442{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-10-30 07:59:54,647 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7ce7e83c{/metrics/json,null,AVAILABLE,@Spark}
+2019-10-30 07:59:57,113 INFO input.FileInputFormat: Total input paths to process : 10
+2019-10-30 08:00:18,667 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+/users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class: line 101: 14218 Killed                  LD_PRELOAD=/usr/lib/libmigration.so $APPPREFIX "${CMD[@]}"
+	Command being timed: "Terasort/bin/run.sh"
+	User time (seconds): 105.21
+	System time (seconds): 14.25
+	Percent of CPU this job got: 229%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:51.96
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2708740
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 231
+	Minor (reclaiming a frame) page faults: 205471
+	Voluntary context switches: 73357
+	Involuntary context switches: 41186
+	Swaps: 0
+	File system inputs: 466896
+	File system outputs: 4029848
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
++ exit
+[45699.444378] flag is set to print stats 2
+[45699.444382] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[45699.444383] flag set to clear count 0
+[45699.444385] flag is set to collect hetero allocate  9 
+[45789.426276] drop_caches: sh (14046): drop_caches: 3

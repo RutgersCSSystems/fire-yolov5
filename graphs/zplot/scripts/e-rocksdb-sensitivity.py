@@ -32,7 +32,7 @@ xname="Bandwidth Relative to Fast Memory"
 CONFIG = ['BW500', 'BW1000', 'BW2000', 'BW4000']
 #CONFIG = ['CAP2048', 'CAP4096', 'CAP8192', 'CAP10240']
 
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'Hetero-Context']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC']
 mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch']
 
 
@@ -100,8 +100,8 @@ axis(drawable=d, style='xy',
      yauto=[0,ymax, yint],
      linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,0],
      xtitle=xname, ytitle=yname,
-     ytitlesize=yfontsize)
+     ytitlesize=yfontsize, xtitlesize=xfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=85)
+L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=85, fontsize=9.0)
 
 c.render()

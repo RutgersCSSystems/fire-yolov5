@@ -1,0 +1,134 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/filebench
++ APP=/users/skannan/ssd/NVM/appbench/apps/filebench/filebench
++ DATA=/users/skannan/ssd/NVM/appbench/shared_data
++ SIZE=' --size=4G'
++ PARAM=' --directory=/users/skannan/ssd/NVM/appbench/shared_data  --size=4G'
++ OUTPUT=
++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data
++ sudo chown -R skannan /users/skannan/ssd/NVM/appbench/shared_data
++ cd /users/skannan/ssd/NVM/appbench/apps/filebench
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ RANDOM_MONGO
++ echo 'Running Random Write'
+Running Random Write
++ numactl --membind=1 /users/skannan/ssd/NVM/appbench/apps/filebench/filebench -f workloads/mongo.f
+initiating tracing...
+initiating tracing...
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.133: Mongo-like Version 2.3 personality successfully loaded
+0.133: Populating and pre-allocating filesets
+0.268: postsetdel populated: 200000 files, avg. dir. width = 20, avg. dir. depth = 4.1, 0 leafdirs, 6250.000MB total size
+0.268: Removing postsetdel tree (if exists)
+0.276: Pre-allocating directories in postsetdel tree
+0.551: Pre-allocating files in postsetdel tree
+16.006: postset populated: 200000 files, avg. dir. width = 20, avg. dir. depth = 4.1, 0 leafdirs, 6250.000MB total size
+16.006: Removing postset tree (if exists)
+16.009: Pre-allocating directories in postset tree
+16.506: Pre-allocating files in postset tree
+26.961: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+26.961: Population and pre-allocation of filesets completed
+26.961: Starting 1 filereader instances
+initiating tracing...
+initiating tracing...
+27.964: Running...
+49.967: Run took 22 seconds...
+49.968: Per-Operation Breakdown
+deletefile1          200000ops     9089ops/s   0.0mb/s    0.439ms/op [0.016ms - 1122.382ms]
+closefile2           200002ops     9090ops/s   0.0mb/s    0.003ms/op [0.001ms - 0.584ms]
+readfile1            200005ops     9090ops/s 301.8mb/s    0.191ms/op [0.018ms - 219.964ms]
+openfile2            200005ops     9090ops/s   0.0mb/s    0.021ms/op [0.003ms - 2.959ms]
+closefile1           200005ops     9090ops/s   0.0mb/s    0.002ms/op [0.001ms - 1.061ms]
+appendfilerand1      200006ops     9090ops/s  71.1mb/s    0.110ms/op [0.001ms - 370.249ms]
+openfile1            200006ops     9090ops/s   0.0mb/s    0.023ms/op [0.003ms - 2.994ms]
+49.968: IO Summary: 1400029 ops 63627.753 ops/s 9090/9090 rd/wr 372.9mb/s 0.113ms/op
+49.968: Shutting down processes
+application termination...
+application termination...
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ rm /users/skannan/ssd/NVM/appbench/shared_data/postset /users/skannan/ssd/NVM/appbench/shared_data/postsetdel
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/shared_data/postset’: Is a directory
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/shared_data/postsetdel’: Is a directory
++ rm -rf fio-seq-RW
++ rm -rf fio-rand-RW
++ set +x
+[11475.708990] drop_caches: sh (4004): drop_caches: 3
+[11477.363469] drop_caches: sh (4012): drop_caches: 3
+[16285.467226] drop_caches: sh (21234): drop_caches: 3
+[16285.860917] drop_caches: sh (21243): drop_caches: 3
+[16338.927200] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[16339.376417] drop_caches: sh (21750): drop_caches: 3
+[16340.210308] drop_caches: sh (21758): drop_caches: 3
+[16342.245155] drop_caches: sh (21795): drop_caches: 3
+[16343.022278] drop_caches: sh (21803): drop_caches: 3
+[16343.099946] flag is set to collect hetero allocate  9 
+[16343.099948] flag is set to enable HETERO_PGCACHE 11 
+[16343.099948] flag is set to enable HETERO_BUFFER 12 
+[16343.099949] flag is set to enable HETERO_JOURNAL 13 
+[16343.099950] flag is set to enable HETERO_RADIX 14 
+[16343.099951] flag is set to enable HETERO_FULLKERN 15 
+[16343.099951] flag to set FASTMEM node to 1 
+[16343.099953] hetero_pid set to 21804 21804 procname filebench
+[16343.099954] flag to set FASTMEM node to 1 
+[16343.099955] flag to set MIGRATION FREQ to 410065408 
+[16343.099956] flag to disable migration 19 
+[16343.099957] flag to MIGRATE_LISTCNT 410065408 
+[16343.099986] flag is set to collect hetero allocate  9 
+[16343.099986] flag is set to enable HETERO_PGCACHE 11 
+[16343.099987] flag is set to enable HETERO_BUFFER 12 
+[16343.099988] flag is set to enable HETERO_JOURNAL 13 
+[16343.099989] flag is set to enable HETERO_RADIX 14 
+[16343.099989] flag is set to enable HETERO_FULLKERN 15 
+[16343.099990] flag to set FASTMEM node to 1 
+[16343.099991] hetero_pid set to 21804 21804 procname filebench
+[16343.099991] flag to set FASTMEM node to 1 
+[16343.099992] flag to set MIGRATION FREQ to 410065408 
+[16343.099993] flag to disable migration 19 
+[16343.099994] flag to MIGRATE_LISTCNT 410065408 
+[16375.248287] flag is set to collect hetero allocate  9 
+[16375.248294] flag is set to enable HETERO_PGCACHE 11 
+[16375.248300] flag is set to enable HETERO_BUFFER 12 
+[16375.248301] flag is set to enable HETERO_JOURNAL 13 
+[16375.248302] flag is set to enable HETERO_RADIX 14 
+[16375.248308] flag is set to enable HETERO_FULLKERN 15 
+[16375.248308] flag to set FASTMEM node to 1 
+[16375.248316] hetero_pid set to 17049 17049 procname filebench
+[16375.248317] flag to set FASTMEM node to 1 
+[16375.248324] flag to set MIGRATION FREQ to 410065408 
+[16375.248325] flag to disable migration 19 
+[16375.248331] flag to MIGRATE_LISTCNT 410065408 
+[16375.248372] flag is set to collect hetero allocate  9 
+[16375.248377] flag is set to enable HETERO_PGCACHE 11 
+[16375.248378] flag is set to enable HETERO_BUFFER 12 
+[16375.248378] flag is set to enable HETERO_JOURNAL 13 
+[16375.248379] flag is set to enable HETERO_RADIX 14 
+[16375.248385] flag is set to enable HETERO_FULLKERN 15 
+[16375.248385] flag to set FASTMEM node to 1 
+[16375.248386] hetero_pid set to 17049 17049 procname filebench
+[16375.248392] flag to set FASTMEM node to 1 
+[16375.248393] flag to set MIGRATION FREQ to 410065408 
+[16375.248394] flag to disable migration 19 
+[16375.248394] flag to MIGRATE_LISTCNT 410065408 
+[16399.098857] flag is set to print hetero allocate stat 10 
+[16399.098863] Curr 17049 Currname filebench HeteroProcname filebench cache-hits 517603 cache-miss 0 buff-hits 1720 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 2709 active-cache 514894
+[16399.098863]  
+[16399.098865] cache-hits 74615731 cache-miss 90204602 buff-hits 0 buff-miss 0 migrated 13613775 cache-del 13184 buff-del 0 
+[16399.098867] flag set to clear count 0
+[16399.253348] flag is set to print hetero allocate stat 10 
+[16399.253353] Curr 21804 Currname filebench HeteroProcname 0000000000000000 cache-hits 4157249 cache-miss 0 buff-hits 230557 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 4157249
+[16399.253353]  
+[16399.253356] cache-hits 74615731 cache-miss 90204602 buff-hits 0 buff-miss 0 migrated 13613775 cache-del 13184 buff-del 0 
+[16399.253357] flag set to clear count 0
+[16403.919977] drop_caches: sh (17059): drop_caches: 3
+[16418.719686] drop_caches: sh (17069): drop_caches: 3

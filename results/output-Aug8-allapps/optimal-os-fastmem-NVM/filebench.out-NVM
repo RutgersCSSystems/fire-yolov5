@@ -1,0 +1,98 @@
++ APPBASE=/users/skannan/ssd/NVM/appbench/apps/filebench
++ APP=/users/skannan/ssd/NVM/appbench/apps/filebench/filebench
++ DATA=/users/skannan/ssd/NVM/appbench/shared_data
++ SIZE=' --size=4G'
++ PARAM=' --directory=/users/skannan/ssd/NVM/appbench/shared_data  --size=4G'
++ OUTPUT=
++ mkdir -p /users/skannan/ssd/NVM/appbench/shared_data
++ sudo chown -R skannan /users/skannan/ssd/NVM/appbench/shared_data
++ cd /users/skannan/ssd/NVM/appbench/apps/filebench
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ RANDOM_MONGO
++ echo 'Running Random Write'
+Running Random Write
++ numactl --membind=0 /users/skannan/ssd/NVM/appbench/apps/filebench/filebench -f workloads/mongo.f
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.122: Mongo-like Version 2.3 personality successfully loaded
+0.122: Populating and pre-allocating filesets
+0.252: postsetdel populated: 200000 files, avg. dir. width = 20, avg. dir. depth = 4.1, 0 leafdirs, 6250.000MB total size
+0.252: Removing postsetdel tree (if exists)
+0.268: Pre-allocating directories in postsetdel tree
+0.550: Pre-allocating files in postsetdel tree
+6.471: postset populated: 200000 files, avg. dir. width = 20, avg. dir. depth = 4.1, 0 leafdirs, 6250.000MB total size
+6.471: Removing postset tree (if exists)
+6.472: Pre-allocating directories in postset tree
+6.906: Pre-allocating files in postset tree
+19.741: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+19.741: Population and pre-allocation of filesets completed
+19.741: Starting 1 filereader instances
+20.922: Running...
+25.922: Run took 5 seconds...
+25.923: Per-Operation Breakdown
+deletefile1          200000ops    39996ops/s   0.0mb/s    0.058ms/op [0.017ms - 245.835ms]
+closefile2           200003ops    39996ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.223ms]
+readfile1            200004ops    39997ops/s 1327.2mb/s    0.029ms/op [0.009ms - 245.726ms]
+openfile2            200005ops    39997ops/s   0.0mb/s    0.007ms/op [0.003ms - 0.364ms]
+closefile1           200005ops    39997ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.319ms]
+appendfilerand1      200007ops    39997ops/s 311.6mb/s    0.033ms/op [0.001ms - 245.753ms]
+openfile1            200007ops    39997ops/s   0.0mb/s    0.008ms/op [0.003ms - 0.545ms]
+25.923: IO Summary: 1400031 ops 279977.138 ops/s 39997/39997 rd/wr 1638.9mb/s 0.020ms/op
+25.923: Shutting down processes
+application termination...
+application termination...
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ rm /users/skannan/ssd/NVM/appbench/shared_data/postset /users/skannan/ssd/NVM/appbench/shared_data/postsetdel
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/shared_data/postset’: Is a directory
+rm: cannot remove ‘/users/skannan/ssd/NVM/appbench/shared_data/postsetdel’: Is a directory
++ rm -rf fio-seq-RW
++ rm -rf fio-rand-RW
++ set +x
+[17128.834722] drop_caches: sh (1435): drop_caches: 3
+[17130.435058] drop_caches: sh (1443): drop_caches: 3
+[17150.728145] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[17154.809104] nvmemul: ioctl command: 0xc008aa02
+[17154.809111] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[17154.809120] nvmemul: ioctl command: 0x8008aa01
+[17154.809122] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[17154.809128] nvmemul: ioctl command: 0x8008aa01
+[17154.809129] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[17154.809134] nvmemul: ioctl command: 0x8008aa01
+[17154.809136] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[17154.809141] nvmemul: ioctl command: 0x8008aa01
+[17154.809143] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[17154.809148] nvmemul: ioctl command: 0x8008aa01
+[17154.809149] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[17154.809154] nvmemul: ioctl command: 0x8008aa01
+[17154.809156] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[17154.809161] nvmemul: ioctl command: 0x8008aa01
+[17154.809163] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[17154.809167] nvmemul: ioctl command: 0x8008aa01
+[17154.809169] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[17160.284605] drop_caches: sh (1600): drop_caches: 3
+[17161.008536] drop_caches: sh (1608): drop_caches: 3
+[17162.998463] drop_caches: sh (1645): drop_caches: 3
+[17163.797107] drop_caches: sh (1653): drop_caches: 3
+[17192.674739] flag is set to print hetero allocate stat 10 
+[17192.674747] Curr 37461 Currname filebench HeteroProcname 0000000000000000 cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 0
+[17192.674747]  
+[17192.674751] cache-hits 78172740 cache-miss 105474277 buff-hits 0 buff-miss 0 migrated 13613775 cache-del 14201 buff-del 0 
+[17192.674753] flag set to clear count 0
+[17193.662874] flag is set to print hetero allocate stat 10 
+[17193.662882] Curr 1654 Currname filebench HeteroProcname 0000000000000000 cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 migrate_time 0 avg_buff_life(us) 0 pgbuff-del 0 avg_cache_life(us) 0 pgcache-del 0 active-cache 0
+[17193.662882]  
+[17193.662892] cache-hits 78172740 cache-miss 105474277 buff-hits 0 buff-miss 0 migrated 13613775 cache-del 14201 buff-del 0 
+[17193.662894] flag set to clear count 0
+[17195.757808] drop_caches: sh (37472): drop_caches: 3
+[17219.657581] drop_caches: sh (37480): drop_caches: 3
