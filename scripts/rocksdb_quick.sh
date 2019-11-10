@@ -4,7 +4,7 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="SSD"
-CAPACITY3192
+CAPACITY=3192
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -46,7 +46,7 @@ SETUPEXTRAM() {
         sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
 	let DISKSZ=$NUMAFREE-$CAPACITY
-	echo $DISKSZ
+	echo $DISKSZ"*************"
 	$SCRIPTS/umount_ext4ramdisk.sh
 	$SCRIPTS/mount_ext4ramdisk.sh $DISKSZ
 
@@ -73,13 +73,13 @@ COMPILE_SHAREDLIB() {
 
 #APP="rocksdb.out"
 #APP="HiBench.out"
-#APP="spark-bench.out"
+APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
-APP="cassandra.out"
+#APP="cassandra.out"
 
 
 

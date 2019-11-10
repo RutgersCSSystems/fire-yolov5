@@ -597,6 +597,20 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+#####################REDIS NETWORK##############################
+j=0
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+TARGET=$OUTPUTDIR
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+
+exit
+
+
+
+
 
 ####################KERNEL STAT ################################
 j=0
@@ -680,18 +694,6 @@ exit
 
 
 
-
-
-#####################REDIS NETWORK##############################
-j=0
-APP='redis'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
-TARGET=$OUTPUTDIR
-EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
-
-exit
 
 
 #######################ROCKSDB PREFETCH#########################
