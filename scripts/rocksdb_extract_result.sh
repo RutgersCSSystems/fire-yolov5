@@ -608,16 +608,32 @@ FORMAT_RESULT_REDIS() {
 ####################KERNEL STAT ################################
 j=0
 APP='rocksdb'
-#OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
-OUTPUTDIR=/users/skannan/ssd/NVM/appbench/output
+OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
+#OUTPUTDIR=/users/skannan/ssd/NVM/appbench/output
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT_SENSITIVE "rocksdb"
+
 APP='spark-bench'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output/sparkbench-sensitivity"
+TARGET=$OUTPUTDIR
 EXTRACT_RESULT_SENSITIVE "spark-bench"
+
 cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity.py
+python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py
 exit
 
+
+
+#####################REDIS NETWORK##############################
+j=0
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+TARGET=$OUTPUTDIR
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+
+exit
 
 #####################REDIS NETWORK##############################
 j=0
@@ -698,8 +714,14 @@ cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
 exit
 
-
-
+j=0
+APP='rocksdb'
+OUTPUTDIR="results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
 #######################ROCKSDB PREFETCH#########################
 j=0
 APP='rocksdb'

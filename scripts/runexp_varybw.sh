@@ -5,21 +5,21 @@ cd $NVMBASE
 APP=""
 #TYPE="SSD"
 TYPE="NVM"
-EXPTYPE="CAP"
-#EXPTYPE="BW"
+#EXPTYPE="CAP"
+EXPTYPE="BW"
 
-APP="rocksdb.out"
-
+#APP="rocksdb.out"
+APP="spark-bench.out"
 
 #TYPE="SSD"
-#declare -a bwarr=("4000" "1000" "2000" "500")
-declare -a bwarr=("2000")
+declare -a bwarr=("4000" "1000" "2000" "500")
+#declare -a bwarr=("1000")
+#declare -a caparr=("2048" "4096" "8192" "10240")
 
-declare -a caparr=("2048" "4096" "8192" "10240")
+#declare -a apparr=("rocksdb.out")
+declare -a apparr=("spark-bench.out")
 
-declare -a apparr=("rocksdb.out")
-
-#declare -a caparr=("3192")
+declare -a caparr=("4096")
 let CAPACITY=4096
 
 
@@ -205,16 +205,14 @@ do
 		#sleep 2
 		#SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
 		#sleep 2
-		#export APPPREFIX="numactl --preferred=1"
-		#SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-
+		export APPPREFIX="numactl --preferred=1"
+		SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 		export APPPREFIX="numactl --preferred=0"
 		SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
-		export APPPREFIX="numactl --membind=1"
 		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-		
+		#export APPPREFIX="numactl --membind=1"
+		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
 		done
 	done
 done

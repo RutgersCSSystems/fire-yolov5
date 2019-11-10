@@ -65,6 +65,7 @@ INSTALL_SPARK_HIBENCH(){
 	cp -r $SPARKFILES/$HADOOP/bin/* $SPARKDIR/$HADOOP/bin/
 	cp -r $SPARKFILES/$HADOOP/sbin/* $SPARKDIR/$HADOOP/sbin/
 	cp $SPARKFILES/conf/spark-defaults.conf $SPARKDIR/conf/
+	cp $SPARKFILES/bin/* $SPARKDIR/bin/*
 
         #git clone https://github.com/Intel-bigdata/HiBench
         #cd $HIBENCHDIR
