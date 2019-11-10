@@ -29,35 +29,29 @@ let INCR_ONE_SPACE=1
 
 ## declare an array variable
 declare -a kernstat=("cache-miss" "buff-miss" "migrated")
-declare -a excludekernstat=("obj-affinity-NVM1")
 
 ##use this for storing some state
 let slowmemhists=0
 
-#declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity'  'slowmem-obj-affinity-prefetch')
-declare -a placearr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST')
-
+declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig' 'slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net')
+declare -a sensitive_arr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST')
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
 
-#declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
+declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
 #declare -a configarr=("BW1000")
-declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
-
+#declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
-
-
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
 
+declare -a excludekernstat=("obj-affinity-NVM1")
 declare -a excludefullstat=("NVM1" "prefetch")
-
 declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "slowmem-only" "optimal")
+declare -a excluderedisbreakdown=("affinity-prefetch")
 
 declare -a redispattern=("SET" "GET")
-
-
 declare -a mech_redis_prefetch=('slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch')
 
 
@@ -162,6 +156,7 @@ PULL_RESULT() {
                         scaled_value=$(echo $val $SCALE_SPARK_GRAPH | awk '{printf "%4.0f\n", $2/$1}')
 			echo $dir/$APPFILE" "$val" "$scaled_value
                         echo $scaled_value &> $APP".data"
+			echo $APP".data"
 		else
 			cp $dir/$APPFILE $dir/$APPFILE".txt"
 			sed -i "/readseq/c\ " $dir/$APPFILE".txt"
@@ -385,10 +380,17 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
                 TYPE=$device
                 APPFILE=$APP".out-"$device
 
-		for array in "${mechnames[@]}"
+		for array in "${placearr[@]}"
 		do
+
 			for dir in $TARGET/$array"-"$device
 			do
+				exlude=0
+				EXCLUDE_DIR $exlude $dir excluderedisbreakdown
+				if [ $exlude -ge 1 ]; then
+					echo "EXCLUDING" $dir
+					continue;
+				fi
 				REDIS_CONSOLIDATE_RESULT $dir $APP
 			done
 		done
@@ -401,10 +403,16 @@ EXTRACT_REDIS_BREAKDOWN_RESULT() {
 
 		for accesstype in "${redispattern[@]}"
 		do
-			for array in "${mechnames[@]}"
+			for array in "${placearr[@]}"
 			do
 				for dir in $TARGET/$array"-"$device
 				do
+					exlude=0
+					EXCLUDE_DIR $exlude $dir excluderedisbreakdown
+					if [ $exlude -ge 1 ]; then
+						echo "EXCLUDING" $dir
+						continue;
+					fi
 					PULL_RESULT_PATTERN $APP $dir $j $APP"-all.out-"$TYPE $accesstype
 				done
 			done
@@ -517,7 +525,7 @@ EXTRACT_RESULT_SENSITIVE() {
 
                 for BW in "${configarr[@]}"
                 do
-                        for placement in "${placearr[@]}"
+                        for placement in "${sensitive_arr[@]}"
                         do
                                 for dir in $TARGET/$BW*/*$placement*$device
                                 do
@@ -597,7 +605,6 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
-
 ####################KERNEL STAT ################################
 j=0
 APP='rocksdb'
@@ -605,8 +612,35 @@ APP='rocksdb'
 OUTPUTDIR=/users/skannan/ssd/NVM/appbench/output
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT_SENSITIVE "rocksdb"
+APP='spark-bench'
+EXTRACT_RESULT_SENSITIVE "spark-bench"
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity.py
+exit
+
+
+#####################REDIS NETWORK##############################
+j=0
+APP='redis'
+OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+TARGET=$OUTPUTDIR
+EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+
+exit
+
+
+
+
+####################KERNEL STAT ################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 exit
 
 ####################MOTIVATION ANALYSIS########################
@@ -664,34 +698,6 @@ cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
 exit
 
-
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-exit
-
-
-
-
-
-
-
-
-
-#####################REDIS NETWORK##############################
-j=0
-APP='redis'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
-TARGET=$OUTPUTDIR
-EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
-
-exit
 
 
 #######################ROCKSDB PREFETCH#########################
