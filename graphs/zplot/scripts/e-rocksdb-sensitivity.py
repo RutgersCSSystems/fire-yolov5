@@ -15,7 +15,7 @@ lwidth = 0.3
 xfontsize=9.0
 yfontsize=9.0
 xlabelsize=9.0
-xydim=[200, 170]
+xydim=[225, 170]
 xystart=[100,100]
 xylegend=[50,160]
 xycord = [50,30]
@@ -32,8 +32,8 @@ xname="Bandwidth Relative to Fast Memory"
 CONFIG = ['BW500', 'BW1000', 'BW2000', 'BW4000']
 #CONFIG = ['CAP2048', 'CAP4096', 'CAP8192', 'CAP10240']
 
-mechnames = ['All-SlowMem', 'Naive', 'Migration-only', 'Hetero-Context', 'All-FastMem']
-mech = ['slowmem-only', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch', 'optimal-os-fastmem']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC']
+mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch']
 
 
 xlabel = ["1/16", "1/8", "1/4", "1/2"]
@@ -71,23 +71,21 @@ for k in range(0, len(CONFIG)):
 
     for j in range(0, len(mech)):
 
-        if( s % (len(mech)) == len(mech)-1):
+        #if( s % (len(mech)) == len(mech)-1):
 
-	    style='star'
-            color='green'	
+	 #   style='star'
+          #  color='green'	
 
-	    p.line(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color, linewidth=0.5)	
+	   # p.line(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color, linewidth=0.5)	
 
-	    if( legendflag == 0):
-	    	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
-        	         linewidth=0.5, style=style, legend=L, legendtext=mechnames[j], fill=True, size=8)
-		legendflag = 1
-	    else:
-	    	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
-        	         linewidth=0.5, style=style, fill=True, size=8)
-
-
-	elif(s > len(mech)-1):
+	    #if( legendflag == 0):
+	    #	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
+        #	         linewidth=0.5, style=style, legend=L, legendtext=mechnames[j], fill=True, size=8)
+	#	legendflag = 1
+	 #   else:
+	  #  	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
+        #	         linewidth=0.5, style=style, fill=True, size=8)
+	if(s > len(mech)-1):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)
         else:
@@ -100,10 +98,10 @@ for k in range(0, len(CONFIG)):
 axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], 
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,0],
      xtitle=xname, ytitle=yname,
-     ytitlesize=yfontsize)
+     ytitlesize=yfontsize, xtitlesize=xfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
+L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=85, fontsize=9.0)
 
 c.render()

@@ -4,7 +4,7 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="SSD"
-CAPACITY=4096
+CAPACITY3192
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -36,7 +36,7 @@ SETUPEXTRAM() {
 	sudo kill -9 `pidof postgres`
 	sudo kilall postgres
 	sudo /etc/init.d/mysql stop
-	sudo stop
+	sudo dmesg -c
 
         sudo rm -rf  /mnt/ext4ramdisk/*
 	$SCRIPTS/umount_ext4ramdisk.sh
@@ -73,13 +73,13 @@ COMPILE_SHAREDLIB() {
 
 #APP="rocksdb.out"
 #APP="HiBench.out"
-APP="spark-bench.out"
+#APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
-#APP="cassandra.out"
+APP="cassandra.out"
 
 
 
@@ -95,7 +95,7 @@ RUNAPP() {
         #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
         if [ "$APP" = "cassandra.out" ]
         then
-                $APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+                $APPBENCH/apps/butterflyeffect/code/run.sh &> $OUTPUT
         fi
         #$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 
@@ -168,30 +168,15 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
-#### NAIVE PLACEMENT #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
-
-#### MIGRATION ONLY NO PREFETCH #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
-
-#### OBJAFF NO PREFETCH #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
-
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
 $NVMBASE/scripts/clear_cache.sh
+exit
+
+
 
 
 export APPPREFIX="numactl --membind=1"
@@ -199,6 +184,22 @@ $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
 $SCRIPTS/mount_ext4ramdisk.sh 24000
 SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
+exit
+
+#### OBJAFF NO PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+exit
+
+
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5
@@ -207,6 +208,18 @@ DISABLE_THROTTLE
 export APPPREFIX="numactl --membind=0"
 SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 exit
+
+
+
+
+#### MIGRATION ONLY NO PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+
+
+
 
 
 

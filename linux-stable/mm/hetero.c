@@ -97,7 +97,7 @@ Move this to header file later.
 
 //#define _ENABLE_HETERO_THREAD
 #ifdef _ENABLE_HETERO_THREAD
-#define MAXTHREADS 100
+#define MAXTHREADS 10
 struct migrate_threads {
 	struct task_struct *thrd;
 };
@@ -912,6 +912,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
+	print_hetero_stats(current);
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
 				current->mm, "HETEROTHRD");	
 

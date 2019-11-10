@@ -2,11 +2,11 @@
 set -x
 
 QEMU_SET() {
-	echo "export HDFS_NAMENODE_USER="root"" &>> ~/.bashrc
-	echo "export HDFS_DATANODE_USER="root"" &>> ~/.bashrc
-	echo "export HDFS_SECONDARYNAMENODE_USER="root"" &>> ~/.bashrc
-	echo "export YARN_RESOURCEMANAGER_USER="root"" &>> ~/.bashrc
-	echo "export YARN_NODEMANAGER_USER="root"" &>> ~/.bashrc
+	echo "export HDFS_NAMENODE_USER="skannan"" &>> ~/.bashrc
+	echo "export HDFS_DATANODE_USER="skannan"" &>> ~/.bashrc
+	echo "export HDFS_SECONDARYNAMENODE_USER="skannan"" &>> ~/.bashrc
+	echo "export YARN_RESOURCEMANAGER_USER="skannan"" &>> ~/.bashrc
+	echo "export YARN_NODEMANAGER_USER="skannan"" &>> ~/.bashrc
 }
 
 ADD_SPARK_TO_BASHRC() {
@@ -33,11 +33,11 @@ INSTALL_SPARK_HIBENCH(){
 	SPARKFILE=spark-2.4.4-bin-hadoop2.7.tgz
 	SPARKDIR=$APPBENCH/apps/spark
 	HIBENCHDIR=$SPARKDIR/HiBench
+	SPARKBENCH=$SPARKDIR/spark-bench
         SPARKFILES=$APPBENCH/apps/spark_files
 	HADOOP="hadoop-3.2.1"
 	HADOOP_DIR=$SPARKDIR/$HADOOP
 
-        #ADD_SPARK_TO_BASHRC
 
 	# Check if Spark file exists?
 	if [ -f $SPARKFILE ]; then
@@ -60,14 +60,32 @@ INSTALL_SPARK_HIBENCH(){
 	    wget http://apache.mirrors.pair.com/hadoop/common/$HADOOP/$HADOOP".tar.gz"
 	    tar -xvzf $HADOOP".tar.gz"
 	fi
-	
-        git clone https://github.com/Intel-bigdata/HiBench
-        cd $HIBENCHDIR
-	mvn -Dspark=2.1 -Dscala=2.11 clean package
-	cp $SPARKFILES/$HADOOP/etc/* $HADOOP_DIR/etc/
-        cp $SPARKFILES/HiBench/conf/* $HIBENCHDIR/conf/ 
-}
+	cd $SPARKDIR/$HADOOP
+	cp -r $SPARKFILES/$HADOOP/etc/hadoop/* $SPARKDIR/$HADOOP/etc/hadoop/
+	cp -r $SPARKFILES/$HADOOP/bin/* $SPARKDIR/$HADOOP/bin/
+	cp -r $SPARKFILES/$HADOOP/sbin/* $SPARKDIR/$HADOOP/sbin/
+	cp $SPARKFILES/conf/spark-defaults.conf $SPARKDIR/conf/
+	cp $SPARKFILES/bin/* $SPARKDIR/bin/*
 
+        #git clone https://github.com/Intel-bigdata/HiBench
+        #cd $HIBENCHDIR
+	#mvn -Dspark=2.1 -Dscala=2.11 clean package
+	#cp $SPARKFILES/$HADOOP/etc/* $HADOOP_DIR/etc/
+        #cp $SPARKFILES/HiBench/conf/* $HIBENCHDIR/conf/ 
+	
+	cd $SPARKDIR
+	git clone https://github.com/CODAIT/spark-bench -b legacy
+	cd $SPARKBENCH
+	git clone https://github.com/synhershko/wikixmlj.git
+	cd wikixmlj
+	mvn package install
+	cd $SPARKBENCH
+	bin/build-all.sh
+	cp -r $SPARKFILES/spark-bench/conf .
+        cp -r $SPARKFILES/spark-bench/bin .
+	
+}
 source scripts/setvars.sh
 INSTALL_SPARK_HIBENCH
+ADD_SPARK_TO_BASHRC
 QEMU_SET

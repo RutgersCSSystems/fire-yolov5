@@ -6,28 +6,28 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=600
+ymax=1000
 yint=100
 xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xfontsize=10.0
-yfontsize=9.0
-xlabelsize=10.0
 xydim=[270, 170]
-xystart=[100,100]
+xystart=[90,100]
 xylegend=[50,160]
-xycord = [40,20]
+xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=7
 
+xfontsize=9.0
+yfontsize=9.0
+xlabelsize=9.0
 
-mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-NoMigrate', 'Hetero-Context', 'All-SlowMem']
-#xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
-#pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig', 'slowmem-obj-affinity', 'slowmem-only']
+
+
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-NoMigrate', 'KLOC']
+mech = [ 'slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig', 'slowmem-obj-affinity']
 storage=["SSD", "NVM"]
 pattern = "NVM"
 APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
@@ -35,7 +35,7 @@ xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
 
 
 
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']
+colors=['white', 'lightgrey', 'darkgray', 'black', 'blue', 'red']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/'
 yname="Throughput (MB/sec)"
 
@@ -75,9 +75,9 @@ axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
      linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [0,-10], 
-     xtitle='Application', ytitle=yname,
-     ytitlesize=yfontsize)
+     xtitle='Application', ytitle=yname, xtitleshift = [10,0],
+     ytitlesize=yfontsize, xtitlesize=xfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=50)
 
+L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=95, fontsize=yfontsize)
 c.render()
