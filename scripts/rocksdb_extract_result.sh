@@ -35,13 +35,14 @@ declare -a excludekernstat=("obj-affinity-NVM1")
 let slowmemhists=0
 
 #declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity'  'slowmem-obj-affinity-prefetch')
-declare -a placearr=('APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST' 'APPSLOW-OSSLOW')
+declare -a placearr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST')
 
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
+
 #declare -a configarr=("BW500" "BW1000" "BW2000" "BW4000")
-declare -a configarr=("BW1000")
-#declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
+#declare -a configarr=("BW1000")
+declare -a configarr=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 
 declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
@@ -135,6 +136,7 @@ PULL_RESULT() {
 	mkdir -p $ZPLOT/data/$GRAPHDATA
 	rm -rf $resultfile
 	rm -rf "num.data"
+
 
 	if [ -f $dir/$APPFILE ]; then
 		if [ "$APP" = 'redis' ]; 
@@ -531,7 +533,7 @@ EXTRACT_RESULT_SENSITIVE() {
                                         else
                                                 APPFILE=$APP".out-"$TYPE
                                         fi
-                                        PULL_RESULT $APP $dir $j $APPFILE "result-sensitivity" "-"$BW
+                                        PULL_RESULT $APP $dir $j $APPFILE "motivate" "-"$BW
                                 done
                         done
                         j=$((j+$INCR_ONE_SPACE))
@@ -595,6 +597,18 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+
+####################KERNEL STAT ################################
+j=0
+APP='rocksdb'
+#OUTPUTDIR="results/output-Aug8-allapps-sensitivity"
+OUTPUTDIR=/users/skannan/ssd/NVM/appbench/output
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_SENSITIVE "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity.py
+exit
+
 ####################MOTIVATION ANALYSIS########################
 
 j=0
@@ -612,12 +626,15 @@ APP='filebench'
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT_COMPARE "filebench"
 
+APP='cassandra'
+OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
+TARGET=$OUTPUTDIR
+EXTRACT_RESULT_COMPARE "cassandra"
+
+
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
 exit
-
-
-
 
 ####################ALL APPS##########################
 j=0
@@ -660,18 +677,6 @@ exit
 
 
 
-
-
-
-
-####################KERNEL STAT ################################
-j=0
-APP='rocksdb'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/result-sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity.py
 
 
 

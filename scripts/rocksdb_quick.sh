@@ -4,7 +4,7 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="SSD"
-CAPACITY=5120
+CAPACITY3192
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -73,13 +73,13 @@ COMPILE_SHAREDLIB() {
 
 #APP="rocksdb.out"
 #APP="HiBench.out"
-APP="spark-bench.out"
+#APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
-#APP="cassandra.out"
+APP="cassandra.out"
 
 
 
@@ -95,7 +95,7 @@ RUNAPP() {
         #$APPBENCH/apps/rocksdb/run_new.sh &> $OUTPUT
         if [ "$APP" = "cassandra.out" ]
         then
-                $APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+                $APPBENCH/apps/butterflyeffect/code/run.sh &> $OUTPUT
         fi
         #$APPBENCH/apps/filebench/run.sh &> $OUTPUT
 
@@ -168,15 +168,22 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
-
-
-
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
 $NVMBASE/scripts/clear_cache.sh
+exit
+
+
+
+
+export APPPREFIX="numactl --membind=1"
+$SCRIPTS/umount_ext4ramdisk.sh
+sleep 5
+$SCRIPTS/mount_ext4ramdisk.sh 24000
+SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 exit
 
 #### OBJAFF NO PREFETCH #############
@@ -193,13 +200,6 @@ SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 exit
-
-
-export APPPREFIX="numactl --membind=1"
-$SCRIPTS/umount_ext4ramdisk.sh
-sleep 5
-$SCRIPTS/mount_ext4ramdisk.sh 24000
-SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5

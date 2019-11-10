@@ -1,3 +1,4 @@
++ CODE=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code
 + YCSB_CLIENT=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB
 + OPSCNT=500000
 + HOST=localhost
@@ -5,28 +6,27 @@
 + mkdir /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code
 mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code’: File exists
 + cd /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code
++ DESTROY
++ sudo killall java
+java: no process found
++ sudo killall java
+java: no process found
++ sleep 2
++ sudo killall java
+java: no process found
++ sleep 2
++ sudo killall java
+java: no process found
++ sleep 2
 ++ pidof java
 + kill -9
 kill: usage: kill [-s sigspec | -n signum | -sigspec] pid | jobspec ... or kill -l [sigspec]
-+ CASANDARA_SET_ENV
-+ export LANG=en_US.UTF-8
-+ LANG=en_US.UTF-8
-+ export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
-+ JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
-+ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-+ JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-+ export 'ANT_OPTS=-Xms4G -Xmx16G'
-+ ANT_OPTS='-Xms4G -Xmx16G'
-+ export ANT_HOME=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/apache-ant-1.9.4
-+ ANT_HOME=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/apache-ant-1.9.4
-+ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-12-oracle/bin:/usr/lib/jvm/java-12-oracle/db/bin:/users/skannan/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:/users/skannan/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/apache-ant-1.9.4/bin
-+ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-12-oracle/bin:/usr/lib/jvm/java-12-oracle/db/bin:/users/skannan/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:/users/skannan/bin:/usr/lib/jvm/java-8-openjdk-amd64/bin:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/apache-ant-1.9.4/bin
 + sleep 5
 + RUN_CASSANDARA
 + cd /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra
 + mkdir /users/skannan/ssd/NVM/appbench/shared_data
 mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/shared_data’: File exists
-+ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/commitlog /users/skannan/ssd/NVM/appbench/shared_data/data /users/skannan/ssd/NVM/appbench/shared_data/hints /users/skannan/ssd/NVM/appbench/shared_data/saved_caches
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/lost+found
 + rm -rf /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/data
 + rm -rf /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/data/data
 + ln -s /users/skannan/ssd/NVM/appbench/shared_data /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/data
@@ -106,12 +106,9 @@ mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/shared_data’
 + JAVA_AGENT= -javaagent:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar
 + JAVA_OPTS=:-Djava.library.path=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-bin
 + break
-+ [ -n /usr/lib/jvm/java-8-openjdk-amd64 ]
-+ [ -x /usr/lib/jvm/java-8-openjdk-amd64/bin/amd64/java ]
-+ [ -x /usr/lib/jvm/java-8-openjdk-amd64/bin/java ]
-+ JAVA=/usr/lib/jvm/java-8-openjdk-amd64/bin/java
-+ break
-+ [ -z /usr/lib/jvm/java-8-openjdk-amd64/bin/java ]
++ [ -n  ]
++ JAVA=java
++ [ -z java ]
 + NUMACTL_ARGS=numactl --membind=1
 + which numactl
 + numactl numactl --membind=1 ls /
@@ -119,14 +116,12 @@ mkdir: cannot create directory ‘/users/skannan/ssd/NVM/appbench/shared_data’
 + [ -z /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf -o -z /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/main:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/thrift:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/HdrHistogram-2.1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ST4-4.0.8.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/airline-0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/antlr-runtime-3.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/caffeine-2.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/cassandra-driver-core-3.0.1-shaded.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-cli-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-codec-1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-lang3-3.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-math3-3.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/compress-lzf-0.8.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrent-trees-2.4.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrentlinkedhashmap-lru-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/disruptor-3.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ecj-4.4.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/guava-18.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/high-scale-lib-1.0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/hppc-0.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/javax.inject.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jbcrypt-0.3m.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jcl-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jctools-core-1.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jflex-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jna-4.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/joda-time-2.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/json-simple-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jstackjunit-0.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/libthrift-0.9.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/log4j-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-classic-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-core-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/lz4-1.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-core-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-jvm-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-logback-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/netty-all-4.0.44.Final.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-j8-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config-base-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config3-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-1.6.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/slf4j-api-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snakeyaml-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snappy-java-1.1.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snowball-stemmer-1.3.0.581.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/stream-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/thrift-server-0.3.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jsr223/*/*.jar ]
 + [ -f /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/cassandra-env.sh ]
 + . /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/cassandra-env.sh
-+ /usr/lib/jvm/java-8-openjdk-amd64/bin/java -version
-+ java_ver_output=Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-openjdk version "1.8.0_222"
-OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1~14.04-b10)
++ java -version
++ java_ver_output=openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~16.04.1-b10)
 OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
-+ echo Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-openjdk version "1.8.0_222"
-OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1~14.04-b10)
++ echo openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~16.04.1-b10)
 OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 + grep [openjdk|java] version
 + awk -F" NR==1 {print $2}
@@ -136,9 +131,8 @@ OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 + JVM_PATCH_VERSION=222
 + [ 1.8.0 < 1.8 ]
 + [ 1.8.0 < 1.8 ]
-+ echo Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-openjdk version "1.8.0_222"
-OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1~14.04-b10)
++ echo openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~16.04.1-b10)
 OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 + grep -A 1 java version
 + awk NR==2 {print $1}
@@ -181,20 +175,20 @@ OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
 + JVM_OPTS= -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation
 + JVM_OPTS= -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10
 + JVM_OPTS= -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
-+ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure+  -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
++ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10+  -XX:GCLogFileSize=10M
 grep -q Xmn
 + DEFINED_XMN=1
-+ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC+  -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStampsgrep -XX:+PrintHeapAtGC -q -XX:+PrintTenuringDistribution Xmx -XX:+PrintGCApplicationStoppedTime
- -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
++ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError+  -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMAgrep -XX:+PerfDisableSharedMem -q -Djava.net.preferIPv4Stack=true Xmx -XX:+UseParNewGC
+ -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
 + DEFINED_XMX=1
-+ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB+  -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabledgrep -XX:+CMSEdenChunksRecordAlways -q -XX:+CMSClassUnloadingEnabled Xms -XX:+PrintGCDetails
- -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
++ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime+  -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
+grep -q Xms
 + DEFINED_XMS=1
-+ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8+  -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistributiongrep -XX:+PrintGCApplicationStoppedTime -q -XX:+PrintPromotionFailure UseConcMarkSweepGC -XX:+UseGCLogFileRotation
- -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
++ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
++ grep -q UseConcMarkSweepGC
 + USING_CMS=0
-+ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1+  -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTimegrep -XX:+PrintPromotionFailure -q -XX:+UseGCLogFileRotation UseG1GC -XX:NumberOfGCLogFiles=10
- -XX:GCLogFileSize=10M
++ echo -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking+  -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=truegrep -XX:+UseParNewGC -q -XX:+UseConcMarkSweepGC UseG1GC -XX:+CMSParallelRemarkEnabled
+ -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M
 + USING_G1=1
 + [ x = x ]
 + [ x = x -o 1 -eq 0 ]
@@ -274,8 +268,8 @@ grep -q Xmn
 + echo /lib64:/lib:/usr/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu/libfakeroot:/usr/local/lib:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu/mesa-egl:/usr/lib/x86_64-linux-gnu/mesa:/lib:/usr/lib
 + tr :  
 + path=/lib64 /lib /usr/lib64 /usr/lib /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/mesa-egl /usr/lib/x86_64-linux-gnu/mesa /lib /usr/lib
-+ find /lib64 /lib+  /usr/lib64 /usr/lib /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/mesa-egl /usr/lib/x86_64-linux-gnu/mesa /lib /usr/lib -regex .*/libjemalloc\.so\(\.1\)* -printhead
- -n 1
++ find /lib64 /lib /usr/lib64 /usr/lib /usr/lib/x86_64-linux-gnu/libfakeroot /usr/local/lib /lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/mesa-egl /usr/lib/x86_64-linux-gnu/mesa /lib /usr/lib -regex .*/libjemalloc\.so\(\.1\)* -print
++ head -n 1
 + CASSANDRA_LIBJEMALLOC=
 + [ ! -z ]
 + getopt vRfhp:bD:H:E: --preferred=0
@@ -303,8 +297,6 @@ getopt: unrecognized option '--preferred=0'
 + cassandra_parms=-Dlogback.configurationFile=logback.xml -Dcassandra.logdir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs -Dcassandra.storagedir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data
 + [ x != x ]
 + export LD_PRELOAD=/users/skannan/ssd/NVM/appbench/shared_libs/construct/libmigration.so
-+ echo numactl --membind=1
-numactl --membind=1
 + [ x != x ]
 + [ x-XX:OnOutOfMemoryError=kill -9 %p != x ]
 + [ ! -z  ]
@@ -312,11 +304,10 @@ numactl --membind=1
 + export LD_PRELOAD=
 + return 0
 + exit 0
-+ exec numactl --membind=1 /usr/lib/jvm/java-8-openjdk-amd64/bin/java+ sleep 5
- -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M -Xms8192M -Xmx8192M -Xmn2048M -XX:CompileCommandFile=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/hotspot_compiler -javaagent:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar -Dcassandra.jmx.local.port=7199 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.password.file=/etc/cassandra/jmxremote.password -Djava.library.path=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-bin -XX:OnOutOfMemoryError=kill -9 %p -Dlogback.configurationFile=logback.xml -Dcassandra.logdir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs -Dcassandra.storagedir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/main:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/thrift:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/HdrHistogram-2.1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ST4-4.0.8.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/airline-0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/antlr-runtime-3.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/caffeine-2.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/cassandra-driver-core-3.0.1-shaded.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-cli-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-codec-1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-lang3-3.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-math3-3.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/compress-lzf-0.8.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrent-trees-2.4.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrentlinkedhashmap-lru-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/disruptor-3.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ecj-4.4.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/guava-18.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/high-scale-lib-1.0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/hppc-0.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/javax.inject.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jbcrypt-0.3m.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jcl-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jctools-core-1.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jflex-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jna-4.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/joda-time-2.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/json-simple-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jstackjunit-0.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/libthrift-0.9.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/log4j-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-classic-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-core-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/lz4-1.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-core-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-jvm-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-logback-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/netty-all-4.0.44.Final.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-j8-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config-base-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config3-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-1.6.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/slf4j-api-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snakeyaml-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snappy-java-1.1.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snowball-stemmer-1.3.0.581.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/stream-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/thrift-server-0.3.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jsr223/*/*.jar org.apache.cassandra.service.CassandraDaemon
++ exec numactl --membind=1 java -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log -ea -XX:+UseThreadPriorities -XX:ThreadPriorityPolicy=42 -XX:+HeapDumpOnOutOfMemoryError -Xss32m -XX:StringTableSize=1000003 -XX:+AlwaysPreTouch -XX:-UseBiasedLocking -XX:+UseTLAB -XX:+ResizeTLAB -XX:+UseNUMA -XX:+PerfDisableSharedMem+ sleep 5
+ -Djava.net.preferIPv4Stack=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:SurvivorRatio=8 -XX:MaxTenuringThreshold=1 -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSWaitDuration=10000 -XX:+CMSParallelInitialMarkEnabled -XX:+CMSEdenChunksRecordAlways -XX:+CMSClassUnloadingEnabled -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintHeapAtGC -XX:+PrintTenuringDistribution -XX:+PrintGCApplicationStoppedTime -XX:+PrintPromotionFailure -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M -Xms8192M -Xmx8192M -Xmn2048M -XX:CompileCommandFile=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/hotspot_compiler -javaagent:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar -Dcassandra.jmx.local.port=7199 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.password.file=/etc/cassandra/jmxremote.password -Djava.library.path=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-bin -XX:OnOutOfMemoryError=kill -9 %p -Dlogback.configurationFile=logback.xml -Dcassandra.logdir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs -Dcassandra.storagedir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/main:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/thrift:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/HdrHistogram-2.1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ST4-4.0.8.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/airline-0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/antlr-runtime-3.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/caffeine-2.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/cassandra-driver-core-3.0.1-shaded.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-cli-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-codec-1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-lang3-3.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-math3-3.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/compress-lzf-0.8.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrent-trees-2.4.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrentlinkedhashmap-lru-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/disruptor-3.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ecj-4.4.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/guava-18.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/high-scale-lib-1.0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/hppc-0.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/javax.inject.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jbcrypt-0.3m.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jcl-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jctools-core-1.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jflex-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jna-4.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/joda-time-2.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/json-simple-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jstackjunit-0.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/libthrift-0.9.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/log4j-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-classic-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-core-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/lz4-1.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-core-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-jvm-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-logback-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/netty-all-4.0.44.Final.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-j8-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config-base-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config3-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-1.6.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/slf4j-api-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snakeyaml-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snappy-java-1.1.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snowball-stemmer-1.3.0.581.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/stream-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/thrift-server-0.3.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jsr223/*/*.jar org.apache.cassandra.service.CassandraDaemon
 initiating tracing...
 initiating tracing...
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
 CompilerOracle: dontinline org/apache/cassandra/db/Columns$Serializer.deserializeLargeSubset (Lorg/apache/cassandra/io/util/DataInputPlus;Lorg/apache/cassandra/db/Columns;I)Lorg/apache/cassandra/db/Columns;
 CompilerOracle: dontinline org/apache/cassandra/db/Columns$Serializer.serializeLargeSubset (Ljava/util/Collection;ILorg/apache/cassandra/db/Columns;ILorg/apache/cassandra/io/util/DataOutputPlus;)V
 CompilerOracle: dontinline org/apache/cassandra/db/Columns$Serializer.serializeLargeSubsetSize (Ljava/util/Collection;ILorg/apache/cassandra/db/Columns;I)I
@@ -342,122 +333,120 @@ CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOpera
 CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOperations.compareTo (Ljava/lang/Object;JILjava/nio/ByteBuffer;)I
 CompilerOracle: inline org/apache/cassandra/utils/FastByteOperations$UnsafeOperations.compareTo (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)I
 CompilerOracle: inline org/apache/cassandra/utils/vint/VIntCoding.encodeVInt (JI)[B
-INFO  [main] 2019-08-08 19:38:00,152 YamlConfigurationLoader.java:89 - Configuration location: file:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/conf/cassandra.yaml
-INFO  [main] 2019-08-08 19:38:00,376 Config.java:495 - Node configuration:[allocate_tokens_for_keyspace=null; authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_bootstrap=true; auto_snapshot=true; back_pressure_enabled=false; back_pressure_strategy=org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}; batch_size_fail_threshold_in_kb=50; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=null; broadcast_rpc_address=null; buffer_pool_use_heap_if_exhausted=true; cas_contention_timeout_in_ms=1000; cdc_enabled=false; cdc_free_space_check_interval_ms=250; cdc_raw_directory=null; cdc_total_space_in_mb=0; client_encryption_options=<REDACTED>; cluster_name=Test Cluster; column_index_cache_size_in_kb=2; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_compression=null; commitlog_directory=null; commitlog_max_compression_buffers_in_pool=3; commitlog_periodic_queue_size=-1; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_batch_window_in_ms=NaN; commitlog_sync_period_in_ms=10000; commitlog_total_space_in_mb=null; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_compactors=null; concurrent_counter_writes=32; concurrent_materialized_view_writes=32; concurrent_reads=32; concurrent_replicates=null; concurrent_writes=32; counter_cache_keys_to_save=2147483647; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; credentials_cache_max_entries=1000; credentials_update_interval_in_ms=-1; credentials_validity_in_ms=2000; cross_node_timeout=false; data_file_directories=[Ljava.lang.String;@176d53b2; disk_access_mode=auto; disk_failure_policy=stop; disk_optimization_estimate_percentile=0.95; disk_optimization_page_cross_chance=0.1; disk_optimization_strategy=ssd; dynamic_snitch=true; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; enable_materialized_views=true; enable_scripted_user_defined_functions=false; enable_user_defined_functions=false; enable_user_defined_functions_threads=true; encryption_options=null; endpoint_snitch=SimpleSnitch; file_cache_round_up=null; file_cache_size_in_mb=null; gc_log_threshold_in_ms=200; gc_warn_threshold_in_ms=1000; hinted_handoff_disabled_datacenters=[]; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; hints_compression=null; hints_directory=null; hints_flush_period_in_ms=10000; incremental_backups=false; index_interval=null; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; initial_token=null; inter_dc_stream_throughput_outbound_megabits_per_sec=200; inter_dc_tcp_nodelay=false; internode_authenticator=null; internode_compression=dc; internode_recv_buff_size_in_bytes=0; internode_send_buff_size_in_bytes=0; key_cache_keys_to_save=2147483647; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=localhost; listen_interface=null; listen_interface_prefer_ipv6=false; listen_on_broadcast_address=false; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; max_hints_file_size_in_mb=128; max_mutation_size_in_kb=null; max_streaming_retries=3; max_value_size_in_mb=256; memtable_allocation_type=heap_buffers; memtable_cleanup_threshold=null; memtable_flush_writers=0; memtable_heap_space_in_mb=null; memtable_offheap_space_in_mb=null; min_free_space_per_drive_in_mb=50; native_transport_max_concurrent_connections=-1; native_transport_max_concurrent_connections_per_ip=-1; native_transport_max_frame_size_in_mb=256; native_transport_max_threads=128; native_transport_port=9042; native_transport_port_ssl=null; num_tokens=256; otc_backlog_expiration_interval_ms=200; otc_coalescing_enough_coalesced_messages=8; otc_coalescing_strategy=DISABLED; otc_coalescing_window_us=200; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_cache_max_entries=1000; permissions_update_interval_in_ms=-1; permissions_validity_in_ms=2000; phi_convict_threshold=8.0; prepared_statements_cache_size_mb=null; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_scheduler_id=null; request_scheduler_options=null; request_timeout_in_ms=10000; role_manager=CassandraRoleManager; roles_cache_max_entries=1000; roles_update_interval_in_ms=-1; roles_validity_in_ms=2000; row_cache_class_name=org.apache.cassandra.cache.OHCProvider; row_cache_keys_to_save=2147483647; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=localhost; rpc_interface=null; rpc_interface_prefer_ipv6=false; rpc_keepalive=true; rpc_listen_backlog=50; rpc_max_threads=2147483647; rpc_min_threads=16; rpc_port=9160; rpc_recv_buff_size_in_bytes=null; rpc_send_buff_size_in_bytes=null; rpc_server_type=sync; saved_caches_directory=null; seed_provider=org.apache.cassandra.locator.SimpleSeedProvider{seeds=127.0.0.1}; server_encryption_options=<REDACTED>; slow_query_log_timeout_in_ms=500; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; stream_throughput_outbound_megabits_per_sec=200; streaming_keep_alive_period_in_secs=300; streaming_socket_timeout_in_ms=86400000; thrift_framed_transport_size_in_mb=15; thrift_max_message_length_in_mb=16; thrift_prepared_statements_cache_size_mb=null; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; tracetype_query_ttl=86400; tracetype_repair_ttl=604800; transparent_data_encryption_options=org.apache.cassandra.config.TransparentDataEncryptionOptions@971d0d8; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; user_defined_function_fail_timeout=1500; user_defined_function_warn_timeout=500; user_function_timeout_policy=die; windows_timer_interval=1; write_request_timeout_in_ms=2000]
-INFO  [main] 2019-08-08 19:38:00,376 DatabaseDescriptor.java:367 - DiskAccessMode 'auto' determined to be mmap, indexAccessMode is mmap
-INFO  [main] 2019-08-08 19:38:00,377 DatabaseDescriptor.java:425 - Global memtable on-heap threshold is enabled at 1996MB
-INFO  [main] 2019-08-08 19:38:00,377 DatabaseDescriptor.java:429 - Global memtable off-heap threshold is enabled at 1996MB
-INFO  [main] 2019-08-08 19:38:00,510 RateBasedBackPressure.java:123 - Initialized back-pressure with high ratio: 0.9, factor: 5, flow: FAST, window size: 2000.
-INFO  [main] 2019-08-08 19:38:00,510 DatabaseDescriptor.java:729 - Back-pressure is disabled with strategy org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}.
-INFO  [main] 2019-08-08 19:38:00,586 JMXServerUtils.java:246 - Configured JMX server at: service:jmx:rmi://127.0.0.1/jndi/rmi://127.0.0.1:7199/jmxrmi
-INFO  [main] 2019-08-08 19:38:00,591 CassandraDaemon.java:473 - Hostname: c220g2-010809.wisc.cloudlab.us
-INFO  [main] 2019-08-08 19:38:00,591 CassandraDaemon.java:480 - JVM vendor/version: OpenJDK 64-Bit Server VM/1.8.0_222
-INFO  [main] 2019-08-08 19:38:00,592 CassandraDaemon.java:481 - Heap size: 7.800GiB/7.800GiB
-INFO  [main] 2019-08-08 19:38:00,593 CassandraDaemon.java:486 - Code Cache Non-heap memory: init = 2555904(2496K) used = 7700672(7520K) committed = 7733248(7552K) max = 251658240(245760K)
-INFO  [main] 2019-08-08 19:38:00,593 CassandraDaemon.java:486 - Metaspace Non-heap memory: init = 0(0K) used = 17085104(16684K) committed = 17694720(17280K) max = -1(-1K)
-INFO  [main] 2019-08-08 19:38:00,593 CassandraDaemon.java:486 - Compressed Class Space Non-heap memory: init = 0(0K) used = 2042672(1994K) committed = 2228224(2176K) max = 1073741824(1048576K)
-INFO  [main] 2019-08-08 19:38:00,593 CassandraDaemon.java:486 - Par Eden Space Heap memory: init = 1718091776(1677824K) used = 412342688(402678K) committed = 1718091776(1677824K) max = 1718091776(1677824K)
-INFO  [main] 2019-08-08 19:38:00,593 CassandraDaemon.java:486 - Par Survivor Space Heap memory: init = 214695936(209664K) used = 0(0K) committed = 214695936(209664K) max = 214695936(209664K)
-INFO  [main] 2019-08-08 19:38:00,594 CassandraDaemon.java:486 - CMS Old Gen Heap memory: init = 6442450944(6291456K) used = 0(0K) committed = 6442450944(6291456K) max = 6442450944(6291456K)
-INFO  [main] 2019-08-08 19:38:00,594 CassandraDaemon.java:488 - Classpath: /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/main:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/thrift:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/HdrHistogram-2.1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ST4-4.0.8.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/airline-0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/antlr-runtime-3.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/caffeine-2.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/cassandra-driver-core-3.0.1-shaded.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-cli-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-codec-1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-lang3-3.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-math3-3.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/compress-lzf-0.8.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrent-trees-2.4.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrentlinkedhashmap-lru-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/disruptor-3.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ecj-4.4.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/guava-18.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/high-scale-lib-1.0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/hppc-0.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/javax.inject.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jbcrypt-0.3m.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jcl-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jctools-core-1.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jflex-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jna-4.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/joda-time-2.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/json-simple-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jstackjunit-0.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/libthrift-0.9.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/log4j-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-classic-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-core-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/lz4-1.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-core-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-jvm-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-logback-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/netty-all-4.0.44.Final.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-j8-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config-base-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config3-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-1.6.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/slf4j-api-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snakeyaml-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snappy-java-1.1.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snowball-stemmer-1.3.0.581.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/stream-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/thrift-server-0.3.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jsr223/*/*.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar
-INFO  [main] 2019-08-08 19:38:00,594 CassandraDaemon.java:490 - JVM Arguments: [-Dfile.encoding=UTF8, -Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log, -ea, -XX:+UseThreadPriorities, -XX:ThreadPriorityPolicy=42, -XX:+HeapDumpOnOutOfMemoryError, -Xss32m, -XX:StringTableSize=1000003, -XX:+AlwaysPreTouch, -XX:-UseBiasedLocking, -XX:+UseTLAB, -XX:+ResizeTLAB, -XX:+UseNUMA, -XX:+PerfDisableSharedMem, -Djava.net.preferIPv4Stack=true, -XX:+UseParNewGC, -XX:+UseConcMarkSweepGC, -XX:+CMSParallelRemarkEnabled, -XX:SurvivorRatio=8, -XX:MaxTenuringThreshold=1, -XX:CMSInitiatingOccupancyFraction=75, -XX:+UseCMSInitiatingOccupancyOnly, -XX:CMSWaitDuration=10000, -XX:+CMSParallelInitialMarkEnabled, -XX:+CMSEdenChunksRecordAlways, -XX:+CMSClassUnloadingEnabled, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintHeapAtGC, -XX:+PrintTenuringDistribution, -XX:+PrintGCApplicationStoppedTime, -XX:+PrintPromotionFailure, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=10M, -Xms8192M, -Xmx8192M, -Xmn2048M, -XX:CompileCommandFile=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/hotspot_compiler, -javaagent:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar, -Dcassandra.jmx.local.port=7199, -Dcom.sun.management.jmxremote.authenticate=false, -Dcom.sun.management.jmxremote.password.file=/etc/cassandra/jmxremote.password, -Djava.library.path=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-bin, -XX:OnOutOfMemoryError=kill -9 %p, -Dlogback.configurationFile=logback.xml, -Dcassandra.logdir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs, -Dcassandra.storagedir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data]
-WARN  [main] 2019-08-08 19:38:00,644 NativeLibrary.java:187 - Unable to lock JVM memory (ENOMEM). This can result in part of the JVM being swapped out, especially with mmapped I/O enabled. Increase RLIMIT_MEMLOCK or run Cassandra as root.
-WARN  [main] 2019-08-08 19:38:00,644 StartupChecks.java:136 - jemalloc shared library could not be preloaded to speed up memory allocations
-WARN  [main] 2019-08-08 19:38:00,645 StartupChecks.java:169 - JMX is not enabled to receive remote connections. Please see cassandra-env.sh for more info.
-INFO  [main] 2019-08-08 19:38:00,646 SigarLibrary.java:44 - Initializing SIGAR library
-WARN  [main] 2019-08-08 19:38:00,661 SigarLibrary.java:174 - Cassandra server running in degraded mode. Is swap disabled? : false,  Address space adequate? : true,  nofile limit adequate? : false, nproc limit adequate? : true 
-WARN  [main] 2019-08-08 19:38:00,688 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/commitlog doesn't exist
-WARN  [main] 2019-08-08 19:38:00,688 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/saved_caches doesn't exist
-WARN  [main] 2019-08-08 19:38:00,689 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/hints doesn't exist
-INFO  [main] 2019-08-08 19:38:00,745 QueryProcessor.java:116 - Initialized prepared statement caches with 31 MB (native) and 31 MB (Thrift)
-INFO  [main] 2019-08-08 19:38:01,223 ColumnFamilyStore.java:411 - Initializing system.IndexInfo
 + sleep 5
-INFO  [main] 2019-08-08 19:38:01,749 ColumnFamilyStore.java:411 - Initializing system.batches
-INFO  [main] 2019-08-08 19:38:01,755 ColumnFamilyStore.java:411 - Initializing system.paxos
-INFO  [main] 2019-08-08 19:38:01,762 ColumnFamilyStore.java:411 - Initializing system.local
-INFO  [main] 2019-08-08 19:38:01,767 ColumnFamilyStore.java:411 - Initializing system.peers
-INFO  [main] 2019-08-08 19:38:01,772 ColumnFamilyStore.java:411 - Initializing system.peer_events
-INFO  [main] 2019-08-08 19:38:01,777 ColumnFamilyStore.java:411 - Initializing system.range_xfers
-INFO  [main] 2019-08-08 19:38:01,782 ColumnFamilyStore.java:411 - Initializing system.compaction_history
-INFO  [main] 2019-08-08 19:38:01,787 ColumnFamilyStore.java:411 - Initializing system.sstable_activity
-INFO  [main] 2019-08-08 19:38:01,792 ColumnFamilyStore.java:411 - Initializing system.size_estimates
-INFO  [main] 2019-08-08 19:38:01,797 ColumnFamilyStore.java:411 - Initializing system.available_ranges
-INFO  [main] 2019-08-08 19:38:01,803 ColumnFamilyStore.java:411 - Initializing system.transferred_ranges
-INFO  [main] 2019-08-08 19:38:01,807 ColumnFamilyStore.java:411 - Initializing system.views_builds_in_progress
-INFO  [main] 2019-08-08 19:38:01,811 ColumnFamilyStore.java:411 - Initializing system.built_views
-INFO  [main] 2019-08-08 19:38:01,815 ColumnFamilyStore.java:411 - Initializing system.hints
-INFO  [main] 2019-08-08 19:38:01,821 ColumnFamilyStore.java:411 - Initializing system.batchlog
-INFO  [main] 2019-08-08 19:38:01,825 ColumnFamilyStore.java:411 - Initializing system.prepared_statements
-INFO  [main] 2019-08-08 19:38:01,829 ColumnFamilyStore.java:411 - Initializing system.schema_keyspaces
-INFO  [main] 2019-08-08 19:38:01,836 ColumnFamilyStore.java:411 - Initializing system.schema_columnfamilies
-INFO  [main] 2019-08-08 19:38:01,841 ColumnFamilyStore.java:411 - Initializing system.schema_columns
-INFO  [main] 2019-08-08 19:38:01,846 ColumnFamilyStore.java:411 - Initializing system.schema_triggers
-INFO  [main] 2019-08-08 19:38:01,852 ColumnFamilyStore.java:411 - Initializing system.schema_usertypes
-INFO  [main] 2019-08-08 19:38:01,857 ColumnFamilyStore.java:411 - Initializing system.schema_functions
-INFO  [main] 2019-08-08 19:38:01,862 ColumnFamilyStore.java:411 - Initializing system.schema_aggregates
-INFO  [main] 2019-08-08 19:38:01,864 ViewManager.java:137 - Not submitting build tasks for views in keyspace system as storage service is not initialized
-INFO  [main] 2019-08-08 19:38:01,945 ApproximateTime.java:44 - Scheduling approximate time-check task with a precision of 10 milliseconds
-INFO  [main] 2019-08-08 19:38:01,970 ColumnFamilyStore.java:411 - Initializing system_schema.keyspaces
-INFO  [main] 2019-08-08 19:38:01,974 ColumnFamilyStore.java:411 - Initializing system_schema.tables
-INFO  [main] 2019-08-08 19:38:01,978 ColumnFamilyStore.java:411 - Initializing system_schema.columns
-INFO  [main] 2019-08-08 19:38:01,984 ColumnFamilyStore.java:411 - Initializing system_schema.triggers
-INFO  [main] 2019-08-08 19:38:01,990 ColumnFamilyStore.java:411 - Initializing system_schema.dropped_columns
-INFO  [main] 2019-08-08 19:38:01,994 ColumnFamilyStore.java:411 - Initializing system_schema.views
-INFO  [main] 2019-08-08 19:38:01,998 ColumnFamilyStore.java:411 - Initializing system_schema.types
-INFO  [main] 2019-08-08 19:38:02,002 ColumnFamilyStore.java:411 - Initializing system_schema.functions
-INFO  [main] 2019-08-08 19:38:02,006 ColumnFamilyStore.java:411 - Initializing system_schema.aggregates
-INFO  [main] 2019-08-08 19:38:02,011 ColumnFamilyStore.java:411 - Initializing system_schema.indexes
-INFO  [main] 2019-08-08 19:38:02,012 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_schema as storage service is not initialized
-INFO  [MemtableFlushWriter:1] 2019-08-08 19:38:02,539 CacheService.java:112 - Initializing key cache with capacity of 100 MBs.
-INFO  [MemtableFlushWriter:1] 2019-08-08 19:38:02,548 CacheService.java:134 - Initializing row cache with capacity of 0 MBs
-INFO  [MemtableFlushWriter:1] 2019-08-08 19:38:02,550 CacheService.java:163 - Initializing counter cache with capacity of 50 MBs
-INFO  [MemtableFlushWriter:1] 2019-08-08 19:38:02,552 CacheService.java:174 - Scheduling counter cache save to every 7200 seconds (going to save all keys).
-INFO  [CompactionExecutor:2] 2019-08-08 19:38:02,655 BufferPool.java:230 - Global buffer pool is enabled, when pool is exhausted (max is 512.000MiB) it will allocate on heap
-INFO  [main] 2019-08-08 19:38:02,682 StorageService.java:600 - Populating token metadata from system tables
-INFO  [main] 2019-08-08 19:38:02,722 StorageService.java:607 - Token metadata: 
-INFO  [main] 2019-08-08 19:38:02,746 AutoSavingCache.java:173 - Completed loading (0 ms; 6 keys) KeyCache cache
-INFO  [main] 2019-08-08 19:38:02,767 CommitLog.java:152 - No commitlog files found; skipping replay
-INFO  [main] 2019-08-08 19:38:02,767 StorageService.java:600 - Populating token metadata from system tables
-INFO  [main] 2019-08-08 19:38:02,782 StorageService.java:607 - Token metadata: 
-INFO  [main] 2019-08-08 19:38:02,856 QueryProcessor.java:163 - Preloaded 0 prepared statements
-INFO  [main] 2019-08-08 19:38:02,857 StorageService.java:618 - Cassandra version: 3.11.2-SNAPSHOT
-INFO  [main] 2019-08-08 19:38:02,857 StorageService.java:619 - Thrift API version: 20.1.0
-INFO  [main] 2019-08-08 19:38:02,857 StorageService.java:620 - CQL supported versions: 3.4.4 (default: 3.4.4)
-INFO  [main] 2019-08-08 19:38:02,857 StorageService.java:622 - Native protocol supported versions: 3/v3, 4/v4, 5/v5-beta (default: 4/v4)
-INFO  [main] 2019-08-08 19:38:02,890 IndexSummaryManager.java:85 - Initializing index summary manager with a memory pool size of 399 MB and a resize interval of 60 minutes
-INFO  [main] 2019-08-08 19:38:02,898 MessagingService.java:753 - Starting Messaging Service on localhost/127.0.0.1:7000 (lo)
-WARN  [main] 2019-08-08 19:38:02,903 SystemKeyspace.java:1089 - No host ID found, created b6ef9c16-2512-4e2e-8b57-382714157352 (Note: This should happen exactly once per node).
-INFO  [main] 2019-08-08 19:38:02,928 StorageService.java:707 - Loading persisted ring state
-INFO  [main] 2019-08-08 19:38:02,929 StorageService.java:825 - Starting up server gossip
-INFO  [main] 2019-08-08 19:38:02,982 StorageService.java:886 - This node will not auto bootstrap because it is configured to be a seed node.
-INFO  [main] 2019-08-08 19:38:02,992 BootStrapper.java:228 - Generated random tokens. tokens are [-273743298503915299, -1754436501705230839, 2827656034438815904, -5465913351293846539, 7415133951650064864, 1720717434548260760, 1987653475111298885, -783124679423875214, -8213267280378176678, -292627513946908513, 7068564284980130192, -4092604792894758956, -1658111297394049887, -3618664604674363526, 4958324165752806332, -6590168766147278055, -5143976612912427908, -7228027494246013841, -5130695338134863214, -2758493481822104675, -6766346811969738203, -2069293570322853388, -55214008132228961, -5426360237254191700, 1684145876274702821, -5711255399497142655, -6036936769111220142, -3421871235389762063, -1200527122669038198, 1110689425003431535, 18218185796220807, 1595243363266630344, -8267395394548670325, 4067590762043420487, -6794899686410956215, 3123857775716063597, -2964904805647581480, -1021232586412149736, -6710092771208828755, 4418073939265486978, -5680266251869594332, -701668828834038628, -9172876524303387165, 9002698921132305330, 2557476112626586495, -5047030357233438391, 2919964971075442627, 2216859788034926646, -2664726274487954560, -1933928754923636587, -6641032377285106294, 2366469400371107624, -876588322437560079, 1007460399827529870, -1098607742221240372, 5881963869968638465, -2797186999338653067, -8276427885751901317, 1645823238273707331, -9025415277917359870, 2896063479929873439, -3310796342381978982, -7307706113543006907, -9030590788631052781, 3397857385984345568, 747514267479089459, 7097200536236242604, -3427338924088090286, -6826076189069269292, 8350202016640637832, -1672485999117421996, -119806337203503815, 3458805418346079242, -7456253081002334155, -6126956388101949674, 2199053805530726777, 3315363203263253560, -1385291966198523758, -4913339755512341202, 1952220983277742205, -4636800836889486856, -4643699591516817667, -4399005808816471730, -5063529769784108553, -2818857239335140631, 1864648531326788117, -309233367768350306, 722376340741670858, 7644303870817045583, -5332402509194441860, -2339166336942618540, -2612253168262206271, -4216420747805277422, 4238992469295532736, -6681860084141383730, 652444478430449039, 5126839436915195753, 7015231858214378111, -5521989227277337317, -1863358660312202451, 8332575408562035489, 7206517397218927453, 2280557442103170036, 5498974119111598572, 8470195390641308113, 5224567938605123058, 6822549227836082139, -3922946559730471969, -7427919124252055428, 3162664192121036392, 5295519655306275621, -1872573221736648192, -7167705124504601760, 5157563082627501980, -8867944571231963995, -3013391163292075323, 696847453681258240, 8943266238250518787, 4402741196044976665, 6026746631884878268, 1182031610414525419, -9087873057568534712, 2121086892963660808, -1502327095820875382, 4436237613316917489, -1078376121772403755, 7440835205605832744, -1527602906087603136, -9137028506683711823, -3355217733084205515, 6440463114728196894, -7021503614851531890, -2170977706972186839, 5527022390703825852, 636319433057742834, 4360427560474309299, 1396374511067101394, -2604675038961475516, -4279087623704051295, -3064065576864299956, -8540773118078590470, -6524286893682985285, -7465936438824286432, 6423515128171899632, -6148327327860401833, 6480380006055351290, 2006970741401793133, -2222567736540207065, 6287246610544760792, -3544816606139543864, -7150195890091105308, -3288887706728263883, -2554345769187972170, 9162753728205420531, -4328147170739422277, 8599296166550004154, 4897797168625122701, -6005689630663882353, 3531673739412384497, -3985965830226318753, 3770620448404822462, 2159950246544504889, 7135905996927002516, 4425589994875007115, -5951067047516705772, 4074971999194664223, 6818498510780997897, -6433600087820700243, -6475541446208059809, 3333648774958428581, 7531380130113966688, 5101956288498485289, 2815461418071292289, 5071345673556929198, -2937078546717091975, 519308039374931060, -2632253988595821578, -7612685396349487047, -1674380956162335302, -1242532295196950465, 2480649197679356022, 484214767840400188, 3121291675023933987, 309795961297924838, -4223782424064874669, 6737249256030223980, 3512488560500407385, -6928434104216702674, -3551636103098957490, 6797328524378208842, 6013139140460329995, 5891593611762445196, -1670646077563519759, 4166422336642888817, -2851850176801846441, -6382110175611282999, 3900928008560883371, -4583303690007308320, 4703636611413717371, -8280946438562189811, 8323848949087579686, 2091780046844647625, -335213150423519420, -4061945270945901475, 8702559106025740192, 3922081369592566123, -3717794975843404336, 2753621154130617234, 7796399187535006289, -4540950828735060329, 6069687877484244397, -218441510383476072, 4060345470077183531, -8810815116448819685, -1507696170813898831, -1571107055654542268, 8187783985082743391, 8685452058748434681, 4627405423972381857, -6174289856483226632, 487615576933055677, -975420031534392580, -971997651448360804, -1677284998918962917, 6549298153775717155, -3912416416613848627, -9022366819341375021, -4344100633633702741, -3534909170371027652, -1938406871303219661, -7120541668467918980, -6577659124996077685, 6624435471286058309, -4959036231727153732, 1552941706214429667, 4907662680382469487, 8230139027572058241, -417285221356055664, -5518083313151483805, 46132417068389768, 3504739241397355356, 8497338715758449269, -519480604616852452, -5079044440547421393, -4985163096891616816, -4303054786896515012, -4945681523032871141, 2124995516477267020, -8856305489650058519, -4895204351057432524, 1089712961999379934, 8489463432799404933, 4008746716446771182, -3449055912759702710, -6216120544356358231, -7618458911488403310]
-INFO  [main] 2019-08-08 19:38:02,997 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_traces, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=2}}, tables=[org.apache.cassandra.config.CFMetaData@58f58958[cfId=c5e99f16-8677-3914-b17e-960613512345,ksName=system_traces,cfName=sessions,flags=[COMPOUND],params=TableParams{comment=tracing sessions, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=0, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [client command coordinator duration request started_at parameters]],partitionKeyColumns=[session_id],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.UUIDType,columnMetadata=[client, command, session_id, coordinator, request, started_at, duration, parameters],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@46902eed[cfId=8826e8e9-e16a-3728-8753-3bc1fc713c25,ksName=system_traces,cfName=events,flags=[COMPOUND],params=TableParams{comment=tracing events, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=0, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.TimeUUIDType),partitionColumns=[[] | [activity source source_elapsed thread]],partitionKeyColumns=[session_id],clusteringColumns=[event_id],keyValidator=org.apache.cassandra.db.marshal.UUIDType,columnMetadata=[activity, event_id, session_id, source, thread, source_elapsed],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,255 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_traces as storage service is not initialized
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,262 ColumnFamilyStore.java:411 - Initializing system_traces.events
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,279 ColumnFamilyStore.java:411 - Initializing system_traces.sessions
-INFO  [main] 2019-08-08 19:38:03,323 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_distributed, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=3}}, tables=[org.apache.cassandra.config.CFMetaData@1ee8b766[cfId=759fffad-624b-3181-80ee-fa9a52d1f627,ksName=system_distributed,cfName=repair_history,flags=[COMPOUND],params=TableParams{comment=Repair history, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.TimeUUIDType),partitionColumns=[[] | [coordinator exception_message exception_stacktrace finished_at parent_id range_begin range_end started_at status participants]],partitionKeyColumns=[keyspace_name, columnfamily_name],clusteringColumns=[id],keyValidator=org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.UTF8Type,org.apache.cassandra.db.marshal.UTF8Type),columnMetadata=[status, id, coordinator, finished_at, participants, exception_stacktrace, parent_id, range_end, range_begin, exception_message, keyspace_name, started_at, columnfamily_name],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@626f5a98[cfId=deabd734-b99d-3b9c-92e5-fd92eb5abf14,ksName=system_distributed,cfName=parent_repair_history,flags=[COMPOUND],params=TableParams{comment=Repair history, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [exception_message exception_stacktrace finished_at keyspace_name started_at columnfamily_names options requested_ranges successful_ranges]],partitionKeyColumns=[parent_id],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.TimeUUIDType,columnMetadata=[requested_ranges, exception_message, keyspace_name, successful_ranges, started_at, finished_at, options, exception_stacktrace, parent_id, columnfamily_names],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@401c03fb[cfId=5582b59f-8e4e-35e1-b913-3acada51eb04,ksName=system_distributed,cfName=view_build_status,flags=[COMPOUND],params=TableParams{comment=Materialized View build status, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UUIDType),partitionColumns=[[] | [status]],partitionKeyColumns=[keyspace_name, view_name],clusteringColumns=[host_id],keyValidator=org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.UTF8Type,org.apache.cassandra.db.marshal.UTF8Type),columnMetadata=[view_name, status, keyspace_name, host_id],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,407 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_distributed as storage service is not initialized
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,412 ColumnFamilyStore.java:411 - Initializing system_distributed.parent_repair_history
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,421 ColumnFamilyStore.java:411 - Initializing system_distributed.repair_history
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,429 ColumnFamilyStore.java:411 - Initializing system_distributed.view_build_status
-INFO  [main] 2019-08-08 19:38:03,445 StorageService.java:1449 - JOINING: Finish joining ring
-INFO  [main] 2019-08-08 19:38:03,517 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_auth, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=1}}, tables=[org.apache.cassandra.config.CFMetaData@44bcfe2b[cfId=5bc52802-de25-35ed-aeab-188eecebb090,ksName=system_auth,cfName=roles,flags=[COMPOUND],params=TableParams{comment=role definitions, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [can_login is_superuser salted_hash member_of]],partitionKeyColumns=[role],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[salted_hash, member_of, role, can_login, is_superuser],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@66c4c3f7[cfId=0ecdaa87-f8fb-3e60-88d1-74fb36fe5c0d,ksName=system_auth,cfName=role_members,flags=[COMPOUND],params=TableParams{comment=role memberships lookup table, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | []],partitionKeyColumns=[role],clusteringColumns=[member],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[role, member],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@31328ae3[cfId=3afbe79f-2194-31a7-add7-f5ab90d8ec9c,ksName=system_auth,cfName=role_permissions,flags=[COMPOUND],params=TableParams{comment=permissions granted to db roles, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | [permissions]],partitionKeyColumns=[role],clusteringColumns=[resource],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[role, resource, permissions],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@1b6b7620[cfId=5f2fbdad-91f1-3946-bd25-d5da3a5c35ec,ksName=system_auth,cfName=resource_role_permissons_index,flags=[COMPOUND],params=TableParams{comment=index of db roles with permissions granted on a resource, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@c73bb7ef, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | []],partitionKeyColumns=[resource],clusteringColumns=[role],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[resource, role],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,584 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_auth as storage service is not initialized
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,588 ColumnFamilyStore.java:411 - Initializing system_auth.resource_role_permissons_index
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,598 ColumnFamilyStore.java:411 - Initializing system_auth.role_members
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,604 ColumnFamilyStore.java:411 - Initializing system_auth.role_permissions
-INFO  [MigrationStage:1] 2019-08-08 19:38:03,616 ColumnFamilyStore.java:411 - Initializing system_auth.roles
+INFO  [main] 2019-11-09 07:17:35,944 YamlConfigurationLoader.java:89 - Configuration location: file:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/conf/cassandra.yaml
+INFO  [main] 2019-11-09 07:17:36,453 Config.java:495 - Node configuration:[allocate_tokens_for_keyspace=null; authenticator=AllowAllAuthenticator; authorizer=AllowAllAuthorizer; auto_bootstrap=true; auto_snapshot=true; back_pressure_enabled=false; back_pressure_strategy=org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}; batch_size_fail_threshold_in_kb=50; batch_size_warn_threshold_in_kb=5; batchlog_replay_throttle_in_kb=1024; broadcast_address=null; broadcast_rpc_address=null; buffer_pool_use_heap_if_exhausted=true; cas_contention_timeout_in_ms=1000; cdc_enabled=false; cdc_free_space_check_interval_ms=250; cdc_raw_directory=null; cdc_total_space_in_mb=0; client_encryption_options=<REDACTED>; cluster_name=Test Cluster; column_index_cache_size_in_kb=2; column_index_size_in_kb=64; commit_failure_policy=stop; commitlog_compression=null; commitlog_directory=null; commitlog_max_compression_buffers_in_pool=3; commitlog_periodic_queue_size=-1; commitlog_segment_size_in_mb=32; commitlog_sync=periodic; commitlog_sync_batch_window_in_ms=NaN; commitlog_sync_period_in_ms=10000; commitlog_total_space_in_mb=null; compaction_large_partition_warning_threshold_mb=100; compaction_throughput_mb_per_sec=16; concurrent_compactors=null; concurrent_counter_writes=32; concurrent_materialized_view_writes=32; concurrent_reads=32; concurrent_replicates=null; concurrent_writes=32; counter_cache_keys_to_save=2147483647; counter_cache_save_period=7200; counter_cache_size_in_mb=null; counter_write_request_timeout_in_ms=5000; credentials_cache_max_entries=1000; credentials_update_interval_in_ms=-1; credentials_validity_in_ms=2000; cross_node_timeout=false; data_file_directories=[Ljava.lang.String;@3b2c72c2; disk_access_mode=auto; disk_failure_policy=stop; disk_optimization_estimate_percentile=0.95; disk_optimization_page_cross_chance=0.1; disk_optimization_strategy=ssd; dynamic_snitch=true; dynamic_snitch_badness_threshold=0.1; dynamic_snitch_reset_interval_in_ms=600000; dynamic_snitch_update_interval_in_ms=100; enable_materialized_views=true; enable_scripted_user_defined_functions=false; enable_user_defined_functions=false; enable_user_defined_functions_threads=true; encryption_options=null; endpoint_snitch=SimpleSnitch; file_cache_round_up=null; file_cache_size_in_mb=null; gc_log_threshold_in_ms=200; gc_warn_threshold_in_ms=1000; hinted_handoff_disabled_datacenters=[]; hinted_handoff_enabled=true; hinted_handoff_throttle_in_kb=1024; hints_compression=null; hints_directory=null; hints_flush_period_in_ms=10000; incremental_backups=false; index_interval=null; index_summary_capacity_in_mb=null; index_summary_resize_interval_in_minutes=60; initial_token=null; inter_dc_stream_throughput_outbound_megabits_per_sec=200; inter_dc_tcp_nodelay=false; internode_authenticator=null; internode_compression=dc; internode_recv_buff_size_in_bytes=0; internode_send_buff_size_in_bytes=0; key_cache_keys_to_save=2147483647; key_cache_save_period=14400; key_cache_size_in_mb=null; listen_address=localhost; listen_interface=null; listen_interface_prefer_ipv6=false; listen_on_broadcast_address=false; max_hint_window_in_ms=10800000; max_hints_delivery_threads=2; max_hints_file_size_in_mb=128; max_mutation_size_in_kb=null; max_streaming_retries=3; max_value_size_in_mb=256; memtable_allocation_type=heap_buffers; memtable_cleanup_threshold=null; memtable_flush_writers=0; memtable_heap_space_in_mb=null; memtable_offheap_space_in_mb=null; min_free_space_per_drive_in_mb=50; native_transport_max_concurrent_connections=-1; native_transport_max_concurrent_connections_per_ip=-1; native_transport_max_frame_size_in_mb=256; native_transport_max_threads=128; native_transport_port=9042; native_transport_port_ssl=null; num_tokens=256; otc_backlog_expiration_interval_ms=200; otc_coalescing_enough_coalesced_messages=8; otc_coalescing_strategy=DISABLED; otc_coalescing_window_us=200; partitioner=org.apache.cassandra.dht.Murmur3Partitioner; permissions_cache_max_entries=1000; permissions_update_interval_in_ms=-1; permissions_validity_in_ms=2000; phi_convict_threshold=8.0; prepared_statements_cache_size_mb=null; range_request_timeout_in_ms=10000; read_request_timeout_in_ms=5000; request_scheduler=org.apache.cassandra.scheduler.NoScheduler; request_scheduler_id=null; request_scheduler_options=null; request_timeout_in_ms=10000; role_manager=CassandraRoleManager; roles_cache_max_entries=1000; roles_update_interval_in_ms=-1; roles_validity_in_ms=2000; row_cache_class_name=org.apache.cassandra.cache.OHCProvider; row_cache_keys_to_save=2147483647; row_cache_save_period=0; row_cache_size_in_mb=0; rpc_address=localhost; rpc_interface=null; rpc_interface_prefer_ipv6=false; rpc_keepalive=true; rpc_listen_backlog=50; rpc_max_threads=2147483647; rpc_min_threads=16; rpc_port=9160; rpc_recv_buff_size_in_bytes=null; rpc_send_buff_size_in_bytes=null; rpc_server_type=sync; saved_caches_directory=null; seed_provider=org.apache.cassandra.locator.SimpleSeedProvider{seeds=127.0.0.1}; server_encryption_options=<REDACTED>; slow_query_log_timeout_in_ms=500; snapshot_before_compaction=false; ssl_storage_port=7001; sstable_preemptive_open_interval_in_mb=50; start_native_transport=true; start_rpc=false; storage_port=7000; stream_throughput_outbound_megabits_per_sec=200; streaming_keep_alive_period_in_secs=300; streaming_socket_timeout_in_ms=86400000; thrift_framed_transport_size_in_mb=15; thrift_max_message_length_in_mb=16; thrift_prepared_statements_cache_size_mb=null; tombstone_failure_threshold=100000; tombstone_warn_threshold=1000; tracetype_query_ttl=86400; tracetype_repair_ttl=604800; transparent_data_encryption_options=org.apache.cassandra.config.TransparentDataEncryptionOptions@491666ad; trickle_fsync=false; trickle_fsync_interval_in_kb=10240; truncate_request_timeout_in_ms=60000; unlogged_batch_across_partitions_warn_threshold=10; user_defined_function_fail_timeout=1500; user_defined_function_warn_timeout=500; user_function_timeout_policy=die; windows_timer_interval=1; write_request_timeout_in_ms=2000]
+INFO  [main] 2019-11-09 07:17:36,454 DatabaseDescriptor.java:367 - DiskAccessMode 'auto' determined to be mmap, indexAccessMode is mmap
+INFO  [main] 2019-11-09 07:17:36,454 DatabaseDescriptor.java:425 - Global memtable on-heap threshold is enabled at 1996MB
+INFO  [main] 2019-11-09 07:17:36,454 DatabaseDescriptor.java:429 - Global memtable off-heap threshold is enabled at 1996MB
+INFO  [main] 2019-11-09 07:17:36,630 RateBasedBackPressure.java:123 - Initialized back-pressure with high ratio: 0.9, factor: 5, flow: FAST, window size: 2000.
+INFO  [main] 2019-11-09 07:17:36,631 DatabaseDescriptor.java:729 - Back-pressure is disabled with strategy org.apache.cassandra.net.RateBasedBackPressure{high_ratio=0.9, factor=5, flow=FAST}.
+INFO  [main] 2019-11-09 07:17:36,781 JMXServerUtils.java:246 - Configured JMX server at: service:jmx:rmi://127.0.0.1/jndi/rmi://127.0.0.1:7199/jmxrmi
+INFO  [main] 2019-11-09 07:17:36,788 CassandraDaemon.java:473 - Hostname: c220g2-011010.wisc.cloudlab.us
+INFO  [main] 2019-11-09 07:17:36,788 CassandraDaemon.java:480 - JVM vendor/version: OpenJDK 64-Bit Server VM/1.8.0_222
+INFO  [main] 2019-11-09 07:17:36,801 CassandraDaemon.java:481 - Heap size: 7.800GiB/7.800GiB
+INFO  [main] 2019-11-09 07:17:36,801 CassandraDaemon.java:486 - Code Cache Non-heap memory: init = 2555904(2496K) used = 7790720(7608K) committed = 7864320(7680K) max = 251658240(245760K)
+INFO  [main] 2019-11-09 07:17:36,802 CassandraDaemon.java:486 - Metaspace Non-heap memory: init = 0(0K) used = 17557752(17146K) committed = 17956864(17536K) max = -1(-1K)
+INFO  [main] 2019-11-09 07:17:36,802 CassandraDaemon.java:486 - Compressed Class Space Non-heap memory: init = 0(0K) used = 2092280(2043K) committed = 2228224(2176K) max = 1073741824(1048576K)
+INFO  [main] 2019-11-09 07:17:36,802 CassandraDaemon.java:486 - Par Eden Space Heap memory: init = 1718091776(1677824K) used = 446704632(436234K) committed = 1718091776(1677824K) max = 1718091776(1677824K)
+INFO  [main] 2019-11-09 07:17:36,802 CassandraDaemon.java:486 - Par Survivor Space Heap memory: init = 214695936(209664K) used = 0(0K) committed = 214695936(209664K) max = 214695936(209664K)
+INFO  [main] 2019-11-09 07:17:36,803 CassandraDaemon.java:486 - CMS Old Gen Heap memory: init = 6442450944(6291456K) used = 0(0K) committed = 6442450944(6291456K) max = 6442450944(6291456K)
+INFO  [main] 2019-11-09 07:17:36,803 CassandraDaemon.java:488 - Classpath: /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/main:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../build/classes/thrift:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/HdrHistogram-2.1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ST4-4.0.8.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/airline-0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/antlr-runtime-3.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/caffeine-2.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/cassandra-driver-core-3.0.1-shaded.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-cli-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-codec-1.9.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-lang3-3.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/commons-math3-3.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/compress-lzf-0.8.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrent-trees-2.4.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/concurrentlinkedhashmap-lru-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/disruptor-3.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ecj-4.4.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/guava-18.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/high-scale-lib-1.0.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/hppc-0.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/javax.inject.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jbcrypt-0.3m.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jcl-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jctools-core-1.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jflex-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jna-4.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/joda-time-2.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/json-simple-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jstackjunit-0.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/libthrift-0.9.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/log4j-over-slf4j-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-classic-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/logback-core-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/lz4-1.3.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-core-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-jvm-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/metrics-logback-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/netty-all-4.0.44.Final.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/ohc-core-j8-0.4.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config-base-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/reporter-config3-3.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-1.6.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/slf4j-api-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snakeyaml-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snappy-java-1.1.2.6.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/snowball-stemmer-1.3.0.581.1.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/stream-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/thrift-server-0.3.7.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jsr223/*/*.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar
+INFO  [main] 2019-11-09 07:17:36,803 CassandraDaemon.java:490 - JVM Arguments: [-Xloggc:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs/gc.log, -ea, -XX:+UseThreadPriorities, -XX:ThreadPriorityPolicy=42, -XX:+HeapDumpOnOutOfMemoryError, -Xss32m, -XX:StringTableSize=1000003, -XX:+AlwaysPreTouch, -XX:-UseBiasedLocking, -XX:+UseTLAB, -XX:+ResizeTLAB, -XX:+UseNUMA, -XX:+PerfDisableSharedMem, -Djava.net.preferIPv4Stack=true, -XX:+UseParNewGC, -XX:+UseConcMarkSweepGC, -XX:+CMSParallelRemarkEnabled, -XX:SurvivorRatio=8, -XX:MaxTenuringThreshold=1, -XX:CMSInitiatingOccupancyFraction=75, -XX:+UseCMSInitiatingOccupancyOnly, -XX:CMSWaitDuration=10000, -XX:+CMSParallelInitialMarkEnabled, -XX:+CMSEdenChunksRecordAlways, -XX:+CMSClassUnloadingEnabled, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintHeapAtGC, -XX:+PrintTenuringDistribution, -XX:+PrintGCApplicationStoppedTime, -XX:+PrintPromotionFailure, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=10, -XX:GCLogFileSize=10M, -Xms8192M, -Xmx8192M, -Xmn2048M, -XX:CompileCommandFile=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../conf/hotspot_compiler, -javaagent:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/jamm-0.3.0.jar, -Dcassandra.jmx.local.port=7199, -Dcom.sun.management.jmxremote.authenticate=false, -Dcom.sun.management.jmxremote.password.file=/etc/cassandra/jmxremote.password, -Djava.library.path=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../lib/sigar-bin, -XX:OnOutOfMemoryError=kill -9 %p, -Dlogback.configurationFile=logback.xml, -Dcassandra.logdir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../logs, -Dcassandra.storagedir=/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data]
+INFO  [main] 2019-11-09 07:17:37,345 NativeLibrary.java:174 - JNA mlockall successful
+WARN  [main] 2019-11-09 07:17:37,346 StartupChecks.java:136 - jemalloc shared library could not be preloaded to speed up memory allocations
+WARN  [main] 2019-11-09 07:17:37,347 StartupChecks.java:169 - JMX is not enabled to receive remote connections. Please see cassandra-env.sh for more info.
+INFO  [main] 2019-11-09 07:17:37,349 SigarLibrary.java:44 - Initializing SIGAR library
+WARN  [main] 2019-11-09 07:17:37,366 SigarLibrary.java:174 - Cassandra server running in degraded mode. Is swap disabled? : false,  Address space adequate? : true,  nofile limit adequate? : true, nproc limit adequate? : true 
+WARN  [main] 2019-11-09 07:17:37,386 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/commitlog doesn't exist
+WARN  [main] 2019-11-09 07:17:37,386 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/saved_caches doesn't exist
+WARN  [main] 2019-11-09 07:17:37,387 StartupChecks.java:332 - Directory /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/cassandra/bin/../data/hints doesn't exist
+INFO  [main] 2019-11-09 07:17:37,444 QueryProcessor.java:116 - Initialized prepared statement caches with 31 MB (native) and 31 MB (Thrift)
+INFO  [main] 2019-11-09 07:17:38,035 ColumnFamilyStore.java:411 - Initializing system.IndexInfo
+INFO  [main] 2019-11-09 07:17:38,606 ColumnFamilyStore.java:411 - Initializing system.batches
+INFO  [main] 2019-11-09 07:17:38,612 ColumnFamilyStore.java:411 - Initializing system.paxos
+INFO  [main] 2019-11-09 07:17:38,621 ColumnFamilyStore.java:411 - Initializing system.local
+INFO  [main] 2019-11-09 07:17:38,626 ColumnFamilyStore.java:411 - Initializing system.peers
+INFO  [main] 2019-11-09 07:17:38,631 ColumnFamilyStore.java:411 - Initializing system.peer_events
+INFO  [main] 2019-11-09 07:17:38,636 ColumnFamilyStore.java:411 - Initializing system.range_xfers
+INFO  [main] 2019-11-09 07:17:38,641 ColumnFamilyStore.java:411 - Initializing system.compaction_history
+INFO  [main] 2019-11-09 07:17:38,646 ColumnFamilyStore.java:411 - Initializing system.sstable_activity
+INFO  [main] 2019-11-09 07:17:38,651 ColumnFamilyStore.java:411 - Initializing system.size_estimates
+INFO  [main] 2019-11-09 07:17:38,656 ColumnFamilyStore.java:411 - Initializing system.available_ranges
+INFO  [main] 2019-11-09 07:17:38,661 ColumnFamilyStore.java:411 - Initializing system.transferred_ranges
+INFO  [main] 2019-11-09 07:17:38,666 ColumnFamilyStore.java:411 - Initializing system.views_builds_in_progress
+INFO  [main] 2019-11-09 07:17:38,670 ColumnFamilyStore.java:411 - Initializing system.built_views
+INFO  [main] 2019-11-09 07:17:38,674 ColumnFamilyStore.java:411 - Initializing system.hints
+INFO  [main] 2019-11-09 07:17:38,680 ColumnFamilyStore.java:411 - Initializing system.batchlog
+INFO  [main] 2019-11-09 07:17:38,684 ColumnFamilyStore.java:411 - Initializing system.prepared_statements
+INFO  [main] 2019-11-09 07:17:38,689 ColumnFamilyStore.java:411 - Initializing system.schema_keyspaces
+INFO  [main] 2019-11-09 07:17:38,697 ColumnFamilyStore.java:411 - Initializing system.schema_columnfamilies
+INFO  [main] 2019-11-09 07:17:38,701 ColumnFamilyStore.java:411 - Initializing system.schema_columns
+INFO  [main] 2019-11-09 07:17:38,706 ColumnFamilyStore.java:411 - Initializing system.schema_triggers
+INFO  [main] 2019-11-09 07:17:38,711 ColumnFamilyStore.java:411 - Initializing system.schema_usertypes
+INFO  [main] 2019-11-09 07:17:38,716 ColumnFamilyStore.java:411 - Initializing system.schema_functions
+INFO  [main] 2019-11-09 07:17:38,720 ColumnFamilyStore.java:411 - Initializing system.schema_aggregates
+INFO  [main] 2019-11-09 07:17:38,721 ViewManager.java:137 - Not submitting build tasks for views in keyspace system as storage service is not initialized
+INFO  [main] 2019-11-09 07:17:38,823 ApproximateTime.java:44 - Scheduling approximate time-check task with a precision of 10 milliseconds
+INFO  [main] 2019-11-09 07:17:38,857 ColumnFamilyStore.java:411 - Initializing system_schema.keyspaces
+INFO  [main] 2019-11-09 07:17:38,861 ColumnFamilyStore.java:411 - Initializing system_schema.tables
+INFO  [main] 2019-11-09 07:17:38,866 ColumnFamilyStore.java:411 - Initializing system_schema.columns
+INFO  [main] 2019-11-09 07:17:38,870 ColumnFamilyStore.java:411 - Initializing system_schema.triggers
+INFO  [main] 2019-11-09 07:17:38,874 ColumnFamilyStore.java:411 - Initializing system_schema.dropped_columns
+INFO  [main] 2019-11-09 07:17:38,878 ColumnFamilyStore.java:411 - Initializing system_schema.views
+INFO  [main] 2019-11-09 07:17:38,882 ColumnFamilyStore.java:411 - Initializing system_schema.types
+INFO  [main] 2019-11-09 07:17:38,886 ColumnFamilyStore.java:411 - Initializing system_schema.functions
+INFO  [main] 2019-11-09 07:17:38,890 ColumnFamilyStore.java:411 - Initializing system_schema.aggregates
+INFO  [main] 2019-11-09 07:17:38,894 ColumnFamilyStore.java:411 - Initializing system_schema.indexes
+INFO  [main] 2019-11-09 07:17:38,896 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_schema as storage service is not initialized
+INFO  [MemtableFlushWriter:1] 2019-11-09 07:17:39,461 CacheService.java:112 - Initializing key cache with capacity of 100 MBs.
+INFO  [MemtableFlushWriter:1] 2019-11-09 07:17:39,472 CacheService.java:134 - Initializing row cache with capacity of 0 MBs
+INFO  [MemtableFlushWriter:1] 2019-11-09 07:17:39,475 CacheService.java:163 - Initializing counter cache with capacity of 50 MBs
+INFO  [MemtableFlushWriter:1] 2019-11-09 07:17:39,476 CacheService.java:174 - Scheduling counter cache save to every 7200 seconds (going to save all keys).
+INFO  [CompactionExecutor:2] 2019-11-09 07:17:39,611 BufferPool.java:230 - Global buffer pool is enabled, when pool is exhausted (max is 512.000MiB) it will allocate on heap
+INFO  [main] 2019-11-09 07:17:39,621 StorageService.java:600 - Populating token metadata from system tables
+INFO  [main] 2019-11-09 07:17:39,668 StorageService.java:607 - Token metadata: 
+INFO  [pool-3-thread-1] 2019-11-09 07:17:39,708 AutoSavingCache.java:173 - Completed loading (3 ms; 5 keys) KeyCache cache
+INFO  [main] 2019-11-09 07:17:39,746 CommitLog.java:152 - No commitlog files found; skipping replay
+INFO  [main] 2019-11-09 07:17:39,746 StorageService.java:600 - Populating token metadata from system tables
+INFO  [main] 2019-11-09 07:17:39,763 StorageService.java:607 - Token metadata: 
+INFO  [main] 2019-11-09 07:17:39,841 QueryProcessor.java:163 - Preloaded 0 prepared statements
+INFO  [main] 2019-11-09 07:17:39,842 StorageService.java:618 - Cassandra version: 3.11.2-SNAPSHOT
+INFO  [main] 2019-11-09 07:17:39,842 StorageService.java:619 - Thrift API version: 20.1.0
+INFO  [main] 2019-11-09 07:17:39,843 StorageService.java:620 - CQL supported versions: 3.4.4 (default: 3.4.4)
+INFO  [main] 2019-11-09 07:17:39,843 StorageService.java:622 - Native protocol supported versions: 3/v3, 4/v4, 5/v5-beta (default: 4/v4)
+INFO  [main] 2019-11-09 07:17:39,889 IndexSummaryManager.java:85 - Initializing index summary manager with a memory pool size of 399 MB and a resize interval of 60 minutes
+INFO  [main] 2019-11-09 07:17:39,909 MessagingService.java:753 - Starting Messaging Service on localhost/127.0.0.1:7000 (lo)
+WARN  [main] 2019-11-09 07:17:39,917 SystemKeyspace.java:1089 - No host ID found, created b5abfac4-d813-4c55-a394-c578ffcc4792 (Note: This should happen exactly once per node).
+INFO  [main] 2019-11-09 07:17:39,941 StorageService.java:707 - Loading persisted ring state
+INFO  [main] 2019-11-09 07:17:39,942 StorageService.java:825 - Starting up server gossip
+INFO  [main] 2019-11-09 07:17:40,000 StorageService.java:886 - This node will not auto bootstrap because it is configured to be a seed node.
+INFO  [main] 2019-11-09 07:17:40,009 BootStrapper.java:228 - Generated random tokens. tokens are [-3234207932209667844, 2829555875427575213, -895340226228129840, -5745713448527015664, -3003244722891951374, -2661477796347914232, 7575816965204808745, 4828089566879455095, 9211727940475016595, -5515867865443728352, 3025487371271542360, 5783742575693352435, 3398645327471492021, -8367725101547138141, 7510644890681086126, 6105094697924907526, 1329155609396091088, -1227059696571740428, -7236269211391472358, -2270562899563012078, -4003435418094821922, -1297276410347214364, 5619489219894938253, -8206881964535900640, -127498558057033969, 8505409268868827826, 3414371344067868571, -1369722089803029604, 4490147061382715504, 8524973793254357615, -3438163682256571060, -7220751026871272703, 8057249474206934684, -4498536125254587806, 3299559720648144782, -6776729566528956492, 5285255522818374211, 8411825541686727305, -7681439816577452753, 5633905686211840506, 2312683796173016386, 551510501694041437, -8103054435022464528, 8206243132074975452, -8992773508565499594, 8399202240410560358, -5412572536740391477, 1419750357755123508, -4908007903541685257, 696727189597736732, 4301440059169325690, 8547955099787570676, -7175099273871435849, 7003369569067524582, -4065322689443021010, 5920104888152505645, 4741921852545769668, 4993415951173548291, 4081353010509183593, 5467114728714687232, 5386132718181717415, -3008585508765049704, -5357485231410970621, 411310372035759328, 6340713571954717750, -8238106100824427625, 5984245961612732656, -3267377437139229344, -1460464060481566381, 8489859603237945581, -5709518166860512097, 6703321340640757389, -7357814997314506404, -7683385555677121748, 2501023834076280631, 5869592228447661042, -7156221515305977732, -6020200580401678074, 4880670731547113628, -5839374117477233822, 5406774080291277174, -5676380733537182270, -164054898364765548, -5441932926908698578, 1671358992788562137, -3606415779897911691, 378487005215394298, -8967293698993841129, 803787453302664938, 2604014911474038134, 7559326928690165264, 2174728459703001351, 130234817679515567, 7255864420350118782, 3703671985135654731, -7813931001845945953, -3796751272426030636, 7811754410426278813, -5078302268432920499, -1347993726725711791, -1019395158929101613, -2126459123795417897, 4462619989914985072, 7864431375494887828, -5343764432349700128, 5780254962706055401, -1005146536749522033, -8139923606645536166, -3976383673695552346, -8391730049644762274, 6897843791116575396, 165620495335483300, -1309459402654302123, 2527960086497272246, -2684280836011953527, 5845405718004093910, -4230142603878343552, -7826886776531554855, -5287767904287222960, 9050807550676766321, -8304274252545869528, -634060762862611126, 7675197438103632433, -4037265608564207877, -482174415995186809, -2290787433412727368, 8670497709050955974, 8033880549016701883, 7397882392860687343, -6482111594384031076, 3205490808745523614, 5057191257088388219, -7272463049745579849, -3634682606916153188, -6700806047211538614, 511470512091507691, -3419640925461304499, 1999396171315428358, -1858916602496739054, -1969481389397133951, -1079173215923251104, 7316239278243968807, 3693402167457372681, -709806820401203820, 1022623860936417322, 2433570603213353757, -2633795895482547, 9195044895105130130, -2745751726747664797, -7453542034528740893, -5462946374835458324, 2932719576695776692, 9121305377858942078, 5896934647453788940, 3225179496319105718, 7766721480427325101, 4112625624243336252, -3771823231331106626, -9071071470892714757, -7126457476124181972, 7483172444960934817, -3090664382556162329, 8136892529878838160, 2175013416497578047, 2516951591874318716, 3664745350163525469, -213696228558743349, 1673676280683749100, 2063147695942300097, 8163204070550278900, -6112956498254908914, 2068546925556282496, 7835522741220210805, -6917555850990128390, 1492738699665102352, -8574586210987235532, 20765248279295394, 6840132308945861825, -8947593912144643554, 6307783230330592697, 3718761333374300483, 4846427680255679251, 2450121835889238290, 8043955503770449761, -7105729042459267302, -1881834022034849481, 6632580563520332614, 5347455483378871856, 7281583695985682478, -3343843675745720405, -1355020570262541949, 8126456056916087389, -1199663750394764844, -7594888691453587881, 7793372472571173955, 7586720698203335417, -8427415328701068286, 5724146791614544198, 7006073742702579023, 1021072411665328922, -4176539516736026007, 5637048821477976074, 7420776886862484194, 2863065629855639316, -5187125579007136594, -9007116014223485882, -2407233356075887431, -5113736072669063723, -5963826396606023169, 7533474401008950957, -3388549148749017302, -8207161500685058314, 4079519813569686357, 3308110783223903424, 4310271300669439340, -5501004341926400986, -631025091882965144, -7041700778490890009, 4093348778162752068, -3450280120991478398, 8531313917447731153, 426422545678692904, -8889565189346998840, 7244003639222648391, -2387049171543580964, 8773269082758194550, 4170005345958165241, 2296842422094042534, -8575480835196676805, -4989561070161926596, 8692372457469026171, 5876201738022940425, -9148827081260453004, 4715313525550259553, 7159122803204535997, 2966316710398239532, 4650059170153921776, -3921128192432603718, 123472065866340079, 2360708100515541778, 4486916710342495191, 4849729068128489190, -8976204158583834794, -1206177798151261133, 1634788310248491862, -4462375418578302989, -1070881200238480680, -7334334606949723984, 2435334257356994212, 5592273400421059480, -3702803896905819153, -932191850951111905, -5813156612953558203, -7286548918932126774, 6225093138915687534, 3165488582155166946]
+INFO  [main] 2019-11-09 07:17:40,014 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_traces, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=2}}, tables=[org.apache.cassandra.config.CFMetaData@497650cd[cfId=c5e99f16-8677-3914-b17e-960613512345,ksName=system_traces,cfName=sessions,flags=[COMPOUND],params=TableParams{comment=tracing sessions, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=0, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [client command coordinator duration request started_at parameters]],partitionKeyColumns=[session_id],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.UUIDType,columnMetadata=[client, command, session_id, coordinator, request, started_at, duration, parameters],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@8ce8cb3[cfId=8826e8e9-e16a-3728-8753-3bc1fc713c25,ksName=system_traces,cfName=events,flags=[COMPOUND],params=TableParams{comment=tracing events, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=0, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.TimeUUIDType),partitionColumns=[[] | [activity source source_elapsed thread]],partitionKeyColumns=[session_id],clusteringColumns=[event_id],keyValidator=org.apache.cassandra.db.marshal.UUIDType,columnMetadata=[activity, event_id, session_id, source, thread, source_elapsed],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
 + RUN_YCSB
 + cd /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB
 + sleep 5
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,308 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_traces as storage service is not initialized
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,315 ColumnFamilyStore.java:411 - Initializing system_traces.events
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,324 ColumnFamilyStore.java:411 - Initializing system_traces.sessions
+INFO  [main] 2019-11-09 07:17:40,361 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_distributed, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=3}}, tables=[org.apache.cassandra.config.CFMetaData@1d19145a[cfId=759fffad-624b-3181-80ee-fa9a52d1f627,ksName=system_distributed,cfName=repair_history,flags=[COMPOUND],params=TableParams{comment=Repair history, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.TimeUUIDType),partitionColumns=[[] | [coordinator exception_message exception_stacktrace finished_at parent_id range_begin range_end started_at status participants]],partitionKeyColumns=[keyspace_name, columnfamily_name],clusteringColumns=[id],keyValidator=org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.UTF8Type,org.apache.cassandra.db.marshal.UTF8Type),columnMetadata=[status, id, coordinator, finished_at, participants, exception_stacktrace, parent_id, range_end, range_begin, exception_message, keyspace_name, started_at, columnfamily_name],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@449ea5b5[cfId=deabd734-b99d-3b9c-92e5-fd92eb5abf14,ksName=system_distributed,cfName=parent_repair_history,flags=[COMPOUND],params=TableParams{comment=Repair history, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [exception_message exception_stacktrace finished_at keyspace_name started_at columnfamily_names options requested_ranges successful_ranges]],partitionKeyColumns=[parent_id],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.TimeUUIDType,columnMetadata=[requested_ranges, exception_message, keyspace_name, successful_ranges, started_at, finished_at, options, exception_stacktrace, parent_id, columnfamily_names],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@d4062db[cfId=5582b59f-8e4e-35e1-b913-3acada51eb04,ksName=system_distributed,cfName=view_build_status,flags=[COMPOUND],params=TableParams{comment=Materialized View build status, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=864000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UUIDType),partitionColumns=[[] | [status]],partitionKeyColumns=[keyspace_name, view_name],clusteringColumns=[host_id],keyValidator=org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.UTF8Type,org.apache.cassandra.db.marshal.UTF8Type),columnMetadata=[view_name, status, keyspace_name, host_id],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,482 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_distributed as storage service is not initialized
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,488 ColumnFamilyStore.java:411 - Initializing system_distributed.parent_repair_history
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,501 ColumnFamilyStore.java:411 - Initializing system_distributed.repair_history
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,509 ColumnFamilyStore.java:411 - Initializing system_distributed.view_build_status
+INFO  [main] 2019-11-09 07:17:40,528 StorageService.java:1449 - JOINING: Finish joining ring
+INFO  [main] 2019-11-09 07:17:40,657 MigrationManager.java:331 - Create new Keyspace: KeyspaceMetadata{name=system_auth, params=KeyspaceParams{durable_writes=true, replication=ReplicationParams{class=org.apache.cassandra.locator.SimpleStrategy, replication_factor=1}}, tables=[org.apache.cassandra.config.CFMetaData@a92e76a[cfId=5bc52802-de25-35ed-aeab-188eecebb090,ksName=system_auth,cfName=roles,flags=[COMPOUND],params=TableParams{comment=role definitions, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(),partitionColumns=[[] | [can_login is_superuser salted_hash member_of]],partitionKeyColumns=[role],clusteringColumns=[],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[salted_hash, member_of, role, can_login, is_superuser],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@7962b7cc[cfId=0ecdaa87-f8fb-3e60-88d1-74fb36fe5c0d,ksName=system_auth,cfName=role_members,flags=[COMPOUND],params=TableParams{comment=role memberships lookup table, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | []],partitionKeyColumns=[role],clusteringColumns=[member],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[role, member],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@1c91ae45[cfId=3afbe79f-2194-31a7-add7-f5ab90d8ec9c,ksName=system_auth,cfName=role_permissions,flags=[COMPOUND],params=TableParams{comment=permissions granted to db roles, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | [permissions]],partitionKeyColumns=[role],clusteringColumns=[resource],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[role, resource, permissions],droppedColumns={},triggers=[],indexes=[]], org.apache.cassandra.config.CFMetaData@6287f085[cfId=5f2fbdad-91f1-3946-bd25-d5da3a5c35ec,ksName=system_auth,cfName=resource_role_permissons_index,flags=[COMPOUND],params=TableParams{comment=index of db roles with permissions granted on a resource, read_repair_chance=0.0, dclocal_read_repair_chance=0.0, bloom_filter_fp_chance=0.01, crc_check_chance=1.0, gc_grace_seconds=7776000, default_time_to_live=0, memtable_flush_period_in_ms=3600000, min_index_interval=128, max_index_interval=2048, speculative_retry=99PERCENTILE, caching={'keys' : 'ALL', 'rows_per_partition' : 'NONE'}, compaction=CompactionParams{class=org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy, options={min_threshold=4, max_threshold=32}}, compression=org.apache.cassandra.schema.CompressionParams@3d344f9c, extensions={}, cdc=false},comparator=comparator(org.apache.cassandra.db.marshal.UTF8Type),partitionColumns=[[] | []],partitionKeyColumns=[resource],clusteringColumns=[role],keyValidator=org.apache.cassandra.db.marshal.UTF8Type,columnMetadata=[resource, role],droppedColumns={},triggers=[],indexes=[]]], views=[], functions=[], types=[]}
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,761 ViewManager.java:137 - Not submitting build tasks for views in keyspace system_auth as storage service is not initialized
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,767 ColumnFamilyStore.java:411 - Initializing system_auth.resource_role_permissons_index
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,774 ColumnFamilyStore.java:411 - Initializing system_auth.role_members
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,779 ColumnFamilyStore.java:411 - Initializing system_auth.role_permissions
+INFO  [MigrationStage:1] 2019-11-09 07:17:40,786 ColumnFamilyStore.java:411 - Initializing system_auth.roles
 + cqlsh -e 'create keyspace ycsb WITH REPLICATION = {'\''class'\'' : '\''SimpleStrategy'\'', '\''replication_factor'\'': 1 }; USE ycsb; create table usertable (y_id varchar primary key, field0 varchar, field1 varchar, field2 varchar,field3 varchar,field4 varchar, field5 varchar, field6 varchar,field7 varchar,field8 varchar,field9 varchar);'
 + sleep 5
 + /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/bin/ycsb load cassandra2-cql -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -s
 [WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
 [DEBUG]  Running 'mvn -pl com.yahoo.ycsb:cassandra2-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/target/cassandra2-binding-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/users/skannan/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/users/skannan/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/users/skannan/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/core/target/core-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/users/skannan/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/users/skannan/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/users/skannan/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar com.yahoo.ycsb.Client -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -s -load
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
+java -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/target/cassandra2-binding-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/users/skannan/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/users/skannan/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/users/skannan/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/core/target/core-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/users/skannan/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/users/skannan/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/users/skannan/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar com.yahoo.ycsb.Client -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -s -load
 YCSB Client 0.9.0-SNAPSHOT
 Command line: -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -s -load
 Loading workload...
@@ -465,7 +454,7 @@ Starting test.
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-2019-08-08 19:38:25:641 0 sec: 0 operations; est completion in 0 seconds 
+2019-11-09 07:18:04:192 0 sec: 0 operations; est completion in 0 seconds 
 Connected to cluster: Test Cluster
 Datacenter: datacenter1; Host: localhost/127.0.0.1; Rack: rack1
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
@@ -476,440 +465,41 @@ DBWrapper: report latency for each error is false and specific error codes to tr
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
-2019-08-08 19:38:35:643 10 sec: 7267 operations; 726.34 current ops/sec; est completion in 11 minutes [INSERT: Count=7267, Max=288255, Min=1659, Avg=9736, 90=15327, 99=38111, 99.9=248447, 99.99=263679] 
-2019-08-08 19:38:45:624 20 sec: 16174 operations; 891.06 current ops/sec; est completion in 9 minutes [INSERT: Count=8915, Max=712191, Min=1283, Avg=9242.17, 90=13695, 99=29887, 99.9=149119, 99.99=711679] 
-2019-08-08 19:38:55:623 30 sec: 30409 operations; 1423.5 current ops/sec; est completion in 7 minutes [INSERT: Count=14235, Max=818687, Min=797, Avg=5592.73, 90=7935, 99=13791, 99.9=106367, 99.99=818175] 
-2019-08-08 19:39:05:627 40 sec: 44677 operations; 1426.66 current ops/sec; est completion in 6 minutes [INSERT: Count=14269, Max=897023, Min=885, Avg=5582.92, 90=7127, 99=13359, 99.9=41119, 99.99=894975] 
-2019-08-08 19:39:15:625 50 sec: 59034 operations; 1435.84 current ops/sec; est completion in 6 minutes [INSERT: Count=14353, Max=905215, Min=714, Avg=5548.7, 90=10391, 99=20495, 99.9=79615, 99.99=903167] 
-2019-08-08 19:39:25:623 60 sec: 74101 operations; 1506.7 current ops/sec; est completion in 5 minutes [INSERT: Count=15070, Max=923135, Min=1380, Avg=5284.33, 90=6243, 99=10495, 99.9=17727, 99.99=918527] 
-2019-08-08 19:39:35:625 70 sec: 88069 operations; 1396.8 current ops/sec; est completion in 5 minutes [INSERT: Count=13968, Max=837119, Min=939, Avg=5706.6, 90=7223, 99=12455, 99.9=79679, 99.99=836095] 
-2019-08-08 19:39:45:627 80 sec: 100288 operations; 1221.78 current ops/sec; est completion in 5 minutes [INSERT: Count=12217, Max=888319, Min=643, Avg=6521.04, 90=8951, 99=18991, 99.9=39903, 99.99=887807] 
-2019-08-08 19:39:55:625 90 sec: 112089 operations; 1180.34 current ops/sec; est completion in 5 minutes [INSERT: Count=11804, Max=859135, Min=1092, Avg=6749.96, 90=8879, 99=22287, 99.9=100479, 99.99=851967] 
-2019-08-08 19:40:05:624 100 sec: 125276 operations; 1318.7 current ops/sec; est completion in 5 minutes [INSERT: Count=13179, Max=918527, Min=1076, Avg=6042.27, 90=7811, 99=12343, 99.9=30127, 99.99=916991] 
-2019-08-08 19:40:15:626 110 sec: 134463 operations; 918.61 current ops/sec; est completion in 5 minutes [INSERT: Count=9189, Max=3018751, Min=1600, Avg=8678.93, 90=8783, 99=14263, 99.9=1029119, 99.99=3018751] 
-2019-08-08 19:40:25:630 120 sec: 147595 operations; 1313.07 current ops/sec; est completion in 4 minutes [INSERT: Count=13137, Max=814591, Min=916, Avg=6070.06, 90=7487, 99=12247, 99.9=333567, 99.99=812031] 
-2019-08-08 19:40:35:622 130 sec: 159086 operations; 1149.33 current ops/sec; est completion in 4 minutes [INSERT: Count=11491, Max=778239, Min=1198, Avg=6928.91, 90=9103, 99=15263, 99.9=91135, 99.99=778239] 
-2019-08-08 19:40:45:626 140 sec: 172816 operations; 1372.86 current ops/sec; est completion in 4 minutes [INSERT: Count=13730, Max=849407, Min=819, Avg=5806.35, 90=7567, 99=12415, 99.9=24575, 99.99=848895] 
-2019-08-08 19:40:55:624 150 sec: 184692 operations; 1187.6 current ops/sec; est completion in 4 minutes [INSERT: Count=11876, Max=981503, Min=1877, Avg=6708.06, 90=7711, 99=12807, 99.9=836607, 99.99=980991] 
-2019-08-08 19:41:05:623 160 sec: 198312 operations; 1362 current ops/sec; est completion in 4 minutes [INSERT: Count=13620, Max=871423, Min=1331, Avg=5850.33, 90=7355, 99=12023, 99.9=18767, 99.99=870399] 
-2019-08-08 19:41:15:625 170 sec: 211583 operations; 1327.1 current ops/sec; est completion in 3 minutes [INSERT: Count=13271, Max=852479, Min=1044, Avg=6004.67, 90=7455, 99=13055, 99.9=133887, 99.99=848895] 
-2019-08-08 19:41:25:628 180 sec: 225451 operations; 1386.8 current ops/sec; est completion in 3 minutes [INSERT: Count=13866, Max=834559, Min=914, Avg=5745.88, 90=7423, 99=12383, 99.9=68479, 99.99=834047] 
-2019-08-08 19:41:35:628 190 sec: 237512 operations; 1205.98 current ops/sec; est completion in 3 minutes [INSERT: Count=12063, Max=800255, Min=1296, Avg=6607.74, 90=8279, 99=14519, 99.9=181887, 99.99=799231] 
-2019-08-08 19:41:45:624 200 sec: 249631 operations; 1212.02 current ops/sec; est completion in 3 minutes [INSERT: Count=12120, Max=794111, Min=878, Avg=6571.37, 90=7323, 99=12375, 99.9=754175, 99.99=794111] 
-2019-08-08 19:41:55:625 210 sec: 263447 operations; 1381.6 current ops/sec; est completion in 3 minutes [INSERT: Count=13813, Max=849919, Min=1566, Avg=5767.27, 90=7019, 99=12175, 99.9=17439, 99.99=849407] 
-2019-08-08 19:42:05:626 220 sec: 276953 operations; 1350.6 current ops/sec; est completion in 2 minutes [INSERT: Count=13505, Max=820223, Min=799, Avg=5900.59, 90=7575, 99=12919, 99.9=31103, 99.99=820223] 
-2019-08-08 19:42:15:626 230 sec: 290370 operations; 1341.7 current ops/sec; est completion in 2 minutes [INSERT: Count=13427, Max=814079, Min=1585, Avg=5938.86, 90=7455, 99=12383, 99.9=72831, 99.99=813055] 
-2019-08-08 19:42:25:625 240 sec: 303701 operations; 1333.1 current ops/sec; est completion in 2 minutes [INSERT: Count=13336, Max=838655, Min=1160, Avg=5977.27, 90=7303, 99=12695, 99.9=89663, 99.99=838655] 
-2019-08-08 19:42:35:626 250 sec: 316492 operations; 1279.1 current ops/sec; est completion in 2 minutes [INSERT: Count=12776, Max=906239, Min=947, Avg=6233.21, 90=8071, 99=13599, 99.9=418815, 99.99=905215] 
-2019-08-08 19:42:45:620 260 sec: 328469 operations; 1197.82 current ops/sec; est completion in 2 minutes [INSERT: Count=11972, Max=993791, Min=846, Avg=6592.64, 90=7567, 99=12287, 99.9=631295, 99.99=992255] 
-2019-08-08 19:42:55:641 270 sec: 340780 operations; 1230.48 current ops/sec; est completion in 2 minutes [INSERT: Count=12311, Max=200959, Min=1069, Avg=6149.08, 90=8335, 99=13751, 99.9=159999, 99.99=194175] 
-2019-08-08 19:43:05:633 280 sec: 354246 operations; 1346.87 current ops/sec; est completion in 1 minutes [INSERT: Count=13481, Max=891391, Min=863, Avg=6283.79, 90=7279, 99=12263, 99.9=782847, 99.99=890879] 
-2019-08-08 19:43:15:624 290 sec: 367865 operations; 1362.04 current ops/sec; est completion in 1 minutes [INSERT: Count=13611, Max=840703, Min=1216, Avg=5840.74, 90=6955, 99=12335, 99.9=92863, 99.99=840703] 
-2019-08-08 19:43:25:623 300 sec: 380910 operations; 1304.63 current ops/sec; est completion in 1 minutes [INSERT: Count=13043, Max=900095, Min=1315, Avg=6110.32, 90=7695, 99=12623, 99.9=17919, 99.99=898559] 
-2019-08-08 19:43:35:635 310 sec: 394013 operations; 1310.17 current ops/sec; est completion in 1 minutes [INSERT: Count=13098, Max=43359, Min=1077, Avg=5732.39, 90=8583, 99=14383, 99.9=24207, 99.99=43103] 
-2019-08-08 19:43:45:645 320 sec: 407372 operations; 1335.5 current ops/sec; est completion in 1 minutes [INSERT: Count=13359, Max=859135, Min=1078, Avg=5934.51, 90=7335, 99=12359, 99.9=85247, 99.99=857599] 
-2019-08-08 19:43:55:637 330 sec: 420663 operations; 1329.23 current ops/sec; est completion in 1 minutes [INSERT: Count=13291, Max=899583, Min=1188, Avg=6057.94, 90=7519, 99=13015, 99.9=52127, 99.99=898559] 
-2019-08-08 19:44:05:636 340 sec: 433982 operations; 1332.03 current ops/sec; est completion in 52 seconds [INSERT: Count=13319, Max=793599, Min=1032, Avg=5970.98, 90=7231, 99=12015, 99.9=136959, 99.99=790015] 
-2019-08-08 19:44:15:626 350 sec: 446789 operations; 1280.83 current ops/sec; est completion in 42 seconds [INSERT: Count=12812, Max=1078271, Min=1246, Avg=6567.11, 90=7799, 99=13303, 99.9=837631, 99.99=1078271] 
-2019-08-08 19:44:25:627 360 sec: 460250 operations; 1346.23 current ops/sec; est completion in 32 seconds [INSERT: Count=13467, Max=825855, Min=1524, Avg=5921.69, 90=7127, 99=12415, 99.9=192383, 99.99=821759] 
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:263)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 14 more
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:73)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:26)
-	at com.datastax.driver.core.DriverThrowables.propagateCause(DriverThrowables.java:37)
-	at com.datastax.driver.core.DefaultResultSetFuture.getUninterruptibly(DefaultResultSetFuture.java:245)
-	at com.datastax.driver.core.AbstractSession.execute(AbstractSession.java:63)
-	at com.yahoo.ycsb.db.CassandraCQLClient.insert(CassandraCQLClient.java:436)
-	at com.yahoo.ycsb.DBWrapper.insert(DBWrapper.java:208)
-	at com.yahoo.ycsb.workloads.CoreWorkload.doInsert(CoreWorkload.java:579)
-	at com.yahoo.ycsb.ClientThread.run(Client.java:346)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.exceptions.WriteTimeoutException.copy(WriteTimeoutException.java:100)
-	at com.datastax.driver.core.Responses$Error.asException(Responses.java:122)
-	at com.datastax.driver.core.RequestHandler$SpeculativeExecution.onSet(RequestHandler.java:477)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:1005)
-	at com.datastax.driver.core.Connection$Dispatcher.channelRead0(Connection.java:928)
-	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:105)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.timeout.IdleStateHandler.channelRead(IdleStateHandler.java:266)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:276)
-	at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:354)
-	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:244)
-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:318)
-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:304)
-	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:846)
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:131)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:511)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:468)
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:382)
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:354)
-	at io.netty.util.concurrent.SingleThreadEventExecutor$2.run(SingleThreadEventExecutor.java:112)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: com.datastax.driver.core.exceptions.WriteTimeoutException: Cassandra timeout during write query at consistency ONE (1 replica were required but only 0 acknowledged the write)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:59)
-	at com.datastax.driver.core.Responses$Error$1.decode(Responses.java:37)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:266)
-	at com.datastax.driver.core.Message$ProtocolDecoder.decode(Message.java:246)
-	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:89)
-	... 15 more
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-Error inserting, not retrying any more. number of attempts: 1Insertion Retry Limit: 0
-2019-08-08 19:44:35:620 370 sec: 467207 operations; 695.77 current ops/sec; est completion in 26 seconds [CLEANUP: Count=7, Max=9, Min=1, Avg=2.14, 90=1, 99=9, 99.9=9, 99.99=9] [INSERT: Count=6946, Max=914943, Min=1253, Avg=6902.58, 90=7595, 99=17759, 99.9=912383, 99.99=914943] [INSERT-FAILED: Count=8, Max=2822143, Min=2803712, Avg=2814720, 90=2822143, 99=2822143, 99.9=2822143, 99.99=2822143] 
-2019-08-08 19:44:36:698 371 sec: 467207 operations; 0 current ops/sec; est completion in 27 seconds [CLEANUP: Count=1, Max=2234367, Min=2232320, Avg=2233344, 90=2234367, 99=2234367, 99.9=2234367, 99.99=2234367] [INSERT: Count=0, Max=0, Min=9223372036854775807, Avg=�, 90=0, 99=0, 99.9=0, 99.99=0] [INSERT-FAILED: Count=0, Max=0, Min=9223372036854775807, Avg=�, 90=0, 99=0, 99.9=0, 99.99=0] 
-[OVERALL], RunTime(ms), 371078.0
-[OVERALL], Throughput(ops/sec), 1259.0533526643994
-[CLEANUP], Operations, 8.0
-[CLEANUP], AverageLatency(us), 279169.875
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+2019-11-09 07:18:14:183 10 sec: 26697 operations; 2669.17 current ops/sec; est completion in 2 minutes [INSERT: Count=26742, Max=252671, Min=1494, Avg=5473.6, 90=7855, 99=20767, 99.9=129023, 99.99=251263] 
+2019-11-09 07:18:24:173 20 sec: 70859 operations; 4416.2 current ops/sec; est completion in 2 minutes [INSERT: Count=44164, Max=455423, Min=671, Avg=3581.6, 90=4479, 99=10583, 99.9=84671, 99.99=439551] 
+2019-11-09 07:18:34:168 30 sec: 188306 operations; 11744.7 current ops/sec; est completion in 50 seconds [INSERT: Count=117442, Max=306175, Min=290, Avg=1346.89, 90=1861, 99=3253, 99.9=11015, 99.99=296959] 
+2019-11-09 07:18:44:167 40 sec: 311513 operations; 12321.93 current ops/sec; est completion in 25 seconds [INSERT: Count=123198, Max=365055, Min=294, Avg=1286.31, 90=1825, 99=2585, 99.9=7203, 99.99=363519] 
+2019-11-09 07:18:54:169 50 sec: 406186 operations; 9467.3 current ops/sec; est completion in 12 seconds [INSERT: Count=94659, Max=405503, Min=316, Avg=1674.93, 90=2193, 99=9127, 99.9=19247, 99.99=404991] 
+2019-11-09 07:19:04:166 60 sec: 500000 operations; 9381.4 current ops/sec; [CLEANUP: Count=15, Max=192, Min=1, Avg=17.6, 90=46, 99=192, 99.9=192, 99.99=192] [INSERT: Count=93795, Max=372991, Min=201, Avg=1582.52, 90=2101, 99=5623, 99.9=18623, 99.99=372223] 
+2019-11-09 07:19:05:844 61 sec: 500000 operations; 0 current ops/sec; [CLEANUP: Count=1, Max=2234367, Min=2232320, Avg=2233344, 90=2234367, 99=2234367, 99.9=2234367, 99.99=2234367] [INSERT: Count=0, Max=0, Min=9223372036854775807, Avg=�, 90=0, 99=0, 99.9=0, 99.99=0] 
+[OVERALL], RunTime(ms), 61679.0
+[OVERALL], Throughput(ops/sec), 8106.486810745959
+[CLEANUP], Operations, 16.0
+[CLEANUP], AverageLatency(us), 139600.5
 [CLEANUP], MinLatency(us), 1.0
 [CLEANUP], MaxLatency(us), 2234367.0
-[CLEANUP], 95thPercentileLatency(us), 2234367.0
+[CLEANUP], 95thPercentileLatency(us), 192.0
 [CLEANUP], 99thPercentileLatency(us), 2234367.0
-[INSERT], Operations, 467207.0
-[INSERT], AverageLatency(us), 6229.546186165875
-[INSERT], MinLatency(us), 643.0
-[INSERT], MaxLatency(us), 3018751.0
-[INSERT], 95thPercentileLatency(us), 9663.0
-[INSERT], 99thPercentileLatency(us), 15007.0
-[INSERT], Return=OK, 467207
-[INSERT], Return=ERROR, 8
-[INSERT-FAILED], Operations, 8.0
-[INSERT-FAILED], AverageLatency(us), 2814720.0
-[INSERT-FAILED], MinLatency(us), 2803712.0
-[INSERT-FAILED], MaxLatency(us), 2822143.0
-[INSERT-FAILED], 95thPercentileLatency(us), 2822143.0
-[INSERT-FAILED], 99thPercentileLatency(us), 2822143.0
+[INSERT], Operations, 500000.0
+[INSERT], AverageLatency(us), 1856.36974
+[INSERT], MinLatency(us), 201.0
+[INSERT], MaxLatency(us), 455423.0
+[INSERT], 95thPercentileLatency(us), 4203.0
+[INSERT], 99thPercentileLatency(us), 8279.0
+[INSERT], Return=OK, 500000
 + sleep 5
 + /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/bin/ycsb run cassandra2-cql -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada
 [WARN]  Running against a source checkout. In order to get our runtime dependencies we'll have to invoke Maven. Depending on the state of your system, this may take ~30-45 seconds
 [DEBUG]  Running 'mvn -pl com.yahoo.ycsb:cassandra2-binding -am package -DskipTests dependency:build-classpath -DincludeScope=compile -Dmdep.outputFilterFile=true'
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/target/cassandra2-binding-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/users/skannan/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/users/skannan/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/users/skannan/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/core/target/core-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/users/skannan/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/users/skannan/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/users/skannan/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar com.yahoo.ycsb.Client -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -t
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF8
+java -cp /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/conf:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/cassandra2/target/cassandra2-binding-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar:/users/skannan/.m2/repository/io/dropwizard/metrics/metrics-core/3.1.2/metrics-core-3.1.2.jar:/users/skannan/.m2/repository/com/datastax/cassandra/cassandra-driver-core/3.0.0/cassandra-driver-core-3.0.0.jar:/users/skannan/.m2/repository/io/netty/netty-handler/4.0.33.Final/netty-handler-4.0.33.Final.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-core-asl/1.9.4/jackson-core-asl-1.9.4.jar:/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/core/target/core-0.9.0-SNAPSHOT.jar:/users/skannan/.m2/repository/io/netty/netty-transport/4.0.33.Final/netty-transport-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-codec/4.0.33.Final/netty-codec-4.0.33.Final.jar:/users/skannan/.m2/repository/com/google/guava/guava/16.0.1/guava-16.0.1.jar:/users/skannan/.m2/repository/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar:/users/skannan/.m2/repository/org/codehaus/jackson/jackson-mapper-asl/1.9.4/jackson-mapper-asl-1.9.4.jar:/users/skannan/.m2/repository/io/netty/netty-buffer/4.0.33.Final/netty-buffer-4.0.33.Final.jar:/users/skannan/.m2/repository/io/netty/netty-common/4.0.33.Final/netty-common-4.0.33.Final.jar com.yahoo.ycsb.Client -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -t
 YCSB Client 0.9.0-SNAPSHOT
 Command line: -db com.yahoo.ycsb.db.CassandraCQLClient -p hosts=localhost -p port=9042 -p recordcount=500000 -P /users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code/mapkeeper/ycsb/YCSB/workloads/workloada -t
 Loading workload...
@@ -927,45 +517,213 @@ DBWrapper: report latency for each error is false and specific error codes to tr
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
 DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
-[OVERALL], RunTime(ms), 33109.0
-[OVERALL], Throughput(ops/sec), 3020.3267993596905
-[READ], Operations, 76446.0
-[READ], AverageLatency(us), 2126.504185961332
-[READ], MinLatency(us), 212.0
-[READ], MaxLatency(us), 666623.0
-[READ], 95thPercentileLatency(us), 5019.0
-[READ], 99thPercentileLatency(us), 7747.0
-[READ], Return=OK, 76446
-[READ], Return=NOT_FOUND, 3516
-[READ-MODIFY-WRITE], Operations, 39954.0
-[READ-MODIFY-WRITE], AverageLatency(us), 3238.2343194673876
-[READ-MODIFY-WRITE], MinLatency(us), 462.0
-[READ-MODIFY-WRITE], MaxLatency(us), 702463.0
-[READ-MODIFY-WRITE], 95thPercentileLatency(us), 7395.0
-[READ-MODIFY-WRITE], 99thPercentileLatency(us), 11943.0
-[CLEANUP], Operations, 8.0
-[CLEANUP], AverageLatency(us), 279430.25
-[CLEANUP], MinLatency(us), 2.0
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+DBWrapper: report latency for each error is false and specific error codes to track for latency are: []
+[OVERALL], RunTime(ms), 38132.0
+[OVERALL], Throughput(ops/sec), 13112.346585544949
+[READ], Operations, 400151.0
+[READ], AverageLatency(us), 857.532394021257
+[READ], MinLatency(us), 158.0
+[READ], MaxLatency(us), 587775.0
+[READ], 95thPercentileLatency(us), 1946.0
+[READ], 99thPercentileLatency(us), 5191.0
+[READ], Return=OK, 400151
+[READ-MODIFY-WRITE], Operations, 200057.0
+[READ-MODIFY-WRITE], AverageLatency(us), 1560.0877150012248
+[READ-MODIFY-WRITE], MinLatency(us), 348.0
+[READ-MODIFY-WRITE], MaxLatency(us), 602623.0
+[READ-MODIFY-WRITE], 95thPercentileLatency(us), 3491.0
+[READ-MODIFY-WRITE], 99thPercentileLatency(us), 8535.0
+[CLEANUP], Operations, 16.0
+[CLEANUP], AverageLatency(us), 139724.3125
+[CLEANUP], MinLatency(us), 1.0
 [CLEANUP], MaxLatency(us), 2236415.0
-[CLEANUP], 95thPercentileLatency(us), 2236415.0
+[CLEANUP], 95thPercentileLatency(us), 83.0
 [CLEANUP], 99thPercentileLatency(us), 2236415.0
-[UPDATE], Operations, 59992.0
-[UPDATE], AverageLatency(us), 1169.6344012535005
-[UPDATE], MinLatency(us), 190.0
-[UPDATE], MaxLatency(us), 666623.0
-[UPDATE], 95thPercentileLatency(us), 2503.0
-[UPDATE], 99thPercentileLatency(us), 4867.0
-[UPDATE], Return=OK, 59992
-[READ-FAILED], Operations, 3516.0
-[READ-FAILED], AverageLatency(us), 1247.9075654152446
-[READ-FAILED], MinLatency(us), 185.0
-[READ-FAILED], MaxLatency(us), 665087.0
-[READ-FAILED], 95thPercentileLatency(us), 2805.0
-[READ-FAILED], 99thPercentileLatency(us), 4471.0
+[UPDATE], Operations, 299906.0
+[UPDATE], AverageLatency(us), 710.3653844871393
+[UPDATE], MinLatency(us), 147.0
+[UPDATE], MaxLatency(us), 583167.0
+[UPDATE], 95thPercentileLatency(us), 1570.0
+[UPDATE], 99thPercentileLatency(us), 3259.0
+[UPDATE], Return=OK, 299906
 + sudo service cassandra stop
- * Stopping Cassandra cassandra
-   ...done.
 ++ pidof java
-+ kill -9 15555
++ kill -9 27510
 ++ pidof java
-+ kill -9 15555
++ kill -9 27510
++ DESTROY
++ sudo killall java
++ sudo killall java
++ sleep 2
++ sudo killall java
+java: no process found
++ sleep 2
++ sudo killall java
+java: no process found
++ sleep 2
+[40767.800057] drop_caches: sh (26549): drop_caches: 3
+[40769.666601] drop_caches: sh (26558): drop_caches: 3
+[40780.716481] nvmemul: ioctl command: 0xc008aa02
+[40780.716485] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x812c
+[40780.716491] nvmemul: ioctl command: 0x8008aa01
+[40780.716493] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[40780.716496] nvmemul: ioctl command: 0x8008aa01
+[40780.716497] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[40780.716500] nvmemul: ioctl command: 0x8008aa01
+[40780.716502] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[40780.716504] nvmemul: ioctl command: 0x8008aa01
+[40780.716506] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[40780.716509] nvmemul: ioctl command: 0xc008aa02
+[40780.716510] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[40780.716513] nvmemul: ioctl command: 0x8008aa01
+[40780.716514] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[40780.716517] nvmemul: ioctl command: 0x8008aa01
+[40780.716518] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[40780.716521] nvmemul: ioctl command: 0x8008aa01
+[40780.716522] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[40780.716524] nvmemul: ioctl command: 0x8008aa01
+[40780.716526] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[40809.582979] nvmemul: ioctl command: 0xc008aa02
+[40809.582994] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[40809.583040] nvmemul: ioctl command: 0x8008aa01
+[40809.583041] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[40809.583044] nvmemul: ioctl command: 0x8008aa01
+[40809.583045] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[40809.583055] nvmemul: ioctl command: 0x8008aa01
+[40809.583056] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[40809.583059] nvmemul: ioctl command: 0x8008aa01
+[40809.583060] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[40824.828257] nvmemul: ioctl command: 0xc008aa02
+[40824.828268] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[40824.828353] nvmemul: ioctl command: 0x8008aa01
+[40824.828355] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[40824.828358] nvmemul: ioctl command: 0x8008aa01
+[40824.828359] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[40824.828369] nvmemul: ioctl command: 0x8008aa01
+[40824.828370] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[40824.828373] nvmemul: ioctl command: 0x8008aa01
+[40824.828374] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[40836.017224] nvmemul: ioctl command: 0xc008aa02
+[40836.017235] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[40836.017245] nvmemul: ioctl command: 0x8008aa01
+[40836.017246] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[40836.017249] nvmemul: ioctl command: 0x8008aa01
+[40836.017250] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[40836.017253] nvmemul: ioctl command: 0x8008aa01
+[40836.017254] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[40836.017257] nvmemul: ioctl command: 0x8008aa01
+[40836.017258] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[40845.466596] nvmemul: ioctl command: 0xc008aa02
+[40845.466602] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[40845.466613] nvmemul: ioctl command: 0x8008aa01
+[40845.466614] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[40845.466617] nvmemul: ioctl command: 0x8008aa01
+[40845.466618] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[40845.466621] nvmemul: ioctl command: 0x8008aa01
+[40845.466622] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[40845.466625] nvmemul: ioctl command: 0x8008aa01
+[40845.466626] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[40863.512352] nvmemul: ioctl command: 0xc008aa02
+[40863.512356] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x804b
+[40863.512362] nvmemul: ioctl command: 0x8008aa01
+[40863.512364] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[40863.512367] nvmemul: ioctl command: 0x8008aa01
+[40863.512368] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[40863.512371] nvmemul: ioctl command: 0x8008aa01
+[40863.512372] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[40863.512375] nvmemul: ioctl command: 0x8008aa01
+[40863.512376] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[40863.512379] nvmemul: ioctl command: 0xc008aa02
+[40863.512381] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x8fff
+[40863.512384] nvmemul: ioctl command: 0x8008aa01
+[40863.512385] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x800f
+[40863.512388] nvmemul: ioctl command: 0x8008aa01
+[40863.512389] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x800f
+[40863.512391] nvmemul: ioctl command: 0x8008aa01
+[40863.512392] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x800f
+[40863.512395] nvmemul: ioctl command: 0x8008aa01
+[40863.512396] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x800f
+[40888.332010] perf: interrupt took too long (87691 > 85456), lowering kernel.perf_event_max_sample_rate to 2250
+[40892.406157] nvmemul: ioctl command: 0xc008aa02
+[40892.406163] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x800f
+[40892.406212] nvmemul: ioctl command: 0x8008aa01
+[40892.406213] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x801e
+[40892.406216] nvmemul: ioctl command: 0x8008aa01
+[40892.406217] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x801e
+[40892.406220] nvmemul: ioctl command: 0x8008aa01
+[40892.406221] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x801e
+[40892.406224] nvmemul: ioctl command: 0x8008aa01
+[40892.406225] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x801e
+[40907.663443] nvmemul: ioctl command: 0xc008aa02
+[40907.663454] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x801e
+[40907.663532] nvmemul: ioctl command: 0x8008aa01
+[40907.663534] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x802d
+[40907.663537] nvmemul: ioctl command: 0x8008aa01
+[40907.663538] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x802d
+[40907.663541] nvmemul: ioctl command: 0x8008aa01
+[40907.663542] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x802d
+[40907.663545] nvmemul: ioctl command: 0x8008aa01
+[40907.663546] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x802d
+[40918.764704] nvmemul: ioctl command: 0xc008aa02
+[40918.764709] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[40918.764719] nvmemul: ioctl command: 0x8008aa01
+[40918.764720] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x803c
+[40918.764723] nvmemul: ioctl command: 0x8008aa01
+[40918.764724] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x803c
+[40918.764727] nvmemul: ioctl command: 0x8008aa01
+[40918.764729] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x803c
+[40918.764731] nvmemul: ioctl command: 0x8008aa01
+[40918.764732] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x803c
+[40927.995262] nvmemul: ioctl command: 0xc008aa02
+[40927.995268] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x803c
+[40927.995276] nvmemul: ioctl command: 0x8008aa01
+[40927.995277] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x804b
+[40927.995280] nvmemul: ioctl command: 0x8008aa01
+[40927.995281] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x804b
+[40927.995284] nvmemul: ioctl command: 0x8008aa01
+[40927.995286] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x804b
+[40927.995289] nvmemul: ioctl command: 0x8008aa01
+[40927.995290] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x804b
+[40985.687996] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[40987.092859] drop_caches: sh (27355): drop_caches: 3
+[40988.971053] drop_caches: sh (27363): drop_caches: 3
+[41011.589028] flag is set to enable HETERO_PGCACHE 11 
+[41011.589031] flag is set to enable HETERO_BUFFER 12 
+[41011.589031] flag is set to enable HETERO_JOURNAL 13 
+[41011.589032] flag is set to enable HETERO_RADIX 14 
+[41011.589033] flag is set to enable HETERO_FULLKERN 15 
+[41011.589034] flag to set FASTMEM node to 1 
+[41011.589035] hetero_pid set to 27510 27510 procname numactl
+[41011.589036] flag to set FASTMEM node to 1 
+[41011.589037] flag to set MIGRATION FREQ to 410065408 
+[41011.589038] flag to disable migration 19 
+[41011.589039] flag to MIGRATE_LISTCNT 410065408 
+[41011.589569] flag is set to enable HETERO_PGCACHE 11 
+[41011.589570] flag is set to enable HETERO_BUFFER 12 
+[41011.589571] flag is set to enable HETERO_JOURNAL 13 
+[41011.589572] flag is set to enable HETERO_RADIX 14 
+[41011.589572] flag is set to enable HETERO_FULLKERN 15 
+[41011.589573] flag to set FASTMEM node to 1 
+[41011.589574] hetero_pid set to 27510 27510 procname java
+[41011.589575] flag to set FASTMEM node to 1 
+[41011.589576] flag to set MIGRATION FREQ to 410065408 
+[41011.589577] flag to disable migration 19 
+[41011.589578] flag to MIGRATE_LISTCNT 410065408 
+[41018.220953] flag is set to enable HETERO_PGCACHE 11 
+[41018.220956] flag is set to enable HETERO_BUFFER 12 
+[41018.220957] flag is set to enable HETERO_JOURNAL 13 
+[41018.220958] flag is set to enable HETERO_RADIX 14 
+[41018.220959] flag is set to enable HETERO_FULLKERN 15 
+[41018.220960] flag to set FASTMEM node to 1 
+[41018.220963] hetero_pid set to 27576 27576 procname ldconfig
+[41018.220964] flag to set FASTMEM node to 1 
+[41018.220965] flag to set MIGRATION FREQ to 410065408 
+[41018.220967] flag to disable migration 19 
+[41018.220968] flag to MIGRATE_LISTCNT 410065408 

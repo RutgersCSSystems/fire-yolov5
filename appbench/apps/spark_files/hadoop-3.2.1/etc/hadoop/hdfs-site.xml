@@ -17,24 +17,19 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-    <property>
+    <!--property>
         <name>dfs.replication</name>
         <value>1</value>
-    </property>
-
- <!--property>
-          <name>dfs.namenode.rpc-address</name>
-          <value>master:9000</value>
-  </property-->
+    </property-->
 
 <property>
     <name>dfs.namenode.name.dir</name>
-    <value>file:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/namenode</value>
+    <value>file:/users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode</value>
 </property>
 
 <property>
     <name>dfs.datanode.data.dir</name>
-    <value>file:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/datanode</value>
+    <value>file:/users/skannan/ssd/NVM/appbench/shared_data/hdfs/datanode</value>
 </property>
 
 </configuration>

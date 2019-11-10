@@ -17,9 +17,31 @@
    <name>yarn.nodemanager.aux-services</name>
    <value>mapreduce_shuffle</value>
 </property>
+
 <property>
    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
-   <value>org.apache.hadoop.mapred.ShuffleHandler</value>
 </property>
+
+<property>
+   <name>yarn.nodemanager.resource.memory-mb</name>
+   <value>131072</value>
+</property>
+
+<property>
+   <name>yarn.scheduler.maximum-allocation-mb</name>
+   <value>49152</value>
+</property>
+
+
+<property>
+  <name>yarn.nodemanager.resource.cpu-vcores</name>
+  <value>48</value>
+</property>
+
+<property>
+  <name>yarn.scheduler.maximum-allocation-vcores</name>
+  <value>32</value>
+</property>
+
 
 </configuration>

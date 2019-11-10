@@ -10,6 +10,7 @@ INSTALL_SYSTEM_LIBS(){
 	sudo apt-get install -y python-setuptools python-dev build-essential
 	sudo easy_install -y pip
         sudo apt install -y  python-pip
+	sudo pip install zplot
 	sudo apt-get install -y numactl
 	sudo apt-get install -y libsqlite3-dev
 	sudo apt-get install -y libnuma-dev
@@ -29,6 +30,9 @@ INSTALL_SYSTEM_LIBS(){
 	sudo apt-get install -y msrtool
 	sudo pip install -y psutil
 	sudo apt-get install -y libmpich-dev
+	sudo apt-get install -y libzstd-dev
+	sudo apt-get install -y liblz4-dev
+	sudo apt-get install -y libsnappy-dev
 	#sudo pip install thrift_compiler
 	#INSTALL_JAVA
 	sudo add-apt-repository ppa:webupd8team/java
@@ -140,9 +144,10 @@ GETAPPS(){
 	INSTALL_CASSANDRA
 }
 
-#INSTALL_ROCKSDB
+GETAPPS
 #INSTALL_SYSTEM_LIBS
-$SCRIPTS/set_spark.sh
+#INSTALL_ROCKSDB
+#$SCRIPTS/set_spark.sh
 exit
 
 

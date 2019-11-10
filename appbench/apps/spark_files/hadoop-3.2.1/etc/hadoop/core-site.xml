@@ -17,17 +17,12 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-<!--property>
-      <name>fs.defaultFS</name>
-      <value>hdfs://master:9000</value>
-    </property-->
-
 <property>
   <name>hadoop.tmp.dir</name>
   <value>/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/hdfs/tmp</value>
 </property>
  <property>
      <name>fs.defaultFS</name>
-     <value>hdfs://172.16.70.56/</value>
+     <value>hdfs://localhost/</value>
  </property>
 </configuration>

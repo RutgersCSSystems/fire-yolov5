@@ -13,12 +13,12 @@ xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
 xydim=[270, 170]
-xystart=[90,100]
-xylegend=[50,160]
+xystart=[140,100]
+xylegend=[70,140]
 xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
-xmanualint=7
+xmanualint=5
 
 xfontsize=9.0
 yfontsize=9.0
@@ -26,24 +26,27 @@ xlabelsize=9.0
 
 
 
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-NoMigrate', 'KLOC']
-mech = [ 'slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig', 'slowmem-obj-affinity']
+mechnames = ['App Slow + OS Slow', 'App Fast + OS Fast', 'App Slow + OS Fast', 'App Fast + OS Slow']
+mech = ['APPSLOW-OSSLOW', 'APPFAST-OSFAST', 'APPSLOW-OSFAST', 'APPFAST-OSSLOW']
 storage=["SSD", "NVM"]
 pattern = "NVM"
-APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
-xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
-
+#APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
+#xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
+APPS = ["filebench", "redis", "rocksdb", "cassandra"]
+xlabel = ["filebench", "redis", "rocksdb", "cassandra"]
+BW="BW1000"
+titletxt='m-allapps'
 
 
 colors=['white', 'lightgrey', 'darkgray', 'black', 'blue', 'red']
-path='/users/skannan/ssd/NVM/graphs/zplot/data/'
+path='/users/skannan/ssd/NVM/graphs/zplot/data/motivate/'
 yname="Throughput (MB/sec)"
 
 dseq = []
 L=legend()
 p = plotter()
 
-c = canvas('pdf', title='e-allapps', dimensions=xydim)
+c = canvas('pdf', title=titletxt, dimensions=xydim)
 d = drawable(canvas=c, xrange=[0,16], yrange=[0,ymax], coord=xycord, dimensions=xystart)
 
 for j in range(0, len(xlabel)):
@@ -52,8 +55,8 @@ for j in range(0, len(xlabel)):
     xmanualstart = xmanualstart + xmanualint
 
     for i in range(0, len(mech)):
-	print path + xlabel[j] + '-'+mech[i]+"-" + pattern +'.data'
-        dseq.append(table(file=path + xlabel[j] + '-'+mech[i]+"-" + pattern +'.data'))
+	print path + xlabel[j] + '-'+mech[i]+"-" + pattern + "-" + BW +'.data'
+        dseq.append(table(file=path + xlabel[j] + '-'+mech[i]+"-" + pattern + "-" + BW +'.data'))
 	
 
 s=0
@@ -79,5 +82,5 @@ axis(drawable=d, style='xy',
      ytitlesize=yfontsize, xtitlesize=xfontsize)
 
 
-L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=95, fontsize=yfontsize)
+L.draw(canvas=c, coord=xylegend, skipnext=6, skipspace=95, fontsize=yfontsize)
 c.render()

@@ -68,7 +68,7 @@ fi
 # The exit code of the launcher is appended to the output, so the parent shell removes it from the
 # command array and checks the value to see if the launcher succeeded.
 build_command() {
-  "$RUNNER" -Xmx128m -cp "$LAUNCH_CLASSPATH" org.apache.spark.launcher.Main "$@"
+  $RUNNER -Xmx128m -cp "$LAUNCH_CLASSPATH" org.apache.spark.launcher.Main "$@"
   printf "%d\0" $?
 }
 
@@ -77,6 +77,7 @@ set +o posix
 CMD=()
 while IFS= read -d '' -r ARG; do
   CMD+=("$ARG")
+  print $CMD
 done < <(build_command "$@")
 
 COUNT=${#CMD[@]}
@@ -97,5 +98,4 @@ fi
 
 CMD=("${CMD[@]:0:$LAST}")
 #exec "${CMD[@]}"
-echo "D_PRELOAD=/usr/lib/libmigration.so $APPPREFIX "${CMD[@]}""
-LD_PRELOAD=/usr/lib/libmigration.so "${CMD[@]}"
+LD_PRELOAD=/usr/lib/libmigration.so $APPPREFIX "${CMD[@]}"
