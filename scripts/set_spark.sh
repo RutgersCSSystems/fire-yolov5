@@ -38,7 +38,6 @@ INSTALL_SPARK_HIBENCH(){
 	HADOOP="hadoop-3.2.1"
 	HADOOP_DIR=$SPARKDIR/$HADOOP
 
-        #ADD_SPARK_TO_BASHRC
 
 	# Check if Spark file exists?
 	if [ -f $SPARKFILE ]; then
@@ -62,9 +61,9 @@ INSTALL_SPARK_HIBENCH(){
 	    tar -xvzf $HADOOP".tar.gz"
 	fi
 	cd $SPARKDIR/$HADOOP
-	cp -r $SPARKFILES/$HADOOP/etc/hadoop/* $HADOOP/etc/hadoop/
-	cp -r $SPARKFILES/$HADOOP/bin/* $HADOOP/bin/
-	cp -r $SPARKFILES/$HADOOP/sbin/* $HADOOP/sbin/
+	cp -r $SPARKFILES/$HADOOP/etc/hadoop/* $SPARKDIR/$HADOOP/etc/hadoop/
+	cp -r $SPARKFILES/$HADOOP/bin/* $SPARKDIR/$HADOOP/bin/
+	cp -r $SPARKFILES/$HADOOP/sbin/* $SPARKDIR/$HADOOP/sbin/
 
         #git clone https://github.com/Intel-bigdata/HiBench
         #cd $HIBENCHDIR
@@ -82,8 +81,9 @@ INSTALL_SPARK_HIBENCH(){
 	bin/build-all.sh
 	cp -r $SPARKFILES/spark-bench/conf .
         cp -r $SPARKFILES/spark-bench/bin .
+	
 }
-
 source scripts/setvars.sh
 INSTALL_SPARK_HIBENCH
+ADD_SPARK_TO_BASHRC
 QEMU_SET
