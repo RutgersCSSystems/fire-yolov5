@@ -33,6 +33,7 @@ INSTALL_SPARK_HIBENCH(){
 	SPARKFILE=spark-2.4.4-bin-hadoop2.7.tgz
 	SPARKDIR=$APPBENCH/apps/spark
 	HIBENCHDIR=$SPARKDIR/HiBench
+	SPARKBENCH=$SPARKDIR/spark-bench
         SPARKFILES=$APPBENCH/apps/spark_files
 	HADOOP="hadoop-3.2.1"
 	HADOOP_DIR=$SPARKDIR/$HADOOP
@@ -60,12 +61,27 @@ INSTALL_SPARK_HIBENCH(){
 	    wget http://apache.mirrors.pair.com/hadoop/common/$HADOOP/$HADOOP".tar.gz"
 	    tar -xvzf $HADOOP".tar.gz"
 	fi
+	cd $SPARKDIR/$HADOOP
+	cp -r $SPARKFILES/$HADOOP/etc/hadoop/* $HADOOP/etc/hadoop/
+	cp -r $SPARKFILES/$HADOOP/bin/* $HADOOP/bin/
+	cp -r $SPARKFILES/$HADOOP/sbin/* $HADOOP/sbin/
+
+        #git clone https://github.com/Intel-bigdata/HiBench
+        #cd $HIBENCHDIR
+	#mvn -Dspark=2.1 -Dscala=2.11 clean package
+	#cp $SPARKFILES/$HADOOP/etc/* $HADOOP_DIR/etc/
+        #cp $SPARKFILES/HiBench/conf/* $HIBENCHDIR/conf/ 
 	
-        git clone https://github.com/Intel-bigdata/HiBench
-        cd $HIBENCHDIR
-	mvn -Dspark=2.1 -Dscala=2.11 clean package
-	cp $SPARKFILES/$HADOOP/etc/* $HADOOP_DIR/etc/
-        cp $SPARKFILES/HiBench/conf/* $HIBENCHDIR/conf/ 
+	cd $SPARKDIR
+	git clone https://github.com/CODAIT/spark-bench -b legacy
+	cd $SPARKBENCH
+	git clone https://github.com/synhershko/wikixmlj.git
+	cd wikixmlj
+	mvn package install
+	cd $SPARKBENCH
+	bin/build-all.sh
+	cp -r $SPARKFILES/spark-bench/conf .
+        cp -r $SPARKFILES/spark-bench/bin .
 }
 
 source scripts/setvars.sh
