@@ -15,25 +15,22 @@ lwidth = 0.3
 xfontsize=9.0
 yfontsize=9.0
 xlabelsize=9.0
-xydim=[240, 190]
-xystart=[120,100]
-xylegend=[50,180]
+xydim=[270, 170]
+xystart=[120, 90]
+xylegend=[50,150]
 xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=7
+skipnextval=4
+skipspaceval=80
 
-
-mechnames = ['Naive', 'All-FastMem', 'Migration-only', 'Hetero-Context-NoMigrate', 'Hetero-Context', 'Hetero-Context-N/W', 'All-SlowMem']
-#xlabel = ['SET-SSD', 'SET-NVM', 'GET-SSD', 'GET-NVM']
-#pattern = ['SSD-SET','NVM-SET', 'SSD-GET', 'NVM-GET']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-NoMigrate', 'KLOC', 'KLOC-N/W']
 xlabel = ['SET', 'GET']
 pattern = ['NVM-SET', 'NVM-GET']
-mech = ['naive-os-fastmem', 'optimal-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-obj-affinity-net', 'slowmem-only']
+mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem','slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-obj-affinity-net']
 storage=["NVM"]
-
-
-colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'green', 'blue']
+colors=['white', 'lightgrey', 'darkgray', 'black', 'blue', 'red', 'green']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/patern/redis'
 yname="Throughput (in 100K OPS/sec)"
 
@@ -76,6 +73,6 @@ axis(drawable=d, style='xy',
      xtitle='Operation Type', ytitle=yname,
      ytitlesize=yfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=9, skipspace=50)
+L.draw(canvas=c, coord=xylegend, skipnext=skipnextval, skipspace=skipspaceval)
 
 c.render()
