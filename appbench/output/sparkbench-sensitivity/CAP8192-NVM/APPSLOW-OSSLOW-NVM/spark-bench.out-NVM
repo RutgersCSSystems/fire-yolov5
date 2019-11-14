@@ -1,20 +1,21 @@
 + sudo dmesg -c
-[77933.529093] drop_caches: sh (35960): drop_caches: 3
-[77934.059017] drop_caches: sh (35968): drop_caches: 3
-[77934.417942] drop_caches: sh (35974): drop_caches: 3
-[77934.769000] drop_caches: sh (35982): drop_caches: 3
+[165557.916094] drop_caches: sh (35505): drop_caches: 3
+[165561.322305] drop_caches: sh (35513): drop_caches: 3
+[165595.504911] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
+[165596.382347] drop_caches: sh (35612): drop_caches: 3
+[165597.618201] drop_caches: sh (35620): drop_caches: 3
 + /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
 + cd /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench
 + stop-dfs.sh
 Stopping namenodes on [localhost]
 Stopping datanodes
 Stopping secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
-+ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/hdfs/datanode /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode
++ rm -rf '/users/skannan/ssd/NVM/appbench/shared_data/hdfs/*'
 + hadoop namenode -format
 WARNING: Use of this script to execute namenode is deprecated.
 WARNING: Attempting to execute replacement "hdfs namenode" instead.
 
-2019-11-10 17:01:54,841 INFO namenode.NameNode: STARTUP_MSG: 
+2019-11-11 17:22:57,010 INFO namenode.NameNode: STARTUP_MSG: 
 /************************************************************
 STARTUP_MSG: Starting NameNode
 STARTUP_MSG:   host = node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
@@ -24,73 +25,73 @@ STARTUP_MSG:   classpath = /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2
 STARTUP_MSG:   build = https://gitbox.apache.org/repos/asf/hadoop.git -r b3cbbb467e22ea829b3808f4b7b01d07e0bf3842; compiled by 'rohithsharmaks' on 2019-09-10T15:56Z
 STARTUP_MSG:   java = 1.8.0_222
 ************************************************************/
-2019-11-10 17:01:54,867 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
-2019-11-10 17:01:54,946 INFO namenode.NameNode: createNameNode [-format]
-Formatting using clusterid: CID-17aedd5f-879f-4ec1-949c-2011d9c8ebdf
-2019-11-10 17:01:55,778 INFO namenode.FSEditLog: Edit logging is async:true
-2019-11-10 17:01:55,802 INFO namenode.FSNamesystem: KeyProvider: null
-2019-11-10 17:01:55,803 INFO namenode.FSNamesystem: fsLock is fair: true
-2019-11-10 17:01:55,804 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
-2019-11-10 17:01:55,810 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
-2019-11-10 17:01:55,810 INFO namenode.FSNamesystem: supergroup          = supergroup
-2019-11-10 17:01:55,810 INFO namenode.FSNamesystem: isPermissionEnabled = true
-2019-11-10 17:01:55,810 INFO namenode.FSNamesystem: HA Enabled: false
-2019-11-10 17:01:55,872 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
-2019-11-10 17:01:55,890 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
-2019-11-10 17:01:55,890 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
-2019-11-10 17:01:55,895 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
-2019-11-10 17:01:55,895 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 10 17:01:55
-2019-11-10 17:01:55,897 INFO util.GSet: Computing capacity for map BlocksMap
-2019-11-10 17:01:55,897 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:01:55,899 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
-2019-11-10 17:01:55,899 INFO util.GSet: capacity      = 2^26 = 67108864 entries
-2019-11-10 17:01:56,057 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
-2019-11-10 17:01:56,057 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
-2019-11-10 17:01:56,065 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
-2019-11-10 17:01:56,065 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
-2019-11-10 17:01:56,065 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
-2019-11-10 17:01:56,065 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: defaultReplication         = 3
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: maxReplication             = 512
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: minReplication             = 1
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
-2019-11-10 17:01:56,066 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
-2019-11-10 17:01:56,103 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
-2019-11-10 17:01:56,103 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
-2019-11-10 17:01:56,103 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
-2019-11-10 17:01:56,103 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
-2019-11-10 17:01:56,117 INFO util.GSet: Computing capacity for map INodeMap
-2019-11-10 17:01:56,117 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:01:56,118 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
-2019-11-10 17:01:56,118 INFO util.GSet: capacity      = 2^25 = 33554432 entries
-2019-11-10 17:01:57,191 INFO namenode.FSDirectory: ACLs enabled? false
-2019-11-10 17:01:57,191 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
-2019-11-10 17:01:57,191 INFO namenode.FSDirectory: XAttrs enabled? true
-2019-11-10 17:01:57,191 INFO namenode.NameNode: Caching file names occurring more than 10 times
-2019-11-10 17:01:57,197 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
-2019-11-10 17:01:57,199 INFO snapshot.SnapshotManager: SkipList is disabled
-2019-11-10 17:01:57,204 INFO util.GSet: Computing capacity for map cachedBlocks
-2019-11-10 17:01:57,204 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:01:57,204 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
-2019-11-10 17:01:57,204 INFO util.GSet: capacity      = 2^23 = 8388608 entries
-2019-11-10 17:01:57,221 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
-2019-11-10 17:01:57,222 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
-2019-11-10 17:01:57,222 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
-2019-11-10 17:01:57,225 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
-2019-11-10 17:01:57,226 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
-2019-11-10 17:01:57,228 INFO util.GSet: Computing capacity for map NameNodeRetryCache
-2019-11-10 17:01:57,228 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:01:57,228 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
-2019-11-10 17:01:57,228 INFO util.GSet: capacity      = 2^20 = 1048576 entries
-2019-11-10 17:01:57,271 INFO namenode.FSImage: Allocated new BlockPoolId: BP-330168583-128.105.145.169-1573430517263
-2019-11-10 17:01:57,309 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
-2019-11-10 17:01:57,389 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
-2019-11-10 17:01:57,539 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 402 bytes saved in 0 seconds .
-2019-11-10 17:01:57,552 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
-2019-11-10 17:01:57,559 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
-2019-11-10 17:01:57,559 INFO namenode.NameNode: SHUTDOWN_MSG: 
+2019-11-11 17:22:57,037 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
+2019-11-11 17:22:57,116 INFO namenode.NameNode: createNameNode [-format]
+Formatting using clusterid: CID-f2e5cb39-e452-4a08-9fe6-642d4e783ea8
+2019-11-11 17:22:58,023 INFO namenode.FSEditLog: Edit logging is async:true
+2019-11-11 17:22:58,049 INFO namenode.FSNamesystem: KeyProvider: null
+2019-11-11 17:22:58,050 INFO namenode.FSNamesystem: fsLock is fair: true
+2019-11-11 17:22:58,052 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
+2019-11-11 17:22:58,057 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
+2019-11-11 17:22:58,057 INFO namenode.FSNamesystem: supergroup          = supergroup
+2019-11-11 17:22:58,057 INFO namenode.FSNamesystem: isPermissionEnabled = true
+2019-11-11 17:22:58,057 INFO namenode.FSNamesystem: HA Enabled: false
+2019-11-11 17:22:58,132 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
+2019-11-11 17:22:58,147 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
+2019-11-11 17:22:58,147 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
+2019-11-11 17:22:58,152 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
+2019-11-11 17:22:58,152 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 11 17:22:58
+2019-11-11 17:22:58,154 INFO util.GSet: Computing capacity for map BlocksMap
+2019-11-11 17:22:58,154 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:22:58,163 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
+2019-11-11 17:22:58,164 INFO util.GSet: capacity      = 2^26 = 67108864 entries
+2019-11-11 17:22:58,384 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
+2019-11-11 17:22:58,385 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
+2019-11-11 17:22:58,393 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
+2019-11-11 17:22:58,393 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
+2019-11-11 17:22:58,393 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
+2019-11-11 17:22:58,393 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: defaultReplication         = 3
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: maxReplication             = 512
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: minReplication             = 1
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
+2019-11-11 17:22:58,394 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
+2019-11-11 17:22:58,434 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
+2019-11-11 17:22:58,434 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
+2019-11-11 17:22:58,434 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
+2019-11-11 17:22:58,434 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
+2019-11-11 17:22:58,449 INFO util.GSet: Computing capacity for map INodeMap
+2019-11-11 17:22:58,449 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:22:58,450 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
+2019-11-11 17:22:58,450 INFO util.GSet: capacity      = 2^25 = 33554432 entries
+2019-11-11 17:23:02,540 INFO namenode.FSDirectory: ACLs enabled? false
+2019-11-11 17:23:02,541 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
+2019-11-11 17:23:02,541 INFO namenode.FSDirectory: XAttrs enabled? true
+2019-11-11 17:23:02,542 INFO namenode.NameNode: Caching file names occurring more than 10 times
+2019-11-11 17:23:02,550 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
+2019-11-11 17:23:02,554 INFO snapshot.SnapshotManager: SkipList is disabled
+2019-11-11 17:23:02,559 INFO util.GSet: Computing capacity for map cachedBlocks
+2019-11-11 17:23:02,559 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:23:02,560 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
+2019-11-11 17:23:02,560 INFO util.GSet: capacity      = 2^23 = 8388608 entries
+2019-11-11 17:23:02,596 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
+2019-11-11 17:23:02,596 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
+2019-11-11 17:23:02,596 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
+2019-11-11 17:23:02,602 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+2019-11-11 17:23:02,603 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
+2019-11-11 17:23:02,605 INFO util.GSet: Computing capacity for map NameNodeRetryCache
+2019-11-11 17:23:02,605 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:23:02,605 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
+2019-11-11 17:23:02,605 INFO util.GSet: capacity      = 2^20 = 1048576 entries
+2019-11-11 17:23:02,643 INFO namenode.FSImage: Allocated new BlockPoolId: BP-711290525-128.105.145.169-1573518182635
+2019-11-11 17:23:02,689 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
+2019-11-11 17:23:02,738 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
+2019-11-11 17:23:02,983 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 399 bytes saved in 0 seconds .
+2019-11-11 17:23:03,003 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
+2019-11-11 17:23:03,010 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
+2019-11-11 17:23:03,010 INFO namenode.NameNode: SHUTDOWN_MSG: 
 /************************************************************
 SHUTDOWN_MSG: Shutting down NameNode at node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
 ************************************************************/
@@ -103,7 +104,7 @@ Starting secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
 + /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/gen_data.sh
 ========== preparing Terasort data ==========
 Master:
-sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-10-17:02:20.dat
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-11-17:23:23.dat
 + '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
 + export PYTHONHASHSEED=0
 + PYTHONHASHSEED=0
@@ -164,38 +165,38 @@ Unescaped left brace in regex is deprecated, passed through in regex; marked by 
 Error: no "print" mailcap rules found for type "application/x-executable"
 initiating tracing...
 initiating tracing...
-2019-11-10 17:02:22,688 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2019-11-10 17:02:23,213 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
-2019-11-10 17:02:23,922 INFO util.log: Logging initialized @2568ms
-2019-11-10 17:02:24,013 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
-2019-11-10 17:02:24,028 INFO server.Server: Started @2675ms
-2019-11-10 17:02:24,048 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
-2019-11-10 17:02:24,076 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,077 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,078 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,079 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,080 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,080 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,081 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,082 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,082 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,083 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,084 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,084 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,085 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,085 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,086 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,087 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,087 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,088 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,088 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,089 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,096 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,096 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,097 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,098 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,099 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:02:24,506 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9fec931{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:26,187 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:23:26,727 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:23:27,420 INFO util.log: Logging initialized @2605ms
+2019-11-11 17:23:27,492 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:23:27,508 INFO server.Server: Started @2694ms
+2019-11-11 17:23:27,532 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:23:27,565 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,566 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,567 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,568 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,569 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,569 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,570 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,571 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,571 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,572 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,573 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,573 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,574 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,575 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,575 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,576 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,576 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,577 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,578 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,578 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,586 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,586 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,587 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,588 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,588 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:23:27,985 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9fec931{/metrics/json,null,AVAILABLE,@Spark}
 ===========================================================================
 ===========================================================================
 Input size: 3GB
@@ -204,1092 +205,49 @@ Number of output partitions: 10
 Number of records/ partition:   3000000
 ===========================================================================
 ===========================================================================
-2019-11-10 17:02:25,059 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,770 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,772 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,780 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,780 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,782 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,782 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,784 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,784 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,785 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,785 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,784 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:27,785 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:02:43,652 WARN hdfs.DFSClient: DataStreamer Exception
-org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-2019-11-10 17:02:43,752 ERROR util.Utils: Aborting task
-org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-2019-11-10 17:02:44,302 ERROR io.SparkHadoopWriter: Task attempt_20191110170224_0001_r_000009_0 aborted.
-2019-11-10 17:02:44,413 ERROR executor.Executor: Exception in task 9.0 in stage 0.0 (TID 9)
-org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-2019-11-10 17:02:44,553 WARN scheduler.TaskSetManager: Lost task 9.0 in stage 0.0 (TID 9, localhost, executor driver): org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-
-2019-11-10 17:02:44,561 ERROR scheduler.TaskSetManager: Task 9 in stage 0.0 failed 1 times; aborting job
-2019-11-10 17:02:44,659 ERROR io.SparkHadoopWriter: Aborting job job_20191110170224_0001.
-org.apache.spark.SparkException: Job aborted due to stage failure: Task 9 in stage 0.0 failed 1 times, most recent failure: Lost task 9.0 in stage 0.0 (TID 9, localhost, executor driver): org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-
-Driver stacktrace:
-	at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1889)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1877)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1876)
-	at scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)
-	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:48)
-	at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1876)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:926)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:926)
-	at scala.Option.foreach(Option.scala:257)
-	at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:926)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:2110)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2059)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2048)
-	at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
-	at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:737)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2061)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2082)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2114)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.write(SparkHadoopWriter.scala:78)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply$mcV$sp(PairRDDFunctions.scala:1083)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopDataset(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply$mcV$sp(PairRDDFunctions.scala:1000)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopFile(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply$mcV$sp(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopFile(PairRDDFunctions.scala:978)
-	at src.main.scala.terasortDataGen$.main(terasortDataGen.scala:93)
-	at src.main.scala.terasortDataGen.main(terasortDataGen.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.spark.deploy.JavaMainApplication.start(SparkApplication.scala:52)
-	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:845)
-	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:161)
-	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:184)
-	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:86)
-	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:920)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:929)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-Caused by: org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-Exception in thread "main" org.apache.spark.SparkException: Job aborted.
-	at org.apache.spark.internal.io.SparkHadoopWriter$.write(SparkHadoopWriter.scala:100)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply$mcV$sp(PairRDDFunctions.scala:1083)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopDataset$1.apply(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopDataset(PairRDDFunctions.scala:1081)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply$mcV$sp(PairRDDFunctions.scala:1000)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$2.apply(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopFile(PairRDDFunctions.scala:991)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply$mcV$sp(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsNewAPIHadoopFile$1.apply(PairRDDFunctions.scala:979)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)
-	at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)
-	at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)
-	at org.apache.spark.rdd.PairRDDFunctions.saveAsNewAPIHadoopFile(PairRDDFunctions.scala:978)
-	at src.main.scala.terasortDataGen$.main(terasortDataGen.scala:93)
-	at src.main.scala.terasortDataGen.main(terasortDataGen.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.spark.deploy.JavaMainApplication.start(SparkApplication.scala:52)
-	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:845)
-	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:161)
-	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:184)
-	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:86)
-	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:920)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:929)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-Caused by: org.apache.spark.SparkException: Job aborted due to stage failure: Task 9 in stage 0.0 failed 1 times, most recent failure: Lost task 9.0 in stage 0.0 (TID 9, localhost, executor driver): org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-
-Driver stacktrace:
-	at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1889)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1877)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$abortStage$1.apply(DAGScheduler.scala:1876)
-	at scala.collection.mutable.ResizableArray$class.foreach(ResizableArray.scala:59)
-	at scala.collection.mutable.ArrayBuffer.foreach(ArrayBuffer.scala:48)
-	at org.apache.spark.scheduler.DAGScheduler.abortStage(DAGScheduler.scala:1876)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:926)
-	at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleTaskSetFailed$1.apply(DAGScheduler.scala:926)
-	at scala.Option.foreach(Option.scala:257)
-	at org.apache.spark.scheduler.DAGScheduler.handleTaskSetFailed(DAGScheduler.scala:926)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:2110)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2059)
-	at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:2048)
-	at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:49)
-	at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:737)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2061)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2082)
-	at org.apache.spark.SparkContext.runJob(SparkContext.scala:2114)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.write(SparkHadoopWriter.scala:78)
-	... 35 more
-Caused by: org.apache.spark.SparkException: Task failed while writing rows
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:157)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000009_0/part-r-00009 could only be written to 0 of the 1 minReplication nodes. There are 1 datanode(s) running and 1 node(s) are excluded in this operation.
-	at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget4NewBlock(BlockManager.java:2219)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.chooseTargetForNewBlock(FSDirWriteFileOp.java:294)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2789)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-2019-11-10 17:02:44,982 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
-2019-11-10 17:02:45,680 WARN hdfs.DFSClient: DataStreamer Exception
-java.io.FileNotFoundException: File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000006_0/part-r-00006 (inode 16405) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.analyzeFileState(FSDirWriteFileOp.java:599)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:171)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-	at org.apache.hadoop.ipc.RemoteException.instantiateException(RemoteException.java:106)
-	at org.apache.hadoop.ipc.RemoteException.unwrapRemoteException(RemoteException.java:73)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1459)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000006_0/part-r-00006 (inode 16405) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.analyzeFileState(FSDirWriteFileOp.java:599)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:171)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	... 2 more
-2019-11-10 17:02:45,692 ERROR util.Utils: Aborting task
-java.io.FileNotFoundException: File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000006_0/part-r-00006 (inode 16405) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.analyzeFileState(FSDirWriteFileOp.java:599)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:171)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
-	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
-	at org.apache.hadoop.ipc.RemoteException.instantiateException(RemoteException.java:106)
-	at org.apache.hadoop.ipc.RemoteException.unwrapRemoteException(RemoteException.java:73)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1459)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
-Caused by: org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000006_0/part-r-00006 (inode 16405) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.analyzeFileState(FSDirWriteFileOp.java:599)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:171)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
-	... 2 more
-2019-11-10 17:02:45,694 ERROR hdfs.DFSClient: Failed to close inode 16401
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000005_0/part-r-00005 (inode 16401) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,695 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,738 ERROR hdfs.DFSClient: Failed to close inode 16403
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000000_0/part-r-00000 (inode 16403) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,739 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,773 ERROR hdfs.DFSClient: Failed to close inode 16407
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000001_0/part-r-00001 (inode 16407) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,775 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:70)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,814 ERROR hdfs.DFSClient: Failed to close inode 16409
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000004_0/part-r-00004 (inode 16409) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,815 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,859 ERROR hdfs.DFSClient: Failed to close inode 16393
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000007_0/part-r-00007 (inode 16393) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,860 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,895 ERROR hdfs.DFSClient: Failed to close inode 16395
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000002_0/part-r-00002 (inode 16395) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,895 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,902 ERROR hdfs.DFSClient: Failed to close inode 16397
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000008_0/part-r-00008 (inode 16397) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,902 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-2019-11-10 17:02:45,906 ERROR hdfs.DFSClient: Failed to close inode 16399
-org.apache.hadoop.ipc.RemoteException(java.io.FileNotFoundException): File does not exist: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191110170224_0001_r_000003_0/part-r-00003 (inode 16399) Holder DFSClient_attempt_20191110170225_0000_m_000000_0_-1867627493_1 does not have any open files.
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.checkLease(FSNamesystem.java:2898)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFileInternal(FSDirWriteFileOp.java:693)
-	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.completeFile(FSDirWriteFileOp.java:679)
-	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.completeFile(FSNamesystem.java:2941)
-	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.complete(NameNodeRpcServer.java:947)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.complete(ClientNamenodeProtocolServerSideTranslatorPB.java:620)
-	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
-	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
-	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at javax.security.auth.Subject.doAs(Subject.java:422)
-	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
-	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
-
-	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
-	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
-	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
-	at com.sun.proxy.$Proxy21.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.complete(ClientNamenodeProtocolTranslatorPB.java:462)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
-	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
-	at com.sun.proxy.$Proxy22.complete(Unknown Source)
-	at org.apache.hadoop.hdfs.DFSOutputStream.completeFile(DFSOutputStream.java:2291)
-	at org.apache.hadoop.hdfs.DFSOutputStream.closeImpl(DFSOutputStream.java:2267)
-	at org.apache.hadoop.hdfs.DFSOutputStream.close(DFSOutputStream.java:2232)
-	at org.apache.hadoop.hdfs.DFSClient.closeAllFilesBeingWritten(DFSClient.java:937)
-	at org.apache.hadoop.hdfs.DFSClient.closeOutputStreams(DFSClient.java:969)
-	at org.apache.hadoop.hdfs.DistributedFileSystem.close(DistributedFileSystem.java:1076)
-	at org.apache.hadoop.fs.FileSystem$Cache.closeAll(FileSystem.java:2760)
-	at org.apache.hadoop.fs.FileSystem$Cache$ClientFinalizer.run(FileSystem.java:2777)
-	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
-2019-11-10 17:02:45,906 ERROR util.Utils: Aborting task
-java.nio.channels.ClosedChannelException
-	at org.apache.hadoop.hdfs.DFSOutputStream.checkClosed(DFSOutputStream.java:1546)
-	at org.apache.hadoop.fs.FSOutputSummer.write(FSOutputSummer.java:104)
-	at org.apache.hadoop.fs.FSDataOutputStream$PositionCache.write(FSDataOutputStream.java:58)
-	at java.io.DataOutputStream.write(DataOutputStream.java:107)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:69)
-	at src.main.scala.TeraOutputFormat$TeraRecordWriter.write(TeraOutputFormat.scala:63)
-	at org.apache.spark.internal.io.HadoopMapReduceWriteConfigUtil.write(SparkHadoopWriter.scala:358)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:132)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$4.apply(SparkHadoopWriter.scala:129)
-	at org.apache.spark.util.Utils$.tryWithSafeFinallyAndFailureCallbacks(Utils.scala:1394)
-	at org.apache.spark.internal.io.SparkHadoopWriter$.org$apache$spark$internal$io$SparkHadoopWriter$$executeTask(SparkHadoopWriter.scala:141)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:83)
-	at org.apache.spark.internal.io.SparkHadoopWriter$$anonfun$3.apply(SparkHadoopWriter.scala:78)
-	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
-	at org.apache.spark.scheduler.Task.run(Task.scala:123)
-	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$10.apply(Executor.scala:408)
-	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1360)
-	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:414)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
+2019-11-11 17:23:28,456 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,263 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,266 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,265 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,273 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,273 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,273 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,274 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,274 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,274 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,275 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,275 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,275 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:30,275 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:23:52,797 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000000
+2019-11-11 17:23:53,280 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000009
+2019-11-11 17:23:54,196 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000002
+2019-11-11 17:23:54,474 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000005
+2019-11-11 17:23:54,571 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000006
+2019-11-11 17:23:54,792 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000001
+2019-11-11 17:23:54,860 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000003
+2019-11-11 17:23:55,100 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000008
+2019-11-11 17:23:55,128 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000007
+2019-11-11 17:23:55,238 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172328_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111172328_0001_r_000004
+Number of records written: 30000000
+2019-11-11 17:24:08,459 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
 application termination...
 
  Performance counter stats for 'Terasort/bin/gen_data.sh':
 
-        83,421,134      dTLB-load-misses:u                                          
-        57,907,160      LLC-load-misses:u                                           
-   188,119,394,917      instructions:u                                              
-           860,979      minor-faults:u                                              
+       108,498,803      dTLB-load-misses:u                                          
+       109,546,694      LLC-load-misses:u                                           
+   344,152,407,551      instructions:u                                              
+           950,169      minor-faults:u                                              
 
-      33.208168527 seconds time elapsed
+      52.662794376 seconds time elapsed
 
 + sleep 2
 + /usr/bin/time -v /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh
@@ -1298,7 +256,7 @@ Master:
 Terasort opt hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output 
 Connection to localhost closed.
 data purged on localhost
-sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-10-17:03:00.dat
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-11-17:24:24.dat
 + '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
 + export PYTHONHASHSEED=0
 + PYTHONHASHSEED=0
@@ -1357,85 +315,160 @@ Unescaped left brace in regex is deprecated, passed through in regex; marked by 
 Error: no "print" mailcap rules found for type "application/x-executable"
 initiating tracing...
 initiating tracing...
-2019-11-10 17:03:04,402 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2019-11-10 17:03:04,951 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
-2019-11-10 17:03:05,754 INFO util.log: Logging initialized @3085ms
-2019-11-10 17:03:05,827 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
-2019-11-10 17:03:05,844 INFO server.Server: Started @3176ms
-2019-11-10 17:03:05,867 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
-2019-11-10 17:03:05,900 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,901 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,902 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,903 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,904 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,905 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,906 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,907 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,908 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,909 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,910 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,910 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,911 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,912 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,913 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,914 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,915 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,916 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,917 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,918 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,926 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,926 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,927 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,928 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:03:05,928 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:03:06,418 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5246a3b3{/metrics/json,null,AVAILABLE,@Spark}
-2019-11-10 17:03:07,841 INFO input.FileInputFormat: Total input paths to process : 0
-Exception in thread "main" java.lang.ArithmeticException: / by zero
-	at src.main.scala.TeraSortPartitioner.<init>(TerasortPartitioner.scala:32)
-	at src.main.scala.terasortApp$.main(terasortApp.scala:53)
-	at src.main.scala.terasortApp.main(terasortApp.scala)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.lang.reflect.Method.invoke(Method.java:498)
-	at org.apache.spark.deploy.JavaMainApplication.start(SparkApplication.scala:52)
-	at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:845)
-	at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:161)
-	at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:184)
-	at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:86)
-	at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:920)
-	at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:929)
-	at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
-2019-11-10 17:03:07,854 INFO server.AbstractConnector: Stopped Spark@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:24:28,410 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:24:28,970 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:24:29,746 INFO util.log: Logging initialized @3059ms
+2019-11-11 17:24:29,825 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:24:29,842 INFO server.Server: Started @3156ms
+2019-11-11 17:24:29,866 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:24:29,908 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,910 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,911 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,912 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,912 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,913 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,913 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,915 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,915 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,916 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,916 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,917 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,918 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,918 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,919 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,920 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,921 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,921 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,922 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,923 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,931 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,931 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,932 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,933 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:24:29,933 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:24:30,403 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7ce4de34{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 17:24:31,827 INFO input.FileInputFormat: Total input paths to process : 10
+2019-11-11 17:25:50,823 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:18,873 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:18,895 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:18,948 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:18,957 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,177 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,185 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,534 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,546 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,595 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:22,606 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,363 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,386 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,663 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,699 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,869 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:25,885 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:26,161 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:26,179 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:31,788 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:31,806 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:34,506 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:34,533 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:35,505 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:35,522 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:35,949 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:35,968 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:41,422 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:41,448 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:41,954 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000029_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000029
+2019-11-11 17:28:41,954 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000017_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000017
+2019-11-11 17:28:45,755 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000021_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000021
+2019-11-11 17:28:45,773 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:45,779 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:46,041 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000027_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000027
+2019-11-11 17:28:46,236 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000019_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000019
+2019-11-11 17:28:46,955 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000001
+2019-11-11 17:28:46,986 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000005
+2019-11-11 17:28:46,994 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000024_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000024
+2019-11-11 17:28:47,010 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:47,016 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:47,019 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:47,023 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,394 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,405 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,441 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000009
+2019-11-11 17:28:48,530 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,544 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,705 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,718 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,964 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,974 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,982 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:48,984 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:49,140 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000004
+2019-11-11 17:28:50,246 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:50,277 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:51,498 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:51,514 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,070 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,083 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,170 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,179 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,261 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:52,268 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,474 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,484 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,519 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,528 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,776 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:53,787 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:28:59,742 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000020_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000020
+2019-11-11 17:28:59,754 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000010_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000010
+2019-11-11 17:28:59,754 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000006
+2019-11-11 17:28:59,870 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000015_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000015
+2019-11-11 17:28:59,871 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000003
+2019-11-11 17:28:59,875 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000022_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000022
+2019-11-11 17:28:59,870 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000013_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000013
+2019-11-11 17:28:59,882 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000016_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000016
+2019-11-11 17:28:59,883 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000028_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000028
+2019-11-11 17:29:00,015 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000025_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000025
+2019-11-11 17:29:00,015 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000014_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000014
+2019-11-11 17:29:00,015 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000018_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000018
+2019-11-11 17:29:00,807 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000002
+2019-11-11 17:29:00,828 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000007
+2019-11-11 17:29:01,099 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000000
+2019-11-11 17:29:01,304 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000011_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000011
+2019-11-11 17:29:01,723 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000012_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000012
+2019-11-11 17:29:02,505 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000026_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000026
+2019-11-11 17:29:02,571 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000008
+2019-11-11 17:29:02,634 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111172550_0004_r_000023_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111172550_0004_r_000023
+2019-11-11 17:29:02,771 INFO server.AbstractConnector: Stopped Spark@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
 application termination...
 
  Performance counter stats for 'Terasort/bin/run.sh':
 
-        39,549,643      dTLB-load-misses:u                                          
-         9,865,281      LLC-load-misses:u                                           
-    50,782,305,608      instructions:u                                              
-           419,877      minor-faults:u                                              
+     1,034,235,018      dTLB-load-misses:u                                          
+     1,606,243,521      LLC-load-misses:u                                           
+ 1,539,241,649,810      instructions:u                                              
+         2,181,408      minor-faults:u                                              
 
-      15.039435578 seconds time elapsed
+     288.287941669 seconds time elapsed
 
 	Command being timed: "/users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh"
-	User time (seconds): 22.73
-	System time (seconds): 2.87
-	Percent of CPU this job got: 168%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:15.18
+	User time (seconds): 6483.52
+	System time (seconds): 746.30
+	Percent of CPU this job got: 2506%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:48.44
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 569244
+	Maximum resident set size (kbytes): 7302548
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 247
-	Minor (reclaiming a frame) page faults: 422043
-	Voluntary context switches: 57182
-	Involuntary context switches: 1480
+	Major (requiring I/O) page faults: 248
+	Minor (reclaiming a frame) page faults: 2229856
+	Voluntary context switches: 373278
+	Involuntary context switches: 50717
 	Swaps: 0
-	File system inputs: 187896
-	File system outputs: 424
+	File system inputs: 469496
+	File system outputs: 14243568
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -1444,239 +477,232 @@ application termination...
 + sleep 2
 + /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
 + exit
-[77936.530161] flag is set to print stats 2
-[77936.530165] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
-[77936.530167] flag set to clear count 0
-[77936.530168] flag is set to collect hetero allocate  9 
-[77972.622248] flag is set to enable HETERO_PGCACHE 11 
-[77972.622250] flag is set to enable HETERO_BUFFER 12 
-[77972.622251] flag is set to enable HETERO_JOURNAL 13 
-[77972.622252] flag is set to enable HETERO_RADIX 14 
-[77972.622253] flag is set to enable HETERO_FULLKERN 15 
-[77972.622254] flag to set FASTMEM node to 0 
-[77972.622255] hetero_pid set to 37966 37966 procname numactl
-[77972.622256] flag to set FASTMEM node to 0 
-[77972.622257] flag to set MIGRATION FREQ to 1000 
-[77972.622258] flag enables HETERO_OBJAFF 1 
-[77972.622259] flag to MIGRATE_LISTCNT 500 
-[77972.622260] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77972.622813] flag is set to enable HETERO_PGCACHE 11 
-[77972.622814] flag is set to enable HETERO_BUFFER 12 
-[77972.622815] flag is set to enable HETERO_JOURNAL 13 
-[77972.622816] flag is set to enable HETERO_RADIX 14 
-[77972.622817] flag is set to enable HETERO_FULLKERN 15 
-[77972.622818] flag to set FASTMEM node to 0 
-[77972.622819] hetero_pid set to 37966 37966 procname java
-[77972.622820] flag to set FASTMEM node to 0 
-[77972.622821] flag to set MIGRATION FREQ to 1000 
-[77972.622822] flag enables HETERO_OBJAFF 1 
-[77972.622823] flag to MIGRATE_LISTCNT 500 
-[77972.622824] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77973.842853] flag is set to enable HETERO_PGCACHE 11 
-[77973.842859] flag is set to enable HETERO_BUFFER 12 
-[77973.842860] flag is set to enable HETERO_JOURNAL 13 
-[77973.842860] flag is set to enable HETERO_RADIX 14 
-[77973.842861] flag is set to enable HETERO_FULLKERN 15 
-[77973.842862] flag to set FASTMEM node to 0 
-[77973.842864] hetero_pid set to 38017 38017 procname setsid
-[77973.842865] flag to set FASTMEM node to 0 
-[77973.842866] flag to set MIGRATION FREQ to 1000 
-[77973.842867] flag enables HETERO_OBJAFF 1 
-[77973.842868] flag to MIGRATE_LISTCNT 500 
-[77973.842869] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77973.843790] flag is set to enable HETERO_PGCACHE 11 
-[77973.843792] flag is set to enable HETERO_BUFFER 12 
-[77973.843793] flag is set to enable HETERO_JOURNAL 13 
-[77973.843794] flag is set to enable HETERO_RADIX 14 
-[77973.843794] flag is set to enable HETERO_FULLKERN 15 
-[77973.843795] flag to set FASTMEM node to 0 
-[77973.843797] hetero_pid set to 38017 38017 procname bash
-[77973.843798] flag to set FASTMEM node to 0 
-[77973.843799] flag to set MIGRATION FREQ to 1000 
-[77973.843800] flag enables HETERO_OBJAFF 1 
-[77973.843802] flag to MIGRATE_LISTCNT 500 
-[77973.843803] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77977.086965] migrate: migrate_pages_hetero_list:4029 migrated 66195 nr_failed 0 retry 0  pages_iterated 66195 pagecnt 66195
-[77977.906348] flag is set to enable HETERO_PGCACHE 11 
-[77977.906350] flag is set to enable HETERO_BUFFER 12 
-[77977.906351] flag is set to enable HETERO_JOURNAL 13 
-[77977.906351] flag is set to enable HETERO_RADIX 14 
-[77977.906352] flag is set to enable HETERO_FULLKERN 15 
-[77977.906353] flag to set FASTMEM node to 0 
-[77977.906355] hetero_pid set to 38109 38109 procname chmod
-[77977.906356] flag to set FASTMEM node to 0 
-[77977.906357] flag to set MIGRATION FREQ to 1000 
-[77977.906358] flag enables HETERO_OBJAFF 1 
-[77977.906359] flag to MIGRATE_LISTCNT 500 
-[77977.906360] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77978.850810] flag is set to enable HETERO_PGCACHE 11 
-[77978.850814] flag is set to enable HETERO_BUFFER 12 
-[77978.850815] flag is set to enable HETERO_JOURNAL 13 
-[77978.850816] flag is set to enable HETERO_RADIX 14 
-[77978.850817] flag is set to enable HETERO_FULLKERN 15 
-[77978.850821] flag to set FASTMEM node to 0 
-[77978.850823] hetero_pid set to 38111 38111 procname chmod
-[77978.850824] flag to set FASTMEM node to 0 
-[77978.850825] flag to set MIGRATION FREQ to 1000 
-[77978.850826] flag enables HETERO_OBJAFF 1 
-[77978.850828] flag to MIGRATE_LISTCNT 500 
-[77978.850830] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77979.855679] migrate: migrate_pages_hetero_list:4029 migrated 48964 nr_failed 0 retry 0  pages_iterated 48964 pagecnt 48964
-[77982.628256] migrate: migrate_pages_hetero_list:4029 migrated 55402 nr_failed 0 retry 0  pages_iterated 6438 pagecnt 6438
-[77983.395978] migrate: migrate_pages_hetero_list:4029 migrated 56585 nr_failed 0 retry 0  pages_iterated 1183 pagecnt 1183
-[77985.882661] migrate: migrate_pages_hetero_list:4029 migrated 58474 nr_failed 0 retry 0  pages_iterated 1890 pagecnt 1889
-[77986.997129] migrate: migrate_pages_hetero_list:4029 migrated 59227 nr_failed 0 retry 0  pages_iterated 753 pagecnt 753
-[77989.388071] migrate: migrate_pages_hetero_list:4029 migrated 60064 nr_failed 0 retry 0  pages_iterated 837 pagecnt 837
-[77990.922686] migrate: migrate_pages_hetero_list:4029 migrated 61031 nr_failed 0 retry 0  pages_iterated 967 pagecnt 967
-[77991.632473] migrate: migrate_pages_hetero_list:4029 migrated 61768 nr_failed 0 retry 0  pages_iterated 737 pagecnt 737
-[77993.070155] migrate: migrate_pages_hetero_list:4029 migrated 62377 nr_failed 0 retry 0  pages_iterated 609 pagecnt 609
-[77995.219870] migrate: migrate_pages_hetero_list:4029 migrated 63183 nr_failed 0 retry 0  pages_iterated 806 pagecnt 806
-[77996.353559] flag is set to enable HETERO_PGCACHE 11 
-[77996.353582] flag is set to enable HETERO_BUFFER 12 
-[77996.353597] flag is set to enable HETERO_JOURNAL 13 
-[77996.353598] flag is set to enable HETERO_RADIX 14 
-[77996.353606] flag is set to enable HETERO_FULLKERN 15 
-[77996.353613] flag to set FASTMEM node to 0 
-[77996.353628] hetero_pid set to 38200 38200 procname rm
-[77996.353644] flag to set FASTMEM node to 0 
-[77996.353651] flag to set MIGRATION FREQ to 1000 
-[77996.353659] flag enables HETERO_OBJAFF 1 
-[77996.353660] flag to MIGRATE_LISTCNT 500 
-[77996.353667] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77996.401250] flag is set to enable HETERO_PGCACHE 11 
-[77996.401288] flag is set to enable HETERO_BUFFER 12 
-[77996.401295] flag is set to enable HETERO_JOURNAL 13 
-[77996.401311] flag is set to enable HETERO_RADIX 14 
-[77996.401312] flag is set to enable HETERO_FULLKERN 15 
-[77996.401319] flag to set FASTMEM node to 0 
-[77996.401341] hetero_pid set to 38215 38215 procname rm
-[77996.401349] flag to set FASTMEM node to 0 
-[77996.401357] flag to set MIGRATION FREQ to 1000 
-[77996.401364] flag enables HETERO_OBJAFF 1 
-[77996.401366] flag to MIGRATE_LISTCNT 500 
-[77996.401372] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77996.423726] flag is set to enable HETERO_PGCACHE 11 
-[77996.423734] flag is set to enable HETERO_BUFFER 12 
-[77996.423735] flag is set to enable HETERO_JOURNAL 13 
-[77996.423740] flag is set to enable HETERO_RADIX 14 
-[77996.423741] flag is set to enable HETERO_FULLKERN 15 
-[77996.423741] flag to set FASTMEM node to 0 
-[77996.423749] hetero_pid set to 38216 38216 procname rm
-[77996.423750] flag to set FASTMEM node to 0 
-[77996.423751] flag to set MIGRATION FREQ to 1000 
-[77996.423752] flag enables HETERO_OBJAFF 1 
-[77996.423753] flag to MIGRATE_LISTCNT 500 
-[77996.423754] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[77996.428104] flag is set to enable HETERO_PGCACHE 11 
-[77996.428105] flag is set to enable HETERO_BUFFER 12 
-[77996.428107] flag is set to enable HETERO_JOURNAL 13 
-[77996.428108] flag is set to enable HETERO_RADIX 14 
-[77996.428109] flag is set to enable HETERO_FULLKERN 15 
-[77996.428110] flag to set FASTMEM node to 0 
-[77996.428111] hetero_pid set to 38217 38217 procname rm
-[77996.428113] flag to set FASTMEM node to 0 
-[77996.428114] flag to set MIGRATION FREQ to 1000 
-[77996.428115] flag enables HETERO_OBJAFF 1 
-[77996.428117] flag to MIGRATE_LISTCNT 500 
-[77996.428119] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78010.688224] drop_caches: sh (38737): drop_caches: 3
-[78013.935460] flag is set to enable HETERO_PGCACHE 11 
-[78013.935462] flag is set to enable HETERO_BUFFER 12 
-[78013.935463] flag is set to enable HETERO_JOURNAL 13 
-[78013.935464] flag is set to enable HETERO_RADIX 14 
-[78013.935465] flag is set to enable HETERO_FULLKERN 15 
-[78013.935466] flag to set FASTMEM node to 0 
-[78013.935467] hetero_pid set to 38911 38911 procname numactl
-[78013.935468] flag to set FASTMEM node to 0 
-[78013.935469] flag to set MIGRATION FREQ to 1000 
-[78013.935470] flag enables HETERO_OBJAFF 1 
-[78013.935472] flag to MIGRATE_LISTCNT 500 
-[78013.935473] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78013.936051] flag is set to enable HETERO_PGCACHE 11 
-[78013.936052] flag is set to enable HETERO_BUFFER 12 
-[78013.936053] flag is set to enable HETERO_JOURNAL 13 
-[78013.936053] flag is set to enable HETERO_RADIX 14 
-[78013.936054] flag is set to enable HETERO_FULLKERN 15 
-[78013.936055] flag to set FASTMEM node to 0 
-[78013.936056] hetero_pid set to 38911 38911 procname java
-[78013.936057] flag to set FASTMEM node to 0 
-[78013.936058] flag to set MIGRATION FREQ to 1000 
-[78013.936059] flag enables HETERO_OBJAFF 1 
-[78013.936060] flag to MIGRATE_LISTCNT 500 
-[78013.936061] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78015.477586] flag is set to enable HETERO_PGCACHE 11 
-[78015.477588] flag is set to enable HETERO_BUFFER 12 
-[78015.477589] flag is set to enable HETERO_JOURNAL 13 
-[78015.477590] flag is set to enable HETERO_RADIX 14 
-[78015.477591] flag is set to enable HETERO_FULLKERN 15 
-[78015.477592] flag to set FASTMEM node to 0 
-[78015.477593] hetero_pid set to 38962 38962 procname setsid
-[78015.477594] flag to set FASTMEM node to 0 
-[78015.477595] flag to set MIGRATION FREQ to 1000 
-[78015.477596] flag enables HETERO_OBJAFF 1 
-[78015.477597] flag to MIGRATE_LISTCNT 500 
-[78015.477598] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78015.478558] flag is set to enable HETERO_PGCACHE 11 
-[78015.478560] flag is set to enable HETERO_BUFFER 12 
-[78015.478560] flag is set to enable HETERO_JOURNAL 13 
-[78015.478561] flag is set to enable HETERO_RADIX 14 
-[78015.478562] flag is set to enable HETERO_FULLKERN 15 
-[78015.478563] flag to set FASTMEM node to 0 
-[78015.478564] hetero_pid set to 38962 38962 procname bash
-[78015.478565] flag to set FASTMEM node to 0 
-[78015.478566] flag to set MIGRATION FREQ to 1000 
-[78015.478567] flag enables HETERO_OBJAFF 1 
-[78015.478568] flag to MIGRATE_LISTCNT 500 
-[78015.478572] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78019.155741] flag is set to enable HETERO_PGCACHE 11 
-[78019.155743] flag is set to enable HETERO_BUFFER 12 
-[78019.155744] flag is set to enable HETERO_JOURNAL 13 
-[78019.155745] flag is set to enable HETERO_RADIX 14 
-[78019.155746] flag is set to enable HETERO_FULLKERN 15 
-[78019.155747] flag to set FASTMEM node to 0 
-[78019.155749] hetero_pid set to 39057 39057 procname rm
-[78019.155749] flag to set FASTMEM node to 0 
-[78019.155750] flag to set MIGRATION FREQ to 1000 
-[78019.155752] flag enables HETERO_OBJAFF 1 
-[78019.155753] flag to MIGRATE_LISTCNT 500 
-[78019.155754] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78019.238686] flag is set to enable HETERO_PGCACHE 11 
-[78019.238689] flag is set to enable HETERO_BUFFER 12 
-[78019.238690] flag is set to enable HETERO_JOURNAL 13 
-[78019.238691] flag is set to enable HETERO_RADIX 14 
-[78019.238692] flag is set to enable HETERO_FULLKERN 15 
-[78019.238693] flag to set FASTMEM node to 0 
-[78019.238695] hetero_pid set to 39073 39073 procname rm
-[78019.238696] flag to set FASTMEM node to 0 
-[78019.238697] flag to set MIGRATION FREQ to 1000 
-[78019.238698] flag enables HETERO_OBJAFF 1 
-[78019.238700] flag to MIGRATE_LISTCNT 500 
-[78019.238701] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78019.246263] flag is set to enable HETERO_PGCACHE 11 
-[78019.246265] flag is set to enable HETERO_BUFFER 12 
-[78019.246266] flag is set to enable HETERO_JOURNAL 13 
-[78019.246267] flag is set to enable HETERO_RADIX 14 
-[78019.246268] flag is set to enable HETERO_FULLKERN 15 
-[78019.246268] flag to set FASTMEM node to 0 
-[78019.246270] hetero_pid set to 39074 39074 procname rm
-[78019.246271] flag to set FASTMEM node to 0 
-[78019.246272] flag to set MIGRATION FREQ to 1000 
-[78019.246273] flag enables HETERO_OBJAFF 1 
-[78019.246274] flag to MIGRATE_LISTCNT 500 
-[78019.246275] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78019.248898] flag is set to enable HETERO_PGCACHE 11 
-[78019.248899] flag is set to enable HETERO_BUFFER 12 
-[78019.248900] flag is set to enable HETERO_JOURNAL 13 
-[78019.248901] flag is set to enable HETERO_RADIX 14 
-[78019.248902] flag is set to enable HETERO_FULLKERN 15 
-[78019.248903] flag to set FASTMEM node to 0 
-[78019.248904] hetero_pid set to 39075 39075 procname rm
-[78019.248905] flag to set FASTMEM node to 0 
-[78019.248906] flag to set MIGRATION FREQ to 1000 
-[78019.248907] flag enables HETERO_OBJAFF 1 
-[78019.248914] flag to MIGRATE_LISTCNT 500 
-[78019.248915] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78021.797602] flag is set to print stats 2
-[78021.797605] cache-hits 511639 cache-miss 106139 buff-hits 0 buff-miss 0 migrated 129378 cache-del 0 buff-del 0 
-[78021.797606] flag set to clear count 0
-[78021.797607] flag is set to collect hetero allocate  9 
+[165599.562796] flag is set to print stats 2
+[165599.562800] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[165599.562801] flag set to clear count 0
+[165599.562802] flag is set to collect hetero allocate  9 
+[165634.551029] flag is set to enable HETERO_PGCACHE 11 
+[165634.551032] flag is set to enable HETERO_BUFFER 12 
+[165634.551033] flag is set to enable HETERO_JOURNAL 13 
+[165634.551034] flag is set to enable HETERO_RADIX 14 
+[165634.551035] flag is set to enable HETERO_FULLKERN 15 
+[165634.551036] flag to set FASTMEM node to 1 
+[165634.551037] hetero_pid set to 37599 37599 procname numactl
+[165634.551038] flag to set FASTMEM node to 1 
+[165634.551039] flag to set MIGRATION FREQ to 410065408 
+[165634.551041] flag to disable migration 19 
+[165634.551042] flag to MIGRATE_LISTCNT 410065408 
+[165634.551619] flag is set to enable HETERO_PGCACHE 11 
+[165634.551620] flag is set to enable HETERO_BUFFER 12 
+[165634.551621] flag is set to enable HETERO_JOURNAL 13 
+[165634.551621] flag is set to enable HETERO_RADIX 14 
+[165634.551622] flag is set to enable HETERO_FULLKERN 15 
+[165634.551623] flag to set FASTMEM node to 1 
+[165634.551625] hetero_pid set to 37599 37599 procname java
+[165634.551625] flag to set FASTMEM node to 1 
+[165634.551627] flag to set MIGRATION FREQ to 410065408 
+[165634.551628] flag to disable migration 19 
+[165634.551629] flag to MIGRATE_LISTCNT 410065408 
+[165635.810641] flag is set to enable HETERO_PGCACHE 11 
+[165635.810647] flag is set to enable HETERO_BUFFER 12 
+[165635.810647] flag is set to enable HETERO_JOURNAL 13 
+[165635.810648] flag is set to enable HETERO_RADIX 14 
+[165635.810649] flag is set to enable HETERO_FULLKERN 15 
+[165635.810650] flag to set FASTMEM node to 1 
+[165635.810651] hetero_pid set to 37650 37650 procname setsid
+[165635.810652] flag to set FASTMEM node to 1 
+[165635.810653] flag to set MIGRATION FREQ to 410065408 
+[165635.810655] flag to disable migration 19 
+[165635.810656] flag to MIGRATE_LISTCNT 410065408 
+[165635.811625] flag is set to enable HETERO_PGCACHE 11 
+[165635.811626] flag is set to enable HETERO_BUFFER 12 
+[165635.811627] flag is set to enable HETERO_JOURNAL 13 
+[165635.811628] flag is set to enable HETERO_RADIX 14 
+[165635.811629] flag is set to enable HETERO_FULLKERN 15 
+[165635.811629] flag to set FASTMEM node to 1 
+[165635.811631] hetero_pid set to 37650 37650 procname bash
+[165635.811631] flag to set FASTMEM node to 1 
+[165635.811633] flag to set MIGRATION FREQ to 410065408 
+[165635.811634] flag to disable migration 19 
+[165635.811635] flag to MIGRATE_LISTCNT 410065408 
+[165639.807333] flag is set to enable HETERO_PGCACHE 11 
+[165639.807339] flag is set to enable HETERO_BUFFER 12 
+[165639.807340] flag is set to enable HETERO_JOURNAL 13 
+[165639.807341] flag is set to enable HETERO_RADIX 14 
+[165639.807341] flag is set to enable HETERO_FULLKERN 15 
+[165639.807342] flag to set FASTMEM node to 1 
+[165639.807345] hetero_pid set to 37741 37741 procname chmod
+[165639.807346] flag to set FASTMEM node to 1 
+[165639.807347] flag to set MIGRATION FREQ to 410065408 
+[165639.807349] flag to disable migration 19 
+[165639.807351] flag to MIGRATE_LISTCNT 410065408 
+[165639.831784] flag is set to enable HETERO_PGCACHE 11 
+[165639.831786] flag is set to enable HETERO_BUFFER 12 
+[165639.831786] flag is set to enable HETERO_JOURNAL 13 
+[165639.831787] flag is set to enable HETERO_RADIX 14 
+[165639.831788] flag is set to enable HETERO_FULLKERN 15 
+[165639.831789] flag to set FASTMEM node to 1 
+[165639.831790] hetero_pid set to 37743 37743 procname chmod
+[165639.831791] flag to set FASTMEM node to 1 
+[165639.831793] flag to set MIGRATION FREQ to 410065408 
+[165639.831794] flag to disable migration 19 
+[165639.831795] flag to MIGRATE_LISTCNT 410065408 
+[165678.233739] flag is set to enable HETERO_PGCACHE 11 
+[165678.233746] flag is set to enable HETERO_BUFFER 12 
+[165678.233747] flag is set to enable HETERO_JOURNAL 13 
+[165678.233748] flag is set to enable HETERO_RADIX 14 
+[165678.233748] flag is set to enable HETERO_FULLKERN 15 
+[165678.233749] flag to set FASTMEM node to 1 
+[165678.233753] hetero_pid set to 37872 37872 procname rm
+[165678.233754] flag to set FASTMEM node to 1 
+[165678.233756] flag to set MIGRATION FREQ to 410065408 
+[165678.233757] flag to disable migration 19 
+[165678.233758] flag to MIGRATE_LISTCNT 410065408 
+[165678.254215] flag is set to enable HETERO_PGCACHE 11 
+[165678.254223] flag is set to enable HETERO_BUFFER 12 
+[165678.254224] flag is set to enable HETERO_JOURNAL 13 
+[165678.254225] flag is set to enable HETERO_RADIX 14 
+[165678.254225] flag is set to enable HETERO_FULLKERN 15 
+[165678.254227] flag to set FASTMEM node to 1 
+[165678.254229] hetero_pid set to 37887 37887 procname rm
+[165678.254230] flag to set FASTMEM node to 1 
+[165678.254231] flag to set MIGRATION FREQ to 410065408 
+[165678.254236] flag to disable migration 19 
+[165678.254237] flag to MIGRATE_LISTCNT 410065408 
+[165678.260806] flag is set to enable HETERO_PGCACHE 11 
+[165678.260809] flag is set to enable HETERO_BUFFER 12 
+[165678.260810] flag is set to enable HETERO_JOURNAL 13 
+[165678.260813] flag is set to enable HETERO_RADIX 14 
+[165678.260814] flag is set to enable HETERO_FULLKERN 15 
+[165678.260815] flag to set FASTMEM node to 1 
+[165678.260822] hetero_pid set to 37888 37888 procname rm
+[165678.260823] flag to set FASTMEM node to 1 
+[165678.260824] flag to set MIGRATION FREQ to 410065408 
+[165678.260826] flag to disable migration 19 
+[165678.260827] flag to MIGRATE_LISTCNT 410065408 
+[165678.264280] flag is set to enable HETERO_PGCACHE 11 
+[165678.264282] flag is set to enable HETERO_BUFFER 12 
+[165678.264284] flag is set to enable HETERO_JOURNAL 13 
+[165678.264285] flag is set to enable HETERO_RADIX 14 
+[165678.264286] flag is set to enable HETERO_FULLKERN 15 
+[165678.264287] flag to set FASTMEM node to 1 
+[165678.264288] hetero_pid set to 37889 37889 procname rm
+[165678.264289] flag to set FASTMEM node to 1 
+[165678.264291] flag to set MIGRATION FREQ to 410065408 
+[165678.264292] flag to disable migration 19 
+[165678.264294] flag to MIGRATE_LISTCNT 410065408 
+[165693.282672] drop_caches: sh (38411): drop_caches: 3
+[165696.422597] flag is set to enable HETERO_PGCACHE 11 
+[165696.422599] flag is set to enable HETERO_BUFFER 12 
+[165696.422600] flag is set to enable HETERO_JOURNAL 13 
+[165696.422601] flag is set to enable HETERO_RADIX 14 
+[165696.422602] flag is set to enable HETERO_FULLKERN 15 
+[165696.422603] flag to set FASTMEM node to 1 
+[165696.422605] hetero_pid set to 38582 38582 procname numactl
+[165696.422605] flag to set FASTMEM node to 1 
+[165696.422607] flag to set MIGRATION FREQ to 410065408 
+[165696.422608] flag to disable migration 19 
+[165696.422610] flag to MIGRATE_LISTCNT 410065408 
+[165696.423227] flag is set to enable HETERO_PGCACHE 11 
+[165696.423228] flag is set to enable HETERO_BUFFER 12 
+[165696.423229] flag is set to enable HETERO_JOURNAL 13 
+[165696.423230] flag is set to enable HETERO_RADIX 14 
+[165696.423230] flag is set to enable HETERO_FULLKERN 15 
+[165696.423231] flag to set FASTMEM node to 1 
+[165696.423233] hetero_pid set to 38582 38582 procname java
+[165696.423233] flag to set FASTMEM node to 1 
+[165696.423234] flag to set MIGRATION FREQ to 410065408 
+[165696.423236] flag to disable migration 19 
+[165696.423237] flag to MIGRATE_LISTCNT 410065408 
+[165697.964720] flag is set to enable HETERO_PGCACHE 11 
+[165697.964722] flag is set to enable HETERO_BUFFER 12 
+[165697.964723] flag is set to enable HETERO_JOURNAL 13 
+[165697.964724] flag is set to enable HETERO_RADIX 14 
+[165697.964725] flag is set to enable HETERO_FULLKERN 15 
+[165697.964726] flag to set FASTMEM node to 1 
+[165697.964727] hetero_pid set to 38633 38633 procname setsid
+[165697.964728] flag to set FASTMEM node to 1 
+[165697.964729] flag to set MIGRATION FREQ to 410065408 
+[165697.964731] flag to disable migration 19 
+[165697.964732] flag to MIGRATE_LISTCNT 410065408 
+[165697.965690] flag is set to enable HETERO_PGCACHE 11 
+[165697.965692] flag is set to enable HETERO_BUFFER 12 
+[165697.965692] flag is set to enable HETERO_JOURNAL 13 
+[165697.965693] flag is set to enable HETERO_RADIX 14 
+[165697.965694] flag is set to enable HETERO_FULLKERN 15 
+[165697.965695] flag to set FASTMEM node to 1 
+[165697.965696] hetero_pid set to 38633 38633 procname bash
+[165697.965697] flag to set FASTMEM node to 1 
+[165697.965698] flag to set MIGRATION FREQ to 410065408 
+[165697.965700] flag to disable migration 19 
+[165697.965701] flag to MIGRATE_LISTCNT 410065408 
+[165702.423326] flag is set to enable HETERO_PGCACHE 11 
+[165702.423330] flag is set to enable HETERO_BUFFER 12 
+[165702.423331] flag is set to enable HETERO_JOURNAL 13 
+[165702.423332] flag is set to enable HETERO_RADIX 14 
+[165702.423333] flag is set to enable HETERO_FULLKERN 15 
+[165702.423334] flag to set FASTMEM node to 1 
+[165702.423336] hetero_pid set to 38744 38744 procname chmod
+[165702.423337] flag to set FASTMEM node to 1 
+[165702.423338] flag to set MIGRATION FREQ to 410065408 
+[165702.423340] flag to disable migration 19 
+[165702.423341] flag to MIGRATE_LISTCNT 410065408 
+[165702.444865] flag is set to enable HETERO_PGCACHE 11 
+[165702.444867] flag is set to enable HETERO_BUFFER 12 
+[165702.444868] flag is set to enable HETERO_JOURNAL 13 
+[165702.444872] flag is set to enable HETERO_RADIX 14 
+[165702.444879] flag is set to enable HETERO_FULLKERN 15 
+[165702.444879] flag to set FASTMEM node to 1 
+[165702.444881] hetero_pid set to 38746 38746 procname chmod
+[165702.444882] flag to set FASTMEM node to 1 
+[165702.444886] flag to set MIGRATION FREQ to 410065408 
+[165702.444888] flag to disable migration 19 
+[165702.444889] flag to MIGRATE_LISTCNT 410065408 
+[165972.538878] flag is set to enable HETERO_PGCACHE 11 
+[165972.538881] flag is set to enable HETERO_BUFFER 12 
+[165972.538882] flag is set to enable HETERO_JOURNAL 13 
+[165972.538883] flag is set to enable HETERO_RADIX 14 
+[165972.538884] flag is set to enable HETERO_FULLKERN 15 
+[165972.538885] flag to set FASTMEM node to 1 
+[165972.538887] hetero_pid set to 38985 38985 procname rm
+[165972.538888] flag to set FASTMEM node to 1 
+[165972.538889] flag to set MIGRATION FREQ to 410065408 
+[165972.538890] flag to disable migration 19 
+[165972.538891] flag to MIGRATE_LISTCNT 410065408 
+[165973.100827] flag is set to enable HETERO_PGCACHE 11 
+[165973.100829] flag is set to enable HETERO_BUFFER 12 
+[165973.100830] flag is set to enable HETERO_JOURNAL 13 
+[165973.100831] flag is set to enable HETERO_RADIX 14 
+[165973.100832] flag is set to enable HETERO_FULLKERN 15 
+[165973.100833] flag to set FASTMEM node to 1 
+[165973.100835] hetero_pid set to 39002 39002 procname rm
+[165973.100836] flag to set FASTMEM node to 1 
+[165973.100837] flag to set MIGRATION FREQ to 410065408 
+[165973.100838] flag to disable migration 19 
+[165973.100839] flag to MIGRATE_LISTCNT 410065408 
+[165973.105633] flag is set to enable HETERO_PGCACHE 11 
+[165973.105634] flag is set to enable HETERO_BUFFER 12 
+[165973.105635] flag is set to enable HETERO_JOURNAL 13 
+[165973.105636] flag is set to enable HETERO_RADIX 14 
+[165973.105637] flag is set to enable HETERO_FULLKERN 15 
+[165973.105638] flag to set FASTMEM node to 1 
+[165973.105639] hetero_pid set to 39003 39003 procname rm
+[165973.105640] flag to set FASTMEM node to 1 
+[165973.105642] flag to set MIGRATION FREQ to 410065408 
+[165973.105643] flag to disable migration 19 
+[165973.105644] flag to MIGRATE_LISTCNT 410065408 
+[165973.107839] flag is set to enable HETERO_PGCACHE 11 
+[165973.107840] flag is set to enable HETERO_BUFFER 12 
+[165973.107841] flag is set to enable HETERO_JOURNAL 13 
+[165973.107849] flag is set to enable HETERO_RADIX 14 
+[165973.107850] flag is set to enable HETERO_FULLKERN 15 
+[165973.107851] flag to set FASTMEM node to 1 
+[165973.107852] hetero_pid set to 39004 39004 procname rm
+[165973.107857] flag to set FASTMEM node to 1 
+[165973.107858] flag to set MIGRATION FREQ to 410065408 
+[165973.107859] flag to disable migration 19 
+[165973.107860] flag to MIGRATE_LISTCNT 410065408 
+[165976.365307] flag is set to print stats 2
+[165976.365311] cache-hits 3692281 cache-miss 437820 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[165976.365312] flag set to clear count 0
+[165976.365313] flag is set to collect hetero allocate  9 

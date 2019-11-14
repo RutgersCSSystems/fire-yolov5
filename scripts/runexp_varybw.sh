@@ -1,26 +1,30 @@
 #!/bin/bash
-#set -x
+set -x
 
 cd $NVMBASE
 APP=""
 #TYPE="SSD"
 TYPE="NVM"
-EXPTYPE="CAP"
-#EXPTYPE="BW"
-
+#APP="spark-bench.out"
+#APP="fio.out"
+#APP="filebench.out"
+#APP="redis.out"
+#APP=fxmark
+#APP="flash.out"
+#APP="cassandra.out"
 #APP="rocksdb.out"
 APP="spark-bench.out"
 
+let CAPACITY=4096
 #TYPE="SSD"
-#declare -a bwarr=("4000" "1000" "2000" "500")
-declare -a bwarr=("1000")
-declare -a caparr=("2048" "4096" "8192" "10240")
-#declare -a caparr=("4096")
-
+declare -a bwarr=("4000" "1000" "2000" "500")
+#declare -a bwarr=("1000")
+#declare -a caparr=("2048" "4096" "8192" "10240")
+#EXPTYPE="CAP"
+EXPTYPE="BW"
+declare -a caparr=("4096")
 #declare -a apparr=("rocksdb.out")
 declare -a apparr=("spark-bench.out")
-let CAPACITY=4096
-
 
 OUTPUTDIR=$APPBENCH/output
 
@@ -51,13 +55,21 @@ SETUPEXTRAM() {
 
 	sudo kill -9 `pidof neo4j`
 	sudo killall java
+	sleep 2
+	sudo killall java
+	sudo killall java
+	sleep 2
 	sudo kill -9 `pidof neo4j`
 	sudo kill -9 `pidof postgres`
 	sudo killall postgres
 
-	$SCRIPTS/umount_ext4ramdisk.sh
 	rm -rf  /mnt/ext4ramdisk/*
-	rm -rf  /mnt/ext4ramdisk/
+	$SCRIPTS/umount_ext4ramdisk.sh
+	if mount | grep /mnt/ext4ramdisk > /dev/null; then
+  		echo "Umounting failed"
+		exit
+	fi
+
 	sleep 5
 	NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
 	let DISKSZ=$NUMAFREE-$CAPACITY
@@ -84,18 +96,6 @@ COMPILE_SHAREDLIB() {
 	make CFLAGS=$DEPFLAGS
 	sudo make install
 }
-
-
-#APP="spark-bench.out"
-#APP="fio.out"
-#APP="filebench.out"
-#APP="redis.out"
-#APP=fxmark
-#APP="flash.out"
-#APP="cassandra.out"
-
-
-
 
 RUNAPP() {
 	#Run application
@@ -157,6 +157,7 @@ SET_RUN_APP() {
         cd $SHARED_LIBS/construct
         make clean
 	make CFLAGS="$3"
+	sudo make install
 	
 	rm $OUTPUTDIR/redis*.txt
 
@@ -176,7 +177,13 @@ for bw  in "${bwarr[@]}"
 do
 	sed -i "/read =/c\read = $bw" $SCRIPTS/nvmemul-throttle-bw.ini
 	sed -i "/write =/c\write = $bw" $SCRIPTS/nvmemul-throttle-bw.ini
-	THROTTLE
+
+	if [ -z "$1" ]
+	  then
+	    THROTTLE
+	  else
+	    echo "Don't throttle"
+	fi
 
 	for APP in "${apparr[@]}"
 	do
@@ -198,26 +205,21 @@ do
 		echo $OUTPUTDIR
 
 		export APPPREFIX="numactl --preferred=0"
-		#SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
-		#sleep 2
-		#SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-		#sleep 2
-		#SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
-		#sleep 2
-		#export APPPREFIX="numactl --preferred=1"
-		#SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-		export APPPREFIX="numactl --preferred=0"
-		SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-<<<<<<< HEAD
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
-		
-=======
+		SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
+		sleep 2
+		SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+		sleep 2
+		SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+		sleep 2
+		export APPPREFIX="numactl --preferred=1"
+		SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
+
+		#export APPPREFIX="numactl --membind=1"
+		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 		#export APPPREFIX="numactl --membind=1"
 		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
->>>>>>> 70f10d5978aa043d314581fd3d7246b53724e8ea
+		#export APPPREFIX="numactl --preferred=0"
+		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 		done
 	done
 done
@@ -225,6 +227,8 @@ done
 	sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
 	export APPPREFIX="numactl --membind=0"
 	DISABLE_THROTTLE
+	let CAPACITY=131072
+	SETUPEXTRAM
 	SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 	exit
 

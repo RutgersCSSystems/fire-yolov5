@@ -1,22 +1,20 @@
 + sudo dmesg -c
-[78112.409996] migrate: migrate_pages_hetero_list:4029 migrated 36267 nr_failed 0 retry 0  pages_iterated 36267 pagecnt 36267
-[78112.455549] drop_caches: sh (1698): drop_caches: 3
-[78113.062157] drop_caches: sh (1710): drop_caches: 3
-[78137.749529] EXT4-fs (loop0): mounted filesystem with ordered data mode. Opts: (null)
-[78138.516111] drop_caches: sh (1802): drop_caches: 3
-[78139.681334] drop_caches: sh (1811): drop_caches: 3
+[167254.564877] drop_caches: sh (12391): drop_caches: 3
+[167257.264674] drop_caches: sh (12400): drop_caches: 3
+[167258.457080] drop_caches: sh (12406): drop_caches: 3
+[167259.581868] drop_caches: sh (12414): drop_caches: 3
 + /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
 + cd /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench
 + stop-dfs.sh
 Stopping namenodes on [localhost]
 Stopping datanodes
 Stopping secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
-+ rm -rf '/users/skannan/ssd/NVM/appbench/shared_data/hdfs/*'
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/hdfs/datanode /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode
 + hadoop namenode -format
 WARNING: Use of this script to execute namenode is deprecated.
 WARNING: Attempting to execute replacement "hdfs namenode" instead.
 
-2019-11-10 17:05:17,321 INFO namenode.NameNode: STARTUP_MSG: 
+2019-11-11 17:50:41,412 INFO namenode.NameNode: STARTUP_MSG: 
 /************************************************************
 STARTUP_MSG: Starting NameNode
 STARTUP_MSG:   host = node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
@@ -26,73 +24,73 @@ STARTUP_MSG:   classpath = /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2
 STARTUP_MSG:   build = https://gitbox.apache.org/repos/asf/hadoop.git -r b3cbbb467e22ea829b3808f4b7b01d07e0bf3842; compiled by 'rohithsharmaks' on 2019-09-10T15:56Z
 STARTUP_MSG:   java = 1.8.0_222
 ************************************************************/
-2019-11-10 17:05:17,346 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
-2019-11-10 17:05:17,429 INFO namenode.NameNode: createNameNode [-format]
-Formatting using clusterid: CID-60084c89-447f-4f99-b672-cbfc95fb6968
-2019-11-10 17:05:18,346 INFO namenode.FSEditLog: Edit logging is async:true
-2019-11-10 17:05:18,371 INFO namenode.FSNamesystem: KeyProvider: null
-2019-11-10 17:05:18,373 INFO namenode.FSNamesystem: fsLock is fair: true
-2019-11-10 17:05:18,374 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
-2019-11-10 17:05:18,379 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
-2019-11-10 17:05:18,379 INFO namenode.FSNamesystem: supergroup          = supergroup
-2019-11-10 17:05:18,379 INFO namenode.FSNamesystem: isPermissionEnabled = true
-2019-11-10 17:05:18,380 INFO namenode.FSNamesystem: HA Enabled: false
-2019-11-10 17:05:18,448 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
-2019-11-10 17:05:18,463 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
-2019-11-10 17:05:18,463 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
-2019-11-10 17:05:18,468 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
-2019-11-10 17:05:18,469 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 10 17:05:18
-2019-11-10 17:05:18,470 INFO util.GSet: Computing capacity for map BlocksMap
-2019-11-10 17:05:18,471 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:05:18,480 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
-2019-11-10 17:05:18,480 INFO util.GSet: capacity      = 2^26 = 67108864 entries
-2019-11-10 17:05:18,638 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
-2019-11-10 17:05:18,638 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
-2019-11-10 17:05:18,646 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
-2019-11-10 17:05:18,647 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
-2019-11-10 17:05:18,647 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
-2019-11-10 17:05:18,647 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
-2019-11-10 17:05:18,647 INFO blockmanagement.BlockManager: defaultReplication         = 3
-2019-11-10 17:05:18,647 INFO blockmanagement.BlockManager: maxReplication             = 512
-2019-11-10 17:05:18,648 INFO blockmanagement.BlockManager: minReplication             = 1
-2019-11-10 17:05:18,648 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
-2019-11-10 17:05:18,648 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
-2019-11-10 17:05:18,648 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
-2019-11-10 17:05:18,648 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
-2019-11-10 17:05:18,685 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
-2019-11-10 17:05:18,685 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
-2019-11-10 17:05:18,685 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
-2019-11-10 17:05:18,685 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
-2019-11-10 17:05:18,700 INFO util.GSet: Computing capacity for map INodeMap
-2019-11-10 17:05:18,700 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:05:18,700 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
-2019-11-10 17:05:18,700 INFO util.GSet: capacity      = 2^25 = 33554432 entries
-2019-11-10 17:05:19,806 INFO namenode.FSDirectory: ACLs enabled? false
-2019-11-10 17:05:19,807 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
-2019-11-10 17:05:19,807 INFO namenode.FSDirectory: XAttrs enabled? true
-2019-11-10 17:05:19,807 INFO namenode.NameNode: Caching file names occurring more than 10 times
-2019-11-10 17:05:19,813 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
-2019-11-10 17:05:19,815 INFO snapshot.SnapshotManager: SkipList is disabled
-2019-11-10 17:05:19,819 INFO util.GSet: Computing capacity for map cachedBlocks
-2019-11-10 17:05:19,819 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:05:19,820 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
-2019-11-10 17:05:19,820 INFO util.GSet: capacity      = 2^23 = 8388608 entries
-2019-11-10 17:05:19,837 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
-2019-11-10 17:05:19,837 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
-2019-11-10 17:05:19,837 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
-2019-11-10 17:05:19,841 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
-2019-11-10 17:05:19,841 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
-2019-11-10 17:05:19,844 INFO util.GSet: Computing capacity for map NameNodeRetryCache
-2019-11-10 17:05:19,844 INFO util.GSet: VM type       = 64-bit
-2019-11-10 17:05:19,844 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
-2019-11-10 17:05:19,844 INFO util.GSet: capacity      = 2^20 = 1048576 entries
-2019-11-10 17:05:19,883 INFO namenode.FSImage: Allocated new BlockPoolId: BP-53692807-128.105.145.169-1573430719875
-2019-11-10 17:05:19,921 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
-2019-11-10 17:05:20,000 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
-2019-11-10 17:05:20,145 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 399 bytes saved in 0 seconds .
-2019-11-10 17:05:20,164 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
-2019-11-10 17:05:20,170 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
-2019-11-10 17:05:20,171 INFO namenode.NameNode: SHUTDOWN_MSG: 
+2019-11-11 17:50:41,438 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
+2019-11-11 17:50:41,524 INFO namenode.NameNode: createNameNode [-format]
+Formatting using clusterid: CID-f655939f-5f9c-42e4-afa9-f764916e0104
+2019-11-11 17:50:42,390 INFO namenode.FSEditLog: Edit logging is async:true
+2019-11-11 17:50:42,415 INFO namenode.FSNamesystem: KeyProvider: null
+2019-11-11 17:50:42,416 INFO namenode.FSNamesystem: fsLock is fair: true
+2019-11-11 17:50:42,418 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
+2019-11-11 17:50:42,423 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
+2019-11-11 17:50:42,423 INFO namenode.FSNamesystem: supergroup          = supergroup
+2019-11-11 17:50:42,423 INFO namenode.FSNamesystem: isPermissionEnabled = true
+2019-11-11 17:50:42,423 INFO namenode.FSNamesystem: HA Enabled: false
+2019-11-11 17:50:42,491 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
+2019-11-11 17:50:42,506 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
+2019-11-11 17:50:42,506 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
+2019-11-11 17:50:42,512 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
+2019-11-11 17:50:42,512 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 11 17:50:42
+2019-11-11 17:50:42,514 INFO util.GSet: Computing capacity for map BlocksMap
+2019-11-11 17:50:42,514 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:50:42,516 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
+2019-11-11 17:50:42,516 INFO util.GSet: capacity      = 2^26 = 67108864 entries
+2019-11-11 17:50:42,736 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
+2019-11-11 17:50:42,736 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
+2019-11-11 17:50:42,745 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
+2019-11-11 17:50:42,745 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
+2019-11-11 17:50:42,745 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
+2019-11-11 17:50:42,745 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: defaultReplication         = 3
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: maxReplication             = 512
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: minReplication             = 1
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
+2019-11-11 17:50:42,746 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
+2019-11-11 17:50:42,782 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
+2019-11-11 17:50:42,783 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
+2019-11-11 17:50:42,783 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
+2019-11-11 17:50:42,783 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
+2019-11-11 17:50:42,797 INFO util.GSet: Computing capacity for map INodeMap
+2019-11-11 17:50:42,797 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:50:42,797 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
+2019-11-11 17:50:42,797 INFO util.GSet: capacity      = 2^25 = 33554432 entries
+2019-11-11 17:50:45,691 INFO namenode.FSDirectory: ACLs enabled? false
+2019-11-11 17:50:45,692 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
+2019-11-11 17:50:45,692 INFO namenode.FSDirectory: XAttrs enabled? true
+2019-11-11 17:50:45,693 INFO namenode.NameNode: Caching file names occurring more than 10 times
+2019-11-11 17:50:45,702 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
+2019-11-11 17:50:45,706 INFO snapshot.SnapshotManager: SkipList is disabled
+2019-11-11 17:50:45,711 INFO util.GSet: Computing capacity for map cachedBlocks
+2019-11-11 17:50:45,711 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:50:45,711 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
+2019-11-11 17:50:45,711 INFO util.GSet: capacity      = 2^23 = 8388608 entries
+2019-11-11 17:50:45,745 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
+2019-11-11 17:50:45,745 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
+2019-11-11 17:50:45,745 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
+2019-11-11 17:50:45,752 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+2019-11-11 17:50:45,752 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
+2019-11-11 17:50:45,754 INFO util.GSet: Computing capacity for map NameNodeRetryCache
+2019-11-11 17:50:45,754 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:50:45,754 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
+2019-11-11 17:50:45,754 INFO util.GSet: capacity      = 2^20 = 1048576 entries
+2019-11-11 17:50:45,800 INFO namenode.FSImage: Allocated new BlockPoolId: BP-226660700-128.105.145.169-1573519845792
+2019-11-11 17:50:45,851 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
+2019-11-11 17:50:45,937 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
+2019-11-11 17:50:46,174 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 402 bytes saved in 0 seconds .
+2019-11-11 17:50:46,196 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
+2019-11-11 17:50:46,202 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
+2019-11-11 17:50:46,202 INFO namenode.NameNode: SHUTDOWN_MSG: 
 /************************************************************
 SHUTDOWN_MSG: Shutting down NameNode at node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
 ************************************************************/
@@ -105,7 +103,7 @@ Starting secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
 + /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/gen_data.sh
 ========== preparing Terasort data ==========
 Master:
-sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-10-17:05:39.dat
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-11-17:51:05.dat
 + '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
 + export PYTHONHASHSEED=0
 + PYTHONHASHSEED=0
@@ -166,38 +164,38 @@ Unescaped left brace in regex is deprecated, passed through in regex; marked by 
 Error: no "print" mailcap rules found for type "application/x-executable"
 initiating tracing...
 initiating tracing...
-2019-11-10 17:05:42,330 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2019-11-10 17:05:42,867 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
-2019-11-10 17:05:43,514 INFO util.log: Logging initialized @2570ms
-2019-11-10 17:05:43,581 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
-2019-11-10 17:05:43,597 INFO server.Server: Started @2654ms
-2019-11-10 17:05:43,615 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
-2019-11-10 17:05:43,640 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,640 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,641 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,642 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,643 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,643 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,644 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,645 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,645 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,646 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,646 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,647 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,648 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,648 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,649 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,649 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,650 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,650 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,651 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,652 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,658 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,658 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,659 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,660 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,660 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:05:43,980 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9fec931{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:08,062 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:51:08,572 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:51:09,184 INFO util.log: Logging initialized @2455ms
+2019-11-11 17:51:09,250 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:51:09,265 INFO server.Server: Started @2537ms
+2019-11-11 17:51:09,284 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:51:09,308 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,309 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,309 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,310 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,311 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,311 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,312 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,313 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,313 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,314 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,314 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,315 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,315 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,316 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,316 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,317 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,317 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,318 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,319 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,319 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,326 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,326 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,327 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,328 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,329 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:51:09,649 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9fec931{/metrics/json,null,AVAILABLE,@Spark}
 ===========================================================================
 ===========================================================================
 Input size: 3GB
@@ -206,49 +204,49 @@ Number of output partitions: 10
 Number of records/ partition:   3000000
 ===========================================================================
 ===========================================================================
-2019-11-10 17:05:44,334 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,750 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,751 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,752 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,753 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,754 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,755 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,755 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,767 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,768 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,768 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,770 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,770 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,770 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:46,770 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:05:55,066 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000005
-2019-11-10 17:05:56,042 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000002
-2019-11-10 17:05:56,141 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000001
-2019-11-10 17:05:56,227 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000008
-2019-11-10 17:05:56,266 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000009
-2019-11-10 17:05:56,441 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000006
-2019-11-10 17:05:56,448 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000007
-2019-11-10 17:05:56,475 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000004
-2019-11-10 17:05:56,532 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000000
-2019-11-10 17:05:56,657 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170544_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191110170544_0001_r_000003
+2019-11-11 17:51:09,999 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,602 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,603 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,604 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:11,604 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:51:16,518 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000006
+2019-11-11 17:51:16,587 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000001
+2019-11-11 17:51:16,864 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000000
+2019-11-11 17:51:16,867 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000002
+2019-11-11 17:51:16,891 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000005
+2019-11-11 17:51:16,921 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000008
+2019-11-11 17:51:16,921 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000009
+2019-11-11 17:51:16,974 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000007
+2019-11-11 17:51:16,974 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000003
+2019-11-11 17:51:17,010 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175109_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111175109_0001_r_000004
 Number of records written: 30000000
-2019-11-10 17:05:59,409 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:51:18,513 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
 application termination...
 
  Performance counter stats for 'Terasort/bin/gen_data.sh':
 
-        81,128,801      dTLB-load-misses:u                                          
-        85,468,975      LLC-load-misses:u                                           
-   335,936,524,952      instructions:u                                              
-           945,078      minor-faults:u                                              
+        74,293,016      dTLB-load-misses:u                                          
+        66,172,442      LLC-load-misses:u                                           
+   336,851,023,121      instructions:u                                              
+           944,349      minor-faults:u                                              
 
-      27.203980723 seconds time elapsed
+      20.411450220 seconds time elapsed
 
 + sleep 2
 + /usr/bin/time -v /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh
@@ -257,7 +255,7 @@ Master:
 Terasort opt hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output 
 Connection to localhost closed.
 data purged on localhost
-sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-10-17:06:15.dat
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-11-17:51:34.dat
 + '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
 + export PYTHONHASHSEED=0
 + PYTHONHASHSEED=0
@@ -316,160 +314,160 @@ Unescaped left brace in regex is deprecated, passed through in regex; marked by 
 Error: no "print" mailcap rules found for type "application/x-executable"
 initiating tracing...
 initiating tracing...
-2019-11-10 17:06:18,744 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2019-11-10 17:06:19,251 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
-2019-11-10 17:06:19,885 INFO util.log: Logging initialized @2842ms
-2019-11-10 17:06:19,954 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
-2019-11-10 17:06:19,970 INFO server.Server: Started @2929ms
-2019-11-10 17:06:19,989 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
-2019-11-10 17:06:20,016 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,016 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,017 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,018 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,018 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,019 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,019 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,020 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,021 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,021 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,022 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,022 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,023 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,023 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,024 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,024 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,025 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,025 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,026 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,027 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,033 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,033 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,034 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,034 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,035 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
-2019-11-10 17:06:20,392 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5246a3b3{/metrics/json,null,AVAILABLE,@Spark}
-2019-11-10 17:06:21,576 INFO input.FileInputFormat: Total input paths to process : 10
-2019-11-10 17:06:33,282 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:52,809 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:52,813 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:52,863 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:52,869 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:57,192 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:07:57,204 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,334 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,368 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,375 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,380 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,519 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,531 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,531 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,542 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,559 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,567 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,727 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,752 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:01,992 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:02,012 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:02,471 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:02,501 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,274 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,306 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,468 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,485 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,561 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,578 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,658 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,678 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,735 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,759 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,762 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,769 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,786 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:09,792 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:10,002 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:10,045 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:10,050 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:10,065 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:12,783 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:12,802 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:13,079 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:13,102 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:13,565 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:13,625 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:14,097 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:14,178 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:16,463 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:16,524 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:16,995 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:17,016 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:18,065 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:18,090 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:18,116 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:18,126 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:20,750 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000014_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000014
-2019-11-10 17:08:22,534 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000020_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000020
-2019-11-10 17:08:23,389 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:23,441 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:23,873 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000017_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000017
-2019-11-10 17:08:24,657 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000018_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000018
-2019-11-10 17:08:26,030 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:26,055 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
-2019-11-10 17:08:27,092 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000021_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000021
-2019-11-10 17:08:27,103 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000027_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000027
-2019-11-10 17:08:27,584 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000003
-2019-11-10 17:08:28,247 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000016_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000016
-2019-11-10 17:08:28,489 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000015_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000015
-2019-11-10 17:08:29,104 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000001
-2019-11-10 17:08:29,938 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000008
-2019-11-10 17:08:29,938 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000002
-2019-11-10 17:08:30,373 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000013_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000013
-2019-11-10 17:08:30,373 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000007
-2019-11-10 17:08:31,387 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000000
-2019-11-10 17:08:31,482 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000029_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000029
-2019-11-10 17:08:31,483 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000012_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000012
-2019-11-10 17:08:31,482 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000026_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000026
-2019-11-10 17:08:31,483 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000025_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000025
-2019-11-10 17:08:31,494 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000019_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000019
-2019-11-10 17:08:31,682 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000011_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000011
-2019-11-10 17:08:31,683 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000022_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000022
-2019-11-10 17:08:31,858 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000009
-2019-11-10 17:08:32,546 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000010_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000010
-2019-11-10 17:08:32,547 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000004
-2019-11-10 17:08:32,644 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000023_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000023
-2019-11-10 17:08:32,836 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000006
-2019-11-10 17:08:32,837 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000024_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000024
-2019-11-10 17:08:32,992 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000028_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000028
-2019-11-10 17:08:33,192 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191110170633_0004_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191110170633_0004_r_000005
-2019-11-10 17:08:33,331 INFO server.AbstractConnector: Stopped Spark@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:51:37,985 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:51:38,525 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:51:39,435 INFO util.log: Logging initialized @3170ms
+2019-11-11 17:51:39,505 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:51:39,523 INFO server.Server: Started @3260ms
+2019-11-11 17:51:39,543 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:51:39,572 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,573 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,573 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,574 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,575 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,575 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,576 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,577 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,578 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,578 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,579 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,579 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,580 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,581 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,581 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,582 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,583 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,583 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,584 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,584 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,591 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,592 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,593 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,594 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,594 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:51:39,988 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5246a3b3{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 17:51:41,199 INFO input.FileInputFormat: Total input paths to process : 10
+2019-11-11 17:51:57,031 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,726 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,726 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,729 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,730 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,760 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,761 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,832 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,832 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,842 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:22,842 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,060 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,060 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,197 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,204 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,666 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,668 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,684 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,685 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,693 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:23,693 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:24,585 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:24,586 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,375 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,376 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,403 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,404 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,415 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,417 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,468 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,470 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,513 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,517 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,515 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,523 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,540 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,541 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,556 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,557 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,573 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,583 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,653 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000001
+2019-11-11 17:52:25,796 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,798 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,805 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,806 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,828 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,829 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,831 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:25,832 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,079 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,080 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,123 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,125 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,179 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,181 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,277 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,278 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,399 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,400 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,464 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:26,466 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:52:29,490 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000026_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000026
+2019-11-11 17:52:29,491 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000015_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000015
+2019-11-11 17:52:29,491 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000024_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000024
+2019-11-11 17:52:29,491 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000012_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000012
+2019-11-11 17:52:29,586 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000004
+2019-11-11 17:52:29,587 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000023_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000023
+2019-11-11 17:52:29,588 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000003
+2019-11-11 17:52:29,592 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000016_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000016
+2019-11-11 17:52:29,592 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000029_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000029
+2019-11-11 17:52:29,592 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000002
+2019-11-11 17:52:29,596 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000028_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000028
+2019-11-11 17:52:29,596 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000020_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000020
+2019-11-11 17:52:29,596 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000011_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000011
+2019-11-11 17:52:29,596 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000019_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000019
+2019-11-11 17:52:29,597 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000013_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000013
+2019-11-11 17:52:29,597 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000027_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000027
+2019-11-11 17:52:29,597 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000010_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000010
+2019-11-11 17:52:29,603 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000000
+2019-11-11 17:52:29,609 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000014_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000014
+2019-11-11 17:52:29,612 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000022_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000022
+2019-11-11 17:52:29,613 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000008
+2019-11-11 17:52:29,654 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000025_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000025
+2019-11-11 17:52:29,730 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000017_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000017
+2019-11-11 17:52:30,657 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000006
+2019-11-11 17:52:30,878 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000009
+2019-11-11 17:52:30,878 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000021_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000021
+2019-11-11 17:52:30,887 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000018_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000018
+2019-11-11 17:52:30,945 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000007
+2019-11-11 17:52:31,007 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111175157_0004_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111175157_0004_r_000005
+2019-11-11 17:52:31,146 INFO server.AbstractConnector: Stopped Spark@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
 application termination...
 
  Performance counter stats for 'Terasort/bin/run.sh':
 
-       800,149,469      dTLB-load-misses:u                                          
-     1,768,994,144      LLC-load-misses:u                                           
- 1,500,893,282,229      instructions:u                                              
-         2,169,566      minor-faults:u                                              
+       622,155,713      dTLB-load-misses:u                                          
+     1,764,851,251      LLC-load-misses:u                                           
+ 1,474,518,782,106      instructions:u                                              
+         2,153,926      minor-faults:u                                              
 
-     147.811608327 seconds time elapsed
+      66.545195068 seconds time elapsed
 
 	Command being timed: "/users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh"
-	User time (seconds): 2572.66
-	System time (seconds): 704.66
-	Percent of CPU this job got: 2214%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:27.96
+	User time (seconds): 792.33
+	System time (seconds): 210.05
+	Percent of CPU this job got: 1502%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:06.69
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 7308776
+	Maximum resident set size (kbytes): 7197836
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 247
-	Minor (reclaiming a frame) page faults: 2218118
-	Voluntary context switches: 370511
-	Involuntary context switches: 110272
+	Minor (reclaiming a frame) page faults: 2202291
+	Voluntary context switches: 403376
+	Involuntary context switches: 26542
 	Swaps: 0
-	File system inputs: 470752
-	File system outputs: 14237032
+	File system inputs: 470720
+	File system outputs: 14236896
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -478,317 +476,232 @@ application termination...
 + sleep 2
 + /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
 + exit
-[78141.498108] flag is set to print stats 2
-[78141.498112] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 36267 cache-del 0 buff-del 0 
-[78141.498113] flag set to clear count 0
-[78141.498115] flag is set to collect hetero allocate  9 
-[78172.206580] flag is set to enable HETERO_PGCACHE 11 
-[78172.206587] flag is set to enable HETERO_BUFFER 12 
-[78172.206587] flag is set to enable HETERO_JOURNAL 13 
-[78172.206588] flag is set to enable HETERO_RADIX 14 
-[78172.206589] flag is set to enable HETERO_FULLKERN 15 
-[78172.206590] flag to set FASTMEM node to 0 
-[78172.206591] hetero_pid set to 3786 3786 procname numactl
-[78172.206594] flag to set FASTMEM node to 0 
-[78172.206595] flag to set MIGRATION FREQ to 1000 
-[78172.206596] flag enables HETERO_OBJAFF 1 
-[78172.206597] flag to MIGRATE_LISTCNT 500 
-[78172.206598] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78172.207296] flag is set to enable HETERO_PGCACHE 11 
-[78172.207297] flag is set to enable HETERO_BUFFER 12 
-[78172.207298] flag is set to enable HETERO_JOURNAL 13 
-[78172.207298] flag is set to enable HETERO_RADIX 14 
-[78172.207299] flag is set to enable HETERO_FULLKERN 15 
-[78172.207300] flag to set FASTMEM node to 0 
-[78172.207301] hetero_pid set to 3786 3786 procname java
-[78172.207302] flag to set FASTMEM node to 0 
-[78172.207303] flag to set MIGRATION FREQ to 1000 
-[78172.207304] flag enables HETERO_OBJAFF 1 
-[78172.207305] flag to MIGRATE_LISTCNT 500 
-[78172.207307] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78173.491187] flag is set to enable HETERO_PGCACHE 11 
-[78173.491190] flag is set to enable HETERO_BUFFER 12 
-[78173.491191] flag is set to enable HETERO_JOURNAL 13 
-[78173.491191] flag is set to enable HETERO_RADIX 14 
-[78173.491192] flag is set to enable HETERO_FULLKERN 15 
-[78173.491193] flag to set FASTMEM node to 0 
-[78173.491195] hetero_pid set to 3837 3837 procname setsid
-[78173.491195] flag to set FASTMEM node to 0 
-[78173.491197] flag to set MIGRATION FREQ to 1000 
-[78173.491198] flag enables HETERO_OBJAFF 1 
-[78173.491199] flag to MIGRATE_LISTCNT 500 
-[78173.491201] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78173.491937] flag is set to enable HETERO_PGCACHE 11 
-[78173.491939] flag is set to enable HETERO_BUFFER 12 
-[78173.491939] flag is set to enable HETERO_JOURNAL 13 
-[78173.491940] flag is set to enable HETERO_RADIX 14 
-[78173.491941] flag is set to enable HETERO_FULLKERN 15 
-[78173.491942] flag to set FASTMEM node to 0 
-[78173.491943] hetero_pid set to 3837 3837 procname bash
-[78173.491944] flag to set FASTMEM node to 0 
-[78173.491945] flag to set MIGRATION FREQ to 1000 
-[78173.491946] flag enables HETERO_OBJAFF 1 
-[78173.491947] flag to MIGRATE_LISTCNT 500 
-[78173.491949] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78176.274178] migrate: migrate_pages_hetero_list:4029 migrated 55296 nr_failed 0 retry 0  pages_iterated 55296 pagecnt 55296
-[78176.764222] migrate: migrate_pages_hetero_list:4029 migrated 122337 nr_failed 0 retry 0  pages_iterated 122337 pagecnt 122337
-[78177.508613] flag is set to enable HETERO_PGCACHE 11 
-[78177.508616] flag is set to enable HETERO_BUFFER 12 
-[78177.508616] flag is set to enable HETERO_JOURNAL 13 
-[78177.508617] flag is set to enable HETERO_RADIX 14 
-[78177.508618] flag is set to enable HETERO_FULLKERN 15 
-[78177.508619] flag to set FASTMEM node to 0 
-[78177.508620] hetero_pid set to 3931 3931 procname chmod
-[78177.508621] flag to set FASTMEM node to 0 
-[78177.508622] flag to set MIGRATION FREQ to 1000 
-[78177.508623] flag enables HETERO_OBJAFF 1 
-[78177.508624] flag to MIGRATE_LISTCNT 500 
-[78177.508626] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78177.853288] flag is set to enable HETERO_PGCACHE 11 
-[78177.853291] flag is set to enable HETERO_BUFFER 12 
-[78177.853292] flag is set to enable HETERO_JOURNAL 13 
-[78177.853293] flag is set to enable HETERO_RADIX 14 
-[78177.853293] flag is set to enable HETERO_FULLKERN 15 
-[78177.853294] flag to set FASTMEM node to 0 
-[78177.853296] hetero_pid set to 3933 3933 procname chmod
-[78177.853297] flag to set FASTMEM node to 0 
-[78177.853298] flag to set MIGRATION FREQ to 1000 
-[78177.853299] flag enables HETERO_OBJAFF 1 
-[78177.853301] flag to MIGRATE_LISTCNT 500 
-[78177.853302] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78178.524815] migrate: migrate_pages_hetero_list:4029 migrated 30511 nr_failed 0 retry 0  pages_iterated 30511 pagecnt 30511
-[78179.803575] migrate: migrate_pages_hetero_list:4029 migrated 31121 nr_failed 0 retry 0  pages_iterated 610 pagecnt 610
-[78180.923965] migrate: migrate_pages_hetero_list:4029 migrated 35828 nr_failed 0 retry 0  pages_iterated 4710 pagecnt 4707
-[78180.963609] migrate: migrate_pages_hetero_list:4029 migrated 37197 nr_failed 0 retry 0  pages_iterated 1369 pagecnt 1369
-[78181.535796] migrate: migrate_pages_hetero_list:4029 migrated 37723 nr_failed 0 retry 0  pages_iterated 526 pagecnt 526
-[78182.219153] migrate: migrate_pages_hetero_list:4029 migrated 38346 nr_failed 0 retry 0  pages_iterated 623 pagecnt 623
-[78182.715598] migrate: migrate_pages_hetero_list:4029 migrated 39252 nr_failed 0 retry 0  pages_iterated 906 pagecnt 906
-[78183.245880] migrate: migrate_pages_hetero_list:4029 migrated 40832 nr_failed 0 retry 0  pages_iterated 1580 pagecnt 1580
-[78183.941152] migrate: migrate_pages_hetero_list:4029 migrated 41662 nr_failed 0 retry 0  pages_iterated 830 pagecnt 830
-[78184.139949] migrate: migrate_pages_hetero_list:4029 migrated 42401 nr_failed 0 retry 0  pages_iterated 739 pagecnt 739
-[78184.355107] migrate: migrate_pages_hetero_list:4029 migrated 42954 nr_failed 0 retry 0  pages_iterated 553 pagecnt 553
-[78185.144245] migrate: migrate_pages_hetero_list:4029 migrated 43467 nr_failed 0 retry 0  pages_iterated 513 pagecnt 513
-[78185.838325] migrate: migrate_pages_hetero_list:4029 migrated 44070 nr_failed 0 retry 0  pages_iterated 603 pagecnt 603
-[78186.253237] migrate: migrate_pages_hetero_list:4029 migrated 44683 nr_failed 0 retry 0  pages_iterated 613 pagecnt 613
-[78187.227425] migrate: migrate_pages_hetero_list:4029 migrated 45288 nr_failed 0 retry 0  pages_iterated 605 pagecnt 605
-[78190.697617] flag is set to enable HETERO_PGCACHE 11 
-[78190.697620] flag is set to enable HETERO_BUFFER 12 
-[78190.697621] flag is set to enable HETERO_JOURNAL 13 
-[78190.697621] flag is set to enable HETERO_RADIX 14 
-[78190.697622] flag is set to enable HETERO_FULLKERN 15 
-[78190.697623] flag to set FASTMEM node to 0 
-[78190.697625] hetero_pid set to 4060 4060 procname rm
-[78190.697625] flag to set FASTMEM node to 0 
-[78190.697627] flag to set MIGRATION FREQ to 1000 
-[78190.697628] flag enables HETERO_OBJAFF 1 
-[78190.697629] flag to MIGRATE_LISTCNT 500 
-[78190.697630] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78190.707973] flag is set to enable HETERO_PGCACHE 11 
-[78190.707975] flag is set to enable HETERO_BUFFER 12 
-[78190.707976] flag is set to enable HETERO_JOURNAL 13 
-[78190.707977] flag is set to enable HETERO_RADIX 14 
-[78190.707978] flag is set to enable HETERO_FULLKERN 15 
-[78190.707979] flag to set FASTMEM node to 0 
-[78190.707980] hetero_pid set to 4075 4075 procname rm
-[78190.707981] flag to set FASTMEM node to 0 
-[78190.707982] flag to set MIGRATION FREQ to 1000 
-[78190.707983] flag enables HETERO_OBJAFF 1 
-[78190.707984] flag to MIGRATE_LISTCNT 500 
-[78190.707985] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78190.711664] flag is set to enable HETERO_PGCACHE 11 
-[78190.711666] flag is set to enable HETERO_BUFFER 12 
-[78190.711667] flag is set to enable HETERO_JOURNAL 13 
-[78190.711667] flag is set to enable HETERO_RADIX 14 
-[78190.711668] flag is set to enable HETERO_FULLKERN 15 
-[78190.711669] flag to set FASTMEM node to 0 
-[78190.711670] hetero_pid set to 4076 4076 procname rm
-[78190.711671] flag to set FASTMEM node to 0 
-[78190.711672] flag to set MIGRATION FREQ to 1000 
-[78190.711673] flag enables HETERO_OBJAFF 1 
-[78190.711674] flag to MIGRATE_LISTCNT 500 
-[78190.711675] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78190.713677] flag is set to enable HETERO_PGCACHE 11 
-[78190.713678] flag is set to enable HETERO_BUFFER 12 
-[78190.713679] flag is set to enable HETERO_JOURNAL 13 
-[78190.713680] flag is set to enable HETERO_RADIX 14 
-[78190.713681] flag is set to enable HETERO_FULLKERN 15 
-[78190.713681] flag to set FASTMEM node to 0 
-[78190.713682] hetero_pid set to 4077 4077 procname rm
-[78190.713683] flag to set FASTMEM node to 0 
-[78190.713685] flag to set MIGRATION FREQ to 1000 
-[78190.713687] flag enables HETERO_OBJAFF 1 
-[78190.713689] flag to MIGRATE_LISTCNT 500 
-[78190.713690] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78205.085913] drop_caches: sh (4597): drop_caches: 3
-[78208.304154] flag is set to enable HETERO_PGCACHE 11 
-[78208.304157] flag is set to enable HETERO_BUFFER 12 
-[78208.304158] flag is set to enable HETERO_JOURNAL 13 
-[78208.304162] flag is set to enable HETERO_RADIX 14 
-[78208.304162] flag is set to enable HETERO_FULLKERN 15 
-[78208.304169] flag to set FASTMEM node to 0 
-[78208.304171] hetero_pid set to 4768 4768 procname numactl
-[78208.304172] flag to set FASTMEM node to 0 
-[78208.304173] flag to set MIGRATION FREQ to 1000 
-[78208.304174] flag enables HETERO_OBJAFF 1 
-[78208.304185] flag to MIGRATE_LISTCNT 500 
-[78208.304186] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78208.304792] flag is set to enable HETERO_PGCACHE 11 
-[78208.304794] flag is set to enable HETERO_BUFFER 12 
-[78208.304795] flag is set to enable HETERO_JOURNAL 13 
-[78208.304796] flag is set to enable HETERO_RADIX 14 
-[78208.304796] flag is set to enable HETERO_FULLKERN 15 
-[78208.304800] flag to set FASTMEM node to 0 
-[78208.304801] hetero_pid set to 4768 4768 procname java
-[78208.304802] flag to set FASTMEM node to 0 
-[78208.304803] flag to set MIGRATION FREQ to 1000 
-[78208.304809] flag enables HETERO_OBJAFF 1 
-[78208.304810] flag to MIGRATE_LISTCNT 500 
-[78208.304817] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78208.418418] migrate: migrate_pages_hetero_list:4029 migrated 4307 nr_failed 0 retry 0  pages_iterated 4307 pagecnt 4307
-[78209.846228] flag is set to enable HETERO_PGCACHE 11 
-[78209.846230] flag is set to enable HETERO_BUFFER 12 
-[78209.846231] flag is set to enable HETERO_JOURNAL 13 
-[78209.846232] flag is set to enable HETERO_RADIX 14 
-[78209.846233] flag is set to enable HETERO_FULLKERN 15 
-[78209.846234] flag to set FASTMEM node to 0 
-[78209.846236] hetero_pid set to 4819 4819 procname setsid
-[78209.846237] flag to set FASTMEM node to 0 
-[78209.846238] flag to set MIGRATION FREQ to 1000 
-[78209.846239] flag enables HETERO_OBJAFF 1 
-[78209.846240] flag to MIGRATE_LISTCNT 500 
-[78209.846242] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78209.846997] flag is set to enable HETERO_PGCACHE 11 
-[78209.846999] flag is set to enable HETERO_BUFFER 12 
-[78209.846999] flag is set to enable HETERO_JOURNAL 13 
-[78209.847000] flag is set to enable HETERO_RADIX 14 
-[78209.847001] flag is set to enable HETERO_FULLKERN 15 
-[78209.847002] flag to set FASTMEM node to 0 
-[78209.847003] hetero_pid set to 4819 4819 procname bash
-[78209.847004] flag to set FASTMEM node to 0 
-[78209.847005] flag to set MIGRATION FREQ to 1000 
-[78209.847006] flag enables HETERO_OBJAFF 1 
-[78209.847007] flag to MIGRATE_LISTCNT 500 
-[78209.847009] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78213.262508] flag is set to enable HETERO_PGCACHE 11 
-[78213.262511] flag is set to enable HETERO_BUFFER 12 
-[78213.262512] flag is set to enable HETERO_JOURNAL 13 
-[78213.262513] flag is set to enable HETERO_RADIX 14 
-[78213.262514] flag is set to enable HETERO_FULLKERN 15 
-[78213.262515] flag to set FASTMEM node to 0 
-[78213.262516] hetero_pid set to 4930 4930 procname chmod
-[78213.262517] flag to set FASTMEM node to 0 
-[78213.262518] flag to set MIGRATION FREQ to 1000 
-[78213.262519] flag enables HETERO_OBJAFF 1 
-[78213.262520] flag to MIGRATE_LISTCNT 500 
-[78213.262522] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78213.603286] flag is set to enable HETERO_PGCACHE 11 
-[78213.603288] flag is set to enable HETERO_BUFFER 12 
-[78213.603289] flag is set to enable HETERO_JOURNAL 13 
-[78213.603290] flag is set to enable HETERO_RADIX 14 
-[78213.603291] flag is set to enable HETERO_FULLKERN 15 
-[78213.603292] flag to set FASTMEM node to 0 
-[78213.603294] hetero_pid set to 4932 4932 procname chmod
-[78213.603294] flag to set FASTMEM node to 0 
-[78213.603296] flag to set MIGRATION FREQ to 1000 
-[78213.603297] flag enables HETERO_OBJAFF 1 
-[78213.603299] flag to MIGRATE_LISTCNT 500 
-[78213.603300] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78213.875914] migrate: migrate_pages_hetero_list:4029 migrated 48041 nr_failed 0 retry 0  pages_iterated 2753 pagecnt 2753
-[78214.594296] migrate: migrate_pages_hetero_list:4029 migrated 48676 nr_failed 0 retry 0  pages_iterated 635 pagecnt 635
-[78215.091221] migrate: migrate_pages_hetero_list:4029 migrated 49443 nr_failed 0 retry 0  pages_iterated 767 pagecnt 767
-[78215.242406] migrate: migrate_pages_hetero_list:4029 migrated 50199 nr_failed 0 retry 0  pages_iterated 756 pagecnt 756
-[78215.688908] migrate: migrate_pages_hetero_list:4029 migrated 51597 nr_failed 0 retry 0  pages_iterated 1398 pagecnt 1398
-[78215.755357] migrate: migrate_pages_hetero_list:4029 migrated 52166 nr_failed 0 retry 0  pages_iterated 569 pagecnt 569
-[78215.945455] migrate: migrate_pages_hetero_list:4029 migrated 52668 nr_failed 0 retry 0  pages_iterated 502 pagecnt 502
-[78217.457168] migrate: migrate_pages_hetero_list:4029 migrated 53489 nr_failed 0 retry 0  pages_iterated 821 pagecnt 821
-[78219.450263] migrate: migrate_pages_hetero_list:4029 migrated 54028 nr_failed 0 retry 0  pages_iterated 539 pagecnt 539
-[78221.174568] migrate: migrate_pages_hetero_list:4029 migrated 54599 nr_failed 0 retry 0  pages_iterated 571 pagecnt 571
-[78225.510836] migrate: migrate_pages_hetero_list:4029 migrated 139705 nr_failed 0 retry 0  pages_iterated 139705 pagecnt 139705
-[78233.789785] migrate: migrate_pages_hetero_list:4029 migrated 6384 nr_failed 0 retry 0  pages_iterated 2077 pagecnt 2077
-[78240.899112] migrate: migrate_pages_hetero_list:4029 migrated 7166 nr_failed 0 retry 0  pages_iterated 782 pagecnt 782
-[78240.932460] migrate: migrate_pages_hetero_list:4029 migrated 8574 nr_failed 0 retry 0  pages_iterated 1408 pagecnt 1408
-[78242.022193] migrate: migrate_pages_hetero_list:4029 migrated 9571 nr_failed 0 retry 0  pages_iterated 997 pagecnt 997
-[78244.052960] migrate: migrate_pages_hetero_list:4029 migrated 11032 nr_failed 0 retry 0  pages_iterated 1461 pagecnt 1461
-[78244.140617] migrate: migrate_pages_hetero_list:4029 migrated 14946 nr_failed 0 retry 0  pages_iterated 4393 pagecnt 3914
-[78246.669205] migrate: migrate_pages_hetero_list:4029 migrated 21165 nr_failed 0 retry 0  pages_iterated 6219 pagecnt 6219
-[78246.860804] migrate: migrate_pages_hetero_list:4029 migrated 22090 nr_failed 0 retry 0  pages_iterated 925 pagecnt 925
-[78247.474765] migrate: migrate_pages_hetero_list:4029 migrated 28727 nr_failed 0 retry 0  pages_iterated 6637 pagecnt 6637
-[78248.007708] migrate: migrate_pages_hetero_list:4029 migrated 31310 nr_failed 0 retry 0  pages_iterated 2583 pagecnt 2583
-[78248.031933] migrate: migrate_pages_hetero_list:4029 migrated 33123 nr_failed 0 retry 0  pages_iterated 1813 pagecnt 1813
-[78248.033338] migrate: migrate_pages_hetero_list:4029 migrated 37095 nr_failed 672 retry 0  pages_iterated 4644 pagecnt 4644
-[78248.033664] migrate: migrate_pages_hetero_list:4029 migrated 37712 nr_failed 0 retry 0  pages_iterated 617 pagecnt 617
-[78248.109756] migrate: migrate_pages_hetero_list:4029 migrated 39795 nr_failed 0 retry 0  pages_iterated 2083 pagecnt 2083
-[78248.607277] migrate: migrate_pages_hetero_list:4029 migrated 764996 nr_failed 0 retry 0  pages_iterated 725201 pagecnt 725201
-[78313.068083] migrate: migrate_pages_hetero_list:4029 migrated 56850 nr_failed 0 retry 0  pages_iterated 2251 pagecnt 2251
-[78320.142474] migrate: migrate_pages_hetero_list:4029 migrated 57425 nr_failed 0 retry 0  pages_iterated 575 pagecnt 575
-[78321.615177] migrate: migrate_pages_hetero_list:4029 migrated 58064 nr_failed 0 retry 0  pages_iterated 639 pagecnt 639
-[78325.488744] migrate: migrate_pages_hetero_list:4029 migrated 58698 nr_failed 0 retry 0  pages_iterated 634 pagecnt 634
-[78325.589546] migrate: migrate_pages_hetero_list:4029 migrated 64423 nr_failed 0 retry 0  pages_iterated 5725 pagecnt 5725
-[78327.657066] migrate: migrate_pages_hetero_list:4029 migrated 64951 nr_failed 0 retry 0  pages_iterated 528 pagecnt 528
-[78329.138784] migrate: migrate_pages_hetero_list:4029 migrated 65781 nr_failed 0 retry 0  pages_iterated 830 pagecnt 830
-[78329.932105] migrate: migrate_pages_hetero_list:4029 migrated 66287 nr_failed 0 retry 0  pages_iterated 506 pagecnt 506
-[78331.006128] migrate: migrate_pages_hetero_list:4029 migrated 67343 nr_failed 0 retry 0  pages_iterated 1057 pagecnt 1056
-[78331.780228] migrate: migrate_pages_hetero_list:4029 migrated 68498 nr_failed 0 retry 0  pages_iterated 1155 pagecnt 1155
-[78332.846813] migrate: migrate_pages_hetero_list:4029 migrated 69097 nr_failed 0 retry 0  pages_iterated 599 pagecnt 599
-[78333.663056] migrate: migrate_pages_hetero_list:4029 migrated 69961 nr_failed 0 retry 0  pages_iterated 864 pagecnt 864
-[78334.190468] migrate: migrate_pages_hetero_list:4029 migrated 70915 nr_failed 0 retry 0  pages_iterated 954 pagecnt 954
-[78334.895911] migrate: migrate_pages_hetero_list:4029 migrated 71722 nr_failed 0 retry 0  pages_iterated 807 pagecnt 807
-[78335.519910] migrate: migrate_pages_hetero_list:4029 migrated 72233 nr_failed 0 retry 0  pages_iterated 511 pagecnt 511
-[78337.514317] migrate: migrate_pages_hetero_list:4029 migrated 73248 nr_failed 0 retry 0  pages_iterated 1017 pagecnt 1015
-[78338.545419] migrate: migrate_pages_hetero_list:4029 migrated 73923 nr_failed 0 retry 0  pages_iterated 675 pagecnt 675
-[78338.664913] migrate: migrate_pages_hetero_list:4029 migrated 74529 nr_failed 0 retry 0  pages_iterated 606 pagecnt 606
-[78339.464427] migrate: migrate_pages_hetero_list:4029 migrated 75244 nr_failed 0 retry 0  pages_iterated 715 pagecnt 715
-[78340.077473] migrate: migrate_pages_hetero_list:4029 migrated 75770 nr_failed 0 retry 0  pages_iterated 526 pagecnt 526
-[78341.996030] migrate: migrate_pages_hetero_list:4029 migrated 76985 nr_failed 0 retry 0  pages_iterated 1215 pagecnt 1215
-[78344.636490] flag is set to enable HETERO_PGCACHE 11 
-[78344.636493] flag is set to enable HETERO_BUFFER 12 
-[78344.636493] flag is set to enable HETERO_JOURNAL 13 
-[78344.636494] flag is set to enable HETERO_RADIX 14 
-[78344.636495] flag is set to enable HETERO_FULLKERN 15 
-[78344.636496] flag to set FASTMEM node to 0 
-[78344.636498] hetero_pid set to 5146 5146 procname rm
-[78344.636499] flag to set FASTMEM node to 0 
-[78344.636500] flag to set MIGRATION FREQ to 1000 
-[78344.636501] flag enables HETERO_OBJAFF 1 
-[78344.636502] flag to MIGRATE_LISTCNT 500 
-[78344.636503] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78345.091071] flag is set to enable HETERO_PGCACHE 11 
-[78345.091074] flag is set to enable HETERO_BUFFER 12 
-[78345.091074] flag is set to enable HETERO_JOURNAL 13 
-[78345.091075] flag is set to enable HETERO_RADIX 14 
-[78345.091076] flag is set to enable HETERO_FULLKERN 15 
-[78345.091077] flag to set FASTMEM node to 0 
-[78345.091079] hetero_pid set to 5164 5164 procname rm
-[78345.091080] flag to set FASTMEM node to 0 
-[78345.091081] flag to set MIGRATION FREQ to 1000 
-[78345.091082] flag enables HETERO_OBJAFF 1 
-[78345.091083] flag to MIGRATE_LISTCNT 500 
-[78345.091084] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78345.094783] flag is set to enable HETERO_PGCACHE 11 
-[78345.094785] flag is set to enable HETERO_BUFFER 12 
-[78345.094785] flag is set to enable HETERO_JOURNAL 13 
-[78345.094786] flag is set to enable HETERO_RADIX 14 
-[78345.094787] flag is set to enable HETERO_FULLKERN 15 
-[78345.094788] flag to set FASTMEM node to 0 
-[78345.094789] hetero_pid set to 5165 5165 procname rm
-[78345.094790] flag to set FASTMEM node to 0 
-[78345.094791] flag to set MIGRATION FREQ to 1000 
-[78345.094792] flag enables HETERO_OBJAFF 1 
-[78345.094793] flag to MIGRATE_LISTCNT 500 
-[78345.094794] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78345.096731] flag is set to enable HETERO_PGCACHE 11 
-[78345.096733] flag is set to enable HETERO_BUFFER 12 
-[78345.096734] flag is set to enable HETERO_JOURNAL 13 
-[78345.096735] flag is set to enable HETERO_RADIX 14 
-[78345.096735] flag is set to enable HETERO_FULLKERN 15 
-[78345.096736] flag to set FASTMEM node to 0 
-[78345.096738] hetero_pid set to 5166 5166 procname rm
-[78345.096739] flag to set FASTMEM node to 0 
-[78345.096740] flag to set MIGRATION FREQ to 1000 
-[78345.096741] flag enables HETERO_OBJAFF 1 
-[78345.096742] flag to MIGRATE_LISTCNT 500 
-[78345.096743] flag to set HETERO_PGCACHE_READAHEAD with 23 
-[78348.093348] flag is set to print stats 2
-[78348.093352] cache-hits 2966998 cache-miss 569069 buff-hits 0 buff-miss 0 migrated 1159319 cache-del 26972 buff-del 0 
-[78348.093353] flag set to clear count 0
-[78348.093355] flag is set to collect hetero allocate  9 
+[167261.437551] flag is set to print stats 2
+[167261.437555] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[167261.437556] flag set to clear count 0
+[167261.437557] flag is set to collect hetero allocate  9 
+[167296.435462] flag is set to enable HETERO_PGCACHE 11 
+[167296.435464] flag is set to enable HETERO_BUFFER 12 
+[167296.435465] flag is set to enable HETERO_JOURNAL 13 
+[167296.435466] flag is set to enable HETERO_RADIX 14 
+[167296.435467] flag is set to enable HETERO_FULLKERN 15 
+[167296.435468] flag to set FASTMEM node to 1 
+[167296.435470] hetero_pid set to 14415 14415 procname numactl
+[167296.435470] flag to set FASTMEM node to 1 
+[167296.435472] flag to set MIGRATION FREQ to 410065408 
+[167296.435473] flag to disable migration 19 
+[167296.435475] flag to MIGRATE_LISTCNT 410065408 
+[167296.436136] flag is set to enable HETERO_PGCACHE 11 
+[167296.436138] flag is set to enable HETERO_BUFFER 12 
+[167296.436138] flag is set to enable HETERO_JOURNAL 13 
+[167296.436139] flag is set to enable HETERO_RADIX 14 
+[167296.436140] flag is set to enable HETERO_FULLKERN 15 
+[167296.436141] flag to set FASTMEM node to 1 
+[167296.436143] hetero_pid set to 14415 14415 procname java
+[167296.436143] flag to set FASTMEM node to 1 
+[167296.436145] flag to set MIGRATION FREQ to 410065408 
+[167296.436146] flag to disable migration 19 
+[167296.436147] flag to MIGRATE_LISTCNT 410065408 
+[167297.665376] flag is set to enable HETERO_PGCACHE 11 
+[167297.665378] flag is set to enable HETERO_BUFFER 12 
+[167297.665379] flag is set to enable HETERO_JOURNAL 13 
+[167297.665380] flag is set to enable HETERO_RADIX 14 
+[167297.665380] flag is set to enable HETERO_FULLKERN 15 
+[167297.665381] flag to set FASTMEM node to 1 
+[167297.665383] hetero_pid set to 14466 14466 procname setsid
+[167297.665384] flag to set FASTMEM node to 1 
+[167297.665385] flag to set MIGRATION FREQ to 410065408 
+[167297.665386] flag to disable migration 19 
+[167297.665387] flag to MIGRATE_LISTCNT 410065408 
+[167297.666101] flag is set to enable HETERO_PGCACHE 11 
+[167297.666103] flag is set to enable HETERO_BUFFER 12 
+[167297.666103] flag is set to enable HETERO_JOURNAL 13 
+[167297.666104] flag is set to enable HETERO_RADIX 14 
+[167297.666105] flag is set to enable HETERO_FULLKERN 15 
+[167297.666106] flag to set FASTMEM node to 1 
+[167297.666107] hetero_pid set to 14466 14466 procname bash
+[167297.666108] flag to set FASTMEM node to 1 
+[167297.666109] flag to set MIGRATION FREQ to 410065408 
+[167297.666110] flag to disable migration 19 
+[167297.666112] flag to MIGRATE_LISTCNT 410065408 
+[167300.850182] flag is set to enable HETERO_PGCACHE 11 
+[167300.850185] flag is set to enable HETERO_BUFFER 12 
+[167300.850186] flag is set to enable HETERO_JOURNAL 13 
+[167300.850186] flag is set to enable HETERO_RADIX 14 
+[167300.850187] flag is set to enable HETERO_FULLKERN 15 
+[167300.850188] flag to set FASTMEM node to 1 
+[167300.850190] hetero_pid set to 14557 14557 procname chmod
+[167300.850191] flag to set FASTMEM node to 1 
+[167300.850192] flag to set MIGRATION FREQ to 410065408 
+[167300.850193] flag to disable migration 19 
+[167300.850195] flag to MIGRATE_LISTCNT 410065408 
+[167301.210539] flag is set to enable HETERO_PGCACHE 11 
+[167301.210541] flag is set to enable HETERO_BUFFER 12 
+[167301.210542] flag is set to enable HETERO_JOURNAL 13 
+[167301.210543] flag is set to enable HETERO_RADIX 14 
+[167301.210544] flag is set to enable HETERO_FULLKERN 15 
+[167301.210545] flag to set FASTMEM node to 1 
+[167301.210548] hetero_pid set to 14559 14559 procname chmod
+[167301.210548] flag to set FASTMEM node to 1 
+[167301.210550] flag to set MIGRATION FREQ to 410065408 
+[167301.210555] flag to disable migration 19 
+[167301.210557] flag to MIGRATE_LISTCNT 410065408 
+[167308.248458] flag is set to enable HETERO_PGCACHE 11 
+[167308.248460] flag is set to enable HETERO_BUFFER 12 
+[167308.248461] flag is set to enable HETERO_JOURNAL 13 
+[167308.248462] flag is set to enable HETERO_RADIX 14 
+[167308.248463] flag is set to enable HETERO_FULLKERN 15 
+[167308.248463] flag to set FASTMEM node to 1 
+[167308.248465] hetero_pid set to 14687 14687 procname rm
+[167308.248466] flag to set FASTMEM node to 1 
+[167308.248467] flag to set MIGRATION FREQ to 410065408 
+[167308.248468] flag to disable migration 19 
+[167308.248469] flag to MIGRATE_LISTCNT 410065408 
+[167308.262593] flag is set to enable HETERO_PGCACHE 11 
+[167308.262595] flag is set to enable HETERO_BUFFER 12 
+[167308.262595] flag is set to enable HETERO_JOURNAL 13 
+[167308.262596] flag is set to enable HETERO_RADIX 14 
+[167308.262597] flag is set to enable HETERO_FULLKERN 15 
+[167308.262598] flag to set FASTMEM node to 1 
+[167308.262599] hetero_pid set to 14702 14702 procname rm
+[167308.262600] flag to set FASTMEM node to 1 
+[167308.262601] flag to set MIGRATION FREQ to 410065408 
+[167308.262603] flag to disable migration 19 
+[167308.262604] flag to MIGRATE_LISTCNT 410065408 
+[167308.266199] flag is set to enable HETERO_PGCACHE 11 
+[167308.266201] flag is set to enable HETERO_BUFFER 12 
+[167308.266201] flag is set to enable HETERO_JOURNAL 13 
+[167308.266202] flag is set to enable HETERO_RADIX 14 
+[167308.266203] flag is set to enable HETERO_FULLKERN 15 
+[167308.266204] flag to set FASTMEM node to 1 
+[167308.266205] hetero_pid set to 14703 14703 procname rm
+[167308.266206] flag to set FASTMEM node to 1 
+[167308.266207] flag to set MIGRATION FREQ to 410065408 
+[167308.266208] flag to disable migration 19 
+[167308.266209] flag to MIGRATE_LISTCNT 410065408 
+[167308.268060] flag is set to enable HETERO_PGCACHE 11 
+[167308.268061] flag is set to enable HETERO_BUFFER 12 
+[167308.268062] flag is set to enable HETERO_JOURNAL 13 
+[167308.268063] flag is set to enable HETERO_RADIX 14 
+[167308.268064] flag is set to enable HETERO_FULLKERN 15 
+[167308.268064] flag to set FASTMEM node to 1 
+[167308.268066] hetero_pid set to 14704 14704 procname rm
+[167308.268067] flag to set FASTMEM node to 1 
+[167308.268068] flag to set MIGRATION FREQ to 410065408 
+[167308.268069] flag to disable migration 19 
+[167308.268070] flag to MIGRATE_LISTCNT 410065408 
+[167322.820875] drop_caches: sh (15222): drop_caches: 3
+[167325.969272] flag is set to enable HETERO_PGCACHE 11 
+[167325.969274] flag is set to enable HETERO_BUFFER 12 
+[167325.969275] flag is set to enable HETERO_JOURNAL 13 
+[167325.969276] flag is set to enable HETERO_RADIX 14 
+[167325.969277] flag is set to enable HETERO_FULLKERN 15 
+[167325.969278] flag to set FASTMEM node to 1 
+[167325.969279] hetero_pid set to 15396 15396 procname numactl
+[167325.969280] flag to set FASTMEM node to 1 
+[167325.969281] flag to set MIGRATION FREQ to 410065408 
+[167325.969283] flag to disable migration 19 
+[167325.969284] flag to MIGRATE_LISTCNT 410065408 
+[167325.969914] flag is set to enable HETERO_PGCACHE 11 
+[167325.969915] flag is set to enable HETERO_BUFFER 12 
+[167325.969916] flag is set to enable HETERO_JOURNAL 13 
+[167325.969917] flag is set to enable HETERO_RADIX 14 
+[167325.969918] flag is set to enable HETERO_FULLKERN 15 
+[167325.969919] flag to set FASTMEM node to 1 
+[167325.969920] hetero_pid set to 15396 15396 procname java
+[167325.969921] flag to set FASTMEM node to 1 
+[167325.969922] flag to set MIGRATION FREQ to 410065408 
+[167325.969923] flag to disable migration 19 
+[167325.969924] flag to MIGRATE_LISTCNT 410065408 
+[167327.499088] flag is set to enable HETERO_PGCACHE 11 
+[167327.499090] flag is set to enable HETERO_BUFFER 12 
+[167327.499091] flag is set to enable HETERO_JOURNAL 13 
+[167327.499092] flag is set to enable HETERO_RADIX 14 
+[167327.499093] flag is set to enable HETERO_FULLKERN 15 
+[167327.499094] flag to set FASTMEM node to 1 
+[167327.499095] hetero_pid set to 15447 15447 procname setsid
+[167327.499096] flag to set FASTMEM node to 1 
+[167327.499097] flag to set MIGRATION FREQ to 410065408 
+[167327.499099] flag to disable migration 19 
+[167327.499100] flag to MIGRATE_LISTCNT 410065408 
+[167327.499901] flag is set to enable HETERO_PGCACHE 11 
+[167327.499903] flag is set to enable HETERO_BUFFER 12 
+[167327.499904] flag is set to enable HETERO_JOURNAL 13 
+[167327.499904] flag is set to enable HETERO_RADIX 14 
+[167327.499905] flag is set to enable HETERO_FULLKERN 15 
+[167327.499906] flag to set FASTMEM node to 1 
+[167327.499907] hetero_pid set to 15447 15447 procname bash
+[167327.499908] flag to set FASTMEM node to 1 
+[167327.499909] flag to set MIGRATION FREQ to 410065408 
+[167327.499910] flag to disable migration 19 
+[167327.499911] flag to MIGRATE_LISTCNT 410065408 
+[167331.702851] flag is set to enable HETERO_PGCACHE 11 
+[167331.702856] flag is set to enable HETERO_BUFFER 12 
+[167331.702857] flag is set to enable HETERO_JOURNAL 13 
+[167331.702858] flag is set to enable HETERO_RADIX 14 
+[167331.702858] flag is set to enable HETERO_FULLKERN 15 
+[167331.702859] flag to set FASTMEM node to 1 
+[167331.702863] hetero_pid set to 15558 15558 procname chmod
+[167331.702864] flag to set FASTMEM node to 1 
+[167331.702865] flag to set MIGRATION FREQ to 410065408 
+[167331.702867] flag to disable migration 19 
+[167331.702870] flag to MIGRATE_LISTCNT 410065408 
+[167331.718007] flag is set to enable HETERO_PGCACHE 11 
+[167331.718008] flag is set to enable HETERO_BUFFER 12 
+[167331.718009] flag is set to enable HETERO_JOURNAL 13 
+[167331.718010] flag is set to enable HETERO_RADIX 14 
+[167331.718011] flag is set to enable HETERO_FULLKERN 15 
+[167331.718012] flag to set FASTMEM node to 1 
+[167331.718013] hetero_pid set to 15560 15560 procname chmod
+[167331.718014] flag to set FASTMEM node to 1 
+[167331.718015] flag to set MIGRATION FREQ to 410065408 
+[167331.718016] flag to disable migration 19 
+[167331.718017] flag to MIGRATE_LISTCNT 410065408 
+[167380.895233] flag is set to enable HETERO_PGCACHE 11 
+[167380.895236] flag is set to enable HETERO_BUFFER 12 
+[167380.895237] flag is set to enable HETERO_JOURNAL 13 
+[167380.895238] flag is set to enable HETERO_RADIX 14 
+[167380.895239] flag is set to enable HETERO_FULLKERN 15 
+[167380.895239] flag to set FASTMEM node to 1 
+[167380.895241] hetero_pid set to 15765 15765 procname rm
+[167380.895242] flag to set FASTMEM node to 1 
+[167380.895243] flag to set MIGRATION FREQ to 410065408 
+[167380.895245] flag to disable migration 19 
+[167380.895246] flag to MIGRATE_LISTCNT 410065408 
+[167381.524078] flag is set to enable HETERO_PGCACHE 11 
+[167381.524082] flag is set to enable HETERO_BUFFER 12 
+[167381.524083] flag is set to enable HETERO_JOURNAL 13 
+[167381.524084] flag is set to enable HETERO_RADIX 14 
+[167381.524085] flag is set to enable HETERO_FULLKERN 15 
+[167381.524086] flag to set FASTMEM node to 1 
+[167381.524087] hetero_pid set to 15780 15780 procname rm
+[167381.524088] flag to set FASTMEM node to 1 
+[167381.524089] flag to set MIGRATION FREQ to 410065408 
+[167381.524091] flag to disable migration 19 
+[167381.524092] flag to MIGRATE_LISTCNT 410065408 
+[167381.528459] flag is set to enable HETERO_PGCACHE 11 
+[167381.528460] flag is set to enable HETERO_BUFFER 12 
+[167381.528461] flag is set to enable HETERO_JOURNAL 13 
+[167381.528462] flag is set to enable HETERO_RADIX 14 
+[167381.528463] flag is set to enable HETERO_FULLKERN 15 
+[167381.528464] flag to set FASTMEM node to 1 
+[167381.528465] hetero_pid set to 15781 15781 procname rm
+[167381.528466] flag to set FASTMEM node to 1 
+[167381.528467] flag to set MIGRATION FREQ to 410065408 
+[167381.528468] flag to disable migration 19 
+[167381.528469] flag to MIGRATE_LISTCNT 410065408 
+[167381.530826] flag is set to enable HETERO_PGCACHE 11 
+[167381.530828] flag is set to enable HETERO_BUFFER 12 
+[167381.530829] flag is set to enable HETERO_JOURNAL 13 
+[167381.530829] flag is set to enable HETERO_RADIX 14 
+[167381.530830] flag is set to enable HETERO_FULLKERN 15 
+[167381.530831] flag to set FASTMEM node to 1 
+[167381.530832] hetero_pid set to 15782 15782 procname rm
+[167381.530833] flag to set FASTMEM node to 1 
+[167381.530834] flag to set MIGRATION FREQ to 410065408 
+[167381.530836] flag to disable migration 19 
+[167381.530837] flag to MIGRATE_LISTCNT 410065408 
+[167384.322001] flag is set to print stats 2
+[167384.322005] cache-hits 3339416 cache-miss 127783 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[167384.322006] flag set to clear count 0
+[167384.322008] flag is set to collect hetero allocate  9 

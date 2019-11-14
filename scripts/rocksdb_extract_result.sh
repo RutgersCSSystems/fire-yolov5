@@ -619,7 +619,7 @@ TARGET=$OUTPUTDIR
 EXTRACT_RESULT_SENSITIVE "spark-bench"
 
 cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py
+python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py "CAP"
 exit
 
 

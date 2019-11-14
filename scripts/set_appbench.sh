@@ -146,7 +146,7 @@ GETAPPS(){
 
 INSTALL_SYSTEM_LIBS
 INSTALL_ROCKSDB
-$SCRIPTS/set_spark.sh
+#$SCRIPTS/set_spark.sh
 exit
 
 GETAPPS
