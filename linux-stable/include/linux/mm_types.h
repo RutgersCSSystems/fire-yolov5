@@ -202,6 +202,8 @@ struct page {
 	struct mem_cgroup *mem_cgroup;
 #endif
 
+        struct rb_node rb_node;
+
 	/* HeteroOS code */
 #ifdef CONFIG_HETERO_ENABLE
 	int hetero;
@@ -211,14 +213,17 @@ struct page {
 #endif
         /* group service_tree member */
 	//struct list_head hetero_list;
-#endif
-        struct rb_node rb_node;
-
-
 #ifdef CONFIG_HETERO_STATS
         struct timeval hetero_create_time;
         struct timeval hetero_del_time;
+	/* Added to count hetero page type stats 
+	* FIXME: Remove after eval or find better way
+	*/
+	int page_type;
 #endif
+
+#endif
+
 	/*
 	 * On machines where all RAM is mapped into kernel address space,
 	 * we can simply calculate the virtual address. On machines with

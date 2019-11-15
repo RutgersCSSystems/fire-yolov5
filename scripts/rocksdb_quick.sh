@@ -4,7 +4,7 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="SSD"
-CAPACITY=3192
+CAPACITY=4096
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh

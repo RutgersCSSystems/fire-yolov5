@@ -330,7 +330,8 @@ EXPORT_SYMBOL(check_hetero_proc);
 
 
 int 
-check_hetero_page(struct mm_struct *mm, struct page *page) {
+check_hetero_page(struct mm_struct *mm, struct page *page) 
+{
 
 	int rc = -1;
 
@@ -397,7 +398,6 @@ EXPORT_SYMBOL(is_hetero_exit);
 void 
 debug_hetero_obj(void *obj) 
 {
-
 #ifdef CONFIG_HETERO_DEBUG
         struct dentry *dentry, *curr_dentry = NULL;
 	struct inode *inode = (struct inode *)obj;
@@ -475,11 +475,11 @@ is_hetero_obj(void *obj)
 }
 EXPORT_SYMBOL(is_hetero_obj);
 
-
 /* 
 * Functions to test different allocation strategies 
 */
-int is_hetero_pgcache_set(void)
+int 
+is_hetero_pgcache_set(void)
 {
         if(check_hetero_proc(current)) 
 	        return enbl_hetero_pgcache;
@@ -488,7 +488,8 @@ int is_hetero_pgcache_set(void)
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 
-int is_hetero_pgcache_readahead_set(void)
+int 
+is_hetero_pgcache_readahead_set(void)
 {
 	if(check_hetero_proc(current))
 		return enbl_hetero_pgcache_readahead;
@@ -497,7 +498,8 @@ int is_hetero_pgcache_readahead_set(void)
 EXPORT_SYMBOL(is_hetero_pgcache_readahead_set);
 
 
-int is_hetero_buffer_set(void)
+int 
+is_hetero_buffer_set(void)
 {
         if(check_hetero_proc(current)) 
                 return enbl_hetero_buffer;
@@ -650,7 +652,8 @@ EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 /* Update STAT
 * TODO: Currently not setting HETERO_PG_FLAG for testing
 */
-void update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
+void 
+update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
 	int correct_node = 0; 
 	struct mm_struct *mm = NULL;
