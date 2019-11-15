@@ -198,35 +198,35 @@ do
 		echo $OUTPUTDIR
 
 		export APPPREFIX="numactl --preferred=0"
-		#SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
-		#sleep 2
+		$NVMBASE/scripts/clear_cache.sh
+		SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
+		sleep 2
+
+		export APPPREFIX="numactl  --preferred=0"
+		$NVMBASE/scripts/clear_cache.sh
+		SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
+		sleep 2
+
+		#### OBJAFF NO PREFETCH #############
+		export APPPREFIX="numactl  --preferred=0"
+		$NVMBASE/scripts/clear_cache.sh
+		SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
+
+		#$NVMBASE/scripts/clear_cache.sh
 		#SET_RUN_APP $OUTPUTDIR "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-		#sleep 2
-		#SET_RUN_APP $OUTPUTDIR "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
 		#sleep 2
 		#export APPPREFIX="numactl --preferred=1"
 		#SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-		export APPPREFIX="numactl --preferred=0"
-		SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-<<<<<<< HEAD
-		export APPPREFIX="numactl --membind=1"
-		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
-		
-=======
+		#export APPPREFIX="numactl --preferred=0"
+
+		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
+		#export APPPREFIX="numactl --membind=1"
+		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
 		#export APPPREFIX="numactl --membind=1"
 		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
->>>>>>> 70f10d5978aa043d314581fd3d7246b53724e8ea
 		done
 	done
 done
-	sed -i "/read =/c\read = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
-	sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
-	export APPPREFIX="numactl --membind=0"
-	DISABLE_THROTTLE
-	SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-	exit
 
 	$SCRIPTS/umount_ext4ramdisk.sh
 	sleep 5
@@ -235,3 +235,12 @@ done
 	export APPPREFIX="numactl --membind=0"
 	SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 	exit
+
+	sed -i "/read =/c\read = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
+	sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
+	export APPPREFIX="numactl --membind=0"
+	DISABLE_THROTTLE
+	SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+	exit
+
+

@@ -10,15 +10,25 @@
 //#define _HETERO_ZSMALLOC
 
 #ifdef CONFIG_HETERO_ENABLE
+
 #define HETERO_PG_FLAG 1
 #define HETERO_PG_DEL_FLAG 2
 #define HETERO_PG_MIG_FLAG 3
 
 #define _USE_HETERO_PG_FLAG
-
 #define NUMA_FAST_NODE 0
 #define NUMA_HETERO_NODE 1
 #define HETERO_PROC 4
+
+#ifdef CONFIG_HETERO_STATS
+
+enum {
+        HETERO_APP_PAGE    = 1000,
+        HETERO_KBUFF_PAGE  = 1001,
+        HETERO_CACHE_PAGE  = 1002
+};
+#endif
+
 /* Page cache allocation */
 #define _ENABLE_PAGECACHE
 /* Buffer allocation */

@@ -4644,6 +4644,11 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         struct sysinfo i;
 	int nid = get_fastmem_node();
 
+	if (alloc_mask & GFP_KERNEL) {
+		if (alloc_mask & GFP_HIGHUSER){
+			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+		}
+	}
 #if 0	
 	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
