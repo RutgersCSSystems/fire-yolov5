@@ -1,0 +1,675 @@
++ sudo dmesg -c
+[157786.441724] drop_caches: sh (14330): drop_caches: 3
+[157790.143740] drop_caches: sh (14338): drop_caches: 3
+[157796.133694] nvmemul: ioctl command: 0xc008aa02
+[157796.133700] nvmemul: getpci bus_id 0xff device_id 0x14, function_id 0x0, offset 0x190, val 0x802d
+[157796.133706] nvmemul: ioctl command: 0x8008aa01
+[157796.133708] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[157796.133712] nvmemul: ioctl command: 0x8008aa01
+[157796.133713] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[157796.133716] nvmemul: ioctl command: 0x8008aa01
+[157796.133718] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[157796.133721] nvmemul: ioctl command: 0x8008aa01
+[157796.133722] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[157796.133725] nvmemul: ioctl command: 0x8008aa01
+[157796.133727] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x0, val=0x8fff
+[157796.133730] nvmemul: ioctl command: 0x8008aa01
+[157796.133731] nvmemul: setpci bus_id=0xff device_id=0x14, function_id=0x1, val=0x8fff
+[157796.133734] nvmemul: ioctl command: 0x8008aa01
+[157796.133736] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x0, val=0x8fff
+[157796.133739] nvmemul: ioctl command: 0x8008aa01
+[157796.133740] nvmemul: setpci bus_id=0xff device_id=0x17, function_id=0x1, val=0x8fff
+[157802.195899] drop_caches: sh (14474): drop_caches: 3
+[157803.504799] drop_caches: sh (14482): drop_caches: 3
++ /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
++ cd /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench
++ stop-dfs.sh
+Stopping namenodes on [localhost]
+Stopping datanodes
+Stopping secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/hdfs/datanode /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode
++ hadoop namenode -format
+WARNING: Use of this script to execute namenode is deprecated.
+WARNING: Attempting to execute replacement "hdfs namenode" instead.
+
+2019-11-11 15:13:05,165 INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************
+STARTUP_MSG: Starting NameNode
+STARTUP_MSG:   host = node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
+STARTUP_MSG:   args = [-format]
+STARTUP_MSG:   version = 3.2.1
+STARTUP_MSG:   classpath = /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/etc/hadoop:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsp-api-2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-api-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jul-to-slf4j-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-kms-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-simple-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-all-4.0.52.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/leveldbjni-all-1.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okhttp-2.7.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-daemon-1.0.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okio-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-ajax-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/hamcrest-core-1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/junit-4.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-app-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-uploader-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-nativetask-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-shuffle-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-plugins-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/javax.inject-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-module-jaxb-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-servlet-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcprov-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-base-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/json-io-2.5.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/geronimo-jcache_1.0_spec-1.0-alpha-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-guice-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/objenesis-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/fst-2.50.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcpkix-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/ehcache-3.3.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/snakeyaml-1.16.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/java-util-1.9.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-client-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/aopalliance-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/HikariCP-java7-2.4.12.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-json-provider-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/swagger-annotations-1.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-submarine-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-applicationhistoryservice-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-distributedshell-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-sharedcachemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-unmanaged-am-launcher-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-resourcemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-registry-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-tests-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-router-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-nodemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-timeline-pluginstorage-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-web-proxy-3.2.1.jar
+STARTUP_MSG:   build = https://gitbox.apache.org/repos/asf/hadoop.git -r b3cbbb467e22ea829b3808f4b7b01d07e0bf3842; compiled by 'rohithsharmaks' on 2019-09-10T15:56Z
+STARTUP_MSG:   java = 1.8.0_222
+************************************************************/
+2019-11-11 15:13:05,191 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
+2019-11-11 15:13:05,270 INFO namenode.NameNode: createNameNode [-format]
+Formatting using clusterid: CID-d276f2c2-21f6-474c-9b9c-297cf313a71a
+2019-11-11 15:13:06,088 INFO namenode.FSEditLog: Edit logging is async:true
+2019-11-11 15:13:06,114 INFO namenode.FSNamesystem: KeyProvider: null
+2019-11-11 15:13:06,116 INFO namenode.FSNamesystem: fsLock is fair: true
+2019-11-11 15:13:06,117 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
+2019-11-11 15:13:06,123 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
+2019-11-11 15:13:06,123 INFO namenode.FSNamesystem: supergroup          = supergroup
+2019-11-11 15:13:06,123 INFO namenode.FSNamesystem: isPermissionEnabled = true
+2019-11-11 15:13:06,123 INFO namenode.FSNamesystem: HA Enabled: false
+2019-11-11 15:13:06,190 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
+2019-11-11 15:13:06,206 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
+2019-11-11 15:13:06,206 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
+2019-11-11 15:13:06,211 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
+2019-11-11 15:13:06,212 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 11 15:13:06
+2019-11-11 15:13:06,213 INFO util.GSet: Computing capacity for map BlocksMap
+2019-11-11 15:13:06,213 INFO util.GSet: VM type       = 64-bit
+2019-11-11 15:13:06,215 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
+2019-11-11 15:13:06,215 INFO util.GSet: capacity      = 2^26 = 67108864 entries
+2019-11-11 15:13:06,376 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
+2019-11-11 15:13:06,376 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
+2019-11-11 15:13:06,384 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
+2019-11-11 15:13:06,384 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
+2019-11-11 15:13:06,384 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
+2019-11-11 15:13:06,384 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: defaultReplication         = 3
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: maxReplication             = 512
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: minReplication             = 1
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
+2019-11-11 15:13:06,385 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
+2019-11-11 15:13:06,422 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
+2019-11-11 15:13:06,422 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
+2019-11-11 15:13:06,422 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
+2019-11-11 15:13:06,422 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
+2019-11-11 15:13:06,437 INFO util.GSet: Computing capacity for map INodeMap
+2019-11-11 15:13:06,437 INFO util.GSet: VM type       = 64-bit
+2019-11-11 15:13:06,437 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
+2019-11-11 15:13:06,437 INFO util.GSet: capacity      = 2^25 = 33554432 entries
+2019-11-11 15:13:07,544 INFO namenode.FSDirectory: ACLs enabled? false
+2019-11-11 15:13:07,544 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
+2019-11-11 15:13:07,544 INFO namenode.FSDirectory: XAttrs enabled? true
+2019-11-11 15:13:07,544 INFO namenode.NameNode: Caching file names occurring more than 10 times
+2019-11-11 15:13:07,550 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
+2019-11-11 15:13:07,552 INFO snapshot.SnapshotManager: SkipList is disabled
+2019-11-11 15:13:07,556 INFO util.GSet: Computing capacity for map cachedBlocks
+2019-11-11 15:13:07,557 INFO util.GSet: VM type       = 64-bit
+2019-11-11 15:13:07,557 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
+2019-11-11 15:13:07,557 INFO util.GSet: capacity      = 2^23 = 8388608 entries
+2019-11-11 15:13:07,575 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
+2019-11-11 15:13:07,575 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
+2019-11-11 15:13:07,575 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
+2019-11-11 15:13:07,579 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+2019-11-11 15:13:07,580 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
+2019-11-11 15:13:07,582 INFO util.GSet: Computing capacity for map NameNodeRetryCache
+2019-11-11 15:13:07,582 INFO util.GSet: VM type       = 64-bit
+2019-11-11 15:13:07,582 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
+2019-11-11 15:13:07,582 INFO util.GSet: capacity      = 2^20 = 1048576 entries
+2019-11-11 15:13:07,613 INFO namenode.FSImage: Allocated new BlockPoolId: BP-1247287511-128.105.145.169-1573510387605
+2019-11-11 15:13:07,652 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
+2019-11-11 15:13:07,712 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
+2019-11-11 15:13:07,852 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 402 bytes saved in 0 seconds .
+2019-11-11 15:13:07,865 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
+2019-11-11 15:13:07,871 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
+2019-11-11 15:13:07,872 INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************
+SHUTDOWN_MSG: Shutting down NameNode at node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
+************************************************************/
++ sleep 2
++ start-dfs.sh
+Starting namenodes on [localhost]
+Starting datanodes
+Starting secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
++ sleep 4
++ /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/gen_data.sh
+========== preparing Terasort data ==========
+Master:
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-11-15:13:26.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortDataGen --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar 30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+2019-11-11 15:13:28,749 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 15:13:29,247 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 15:13:29,857 INFO util.log: Logging initialized @2450ms
+2019-11-11 15:13:29,925 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 15:13:29,941 INFO server.Server: Started @2535ms
+2019-11-11 15:13:29,959 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 15:13:29,983 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,984 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,984 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,985 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,986 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,986 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,987 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,988 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,988 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,989 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,989 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,990 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,990 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,991 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,991 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,992 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,993 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,993 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,994 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 15:13:29,994 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,000 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,001 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,002 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,002 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,003 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 15:13:30,321 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9fec931{/metrics/json,null,AVAILABLE,@Spark}
+===========================================================================
+===========================================================================
+Input size: 3GB
+Total number of records: 30000000
+Number of output partitions: 10
+Number of records/ partition:   3000000
+===========================================================================
+===========================================================================
+2019-11-11 15:13:30,664 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,227 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,227 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,230 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,229 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,230 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,230 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,231 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:32,232 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 15:13:50,133 INFO hdfs.DFSClient: Exception while adding a block
+org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.server.namenode.NotReplicatedYetException): Not replicated yet: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000007_0/part-r-00007
+	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:181)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
+	at sun.reflect.GeneratedMethodAccessor14.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
+2019-11-11 15:13:50,136 INFO hdfs.DFSClient: Waiting for replication for 5 seconds
+2019-11-11 15:13:50,136 WARN hdfs.DFSClient: NotReplicatedYetException sleeping /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000007_0/part-r-00007 retries left 4
+2019-11-11 15:13:50,147 INFO hdfs.DFSClient: Exception while adding a block
+org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.server.namenode.NotReplicatedYetException): Not replicated yet: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000009_0/part-r-00009
+	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:181)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
+	at sun.reflect.GeneratedMethodAccessor14.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
+2019-11-11 15:13:50,148 INFO hdfs.DFSClient: Waiting for replication for 5 seconds
+2019-11-11 15:13:50,148 WARN hdfs.DFSClient: NotReplicatedYetException sleeping /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000009_0/part-r-00009 retries left 4
+2019-11-11 15:13:50,151 INFO hdfs.DFSClient: Exception while adding a block
+org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.server.namenode.NotReplicatedYetException): Not replicated yet: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000001_0/part-r-00001
+	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:181)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
+	at sun.reflect.GeneratedMethodAccessor14.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
+2019-11-11 15:13:50,151 INFO hdfs.DFSClient: Waiting for replication for 5 seconds
+2019-11-11 15:13:50,151 WARN hdfs.DFSClient: NotReplicatedYetException sleeping /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000001_0/part-r-00001 retries left 4
+2019-11-11 15:13:50,166 INFO hdfs.DFSClient: Exception while adding a block
+org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.server.namenode.NotReplicatedYetException): Not replicated yet: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000002_0/part-r-00002
+	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:181)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
+	at sun.reflect.GeneratedMethodAccessor14.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
+2019-11-11 15:13:50,166 WARN hdfs.DFSClient: NotReplicatedYetException sleeping /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000002_0/part-r-00002 retries left 4
+2019-11-11 15:13:50,206 INFO hdfs.DFSClient: Exception while adding a block
+org.apache.hadoop.ipc.RemoteException(org.apache.hadoop.hdfs.server.namenode.NotReplicatedYetException): Not replicated yet: /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000008_0/part-r-00008
+	at org.apache.hadoop.hdfs.server.namenode.FSDirWriteFileOp.validateAddBlock(FSDirWriteFileOp.java:181)
+	at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2777)
+	at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:892)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:574)
+	at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:528)
+	at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1070)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:999)
+	at org.apache.hadoop.ipc.Server$RpcCall.run(Server.java:927)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1730)
+	at org.apache.hadoop.ipc.Server$Handler.run(Server.java:2915)
+
+	at org.apache.hadoop.ipc.Client.call(Client.java:1475)
+	at org.apache.hadoop.ipc.Client.call(Client.java:1412)
+	at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:229)
+	at com.sun.proxy.$Proxy21.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolTranslatorPB.addBlock(ClientNamenodeProtocolTranslatorPB.java:418)
+	at sun.reflect.GeneratedMethodAccessor14.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:191)
+	at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:102)
+	at com.sun.proxy.$Proxy22.addBlock(Unknown Source)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.locateFollowingBlock(DFSOutputStream.java:1455)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.nextBlockOutputStream(DFSOutputStream.java:1251)
+	at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:448)
+2019-11-11 15:13:50,206 WARN hdfs.DFSClient: NotReplicatedYetException sleeping /SparkBench/Terasort/Input/_temporary/0/_temporary/attempt_20191111151330_0001_r_000008_0/part-r-00008 retries left 4
+2019-11-11 15:13:54,665 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000006
+2019-11-11 15:13:54,665 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000001
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000000
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000007
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000002
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000003
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000009
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000008
+2019-11-11 15:13:54,666 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000004
+2019-11-11 15:13:54,667 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111151330_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111151330_0001_r_000005
+Number of records written: 30000000
+2019-11-11 15:13:57,259 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+application termination...
+
+ Performance counter stats for 'Terasort/bin/gen_data.sh':
+
+        74,430,303      dTLB-load-misses:u                                          
+        61,140,441      LLC-load-misses:u                                           
+   335,198,869,363      instructions:u                                              
+           946,666      minor-faults:u                                              
+
+      38.989748710 seconds time elapsed
+
++ sleep 2
++ /usr/bin/time -v /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh
+========== running Terasort benchmark ==========
+Master:
+Terasort opt hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output 
+Connection to localhost closed.
+data purged on localhost
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-11-15:14:13.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortApp --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+2019-11-11 15:14:17,680 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 15:14:18,205 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 15:14:18,852 INFO util.log: Logging initialized @2885ms
+2019-11-11 15:14:18,919 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 15:14:18,934 INFO server.Server: Started @2969ms
+2019-11-11 15:14:18,953 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 15:14:18,980 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,980 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,981 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,981 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,982 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,982 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,983 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,984 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,984 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,985 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,986 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,986 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,987 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,987 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,988 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,988 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,989 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,989 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,990 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,991 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,996 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,997 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,998 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,998 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 15:14:18,999 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 15:14:19,348 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5246a3b3{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 15:14:20,786 INFO input.FileInputFormat: Total input paths to process : 10
+2019-11-11 15:14:36,600 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+/users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class: line 101: 17466 Killed                  LD_PRELOAD=/usr/lib/libmigration.so $APPPREFIX "${CMD[@]}"
+
+ Performance counter stats for 'Terasort/bin/run.sh':
+
+       171,520,199      dTLB-load-misses:u                                          
+       513,522,706      LLC-load-misses:u                                           
+   849,312,372,311      instructions:u                                              
+         1,559,302      minor-faults:u                                              
+
+     100.541802790 seconds time elapsed
+
+	Command being timed: "/users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh"
+	User time (seconds): 394.46
+	System time (seconds): 35.75
+	Percent of CPU this job got: 427%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:40.73
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3634636
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 20229
+	Minor (reclaiming a frame) page faults: 1621466
+	Voluntary context switches: 173371
+	Involuntary context switches: 6910
+	Swaps: 0
+	File system inputs: 13074704
+	File system outputs: 11910544
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
++ sleep 2
++ /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
++ exit
+[157805.427928] flag is set to print stats 2
+[157805.427932] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[157805.427932] flag set to clear count 0
+[157805.427934] flag is set to collect hetero allocate  9 
+[157882.633019] drop_caches: sh (17293): drop_caches: 3
+[157975.110453] oom_kill: java invoked oom-killer: gfp_mask=0x14280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), nodemask=0, order=0, oom_score_adj=0
+[157975.110456] cpuset: java cpuset=/ mems_allowed=0-1
+[157975.110463] CPU: 2 PID: 17494 Comm: java Tainted: G           OE     4.17.0 #3
+[157975.110465] Hardware name: Cisco Systems Inc UCSC-C220-M4S/UCSC-C220-M4S, BIOS C220M4.3.0.3c.0.0831170216 08/31/2017
+[157975.110466] Call Trace:
+[157975.110485]  dump_stack+0x5c/0x7b
+[157975.110492]  dump_header+0x6b/0x27c
+[157975.110498]  ? mempolicy_nodemask_intersects+0x23/0x70
+[157975.110500]  oom_kill_process+0x239/0x490
+[157975.110501]  ? oom_badness+0x23/0x120
+[157975.110503]  out_of_memory+0x10f/0x480
+[157975.110506]  __alloc_pages_slowpath+0xce2/0xdc0
+[157975.110509]  __alloc_pages_nodemask+0x246/0x280
+[157975.110511]  alloc_pages_vma+0x7c/0x1e0
+[157975.110518]  __handle_mm_fault+0xd10/0x1160
+[157975.110521]  handle_mm_fault+0xfa/0x200
+[157975.110527]  __do_page_fault+0x260/0x500
+[157975.110536]  ? page_fault+0x8/0x30
+[157975.110538]  page_fault+0x1e/0x30
+[157975.110541] RIP: 0033:0x7f9e1d504fc1
+[157975.110542] RSP: 002b:00007f9e03eedc88 EFLAGS: 00010206
+[157975.110544] RAX: 000000066d4fbfa8 RBX: 00000007ae8c46e8 RCX: 00000007ae8c4758
+[157975.110545] RDX: 000000066d4fc018 RSI: 00000007ae8c46e8 RDI: 000000066d4fbfa8
+[157975.110546] RBP: 00007f9e03eedd10 R08: 0000000000000001 R09: 00007f9e140aec98
+[157975.110547] R10: 0000000000000001 R11: 00007f9e159e7000 R12: 0000000000000009
+[157975.110548] R13: 00007f9e140aec00 R14: 000000000000000e R15: 000000066d4fbfa8
+[157975.110550] Mem-Info:
+[157975.110559] active_anon:905204 inactive_anon:172592 isolated_anon:0
+                 active_file:12461 inactive_file:441963 isolated_file:0
+                 unevictable:11902609 dirty:21 writeback:403 unstable:0
+                 slab_reclaimable:41423 slab_unreclaimable:7256953
+                 mapped:18487 shmem:8545 pagetables:5310 bounce:0
+                 free:19535807 free_pcp:1596 free_cma:0
+[157975.110563] Node 0 active_anon:3142980kB inactive_anon:628336kB active_file:312kB inactive_file:316kB unevictable:47608592kB isolated(anon):0kB isolated(file):0kB mapped:644kB dirty:4kB writeback:1612kB shmem:44kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB unstable:0kB all_unreclaimable? yes
+[157975.110564] Node 0 DMA free:15800kB min:8kB low:20kB high:32kB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15968kB managed:15800kB mlocked:0kB kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[157975.110570] lowmem_reserve[]: 0 1686 78674 78674 78674
+[157975.110573] Node 0 DMA32 free:308828kB min:964kB low:2688kB high:4412kB active_anon:1109792kB inactive_anon:290592kB active_file:40kB inactive_file:32kB unevictable:0kB writepending:1608kB present:1967952kB managed:1771312kB mlocked:0kB kernel_stack:80kB pagetables:3336kB bounce:0kB free_pcp:3940kB local_pcp:232kB free_cma:0kB
+[157975.110578] lowmem_reserve[]: 0 0 76988 76988 76988
+[157975.110580] Node 0 Normal free:43348kB min:44028kB low:122864kB high:201700kB active_anon:2033068kB inactive_anon:337844kB active_file:312kB inactive_file:256kB unevictable:47608592kB writepending:8kB present:81788928kB managed:78836140kB mlocked:1808kB kernel_stack:10888kB pagetables:16332kB bounce:0kB free_pcp:2444kB local_pcp:92kB free_cma:0kB
+[157975.110584] lowmem_reserve[]: 0 0 0 0 0
+[157975.110587] Node 0 DMA: 0*4kB 1*8kB (U) 1*16kB (U) 1*32kB (U) 2*64kB (U) 2*128kB (U) 0*256kB 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) = 15800kB
+[157975.110596] Node 0 DMA32: 23*4kB (UME) 239*8kB (UME) 527*16kB (UE) 375*32kB (UE) 213*64kB (UE) 119*128kB (UE) 77*256kB (UE) 46*512kB (ME) 23*1024kB (E) 13*2048kB (ME) 40*4096kB (UME) = 308580kB
+[157975.110606] Node 0 Normal: 487*4kB (UME) 463*8kB (UE) 480*16kB (UE) 626*32kB (UME) 32*64kB (UM) 0*128kB 1*256kB (M) 1*512kB (M) 3*1024kB (M) 2*2048kB (M) 0*4096kB = 43348kB
+[157975.110617] hugetlb: Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
+[157975.110618] hugetlb: Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[157975.110619] hugetlb: Node 1 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
+[157975.110620] hugetlb: Node 1 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[157975.110620] 12391945 total pagecache pages
+[157975.110622] 26607 pages in swap cache
+[157975.110623] Swap cache stats: add 13567911, delete 13539299, find 5698403/8028896
+[157975.110623] Free swap  = 0kB
+[157975.110624] Total swap = 3145724kB
+[157975.110625] 41914732 pages RAM
+[157975.110626] 0 pages HighMem/MovableOnly
+[157975.110626] 1564338 pages reserved
+[157975.110626] 0 pages cma reserved
+[157975.110627] 0 pages hwpoisoned
+[157975.110628] oom_kill: [ pid ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+[157975.110641] oom_kill: [  686]     0   686    27352    14483   253952       21             0 systemd-journal
+[157975.110644] oom_kill: [  708]     0   708    25742      211    94208       57             0 lvmetad
+[157975.110646] oom_kill: [  726]     0   726    11996      694   131072      989         -1000 systemd-udevd
+[157975.110648] oom_kill: [ 1308]     0  1308     7096      877   106496      209             0 smartd
+[157975.110650] oom_kill: [ 1309]     0  1309     7252      619   102400       50             0 cron
+[157975.110652] oom_kill: [ 1310]     0  1310    69096     1364   167936       79             0 accounts-daemon
+[157975.110654] oom_kill: [ 1313]     0  1313     7136      642   102400       46             0 systemd-logind
+[157975.110657] oom_kill: [ 1314]   104  1314    65156      800   139264      202             0 rsyslogd
+[157975.110660] oom_kill: [ 1315]   107  1315    10722      437   126976       76          -900 dbus-daemon
+[157975.110662] oom_kill: [ 1329]     0  1329     6511      389    90112       67             0 atd
+[157975.110664] oom_kill: [ 1561]     0  1561    43558      990   233472     2031             0 unattended-upgr
+[157975.110666] oom_kill: [ 1564]     0  1564    10041      575   122880     3356             0 ntpstart
+[157975.110668] oom_kill: [ 1599]     0  1599     1305        9    57344       19             0 iscsid
+[157975.110670] oom_kill: [ 1600]     0  1600     1430      876    57344        0           -17 iscsid
+[157975.110672] oom_kill: [ 1634]     0  1634    16378      744   167936      160         -1000 sshd
+[157975.110674] oom_kill: [ 1651]     0  1651     3938      498    77824       36             0 agetty
+[157975.110676] oom_kill: [ 1653]     0  1653     4969      552    81920       82             0 irqbalance
+[157975.110678] oom_kill: [ 1654]     0  1654     3984      375    73728       37             0 agetty
+[157975.110680] oom_kill: [ 1705]     0  1705     2705      387    61440       33             0 slothd
+[157975.110682] oom_kill: [ 1709]     0  1709    12338     1079   131072     3145             0 watchdog
+[157975.110684] oom_kill: [ 1718]     0  1718     4932        0    73728      102             0 pubsubd
+[157975.110687] oom_kill: [ 1860]     0  1860     1094        0    49152       25             0 emulab-syncd
+[157975.110689] oom_kill: [ 1866]     0  1866    12349      259   135168     3575             0 rc.progagent
+[157975.110691] oom_kill: [ 1867] 10005  1867     7030      505    98304      106             0 program-agent
+[157975.110693] oom_kill: [ 1915]     0  1915     5444      282    77824       94             0 linktest
+[157975.110695] oom_kill: [ 1931]   109  1931    27509      826   114688      115             0 ntpd
+[157975.110696] oom_kill: [ 1966] 20001  1966    11318      973   131072      122             0 systemd
+[157975.110698] oom_kill: [ 1967] 20001  1967    15302        2   151552      474             0 (sd-pam)
+[157975.110701] oom_kill: [30931] 20001 30931    13203     1821   139264       94             0 mosh-server
+[157975.110703] oom_kill: [30932] 20001 30932     5791     1368    86016       51             0 bash
+[157975.110705] oom_kill: [ 3732] 20001  3732    13503     2126   135168       97             0 mosh-server
+[157975.110707] oom_kill: [ 3733] 20001  3733     5716      622    94208      541             0 bash
+[157975.110709] oom_kill: [ 3918] 20001  3918    13479     2143   147456       79             0 mosh-server
+[157975.110711] oom_kill: [ 3919] 20001  3919     5999     1293    86016      360             0 bash
+[157975.110716] oom_kill: [ 3213] 20001  3213     3169      784    73728        0             0 runexp_varybw.s
+[157975.110719] oom_kill: [14521] 20001 14521     3137      752    65536        0             0 run.sh
+[157975.110722] oom_kill: [15494] 20001 15494  8616001    28976  3039232   267748             0 java
+[157975.110724] oom_kill: [15661] 20001 15661  8624286    95816  1949696    24996             0 java
+[157975.110726] oom_kill: [15969] 20001 15969  8605981    26903  2752512   240882             0 java
+[157975.110728] oom_kill: [16983] 20001 16983     1091      160    57344        0             0 time
+[157975.110731] oom_kill: [16984] 20001 16984    10688     1656   131072        0             0 perf
+[157975.110733] oom_kill: [16985] 20001 16985     3188      795    69632       26             0 run.sh
+[157975.110735] oom_kill: [17333] 20001 17333     1127      179    53248       23             0 sh
+[157975.110737] oom_kill: [17334] 20001 17334     3150      673    69632       73             0 bash
+[157975.110739] oom_kill: [17335] 20001 17335     1825      131    61440       20             0 tee
+[157975.110741] oom_kill: [17466] 20001 17466  5021393   899058 10596352   235365             0 java
+[157975.110742] oom_kill: Out of memory: Kill process 17466 (java) score 51 or sacrifice child
+[157975.120583] oom_kill: Killed process 17466 (java) total-vm:20085572kB, anon-rss:3581128kB, file-rss:15104kB, shmem-rss:0kB
+[157975.369675] oom_kill: oom_reaper: reaped process 17466 (java), now anon-rss:0kB, file-rss:4kB, shmem-rss:0kB
+[157977.813646] flag is set to print stats 2
+[157977.813650] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[157977.813651] flag set to clear count 0
+[157977.813652] flag is set to collect hetero allocate  9 

@@ -32,8 +32,8 @@ storage=["SSD", "NVM"]
 pattern = "NVM"
 #APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
 #xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
-APPS = ["filebench", "redis", "rocksdb", "cassandra"]
-xlabel = ["filebench", "redis", "rocksdb", "cassandra"]
+APPS = ["filebench", "redis", "rocksdb", "cassandra", "spark"]
+xlabel = ["filebench", "redis", "rocksdb", "cassandra", "spark-bench"]
 BW="BW1000"
 titletxt='m-allapps'
 

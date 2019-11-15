@@ -1,0 +1,707 @@
++ sudo dmesg -c
+[166890.298796] drop_caches: sh (8938): drop_caches: 3
+[166893.134999] drop_caches: sh (8948): drop_caches: 3
+[166894.270926] drop_caches: sh (8954): drop_caches: 3
+[166895.393066] drop_caches: sh (8962): drop_caches: 3
++ /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
++ cd /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench
++ stop-dfs.sh
+Stopping namenodes on [localhost]
+Stopping datanodes
+Stopping secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
++ rm -rf /users/skannan/ssd/NVM/appbench/shared_data/hdfs/datanode /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode
++ hadoop namenode -format
+WARNING: Use of this script to execute namenode is deprecated.
+WARNING: Attempting to execute replacement "hdfs namenode" instead.
+
+2019-11-11 17:44:37,135 INFO namenode.NameNode: STARTUP_MSG: 
+/************************************************************
+STARTUP_MSG: Starting NameNode
+STARTUP_MSG:   host = node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
+STARTUP_MSG:   args = [-format]
+STARTUP_MSG:   version = 3.2.1
+STARTUP_MSG:   classpath = /users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/etc/hadoop:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsp-api-2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-api-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jul-to-slf4j-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-kms-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-common-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/common/hadoop-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-http-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/j2objc-annotations-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr311-api-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-client-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/avro-1.7.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpcore-4.4.10.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-text-1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-collections-3.2.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-3.10.5.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/stax2-api-3.1.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-cli-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-configuration2-2.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-servlet-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-framework-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/checker-qual-2.5.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-impl-2.2.3-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-webapp-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/snappy-java-1.0.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-compress-1.18.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/protobuf-java-2.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/woodstox-core-5.0.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-simple-1.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-admin-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-server-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-jaxrs-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/netty-all-4.0.52.Final.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-databind-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/gson-2.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/token-provider-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-pkix-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-net-3.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-common-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-auth-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/paranamer-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-core-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jettison-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-xml-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/leveldbjni-all-1.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/asm-5.0.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-io-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/nimbus-jose-jwt-4.41.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsr305-3.0.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jsch-0.1.54.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/failureaccess-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/audience-annotations-0.5.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okhttp-2.7.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-servlet-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-util-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/dnsjava-2.1.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/javax.servlet-api-3.1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-xdr-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-identity-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-daemon-1.0.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-crypto-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-client-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-asn1-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-server-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-security-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-mapper-asl-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-codec-1.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-server-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jackson-xc-1.9.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jaxb-api-2.2.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/okio-1.6.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-core-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/animal-sniffer-annotations-1.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/log4j-1.2.17.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-io-2.5.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/hadoop-annotations-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/htrace-core4-4.1.0-incubating.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/re2j-1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/guava-27.0-jre.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-core-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jcip-annotations-1.0-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/accessors-smart-1.2.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/curator-recipes-2.13.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/httpclient-4.5.6.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-math3-3.1.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-logging-1.1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jersey-json-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/json-smart-2.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/error_prone_annotations-2.2.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-lang3-3.7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/commons-beanutils-1.9.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerb-simplekdc-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/kerby-config-1.0.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/zookeeper-3.4.13.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/lib/jetty-util-ajax-9.3.24.v20180605.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-native-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-httpfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-rbf-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-client-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/hdfs/hadoop-hdfs-nfs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/hamcrest-core-1.3.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/lib/junit-4.11.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-app-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.2.1-tests.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-uploader-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-nativetask-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-shuffle-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/mapreduce/hadoop-mapreduce-client-hs-plugins-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/javax.inject-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-module-jaxb-annotations-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-servlet-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcprov-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-base-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/json-io-2.5.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/geronimo-jcache_1.0_spec-1.0-alpha-1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-guice-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/objenesis-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/fst-2.50.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/guice-4.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/bcpkix-jdk15on-1.60.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/mssql-jdbc-6.2.1.jre7.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/ehcache-3.3.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/snakeyaml-1.16.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/metrics-core-3.2.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/java-util-1.9.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jersey-client-1.19.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/aopalliance-1.0.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/HikariCP-java7-2.4.12.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/jackson-jaxrs-json-provider-2.9.8.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/lib/swagger-annotations-1.5.4.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-submarine-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-applicationhistoryservice-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-distributedshell-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-sharedcachemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-applications-unmanaged-am-launcher-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-resourcemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-registry-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-tests-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-router-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-nodemanager-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-api-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-common-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-client-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-services-core-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-timeline-pluginstorage-3.2.1.jar:/users/skannan/ssd/NVM/appbench/apps/spark/hadoop-3.2.1/share/hadoop/yarn/hadoop-yarn-server-web-proxy-3.2.1.jar
+STARTUP_MSG:   build = https://gitbox.apache.org/repos/asf/hadoop.git -r b3cbbb467e22ea829b3808f4b7b01d07e0bf3842; compiled by 'rohithsharmaks' on 2019-09-10T15:56Z
+STARTUP_MSG:   java = 1.8.0_222
+************************************************************/
+2019-11-11 17:44:37,167 INFO namenode.NameNode: registered UNIX signal handlers for [TERM, HUP, INT]
+2019-11-11 17:44:37,247 INFO namenode.NameNode: createNameNode [-format]
+Formatting using clusterid: CID-d30144b8-bc42-4593-b38d-075c20236749
+2019-11-11 17:44:38,106 INFO namenode.FSEditLog: Edit logging is async:true
+2019-11-11 17:44:38,132 INFO namenode.FSNamesystem: KeyProvider: null
+2019-11-11 17:44:38,134 INFO namenode.FSNamesystem: fsLock is fair: true
+2019-11-11 17:44:38,138 INFO namenode.FSNamesystem: Detailed lock hold time metrics enabled: false
+2019-11-11 17:44:38,144 INFO namenode.FSNamesystem: fsOwner             = skannan (auth:SIMPLE)
+2019-11-11 17:44:38,144 INFO namenode.FSNamesystem: supergroup          = supergroup
+2019-11-11 17:44:38,144 INFO namenode.FSNamesystem: isPermissionEnabled = true
+2019-11-11 17:44:38,145 INFO namenode.FSNamesystem: HA Enabled: false
+2019-11-11 17:44:38,206 INFO common.Util: dfs.datanode.fileio.profiling.sampling.percentage set to 0. Disabling file IO profiling
+2019-11-11 17:44:38,221 INFO blockmanagement.DatanodeManager: dfs.block.invalidate.limit: configured=1000, counted=60, effected=1000
+2019-11-11 17:44:38,221 INFO blockmanagement.DatanodeManager: dfs.namenode.datanode.registration.ip-hostname-check=true
+2019-11-11 17:44:38,226 INFO blockmanagement.BlockManager: dfs.namenode.startup.delay.block.deletion.sec is set to 000:00:00:00.000
+2019-11-11 17:44:38,227 INFO blockmanagement.BlockManager: The block deletion will start around 2019 Nov 11 17:44:38
+2019-11-11 17:44:38,228 INFO util.GSet: Computing capacity for map BlocksMap
+2019-11-11 17:44:38,229 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:44:38,230 INFO util.GSet: 2.0% max memory 26.7 GB = 546.1 MB
+2019-11-11 17:44:38,230 INFO util.GSet: capacity      = 2^26 = 67108864 entries
+2019-11-11 17:44:38,447 INFO blockmanagement.BlockManager: Storage policy satisfier is disabled
+2019-11-11 17:44:38,447 INFO blockmanagement.BlockManager: dfs.block.access.token.enable = false
+2019-11-11 17:44:38,457 INFO Configuration.deprecation: No unit for dfs.namenode.safemode.extension(30000) assuming MILLISECONDS
+2019-11-11 17:44:38,457 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.threshold-pct = 0.9990000128746033
+2019-11-11 17:44:38,457 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.min.datanodes = 0
+2019-11-11 17:44:38,457 INFO blockmanagement.BlockManagerSafeMode: dfs.namenode.safemode.extension = 30000
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: defaultReplication         = 3
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: maxReplication             = 512
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: minReplication             = 1
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: maxReplicationStreams      = 2
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: redundancyRecheckInterval  = 3000ms
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: encryptDataTransfer        = false
+2019-11-11 17:44:38,458 INFO blockmanagement.BlockManager: maxNumBlocksToLog          = 1000
+2019-11-11 17:44:38,493 INFO namenode.FSDirectory: GLOBAL serial map: bits=29 maxEntries=536870911
+2019-11-11 17:44:38,493 INFO namenode.FSDirectory: USER serial map: bits=24 maxEntries=16777215
+2019-11-11 17:44:38,493 INFO namenode.FSDirectory: GROUP serial map: bits=24 maxEntries=16777215
+2019-11-11 17:44:38,493 INFO namenode.FSDirectory: XATTR serial map: bits=24 maxEntries=16777215
+2019-11-11 17:44:38,508 INFO util.GSet: Computing capacity for map INodeMap
+2019-11-11 17:44:38,508 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:44:38,508 INFO util.GSet: 1.0% max memory 26.7 GB = 273.0 MB
+2019-11-11 17:44:38,508 INFO util.GSet: capacity      = 2^25 = 33554432 entries
+2019-11-11 17:44:40,592 INFO namenode.FSDirectory: ACLs enabled? false
+2019-11-11 17:44:40,593 INFO namenode.FSDirectory: POSIX ACL inheritance enabled? true
+2019-11-11 17:44:40,593 INFO namenode.FSDirectory: XAttrs enabled? true
+2019-11-11 17:44:40,593 INFO namenode.NameNode: Caching file names occurring more than 10 times
+2019-11-11 17:44:40,601 INFO snapshot.SnapshotManager: Loaded config captureOpenFiles: false, skipCaptureAccessTimeOnlyChange: false, snapshotDiffAllowSnapRootDescendant: true, maxSnapshotLimit: 65536
+2019-11-11 17:44:40,604 INFO snapshot.SnapshotManager: SkipList is disabled
+2019-11-11 17:44:40,610 INFO util.GSet: Computing capacity for map cachedBlocks
+2019-11-11 17:44:40,610 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:44:40,610 INFO util.GSet: 0.25% max memory 26.7 GB = 68.3 MB
+2019-11-11 17:44:40,610 INFO util.GSet: capacity      = 2^23 = 8388608 entries
+2019-11-11 17:44:40,643 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.window.num.buckets = 10
+2019-11-11 17:44:40,643 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.num.users = 10
+2019-11-11 17:44:40,643 INFO metrics.TopMetrics: NNTop conf: dfs.namenode.top.windows.minutes = 1,5,25
+2019-11-11 17:44:40,649 INFO namenode.FSNamesystem: Retry cache on namenode is enabled
+2019-11-11 17:44:40,649 INFO namenode.FSNamesystem: Retry cache will use 0.03 of total heap and retry cache entry expiry time is 600000 millis
+2019-11-11 17:44:40,651 INFO util.GSet: Computing capacity for map NameNodeRetryCache
+2019-11-11 17:44:40,651 INFO util.GSet: VM type       = 64-bit
+2019-11-11 17:44:40,652 INFO util.GSet: 0.029999999329447746% max memory 26.7 GB = 8.2 MB
+2019-11-11 17:44:40,652 INFO util.GSet: capacity      = 2^20 = 1048576 entries
+2019-11-11 17:44:40,703 INFO namenode.FSImage: Allocated new BlockPoolId: BP-408165358-128.105.145.169-1573519480695
+2019-11-11 17:44:40,772 INFO common.Storage: Storage directory /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode has been successfully formatted.
+2019-11-11 17:44:40,828 INFO namenode.FSImageFormatProtobuf: Saving image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 using no compression
+2019-11-11 17:44:41,068 INFO namenode.FSImageFormatProtobuf: Image file /users/skannan/ssd/NVM/appbench/shared_data/hdfs/namenode/current/fsimage.ckpt_0000000000000000000 of size 402 bytes saved in 0 seconds .
+2019-11-11 17:44:41,081 INFO namenode.NNStorageRetentionManager: Going to retain 1 images with txid >= 0
+2019-11-11 17:44:41,086 INFO namenode.FSImage: FSImageSaver clean checkpoint: txid=0 when meet shutdown.
+2019-11-11 17:44:41,086 INFO namenode.NameNode: SHUTDOWN_MSG: 
+/************************************************************
+SHUTDOWN_MSG: Shutting down NameNode at node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us/128.105.145.169
+************************************************************/
++ sleep 2
++ start-dfs.sh
+Starting namenodes on [localhost]
+Starting datanodes
+Starting secondary namenodes [node-1.wisc2.fsperfatscale-pg0.wisc.cloudlab.us]
++ sleep 4
++ /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/gen_data.sh
+========== preparing Terasort data ==========
+Master:
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortDataGen --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar  30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10 2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_gendata_2019-11-11-17:45:02.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortDataGen --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar 30000000 hdfs://localhost:8020/SparkBench/Terasort/Input 10
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+initiating tracing...
+initiating tracing...
+2019-11-11 17:45:04,533 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:45:05,079 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:45:05,790 INFO util.log: Logging initialized @2643ms
+2019-11-11 17:45:05,861 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:45:05,878 INFO server.Server: Started @2731ms
+2019-11-11 17:45:05,900 INFO server.AbstractConnector: Started ServerConnector@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:45:05,932 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@1e6b9a95{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,934 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5baaae4c{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,934 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b6e8f77{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,935 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4f449e8f{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,936 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@411291e5{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,937 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6e28bb87{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,937 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@19f040ba{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,938 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@c3c4c1c{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,939 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@17d238b1{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,939 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,940 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,941 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6d6cb754{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,942 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,942 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,943 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,944 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,944 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4a183d02{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,945 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5d05ef57{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,945 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,946 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,953 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,954 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@d400943{/,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,955 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@22101c80{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,956 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a4c638d{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:45:05,956 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@13e698c7{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:45:06,385 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4393593c{/metrics/json,null,AVAILABLE,@Spark}
+===========================================================================
+===========================================================================
+Input size: 3GB
+Total number of records: 30000000
+Number of output partitions: 10
+Number of records/ partition:   3000000
+===========================================================================
+===========================================================================
+2019-11-11 17:45:06,960 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,684 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,688 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,689 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,700 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,700 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,701 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,701 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,701 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,702 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,702 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,701 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:08,702 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:45:29,317 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000003
+2019-11-11 17:45:29,491 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000001
+2019-11-11 17:45:29,521 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000005
+2019-11-11 17:45:29,715 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000006
+2019-11-11 17:45:29,715 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000009
+2019-11-11 17:45:29,816 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000004
+2019-11-11 17:45:29,868 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000002
+2019-11-11 17:45:30,065 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000008
+2019-11-11 17:45:30,247 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000007
+2019-11-11 17:45:30,467 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174506_0001_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Input/_temporary/0/task_20191111174506_0001_r_000000
+Number of records written: 30000000
+2019-11-11 17:45:43,163 INFO server.AbstractConnector: Stopped Spark@6ea94d6a{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+application termination...
+
+ Performance counter stats for 'Terasort/bin/gen_data.sh':
+
+        98,637,282      dTLB-load-misses:u                                          
+       114,960,009      LLC-load-misses:u                                           
+   347,449,316,755      instructions:u                                              
+           952,579      minor-faults:u                                              
+
+      48.882450933 seconds time elapsed
+
++ sleep 2
++ /usr/bin/time -v /users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh
+========== running Terasort benchmark ==========
+Master:
+Terasort opt hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output 
+Connection to localhost closed.
+data purged on localhost
+sh -c  /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-submit --class src.main.scala.terasortApp --master local[*]   --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf  --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output  2>&1|tee /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/bin/..//num/Terasort_run_2019-11-11-17:45:59.dat
++ '[' -z /users/skannan/ssd/NVM/appbench/apps/spark ']'
++ export PYTHONHASHSEED=0
++ PYTHONHASHSEED=0
++ exec /users/skannan/ssd/NVM/appbench/apps/spark/bin/spark-class org.apache.spark.deploy.SparkSubmit --class src.main.scala.terasortApp --master 'local[*]' --conf spark.rpc.askTimeout=500 --conf spark.executor.memory=7g --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --conf spark.rdd.compress=false --conf spark.io.compression.codec=lzf --jars /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/jars/guava-19.0-rc2.jar /users/skannan/ssd/NVM/appbench/apps/spark/spark-bench/Terasort/target/TerasortApp-1.0-jar-with-dependencies.jar hdfs://localhost:8020/SparkBench/Terasort/Input hdfs://localhost:8020/SparkBench/Terasort/Output
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
+Error: no "print" mailcap rules found for type "application/x-executable"
+initiating tracing...
+initiating tracing...
+2019-11-11 17:46:02,986 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2019-11-11 17:46:03,513 WARN spark.SparkConf: Note that spark.local.dir will be overridden by the value set by the cluster manager (via SPARK_LOCAL_DIRS in mesos/standalone/kubernetes and LOCAL_DIRS in YARN).
+2019-11-11 17:46:04,226 INFO util.log: Logging initialized @2983ms
+2019-11-11 17:46:04,295 INFO server.Server: jetty-9.3.z-SNAPSHOT, build timestamp: unknown, git hash: unknown
+2019-11-11 17:46:04,318 INFO server.Server: Started @3076ms
+2019-11-11 17:46:04,340 INFO server.AbstractConnector: Started ServerConnector@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+2019-11-11 17:46:04,378 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@73eb8672{/jobs,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,378 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3d7cc3cb{/jobs/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,379 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@35e478f{/jobs/job,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,380 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b7d1df8{/jobs/job/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,380 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@3044e9c7{/stages,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,381 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@41d7b27f{/stages/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,381 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@49096b06{/stages/stage,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,382 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@213deac2{/stages/stage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,383 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23eee4b8{/stages/pool,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,383 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@28952dea{/stages/pool/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,384 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a9800f8{/storage,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,385 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@143d9a93{/storage/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,385 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@40226788{/storage/rdd,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,386 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@4159e81b{/storage/rdd/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,386 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5b5caf08{/environment,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,387 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@23cd4ff2{/environment/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,387 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@70807224{/executors,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,388 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7e97551f{/executors/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,389 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@400d912a{/executors/threadDump,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,389 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@9f6e406{/executors/threadDump/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,396 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@7a94b64e{/static,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,396 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5a101b1c{/,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,397 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@2160e52a{/api,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,397 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@469d003c{/jobs/job/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,398 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@6b410923{/stages/stage/kill,null,AVAILABLE,@Spark}
+2019-11-11 17:46:04,823 INFO handler.ContextHandler: Started o.s.j.s.ServletContextHandler@5246a3b3{/metrics/json,null,AVAILABLE,@Spark}
+2019-11-11 17:46:06,155 INFO input.FileInputFormat: Total input paths to process : 10
+2019-11-11 17:47:18,721 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:38,646 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:38,655 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:38,988 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:38,997 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:39,328 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:39,339 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:40,285 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:40,299 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:41,616 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:41,632 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:44,036 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:44,052 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:44,306 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:44,344 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:49,539 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:49,576 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:50,171 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:50,200 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:53,562 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:53,577 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:54,600 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000024_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000024
+2019-11-11 17:49:57,567 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000003_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000003
+2019-11-11 17:49:57,839 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:57,852 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:58,100 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:58,110 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:58,374 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000020_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000020
+2019-11-11 17:49:58,422 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:58,443 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:49:59,486 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000029_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000029
+2019-11-11 17:50:02,557 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:02,566 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:02,785 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:02,794 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:02,927 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:02,940 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000008_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000008
+2019-11-11 17:50:02,941 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:04,941 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000005_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000005
+2019-11-11 17:50:06,198 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000026_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000026
+2019-11-11 17:50:07,790 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:07,797 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:07,859 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000025_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000025
+2019-11-11 17:50:08,358 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,368 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,593 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,607 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,748 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,759 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,827 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000012_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000012
+2019-11-11 17:50:08,940 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:08,948 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:09,241 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:09,252 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:09,722 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000028_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000028
+2019-11-11 17:50:10,469 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000018_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000018
+2019-11-11 17:50:10,895 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:10,905 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:10,905 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:10,907 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:11,022 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000014_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000014
+2019-11-11 17:50:11,225 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:11,233 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:11,281 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000002_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000002
+2019-11-11 17:50:11,291 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:11,300 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:12,104 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:12,117 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:12,822 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000021_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000021
+2019-11-11 17:50:13,209 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000017_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000017
+2019-11-11 17:50:13,222 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:13,228 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:13,387 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:13,395 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:13,470 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000011_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000011
+2019-11-11 17:50:13,670 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:13,677 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 1
+2019-11-11 17:50:15,411 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000013_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000013
+2019-11-11 17:50:17,093 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000009_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000009
+2019-11-11 17:50:17,094 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000004_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000004
+2019-11-11 17:50:17,472 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000027_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000027
+2019-11-11 17:50:17,773 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000015_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000015
+2019-11-11 17:50:17,841 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000001_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000001
+2019-11-11 17:50:18,478 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000019_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000019
+2019-11-11 17:50:18,644 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000007_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000007
+2019-11-11 17:50:18,808 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000010_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000010
+2019-11-11 17:50:18,962 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000023_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000023
+2019-11-11 17:50:19,038 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000000_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000000
+2019-11-11 17:50:19,180 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000022_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000022
+2019-11-11 17:50:19,472 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000016_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000016
+2019-11-11 17:50:19,565 INFO output.FileOutputCommitter: Saved output of task 'attempt_20191111174718_0004_r_000006_0' to hdfs://localhost:8020/SparkBench/Terasort/Output/_temporary/0/task_20191111174718_0004_r_000006
+2019-11-11 17:50:19,705 INFO server.AbstractConnector: Stopped Spark@77bb0ab5{HTTP/1.1,[http/1.1]}{0.0.0.0:4040}
+application termination...
+
+ Performance counter stats for 'Terasort/bin/run.sh':
+
+       976,317,332      dTLB-load-misses:u                                          
+     1,619,093,965      LLC-load-misses:u                                           
+ 1,484,655,522,397      instructions:u                                              
+         2,172,795      minor-faults:u                                              
+
+     270.435195697 seconds time elapsed
+
+	Command being timed: "/users/skannan/ssd/NVM/linux-stable/tools/perf/perf stat -e dTLB-load-misses,LLC-load-misses,instructions,minor-faults Terasort/bin/run.sh"
+	User time (seconds): 6407.99
+	System time (seconds): 497.84
+	Percent of CPU this job got: 2552%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:30.59
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7207548
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 246
+	Minor (reclaiming a frame) page faults: 2221146
+	Voluntary context switches: 382733
+	Involuntary context switches: 35898
+	Swaps: 0
+	File system inputs: 470248
+	File system outputs: 14244080
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
++ sleep 2
++ /users/skannan/ssd/NVM/appbench/shared_libs/construct/reset
++ exit
+[166897.221772] flag is set to print stats 2
+[166897.221776] cache-hits 0 cache-miss 0 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[166897.221777] flag set to clear count 0
+[166897.221778] flag is set to collect hetero allocate  9 
+[166932.860794] flag is set to enable HETERO_PGCACHE 11 
+[166932.860797] flag is set to enable HETERO_BUFFER 12 
+[166932.860798] flag is set to enable HETERO_JOURNAL 13 
+[166932.860799] flag is set to enable HETERO_RADIX 14 
+[166932.860800] flag is set to enable HETERO_FULLKERN 15 
+[166932.860801] flag to set FASTMEM node to 0 
+[166932.860802] hetero_pid set to 10964 10964 procname numactl
+[166932.860803] flag to set FASTMEM node to 0 
+[166932.860804] flag to set MIGRATION FREQ to 410065408 
+[166932.860806] flag to disable migration 19 
+[166932.860808] flag to MIGRATE_LISTCNT 410065408 
+[166932.861486] flag is set to enable HETERO_PGCACHE 11 
+[166932.861487] flag is set to enable HETERO_BUFFER 12 
+[166932.861487] flag is set to enable HETERO_JOURNAL 13 
+[166932.861488] flag is set to enable HETERO_RADIX 14 
+[166932.861489] flag is set to enable HETERO_FULLKERN 15 
+[166932.861490] flag to set FASTMEM node to 0 
+[166932.861491] hetero_pid set to 10964 10964 procname java
+[166932.861492] flag to set FASTMEM node to 0 
+[166932.861493] flag to set MIGRATION FREQ to 410065408 
+[166932.861495] flag to disable migration 19 
+[166932.861496] flag to MIGRATE_LISTCNT 410065408 
+[166934.127958] flag is set to enable HETERO_PGCACHE 11 
+[166934.127961] flag is set to enable HETERO_BUFFER 12 
+[166934.127962] flag is set to enable HETERO_JOURNAL 13 
+[166934.127963] flag is set to enable HETERO_RADIX 14 
+[166934.127963] flag is set to enable HETERO_FULLKERN 15 
+[166934.127964] flag to set FASTMEM node to 0 
+[166934.127966] hetero_pid set to 11015 11015 procname setsid
+[166934.127967] flag to set FASTMEM node to 0 
+[166934.127968] flag to set MIGRATION FREQ to 410065408 
+[166934.127969] flag to disable migration 19 
+[166934.127970] flag to MIGRATE_LISTCNT 410065408 
+[166934.128890] flag is set to enable HETERO_PGCACHE 11 
+[166934.128891] flag is set to enable HETERO_BUFFER 12 
+[166934.128892] flag is set to enable HETERO_JOURNAL 13 
+[166934.128893] flag is set to enable HETERO_RADIX 14 
+[166934.128894] flag is set to enable HETERO_FULLKERN 15 
+[166934.128894] flag to set FASTMEM node to 0 
+[166934.128896] hetero_pid set to 11015 11015 procname bash
+[166934.128896] flag to set FASTMEM node to 0 
+[166934.128898] flag to set MIGRATION FREQ to 410065408 
+[166934.128899] flag to disable migration 19 
+[166934.128900] flag to MIGRATE_LISTCNT 410065408 
+[166937.873343] flag is set to enable HETERO_PGCACHE 11 
+[166937.873348] flag is set to enable HETERO_BUFFER 12 
+[166937.873349] flag is set to enable HETERO_JOURNAL 13 
+[166937.873350] flag is set to enable HETERO_RADIX 14 
+[166937.873351] flag is set to enable HETERO_FULLKERN 15 
+[166937.873351] flag to set FASTMEM node to 0 
+[166937.873353] hetero_pid set to 11106 11106 procname chmod
+[166937.873354] flag to set FASTMEM node to 0 
+[166937.873355] flag to set MIGRATION FREQ to 410065408 
+[166937.873356] flag to disable migration 19 
+[166937.873358] flag to MIGRATE_LISTCNT 410065408 
+[166938.225281] flag is set to enable HETERO_PGCACHE 11 
+[166938.225283] flag is set to enable HETERO_BUFFER 12 
+[166938.225284] flag is set to enable HETERO_JOURNAL 13 
+[166938.225284] flag is set to enable HETERO_RADIX 14 
+[166938.225285] flag is set to enable HETERO_FULLKERN 15 
+[166938.225286] flag to set FASTMEM node to 0 
+[166938.225288] hetero_pid set to 11108 11108 procname chmod
+[166938.225289] flag to set FASTMEM node to 0 
+[166938.225290] flag to set MIGRATION FREQ to 410065408 
+[166938.225291] flag to disable migration 19 
+[166938.225292] flag to MIGRATE_LISTCNT 410065408 
+[166972.909548] flag is set to enable HETERO_PGCACHE 11 
+[166972.909550] flag is set to enable HETERO_BUFFER 12 
+[166972.909550] flag is set to enable HETERO_JOURNAL 13 
+[166972.909551] flag is set to enable HETERO_RADIX 14 
+[166972.909552] flag is set to enable HETERO_FULLKERN 15 
+[166972.909553] flag to set FASTMEM node to 0 
+[166972.909556] hetero_pid set to 11240 11240 procname rm
+[166972.909572] flag to set FASTMEM node to 0 
+[166972.909573] flag to set MIGRATION FREQ to 410065408 
+[166972.909574] flag to disable migration 19 
+[166972.909575] flag to MIGRATE_LISTCNT 410065408 
+[166973.039613] flag is set to enable HETERO_PGCACHE 11 
+[166973.039620] flag is set to enable HETERO_BUFFER 12 
+[166973.039622] flag is set to enable HETERO_JOURNAL 13 
+[166973.039623] flag is set to enable HETERO_RADIX 14 
+[166973.039624] flag is set to enable HETERO_FULLKERN 15 
+[166973.039625] flag to set FASTMEM node to 0 
+[166973.039627] hetero_pid set to 11255 11255 procname rm
+[166973.039628] flag to set FASTMEM node to 0 
+[166973.039629] flag to set MIGRATION FREQ to 410065408 
+[166973.039631] flag to disable migration 19 
+[166973.039633] flag to MIGRATE_LISTCNT 410065408 
+[166973.045093] flag is set to enable HETERO_PGCACHE 11 
+[166973.045095] flag is set to enable HETERO_BUFFER 12 
+[166973.045096] flag is set to enable HETERO_JOURNAL 13 
+[166973.045097] flag is set to enable HETERO_RADIX 14 
+[166973.045098] flag is set to enable HETERO_FULLKERN 15 
+[166973.045099] flag to set FASTMEM node to 0 
+[166973.045101] hetero_pid set to 11256 11256 procname rm
+[166973.045102] flag to set FASTMEM node to 0 
+[166973.045103] flag to set MIGRATION FREQ to 410065408 
+[166973.045105] flag to disable migration 19 
+[166973.045106] flag to MIGRATE_LISTCNT 410065408 
+[166973.047642] flag is set to enable HETERO_PGCACHE 11 
+[166973.047644] flag is set to enable HETERO_BUFFER 12 
+[166973.047645] flag is set to enable HETERO_JOURNAL 13 
+[166973.047646] flag is set to enable HETERO_RADIX 14 
+[166973.047649] flag is set to enable HETERO_FULLKERN 15 
+[166973.047656] flag to set FASTMEM node to 0 
+[166973.047657] hetero_pid set to 11257 11257 procname rm
+[166973.047658] flag to set FASTMEM node to 0 
+[166973.047663] flag to set MIGRATION FREQ to 410065408 
+[166973.047665] flag to disable migration 19 
+[166973.047667] flag to MIGRATE_LISTCNT 410065408 
+[166987.805476] drop_caches: sh (11775): drop_caches: 3
+[166990.955760] flag is set to enable HETERO_PGCACHE 11 
+[166990.955763] flag is set to enable HETERO_BUFFER 12 
+[166990.955764] flag is set to enable HETERO_JOURNAL 13 
+[166990.955765] flag is set to enable HETERO_RADIX 14 
+[166990.955765] flag is set to enable HETERO_FULLKERN 15 
+[166990.955766] flag to set FASTMEM node to 0 
+[166990.955768] hetero_pid set to 11951 11951 procname numactl
+[166990.955769] flag to set FASTMEM node to 0 
+[166990.955770] flag to set MIGRATION FREQ to 410065408 
+[166990.955771] flag to disable migration 19 
+[166990.955773] flag to MIGRATE_LISTCNT 410065408 
+[166990.956414] flag is set to enable HETERO_PGCACHE 11 
+[166990.956415] flag is set to enable HETERO_BUFFER 12 
+[166990.956416] flag is set to enable HETERO_JOURNAL 13 
+[166990.956416] flag is set to enable HETERO_RADIX 14 
+[166990.956417] flag is set to enable HETERO_FULLKERN 15 
+[166990.956418] flag to set FASTMEM node to 0 
+[166990.956420] hetero_pid set to 11951 11951 procname java
+[166990.956420] flag to set FASTMEM node to 0 
+[166990.956421] flag to set MIGRATION FREQ to 410065408 
+[166990.956423] flag to disable migration 19 
+[166990.956424] flag to MIGRATE_LISTCNT 410065408 
+[166992.515830] flag is set to enable HETERO_PGCACHE 11 
+[166992.515833] flag is set to enable HETERO_BUFFER 12 
+[166992.515834] flag is set to enable HETERO_JOURNAL 13 
+[166992.515835] flag is set to enable HETERO_RADIX 14 
+[166992.515835] flag is set to enable HETERO_FULLKERN 15 
+[166992.515836] flag to set FASTMEM node to 0 
+[166992.515839] hetero_pid set to 12002 12002 procname setsid
+[166992.515840] flag to set FASTMEM node to 0 
+[166992.515841] flag to set MIGRATION FREQ to 410065408 
+[166992.515842] flag to disable migration 19 
+[166992.515844] flag to MIGRATE_LISTCNT 410065408 
+[166992.516731] flag is set to enable HETERO_PGCACHE 11 
+[166992.516732] flag is set to enable HETERO_BUFFER 12 
+[166992.516733] flag is set to enable HETERO_JOURNAL 13 
+[166992.516733] flag is set to enable HETERO_RADIX 14 
+[166992.516734] flag is set to enable HETERO_FULLKERN 15 
+[166992.516735] flag to set FASTMEM node to 0 
+[166992.516736] hetero_pid set to 12002 12002 procname bash
+[166992.516737] flag to set FASTMEM node to 0 
+[166992.516738] flag to set MIGRATION FREQ to 410065408 
+[166992.516740] flag to disable migration 19 
+[166992.516741] flag to MIGRATE_LISTCNT 410065408 
+[166996.656836] flag is set to enable HETERO_PGCACHE 11 
+[166996.656839] flag is set to enable HETERO_BUFFER 12 
+[166996.656839] flag is set to enable HETERO_JOURNAL 13 
+[166996.656840] flag is set to enable HETERO_RADIX 14 
+[166996.656841] flag is set to enable HETERO_FULLKERN 15 
+[166996.656842] flag to set FASTMEM node to 0 
+[166996.656844] hetero_pid set to 12113 12113 procname chmod
+[166996.656845] flag to set FASTMEM node to 0 
+[166996.656846] flag to set MIGRATION FREQ to 410065408 
+[166996.656847] flag to disable migration 19 
+[166996.656848] flag to MIGRATE_LISTCNT 410065408 
+[166996.676029] flag is set to enable HETERO_PGCACHE 11 
+[166996.676031] flag is set to enable HETERO_BUFFER 12 
+[166996.676032] flag is set to enable HETERO_JOURNAL 13 
+[166996.676033] flag is set to enable HETERO_RADIX 14 
+[166996.676034] flag is set to enable HETERO_FULLKERN 15 
+[166996.676035] flag to set FASTMEM node to 0 
+[166996.676036] hetero_pid set to 12115 12115 procname chmod
+[166996.676037] flag to set FASTMEM node to 0 
+[166996.676038] flag to set MIGRATION FREQ to 410065408 
+[166996.676039] flag to disable migration 19 
+[166996.676041] flag to MIGRATE_LISTCNT 410065408 
+[167249.459973] flag is set to enable HETERO_PGCACHE 11 
+[167249.459976] flag is set to enable HETERO_BUFFER 12 
+[167249.459977] flag is set to enable HETERO_JOURNAL 13 
+[167249.459977] flag is set to enable HETERO_RADIX 14 
+[167249.459978] flag is set to enable HETERO_FULLKERN 15 
+[167249.459979] flag to set FASTMEM node to 0 
+[167249.459981] hetero_pid set to 12341 12341 procname rm
+[167249.459982] flag to set FASTMEM node to 0 
+[167249.459983] flag to set MIGRATION FREQ to 410065408 
+[167249.459985] flag to disable migration 19 
+[167249.459986] flag to MIGRATE_LISTCNT 410065408 
+[167249.882566] flag is set to enable HETERO_PGCACHE 11 
+[167249.882569] flag is set to enable HETERO_BUFFER 12 
+[167249.882570] flag is set to enable HETERO_JOURNAL 13 
+[167249.882571] flag is set to enable HETERO_RADIX 14 
+[167249.882571] flag is set to enable HETERO_FULLKERN 15 
+[167249.882572] flag to set FASTMEM node to 0 
+[167249.882574] hetero_pid set to 12358 12358 procname rm
+[167249.882575] flag to set FASTMEM node to 0 
+[167249.882577] flag to set MIGRATION FREQ to 410065408 
+[167249.882578] flag to disable migration 19 
+[167249.882579] flag to MIGRATE_LISTCNT 410065408 
+[167249.886249] flag is set to enable HETERO_PGCACHE 11 
+[167249.886251] flag is set to enable HETERO_BUFFER 12 
+[167249.886252] flag is set to enable HETERO_JOURNAL 13 
+[167249.886252] flag is set to enable HETERO_RADIX 14 
+[167249.886253] flag is set to enable HETERO_FULLKERN 15 
+[167249.886254] flag to set FASTMEM node to 0 
+[167249.886255] hetero_pid set to 12359 12359 procname rm
+[167249.886256] flag to set FASTMEM node to 0 
+[167249.886258] flag to set MIGRATION FREQ to 410065408 
+[167249.886259] flag to disable migration 19 
+[167249.886260] flag to MIGRATE_LISTCNT 410065408 
+[167249.888060] flag is set to enable HETERO_PGCACHE 11 
+[167249.888061] flag is set to enable HETERO_BUFFER 12 
+[167249.888062] flag is set to enable HETERO_JOURNAL 13 
+[167249.888063] flag is set to enable HETERO_RADIX 14 
+[167249.888064] flag is set to enable HETERO_FULLKERN 15 
+[167249.888065] flag to set FASTMEM node to 0 
+[167249.888066] hetero_pid set to 12360 12360 procname rm
+[167249.888067] flag to set FASTMEM node to 0 
+[167249.888068] flag to set MIGRATION FREQ to 410065408 
+[167249.888069] flag to disable migration 19 
+[167249.888070] flag to MIGRATE_LISTCNT 410065408 
+[167253.102954] flag is set to print stats 2
+[167253.102958] cache-hits 3197483 cache-miss 947030 buff-hits 0 buff-miss 0 migrated 0 cache-del 0 buff-del 0 
+[167253.102959] flag set to clear count 0
+[167253.102961] flag is set to collect hetero allocate  9 

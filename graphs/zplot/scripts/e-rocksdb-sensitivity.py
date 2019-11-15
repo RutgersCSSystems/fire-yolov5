@@ -71,20 +71,6 @@ for k in range(0, len(CONFIG)):
 
     for j in range(0, len(mech)):
 
-        #if( s % (len(mech)) == len(mech)-1):
-
-	 #   style='star'
-          #  color='green'	
-
-	   # p.line(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color, linewidth=0.5)	
-
-	    #if( legendflag == 0):
-	    #	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
-        #	         linewidth=0.5, style=style, legend=L, legendtext=mechnames[j], fill=True, size=8)
-	#	legendflag = 1
-	 #   else:
-	  #  	p.points(drawable=d, table=dseq[s], xfield='c0', yfield='c1', linecolor=color,
-        #	         linewidth=0.5, style=style, fill=True, size=8)
 	if(s > len(mech)-1):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)

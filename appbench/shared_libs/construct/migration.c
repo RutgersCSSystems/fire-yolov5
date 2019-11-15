@@ -55,14 +55,14 @@ static void dest() __attribute__((destructor));
 
 
 #define HETERO_MIGRATE_FREQ 17
-#define FREQ 1000
+#define FREQ 50000
 #define HETERO_OBJ_AFF 18
 #define HETERO_DISABLE_MIGRATE 19
 #define HETERO_MIGRATE_LISTCNT 20
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
-#define MIGRATE_LIST_CNT 500
+#define MIGRATE_LIST_CNT 100
 
 
 void set_migration_freq() {
