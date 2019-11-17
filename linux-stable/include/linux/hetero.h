@@ -93,10 +93,8 @@ void set_sock_hetero_obj_netdev(void *socket, void *inode);
 
 
 int check_hetero_page(struct mm_struct *mm, struct page *page);
-#ifdef CONFIG_HETERO_STATS
 void update_hetero_pgcache(int node, struct page *, int delpage);
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage);
-#endif
 void try_hetero_migration(void *map, gfp_t gfp_mask);
 
 /* rbtree */
@@ -117,7 +115,11 @@ int migrate_pages_slowmem(struct task_struct *task);
 void
 hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
-
+#ifdef CONFIG_HETERO_STATS
+void incr_tot_cache_pages(void);
+void incr_tot_buff_pages(void);
+void incr_tot_app_pages(void);
+#endif
 
 #endif /* _LINUX_NUMA_H */
 

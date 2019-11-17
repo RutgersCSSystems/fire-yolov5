@@ -9,8 +9,8 @@ cd $KERN_SRC
 #sudo make kvmconfig 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA &> $KERN_SRC/compile.out
-#grep -r "error:|undefined|warning" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
-#sudo make modules &>> $KERN_SRC/compile.out
+grep -r "error:|undefined|warning" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
+sudo make modules &>> $KERN_SRC/compile.out
 #sudo make modules_install &>> $KERN_SRC/compile.out
 #grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 #sudo make install &>> $KERN_SRC/compile.out

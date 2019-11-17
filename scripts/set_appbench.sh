@@ -141,8 +141,10 @@ GETAPPS(){
 	git clone https://github.com/SudarsunKannan/fio
 	cd $APPBENCH/apps
 	git clone https://github.com/memcached/memcached.git
-	INSTALL_CASSANDRA
 }
+
+INSTALL_CASSANDRA
+exit
 
 INSTALL_SYSTEM_LIBS
 INSTALL_ROCKSDB

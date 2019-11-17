@@ -27,7 +27,7 @@
 set $dir=/users/skannan/ssd/NVM/appbench/shared_data
 set $nfiles=200000
 set $dirwidth=20
-set $filesize=32k
+set $filesize=64k
 set $nthreads=8
 set $meaniosize=16k
 set $readiosize=1m

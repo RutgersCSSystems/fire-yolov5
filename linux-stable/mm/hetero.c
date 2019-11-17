@@ -144,11 +144,53 @@ unsigned long g_buffmiss=0;
 unsigned long g_migrated=0;
 unsigned long g_cachedel=0;
 unsigned long g_buffdel=0;
+
+#ifdef CONFIG_HETERO_STATS
+unsigned long g_tot_cache_pages=0;
+unsigned long g_tot_buff_pages=0;
+unsigned long g_tot_app_pages=0;
+#endif
+
 DEFINE_SPINLOCK(stats_lock);
+
+#ifdef CONFIG_HETERO_STATS
+void incr_tot_cache_pages(void) 
+{
+	if(!is_hetero_pgcache_set())
+		return;
+
+	spin_lock(&stats_lock);
+	g_tot_cache_pages++;
+	spin_unlock(&stats_lock);
+}
+
+void incr_tot_buff_pages(void) 
+{
+	if(!is_hetero_buffer_set())
+		return;
+
+	spin_lock(&stats_lock);
+	g_tot_buff_pages++;
+	spin_unlock(&stats_lock);
+}
+
+void incr_tot_app_pages(void) 
+{
+	if(!is_hetero_pgcache_set()) 
+		return;
+
+	spin_lock(&stats_lock);
+	g_tot_app_pages++;
+	/*if(g_tot_app_pages) {
+		g_tot_app_pages = (g_tot_app_pages - g_tot_cache_pages  -
+					g_tot_buff_pages);
+	}*/
+	spin_unlock(&stats_lock);
+}
+#endif
 
 
 #ifdef CONFIG_HETERO_ENABLE
-
 void incr_global_stats(unsigned long *counter){
 	spin_lock(&stats_lock);
 	*counter = *counter + 1;	
@@ -156,6 +198,7 @@ void incr_global_stats(unsigned long *counter){
 }
 
 void print_global_stats(void) {
+
        printk("cache-hits %lu cache-miss %lu " 
 	      "buff-hits %lu buff-miss %lu " 
 	      "migrated %lu cache-del %lu " 
@@ -163,8 +206,14 @@ void print_global_stats(void) {
 		g_cachehits, g_cachemiss, g_buffhits, 
 		g_buffmiss, g_migrated, g_cachedel,
 		g_buffdel);
+
+#ifdef CONFIG_HETERO_STATS
+  printk("ANALYSIS STAT CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
+		g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
+#endif
 }
 EXPORT_SYMBOL(print_global_stats);
+
 
 struct mm_struct* 
 getmm(struct task_struct *task) 
@@ -234,6 +283,10 @@ void reset_hetero_stats(struct task_struct *task) {
 	g_migrated = 0;
 	g_cachedel = 0;
 	g_buffdel = 0;
+
+	g_tot_cache_pages = 0;
+	g_tot_buff_pages = 0;
+	g_tot_app_pages = 0;
 #endif
 }
 EXPORT_SYMBOL(reset_hetero_stats);
@@ -647,8 +700,6 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 
 
-#ifdef CONFIG_HETERO_STATS
-
 /* Update STAT
 * TODO: Currently not setting HETERO_PG_FLAG for testing
 */
@@ -765,7 +816,6 @@ void update_hetero_pgbuff_stat_miss(void)
         current->mm->pgbuff_miss_cnt += 1;
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
-#endif
 
 
 /* 

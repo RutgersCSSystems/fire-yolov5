@@ -28,14 +28,14 @@ FlushDisk()
 
 RANDOM_MONGO(){
 	echo "Running Random Write"
-	#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
+	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
 	$APPPREFIX $APP -f workloads/mongo.f
 	#$APPPREFIX $APP -f workloads/videoserver.f
 	#$APPPREFIX $APP -f workloads/oltp.f
 	#$APPPREFIX $APP -f workloads/randomrw.f
-	#export LD_PRELOAD=""
+	export LD_PRELOAD=""
 }
 
 RANDOM_WRITE(){
@@ -75,5 +75,6 @@ FlushDisk
 rm $DATA/*
 rm -rf fio-seq-RW
 rm -rf fio-rand-RW
+$SHARED_LIBS/construct/reset
 set +x
 

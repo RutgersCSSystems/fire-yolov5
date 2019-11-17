@@ -1465,6 +1465,26 @@ static inline struct page *alloc_slab_page(struct kmem_cache *s,
 	return page;
 }
 
+static inline struct page *alloc_slab_page_hetero(struct kmem_cache *s,
+		gfp_t flags, int node, struct kmem_cache_order_objects oo)
+{
+	struct page *page;
+	unsigned int order = oo_order(oo);
+
+	if (node == NUMA_NO_NODE)
+		page = alloc_pages(flags, order);
+	else
+		page = __alloc_pages_node_hetero(node, flags, order);
+
+	if (page && memcg_charge_slab(page, flags, order, s)) {
+		__free_pages(page, order);
+		page = NULL;
+	}
+
+	return page;
+}
+
+
 #ifdef CONFIG_SLAB_FREELIST_RANDOM
 /* Pre-initialize the random sequence cache */
 static int init_cache_random_seq(struct kmem_cache *s)
@@ -1664,6 +1684,10 @@ out:
 		1 << oo_order(oo));
 
 	inc_slabs_node(s, page_to_nid(page), page->objects);
+
+#ifdef CONFIG_HETERO_STATS
+        incr_tot_buff_pages();
+#endif
 
 	return page;
 }
@@ -2520,7 +2544,7 @@ static inline void *new_slab_objects(struct kmem_cache *s, gfp_t flags,
 		stat(s, ALLOC_SLAB);
 		c->page = page;
 		*pc = c;
-#ifdef CONFIG_HETERO_STATS
+#ifdef CONFIG_HETERO_ENABLE
 		/*Most likely this should be a fast page miss 
 		* because we explicity redirected allocatio to 
 		* slow memory 
@@ -2856,12 +2880,7 @@ static struct page *allocate_slab_hetero(struct kmem_cache *s, gfp_t flags, int 
 
 	page = NULL;
 	if(!page)
-		page = alloc_slab_page(s, alloc_gfp, node, oo);
-#ifdef CONFIG_HETERO_ENABLE
-        //if(is_hetero_buffer_set() && page){
-          //      printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
-        //}
-#endif
+		page = alloc_slab_page_hetero(s, alloc_gfp, node, oo);
 
 	if (unlikely(!page)) {
 		oo = s->min;
@@ -2919,6 +2938,9 @@ out:
 
 	inc_slabs_node(s, page_to_nid(page), page->objects);
 
+#ifdef CONFIG_HETERO_STATS
+	incr_tot_buff_pages();
+#endif
 	return page;
 }
 
@@ -2973,7 +2995,7 @@ static inline void *new_slab_objects_hetero(struct kmem_cache *s, gfp_t flags,
                 c->page = page;
                 *pc = c;
 
-#ifdef CONFIG_HETERO_STATS
+#ifdef CONFIG_HETERO_ENABLE
 		/* We set hetero_obj to page even if not in the desired 
 		 * memory node. We can later use this for migration.
 		 */

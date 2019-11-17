@@ -4595,8 +4595,12 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 
 	/* First allocation attempt */
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
-	if (likely(page))
+	if (likely(page)) {
+#ifdef CONFIG_HETERO_STATS
+ 	       incr_tot_app_pages();
+#endif
 		goto out;
+	}
 
 	/*
 	 * Apply scoped allocation constraints. This is mainly about GFP_NOFS
@@ -4615,7 +4619,6 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
 		ac.nodemask = nodemask;
 
 	page = __alloc_pages_slowpath(alloc_mask, order, &ac);
-
 out:
 	if (memcg_kmem_enabled() && (gfp_mask & __GFP_ACCOUNT) && page &&
 	    unlikely(memcg_kmem_charge(page, gfp_mask, order) != 0)) {
@@ -4624,7 +4627,6 @@ out:
 	}
 
 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
-
 	return page;
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask);
@@ -4644,11 +4646,6 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
         struct sysinfo i;
 	int nid = get_fastmem_node();
 
-	if (alloc_mask & GFP_KERNEL) {
-		if (alloc_mask & GFP_HIGHUSER){
-			printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
-		}
-	}
 #if 0	
 	if(!node_checkfreq) {
 	        si_meminfo_node(&i, nid);
@@ -4676,6 +4673,9 @@ __alloc_pages_nodemask_hetero(gfp_t gfp_mask, unsigned int order, int preferred_
 	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	//page = hetero_get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
 	if (likely(page)) {
+#ifdef CONFIG_HETERO_STATS
+	        incr_tot_app_pages();
+#endif
 		if(check_fastmem_node(page)) {
 			page->hetero = HETERO_PG_FLAG;
 		}
@@ -4709,11 +4709,9 @@ default_alloc:
 
 	if(page && check_fastmem_node(page)) {
 		page->hetero = HETERO_PG_FLAG;
-	}/*else {
-		printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
-	}*/
-
+	}
 #ifdef CONFIG_HETERO_ENABLE
+#if 0
         if(is_hetero_buffer_set()) {
                 if ((alloc_mask & __GFP_MOVABLE)) {
                         hetero_usrpg_cnt++;
@@ -4721,6 +4719,7 @@ default_alloc:
                          hetero_kernpg_cnt++;
                 }
         }
+#endif
 #endif
 
 out:
@@ -4730,7 +4729,6 @@ out:
 		page = NULL;
 	}
 	trace_mm_page_alloc(page, order, alloc_mask, ac.migratetype);
-
 	return page;
 }
 EXPORT_SYMBOL(__alloc_pages_nodemask_hetero);

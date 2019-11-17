@@ -290,7 +290,7 @@ static void unaccount_page_cache_page(struct address_space *mapping,
 void __delete_from_page_cache(struct page *page, void *shadow)
 {
 	struct address_space *mapping = page->mapping;
-#ifdef CONFIG_HETERO_STATS
+#ifdef CONFIG_HETERO_ENABLE
         if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
 		//printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
         	update_hetero_pgcache(get_fastmem_node(), page, 1);
@@ -1061,10 +1061,8 @@ struct page *__page_cache_alloc(gfp_t gfp)
 				n = get_fastmem_node();
 				page = __alloc_pages_node_hetero(n, gfp, 0);
                                 printk(KERN_ALERT "%s : %d Node: %d \n", __func__, __LINE__, page_to_nid(page));
-#ifdef CONFIG_HETERO_STATS
 				if(page)	
 				        update_hetero_pgcache(get_fastmem_node(), page, 0);
-#endif
 			}
 			else {
 				page = __alloc_pages_node(n, gfp, 0);
@@ -1079,7 +1077,7 @@ struct page *__page_cache_alloc(gfp_t gfp)
 
 	allocpage = alloc_pages(gfp, 0);
 
-#ifdef CONFIG_HETERO_STATS
+#ifdef CONFIG_HETERO_ENABLE
 	if(allocpage && is_hetero_pgcache_set())	
 		update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
 #endif
@@ -1136,8 +1134,13 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
         n = get_fastmem_node();
 
 	if (!is_hetero_pgcache_set()) {
+
+		incr_tot_cache_pages();
 		return __page_cache_alloc(gfp);		
 	}
+
+
+	incr_tot_cache_pages();
 
 	/* Check if  HETERO allocation enabled for page cache 
 	 * enabled 
@@ -1168,7 +1171,7 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
         if(!allocpage && is_hetero_alloc) {
 		allocpage = __alloc_pages_node_hetero(n, gfp, 0);
 	}
-#ifdef CONFIG_HETERO_STATS
+#ifdef CONFIG_HETERO_ENABLE
 	if(allocpage) {
 	    update_hetero_pgcache(get_fastmem_node(), allocpage, 0);
 	}

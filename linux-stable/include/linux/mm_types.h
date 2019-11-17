@@ -398,17 +398,17 @@ struct mm_struct {
 	int 				objaff_root_init;
 	unsigned long                   objaff_kbuff_len;
 	unsigned long                   objaff_cache_len;
-#endif
-
-#ifdef CONFIG_HETERO_STATS
-	unsigned long			pages_migrated;
-	int 				thrd_idx;
-	unsigned long			migrate_attempt;
-	long 				avg_kbufpage_life;
-	long 				avg_cachepage_life;
 	/* Kernel buffer and cache pages deleted */
 	unsigned long 			pgbuffdel;
 	unsigned long 			pgcachedel;
+	unsigned long			pages_migrated;
+	int 				thrd_idx;
+#endif
+
+#ifdef CONFIG_HETERO_STATS
+	unsigned long			migrate_attempt;
+	long 				avg_kbufpage_life;
+	long 				avg_cachepage_life;
 #endif
 
 #ifdef CONFIG_MMU

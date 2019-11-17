@@ -109,8 +109,8 @@ int enbl_hetero_pgcache_readahead_set(void)
 
 void dest() {
     fprintf(stderr, "application termination...\n");
-    /*a = syscall(__NR_start_trace, PRINT_STATS);
-    a = syscall(__NR_start_trace, CLEAR_COUNT);
+    syscall(__NR_start_trace, PRINT_STATS);
+    /*a = syscall(__NR_start_trace, CLEAR_COUNT);
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);

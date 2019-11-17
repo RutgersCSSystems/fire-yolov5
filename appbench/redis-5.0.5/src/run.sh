@@ -111,4 +111,5 @@ sleep 10
 RUNCLIENT
 CLEAN
 CLEAN
+$SHARED_LIBS/construct/reset
 set +x
