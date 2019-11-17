@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -x
 
 TARGET=$OUTPUTDIR
 #APP="rocksdb"
@@ -30,6 +29,9 @@ let INCR_ONE_SPACE=1
 ## declare an array variable
 declare -a kernstat=("cache-miss" "buff-miss" "migrated")
 
+## page use information
+declare -a pagestat=("CACHE-PAGES" "BUFF-PAGES" "APP-PAGES")
+
 ##use this for storing some state
 let slowmemhists=0
 
@@ -56,7 +58,6 @@ declare -a excluderedisbreakdown=("affinity-prefetch")
 
 declare -a redispattern=("SET" "GET")
 declare -a mech_redis_prefetch=('slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch')
-
 
 
 EXTRACT_KERNINFO() {
@@ -334,6 +335,60 @@ EXTRACT_KERNSTAT() {
 		done
 	done
 }
+
+EXTRACT_PAGESTAT() {
+
+        APP=$1
+        dir=$2
+	j=$3
+	stattype=$4
+        resultdir=$ZPLOT/data/pagestat
+	file=$APP".out-NVM"
+        mkdir -p $resultdir
+
+        outfile=$(basename $dir)
+        outputfile=$APP-$outfile"-"$stattype".data"
+        rm -rf $resultdir/$outputfile
+        rm -rf "num.data"
+
+	target=$dir/$file
+	OUTFILE=$APP"-pagestat.data"
+
+	if [ -f $target ]; then
+
+		search=$stattype
+		grep -r $search $target | tail -1 |  tr -d ','  &> out.txt
+		temp=`grep -Eo "$search([[:space:]]+[^[:space:]]+){1}" < out.txt`
+		val=`echo $temp | awk '{print $2}'`
+		echo $val
+		let scaled_value=$val/$SCALE_KERN_GRAPH
+		echo $scaled_value &> $OUTFILE
+		echo $j &> "num.data"
+		paste "num.data" $OUTFILE &> $resultdir/$outputfile
+		rm -rf "num.data" $OUTFILE
+	fi
+}
+
+
+GETPAGESTAT() {
+
+	exlude=0
+	APP=$1
+	rm $APP".data"
+	rm "num.data"
+
+	TYPE="NVM"
+	APPFILE=$APP".out-"$device
+	dir=$TARGET
+
+	for stattype in "${pagestat[@]}"
+	do
+		EXTRACT_PAGESTAT $APP $dir $j $stattype
+	done
+	j=$((j+$INCR_KERN_BAR_SPACE))
+	j=$((j+$INCR_KERN_BAR_SPACE))
+}
+
 
 
 REDIS_CONSOLIDATE_RESULT() {
@@ -644,6 +699,50 @@ FORMAT_RESULT_REDIS() {
 }
 
 
+####################PAGESTAT STAT ################################
+j=0
+j=$((j+1))
+OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
+TARGET=$OUTPUTDIR
+
+APP='filebench'
+GETPAGESTAT $APP
+
+APP='redis'
+GETPAGESTAT $APP
+
+APP='rocksdb'
+GETPAGESTAT $APP
+
+APP='cassandra'
+GETPAGESTAT $APP
+
+
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/m-pagestat.py -o "e-all-pagestat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+
+
+####################KERNEL STAT ################################
+j=0
+APP='rocksdb'
+OUTPUTDIR="results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+
+j=0
+APP='rocksdb'
+OUTPUTDIR="results/output-Aug11-allapps"
+TARGET=$OUTPUTDIR
+EXTRACT_KERNSTAT "rocksdb"
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+####################KERNEL STAT ################################
+
+
 j=0
 APP='rocksdb'
 
@@ -802,26 +901,6 @@ EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
 
-exit
-
-####################KERNEL STAT ################################
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-exit
-
-
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 exit
 #######################ROCKSDB PREFETCH#########################
 j=0
