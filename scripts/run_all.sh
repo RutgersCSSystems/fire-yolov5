@@ -2,11 +2,12 @@
 set -x
 cd $NVMBASE
 APP=""
-TYPE="NVM"
-#TYPE="SSD"
+#TYPE="NVM"
+TYPE="SSD"
 CAPACITY=4096
 
-declare -a apparr=("rocksdb.out" "filebench.out" "redis.out" "cassandra.out")
+#declare -a apparr=("redis.out" "cassandra.out" "filebench.out")
+declare -a apparr=("filebench.out")
 
 OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
 mkdir -f $OUTPUTDIR
@@ -79,7 +80,7 @@ COMPILE_SHAREDLIB() {
 
 #APP="rocksdb.out"
 #APP="HiBench.out"
-APP="spark-bench.out"
+#APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
 #APP="redis.out"
@@ -109,12 +110,12 @@ RUNAPP() {
 	then
         	$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
 	fi
-        #$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
-        #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
-        #cd $APPBENCH/butterflyeffect/code
-        #source scripts/setvars.sh
-        #$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
+	if [ "$APP" = "filebench.out" ]
+	then
+        	$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+	fi
+       #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
         if [ "$APP" = "redis.out" ]
         then
@@ -175,11 +176,18 @@ SETUPEXTRAM
 
 for APP in "${apparr[@]}"
 do
+	#### NAIVE PLACEMENT #############
+	export APPPREFIX="numactl  --preferred=0"
+	$NVMBASE/scripts/clear_cache.sh
+	SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+	continue
+
+
 
 	export APPPREFIX="numactl --membind=1"
 	$SCRIPTS/umount_ext4ramdisk.sh
 	sleep 5
-	$SCRIPTS/mount_ext4ramdisk.sh 24000
+	$SCRIPTS/mount_ext4ramdisk.sh 48000
 	SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 	continue
 
@@ -188,13 +196,6 @@ do
 	SETUPEXTRAM
 	$NVMBASE/scripts/clear_cache.sh
 	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
-	continue
-
-
-	#### NAIVE PLACEMENT #############
-	export APPPREFIX="numactl  --preferred=0"
-	$NVMBASE/scripts/clear_cache.sh
-	SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 	continue
 
 

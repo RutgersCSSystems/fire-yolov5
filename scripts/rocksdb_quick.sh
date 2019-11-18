@@ -2,8 +2,8 @@
 set -x
 cd $NVMBASE
 APP=""
-TYPE="NVM"
-#TYPE="SSD"
+#TYPE="NVM"
+TYPE="SSD"
 CAPACITY=4096
 
 SETUP(){

@@ -1452,6 +1452,10 @@ static inline struct page *alloc_slab_page(struct kmem_cache *s,
 	struct page *page;
 	unsigned int order = oo_order(oo);
 
+#ifdef CONFIG_HETERO_STATS
+        incr_tot_buff_pages();
+#endif
+
 	if (node == NUMA_NO_NODE)
 		page = alloc_pages(flags, order);
 	else
@@ -1470,6 +1474,10 @@ static inline struct page *alloc_slab_page_hetero(struct kmem_cache *s,
 {
 	struct page *page;
 	unsigned int order = oo_order(oo);
+
+#ifdef CONFIG_HETERO_STATS
+        incr_tot_buff_pages();
+#endif
 
 	if (node == NUMA_NO_NODE)
 		page = alloc_pages(flags, order);
@@ -1684,10 +1692,6 @@ out:
 		1 << oo_order(oo));
 
 	inc_slabs_node(s, page_to_nid(page), page->objects);
-
-#ifdef CONFIG_HETERO_STATS
-        incr_tot_buff_pages();
-#endif
 
 	return page;
 }
@@ -2937,10 +2941,6 @@ out:
 		1 << oo_order(oo));
 
 	inc_slabs_node(s, page_to_nid(page), page->objects);
-
-#ifdef CONFIG_HETERO_STATS
-	incr_tot_buff_pages();
-#endif
 	return page;
 }
 

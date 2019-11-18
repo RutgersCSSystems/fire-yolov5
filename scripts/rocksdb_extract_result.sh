@@ -30,7 +30,7 @@ let INCR_ONE_SPACE=1
 declare -a kernstat=("cache-miss" "buff-miss" "migrated")
 
 ## page use information
-declare -a pagestat=("CACHE-PAGES" "BUFF-PAGES" "APP-PAGES")
+declare -a pagestat=("BUFF-PAGES" "CACHE-PAGES" "APP-PAGES")
 
 ##use this for storing some state
 let slowmemhists=0
@@ -336,12 +336,17 @@ EXTRACT_KERNSTAT() {
 	done
 }
 
+
+let buff_val=0
+
 EXTRACT_PAGESTAT() {
 
         APP=$1
         dir=$2
 	j=$3
 	stattype=$4
+	let prev_val=$buff_val
+
         resultdir=$ZPLOT/data/pagestat
 	file=$APP".out-NVM"
         mkdir -p $resultdir
@@ -355,17 +360,18 @@ EXTRACT_PAGESTAT() {
 	OUTFILE=$APP"-pagestat.data"
 
 	if [ -f $target ]; then
-
 		search=$stattype
 		grep -r $search $target | tail -1 |  tr -d ','  &> out.txt
 		temp=`grep -Eo "$search([[:space:]]+[^[:space:]]+){1}" < out.txt`
 		val=`echo $temp | awk '{print $2}'`
-		echo $val
-		let scaled_value=$val/$SCALE_KERN_GRAPH
+		let new_val=($buff_val + $val)
+		echo $new_val
+		let scaled_value=$new_val/$SCALE_KERN_GRAPH
 		echo $scaled_value &> $OUTFILE
 		echo $j &> "num.data"
 		paste "num.data" $OUTFILE &> $resultdir/$outputfile
 		rm -rf "num.data" $OUTFILE
+		buff_val=$new_val
 	fi
 }
 
@@ -380,13 +386,15 @@ GETPAGESTAT() {
 	TYPE="NVM"
 	APPFILE=$APP".out-"$device
 	dir=$TARGET
-
+	let prev_val=0
 	for stattype in "${pagestat[@]}"
 	do
-		EXTRACT_PAGESTAT $APP $dir $j $stattype
+		EXTRACT_PAGESTAT $APP $dir $j $stattype $prev_val
 	done
-	j=$((j+$INCR_KERN_BAR_SPACE))
-	j=$((j+$INCR_KERN_BAR_SPACE))
+
+	buff_val=0
+	j=$((j+5))
+	#j=$((j+$INCR_KERN_BAR_SPACE))
 }
 
 
@@ -714,8 +722,12 @@ GETPAGESTAT $APP
 APP='rocksdb'
 GETPAGESTAT $APP
 
+APP='spark-bench'
+GETPAGESTAT $APP
+
 APP='cassandra'
 GETPAGESTAT $APP
+
 
 
 cd $ZPLOT
