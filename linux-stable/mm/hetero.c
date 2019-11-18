@@ -779,11 +779,13 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
 		mm->pgbuff_hits_cnt += 1;
+		incr_global_stats(&g_buffhits);
 		//page->hetero = HETERO_PG_FLAG;
 		//page->hetero_create_time = (struct timeval){0};
 		//page->hetero_del_time = (struct timeval){0};
 		//do_gettimeofday(&page->hetero_create_time);
 	}else if(!correct_node && !delpage) {
+		incr_global_stats(&g_buffmiss);
 		mm->pgbuff_miss_cnt += 1;
 		page->hetero = 0;
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
