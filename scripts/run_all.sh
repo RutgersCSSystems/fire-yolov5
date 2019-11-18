@@ -4,9 +4,9 @@ cd $NVMBASE
 APP=""
 #TYPE="NVM"
 TYPE="SSD"
-CAPACITY=4096
+CAPACITY=32786
 
-#declare -a apparr=("redis.out" "cassandra.out" "filebench.out")
+#declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
 declare -a apparr=("filebench.out")
 
 OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
@@ -93,8 +93,6 @@ COMPILE_SHAREDLIB() {
 RUNAPP() {
         #Run application
         cd $NVMBASE
-        #/bin/ls &> $OUTPUT
-        #$APPBENCH/apps/fio/run.sh &> $OUTPUT
         if [ "$APP" = "rocksdb.out" ]
         then
                 $APPBENCH/apps/rocksdb/run.sh &> $OUTPUT
@@ -172,30 +170,29 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
-SETUPEXTRAM
-
+#SETUPEXTRAM
 for APP in "${apparr[@]}"
 do
+
+	#### OBJAFF NO PREFETCH #############
+	export APPPREFIX="numactl  --preferred=0"
+	SETUPEXTRAM
+	$NVMBASE/scripts/clear_cache.sh
+	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE"
+	continue
+
+
 	#### NAIVE PLACEMENT #############
 	export APPPREFIX="numactl  --preferred=0"
 	$NVMBASE/scripts/clear_cache.sh
 	SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 	continue
 
-
-
 	export APPPREFIX="numactl --membind=1"
 	$SCRIPTS/umount_ext4ramdisk.sh
 	sleep 5
 	$SCRIPTS/mount_ext4ramdisk.sh 48000
 	SET_RUN_APP "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-	continue
-
-	#### OBJAFF NO PREFETCH #############
-	export APPPREFIX="numactl  --preferred=0"
-	SETUPEXTRAM
-	$NVMBASE/scripts/clear_cache.sh
-	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
 	continue
 
 

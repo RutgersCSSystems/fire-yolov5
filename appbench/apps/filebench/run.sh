@@ -3,7 +3,7 @@ set -x
 APPBASE=$APPBENCH/apps/filebench
 APP=$APPBASE/filebench
 DATA=$SHARED_DATA
-SIZE=" --size=1G"
+SIZE=" --size=4G"
 PARAM=" --directory=$DATA $SIZE"
 OUTPUT=$2
 mkdir -p $DATA
