@@ -12,9 +12,9 @@ xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xydim=[270, 170]
-xystart=[140,100]
-xylegend=[70,140]
+xydim=[240, 140]
+xystart=[120,100]
+xylegend=[100,130]
 xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
@@ -40,7 +40,7 @@ titletxt='m-allapps'
 
 colors=['white', 'lightgrey', 'darkgray', 'black', 'blue', 'red']
 path='/users/skannan/ssd/NVM/graphs/zplot/data/motivate/'
-yname="Throughput (MB/sec)"
+yname="Throughput (OPS/sec)"
 
 dseq = []
 L=legend()
@@ -66,11 +66,13 @@ for k in range(0, len(APPS)):
     for j in range(0, len(mech)):
         if(s >= len(mech)):
             p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
-                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0)
+                   fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0, 
+		   labelfield='c1', labelfont='Helvetica-Bold', labelsize=6.0)
         else:
            p.verticalbars(drawable=d, table=dseq[s], xfield='c0', yfield='c1', fill=True,
                    fillcolor=colors[j], barwidth=bwidth, linewidth=lwidth, yloval=0,
-                   legend=L, legendtext=mechnames[j], fillskip=4)
+                   legend=L, legendtext=mechnames[j], fillskip=4, 
+		   labelfield='c1', labelfont='Helvetica-Bold', labelsize=6.0)
         s=s+1
 
 # a bit of a hack to get around that we don't support date fields (yet)

@@ -32,6 +32,10 @@ declare -a kernstat=("cache-miss" "buff-miss" "migrated")
 ## page use information
 declare -a pagestat=("BUFF-PAGES" "CACHE-PAGES" "APP-PAGES")
 
+## sysstat use information
+declare -a sysstat=("Lib" "Kernel" "App")
+
+
 ##use this for storing some state
 let slowmemhists=0
 
@@ -42,8 +46,9 @@ declare -a sensitive_arr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPFAST-OSSLOW' 'AP
 declare -a placearrcontextsensitivity=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-prefetch')
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
-declare -a configarrbw=("BW500" "BW1000" "BW2000" "BW4000")
-#declare -a configarr=("BW1000")
+#declare -a configarrbw=("BW500" "BW1000" "BW2000" "BW4000")
+declare -a configarrbw=("BW1000")
+
 declare -a configarrcap=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
 
 declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig'  'slowmem-obj-affinity' 'slowmem-obj-affinity-net' 'slowmem-only')
@@ -135,7 +140,6 @@ PULL_RESULT() {
 	rm -rf $resultfile
 	rm -rf "num.data"
 
-
 	if [ -f $dir/$APPFILE ]; then
 
 		if [ "$APP" = 'redis' ]; 
@@ -169,6 +173,7 @@ PULL_RESULT() {
 			val=`cat $dir/$APPFILE".txt" | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
+			echo $scaled_value
 		fi
 		((j++))
 		echo $j &> "num.data"
@@ -390,6 +395,64 @@ GETPAGESTAT() {
 	for stattype in "${pagestat[@]}"
 	do
 		EXTRACT_PAGESTAT $APP $dir $j $stattype $prev_val
+	done
+
+	buff_val=0
+	j=$((j+5))
+	#j=$((j+$INCR_KERN_BAR_SPACE))
+}
+
+
+EXTRACT_SYSSTAT() {
+
+        APP=$1
+        dir=$2
+	j=$3
+	stattype=$4
+	let prev_val=$buff_val
+
+        resultdir=$ZPLOT/data/sysstat
+	file=$APP".out-NVM"
+        mkdir -p $resultdir
+
+        outfile=$(basename $dir)
+        outputfile=$APP-$outfile"-"$stattype".data"
+        rm -rf $resultdir/$outputfile
+        rm -rf "num.data"
+
+	target=$dir/$file
+	OUTFILE=$APP"-sysstat.data"
+
+	if [ -f $target ]; then
+		search=$stattype
+		grep -r $search $target | tail -1 |  tr -d ','  &> out.txt
+		temp=`grep -Eo "$search([[:space:]]+[^[:space:]]+){1}" < out.txt`
+		val=`echo $temp | awk '{print $2}'`
+		let new_val=($buff_val + $val)
+		let scaled_value=$new_val
+		echo $scaled_value &> $OUTFILE
+		echo $j &> "num.data"
+		paste "num.data" $OUTFILE &> $resultdir/$outputfile
+		rm -rf "num.data" $OUTFILE
+		buff_val=$new_val
+	fi
+}
+
+
+GETSYSSTAT() {
+
+	exlude=0
+	APP=$1
+	rm $APP".data"
+	rm "num.data"
+
+	TYPE="NVM"
+	APPFILE=$APP".out-"$device
+	dir=$TARGET
+	let prev_val=0
+	for stattype in "${sysstat[@]}"
+	do
+		EXTRACT_SYSSTAT $APP $dir $j $stattype $prev_val
 	done
 
 	buff_val=0
@@ -706,6 +769,41 @@ FORMAT_RESULT_REDIS() {
 	done
 }
 
+####################MOTIVATION ANALYSIS########################a
+M_ALL_STATS_APP() {
+
+	j=0
+	configarr=("${configarrbw[@]}")
+	APP='rocksdb'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "rocksdb"
+
+	APP='redis'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "redis"
+
+	APP='filebench'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "filebench"
+
+	APP='cassandra'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "cassandra"
+
+	APP='spark-bench'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/sparkbench-sensitivity"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "spark-bench"
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
+	exit
+}
+
+M_ALL_STATS_APP
 
 ####################PAGESTAT STAT ################################
 j=0
@@ -728,11 +826,34 @@ GETPAGESTAT $APP
 APP='cassandra'
 GETPAGESTAT $APP
 
-
-
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/m-pagestat.py -o "e-all-pagestat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 exit
+
+
+####################PAGESTAT STAT ################################
+j=0
+j=$((j+1))
+OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/mem-stats/kernstat"
+TARGET=$OUTPUTDIR
+
+APP='filebench'
+GETSYSSTAT $APP
+
+APP='redis'
+GETSYSSTAT $APP
+
+APP='rocksdb'
+GETSYSSTAT $APP
+
+APP='spark-bench'
+GETSYSSTAT $APP
+
+APP='cassandra'
+GETSYSSTAT $APP
+
+cd $ZPLOT
+python2.7 $NVMBASE/graphs/zplot/scripts/m-sysstat.py -o "e-all-sysstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 
 
 ####################KERNEL STAT ################################
@@ -859,38 +980,6 @@ EXTRACT_RESULT_SENSITIVE_MOTIVATE "spark-bench"
 
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py "CAP"
-exit
-
-####################MOTIVATION ANALYSIS########################
-j=0
-APP='rocksdb'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb_sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "rocksdb"
-
-APP='redis'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "redis"
-
-
-APP='filebench'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "filebench"
-
-APP='cassandra'
-#OUTPUTDIR="/users/skannan/ssd/NVM/appbench/output"
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "cassandra"
-
-APP='spark-bench'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/sparkbench-sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_COMPARE "spark-bench"
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
 exit
 
 #####################REDIS NETWORK##############################
