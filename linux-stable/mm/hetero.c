@@ -169,9 +169,9 @@ void incr_tot_cache_pages(void)
 	if(!is_hetero_pgcache_set())
 		return;
 
-	spin_lock(&stats_lock);
+	//spin_lock(&stats_lock);
 	g_tot_cache_pages++;
-	spin_unlock(&stats_lock);
+	//spin_unlock(&stats_lock);
 }
 
 void incr_tot_buff_pages(void) 
@@ -179,9 +179,9 @@ void incr_tot_buff_pages(void)
 	if(!is_hetero_buffer_set())
 		return;
 
-	spin_lock(&stats_lock);
+	//spin_lock(&stats_lock);
 	g_tot_buff_pages++;
-	spin_unlock(&stats_lock);
+	//spin_unlock(&stats_lock);
 }
 
 void incr_tot_app_pages(void) 
@@ -189,22 +189,22 @@ void incr_tot_app_pages(void)
 	if(!is_hetero_pgcache_set()) 
 		return;
 
-	spin_lock(&stats_lock);
+	//spin_lock(&stats_lock);
 	g_tot_app_pages++;
 	/*if(g_tot_app_pages) {
 		g_tot_app_pages = (g_tot_app_pages - g_tot_cache_pages  -
 					g_tot_buff_pages);
 	}*/
-	spin_unlock(&stats_lock);
+	//spin_unlock(&stats_lock);
 }
 #endif
 
 
 #ifdef CONFIG_HETERO_ENABLE
 void incr_global_stats(unsigned long *counter){
-	spin_lock(&stats_lock);
+	//spin_lock(&stats_lock);
 	*counter = *counter + 1;	
-	spin_unlock(&stats_lock);
+	//spin_unlock(&stats_lock);
 }
 
 void print_global_stats(void) {
