@@ -32,6 +32,9 @@ declare -a kernstat=("cache-miss" "buff-miss" "migrated")
 ## page use information
 declare -a pagestat=("BUFF-PAGES" "CACHE-PAGES" "APP-PAGES")
 
+## page lifetime information
+declare -a lifestat=("CACHE-PAGE-LIFE" "BUFF-PAGE-LIFE")
+
 ## sysstat use information
 declare -a sysstat=("Lib" "Kernel" "App")
 
@@ -42,11 +45,12 @@ let slowmemhists=0
 declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig' 'slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net')
 declare -a placearrcontextsensitivity=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-prefetch')
 
-declare -a sensitive_arr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPFAST-OSSLOW' 'APPSLOW-OSFAST')
+declare -a sensitive_arr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPSLOW-OSFAST' 'APPFAST-OSSLOW')
 declare -a placearrcontextsensitivity=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-prefetch')
 
 declare -a pattern=("fillrandom" "readrandom" "fillseq" "readseq" "overwrite")
-#declare -a configarrbw=("BW500" "BW1000" "BW2000" "BW4000")
+
+declare -a configarrbwall=("BW500" "BW1000" "BW2000" "BW4000")
 declare -a configarrbw=("BW1000")
 
 declare -a configarrcap=("CAP2048" "CAP4096" "CAP8192" "CAP10240")
@@ -55,7 +59,7 @@ declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration
 #declare -a devices=("SSD" "NVM")
 declare -a devices=("NVM")
 
-declare -a excludekernstat=("obj-affinity-NVM1")
+declare -a excludekernstat=("obj-affinity-NVM1" 'slowmem-obj-affinity-NVM' 'slowmem-obj-affinity-nomig-NVM')
 declare -a excludefullstat=('slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net' 'NVM1')
 declare -a excludesensitivecontext=("NVM1" "obj-affinity-net")
 declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "slowmem-only" "optimal")
@@ -97,7 +101,6 @@ EXTRACT_KERNINFO() {
 		then
 			let val=`cat $target | grep "HeteroProcname" &> orig.txt && sed 's/\s/,/g' orig.txt > modified.txt && cat modified.txt | awk -F, -v OFS=, "BEGIN {SUM=0}; {SUM=SUM+$search}; END {print SUM}"`  
 		else
-
 			if [[ $dir == *"slowmem-only"*  ]]; then
 				if [[ $stattype == "cache-miss"  ]]; then
 					localtype="cache-hits"
@@ -163,7 +166,7 @@ PULL_RESULT() {
 	       then
                         val=`cat $dir/$APPFILE | grep "Elapsed" | awk '{print $8}' | awk -F: '{ print ($1 * 60) + ($2) + $3 }'`
                         scaled_value=$(echo $val $SCALE_SPARK_GRAPH | awk '{printf "%4.0f\n", $2/$1}')
-			#echo $dir/$APPFILE" "$val" "$scaled_value
+			echo $dir/$APPFILE" "$val" "$scaled_value
                         echo $scaled_value &> $APP".data"
 			#echo $APP".data"
 			#cat $APP".data"
@@ -312,12 +315,12 @@ EXTRACT_KERNSTAT() {
 
                         for placement in "${placearr[@]}"
                         do
-                                for dir in $TARGET/*$placement*$device
+                                for dir in $TARGET/$placement-$device
                                 do
-
 					exlude=0
 					EXCLUDE_DIR $exlude $dir excludekernstat
 					if [ $exlude -ge 1 ]; then
+						echo "EXCLUDING >>>>>"$dir
 						continue;
 					fi
 					EXTRACT_KERNINFO $APP $dir $j $APPFILE $awkidx $stattype
@@ -459,6 +462,69 @@ GETSYSSTAT() {
 	j=$((j+5))
 	#j=$((j+$INCR_KERN_BAR_SPACE))
 }
+
+
+EXTRACT_LIFESTAT() {
+
+        APP=$1
+        dir=$2
+	j=$3
+	stattype=$4
+	let prev_val=$buff_val
+
+        resultdir=$ZPLOT/data/lifestat
+	file=$APP".out-NVM"
+        mkdir -p $resultdir
+
+        outfile=$(basename $dir)
+        outputfile=$APP-$outfile"-"$stattype".data"
+        rm -rf $resultdir/$outputfile
+        rm -rf "num.data"
+
+	target=$dir/$file
+	OUTFILE=$APP"-lifestat.data"
+
+	echo $target
+
+	if [ -f $target ]; then
+		search=$stattype
+		grep -r $search $target | tail -1 |  tr -d ','  &> out.txt
+		temp=`grep -Eo "$search([[:space:]]+[^[:space:]]+){1}" < out.txt`
+		val=`echo $temp | awk '{print $2}'`
+		let new_val=($buff_val + $val)
+		echo $new_val
+		let scaled_value=$new_val/$SCALE_KERN_GRAPH
+		echo $scaled_value &> $OUTFILE
+		echo $j &> "num.data"
+		paste "num.data" $OUTFILE &> $resultdir/$outputfile
+		rm -rf "num.data" $OUTFILE
+		buff_val=$new_val
+	fi
+}
+
+
+GETLIFESTAT() {
+
+	exlude=0
+	APP=$1
+	rm $APP".data"
+	rm "num.data"
+
+	TYPE="NVM"
+	APPFILE=$APP".out-"$device
+	dir=$TARGET
+	let prev_val=0
+	for stattype in "${lifestat[@]}"
+	do
+		EXTRACT_LIFESTAT $APP $dir $j $stattype $prev_val
+		j=$((j+1))
+	done
+
+	buff_val=0
+	j=$((j+5))
+	#j=$((j+$INCR_KERN_BAR_SPACE))
+}
+
 
 
 
@@ -774,19 +840,22 @@ M_ALL_STATS_APP() {
 
 	j=0
 	configarr=("${configarrbw[@]}")
+
 	APP='rocksdb'
 	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
 	TARGET=$OUTPUTDIR
 	EXTRACT_RESULT_COMPARE "rocksdb"
+
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
+	APP='filebench'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_COMPARE "filebench"
 
 	APP='redis'
 	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
 	TARGET=$OUTPUTDIR
 	EXTRACT_RESULT_COMPARE "redis"
 
-	APP='filebench'
-	TARGET=$OUTPUTDIR
-	EXTRACT_RESULT_COMPARE "filebench"
 
 	APP='cassandra'
 	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
@@ -800,145 +869,171 @@ M_ALL_STATS_APP() {
 
 	cd $ZPLOT
 	python2.7 $NVMBASE/graphs/zplot/scripts/m-allapps-total.py
-	exit
 }
 
+####################PAGESTAT STAT ################################
+M_ALL_LIFE_STATS() {
+	j=0
+	j=$((j+1))
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/lifetime-stats"
+	TARGET=$OUTPUTDIR
+
+	APP='filebench'
+	GETLIFESTAT $APP
+
+	APP='redis'
+	GETLIFESTAT $APP
+
+	APP='rocksdb'
+	GETLIFESTAT $APP
+
+	#APP='spark-bench'
+	#GETLIFESTAT $APP
+
+	APP='cassandra'
+	GETLIFESTAT $APP
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/m-lifestat.py -o "m-all-lifestat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+}
+
+
+####################PAGESTAT STAT ################################
+M_ALL_PAGE_STATS() {
+	j=0
+	j=$((j+1))
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
+	TARGET=$OUTPUTDIR
+
+	APP='filebench'
+	GETPAGESTAT $APP
+
+	APP='redis'
+	GETPAGESTAT $APP
+
+	APP='rocksdb'
+	GETPAGESTAT $APP
+
+	APP='spark-bench'
+	GETPAGESTAT $APP
+
+	APP='cassandra'
+	GETPAGESTAT $APP
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/m-pagestat.py -o "e-all-pagestat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+}
+
+####################PAGESTAT STAT ################################
+M_ALL_KERN_STATS() {
+	j=0
+	j=$((j+1))
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/mem-stats/kernstat"
+	TARGET=$OUTPUTDIR
+
+	APP='filebench'
+	GETSYSSTAT $APP
+
+	APP='redis'
+	GETSYSSTAT $APP
+
+	APP='rocksdb'
+	GETSYSSTAT $APP
+
+	APP='spark-bench'
+	GETSYSSTAT $APP
+
+	APP='cassandra'
+	GETSYSSTAT $APP
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/m-sysstat.py -o "e-all-sysstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+}
+
+E_ROCKSDB_KERNSTAT() {
+	####################KERNEL STAT ################################
+	j=0
+	APP='rocksdb'
+	OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug11-allapps"
+	TARGET=$OUTPUTDIR
+	EXTRACT_KERNSTAT "rocksdb"
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+}
+
+
+CONTEXT_SESITIVITY() {
+	j=0
+	configarr=("${configarrbwall[@]}")
+	APP='rocksdb'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb-sensitivity-context"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
+
+	j=$((j+$INCR_FULL_BAR_SPACE))
+
+	APP='spark-bench'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/spark-sensitivity-context"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
+
+	cd $ZPLOT
+	python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity-BW.py "BW"
+}
+
+REDIS_BREAKDOWN() {
+	#####################REDIS NETWORK##############################
+	j=0
+	APP='redis'
+	OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+	TARGET=$OUTPUTDIR
+	EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
+}
+
+E_ALL_APPS() {
+	####################MOTIVATION ANALYSIS########################
+	j=0
+	APP='rocksdb'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "filebench"
+
+	APP='redis'
+	FORMAT_RESULT_REDIS "redis"
+	EXTRACT_RESULT "redis"
+
+	APP='rocksdb'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "rocksdb"
+
+	APP='cassandra'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "cassandra"
+
+
+	APP='spark-bench'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "spark-bench"
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
+}
+
+
+M_ALL_LIFE_STATS
+exit
 M_ALL_STATS_APP
-
-####################PAGESTAT STAT ################################
-j=0
-j=$((j+1))
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
-TARGET=$OUTPUTDIR
-
-APP='filebench'
-GETPAGESTAT $APP
-
-APP='redis'
-GETPAGESTAT $APP
-
-APP='rocksdb'
-GETPAGESTAT $APP
-
-APP='spark-bench'
-GETPAGESTAT $APP
-
-APP='cassandra'
-GETPAGESTAT $APP
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-pagestat.py -o "e-all-pagestat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+exit
+M_ALL_PAGE_STATS
+M_ALL_KERN_STATS
+E_ROCKSDB_KERNSTAT
+CONTEXT_SESITIVITY
+REDIS_BREAKDOWN
 exit
 
 
-####################PAGESTAT STAT ################################
-j=0
-j=$((j+1))
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/mem-stats/kernstat"
-TARGET=$OUTPUTDIR
-
-APP='filebench'
-GETSYSSTAT $APP
-
-APP='redis'
-GETSYSSTAT $APP
-
-APP='rocksdb'
-GETSYSSTAT $APP
-
-APP='spark-bench'
-GETSYSSTAT $APP
-
-APP='cassandra'
-GETSYSSTAT $APP
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/m-sysstat.py -o "e-all-sysstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-
-
-####################KERNEL STAT ################################
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-
-j=0
-APP='rocksdb'
-OUTPUTDIR="results/output-Aug11-allapps"
-TARGET=$OUTPUTDIR
-EXTRACT_KERNSTAT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -o "e-rocksdb-kernstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
-exit
-####################KERNEL STAT ################################
-
-
-j=0
-APP='rocksdb'
-
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-j=$((j+$INCR_FULL_BAR_SPACE))
-
-APP='spark-bench'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/spark-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity-BW.py "BW"
-exit
-
-####################MOTIVATION ANALYSIS########################
-j=0
-APP='rocksdb'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "filebench"
-
-APP='redis'
-FORMAT_RESULT_REDIS "redis"
-EXTRACT_RESULT "redis"
-
-APP='rocksdb'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "rocksdb"
-
-APP='cassandra'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "cassandra"
-
-
-APP='spark-bench'
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT "spark-bench"
-
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
-
-################################################################################
-j=0
-configarr=("${configarrbw[@]}")
-APP='rocksdb'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-j=$((j+$INCR_FULL_BAR_SPACE))
-
-APP='spark-bench'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/spark-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity-BW.py "BW"
-exit
 
 
 ####################CAP STAT ################################
@@ -982,27 +1077,7 @@ cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py "CAP"
 exit
 
-#####################REDIS NETWORK##############################
-j=0
-APP='redis'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
-TARGET=$OUTPUTDIR
-EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
 
-exit
-
-#####################REDIS NETWORK##############################
-j=0
-APP='redis'
-OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
-TARGET=$OUTPUTDIR
-EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-redis-breakdown.py
-
-exit
 #######################ROCKSDB PREFETCH#########################
 j=0
 APP='rocksdb'

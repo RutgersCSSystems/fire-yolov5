@@ -15,13 +15,15 @@ lwidth = 0.3
 xfontsize=9.0
 yfontsize=9.0
 xlabelsize=9.0
-xydim=[225, 170]
+xydim=[225, 120]
 xystart=[100,100]
-xylegend=[50,160]
+xylegend=[70,110]
 xycord = [50,38]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=10
+ytitleshiftval = [-10,-15] 
+xtitleshiftval = [15,-5]
 
 #graphname='m-all-sensitivity-CAP'
 graphname='e-rocks-kernstat'
@@ -95,7 +97,7 @@ for k in range(0, len(CONFIG)):
 axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,-5],
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = ytitleshiftval, xtitleshift = xtitleshiftval,
      xtitle=xname, ytitle=yname,
      ytitlesize=yfontsize, xtitlesize=xfontsize)
 

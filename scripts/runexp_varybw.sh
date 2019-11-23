@@ -15,14 +15,14 @@ TYPE="NVM"
 #APP="rocksdb.out"
 APP="spark-bench.out"
 
-let CAPACITY=4096
+let CAPACITY=5192
 #TYPE="SSD"
-declare -a bwarr=("4000" "1000" "2000" "500")
-#declare -a bwarr=("1000")
+#declare -a bwarr=("4000" "1000" "2000" "500")
+declare -a bwarr=("1000")
 #declare -a caparr=("2048" "4096" "8192" "10240")
 #EXPTYPE="CAP"
 EXPTYPE="BW"
-declare -a caparr=("4096")
+declare -a caparr=("5192")
 #declare -a apparr=("rocksdb.out")
 declare -a apparr=("spark-bench.out")
 
@@ -197,10 +197,22 @@ do
 		fi
 		echo $OUTPUTDIR
 
-		export APPPREFIX="numactl --preferred=1"
-		$NVMBASE/scripts/clear_cache.sh
-		SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
-		sleep 2
+		export APPPREFIX="numactl --membind=1"
+		SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
+
+
+		#$SCRIPTS/umount_ext4ramdisk.sh
+		#sleep 5
+		#$SCRIPTS/mount_ext4ramdisk.sh 24000
+		#DISABLE_THROTTLE
+		#export APPPREFIX="numactl --membind=0"
+		#SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+
+
+
+		#export APPPREFIX="numactl --preferred=1"
+		#$NVMBASE/scripts/clear_cache.sh
+		#SET_RUN_APP $OUTPUTDIR "slowmem-only-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE -D_NET"
 
 		#export APPPREFIX="numactl --preferred=0"
 		#$NVMBASE/scripts/clear_cache.sh
@@ -226,8 +238,6 @@ do
 		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 		#export APPPREFIX="numactl --membind=1"
 		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSSLOW-$TYPE" "-D_SLOWONLY -D_DISABLE_MIGRATE"
-		#export APPPREFIX="numactl --membind=1"
-		#SET_RUN_APP $OUTPUTDIR  "APPSLOW-OSFAST-$TYPE" "-D_DISABLE_MIGRATE"
 		#export APPPREFIX="numactl --preferred=0"
 		#SET_RUN_APP $OUTPUTDIR  "APPFAST-OSSLOW-$TYPE" "-D_SLOWONLY  -D_DISABLE_MIGRATE"
 		done
