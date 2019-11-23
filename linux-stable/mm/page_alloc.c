@@ -570,6 +570,11 @@ out:
 void free_compound_page(struct page *page)
 {
 	__free_pages_ok(page, compound_order(page));
+#ifdef CONFIG_HETERO_ENABLE
+                if(page != NULL && is_hetero_buffer_set()) {
+                        update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
+                }
+#endif
 }
 
 void prep_compound_page(struct page *page, unsigned int order)
@@ -4771,12 +4776,9 @@ void __free_pages(struct page *page, unsigned int order)
 			__free_pages_ok(page, order);
 
 #ifdef CONFIG_HETERO_ENABLE
-		//spin_lock(&lock);
-		if(page != NULL && page->hetero == HETERO_PG_FLAG 
-			&& is_hetero_buffer_set()) {
+		if(page != NULL && is_hetero_buffer_set()) {
 			update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
 		}
-		//spin_unlock(&lock);
 #endif
 	}
 }
@@ -4816,7 +4818,6 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
 
 #ifdef CONFIG_HETERO_ENABLE
 	if(is_hetero_buffer_set()) {
-		//printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);	
 		page = alloc_pages_hetero_node(get_fastmem_node(), gfp_mask,
 				PAGE_FRAG_CACHE_MAX_ORDER);
 	}	
@@ -4851,8 +4852,14 @@ void __page_frag_cache_drain(struct page *page, unsigned int count)
 
 		if (order == 0)
 			free_unref_page(page);
-		else
+		else {
 			__free_pages_ok(page, order);
+		}
+#ifdef CONFIG_HETERO_ENABLE
+                if(page != NULL && is_hetero_buffer_set()) {
+                        update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
+                }
+#endif
 	}
 }
 EXPORT_SYMBOL(__page_frag_cache_drain);
@@ -4918,8 +4925,14 @@ void page_frag_free(void *addr)
 {
 	struct page *page = virt_to_head_page(addr);
 
-	if (unlikely(put_page_testzero(page)))
+	if (unlikely(put_page_testzero(page))) {
 		__free_pages_ok(page, compound_order(page));
+#ifdef CONFIG_HETERO_ENABLE
+                if(page != NULL && is_hetero_buffer_set()) {
+                        update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
+                }
+#endif
+	}
 }
 EXPORT_SYMBOL(page_frag_free);
 

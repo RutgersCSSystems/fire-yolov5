@@ -204,6 +204,15 @@ do
 		fi
 		echo $OUTPUTDIR
 
+
+		sed -i "/read =/c\read = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
+		sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
+		export APPPREFIX="numactl --membind=0"
+		DISABLE_THROTTLE
+		SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
+		exit
+
+
 		export APPPREFIX="numactl --preferred=0"
 		$NVMBASE/scripts/clear_cache.sh
 		SET_RUN_APP $OUTPUTDIR "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
@@ -242,13 +251,6 @@ done
 	DISABLE_THROTTLE
 	export APPPREFIX="numactl --membind=0"
 	SET_RUN_APP "optimal-os-fastmem-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
-	exit
-
-	sed -i "/read =/c\read = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
-	sed -i "/write =/c\write = 30000" $SCRIPTS/nvmemul-throttle-bw.ini
-	export APPPREFIX="numactl --membind=0"
-	DISABLE_THROTTLE
-	SET_RUN_APP $OUTPUTDIR "APPFAST-OSFAST-$TYPE" "-D_DISABLE_HETERO  -D_DISABLE_MIGRATE"
 	exit
 
 

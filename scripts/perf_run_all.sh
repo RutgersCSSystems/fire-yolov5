@@ -9,7 +9,7 @@ CAPACITY=32786
 #declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
 declare -a apparr=("redis.out")
 
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/page-stats"
+OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/mem-stats"
 mkdir -f $OUTPUTDIR
 
 
@@ -117,7 +117,7 @@ RUNAPP() {
 
         if [ "$APP" = "redis.out" ]
         then
-                $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+                $SCRIPTS/perf.sh $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
         fi
 
 	if [ "$APP" = "spark-bench.out" ]
@@ -176,7 +176,7 @@ do
 
 	#### OBJAFF NO PREFETCH #############
 	export APPPREFIX="numactl  --preferred=0"
-	SETUPEXTRAM
+	#SETUPEXTRAM
 	$NVMBASE/scripts/clear_cache.sh
 	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE"
 	continue

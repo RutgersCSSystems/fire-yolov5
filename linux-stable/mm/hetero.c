@@ -94,6 +94,16 @@ Move this to header file later.
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
 
+/* Collect life time of page 
+*/
+#define HETERO_COLLECT_LIFETIME
+
+#ifdef HETERO_COLLECT_LIFETIME
+unsigned int g_avg_cachepage_life = 0;
+unsigned int g_avg_kbufpage_life = 0;
+unsigned int g_cache_pages_deleted = 0;
+unsigned int g_buff_pages_deleted = 0;
+#endif
 
 //#define _ENABLE_HETERO_THREAD
 #ifdef _ENABLE_HETERO_THREAD
@@ -208,8 +218,19 @@ void print_global_stats(void) {
 		g_buffdel);
 
 #ifdef CONFIG_HETERO_STATS
-  printk("ANALYSIS STAT CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
+  	printk("ANALYSIS STAT CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
 		g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
+#endif
+
+#ifdef HETERO_COLLECT_LIFETIME
+	//buffpgs = mm->pgbuffdel;
+	//cachepgs = mm->pgcachedel;
+	if(g_avg_cachepage_life && g_avg_kbufpage_life && g_buff_pages_deleted && g_cache_pages_deleted) {
+		  printk("ANALYSIS LIFESTAT  CACHE-PAGE-LIFE %lu, BUFF-PAGE-LIFE %lu CACHE_PAGES_ALLOC_DELETE %lu " 
+			" BUFF_PAGES_ALLOC_DELETE %lu g_avg_cachepage_life %lu, g_avg_kbufpage_life %lu \n",
+			  jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted), jiffies_to_msecs(g_avg_kbufpage_life/g_buff_pages_deleted), 
+			  g_cache_pages_deleted, g_buff_pages_deleted, g_avg_cachepage_life/g_cache_pages_deleted, g_avg_kbufpage_life/g_buff_pages_deleted);
+	}
 #endif
 }
 EXPORT_SYMBOL(print_global_stats);
@@ -237,20 +258,11 @@ print_hetero_stats(struct task_struct *task)
 	unsigned long buffpgs = 0;
 	unsigned long cachepgs = 0;
 	struct mm_struct *mm = NULL;
-	long avgbuff_life = 0, avgcache_life = 0;
 
 	mm = getmm(task);
 	if(!mm)
 		return;
 
-	buffpgs = mm->pgbuffdel;
-	cachepgs = mm->pgcachedel;
-
-	if(buffpgs) 
-		avgbuff_life = mm->avg_kbufpage_life/buffpgs;
-
-	if(cachepgs)	
-		avgcache_life = mm->avg_cachepage_life/cachepgs;
 #if 0
         printk("EXITING PROCESS PID %d Currname %s " 
 		"cache-hits %lu cache-miss %lu " 
@@ -291,6 +303,7 @@ void reset_hetero_stats(struct task_struct *task) {
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
+#if 0
 long 
 timediff (struct timeval *start, struct timeval *end) 
 {
@@ -302,6 +315,13 @@ timediff (struct timeval *start, struct timeval *end)
 	diff = (end->tv_sec*1000000 + end->tv_usec) - 
 			(start->tv_sec*1000000 + start->tv_usec);
 	return diff;
+}
+#endif
+
+unsigned long 
+timediff (unsigned long start, unsigned long end) 
+{
+	return (end - start);
 }
 
 
@@ -699,6 +719,46 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 }
 EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 
+#ifdef HETERO_COLLECT_LIFETIME
+void update_page_life_time(struct page *page, int delpage, int kbuff) {
+
+	if(!delpage) {
+
+		//if(!page->hetero_create_time)
+		page->hetero_create_time = jiffies;
+		//if(!(page->hetero_create_time.tv_sec + page->hetero_create_time.tv_usec))
+		//	do_gettimeofday(&page->hetero_create_time);
+	}else {
+	
+		//do_gettimeofday(&page->hetero_del_time);
+		//if(page->hetero_create_time)
+			page->hetero_del_time = jiffies;
+		//else
+		//	return;
+
+		if(kbuff) {
+
+			//g_avg_kbufpage_life += timediff(&page->hetero_create_time, &page->hetero_del_time);
+			g_avg_kbufpage_life += (page->hetero_del_time - page->hetero_create_time);
+			g_buff_pages_deleted++;
+
+		} else  {
+			g_avg_cachepage_life += (page->hetero_del_time - page->hetero_create_time);
+			g_cache_pages_deleted++;
+			/*if(g_cache_pages_deleted) {
+				printk(KERN_ALERT "start %ld, end %ld del_pages %lu life_sum %u avg %ld life_msec %lu\n", 
+					page->hetero_create_time, page->hetero_del_time,
+					g_cache_pages_deleted, g_avg_cachepage_life, 
+					g_avg_cachepage_life/g_cache_pages_deleted, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted));
+			}*/
+		}
+		page->hetero_del_time = 0;  //(struct timeval){0};
+                page->hetero_create_time = 0; //(struct timeval){0};
+	}
+}
+#endif
+
+
 
 /* Update STAT
 * TODO: Currently not setting HETERO_PG_FLAG for testing
@@ -722,29 +782,29 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(!mm)
 		return;
 
+#ifdef HETERO_COLLECT_LIFETIME
+	page->hetero = HETERO_PG_FLAG;
+	update_page_life_time(page, delpage, 0);
+#else
+	if(page->hetero != HETERO_PG_FLAG)
+		return;
+#endif
+
 	/*Check if page is in the correct node and 
 	we are not deleting and only inserting the page*/
 	if(correct_node && !delpage) {
 		mm->pgcache_hits_cnt += 1;
 		page->hetero = HETERO_PG_FLAG;
 		incr_global_stats(&g_cachehits);
-		//page->hetero_create_time = (struct timeval){0};
-		//page->hetero_del_time = (struct timeval){0};
-		//do_gettimeofday(&page->hetero_create_time);
-		//printk(KERN_ALERT "%s:%d \n",__func__,__LINE__);
 	} else if(!correct_node && !delpage) {
 		mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
 		incr_global_stats(&g_cachemiss);
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
-		//do_gettimeofday(&page->hetero_del_time);
-		//current->mm->avg_cachepage_life += 
-		//	timediff(&page->hetero_create_time, &page->hetero_del_time);
 		mm->pgcachedel++;
 		incr_global_stats(&g_cachedel);
 	}
-
 	/* Either if object affinity is disabled or page node is 
 	incorrect, then return */
 	if(!correct_node || !enbl_hetero_objaff)
@@ -754,6 +814,8 @@ ret_pgcache_stat:
 	return;
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
+
+
 
 
 /* 
@@ -775,26 +837,31 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	if(!mm)
 		return;
 
+#ifdef HETERO_COLLECT_LIFETIME
+	page->hetero = HETERO_PG_FLAG;
+	update_page_life_time(page, delpage, 1);
+#else
+	if(page->hetero != HETERO_PG_FLAG)
+		return;
+#endif
 	//Check if page is in the correct node and 
 	//we are not deleting and only inserting the page
 	if(correct_node && !delpage) {
+
 		mm->pgbuff_hits_cnt += 1;
 		incr_global_stats(&g_buffhits);
+
 		//page->hetero = HETERO_PG_FLAG;
-		//page->hetero_create_time = (struct timeval){0};
-		//page->hetero_del_time = (struct timeval){0};
-		//do_gettimeofday(&page->hetero_create_time);
 	}else if(!correct_node && !delpage) {
+
 		incr_global_stats(&g_buffmiss);
 		mm->pgbuff_miss_cnt += 1;
 		page->hetero = 0;
 	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
 			&& delpage) {
+
 #ifdef CONFIG_HETERO_STATS
-			do_gettimeofday(&page->hetero_del_time);
-			mm->avg_kbufpage_life += 
-				timediff(&page->hetero_create_time, &page->hetero_del_time);
-			mm->pgbuffdel++;
+		mm->pgbuffdel++;
 #endif		
 	}
 	//Either if object affinity is disabled or page node is 
@@ -1059,7 +1126,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
 	    //print_hetero_stats(current);
-	    //print_global_stats();	
+	    print_global_stats();	
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);

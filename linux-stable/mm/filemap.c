@@ -291,8 +291,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
 {
 	struct address_space *mapping = page->mapping;
 #ifdef CONFIG_HETERO_ENABLE
-        if (page && is_hetero_pgcache_set() && page->hetero == HETERO_PG_FLAG) {
-		//printk(KERN_ALERT "%s : %d Node: %u \n", __func__, __LINE__, page_to_pfn(page));	
+        if (page && is_hetero_pgcache_set() ) {
         	update_hetero_pgcache(get_fastmem_node(), page, 1);
 	}
 #endif
@@ -307,6 +306,11 @@ static void page_cache_free_page(struct address_space *mapping,
 {
 	void (*freepage)(struct page *);
 
+#ifdef CONFIG_HETERO_ENABLE
+        if (page && is_hetero_pgcache_set() ) {
+        	update_hetero_pgcache(get_fastmem_node(), page, 1);
+	}
+#endif
 	freepage = mapping->a_ops->freepage;
 	if (freepage)
 		freepage(page);
@@ -1139,8 +1143,9 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
 		return __page_cache_alloc(gfp);		
 	}
 
-
+#ifdef CONFIG_HETERO_STATS
 	incr_tot_cache_pages();
+#endif
 
 	/* Check if  HETERO allocation enabled for page cache 
 	 * enabled 

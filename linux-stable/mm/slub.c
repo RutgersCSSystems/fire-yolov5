@@ -3565,6 +3565,11 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
 				      void *head, void *tail, int cnt,
 				      unsigned long addr)
 {
+#ifdef CONFIG_HETERO_ENABLE
+	if(page != NULL && is_hetero_buffer_set()) {
+		update_hetero_pgbuff_stat(get_fastmem_node(), page, 1);
+	}
+#endif
 	/*
 	 * With KASAN enabled slab_free_freelist_hook modifies the freelist
 	 * to remove objects, whose reuse must be delayed.

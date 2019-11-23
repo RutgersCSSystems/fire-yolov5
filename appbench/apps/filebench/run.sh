@@ -76,5 +76,6 @@ rm $DATA/*
 rm -rf fio-seq-RW
 rm -rf fio-rand-RW
 $SHARED_LIBS/construct/reset
+#perf report --sort=dso
 set +x
 

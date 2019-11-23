@@ -158,9 +158,9 @@ PULL_RESULT() {
 	       then
                         val=`cat $dir/$APPFILE | grep "Elapsed" | awk '{print $8}' | awk -F: '{ print ($1 * 60) + ($2) + $3 }'`
                         scaled_value=$(echo $val $SCALE_SPARK_GRAPH | awk '{printf "%4.0f\n", $2/$1}')
-			#echo $dir/$APPFILE" "$val" "$scaled_value
+			echo $dir/$APPFILE" "$val" "$scaled_value
                         echo $scaled_value &> $APP".data"
-			#echo $APP".data"
+			#echo $dir/$APPFILE" "$APP".data"
 			#cat $APP".data"
 		else
 			cp $dir/$APPFILE $dir/$APPFILE".txt"
@@ -647,6 +647,10 @@ FORMAT_RESULT_REDIS() {
 j=0
 APP='rocksdb'
 
+################################################################################
+j=0
+configarr=("${configarrbw[@]}")
+APP='rocksdb'
 OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb-sensitivity-context"
 TARGET=$OUTPUTDIR
 EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
@@ -662,7 +666,6 @@ cd $ZPLOT
 python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity-BW.py "BW"
 exit
 
-####################MOTIVATION ANALYSIS########################
 j=0
 APP='rocksdb'
 OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
@@ -689,24 +692,6 @@ EXTRACT_RESULT "spark-bench"
 cd $ZPLOT
 python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
 
-################################################################################
-j=0
-configarr=("${configarrbw[@]}")
-APP='rocksdb'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/rocksdb-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-j=$((j+$INCR_FULL_BAR_SPACE))
-
-APP='spark-bench'
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/spark-sensitivity-context"
-TARGET=$OUTPUTDIR
-EXTRACT_RESULT_SENSITIVE_CONTEXT $APP
-
-cd $ZPLOT
-python $NVMBASE/graphs/zplot/scripts/e-rocksdb-sensitivity-BW.py "BW"
-exit
 
 
 ####################CAP STAT ################################
