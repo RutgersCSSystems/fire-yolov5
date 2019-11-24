@@ -1138,8 +1138,9 @@ struct page *__page_cache_alloc_hetero(gfp_t gfp,
         n = get_fastmem_node();
 
 	if (!is_hetero_pgcache_set()) {
-
+#ifdef CONFIG_HETERO_STATS
 		incr_tot_cache_pages();
+#endif
 		return __page_cache_alloc(gfp);		
 	}
 

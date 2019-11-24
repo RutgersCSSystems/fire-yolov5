@@ -87,7 +87,6 @@ COMPILE_SHAREDLIB() {
 }
 
 
-
 RUNAPP() {
         #Run application
         cd $NVMBASE

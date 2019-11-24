@@ -407,8 +407,8 @@ struct mm_struct {
 	int 				thrd_idx;
 #endif
 
-#ifdef CONFIG_HETERO_STATS
 	unsigned long			migrate_attempt;
+#ifdef CONFIG_HETERO_STATS
 	long 				avg_kbufpage_life;
 	long 				avg_cachepage_life;
 #endif

@@ -6,26 +6,26 @@ import sys, getopt
 
 inputfile = ''
 outputfile = ''
-ymax=3000
+ymax=2500
 yint=500
 xfield='ops'
 xlegend='DevFS techniques'
-bwidth = 0.9
+bwidth = 0.8
 lwidth = 0.3
-xfontsize=9.0
-yfontsize=9.0
-xlabelsize=9.0
+xfontsize=8.0
+yfontsize=8.0
+xlabelsize=8.0
 xydim=[270, 170]
-xystart=[120, 90]
-xylegend=[50,150]
+xystart=[120, 80]
+xylegend=[30,160]
 xycord = [45,30]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=7
 skipnextval=4
-skipspaceval=80
+skipspaceval=75
 
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-NoMigrate', 'KLOC', 'KLOC-N/W']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-nomigrate', 'KLOC-migrate-fs-noprefetch', 'KLOC-migrate-fs-nw-noprefetch']
 xlabel = ['SET', 'GET']
 pattern = ['NVM-SET', 'NVM-GET']
 mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem','slowmem-migration-only', 'slowmem-obj-affinity-nomig',  'slowmem-obj-affinity', 'slowmem-obj-affinity-net']
@@ -73,6 +73,6 @@ axis(drawable=d, style='xy',
      xtitle='Operation Type', ytitle=yname,
      ytitlesize=yfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=skipnextval, skipspace=skipspaceval)
+L.draw(canvas=c, coord=xylegend, skipnext=skipnextval, skipspace=skipspaceval, width=8, height=8)
 
 c.render()

@@ -12,16 +12,21 @@ xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.9
 lwidth = 0.3
-xfontsize=9.0
-yfontsize=9.0
-xlabelsize=9.0
-xydim=[225, 170]
-xystart=[100,100]
-xylegend=[50,160]
-xycord = [50,38]
+xfontsize=8.0
+yfontsize=8.0
+xlabelsize=8.0
+xydim=[245, 120]
+xystart=[90,100]
+xylegend=[55,110]
+xycord = [40,38]
 xmanualarr = []
 xmanualstart=2.5
 xmanualint=10
+ytitleshiftval = [-5,-15] 
+xtitleshiftval = [15,-5]
+skipnextval=3
+skipspaceval=75
+legendfont=8
 
 #graphname='m-all-sensitivity-CAP'
 graphname='e-rocks-kernstat'
@@ -30,7 +35,7 @@ xname="Slow Memory Pages Used"
 #xname="Capacity Relative to All Fast Memory"
 
 
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-migrate-fs-noprefetch']
 mech = ['slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only',  'slowmem-obj-affinity-prefetch']
 
 CONFIG = ['cache-miss', 'buff-miss', 'migrated']
@@ -95,10 +100,10 @@ for k in range(0, len(CONFIG)):
 axis(drawable=d, style='xy',
      xmanual=xmanualarr,
      yauto=[0,ymax, yint],
-     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = [-5,0], xtitleshift = [15,-5],
+     linewidth=lwidth, xlabelfontsize=xfontsize, xlabelshift=[0,0], ytitleshift = ytitleshiftval, xtitleshift = xtitleshiftval,
      xtitle=xname, ytitle=yname,
      ytitlesize=yfontsize, xtitlesize=xfontsize)
 
-L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=85)
+L.draw(canvas=c, coord=xylegend, skipnext=skipnextval, skipspace=skipspaceval, fontsize=legendfont)
 
 c.render()
