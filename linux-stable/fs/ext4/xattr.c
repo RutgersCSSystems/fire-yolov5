@@ -1936,6 +1936,7 @@ ext4_xattr_block_set(handle_t *handle, struct inode *inode,
 			ea_bdebug(bs->bh, "cloning");
 #ifdef CONFIG_HETERO_ENABLE 
 			if(is_hetero_buffer_set()) {
+                		printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 				s->base = kmalloc_hetero(bs->bh->b_size, GFP_NOFS);
 			}else
 #endif
@@ -2642,14 +2643,19 @@ static int ext4_xattr_move_to_block(handle_t *handle, struct inode *inode,
 
 #ifdef CONFIG_HETERO_ENABLE
 	buffer = NULL;
-        if(is_hetero_buffer_set()) 
+        if(is_hetero_buffer_set()) {
+		printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 		buffer = kmalloc_hetero(value_size, GFP_NOFS);
+	}
 	if(!buffer)
 #endif
 	buffer = kmalloc(value_size, GFP_NOFS);
 
 #ifdef CONFIG_HETERO_ENABLE
 	b_entry_name = NULL;
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
         if(is_hetero_buffer_set()) 
 		b_entry_name = kmalloc_hetero(entry->e_name_len + 1, GFP_NOFS);
 	if(!b_entry_name)

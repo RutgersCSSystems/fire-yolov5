@@ -96,7 +96,7 @@ Move this to header file later.
 
 /* Collect life time of page 
 */
-#define HETERO_COLLECT_LIFETIME
+//#define HETERO_COLLECT_LIFETIME
 
 #ifdef HETERO_COLLECT_LIFETIME
 unsigned int g_avg_cachepage_life = 0;

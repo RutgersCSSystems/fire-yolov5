@@ -474,6 +474,9 @@ void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data)
 	size_t size = (size_t)pool_data;
 #ifdef CONFIG_HETERO_ENABLE
         if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
+        if(is_hetero_buffer_set()) {
 		return kmalloc_hetero(size, gfp_mask);
         }
 #endif
@@ -668,6 +671,9 @@ EXPORT_SYMBOL(mempool_free_slab_hetero);
 void *mempool_kmalloc_hetero(gfp_t gfp_mask, void *pool_data)
 {
 	size_t size = (size_t)pool_data;
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	return kmalloc_hetero(size, gfp_mask);
 }
 EXPORT_SYMBOL(mempool_kmalloc_hetero);

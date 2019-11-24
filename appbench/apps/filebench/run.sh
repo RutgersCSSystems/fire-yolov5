@@ -31,10 +31,10 @@ RANDOM_MONGO(){
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
-	$APPPREFIX $APP -f workloads/mongo.f
+	#$APPPREFIX $APP -f workloads/mongo.f
 	#$APPPREFIX $APP -f workloads/videoserver.f
 	#$APPPREFIX $APP -f workloads/oltp.f
-	#$APPPREFIX $APP -f workloads/randomrw.f
+	$APPPREFIX $APP -f workloads/randomrw.f
 	export LD_PRELOAD=""
 }
 
@@ -64,11 +64,11 @@ $APPPREFIX $APP $APPBASE/examples/fio-seq-read.job --name=seqread $PARAM
 
 cd $APPBASE
 FlushDisk
-RANDOM_MONGO
-#RANDOM_WRITE
+#RANDOM_MONGO
+RANDOM_WRITE
 FlushDisk
-#RANDOM_READ
-#FlushDisk
+RANDOM_READ
+FlushDisk
 #SEQ_WRITE
 #FlushDisk
 #SEQ_READ

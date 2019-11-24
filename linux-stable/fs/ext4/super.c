@@ -4766,6 +4766,7 @@ static int ext4_load_journal(struct super_block *sb,
 		err = jbd2_journal_wipe(journal, !really_read_only);
 	if (!err) {
 #ifdef CONFIG_HETERO_ENABLE
+	        printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);	
 		char *save = kmalloc_hetero(EXT4_S_ERR_LEN, GFP_KERNEL);
 #else 
 		char *save = kmalloc(EXT4_S_ERR_LEN, GFP_KERNEL);

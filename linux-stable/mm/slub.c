@@ -4399,6 +4399,9 @@ void *__kmalloc_hetero(size_t size, gfp_t flags)
 	if(!is_hetero_buffer_set())
 		__kmalloc(size, flags);
 
+        /*if(is_hetero_buffer_set()) {
+                dump_stack();
+        }*/
 
 	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
 		return kmalloc_large(size, flags);

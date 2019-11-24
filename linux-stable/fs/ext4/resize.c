@@ -255,6 +255,9 @@ static struct ext4_new_flex_group_data *alloc_flex_gd(unsigned long flexbg_size)
 		goto out2;
 
 #ifdef CONFIG_HETERO_ENABLE
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	flex_gd->bg_flags = kmalloc_hetero(flexbg_size * sizeof(__u16), GFP_NOFS);
 #else 
 	flex_gd->bg_flags = kmalloc(flexbg_size * sizeof(__u16), GFP_NOFS);
@@ -1031,6 +1034,9 @@ static int reserve_backup_gdb(handle_t *handle, struct inode *inode,
 	int err;
 
 #ifdef CONFIG_HETERO_ENABLE
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	primary = kmalloc_hetero(reserved_gdb * sizeof(*primary), GFP_NOFS);
 #else 
 	primary = kmalloc(reserved_gdb * sizeof(*primary), GFP_NOFS);

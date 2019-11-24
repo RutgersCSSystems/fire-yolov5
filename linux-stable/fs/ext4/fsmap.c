@@ -303,6 +303,9 @@ static inline int ext4_getfsmap_fill(struct list_head *meta_list,
 {
 	struct ext4_fsmap *fsm;
 #ifdef CONFIG_HETERO_ENABLE
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	fsm = kmalloc_hetero(sizeof(*fsm), GFP_NOFS);
 #else 
 	fsm = kmalloc(sizeof(*fsm), GFP_NOFS);

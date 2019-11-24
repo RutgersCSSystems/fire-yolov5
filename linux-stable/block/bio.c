@@ -297,7 +297,7 @@ static void bio_free(struct bio *bio)
 	} else {
 #ifdef CONFIG_HETERO_ENABLE       
                 if(is_hetero_buffer_set()) {
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
 			vfree_hetero(bio);
 #else
 			kfree(bio);
@@ -623,10 +623,10 @@ struct bio *bio_alloc_bioset_hetero(gfp_t gfp_mask, unsigned int nr_iovecs,
                 p = NULL;
 
 		if(is_hetero_buffer_set()) {
-#ifdef CONFIG_HETERO_MIGRATE
-		        //printk(KERN_ALERT "%s : %d size %d \n",
-			//	 __func__, __LINE__, sizeof(struct bio) + 
-			//	nr_iovecs * sizeof(struct bio_vec));
+#if 0 //def CONFIG_HETERO_MIGRATE
+		        printk(KERN_ALERT "%s : %d size %d \n",
+				 __func__, __LINE__, sizeof(struct bio) + 
+				nr_iovecs * sizeof(struct bio_vec));
                         p = vmalloc_hetero(sizeof(struct bio) + nr_iovecs * sizeof(struct bio_vec)); 
 			if(!p)
 #endif

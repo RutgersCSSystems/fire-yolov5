@@ -289,10 +289,19 @@ static ssize_t kernfs_fop_write(struct file *file, const char __user *user_buf,
 	buf = of->prealloc_buf;
 	if (buf)
 		mutex_lock(&of->prealloc_mutex);
-	else
-		buf = kmalloc(len + 1, GFP_KERNEL);
+	else {
+#ifdef CONFIG_HETERO_MIGRATE
+        buf = NULL;
+        if(is_hetero_buffer_set()) {
+                printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
+                buf = vmalloc_hetero(len + 1);
+        }
+        if(!buf)
+#endif
+	buf = kmalloc(len + 1, GFP_KERNEL);
 	if (!buf)
 		return -ENOMEM;
+	}
 
 	if (copy_from_user(buf, user_buf, len)) {
 		len = -EFAULT;
@@ -326,8 +335,15 @@ static ssize_t kernfs_fop_write(struct file *file, const char __user *user_buf,
 out_free:
 	if (buf == of->prealloc_buf)
 		mutex_unlock(&of->prealloc_mutex);
-	else
+	else {
+#ifdef CONFIG_HETERO_MIGRATE
+		if(is_hetero_buffer_set()) {
+			vfree_hetero(buf);
+		}
+		else
+#endif
 		kfree(buf);
+	}
 	return len;
 }
 
@@ -645,6 +661,15 @@ static int kernfs_fop_open(struct inode *inode, struct file *file)
 
 	/* allocate a kernfs_open_file for the file */
 	error = -ENOMEM;
+
+#ifdef CONFIG_HETERO_MIGRATE
+	of = NULL;
+	if(is_hetero_buffer_set()) {
+		printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
+		of = vmalloc_hetero(sizeof(struct kernfs_open_file));
+	}
+	if(!of)
+#endif
 	of = kzalloc(sizeof(struct kernfs_open_file), GFP_KERNEL);
 	if (!of)
 		goto err_out;
@@ -687,7 +712,17 @@ static int kernfs_fop_open(struct inode *inode, struct file *file)
 	if (ops->prealloc && ops->seq_show)
 		goto err_free;
 	if (ops->prealloc) {
+
 		int len = of->atomic_write_len ?: PAGE_SIZE;
+
+#ifdef CONFIG_HETERO_MIGRATE
+		of->prealloc_buf = NULL;
+		if(is_hetero_buffer_set()) {
+			printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
+			of->prealloc_buf = vmalloc_hetero(len + 1);
+		}
+		if(!of->prealloc_buf)
+#endif
 		of->prealloc_buf = kmalloc(len + 1, GFP_KERNEL);
 		error = -ENOMEM;
 		if (!of->prealloc_buf)
@@ -735,7 +770,23 @@ err_put_node:
 err_seq_release:
 	seq_release(inode, file);
 err_free:
+
+#ifdef CONFIG_HETERO_MIGRATE
+	if(is_hetero_buffer_set()) {
+		if(of->prealloc_buf)
+			vfree_hetero(of->prealloc_buf);
+	}
+	else
+#endif
 	kfree(of->prealloc_buf);
+
+#ifdef CONFIG_HETERO_MIGRATE
+        if(is_hetero_buffer_set()) {
+		if(of)
+			vfree_hetero(of);
+        }
+        else
+#endif
 	kfree(of);
 err_out:
 	kernfs_put_active(kn);
@@ -779,7 +830,14 @@ static int kernfs_fop_release(struct inode *inode, struct file *filp)
 
 	kernfs_put_open_node(kn, of);
 	seq_release(inode, filp);
-	kfree(of->prealloc_buf);
+	//kfree(of->prealloc_buf);
+#ifdef CONFIG_HETERO_MIGRATE
+        if(is_hetero_buffer_set()) {
+                if(of)
+                        vfree_hetero(of);
+        }
+        else
+#endif
 	kfree(of);
 
 	return 0;

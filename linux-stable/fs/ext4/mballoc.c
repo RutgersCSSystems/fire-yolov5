@@ -2501,6 +2501,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 #ifdef CONFIG_HETERO_ENABLE
 		meta_group_info = NULL;
 		if(is_hetero_buffer_set()) {
+			printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 			meta_group_info = kmalloc_hetero(metalen, GFP_NOFS);
 		}
 		if(!meta_group_info)
@@ -2558,6 +2559,7 @@ int ext4_mb_add_groupinfo(struct super_block *sb, ext4_group_t group,
 #ifdef CONFIG_HETERO_ENABLE
 		meta_group_info[i]->bb_bitmap = NULL;
                 if(is_hetero_buffer_set()) {
+			printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 			meta_group_info[i]->bb_bitmap =
 				kmalloc_hetero(sb->s_blocksize, GFP_NOFS);
                 }
@@ -2698,6 +2700,7 @@ int ext4_mb_init(struct super_block *sb)
 #ifdef CONFIG_HETERO_ENABLE
 	sbi->s_mb_offsets = NULL;
 	if(is_hetero_buffer_set()) {
+		 printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 		 sbi->s_mb_offsets = kmalloc_hetero(i, GFP_KERNEL);
 	}
 	if(!sbi->s_mb_offsets)
@@ -2712,6 +2715,7 @@ int ext4_mb_init(struct super_block *sb)
 #ifdef CONFIG_HETERO_ENABLE
 	sbi->s_mb_maxs = NULL;
 	if(is_hetero_buffer_set()) {
+		printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 		sbi->s_mb_maxs = kmalloc_hetero(i, GFP_KERNEL);
 	}
 	if(!sbi->s_mb_maxs)

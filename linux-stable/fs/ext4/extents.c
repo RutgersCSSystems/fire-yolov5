@@ -581,6 +581,13 @@ int ext4_ext_precache(struct inode *inode)
 	down_read(&ei->i_data_sem);
 	depth = ext_depth(inode);
 #ifdef CONFIG_HETERO_ENABLE
+
+#if 0 //def CONFIG_HETERO_MIGRATE
+	path = NULL;
+	path = vmalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1));
+	if(!path)
+#endif
+
 	path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
 		       GFP_NOFS);
 #else 
@@ -632,6 +639,12 @@ int ext4_ext_precache(struct inode *inode)
 out:
 	up_read(&ei->i_data_sem);
 	ext4_ext_drop_refs(path);
+
+#if 0 //def CONFIG_HETERO_MIGRATE
+	 if(is_hetero_buffer_set())
+		vfree_hetero(path);
+	else
+#endif
 	kfree(path);
 	return ret;
 }
@@ -887,7 +900,8 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 
 #ifdef CONFIG_HETERO_ENABLE 
 			if(is_hetero_buffer_set()) {
-#ifdef CONFIG_HETERO_MIGRATE
+
+#if 0 //def CONFIG_HETERO_MIGRATE
 				vfree_hetero(path);
 #else
 				kfree(path);
@@ -903,12 +917,12 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 		/* account possible depth increase */
 #ifdef CONFIG_HETERO_ENABLE 
 		if(is_hetero_buffer_set()) {
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
 			path = vmalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 2));
-#else
+			if(!path)
+#endif
 			path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 2),
 				GFP_NOFS);
-#endif
 		}
 #endif
 	        if(!path)
@@ -964,13 +978,13 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
 
 err:
 	ext4_ext_drop_refs(path);
-#ifdef CONFIG_HETERO_MIGRATE
-        if(is_hetero_buffer_set()) {
-	    vfree_hetero(path);
-        }
-#else
-	kfree(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+	 if(is_hetero_buffer_set())
+		vfree_hetero(path);
+	else
 #endif
+	kfree(path);
+
 	if (orig_path)
 		*orig_path = NULL;
 	return ERR_PTR(ret);
@@ -2185,7 +2199,14 @@ merge:
 
 cleanup:
 	ext4_ext_drop_refs(npath);
+
+#if 0 //def CONFIG_HETERO_MIGRATE
+	 if(is_hetero_buffer_set())
+		vfree_hetero(npath);
+	else
+#endif
 	kfree(npath);
+
 	return err;
 }
 
@@ -2334,7 +2355,12 @@ static int ext4_fill_fiemap_extents(struct inode *inode,
 	}
 
 	ext4_ext_drop_refs(path);
-	kfree(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+	 if(is_hetero_buffer_set())
+		vfree_hetero(path);
+	else
+#endif
+        kfree(path);
 	return err;
 }
 
@@ -2970,6 +2996,10 @@ again:
 #ifdef CONFIG_HETERO_ENABLE
 		path = NULL;
                 if(is_hetero_buffer_set()) {
+#if 0 //def CONFIG_HETERO_MIGRATE
+                        path = vmalloc_hetero(sizeof(struct ext4_ext_path) * (depth + 1));
+                        if(!path)
+#endif
 			path = kzalloc_hetero_buf(sizeof(struct ext4_ext_path) * (depth + 1),
 				       GFP_NOFS);
                 }else
@@ -3104,6 +3134,11 @@ again:
 	}
 out:
 	ext4_ext_drop_refs(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+	 if(is_hetero_buffer_set())
+		vfree_hetero(path);
+	else
+#endif
 	kfree(path);
 	path = NULL;
 	if (err == -EAGAIN)
@@ -4655,7 +4690,7 @@ out:
 out2:
 	ext4_ext_drop_refs(path);
 
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
          if(is_hetero_buffer_set()) 
                 vfree_hetero(path);
 	else
@@ -5490,6 +5525,11 @@ ext4_ext_shift_extents(struct inode *inode, handle_t *handle,
 	}
 out:
 	ext4_ext_drop_refs(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+         if(is_hetero_buffer_set())
+                vfree_hetero(path);
+        else
+#endif
 	kfree(path);
 	return ret;
 }
@@ -5767,6 +5807,11 @@ int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
 		}
 
 		ext4_ext_drop_refs(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+		 if(is_hetero_buffer_set())
+			vfree_hetero(path);
+		else
+#endif
 		kfree(path);
 		if (ret < 0) {
 			up_write(&EXT4_I(inode)->i_data_sem);
@@ -5774,6 +5819,11 @@ int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
 		}
 	} else {
 		ext4_ext_drop_refs(path);
+#if 0 //def CONFIG_HETERO_MIGRATE
+		 if(is_hetero_buffer_set())
+			vfree_hetero(path);
+		else
+#endif
 		kfree(path);
 	}
 
@@ -5995,8 +6045,18 @@ ext4_swap_extents(handle_t *handle, struct inode *inode1,
 
 	repeat:
 		ext4_ext_drop_refs(path1);
+#if 0 //def CONFIG_HETERO_MIGRATE
+                 if(is_hetero_buffer_set())
+                        vfree_hetero(path1);
+                else
+#endif
 		kfree(path1);
 		ext4_ext_drop_refs(path2);
+#if 0 //def CONFIG_HETERO_MIGRATE
+                 if(is_hetero_buffer_set())
+                        vfree_hetero(path2);
+                else
+#endif
 		kfree(path2);
 		path1 = path2 = NULL;
 	}

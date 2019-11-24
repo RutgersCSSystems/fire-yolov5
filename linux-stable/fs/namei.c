@@ -537,6 +537,10 @@ static int __nd_alloc_stack(struct nameidata *nd)
 	struct saved *p;
 
 	if (nd->flags & LOOKUP_RCU) {
+#ifdef CONFIG_HETERO_MIGRATE
+		if(is_hetero_buffer_set())
+			printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
+#endif
 		p= kmalloc(MAXSYMLINKS * sizeof(struct saved),
 				  GFP_ATOMIC);
 		if (unlikely(!p))

@@ -4,7 +4,24 @@ cd $NVMBASE
 APP=""
 TYPE="NVM"
 #TYPE="SSD"
-CAPACITY=4096
+CAPACITY=3192
+
+#APP="rocksdb.out"
+#APP="HiBench.out"
+#APP="spark-bench.out"
+#APP="fio.out"
+#APP="filebench.out"
+APP="redis.out"
+#APP=fxmark
+#APP="flash.out"
+#APP="cassandra.out"
+
+source scripts/setvars.sh
+OUTPUTDIR=/proj/fsperfatscale-PG0/sudarsun/context/results/prefetch-results
+mkdir -f $OUTPUTDIR
+
+
+
 
 SETUP(){
 	$NVMBASE/scripts/clear_cache.sh
@@ -13,7 +30,6 @@ SETUP(){
 }
 
 THROTTLE() {
-	source scripts/setvars.sh
 	cp $SCRIPTS/nvmemul-throttle.ini $QUARTZ/nvmemul.ini
 	$SCRIPTS/install_quartz.sh
 	#$SCRIPTS/throttle.sh
@@ -71,17 +87,6 @@ COMPILE_SHAREDLIB() {
 }
 
 
-APP="rocksdb.out"
-#APP="HiBench.out"
-#APP="spark-bench.out"
-#APP="fio.out"
-#APP="filebench.out"
-#APP="redis.out"
-#APP=fxmark
-#APP="flash.out"
-#APP="cassandra.out"
-
-
 
 RUNAPP() {
         #Run application
@@ -103,11 +108,16 @@ RUNAPP() {
 	then
         	$APPBENCH/apps/FlashX/run.sh &> $OUTPUT
 	fi
+
+	if [ "$APP" = "filebench.out" ]
+	then
+        	$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+	fi
+
         #$APPBENCH/apps/filebench/run.sh &> $OUTPUTDIR/$OUTPUT
         #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
         #cd $APPBENCH/butterflyeffect/code
-        #source scripts/setvars.sh
         #$APPBENCH/butterflyeffect/code/run.sh &> $OUTPUT
 
         if [ "$APP" = "redis.out" ]
@@ -158,15 +168,29 @@ SET_RUN_APP() {
 	set +x
 }
 
-OUTPUTDIR=$APPBENCH/output
-mkdir -f $OUTPUTDIR
-
 if [ -z "$1" ]
   then
     THROTTLE
   else
     echo "Don't throttle"
 fi
+
+
+#### WITH PREFETCH #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+
+SET_RUN_APP "slowmem-obj-affinity-noprefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+
+
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF -D_NET"
+$NVMBASE/scripts/clear_cache.sh
+exit
+
+
+
 
 
 #### NAIVE PLACEMENT #############
@@ -177,13 +201,6 @@ SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 exit
 
 
-#### WITH PREFETCH #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
-$NVMBASE/scripts/clear_cache.sh
-exit
 
 
 

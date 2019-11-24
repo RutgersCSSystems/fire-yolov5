@@ -1639,6 +1639,7 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 #ifdef CONFIG_HETERO_ENABLE
         dentry = NULL;
         if(is_hetero_buffer_set()){
+
                 dentry = kmem_cache_alloc_hetero(dentry_cache, GFP_KERNEL);
         }
         if(!dentry)
@@ -1662,6 +1663,14 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 #ifdef CONFIG_HETERO_ENABLE
 		ext = NULL;
                 if(is_hetero_buffer_set()){
+
+#ifdef CONFIG_HETERO_MIGRATE
+			printk(KERN_ALERT "%s : %d size %d \n",
+				 __func__, __LINE__, size + name->len);
+			ext = vmalloc_hetero(size + name->len);
+			if(!ext)
+#endif
+
                         ext = kmalloc_hetero(size + name->len, GFP_KERNEL_ACCOUNT);
                 }
                 if(!ext)
@@ -1705,6 +1714,11 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
 		err = dentry->d_op->d_init(dentry);
 		if (err) {
 			if (dname_external(dentry))
+#ifdef CONFIG_HETERO_MIGRATE
+				if(is_hetero_buffer_set())
+					vfree_hetero(dentry);
+				else
+#endif
 				kfree(external_name(dentry));
 			kmem_cache_free(dentry_cache, dentry);
 			return NULL;

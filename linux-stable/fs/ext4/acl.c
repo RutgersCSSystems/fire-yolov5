@@ -100,6 +100,9 @@ ext4_acl_to_disk(const struct posix_acl *acl, size_t *size)
 
 	*size = ext4_acl_size(acl->a_count);
 #ifdef CONFIG_HETERO_ENABLE
+        if(is_hetero_buffer_set()) {
+                printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+        }
 	ext_acl = kmalloc_hetero(sizeof(ext4_acl_header) + acl->a_count *
 			sizeof(ext4_acl_entry), GFP_NOFS);
 #else 
@@ -172,6 +175,7 @@ ext4_get_acl(struct inode *inode, int type)
 	if (retval > 0) {
 #ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()) {
+			printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
 			value = kmalloc_hetero(retval, GFP_NOFS);
 		}
 #else 

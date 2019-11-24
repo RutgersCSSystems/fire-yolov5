@@ -1970,9 +1970,9 @@ static void *__vmalloc_area_node_hetero(struct vm_struct *area, gfp_t gfp_mask,
 		if (node == NUMA_NO_NODE)
 			page = alloc_page(alloc_mask|highmem_mask);
 		else {
-			//printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
+			printk(KERN_ALERT "%s : %d \n", __func__, __LINE__);
 			page = alloc_pages_hetero_node(node, alloc_mask|highmem_mask, 0);
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
 			if(page) {	
 				//page->hetero = HETERO_PG_FLAG;
 				if(!init_hetero_zspool) {
@@ -2117,6 +2117,8 @@ void *__vmalloc_node_flags_caller_hetero(unsigned long size, int node, gfp_t fla
 
 void *vmalloc_hetero(unsigned long size)
 {
+
+	void *ptr = NULL;
 #ifdef _HETERO_ZSMALLOC
 	unsigned long handle = 0; 
  	void *dst = NULL;
@@ -2140,8 +2142,12 @@ void *vmalloc_hetero(unsigned long size)
 	insert_obj_rbtree(&pool_root, handle, dst);
 	return dst;
 #else
-	return __vmalloc_node_flags_hetero(size, get_fastmem_node(),
+	ptr = __vmalloc_node_flags_hetero(size, get_fastmem_node(),
 				    GFP_KERNEL);
+	if(!ptr) {
+		printk(KERN_ALERT "%s : %d __vmalloc_node_flags_hetero FAILED \n");
+		BUG_ON(!ptr);
+	}
 #endif
 }
 EXPORT_SYMBOL(vmalloc_hetero);
@@ -2172,7 +2178,7 @@ static void __vunmap_hetero(const void *addr, int deallocate_pages)
 
 		for (i = 0; i < area->nr_pages; i++) {
 			struct page *page = area->pages[i];
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
 			rb_erase(&page->rb_node, &pool_root);
 #endif
 			BUG_ON(!page);
@@ -2234,6 +2240,7 @@ void vfree_hetero(const void *addr)
         zs_free(hetero_pool, srch_handle);
 	zs_migrate_hetero(hetero_pool);
 #else
+
 	kmemleak_free(addr);
 
 	if (unlikely(in_interrupt()))

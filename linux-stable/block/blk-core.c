@@ -853,8 +853,8 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 #ifdef CONFIG_HETERO_ENABLE
 	rq = NULL;
         if(is_hetero_buffer_set()) {
-#ifdef CONFIG_HETERO_MIGRATE
-		//rq = vmalloc_hetero(sizeof(struct request) + q->cmd_size);
+#if 0//def CONFIG_HETERO_MIGRATE
+		rq = vmalloc_hetero(sizeof(struct request) + q->cmd_size);
 		if(!rq)
 #endif
 		rq = kmalloc_node_hetero(sizeof(struct request) + q->cmd_size, gfp_mask,
@@ -868,7 +868,7 @@ static void *alloc_request_size(gfp_t gfp_mask, void *data)
 	if (rq && q->init_rq_fn && q->init_rq_fn(q, rq, gfp_mask) < 0) {
 #ifdef CONFIG_HETERO_ENABLE
 		if(is_hetero_buffer_set()){
-#ifdef CONFIG_HETERO_MIGRATE
+#if 0 //def CONFIG_HETERO_MIGRATE
 			//vfree_hetero(rq);
 			//rq = NULL;
 			//return rq;
