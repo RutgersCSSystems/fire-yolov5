@@ -870,11 +870,6 @@ int slab_dead_cpu(unsigned int cpu);
 static __always_inline void *kmalloc_hetero(size_t size, gfp_t flags)
 {
 
-        if(is_hetero_buffer_set()) {
-                printk("%s : %d kmalloc_hetero in \n", __func__, __LINE__);
-                dump_stack();
-        }
-
 	if (__builtin_constant_p(size)) {
 		if (size > KMALLOC_MAX_CACHE_SIZE)
 			return kmalloc_large(size, flags);

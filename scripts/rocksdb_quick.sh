@@ -6,12 +6,12 @@ TYPE="NVM"
 #TYPE="SSD"
 CAPACITY=3192
 
-#APP="rocksdb.out"
+APP="rocksdb.out"
 #APP="HiBench.out"
 #APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
-APP="redis.out"
+#APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
 #APP="cassandra.out"
@@ -180,11 +180,11 @@ export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
 $NVMBASE/scripts/clear_cache.sh
 
-SET_RUN_APP "slowmem-obj-affinity-noprefetch-$TYPE" "-D_MIGRATE -D_OBJAFF -D_NET"
+SET_RUN_APP "slowmem-obj-affinity-noprefetch-$TYPE" "-D_MIGRATE -D_OBJAFF"
 $NVMBASE/scripts/clear_cache.sh
+exit
 
-
-SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF -D_NET"
+SET_RUN_APP "slowmem-obj-affinity-prefetch-$TYPE" "-D_MIGRATE -D_PREFETCH -D_OBJAFF"
 $NVMBASE/scripts/clear_cache.sh
 exit
 
