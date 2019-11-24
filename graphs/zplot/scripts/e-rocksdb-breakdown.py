@@ -31,7 +31,7 @@ xrangesz=12
 #mechnames = ['Optimal', 'Migration-only', 'Obj-affinity',
 #        'Obj-affinity-prefetch', 'SlowMem-only']
 
-mech = ['slowmem-obj-affinity', 'slowmem-obj-affinity-prefetch']
+mech = ['slowmem-obj-affinity-noprefetch', 'slowmem-obj-affinity-prefetch']
 mechnames = ['Hetero-Context', 'Hetero-Context-Prefetch']
 
 colors=['white', 'lightgrey', 'darkgray', 'black', 'red', 'blue']

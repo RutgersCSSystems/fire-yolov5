@@ -17,7 +17,7 @@ let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=1000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
-
+let SCALE_LLC_GRAPH=10000000
 
 
 let INCR_KERN_BAR_SPACE=3
@@ -38,12 +38,17 @@ declare -a lifestat=("CACHE-PAGE-LIFE" "BUFF-PAGE-LIFE")
 ## sysstat use information
 declare -a sysstat=("Lib" "Kernel" "App")
 
+##LLC Miss
+declare -a llcstat=("APP" "Lib" "Kernel")
+
 
 ##use this for storing some state
 let slowmemhists=0
 
 declare -a placearr=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig' 'slowmem-obj-affinity' 'slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net')
 declare -a placearrcontextsensitivity=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-prefetch')
+declare -a placearrprefetch=('slowmem-obj-affinity-noprefetch' 'slowmem-obj-affinity-prefetch')
+
 
 declare -a sensitive_arr=('APPSLOW-OSSLOW' 'APPFAST-OSFAST' 'APPSLOW-OSFAST' 'APPFAST-OSSLOW')
 declare -a placearrcontextsensitivity=('slowmem-only' 'optimal-os-fastmem'  'naive-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-prefetch')
@@ -60,7 +65,12 @@ declare -a mechnames=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration
 declare -a devices=("NVM")
 
 declare -a excludekernstat=("obj-affinity-NVM1" 'slowmem-obj-affinity-NVM' 'slowmem-obj-affinity-nomig-NVM')
+
 declare -a excludefullstat=('slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net' 'NVM1')
+declare -a excludefullstat_noprefetch=('slowmem-obj-affinity-prefetch' 'slowmem-obj-affinity-net' 'NVM1')
+declare -a excludefullstat_prefetch=('naive-os-fastmem' 'optimal-os-fastmem' 'slowmem-migration-only' 'slowmem-obj-affinity-nomig' 'slowmem-obj-affinity-net' 'slowmem-only')
+
+
 declare -a excludesensitivecontext=("NVM1" "obj-affinity-net")
 declare -a excludebreakdown=("optimal" "NVM1" "nomig" "naive" "affinity-net" "slowmem-only" "optimal")
 declare -a excluderedisbreakdown=("affinity-prefetch")
@@ -143,6 +153,8 @@ PULL_RESULT() {
 	rm -rf $resultfile
 	rm -rf "num.data"
 
+	echo "$dir/$APPFILE"
+
 	if [ -f $dir/$APPFILE ]; then
 
 		if [ "$APP" = 'redis' ]; 
@@ -168,7 +180,7 @@ PULL_RESULT() {
                         scaled_value=$(echo $val $SCALE_SPARK_GRAPH | awk '{printf "%4.0f\n", $2/$1}')
 			echo $dir/$APPFILE" "$val" "$scaled_value
                         echo $scaled_value &> $APP".data"
-			#echo $APP".data"
+			#echo $dir/$APPFILE" "$APP".data"
 			#cat $APP".data"
 		else
 			cp $dir/$APPFILE $dir/$APPFILE".txt"
@@ -463,6 +475,65 @@ GETSYSSTAT() {
 	#j=$((j+$INCR_KERN_BAR_SPACE))
 }
 
+EXTRACT_LLCSTAT() {
+
+        APP=$1
+        dir=$2
+	j=$3
+	stattype=$4
+	let prev_val=$buff_val
+
+        resultdir=$ZPLOT/data/llcstat
+	file=$APP".out-NVM"
+        mkdir -p $resultdir
+
+        outfile=$(basename $dir)
+        outputfile=$APP-$outfile"-"$stattype".data"
+        rm -rf $resultdir/$outputfile
+        rm -rf "num.data"
+
+	target=$dir/$file
+	OUTFILE=$APP"-llcstat.data"
+
+	if [ -f $target ]; then
+		search=$stattype
+		grep -r $search $target | tail -1 |  tr -d ','  &> out.txt
+		temp=`grep -Eo "$search([[:space:]]+[^[:space:]]+){1}" < out.txt`
+		val=`echo $temp | awk '{print $2}'`
+		let new_val=($buff_val + $val)
+		let scaled_value=$new_val/$SCALE_LLC_GRAPH
+		echo $scaled_value &> $OUTFILE
+		echo $j &> "num.data"
+		paste "num.data" $OUTFILE &> $resultdir/$outputfile
+		rm -rf "num.data" $OUTFILE
+		buff_val=$new_val
+		echo "******"$new_val"*****"$target"*****"$search"*******"$resultdir/$outputfile
+	fi
+}
+
+
+GETLLCSTAT() {
+
+	exlude=0
+	APP=$1
+	rm $APP".data"
+	rm "num.data"
+
+	TYPE="NVM"
+	APPFILE=$APP".out-"$device
+	dir=$TARGET
+	let prev_val=0
+	for stattype in "${llcstat[@]}"
+	do
+		EXTRACT_LLCSTAT $APP $dir $j $stattype $prev_val
+	done
+	buff_val=0
+	j=$((j+5))
+	#j=$((j+$INCR_KERN_BAR_SPACE))
+}
+
+
+
 
 EXTRACT_LIFESTAT() {
 
@@ -679,6 +750,7 @@ EXTRACT_RESULT() {
 	rm $APP".data"
 	rm "num.data"
 	exclude=0
+	ZPLOTDATA=$2
 
 	for device in "${devices[@]}"
 	do
@@ -692,6 +764,7 @@ EXTRACT_RESULT() {
 				exlude=0
 				EXCLUDE_DIR $exlude $dir excludefullstat
 				if [ $exlude -ge 1 ]; then
+					echo "EXCLUDE_DIR" $dir
 					continue;
 				fi
 				
@@ -700,7 +773,7 @@ EXTRACT_RESULT() {
 				else
 					APPFILE=$APP".out-"$TYPE
 				fi
-				PULL_RESULT $APP $dir $j $APPFILE ""
+				PULL_RESULT $APP $dir $j $APPFILE $ZPLOTDATA
 			done
 		done
 	done
@@ -856,7 +929,6 @@ M_ALL_STATS_APP() {
 	TARGET=$OUTPUTDIR
 	EXTRACT_RESULT_COMPARE "redis"
 
-
 	APP='cassandra'
 	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-sensitivity"
 	TARGET=$OUTPUTDIR
@@ -950,6 +1022,33 @@ M_ALL_KERN_STATS() {
 	python2.7 $NVMBASE/graphs/zplot/scripts/m-sysstat.py -o "e-all-sysstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
 }
 
+####################LLCSTAT STAT ################################
+M_ALL_LLC_STATS() {
+	j=0
+	j=$((j+1))
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/llcstat"
+	TARGET=$OUTPUTDIR
+
+	APP='filebench'
+	GETLLCSTAT $APP
+
+	APP='redis'
+	GETLLCSTAT $APP
+
+	APP='rocksdb'
+	GETLLCSTAT $APP
+
+	APP='spark-bench'
+	GETLLCSTAT $APP
+
+	APP='cassandra'
+	GETLLCSTAT $APP
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/m-llcstat.py -o "m-all-llcstat" -a "rocksdb" -y 400 -r 50 -s "NVM"
+}
+
+
 E_ROCKSDB_KERNSTAT() {
 	####################KERNEL STAT ################################
 	j=0
@@ -985,7 +1084,7 @@ REDIS_BREAKDOWN() {
 	#####################REDIS NETWORK##############################
 	j=0
 	APP='redis'
-	OUTPUTDIR="/users/skannan/ssd/NVM/results/redis-results-Aug11"
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/redis-results-Aug11"
 	TARGET=$OUTPUTDIR
 	EXTRACT_REDIS_BREAKDOWN_RESULT "redis"
 	cd $ZPLOT
@@ -994,9 +1093,10 @@ REDIS_BREAKDOWN() {
 
 E_ALL_APPS() {
 	####################MOTIVATION ANALYSIS########################
+	excludefullstat=("${excludefullstat_noprefetch[@]}")
 	j=0
 	APP='rocksdb'
-	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/m-rocksdb_sensitivity"
+	OUTPUTDIR="/users/skannan/ssd/NVM/results/output-Aug11-allapps"
 	TARGET=$OUTPUTDIR
 	EXTRACT_RESULT "filebench"
 
@@ -1021,15 +1121,78 @@ E_ALL_APPS() {
 	python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
 }
 
+E_ALL_PREFETCH_APPS() {
+	####################MOTIVATION ANALYSIS########################
+	excludefullstat=("${excludefullstat_prefetch[@]}")
+        placearr=("${placearrprefetch[@]}")
+	j=0
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/prefetch-results"
+	APP='rocksdb'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "filebench" "prefetch"
 
+	APP='redis'
+	#FORMAT_RESULT_REDIS "redis"
+	#EXTRACT_RESULT "redis"
+
+	APP='rocksdb'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "rocksdb" "prefetch"
+
+	APP='cassandra'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "cassandra" "prefetch"
+
+	APP='spark-bench'
+	TARGET=$OUTPUTDIR
+	EXTRACT_RESULT "spark-bench" "prefetch"
+
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/e-prefetch-allapps-total.py
+}
+
+
+
+
+E_PREFETCH_ROCKSDB_APPS() {
+	#######################ROCKSDB PREFETCH#########################
+	j=0
+	APP='rocksdb'
+	OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/prefetch-results"
+	TARGET=$OUTPUTDIR
+	EXTRACT_BREAKDOWN_RESULT "rocksdb"
+	cd $ZPLOT
+	python2.7 $NVMBASE/graphs/zplot/scripts/e-rocksdb-breakdown.py
+	exit
+}
+
+
+E_ALL_PREFETCH_APPS
+exit
+
+E_PREFETCH_ROCKSDB_APPS
+exit
+
+REDIS_BREAKDOWN
+exit
+
+E_ROCKSDB_KERNSTAT
+exit
+
+CONTEXT_SESITIVITY
+exit
+
+E_ALL_APPS
+exit
+
+M_ALL_LLC_STATS
+exit
 M_ALL_LIFE_STATS
 exit
 M_ALL_STATS_APP
 exit
 M_ALL_PAGE_STATS
 M_ALL_KERN_STATS
-E_ROCKSDB_KERNSTAT
-CONTEXT_SESITIVITY
 REDIS_BREAKDOWN
 exit
 
@@ -1078,16 +1241,6 @@ python2.7 $NVMBASE/graphs/zplot/scripts/m-rocksdb-sensitivity-BW.py "CAP"
 exit
 
 
-#######################ROCKSDB PREFETCH#########################
-j=0
-APP='rocksdb'
-#OUTPUTDIR="results/output-Aug8-allapps"
-OUTPUTDIR="/users/skannan/ssd/NVM/results/rocksdb-results-prefetch-Aug13"
-TARGET=$OUTPUTDIR
-EXTRACT_BREAKDOWN_RESULT "rocksdb"
-cd $ZPLOT
-python2.7 $NVMBASE/graphs/zplot/scripts/e-rocks-prefetch-breakdown.py
-exit
 #EXTRACT_KERNSTAT "redis"
 #cd $ZPLOT
 #python $NVMBASE/graphs/zplot/scripts/e-rocksdb-kernstat.py -i "" -o "e-redis-kernstat" -a "redis" -y 80 -r 10 -s "SSD"

@@ -168,6 +168,15 @@ if [ -z "$1" ]
     echo "Don't throttle"
 fi
 
+
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
+
+
 #### WITH PREFETCH #############
 export APPPREFIX="numactl  --preferred=0"
 SETUPEXTRAM
@@ -193,13 +202,6 @@ $NVMBASE/scripts/clear_cache.sh
 SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE -D_OBJAFF"
 exit
 
-
-#### NAIVE PLACEMENT #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
 
 $SCRIPTS/umount_ext4ramdisk.sh
 sleep 5

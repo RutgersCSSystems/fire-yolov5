@@ -12,7 +12,7 @@ xfield='ops'
 xlegend='DevFS techniques'
 bwidth = 0.8
 lwidth = 0.1
-xydim=[240, 145]
+xydim=[250, 145]
 xystart=[90,100]
 xylegend=[50,135]
 xycord = [45,30]
@@ -23,10 +23,11 @@ xmanualint=7
 xfontsize=9.0
 yfontsize=9.0
 xlabelsize=9.0
+skipnextval=3 
+skipspaceval=70
 
 
-
-mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-NoMigrate', 'KLOC']
+mechnames = ['All-SlowMem', 'All-FastMem', 'Naive', 'Migration-only', 'KLOC-nomigrate', 'KLOC-migrate-fs- noprefetch']
 mech = [ 'slowmem-only', 'optimal-os-fastmem', 'naive-os-fastmem', 'slowmem-migration-only', 'slowmem-obj-affinity-nomig', 'slowmem-obj-affinity']
 storage=["SSD", "NVM"]
 pattern = "NVM"
@@ -79,5 +80,5 @@ axis(drawable=d, style='xy',
      ytitlesize=yfontsize, xtitlesize=xfontsize)
 
 
-L.draw(canvas=c, coord=xylegend, skipnext=3, skipspace=95, fontsize=yfontsize)
+L.draw(canvas=c, coord=xylegend, skipnext=skipnextval, skipspace=skipspaceval, fontsize=yfontsize)
 c.render()

@@ -2,14 +2,14 @@
 set -x
 cd $NVMBASE
 APP=""
-TYPE="NVM"
-#TYPE="SSD"
+#TYPE="NVM"
+TYPE="SSD"
 CAPACITY=32786
 
-declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
-#declare -a apparr=("filebench.out")
+#declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
+declare -a apparr=("redis.out")
 
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/lifetime-stats"
+OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/mem-stats"
 mkdir -f $OUTPUTDIR
 
 
@@ -111,13 +111,13 @@ RUNAPP() {
 
 	if [ "$APP" = "filebench.out" ]
 	then
-        	$APPBENCH/apps/filebench/run.sh &> $OUTPUT
+        	$SCRIPTS/perf.sh $APPBENCH/apps/filebench/run.sh &> $OUTPUT
 	fi
        #$APPBENCH/apps/pigz/run.sh &> $OUTPUT
 
         if [ "$APP" = "redis.out" ]
         then
-                $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
+                $SCRIPTS/perf.sh $APPBENCH/redis-5.0.5/src/run.sh &> $OUTPUT
         fi
 
 	if [ "$APP" = "spark-bench.out" ]
@@ -173,20 +173,20 @@ fi
 #SETUPEXTRAM
 for APP in "${apparr[@]}"
 do
+
+	#### OBJAFF NO PREFETCH #############
+	export APPPREFIX="numactl  --preferred=0"
+	#SETUPEXTRAM
+	$NVMBASE/scripts/clear_cache.sh
+	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE"
+	continue
+
+
 	#### NAIVE PLACEMENT #############
 	export APPPREFIX="numactl  --preferred=0"
 	$NVMBASE/scripts/clear_cache.sh
 	SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
 	continue
-
-
-	#### OBJAFF NO PREFETCH #############
-	export APPPREFIX="numactl  --preferred=0"
-	SETUPEXTRAM
-	$NVMBASE/scripts/clear_cache.sh
-	SET_RUN_APP "slowmem-obj-affinity-nomig-$TYPE" "-D_DISABLE_MIGRATE"
-	continue
-
 
 	export APPPREFIX="numactl --membind=1"
 	$SCRIPTS/umount_ext4ramdisk.sh
@@ -219,7 +219,11 @@ do
 	$NVMBASE/scripts/clear_cache.sh
 	SET_RUN_APP "slowmem-migration-only-$TYPE" "-D_MIGRATE -D_NET"
 done
-	exit
+
+
+
+
+
 
 
 
@@ -262,6 +266,9 @@ done
 	exit
 
 	#Don't do any migration
+
+
+
 
 #mkdir $OUTPUTDIR/fastmem-only
 exit

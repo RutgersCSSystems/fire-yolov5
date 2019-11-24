@@ -214,8 +214,10 @@ struct page {
         /* group service_tree member */
 	//struct list_head hetero_list;
 #ifdef CONFIG_HETERO_STATS
-        struct timeval hetero_create_time;
-        struct timeval hetero_del_time;
+        //struct timeval hetero_create_time;
+        //struct timeval hetero_del_time;
+        unsigned long hetero_create_time;
+        unsigned long hetero_del_time;
 	/* Added to count hetero page type stats 
 	* FIXME: Remove after eval or find better way
 	*/
@@ -405,8 +407,8 @@ struct mm_struct {
 	int 				thrd_idx;
 #endif
 
-#ifdef CONFIG_HETERO_STATS
 	unsigned long			migrate_attempt;
+#ifdef CONFIG_HETERO_STATS
 	long 				avg_kbufpage_life;
 	long 				avg_cachepage_life;
 #endif

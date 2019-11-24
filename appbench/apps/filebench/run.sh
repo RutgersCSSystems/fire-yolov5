@@ -31,10 +31,10 @@ RANDOM_MONGO(){
 	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
 	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
-	$APPPREFIX $APP -f workloads/mongo.f
+	#$APPPREFIX $APP -f workloads/mongo.f
 	#$APPPREFIX $APP -f workloads/videoserver.f
 	#$APPPREFIX $APP -f workloads/oltp.f
-	#$APPPREFIX $APP -f workloads/randomrw.f
+	$APPPREFIX $APP -f workloads/randomrw.f
 	export LD_PRELOAD=""
 }
 
@@ -76,5 +76,6 @@ rm $DATA/*
 rm -rf fio-seq-RW
 rm -rf fio-rand-RW
 $SHARED_LIBS/construct/reset
+#perf report --sort=dso
 set +x
 
