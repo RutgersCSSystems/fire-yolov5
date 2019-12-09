@@ -143,11 +143,11 @@ GETAPPS(){
 	git clone https://github.com/memcached/memcached.git
 }
 
+INSTALL_SYSTEM_LIBS
+INSTALL_ROCKSDB
 INSTALL_CASSANDRA
 exit
 
-INSTALL_SYSTEM_LIBS
-INSTALL_ROCKSDB
 #$SCRIPTS/set_spark.sh
 exit
 
