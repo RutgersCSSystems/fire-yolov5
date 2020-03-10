@@ -6,10 +6,11 @@ TYPE="NVM"
 #TYPE="SSD"
 CAPACITY=32786
 
-declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
+#declare -a apparr=("redis.out" "cassandra.out" "filebench.out" "rocksdb.out")
+declare -a apparr=("redis.out" "rocksdb.out")
 #declare -a apparr=("filebench.out")
 
-OUTPUTDIR="/proj/fsperfatscale-PG0/sudarsun/context/results/lifetime-stats"
+OUTPUTDIR="/home/sudarsun/ssd/NVM/results"
 mkdir -f $OUTPUTDIR
 
 

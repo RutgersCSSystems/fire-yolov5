@@ -43,7 +43,8 @@ RUN(){
 cd $CLIENTBASE
 $CLIENTBASE/killer.sh &
 #export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-$APPPREFIX $CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32
+#$APPPREFIX 
+$CLIENTBASE/loader -a $DATASET -s $CLIENTBASE/servers.txt -g 0.8 -T 1 -c 100 -w 32
 export LD_PRELOAD=""
 }
 
