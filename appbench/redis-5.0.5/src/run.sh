@@ -9,17 +9,21 @@ PARAM=$1
 OUTPUT=$2
 READS=1000000
 KEYS=4000000
+let MAXINST=4
+
 #READS=10000
 #KEYS=20000
 CLIPREFIX="numactl --preferred=0"
 PHYSCPU="--physcpubind"
 
-let MAXINST=4
 let STARTPORT=6378
 let SERVERCPU=20
-let DATASIZE=2048
+let DATASIZE=4096
 let physcpu=0
 let physcpu2=1
+
+SIGNAL="-9"
+#SIGNAL="-9"
 
 
 CLEAN() {
@@ -29,10 +33,10 @@ CLEAN() {
 		rm -rf *.aof
 		sudo killall "redis-server$b"
 		appname="redis-server$b"
-		sudo kill -9 $appname
+		sudo kill $SIGNAL $appname
 		sudo killall "redis-server$b"
 		echo "KILLING redis-server$b"
-		sudo kill -9 $appname
+		sudo kill $SIGNAL $appname
 	done
 	sudo killall redis-benchmark
 	sudo killall redis-benchmark
@@ -64,7 +68,8 @@ RUN(){
 
   for (( r=1; r<=$MAXINST; r++))
   do
-    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $PHYSCPU=$physcpu,$physcpu2 $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
+    #$PHYSCPU=$physcpu,$physcpu2 
+    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
     #LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
 
     let port=$port+1
@@ -85,19 +90,26 @@ RUNCLIENT(){
 
   for (( c=1; c<$MAXINST; c++))
   do
-    $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
-    #$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
+    # $PHYSCPU=$physcpu
+    $CLIPREFIX $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
     #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=50 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt"  --data-size=4096 &
 
     let port=$port+1
     let physcpu=$physcpu+1
     let physcpu2=$physcpu2+2   	
   done
-  $CLIPREFIX $PHYSCPU=$physcpu $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
-  ###$CLIPREFIX $APPBASE/redis-benchmark $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"  
+  #$PHYSCPU=$physcpu
+  #$PHYSCPU=$physcpu 
+  $CLIPREFIX  $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"
 
-  sleep 5
-  ps aux | grep redis-server | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+  let port=$STARTPORT
+  for (( c=1; c<=$MAXINST; c++))
+  do
+   # $CLIPREFIX $APPBASE/redis-benchmark$c $PARAMS -p $port shutdown &> $OUTPUTDIR/redis$c".txt" 
+    let port=$port+1
+  done
+  #sleep 5
+  #ps aux | grep redis-server | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
 }
 
 cd $REDISROOT/src
@@ -111,5 +123,5 @@ sleep 10
 RUNCLIENT
 CLEAN
 CLEAN
-$SHARED_LIBS/construct/reset
+#$SHARED_LIBS/construct/reset
 set +x
