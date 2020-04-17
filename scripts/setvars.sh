@@ -33,9 +33,9 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
 
-#export APPPREFIX="numactl --preferred=0"
+export APPPREFIX="numactl --preferred=0"
 #export APPPREFIX="perf record -e instructions,mem-loads,mem-stores --vmlinux=/lib/modules/4.17.0/build/vmlinux -I 1000"
-export APPPREFIX="perf stat -e dTLB-load-misses,iTLB-load-misses,instructions,L1-dcache-loads,L1-dcache-stores"
+#export APPPREFIX="perf stat -e dTLB-load-misses,iTLB-load-misses,instructions,L1-dcache-loads,L1-dcache-stores"
 #export APPPREFIX="numactl --membind=1"
 #export APP_PREFIX="numactl --membind=1"
 

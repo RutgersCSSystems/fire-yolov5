@@ -49,7 +49,7 @@ RANDOM_READ(){
 echo "Running Random Read"
 #$APPPREFIX $APP $APPBASE/examples/fio-rand-read.job --name=randread $PARAM
 $APPPREFIX $APP $APPBASE/examples/fio-seq-RW.job --name=randwrite $PARAM
-}
+}RANDOM_MONGO
 
 
 SEQ_WRITE(){
@@ -62,20 +62,20 @@ echo "Running Sequential Read"
 $APPPREFIX $APP $APPBASE/examples/fio-seq-read.job --name=seqread $PARAM
 }
 
+
 cd $APPBASE
 FlushDisk
-#RANDOM_MONGO
-RANDOM_WRITE
-FlushDisk
-RANDOM_READ
-FlushDisk
+RANDOM_MONGO
+#RANDOM_WRITE
+#FlushDisk
+#RANDOM_READ
+#FlushDisk
 #SEQ_WRITE
 #FlushDisk
 #SEQ_READ
 rm $DATA/*
-rm -rf fio-seq-RW
-rm -rf fio-rand-RW
+#rm -rf fio-seq-RW
+#rm -rf fio-rand-RW
 $SHARED_LIBS/construct/reset
 #perf report --sort=dso
 set +x
-

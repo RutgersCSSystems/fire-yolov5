@@ -23,7 +23,7 @@
 # Use is subject to license terms.
 #
 
-set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $dir=/localhome/sudarsun/NVM/appbench/shared_data
 set $filesize=10g
 set $iosize=8k
 set $nthreads=8

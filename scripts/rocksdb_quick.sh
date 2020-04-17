@@ -6,12 +6,12 @@ TYPE="NVM"
 #TYPE="SSD"
 CAPACITY=3192
 
-APP="rocksdb.out"
+#APP="rocksdb.out"
 #APP="HiBench.out"
 #APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
-#APP="redis.out"
+APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
 #APP="cassandra.out"
