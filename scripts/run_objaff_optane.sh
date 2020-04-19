@@ -79,10 +79,10 @@ COMPILE_SHAREDLIB() {
 }
 
 
-#APP="rocksdb.out"
+APP="rocksdb.out"
 #APP="fio.out"
 #APP="filebench.out"
-APP="redis.out"
+#APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
 #APP="cassandra.out"
@@ -156,7 +156,7 @@ do
 	OUTPUTDIR=$APPBENCH/output/CAP"$CAPACITY-"$TYPE
 	mkdir $OUTPUTDIR
 	export OUTPUTDIR=$APPBENCH/output/CAP"$CAPACITY-"$TYPE
-	#SETUPEXTRAM
+	SETUPEXTRAM
 	echo $OUTPUTDIR
 
 	export APPPREFIX="numactl  --preferred=0"

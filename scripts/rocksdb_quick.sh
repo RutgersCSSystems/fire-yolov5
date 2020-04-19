@@ -6,19 +6,20 @@ TYPE="NVM"
 #TYPE="SSD"
 CAPACITY=3192
 
-#APP="rocksdb.out"
+APP="rocksdb.out"
 #APP="HiBench.out"
 #APP="spark-bench.out"
 #APP="fio.out"
 #APP="filebench.out"
-APP="redis.out"
+#APP="redis.out"
 #APP=fxmark
 #APP="flash.out"
 #APP="cassandra.out"
 
 source scripts/setvars.sh
-OUTPUTDIR=/proj/fsperfatscale-PG0/sudarsun/context/results/prefetch-results
-mkdir -f $OUTPUTDIR
+#OUTPUTDIR=/proj/fsperfatscale-PG0/sudarsun/context/results/prefetch-results
+OUTPUTDIR=$NVMBASE/optane-rocksdb
+mkdir -p $OUTPUTDIR
 
 
 
@@ -169,10 +170,18 @@ SET_RUN_APP() {
 
 if [ -z "$1" ]
   then
-    THROTTLE
+    echo "" #THROTTLE
   else
     echo "Don't throttle"
 fi
+
+#### NAIVE PLACEMENT #############
+export APPPREFIX="numactl  --preferred=0"
+#SETUPEXTRAM
+$NVMBASE/scripts/clear_cache.sh
+SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
+exit
+
 
 
 #### WITH PREFETCH #############
@@ -192,12 +201,6 @@ exit
 
 
 
-#### NAIVE PLACEMENT #############
-export APPPREFIX="numactl  --preferred=0"
-SETUPEXTRAM
-$NVMBASE/scripts/clear_cache.sh
-SET_RUN_APP "naive-os-fastmem-$TYPE" "-D_DISABLE_MIGRATE"
-exit
 
 
 

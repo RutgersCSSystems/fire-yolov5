@@ -525,6 +525,39 @@ is_hetero_vma(struct vm_area_struct *vma)
 }
 
 
+
+#define K(x) ((x) << (PAGE_SHIFT - 10))
+#define THRESHOLD 100000
+#define FREQCHECK 1000000
+static unsigned int node_checkfreq = 0;
+static unsigned int node_checkfreq_default = 0;
+
+unsigned long check_node_memsize(void) {
+
+        struct sysinfo i;
+        int nid = get_fastmem_node();
+	unsigned long memsize = 0;
+
+        si_meminfo_node(&i, nid);
+	memsize = i.freeram;
+#if 0
+        if(!node_checkfreq) {
+                if(K(i.freeram) < THRESHOLD) {
+                        node_checkfreq = FREQCHECK;
+                        printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+	                 printk(KERN_ALERT "%s : %d Node: %d, Free pages %8lu kB  \n", 
+				 __func__, __LINE__, nid,  K(i.freeram));
+			 memsize = K(i.freeram);
+                }
+                node_checkfreq = FREQCHECK;
+        }else {
+                node_checkfreq--;
+        }
+#endif
+	return memsize;
+}
+
+
 int 
 is_hetero_obj(void *obj) 
 {
@@ -782,6 +815,8 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(!mm)
 		return;
 
+	//check_node_memsize();
+
 #ifdef HETERO_COLLECT_LIFETIME
 	page->hetero = HETERO_PG_FLAG;
 	update_page_life_time(page, delpage, 0);
@@ -789,14 +824,17 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(page->hetero != HETERO_PG_FLAG)
 		return;
 #endif
-
 	/*Check if page is in the correct node and 
 	we are not deleting and only inserting the page*/
 	if(correct_node && !delpage) {
+		//printk(KERN_ALERT "Page hits %d Node free mem %8lu kB\n", 
+		//			page_to_nid(page), check_node_memsize());
 		mm->pgcache_hits_cnt += 1;
 		page->hetero = HETERO_PG_FLAG;
 		incr_global_stats(&g_cachehits);
 	} else if(!correct_node && !delpage) {
+		printk(KERN_ALERT "Page miss %d Node free mem %8lu kB\n", 
+					page_to_nid(page), check_node_memsize());
 		mm->pgcache_miss_cnt += 1;
 		page->hetero = 0;
 		incr_global_stats(&g_cachemiss);
