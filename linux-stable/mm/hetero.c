@@ -540,6 +540,9 @@ unsigned long check_node_memsize(void) {
 
         si_meminfo_node(&i, nid);
 	memsize = i.freeram;
+	return memsize;
+}
+
 #if 0
         if(!node_checkfreq) {
                 if(K(i.freeram) < THRESHOLD) {
@@ -554,8 +557,7 @@ unsigned long check_node_memsize(void) {
                 node_checkfreq--;
         }
 #endif
-	return memsize;
-}
+
 
 
 int 
