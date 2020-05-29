@@ -6,11 +6,18 @@ PREFIX="numactl --membind=0"
 #DISKSZ=58000
 DISKSZ=$1
 
+let scount="$1*1024"
+echo $scount
+
 #rm -rf $APPBENCH/shared_data
 sudo umount /mnt/ext4ramdisk
+sudo umount /mnt/ramdisk
+
+sudo rm -rf /mnt/ramdisk/ext4.image
+
 sudo mkdir /mnt/ramdisk
 sudo mount -t ramfs ramfs /mnt/ramdisk
-sudo $PREFIX dd if=/dev/zero of=/mnt/ramdisk/ext4.image bs=1M count=$DISKSZ
+sudo $PREFIX dd if=/dev/zero of=/mnt/ramdisk/ext4.image bs=1M count=$scount
 sudo $PREFIX mkfs.ext4 -F /mnt/ramdisk/ext4.image
 sudo mkdir /mnt/ext4ramdisk
 sudo mount -o loop /mnt/ramdisk/ext4.image /mnt/ext4ramdisk
