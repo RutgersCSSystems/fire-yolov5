@@ -207,12 +207,13 @@ void incr_global_stats(unsigned long *counter){
 	//spin_unlock(&stats_lock);
 }
 
-void print_global_stats(void) {
+void print_global_stats(struct task_struct *task) {
 
-       printk("cache-hits %lu cache-miss %lu " 
+       printk("PID %d: cache-hits %lu cache-miss %lu " 
 	      "buff-hits %lu buff-miss %lu " 
 	      "migrated %lu cache-del %lu " 
 	      "buff-del %lu \n", 
+		task->pid,
 		g_cachehits, g_cachemiss, g_buffhits, 
 		g_buffmiss, g_migrated, g_cachedel,
 		g_buffdel);
@@ -1131,7 +1132,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_GLOBAL_STATS:
 	    printk("flag is set to print stats %d\n", flag);
 	    global_flag = PRINT_GLOBAL_STATS;
-	    print_global_stats();
+	    print_global_stats(current);
 	    break;
 	case PFN_TRACE:
 	    printk("flag is set to collect pfn trace %d\n", flag);
@@ -1166,7 +1167,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_ALLOCATE;
 	    //print_hetero_stats(current);
-	    print_global_stats();	
+	    print_global_stats(current);	
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
