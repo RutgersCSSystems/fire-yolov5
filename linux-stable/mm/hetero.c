@@ -219,17 +219,17 @@ void print_global_stats(struct task_struct *task) {
 		g_buffdel);
 
 #ifdef CONFIG_HETERO_STATS
-  	printk("ANALYSIS STAT CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
-		g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
+  	printk("ANALYSIS STAT PID %d, CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
+		current->pid, g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
 #endif
 
 #ifdef HETERO_COLLECT_LIFETIME
 	//buffpgs = mm->pgbuffdel;
 	//cachepgs = mm->pgcachedel;
 	if(g_avg_cachepage_life && g_avg_kbufpage_life && g_buff_pages_deleted && g_cache_pages_deleted) {
-		  printk("ANALYSIS LIFESTAT  CACHE-PAGE-LIFE %lu, BUFF-PAGE-LIFE %lu CACHE_PAGES_ALLOC_DELETE %lu " 
+		  printk("ANALYSIS LIFESTAT PID %d, CACHE-PAGE-LIFE %lu, BUFF-PAGE-LIFE %lu CACHE_PAGES_ALLOC_DELETE %lu " 
 			" BUFF_PAGES_ALLOC_DELETE %lu g_avg_cachepage_life %lu, g_avg_kbufpage_life %lu \n",
-			  jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted), jiffies_to_msecs(g_avg_kbufpage_life/g_buff_pages_deleted), 
+			  current->pid, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted), jiffies_to_msecs(g_avg_kbufpage_life/g_buff_pages_deleted), 
 			  g_cache_pages_deleted, g_buff_pages_deleted, g_avg_cachepage_life/g_cache_pages_deleted, g_avg_kbufpage_life/g_buff_pages_deleted);
 	}
 #endif
