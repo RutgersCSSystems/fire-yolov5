@@ -54,6 +54,7 @@
 #include <linux/uaccess.h>
 #include <asm/cacheflush.h>
 #include <asm/tlb.h>
+#include <asm/atomic.h>
 #include <asm/mmu_context.h>
 #include <linux/pfn_trace.h>
 #include <net/sock.h>
@@ -275,6 +276,19 @@ print_hetero_stats(struct task_struct *task)
 		mm->pgbuff_hits_cnt, 
 		g_tot_app_pages
        	);
+
+	printk(KERN_ALERT "ATOMICs PID %d Proc-name %s "
+			"FilePages %ld "
+			"AnonPages %ld "
+			"SwapEntries %ld "
+			"SharedPages %ld \n",
+			task->pid, task->comm,
+			atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]),
+			atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]),
+			atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]),
+			atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES])
+			);
+
 #if 0
         printk("EXITING PROCESS PID %d Currname %s " 
 		"cache-hits %lu cache-miss %lu " 
