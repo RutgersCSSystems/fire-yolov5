@@ -74,7 +74,7 @@
 #define TIME_STATS 7
 #define TIME_RESET 8
 #define COLLECT_ALLOCATE 9
-#define PRINT_ALLOCATE 10
+#define PRINT_PPROC_PAGESTATS 10
 
 /* 
 Flags to enable hetero allocations.
@@ -264,6 +264,17 @@ print_hetero_stats(struct task_struct *task)
 	if(!mm)
 		return;
 
+        printk(KERN_ALERT "PID %d Proc-name %s " 
+		"page cache %lu " 
+	      	"kernel buffs %lu " 
+		"app pages %lu \n",
+	  	task->pid, task->comm, 
+		//mm->pgcache_hits_cnt + mm->pgcache_miss_cnt, 
+	      	//mm->pgbuff_hits_cnt + mm->pgbuff_miss_cnt, 
+		mm->pgcache_hits_cnt, 
+		mm->pgbuff_hits_cnt, 
+		g_tot_app_pages
+       	);
 #if 0
         printk("EXITING PROCESS PID %d Currname %s " 
 		"cache-hits %lu cache-miss %lu " 
@@ -455,7 +466,7 @@ int
 is_hetero_exit(struct task_struct *task) 
 {
     if(task && check_hetero_proc(task)) {
-	print_hetero_stats(task);
+	//print_hetero_stats(task);
 #ifdef _ENABLE_HETERO_THREAD
 	spin_lock(&kthread_lock);
 	if(thrd_idx)
@@ -818,8 +829,11 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 	if(!mm)
 		return;
 
-	//check_node_memsize();
 
+	mm->pgcache_hits_cnt++;
+
+#if 0
+	//check_node_memsize();
 #ifdef HETERO_COLLECT_LIFETIME
 	page->hetero = HETERO_PG_FLAG;
 	update_page_life_time(page, delpage, 0);
@@ -853,6 +867,9 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 
 ret_pgcache_stat:
 	return;
+
+#endif
+
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
@@ -877,6 +894,10 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 	mm = getmm(current);
 	if(!mm)
 		return;
+
+	mm->pgbuff_hits_cnt++;
+
+#if 0	
 
 #ifdef HETERO_COLLECT_LIFETIME
 	page->hetero = HETERO_PG_FLAG;
@@ -912,6 +933,7 @@ void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage)
 
 ret_pgbuff_stat:
 	return;
+#endif
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat);
 
@@ -1075,7 +1097,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	}
 
 #ifdef _ENABLE_HETERO_THREAD
-	print_hetero_stats(current);
+	//print_hetero_stats(current);
 	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
 				current->mm, "HETEROTHRD");	
 
@@ -1083,7 +1105,7 @@ try_hetero_migration(void *map, gfp_t gfp_mask){
 	thrd_idx++;
 	spin_unlock(&kthread_lock);
 #else
-	print_hetero_stats(current);
+	//print_hetero_stats(current);
 	migrate_to_node_hetero(current->mm, get_fastmem_node(),
 				get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
@@ -1163,11 +1185,11 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    global_flag = COLLECT_ALLOCATE;
 	    return global_flag;
 	    break;
-	case PRINT_ALLOCATE:
+	case PRINT_PPROC_PAGESTATS:
 	    printk("flag is set to print hetero allocate stat %d \n", flag);
-	    global_flag = PRINT_ALLOCATE;
-	    //print_hetero_stats(current);
-	    print_global_stats(current);	
+	    global_flag = PRINT_PPROC_PAGESTATS;
+	    print_hetero_stats(current);
+	    //print_global_stats(current);	
 	    break;
 	case HETERO_PGCACHE:
 	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);

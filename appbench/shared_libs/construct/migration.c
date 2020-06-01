@@ -109,19 +109,46 @@ int enbl_hetero_pgcache_readahead_set(void)
 
 void dest() {
     fprintf(stderr, "application termination...\n");
-    syscall(__NR_start_trace, PRINT_STATS);
+    //syscall(__NR_start_trace, PRINT_STATS);
+    syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
     /*a = syscall(__NR_start_trace, CLEAR_COUNT);
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);
-    syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
     syscall(__NR_start_trace, CLEAR_COUNT, 0);*/
 }
+
+
+void *print_stats(void *ptr) {
+
+	while(1) {
+		syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
+		sleep(5);
+	}
+	return NULL;	
+}
+
+
+void thread_fn(void) {
+	/* this variable is our reference to the second thread */
+	pthread_t inc_x_thread;
+
+	/* create a second thread which executes inc_x(&x) */
+	if(pthread_create(&inc_x_thread, NULL, print_stats, NULL)) {
+		fprintf(stderr, "Error creating thread\n");
+		return 1;
+	}
+	return NULL;
+}
+
+
 
 void con() {
   
     struct sigaction action;
     pid_t pid = getpid();
+
+    thread_fn();
 
     /* Do not enable hetero if HETERO disabled */
 #ifndef _DISABLE_HETERO
@@ -154,6 +181,7 @@ void con() {
 #endif
  	
 }
+
 
 void init_allocs() {
 	con();
