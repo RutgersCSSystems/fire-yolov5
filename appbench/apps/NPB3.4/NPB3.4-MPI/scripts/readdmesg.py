@@ -14,12 +14,14 @@ from subprocess import STDOUT, check_call
 
 MESSAGE_IDENTIFIER='ATOMICs'
 
+STATICFILE='/tmp/LastStamp.time'
+
 Counters = ['FilePages', 'AnonPages', 'SharedPages', 'SwapEntries']
 
 #################################################################
 def main():
-    if len(sys.argv) < 2 or len(sys.argv) > 4:
-        print("Try: ./readdmesg.py (init), or (readfrom messagestamp filename)")
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("Try: ./readdmesg.py (init), or (readfrom filename)")
         sys.exit()
 
     OutDict = {}
@@ -28,10 +30,16 @@ def main():
         out = BashExec('dmesg | tail -1')
         for line in out.stdout:
             laststamp = re.findall("\d+\.\d+", line)[0]
-            print(laststamp)
+            #print(laststamp)
+            outfile = open(STATICFILE, 'w+')
+            outfile.write(laststamp)
+            outfile.close()
+
 
     elif sys.argv[1] == 'readfrom':
-        startStamp = sys.argv[2]
+        outfile = open(STATICFILE, 'r')
+        startStamp = outfile.readline()
+        #startStamp = sys.argv[2]
         StartConsolidating = False
         out = BashExec('dmesg')
 
@@ -48,7 +56,7 @@ def main():
         
             if re.findall("\d+\.\d+", line)[0] == startStamp:
                 StartConsolidating = True
-        AppendToFile(OutDict, sys.argv[3], startStamp)
+        AppendToFile(OutDict, sys.argv[2], startStamp)
 #################################################################
 
 
