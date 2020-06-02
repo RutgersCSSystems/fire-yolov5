@@ -14,6 +14,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <string.h>
+#include <stdbool.h>
 #include "migration.h"
 
 #define __NR_start_trace 333
@@ -63,6 +64,14 @@ static void dest() __attribute__((destructor));
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
 #define MIGRATE_LIST_CNT 1000
+
+
+//For BTIO
+//#define OUTFILE Cummulate.csv
+#define INTERVAL 5
+bool FirstTime = true;
+#define DMESGINIT "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init"
+#define DMESGREAD "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv" 
 
 
 void set_migration_freq() {
@@ -123,7 +132,7 @@ void *print_stats(void *ptr) {
 
 	while(1) {
 		syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
-		sleep(5);
+		sleep(INTERVAL);
 	}
 	return NULL;	
 }
@@ -136,12 +145,48 @@ void thread_fn(void) {
 	/* create a second thread which executes inc_x(&x) */
 	if(pthread_create(&inc_x_thread, NULL, print_stats, NULL)) {
 		fprintf(stderr, "Error creating thread\n");
-		return 1;
 	}
-	return NULL;
 }
 
 
+///////////////////////////////////////////////////////////
+//These set of functions are for BTIO for now
+void *ReadDmesg(void *ptr)
+{
+	while(true)
+	{
+
+		if(FirstTime)
+		{
+			FirstTime = false;
+			//Call init
+			system(DMESGINIT);
+			continue;
+		}
+		//Call to write script
+		system(DMESGREAD);
+		system(DMESGINIT);
+		//Call init
+		sleep(INTERVAL);
+	}
+
+}
+
+//Functions that is called from fortran
+int reportrank_(int *rank)
+{
+	pthread_t readmesg;
+	if(*rank == 0)
+	{
+		if(pthread_create(&readmesg, NULL, ReadDmesg, NULL))
+		{
+			fprintf(stderr, "reportrank_: Error creating Thread\n");
+			return 1;
+		}
+	}
+	return 0;
+}
+////////////////////////////////////////////////////////
 
 void con() {
   
