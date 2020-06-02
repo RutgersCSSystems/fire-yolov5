@@ -12,15 +12,23 @@ import subprocess
 from subprocess import STDOUT, check_call
 
 
+MESSAGE_IDENTIFIER='ATOMICs'
 
+Counters = ['FilePages', 'AnonPages', 'SharedPages', 'SwapEntries']
+
+#################################################################
 def main():
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print("Try: ./readdmesg.py (init), or (readfrom messageID)")
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
+        print("Try: ./readdmesg.py (init), or (readfrom messagestamp filename)")
+        sys.exit()
+
+    OutDict = {}
 
     if sys.argv[1] == 'init':
-        out = BashExec('dmesg | tail -1 | awk \'{print $1}\'')
+        out = BashExec('dmesg | tail -1')
         for line in out.stdout:
-            print(line.strip('\n'))
+            laststamp = re.findall("\d+\.\d+", line)[0]
+            print(laststamp)
 
     elif sys.argv[1] == 'readfrom':
         startStamp = sys.argv[2]
@@ -28,11 +36,39 @@ def main():
         out = BashExec('dmesg')
 
         for line in out.stdout:
-            if line.split(' ')[0] == startStamp:
-                StartConsolidating = True
             if(StartConsolidating == True):
-                ##Add Consolidating logic
-                print(line)
+                if(len(re.findall(MESSAGE_IDENTIFIER, line)) > 0):
+                    #print(line)
+                    split = line.split(' ')
+                    for item in Counters:
+                        try:
+                            OutDict[item] += int(split[split.index(item)+1])
+                        except:
+                            OutDict[item] = int(split[split.index(item)+1])
+        
+            if re.findall("\d+\.\d+", line)[0] == startStamp:
+                StartConsolidating = True
+        AppendToFile(OutDict, sys.argv[3], startStamp)
+#################################################################
+
+
+#################################################################
+def AppendToFile(OutDict, filename, TimeStamp):
+    outfile = open(filename, 'a+')
+    writeout = csv.writer(outfile, quoting=csv.QUOTE_ALL)
+    Header = Counters.copy()
+    Header.insert(0, 'TimeStamp')
+    writeout.writerow(Header)
+
+    OutDat = []
+    OutDat.insert(0, str(TimeStamp))
+    for item in Counters:
+        OutDat.append(str(OutDict[item]))
+
+    writeout.writerow(OutDat)
+    outfile.close()
+
+#################################################################
 
 
 
