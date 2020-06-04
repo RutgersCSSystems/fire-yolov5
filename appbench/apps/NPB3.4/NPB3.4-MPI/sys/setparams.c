@@ -477,7 +477,7 @@ void write_bt_info(FILE *fp, char class, int io)
   else if (class == 'A') { problem_size = 64;  dt = "0.0008d0";   niter = 200; }
   else if (class == 'B') { problem_size = 102; dt = "0.0003d0";   niter = 200; }
   else if (class == 'C') { problem_size = 162; dt = "0.0001d0";   niter = 100; }
-  else if (class == 'D') { problem_size = 300; dt = "0.0001d0";  niter = 250; }
+  else if (class == 'D') { problem_size = 250; dt = "0.0001d0";  niter = 100; }
 //else if (class == 'D') { problem_size = 408; dt = "0.00002d0";  niter = 250; }
   else if (class == 'E') { problem_size = 1020; dt = "0.4d-5";    niter = 250; }
   else if (class == 'F') { problem_size = 2560; dt = "0.6d-6";    niter = 250; }

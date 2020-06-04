@@ -4,7 +4,7 @@ PCAnonRatio=1.5
 #DBGRATIO=1
 #DRATIO=100
 #BASE_MEM=2758459392
-NPROC=40
+NPROC=36
 
 APPPREFIX="numactl --membind=0"
 
@@ -26,8 +26,11 @@ SETUPEXTRAM() {
 
         sudo rm -rf  /mnt/ext4ramdisk/*
         sleep 5
+	./umount_ext4ramdisk.sh	
+	./clear_cache.sh
 
         NUMAFREE=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+	echo "NUMAFREE: "$NUMAFREE
         let DISKSZ=$NUMAFREE-$CAPACITY
         echo $DISKSZ"*************"
         ./umount_ext4ramdisk.sh
@@ -39,21 +42,11 @@ SETUPEXTRAM
 echo "going to sleep"
 sleep 10
 
-$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC ./bin/bt.D.x.ep_io
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2.x 2400 140 1 8 8 4 4
+
 #/usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io
 rm -rf btio*
 FlushDisk
-
-#sudo cgcreate -g memory:npb
-#echo $TotalMem | sudo tee /sys/fs/cgroup/memory/npb/memory.limit_in_bytes
-
-#sudo echo $DRATIO > /proc/sys/vm/dirty_ratio
-#sudo echo $DBGRATIO > /proc/sys/vm/dirty_background_ratio
-
-#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
-#$APPPREFIX  
-
-#/usr/bin/time -v cgexec -g memory:npb mpirun -NP $NPROC ./bin/bt.C.x.ep_io
 
 export LD_PRELOAD=""
 

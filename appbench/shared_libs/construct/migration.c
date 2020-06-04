@@ -68,7 +68,7 @@ static void dest() __attribute__((destructor));
 
 //For BTIO
 //#define OUTFILE Cummulate.csv
-#define INTERVAL 5
+#define INTERVAL 1
 bool FirstTime = true;
 #define DMESGINIT "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init"
 #define DMESGREAD "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv" 
