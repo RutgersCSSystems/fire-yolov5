@@ -15,6 +15,8 @@
 #include <signal.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "migration.h"
 
 #define __NR_start_trace 333
@@ -119,12 +121,27 @@ int enbl_hetero_pgcache_readahead_set(void)
 void dest() {
     fprintf(stderr, "application termination...\n");
     //syscall(__NR_start_trace, PRINT_STATS);
-    syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
+    
+    //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
+
     /*a = syscall(__NR_start_trace, CLEAR_COUNT);
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);
     syscall(__NR_start_trace, CLEAR_COUNT, 0);*/
+
+
+    struct rusage Hello;
+    if (getrusage(RUSAGE_SELF, &Hello) != 0)
+    {
+	    fprintf(stderr, "Unable to get rusage\n");
+    }
+
+    printf("MaxRSS= %lu KB, "
+		"SharedMem= %lu KB, "
+		"HardPageFault= %lu\n"
+		, Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
+
 }
 
 
@@ -148,7 +165,7 @@ void thread_fn(void) {
 	}
 }
 
-
+/*
 ///////////////////////////////////////////////////////////
 //These set of functions are for BTIO for now
 void *ReadDmesg(void *ptr)
@@ -187,6 +204,7 @@ int reportrank_(int *rank)
 	return 0;
 }
 ////////////////////////////////////////////////////////
+*/
 
 void con() {
   
