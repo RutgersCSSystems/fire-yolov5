@@ -193,17 +193,28 @@ void initialize(int argc, char** argv)
   if (IOMETHOD==NULL) {
     IOMETHOD = (char *)malloc(SLENGTH*sizeof(char));
     IOMETHOD = "POSIX";
+    fprintf(stderr, " IOMETHOD = POSIX \n");
   }
   IOMODE = getenv("IOMODE");
   if (IOMODE==NULL) {
     IOMODE = (char *)malloc(SLENGTH*sizeof(char));
     IOMODE = "SYNC";
+    fprintf(stderr, " IOMETHOD = SYNC \n");
   }
   FILETYPE = getenv("FILETYPE");
   if (FILETYPE==NULL) {
     FILETYPE = (char *)malloc(SLENGTH*sizeof(char));
     FILETYPE = "UNIQUE";
+    fprintf(stderr, " FILETYPE = UNIQUE\n");
   }
+
+  IOMETHOD = (char *)malloc(SLENGTH*sizeof(char));
+  IOMETHOD = "POSIX";
+  IOMODE = (char *)malloc(SLENGTH*sizeof(char));
+  IOMODE = "SYNC";
+  FILETYPE = (char *)malloc(SLENGTH*sizeof(char));
+  FILETYPE = "UNIQUE";
+
   REMAP = getenv("REMAP");
   if (REMAP==NULL) {
     REMAP = (char *)malloc(SLENGTH*sizeof(char));
@@ -215,7 +226,7 @@ void initialize(int argc, char** argv)
 #endif
 
   if (my_pe==0) {
-    fprintf(stdout, "IOMETHOD = %s  IOMODE = %s  FILETYPE = %s  REMAP = %s", IOMETHOD, IOMODE, FILETYPE, REMAP);
+    fprintf(stderr, "IOMETHOD = %s  IOMODE = %s  FILETYPE = %s  REMAP = %s", IOMETHOD, IOMODE, FILETYPE, REMAP);
 #ifdef IO
     if (!(BWEXP<0.0)) fprintf(stdout, "  BWEXP = %.2f", BWEXP);
 #endif
