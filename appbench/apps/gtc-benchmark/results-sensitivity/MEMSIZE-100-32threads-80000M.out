@@ -1,0 +1,121 @@
+ Program starts at DATE=20200606  TIME=102402.982
+&INPUT_PARAMETERS
+ IRUN=          0,
+ MSTEP=          5,
+ MSNAP=     100000,
+ NDIAG=          1,
+ NHYBRID=          0,
+ NONLINEAR=  1.00000000    ,
+ PARANL=  0.00000000    ,
+ MODE00=          1,
+ TSTEP=  1.00000000    ,
+ MICELL=        100,
+ MECELL=        100,
+ MPSI=        192,
+ MTHETAMAX=        768,
+ MZETAMAX=         32,
+ NPARTDOM=         10,
+ NCYCLE=          0,
+ A= 0.358000010    ,
+ A0=  3.58000025E-02,
+ A1= 0.322200000    ,
+ Q0= 0.580999970    ,
+ Q1=  1.09200001    ,
+ Q2=  1.09200001    ,
+ RC= 0.500000000    ,
+ RW= 0.400000006    ,
+ AION=  1.00000000    ,
+ QION=  1.00000000    ,
+ AELECTRON=  5.44365786E-04,
+ QELECTRON= -1.00000000    ,
+ KAPPATI=  6.90000010    ,
+ KAPPATE=  6.90000010    ,
+ KAPPAN=  2.20000005    ,
+ TITE=  1.00000000    ,
+ FLOW0=  0.00000000    ,
+ FLOW1=  0.00000000    ,
+ FLOW2=  0.00000000    ,
+ R0=  186.399994    ,
+ B0=  19100.0000    ,
+ TEMPERATURE=  2500.00000    ,
+ EDENSITY0=  4.60000015E+13,
+ STDOUT=          0,
+ NBOUND=         10,
+ UMAX=  4.00000000    ,
+ ILOAD=          0,
+ TAUII= -1.00000000    ,
+ TRACK_PARTICLES=          0,
+ NPTRACK=          0,
+ RNG_CONTROL=          0,
+ NMODE=          5,         10,         15,         20,         25,,
+          30,         35,         40,
+ MMODE=          7,         14,         21,         28,         35,,
+          42,         49,         56,
+ /
+
+===================================
+  Run without OpenMP threads
+===================================
+
+ *******************************************************
+   Using npartdom=           8  and ntoroidal=           4
+ *******************************************************
+
+recording 94693545103360 
+recording 94693545115648 
+recording 94693545123840 
+recording 94693545132032 
+recording 94693545140224 
+recording 94693545148416 
+&RUN_PARAMETERS
+ NUMBERPE=         32,
+ MI=   14822500,
+ MGRID=     148417,
+ MID_THETA=        768,
+ MTDIAG=        768,
+ DELR=  1.04131198    ,
+ DELT=  1.02230561    ,
+ ULENGTH=  186.399994    ,
+ UTIME=  5.46513768E-09,
+ GYRORADIUS=  1.43248774E-03,
+ /
+recording 139863887912960 
+recording 139862838353920 
+recording 139862342295552 
+ random_seed=          33   246511042  2146838761  1369371976 -1662910298  1133007384 -1241216455  1066016744  -807342212  1370399493  1772242030  1499193454  1213147102  1682014887   155647740  -172852606     7639707  1043611028 -1917693668  1264484720   158848887  -341809968  -623234937 -1007091037  -183489748   976055268  -392134449 -1081644426  -683445383   980209679 -1238281204  -913398902 -1067248057           0
+ w_initial =   1.00000005E-03
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   PID 24106 RUNNING AT node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us
+=   EXIT CODE: 9
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================
+YOUR APPLICATION TERMINATED WITH THE EXIT STRING: Killed (signal 9)
+This typically refers to a problem with your application.
+Please see the FAQ page for debugging suggestions
+Command exited with non-zero status 9
+	Command being timed: "mpiexec -n 32 ./gtc"
+	User time (seconds): 871.79
+	System time (seconds): 217.17
+	Percent of CPU this job got: 1304%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:23.45
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2648896
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1539
+	Minor (reclaiming a frame) page faults: 23479466
+	Voluntary context switches: 18414
+	Involuntary context switches: 5146
+	Swaps: 0
+	File system inputs: 56592
+	File system outputs: 784
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 9
