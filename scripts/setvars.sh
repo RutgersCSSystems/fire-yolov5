@@ -4,7 +4,7 @@ export NVMBASE=$PWD
 export OS_RELEASE_NAME=$1
 export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
-export PARA="-j32"
+export PARA="-j`nproc`"
 export VER="4.17.0"
 #export VER="4.18.0-2-amd64"
 
