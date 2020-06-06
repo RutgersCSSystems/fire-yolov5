@@ -46,13 +46,19 @@ SETUPEXTRAM
 echo "going to sleep"
 sleep 10
 
-#export LD_PRELOAD=/usr/lib/libmigration.so 
+export LD_PRELOAD=/usr/lib/libmigration.so 
 #IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
 #export FILETYPE=SHARED
 #export IOMODE=SYNC
 #export IOMETHOD=POSIX
 
+<<<<<<< HEAD
 $APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+=======
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2.x 500 140 1 8 8 4 4
+
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY"M-"$NPROC"threads".out
+>>>>>>> 622edb828b2adf57a0a41177a55ef56cb07c42d9
 
 export LD_PRELOAD=""
 
