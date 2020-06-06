@@ -1,0 +1,97 @@
+
+MADbench 2.0 IO-mode
+no_pe = 16  no_pix = 4000  no_bin = 140  no_gang = 1  sblocksize = 8  fblocksize = 8  r_mod = 4  w_mod = 4
+ IOMETHOD = POSIX 
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = POSIX 
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+ IOMETHOD = SYNC 
+ FILETYPE = UNIQUE
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMS_cc         0.66   [      0.66:      0.66]
+S_bw         0.34   [      0.34:      0.34]
+S_w         42.94   [     42.94:     42.94]
+          -------
+S_total     43.93   [     43.93:     43.93]
+
+W_cc         1.47   [      1.47:      1.47]
+W_bw       903.22   [    903.22:    903.22]
+W_r         36.28   [     36.28:     36.28]
+W_w          2.86   [      2.86:      2.86]
+          -------
+W_total    943.83   [    943.83:    943.83]
+
+C_cc         1.04   [      1.03:      1.04]
+C_bw         0.21   [      0.21:      0.21]
+C_r         35.83   [     35.83:     35.83]
+          -------
+C_total     37.08   [     37.08:     37.08]
+
+
+dC[0] = 0.00000e+00
+	Command being timed: "mpiexec -n 16 ./MADbench2_io 4000 140 1 8 8 4 4"
+	User time (seconds): 15863.13
+	System time (seconds): 184.30
+	Percent of CPU this job got: 1564%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 17:05.52
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 40288
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 649
+	Minor (reclaiming a frame) page faults: 368724
+	Voluntary context switches: 32659
+	Involuntary context switches: 13156
+	Swaps: 0
+	File system inputs: 70006936
+	File system outputs: 70003160
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
