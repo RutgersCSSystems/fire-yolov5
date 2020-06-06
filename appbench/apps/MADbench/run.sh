@@ -5,8 +5,9 @@ PCAnonRatio=1.5
 #DRATIO=100
 #BASE_MEM=2758459392
 NPROC=16
-
 APPPREFIX="numactl --membind=0"
+
+WORKLOAD=1000
 
 #ProgMem=`echo "74828 * $NPROC * 1024" | bc` #in bytes For size C
 #TotalMem=`echo "$ProgMem * $PCAnonRatio" | bc`
@@ -52,7 +53,7 @@ sleep 10
 #export IOMETHOD=POSIX
 
 #$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2.x 500 140 1 8 8 4 4
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 4000 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY.out
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY"M-"$NPROC"threads".out
 
 export LD_PRELOAD=""
 
@@ -64,7 +65,7 @@ FlushDisk
 
 sleep 5
 FlushDisk
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 4000 140 1 8 8 4 4 &> "MEMSIZE-UNLIMITED.out"
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-UNLIMITED-"$NPROC"threads".out
 
 #sudo cgcreate -g memory:npb
 #echo $TotalMem | sudo tee /sys/fs/cgroup/memory/npb/memory.limit_in_bytes
