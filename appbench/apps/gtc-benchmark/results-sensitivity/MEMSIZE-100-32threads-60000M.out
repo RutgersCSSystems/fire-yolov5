@@ -1,4 +1,4 @@
- Program starts at DATE=20200606  TIME=111918.767
+ Program starts at DATE=20200606  TIME=123959.027
 &INPUT_PARAMETERS
  IRUN=          0,
  MSTEP=          5,
@@ -61,12 +61,12 @@
    Using npartdom=           8  and ntoroidal=           4
  *******************************************************
 
-recording 94626154631168 
-recording 94626154643456 
-recording 94626154651648 
-recording 94626154659840 
-recording 94626154668032 
-recording 94626154676224 
+recording 94590510284800 
+recording 94590510297088 
+recording 94590510305280 
+recording 94590510313472 
+recording 94590510321664 
+recording 94590510329856 
 &RUN_PARAMETERS
  NUMBERPE=         32,
  MI=   10050100,
@@ -79,10 +79,10 @@ recording 94626154676224
  UTIME=  5.46513768E-09,
  GYRORADIUS=  1.43248774E-03,
  /
-recording 139863291129856 
-recording 139862578638848 
-recording 139862240690176 
- random_seed=          33  1119941248 -1493033200  1902964053   128603031   946619952 -1185579624 -1954272082  1417600737 -1407669968 -1266426036 -1371716580  1236544610 -1439701231  2038434412  2004378026 -1109190194 -1753148928 -1138104496  1804609490   406613399   299900166  1760336653 -1052524112  1054135547  1314835111   568897936 -1292976607  -640973005 -1398093841  1075906100    59764828 -1867562893           0
+recording 140379575828480 
+recording 140378863337472 
+recording 140378525388800 
+ random_seed=          33 -1888553852   417750939   660190556 -1861420195  -584321500 -1825388278  2017035411 -1137009129 -1840198492   559018659  -880783095  1447031404 -1866807371  2037052469 -1114939310   353504582 -2016797010  -791133663  -570488054  1042964292  -392512780 -1751677006 -1134487801  1980565918  1789426430 -1142104488  2006351770 -2052297956  1727999537   258891792  -504916461    18835989           0
  w_initial =   1.00000005E-03
  poisson solver=          48           0   1.00000048       0.00000000          100701    28428585
  etracer =   1.92500465E-06
@@ -91,42 +91,4 @@ recording 139862240690176
  kappa_T at radial_bin=           3   6.90000010    
  kappa_T at radial_bin=           4   6.79302597    
  kappa_T at radial_bin=           5   2.53836823    
-           1   0.00000000       0.00000000       0.00000000       1.43949892E-05   989.631470       0.00000000       0.00000000       0.00000000    
-           2   5.91687740E-06   6.25216126E-06   1.87814694E-10   1.43750840E-05   989.631287       3.80506060E-18   1.76971636E-17   1.38883129E-17
-           3   6.14763803E-06   5.21439415E-06   2.81396073E-10   1.80072966E-05   989.630981       3.68442706E-18   1.33334475E-17   9.64685162E-18
-           4   6.46633816E-06   3.65206097E-06   3.47110396E-10   2.30512233E-05   989.630615       3.62204813E-18   8.31487080E-18   4.69041930E-18
-           5   6.65052630E-06   1.82512247E-06   3.94668964E-10   2.80695403E-05   989.630188       3.60832561E-18   4.71412299E-18   1.10519933E-18
- Program ends at DATE=20200606   TIME=114829.360 
- CPU TIME USAGE (in SEC):
- pusher    shift     charge    poisson   smooth    field     load      total     
- 1.973E+02 1.005E+02 9.806E+01 7.150E+00 9.446E+00 1.848E+00 8.997E+00 4.242E+02
-
- WALL CLOCK TIMES (in SEC):
- pusher    shift     charge    poisson   smooth    field     load      total     
- 1.318E+03 1.013E+02 1.681E+02 1.489E+01 1.141E+02 5.155E+00 9.294E+00 1.751E+03
-MAIN LOOP TIME(SEC):    1741.320
-TOTAL CPU TIME USAGE (SEC):     424.172
-TOTAL WALL CLOCK TIME(SEC):    1750.614
-	Command being timed: "mpiexec -n 32 ./gtc"
-	User time (seconds): 24490.79
-	System time (seconds): 1297.18
-	Percent of CPU this job got: 1468%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:15.68
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 1941372
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 634595
-	Minor (reclaiming a frame) page faults: 74498655
-	Voluntary context switches: 787866
-	Involuntary context switches: 54199
-	Swaps: 0
-	File system inputs: 25485480
-	File system outputs: 89081816
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
+           1   0.00000000       0.00000000       0.00000000      -1.96735018E-05   989.542480       0.00000000       0.00000000       0.00000000    
