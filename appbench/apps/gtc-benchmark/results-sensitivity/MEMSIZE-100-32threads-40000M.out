@@ -1,4 +1,4 @@
- Program starts at DATE=20200606  TIME=114952.307
+ Program starts at DATE=20200606  TIME=115232.205
 &INPUT_PARAMETERS
  IRUN=          0,
  MSTEP=          5,
@@ -61,12 +61,12 @@
    Using npartdom=           8  and ntoroidal=           4
  *******************************************************
 
-recording 94285675462656 
-recording 94285675474944 
-recording 94285675483136 
-recording 94285675491328 
-recording 94285675499520 
-recording 94285675507712 
+recording 94571863568384 
+recording 94571863580672 
+recording 94571863588864 
+recording 94571863597056 
+recording 94571863605248 
+recording 94571863613440 
 &RUN_PARAMETERS
  NUMBERPE=         32,
  MI=   10050100,
@@ -79,15 +79,15 @@ recording 94285675507712
  UTIME=  5.46513768E-09,
  GYRORADIUS=  1.43248774E-03,
  /
-recording 140357334560768 
-recording 140356622069760 
-recording 140356284121088 
- random_seed=          33  1056201472 -1228887302 -1198196894  -970479180  -716862047  -213965956 -1539201080 -1737403578 -1044963027   576420327  -996526583   104503026  -754303403  -755067119  1072216338  1430087452  1528143528   900563562 -1875213570  1070926057  2140980968  -138406164  1352982024  1551435049   180306254 -1099031668   -31956564 -1211442373  2083288740   -99573502  1457899329  -234749071           0
+recording 139974567518208 
+recording 139973855027200 
+recording 139973517078528 
+ random_seed=          33  -698430736  -784982900  1760567546  1383900695  -439232053  -959060599   998998284  -601246076   998479595  -399463685 -1424825032 -1922945451 -1079970892  -564173135 -1597624684 -2119725906  -920820815 -1472357145   -97731060  1074429958 -1388358138  -330192146  1987054557  -132259343  1852025144  -937376272  2109240069   804375021  1417854076  1645872180  2079569329  -884918645           0
  w_initial =   1.00000005E-03
 
 ===================================================================================
 =   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 27950 RUNNING AT node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us
+=   PID 28133 RUNNING AT node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us
 =   EXIT CODE: 9
 =   CLEANING UP REMAINING PROCESSES
 =   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
@@ -97,22 +97,22 @@ This typically refers to a problem with your application.
 Please see the FAQ page for debugging suggestions
 Command exited with non-zero status 9
 	Command being timed: "mpiexec -n 32 ./gtc"
-	User time (seconds): 580.77
-	System time (seconds): 284.04
-	Percent of CPU this job got: 1108%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:18.04
+	User time (seconds): 322.88
+	System time (seconds): 320.67
+	Percent of CPU this job got: 1152%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:55.85
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 1781892
+	Maximum resident set size (kbytes): 1393116
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1054
-	Minor (reclaiming a frame) page faults: 15405071
-	Voluntary context switches: 41220
-	Involuntary context switches: 18734
+	Major (requiring I/O) page faults: 4391
+	Minor (reclaiming a frame) page faults: 10933765
+	Voluntary context switches: 26291
+	Involuntary context switches: 17264
 	Swaps: 0
-	File system inputs: 40408
+	File system inputs: 182128
 	File system outputs: 784
 	Socket messages sent: 0
 	Socket messages received: 0

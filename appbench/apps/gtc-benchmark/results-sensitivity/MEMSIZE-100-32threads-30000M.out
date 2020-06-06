@@ -1,4 +1,4 @@
- Program starts at DATE=20200606  TIME=102902.017
+ Program starts at DATE=20200606  TIME=110129.134
 &INPUT_PARAMETERS
  IRUN=          0,
  MSTEP=          5,
@@ -11,8 +11,8 @@
  TSTEP=  1.00000000    ,
  MICELL=        100,
  MECELL=        100,
- MPSI=        192,
- MTHETAMAX=        768,
+ MPSI=        200,
+ MTHETAMAX=        500,
  MZETAMAX=         32,
  NPARTDOM=         10,
  NCYCLE=          0,
@@ -61,33 +61,33 @@
    Using npartdom=           8  and ntoroidal=           4
  *******************************************************
 
-recording 94701120344064 
-recording 94701120356352 
-recording 94701120364544 
-recording 94701120372736 
-recording 94701120380928 
-recording 94701120389120 
+recording 94100582973440 
+recording 94100582985728 
+recording 94100582993920 
+recording 94100583002112 
+recording 94100583010304 
+recording 94100583018496 
 &RUN_PARAMETERS
  NUMBERPE=         32,
- MI=   14822500,
- MGRID=     148417,
- MID_THETA=        768,
- MTDIAG=        768,
- DELR=  1.04131198    ,
- DELT=  1.02230561    ,
+ MI=   10050100,
+ MGRID=     100701,
+ MID_THETA=        500,
+ MTDIAG=        480,
+ DELR= 0.999659479    ,
+ DELT=  1.57026148    ,
  ULENGTH=  186.399994    ,
  UTIME=  5.46513768E-09,
  GYRORADIUS=  1.43248774E-03,
  /
-recording 140529611628544 
-recording 140528562069504 
-recording 140528066011136 
- random_seed=          33    31679761 -1039993833   734931025  -879157131  1437191721   375690623  -521110736 -1134092198  1936353297  -411028114  1783841348 -1423013240 -1962478634  1273668935  -108888287  -828717967  1045041706 -1282108393  -178502060   610468054  -981544807 -1175979008   772603937 -1621624765  1469873198 -1727607313   569099167  -262356736   -67794521   292013673 -1675775009  -745491369           0
+recording 140601749884928 
+recording 140601037393920 
+recording 140600699445248 
+ random_seed=          33   878707660   -49025685  1770062642   971563726  -732232017 -1846602538   278418101  -158927673  1086561035 -1969659429  1926647334  1303728368   644976200 -1181690605  1453139651  -438467909  1790880409  1108347175 -1110878026  1962434460  1597660384   901911477   546684795 -1934096362  -958814190   382088468  1289797350  -833563714  1988019918  1921410795   222055159 -1938862254           0
  w_initial =   1.00000005E-03
 
 ===================================================================================
 =   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 24419 RUNNING AT node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us
+=   PID 27090 RUNNING AT node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us
 =   EXIT CODE: 9
 =   CLEANING UP REMAINING PROCESSES
 =   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
@@ -97,23 +97,23 @@ This typically refers to a problem with your application.
 Please see the FAQ page for debugging suggestions
 Command exited with non-zero status 9
 	Command being timed: "mpiexec -n 32 ./gtc"
-	User time (seconds): 292.36
-	System time (seconds): 315.47
-	Percent of CPU this job got: 1133%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:53.62
+	User time (seconds): 230.58
+	System time (seconds): 180.23
+	Percent of CPU this job got: 974%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:42.16
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 1107220
+	Maximum resident set size (kbytes): 1072388
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1531
-	Minor (reclaiming a frame) page faults: 8491873
-	Voluntary context switches: 35158
-	Involuntary context switches: 19583
+	Major (requiring I/O) page faults: 1368
+	Minor (reclaiming a frame) page faults: 8552651
+	Voluntary context switches: 16871
+	Involuntary context switches: 4705
 	Swaps: 0
-	File system inputs: 42672
-	File system outputs: 1040
+	File system inputs: 41592
+	File system outputs: 784
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

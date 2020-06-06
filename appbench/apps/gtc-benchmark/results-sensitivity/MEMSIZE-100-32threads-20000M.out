@@ -1,0 +1,118 @@
+ Program starts at DATE=20200606  TIME=110342.748
+&INPUT_PARAMETERS
+ IRUN=          0,
+ MSTEP=          5,
+ MSNAP=     100000,
+ NDIAG=          1,
+ NHYBRID=          0,
+ NONLINEAR=  1.00000000    ,
+ PARANL=  0.00000000    ,
+ MODE00=          1,
+ TSTEP=  1.00000000    ,
+ MICELL=        100,
+ MECELL=        100,
+ MPSI=        200,
+ MTHETAMAX=        500,
+ MZETAMAX=         32,
+ NPARTDOM=         10,
+ NCYCLE=          0,
+ A= 0.358000010    ,
+ A0=  3.58000025E-02,
+ A1= 0.322200000    ,
+ Q0= 0.580999970    ,
+ Q1=  1.09200001    ,
+ Q2=  1.09200001    ,
+ RC= 0.500000000    ,
+ RW= 0.400000006    ,
+ AION=  1.00000000    ,
+ QION=  1.00000000    ,
+ AELECTRON=  5.44365786E-04,
+ QELECTRON= -1.00000000    ,
+ KAPPATI=  6.90000010    ,
+ KAPPATE=  6.90000010    ,
+ KAPPAN=  2.20000005    ,
+ TITE=  1.00000000    ,
+ FLOW0=  0.00000000    ,
+ FLOW1=  0.00000000    ,
+ FLOW2=  0.00000000    ,
+ R0=  186.399994    ,
+ B0=  19100.0000    ,
+ TEMPERATURE=  2500.00000    ,
+ EDENSITY0=  4.60000015E+13,
+ STDOUT=          0,
+ NBOUND=         10,
+ UMAX=  4.00000000    ,
+ ILOAD=          0,
+ TAUII= -1.00000000    ,
+ TRACK_PARTICLES=          0,
+ NPTRACK=          0,
+ RNG_CONTROL=          0,
+ NMODE=          5,         10,         15,         20,         25,,
+          30,         35,         40,
+ MMODE=          7,         14,         21,         28,         35,,
+          42,         49,         56,
+ /
+
+===================================
+  Run without OpenMP threads
+===================================
+
+ *******************************************************
+   Using npartdom=           8  and ntoroidal=           4
+ *******************************************************
+
+recording 94595020734464 
+recording 94595020746752 
+recording 94595020754944 
+recording 94595020763136 
+recording 94595020771328 
+recording 94595020779520 
+&RUN_PARAMETERS
+ NUMBERPE=         32,
+ MI=   10050100,
+ MGRID=     100701,
+ MID_THETA=        500,
+ MTDIAG=        480,
+ DELR= 0.999659479    ,
+ DELT=  1.57026148    ,
+ ULENGTH=  186.399994    ,
+ UTIME=  5.46513768E-09,
+ GYRORADIUS=  1.43248774E-03,
+ /
+recording 140470494883840 
+recording 140469782392832 
+recording 140469444444160 
+ random_seed=          33   993355250  -404498045  -737821201 -1160405647 -1179178154 -1433816145   254434310  1015983193  1069646675 -1076291520  -626433464  -809893838  -540808336  2014489076 -2115223647 -1600262848   628758194  1701997294   436558358  -367630905  -292846727    66573314 -1148058863 -1347477029  1957222613 -2055837023  1518040703 -1902991633  1013479948  1328070401  1407643877  1447926778           0
+ w_initial =   1.00000005E-03
+[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDU_sock_write (utils/sock/sock.c:286): write error (Broken pipe)
+[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:928): unable to write to downstream stdin
+[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:77): callback returned error status
+[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] main (pm/pmiserv/pmip.c:202): demux engine error waiting for event
+[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] control_cb (pm/pmiserv/pmiserv_cb.c:208): assert (!closed) failed
+[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:77): callback returned error status
+[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:198): error waiting for event
+[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] main (ui/mpich/mpiexec.c:340): process manager error waiting for completion
+Command exited with non-zero status 255
+	Command being timed: "mpiexec -n 32 ./gtc"
+	User time (seconds): 0.00
+	System time (seconds): 0.00
+	Percent of CPU this job got: 0%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.77
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2896
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 45
+	Minor (reclaiming a frame) page faults: 429
+	Voluntary context switches: 90
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 2880
+	File system outputs: 24
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 255

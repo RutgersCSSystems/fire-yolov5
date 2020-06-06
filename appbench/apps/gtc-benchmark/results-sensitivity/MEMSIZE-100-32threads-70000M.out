@@ -1,4 +1,4 @@
- Program starts at DATE=20200606  TIME=101657.182
+ Program starts at DATE=20200606  TIME=111406.636
 &INPUT_PARAMETERS
  IRUN=          0,
  MSTEP=          5,
@@ -11,8 +11,8 @@
  TSTEP=  1.00000000    ,
  MICELL=        100,
  MECELL=        100,
- MPSI=        192,
- MTHETAMAX=        768,
+ MPSI=        200,
+ MTHETAMAX=        500,
  MZETAMAX=         32,
  NPARTDOM=         10,
  NCYCLE=          0,
@@ -61,70 +61,70 @@
    Using npartdom=           8  and ntoroidal=           4
  *******************************************************
 
-recording 94882337431552 
-recording 94882337443840 
-recording 94882337452032 
-recording 94882337460224 
-recording 94882337468416 
-recording 94882337476608 
+recording 94229363699712 
+recording 94229363712000 
+recording 94229363720192 
+recording 94229363728384 
+recording 94229363736576 
+recording 94229363744768 
 &RUN_PARAMETERS
  NUMBERPE=         32,
- MI=   14822500,
- MGRID=     148417,
- MID_THETA=        768,
- MTDIAG=        768,
- DELR=  1.04131198    ,
- DELT=  1.02230561    ,
+ MI=   10050100,
+ MGRID=     100701,
+ MID_THETA=        500,
+ MTDIAG=        480,
+ DELR= 0.999659479    ,
+ DELT=  1.57026148    ,
  ULENGTH=  186.399994    ,
  UTIME=  5.46513768E-09,
  GYRORADIUS=  1.43248774E-03,
  /
-recording 140027089506304 
-recording 140026039947264 
-recording 140025543888896 
- random_seed=          33   -66089933   266468794  1092574142  -257700011 -1021564097  1383346279 -1491306164 -1638239929  1888389431   533913257  1146665540   435222096 -1473994199  1409338946 -1556146714 -1079093353 -1457403669   637358236   881817977 -1831713274   484890864   310393481  -879939885  1696937128  -834200831  -239120099   728520883 -1935571286  1345198670 -1237166495 -1490600344  2034520173           0
+recording 140186739572736 
+recording 140186027081728 
+recording 140185689133056 
+ random_seed=          33   325044747  -100558144  1140768424  1193929631  1744552763 -2069302409  -394076020   689929659   978928633  -162965590 -1691672973 -1599056245 -2004419626  1335372955    24301767  -836157648  -756182067 -1689742508  -475354330  1224440847  -987611431   252892779 -1380435333 -2009548123   376212521  -668722527  1256671574  1405367009  -383626277 -1159663591 -1966647194   617997124           0
  w_initial =   1.00000005E-03
- poisson solver=          53           0   1.00000048       0.00000000          148417    46713758
+ poisson solver=          48           0   1.00000048       0.00000000          100701    28428585
  etracer =   1.92500465E-06
  kappa_T at radial_bin=           1   2.53836632    
  kappa_T at radial_bin=           2   6.79302549    
  kappa_T at radial_bin=           3   6.90000010    
  kappa_T at radial_bin=           4   6.79302597    
  kappa_T at radial_bin=           5   2.53836823    
-           1   0.00000000       0.00000000       0.00000000      -3.11886834E-06   1459.50916       0.00000000       0.00000000       0.00000000    
-           2   5.32972626E-06   2.00593240E-06   2.73854772E-10  -3.21286643E-06   1459.50879       4.33423616E-18   5.61348256E-18   1.27823258E-18
-           3   5.23027802E-06   1.67409951E-06   4.40378706E-10  -3.30439252E-06   1459.50842       4.21574336E-18   5.12332634E-18   9.06013406E-19
-           4   5.20259618E-06   1.20650350E-06   5.06009679E-10  -3.53549876E-06   1459.50781       4.16953209E-18   4.64547403E-18   4.74759796E-19
-           5   5.22070331E-06   7.11695691E-07   5.50997192E-10  -3.50940172E-06   1459.50720       4.17404105E-18   4.33521802E-18   1.61125258E-19
- Program ends at DATE=20200606   TIME=102253.131 
+           1   0.00000000       0.00000000       0.00000000      -1.08974309E-05   989.553101       0.00000000       0.00000000       0.00000000    
+           2   5.74149681E-06   2.48581046E-06   1.98862316E-10  -1.08894601E-05   989.552979       3.74468592E-18   5.57058745E-18   1.82612879E-18
+           3   5.64026368E-06   2.14082752E-06   3.19824472E-10  -1.00815560E-05   989.552612       3.63420065E-18   4.99299618E-18   1.35864540E-18
+           4   5.62920968E-06   1.63274365E-06   3.73129971E-10  -8.80850712E-06   989.552246       3.58709850E-18   4.37444417E-18   7.87531313E-19
+           5   5.64992069E-06   1.07703397E-06   4.01691236E-10  -6.84094266E-06   989.551880       3.57557174E-18   3.90653622E-18   3.31536057E-19
+ Program ends at DATE=20200606   TIME=111759.268 
  CPU TIME USAGE (in SEC):
  pusher    shift     charge    poisson   smooth    field     load      total     
- 9.022E+01 6.292E+00 8.018E+01 6.759E+00 1.217E+01 1.456E+00 1.333E+01 2.117E+02
+ 6.141E+01 3.736E+00 4.892E+01 3.837E+00 1.249E+01 8.450E-01 8.997E+00 1.414E+02
 
  WALL CLOCK TIMES (in SEC):
  pusher    shift     charge    poisson   smooth    field     load      total     
- 9.079E+01 6.298E+00 8.019E+01 6.759E+00 1.250E+02 1.456E+00 1.348E+01 3.560E+02
-MAIN LOOP TIME(SEC):     342.489
-TOTAL CPU TIME USAGE (SEC):     211.707
-TOTAL WALL CLOCK TIME(SEC):     355.967
+ 6.144E+01 3.736E+00 4.892E+01 3.838E+00 8.857E+01 8.468E-01 9.133E+00 2.326E+02
+MAIN LOOP TIME(SEC):     223.511
+TOTAL WALL CLOCK TIME(SEC):     232.644
+TOTAL CPU TIME USAGE (SEC):     141.398
 	Command being timed: "mpiexec -n 32 ./gtc"
-	User time (seconds): 6492.87
-	System time (seconds): 319.87
-	Percent of CPU this job got: 1885%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:01.36
+	User time (seconds): 4395.71
+	System time (seconds): 317.79
+	Percent of CPU this job got: 1974%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:58.77
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 2863224
+	Maximum resident set size (kbytes): 1955656
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 20913
-	Minor (reclaiming a frame) page faults: 58497007
-	Voluntary context switches: 126225
-	Involuntary context switches: 22616
+	Major (requiring I/O) page faults: 1620
+	Minor (reclaiming a frame) page faults: 35260926
+	Voluntary context switches: 62790
+	Involuntary context switches: 14486
 	Swaps: 0
-	File system inputs: 875976
-	File system outputs: 131376208
+	File system inputs: 39384
+	File system outputs: 89077312
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
