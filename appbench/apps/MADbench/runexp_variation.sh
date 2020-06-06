@@ -8,7 +8,10 @@ declare -a thrdarr=("16")
 declare -a workarr=("1000" "2000" "4000")
 declare -a apparr=("MADbench")
 
+
 SETUPEXTRAM() {
+
+	CAPACITY=$1
 
         sudo rm -rf  /mnt/ext4ramdisk0/*
         sudo rm -rf  /mnt/ext4ramdisk1/*
