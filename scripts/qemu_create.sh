@@ -42,7 +42,7 @@ IMAGE_CREATE() {
 SETUP_IMAGE() {
 	scripts/umount_qemu.sh
         sudo mount -o loop $QEMU_IMG_FILE $MOUNT_DIR
-        QEMUNVM=/users/skannan/ssd/NVM/mountdir/skannan/ssd/NVM
+        QEMUNVM=/users/$USER/ssd/NVM/mountdir/skannan/ssd/NVM
         QEMUAPPBENCH=$QEMUNVM/appbench
 	sudo mkdir -p $QEMUAPPBENCH
         sudo cp -r scripts $QEMUNVM
