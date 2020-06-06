@@ -1,0 +1,20 @@
+
+Increase the size of run (water_MD.mdp)
+nsteps, dt,
+
+To change frequency of writes look at water_MD.mdp
+nstxout, nstvout, nstfout, nstlog, nstenergy, nstxtcout
+
+after each changing *.mdp files, one needs to run:
+gmx grompp -v -f water_MD.mdp -c water.gro -p water.top -o run_water
+
+-------------------------
+To clean the newly written logs and files: ./clean_out.sh
+
+WARNING: To clean all the files, including essentials: ./cleanup.sh
+
+If you cleanup and dont know how to get back to run the program
+$./setup.sh
+
+It so migh happen that you have compiled your own gromacs and tried setup.sh
+In these cases, change the SPC path to : <gromacsSourcePath>/share/...

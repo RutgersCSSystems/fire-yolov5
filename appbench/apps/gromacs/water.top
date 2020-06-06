@@ -1,0 +1,42 @@
+;
+;	File 'water.top' was generated
+;	By user: shaleen (20001)
+;	On host: node-0.thiswould.lsm-pg0.wisc.cloudlab.us
+;	At date: Sat Jun  6 11:09:42 2020
+;
+;	This is a standalone topology file
+;
+;	Created by:
+;	                    :-) GROMACS - gmx pdb2gmx, 2018.1 (-:
+;	
+;	Executable:   /usr/bin/gmx
+;	Data prefix:  /usr
+;	Working dir:  /users/shaleen/ssd/ECP-proxy/GROMACS_Examples/water
+;	Command line:
+;	  gmx pdb2gmx -f water.gro -o water.gro -p water.top -n water.ndx
+;	Force field was read from the standard GROMACS share directory.
+;
+
+; Include forcefield parameters
+#include "gromos53a6.ff/forcefield.itp"
+
+; Include water topology
+#include "gromos53a6.ff/spc.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "gromos53a6.ff/ions.itp"
+
+[ system ]
+; Name
+216H2O,WATJP01,SPC216,SPC-MODEL,300K,BOX(M)=1.86206NM,WFVG,MAR. 1984
+
+[ molecules ]
+; Compound        #mols
+SOL             32769
