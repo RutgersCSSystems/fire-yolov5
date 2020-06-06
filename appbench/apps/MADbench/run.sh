@@ -4,10 +4,10 @@ PCAnonRatio=1.5
 #DBGRATIO=1
 #DRATIO=100
 #BASE_MEM=2758459392
-NPROC=16
+NPROC=36
 APPPREFIX="numactl --membind=0"
 
-WORKLOAD=1000
+WORKLOAD=2000
 
 #ProgMem=`echo "74828 * $NPROC * 1024" | bc` #in bytes For size C
 #TotalMem=`echo "$ProgMem * $PCAnonRatio" | bc`
@@ -46,7 +46,7 @@ SETUPEXTRAM
 echo "going to sleep"
 sleep 10
 
-export LD_PRELOAD=/usr/lib/libmigration.so 
+#export LD_PRELOAD=/usr/lib/libmigration.so 
 #IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
 #export FILETYPE=SHARED
 #export IOMODE=SYNC
@@ -54,7 +54,11 @@ export LD_PRELOAD=/usr/lib/libmigration.so
 
 #$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2.x 500 140 1 8 8 4 4
 
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY"M-"$NPROC"threads".out
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY"M-"$NPROC"threads".out
+
+/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 
+
+#/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-"$CAPACITY"M-"$NPROC"threads".out
 
 export LD_PRELOAD=""
 
@@ -66,7 +70,10 @@ FlushDisk
 
 sleep 5
 FlushDisk
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-UNLIMITED-"$NPROC"threads".out
+
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$1-"$NPROC"threads".out
+
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4
 
 #sudo cgcreate -g memory:npb
 #echo $TotalMem | sudo tee /sys/fs/cgroup/memory/npb/memory.limit_in_bytes
