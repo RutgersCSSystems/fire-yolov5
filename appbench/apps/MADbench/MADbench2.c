@@ -156,6 +156,11 @@ void initialize(int argc, char** argv)
     error_check("insuffient arguments", "command line", argc>=PCOUNT);
     for (p=0; p<PCOUNT; p++) parameter[p] = atoi(argv[p]);
   }
+
+  if (my_pe==0){
+	  reportrank_(&my_pe);
+  }
+
   MPI_Bcast(parameter, PCOUNT, MPI_INT, 0, MPI_COMM_WORLD);
 
   no_pix = parameter[1];
