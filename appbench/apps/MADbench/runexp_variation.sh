@@ -63,6 +63,7 @@ do
 			do
 				RUNAPP $CAPACITY $NPROC $WORKLOAD
 				sleep 5
+				./clear_cache.sh
 			done
 		done	
 	done
