@@ -1,4 +1,4 @@
- Program starts at DATE=20200606  TIME=110342.748
+ Warning: option `vmlinux' is being ignored because NO_DWARF=1  Program starts at DATE=20200607  TIME=094710.132
 &INPUT_PARAMETERS
  IRUN=          0,
  MSTEP=          5,
@@ -12,7 +12,7 @@
  MICELL=        100,
  MECELL=        100,
  MPSI=        200,
- MTHETAMAX=        500,
+ MTHETAMAX=        150,
  MZETAMAX=         32,
  NPARTDOM=         10,
  NCYCLE=          0,
@@ -61,58 +61,51 @@
    Using npartdom=           8  and ntoroidal=           4
  *******************************************************
 
-recording 94595020734464 
-recording 94595020746752 
-recording 94595020754944 
-recording 94595020763136 
-recording 94595020771328 
-recording 94595020779520 
+recording 93876761501696 
+recording 93876761513984 
+recording 93876761522176 
+recording 93876761530368 
+recording 93876761538560 
+recording 93876761546752 
 &RUN_PARAMETERS
  NUMBERPE=         32,
- MI=   10050100,
- MGRID=     100701,
- MID_THETA=        500,
- MTDIAG=        480,
+ MI=    3015100,
+ MGRID=      30351,
+ MID_THETA=        150,
+ MTDIAG=        128,
  DELR= 0.999659479    ,
- DELT=  1.57026148    ,
+ DELT=  5.23420477    ,
  ULENGTH=  186.399994    ,
  UTIME=  5.46513768E-09,
  GYRORADIUS=  1.43248774E-03,
  /
-recording 140470494883840 
-recording 140469782392832 
-recording 140469444444160 
- random_seed=          33   993355250  -404498045  -737821201 -1160405647 -1179178154 -1433816145   254434310  1015983193  1069646675 -1076291520  -626433464  -809893838  -540808336  2014489076 -2115223647 -1600262848   628758194  1701997294   436558358  -367630905  -292846727    66573314 -1148058863 -1347477029  1957222613 -2055837023  1518040703 -1902991633  1013479948  1328070401  1407643877  1447926778           0
+recording 140280404398080 
+recording 140280180686848 
+recording 140280073740288 
+ random_seed=          33 -1670138263  1703787307 -2020074775 -1950997079  -819326719  1911538257  1044286410  -609918080   971873533  -564892523  1302024616  -717954887 -1204996087  1478574455   314127277  -231149813   993543361 -1048849130  -283216174  1625565707  -475494839   889109671 -1201942861  -917316974  -596476411  -472529116  -920016022  -491204646 -1724154738  1106798472 -2123573982  1739638019           0
  w_initial =   1.00000005E-03
-[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDU_sock_write (utils/sock/sock.c:286): write error (Broken pipe)
-[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:928): unable to write to downstream stdin
-[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:77): callback returned error status
-[proxy:0:0@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] main (pm/pmiserv/pmip.c:202): demux engine error waiting for event
-[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] control_cb (pm/pmiserv/pmiserv_cb.c:208): assert (!closed) failed
-[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:77): callback returned error status
-[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:198): error waiting for event
-[mpiexec@node-0.storage.fsperfatscale-pg0.wisc.cloudlab.us] main (ui/mpich/mpiexec.c:340): process manager error waiting for completion
-Command exited with non-zero status 255
-	Command being timed: "mpiexec -n 32 ./gtc"
-	User time (seconds): 0.00
-	System time (seconds): 0.00
-	Percent of CPU this job got: 0%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.77
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 2896
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 45
-	Minor (reclaiming a frame) page faults: 429
-	Voluntary context switches: 90
-	Involuntary context switches: 0
-	Swaps: 0
-	File system inputs: 2880
-	File system outputs: 24
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 255
+ poisson solver=          31           0   1.00000036       0.00000000           30351     5601780
+ etracer =   1.92500465E-06
+ kappa_T at radial_bin=           1   2.53836632    
+ kappa_T at radial_bin=           2   6.79302549    
+ kappa_T at radial_bin=           3   6.90000010    
+ kappa_T at radial_bin=           4   6.79302597    
+ kappa_T at radial_bin=           5   2.53836823    
+           1   0.00000000       0.00000000       0.00000000       2.90007029E-05   296.897797       0.00000000       0.00000000       0.00000000    
+           2   6.84935594E-06   8.58577459E-06   5.11978099E-11   2.85348870E-05   296.897766       3.21491872E-18   3.07434248E-17   2.75306272E-17
+           3   7.33581419E-06   7.18446745E-06   7.11869730E-11   2.93961675E-05   296.897644       3.10443179E-18   2.22607339E-17   1.91588364E-17
+           4   7.89590922E-06   5.09001075E-06   9.95293223E-11   3.04735513E-05   296.897522       3.03426599E-18   1.24543936E-17   9.42287758E-18
+           5   8.19600791E-06   2.67146015E-06   1.02888406E-10   3.15520083E-05   296.897400       3.00904898E-18   5.37925685E-18   2.37279282E-18
+ Program ends at DATE=20200607   TIME=094817.384 
+ CPU TIME USAGE (in SEC):
+ pusher    shift     charge    poisson   smooth    field     load      total     
+ 2.017E+01 1.092E+00 1.384E+01 1.136E+00 4.538E+00 2.443E-01 2.714E+00 4.420E+01
+
+ WALL CLOCK TIMES (in SEC):
+ pusher    shift     charge    poisson   smooth    field     load      total     
+ 2.051E+01 1.096E+00 1.385E+01 1.155E+00 2.144E+01 2.443E-01 2.861E+00 6.727E+01
+MAIN LOOP TIME(SEC):      64.410
+TOTAL CPU TIME USAGE (SEC):      44.204
+TOTAL WALL CLOCK TIME(SEC):      67.271
+[ perf record: Woken up 1972 times to write data ]
+[ perf record: Captured and wrote 523.411 MB perf.data (11425273 samples) ]
