@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <mpi.h>
 //#include <numa.h>
 #include <time.h>
 #include <inttypes.h>
@@ -69,11 +70,11 @@ static void dest() __attribute__((destructor));
 
 
 //For BTIO
-//#define OUTFILE Cummulate.csv
-#define INTERVAL 1
+//interval in seconds
+#define INTERVAL 1 
 bool FirstTime = true;
-#define DMESGINIT "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init"
-#define DMESGREAD "/users/skannan/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv" 
+#define DMESGINIT "/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init"
+#define DMESGREAD "/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv" 
 
 
 void set_migration_freq() {
@@ -131,6 +132,9 @@ void dest() {
     syscall(__NR_start_trace, CLEAR_COUNT, 0);*/
 
 
+    /*
+     * This code snippet prints the Rusage parameters
+     * at destruction
     struct rusage Hello;
     if (getrusage(RUSAGE_SELF, &Hello) != 0)
     {
@@ -141,6 +145,7 @@ void dest() {
 		"SharedMem= %lu KB, "
 		"HardPageFault= %lu\n"
 		, Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
+    */
 
 }
 
@@ -165,14 +170,22 @@ void thread_fn(void) {
 	}
 }
 
-/*
 ///////////////////////////////////////////////////////////
 //These set of functions are for BTIO for now
+//
+void *PrintRank(void *ptr)
+{
+	int world_rank = -1;
+	while(true)
+	{
+    			MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+			printf("Rank = %d\n", world_rank);
+	}
+}
 void *ReadDmesg(void *ptr)
 {
 	while(true)
 	{
-
 		if(FirstTime)
 		{
 			FirstTime = false;
@@ -203,8 +216,8 @@ int reportrank_(int *rank)
 	}
 	return 0;
 }
+
 ////////////////////////////////////////////////////////
-*/
 
 void con() {
   
@@ -242,6 +255,14 @@ void con() {
         //setinit = 1;
      } 
 #endif
+
+    /////Start Pthread to monitor dmesg
+	pthread_t readmesg;
+	if(pthread_create(&readmesg, NULL, PrintRank, NULL))
+	{
+		fprintf(stderr, "reportrank_: Error creating Thread\n");
+		return 1;
+	}
  	
 }
 

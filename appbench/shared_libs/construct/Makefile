@@ -2,8 +2,8 @@ all: migration
 
 CXX=g++
 CC=gcc
-LIBS=-lpthread -lrt
-override CFLAGS += -Wall -fpic
+LIBS=-lpthread -lrt -lmpich
+override CFLAGS += -Wall -fpic -I/usr/include/mpich -L/usr/lib/x86_64-linux-gnu
 
 migration: migration.c
 	$(CC) $(CFLAGS) -c migration.c $(LIBS) -D_STOPMIGRATION #-D_STOPONDEMAND
