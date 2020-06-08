@@ -173,13 +173,6 @@ void thread_fn(void) {
 ///////////////////////////////////////////////////////////
 //These set of functions are for BTIO for now
 //
-void *PrintRank(void *ptr)
-{
-	int world_rank = -1;
-	sleep(30);
-    	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-	printf("Rank = %d\n", world_rank);
-}
 void *ReadDmesg(void *ptr)
 {
 	while(true)
@@ -254,14 +247,6 @@ void con() {
      } 
 #endif
 
-    /////Start Pthread to monitor dmesg
-	pthread_t readmesg;
-	if(pthread_create(&readmesg, NULL, PrintRank, NULL))
-	{
-		fprintf(stderr, "reportrank_: Error creating Thread\n");
-		return 1;
-	}
- 	
 }
 
 
