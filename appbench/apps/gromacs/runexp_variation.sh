@@ -3,7 +3,7 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("2045") #added 1500
+declare -a caparr=("1788") #added 1500
 #declare -a caparr=("2276 2288 2545") #added 1500
 declare -a thrdarr=("36")
 declare -a workarr=("100")
