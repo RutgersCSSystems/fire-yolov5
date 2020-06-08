@@ -3,8 +3,8 @@ set -x
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("1000" "2000" "4000" "8000" "20000")
-declare -a thrdarr=("16")
+declare -a caparr=("1500" "2000" "4000" "8000" "20000")
+declare -a thrdarr=("36")
 declare -a workarr=("1000" "2000" "4000")
 declare -a apparr=("MADbench")
 
@@ -52,7 +52,6 @@ RUNAPP() {
 
 for APP in "${apparr[@]}"
 do
-
 	for CAPACITY  in "${caparr[@]}"
 	do 
 		./umount_ext4ramdisk.sh
