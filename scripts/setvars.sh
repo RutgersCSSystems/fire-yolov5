@@ -24,7 +24,7 @@ export SHARED_LIBS=$APPBENCH/shared_libs
 export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
-export SCRIPTS=$NVMBASE/scripts
+export SCRIPTS=$NVMBASE/hpc_scripts
 export INPUTXML=$SCRIPTS/input.xml
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 
@@ -39,7 +39,7 @@ export APPPREFIX="numactl --preferred=0"
 #export APPPREFIX="numactl --membind=1"
 #export APP_PREFIX="numactl --membind=1"
 
-export OUTPUTDIR=$APPBENCH/output
+export OUTPUTDIR=$NVMBASE/HPC-OUTPUT
 export TEST_TMPDIR=/mnt/pmemdir
 
 

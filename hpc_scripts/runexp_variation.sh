@@ -3,16 +3,39 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("18500")
+#declare -a apparr=("MADbench")
+
+
+
+#Enable whichever applicaiton you are running
+
+#Graph500
+declare -a apparr=("graph500")
+declare -a workarr=("25")
+declare -a caparr=("30000 20000 10000")
 declare -a thrdarr=("32")
-declare -a workarr=("100")
-declare -a apparr=("GTC")
+
+#MADbench
+#declare -a apparr=("MADbench")
+#declare -a workarr=("2000" "4000")
+#declare -a caparr=("10000")
+#declare -a thrdarr=("32")
+
+
+#GTC
+#declare -a caparr=("18500")
+#declare -a thrdarr=("32")
+#declare -a workarr=("100")
+#declare -a apparr=("GTC")
+
+
+
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
 
 #Make sure to compile and install perf
-USEPERF=1
+USEPERF=0
 PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
 
 SLEEPNOW() {
@@ -39,8 +62,8 @@ SETUPEXTRAM() {
         sudo rm -rf  /mnt/ext4ramdisk0/*
         sudo rm -rf  /mnt/ext4ramdisk1/*
 
-	./umount_ext4ramdisk.sh 0
-	./umount_ext4ramdisk.sh 1
+	$SCRIPTS/umount_ext4ramdisk.sh 0
+	$SCRIPTS/umount_ext4ramdisk.sh 1
 
         SLEEPNOW
 
@@ -52,8 +75,8 @@ SETUPEXTRAM() {
 
         echo "NODE 0 $DISKSZ NODE 1 $ALLOCSZ"
 
-        ./mount_ext4ramdisk.sh $DISKSZ 0
-        ./mount_ext4ramdisk.sh $ALLOCSZ 1
+        $SCRIPTS/mount_ext4ramdisk.sh $DISKSZ 0
+        $SCRIPTS/mount_ext4ramdisk.sh $ALLOCSZ 1
 
 	SLEEPNOW
 }
@@ -64,13 +87,14 @@ RUNAPP()
 {
 	#Run application
 	cd $APPDIR
-	mkdir results-sensitivity
 
 	CAPACITY=$1
 	NPROC=$2
 	WORKLOAD=$3
 	APP=$4
-	OUTPUT=results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+
+	mkdir -p $OUTPUTDIR/$APP/results-sensitivity
+	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 
 
 	if [[ $USEPERF == "1" ]]; then
@@ -81,11 +105,21 @@ RUNAPP()
 	fi
 
 	if [ "$APP" = "MADbench" ]; then
+		 cd $APPBENCH/apps/MADbench
 		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> $OUTPUT
 	fi
 
 	if [ "$APP" = "GTC" ]; then
+		cd $APPBENCH/apps/gtc-benchmark
 		$APPPREFIX mpiexec -n $NPROC ./gtc &> $OUTPUT
+	fi
+
+	if [ "$APP" = "graph500" ]; then
+		cd $APPBENCH/apps/graph500-3.0.0/src
+		export TMPFILE="graph.out"
+		export REUSEFILE=1
+		echo $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 30 &> $OUTPUT
 	fi
 }
 
@@ -97,7 +131,7 @@ TERMINATE()
 	NPROC=$2
 	WORKLOAD=$3
 	
-	OUTPUT=results-sensitivity/"PERF-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 
 	if [[ $USEPERF == "1" ]]; then
 		SLEEPNOW
@@ -111,7 +145,7 @@ for APP in "${apparr[@]}"
 do
 	for CAPACITY  in "${caparr[@]}"
 	do 
-		SETUPEXTRAM $CAPACITY
+		#SETUPEXTRAM $CAPACITY
 
 		for NPROC in "${thrdarr[@]}"
 		do	
@@ -119,7 +153,7 @@ do
 			do
 				RUNAPP $CAPACITY $NPROC $WORKLOAD $APP
 				SLEEPNOW
-				./clear_cache.sh
+				$SCRIPTS/clear_cache.sh
 				TERMINATE $CAPACITY $NPROC $WORKLOAD
 			done 
 		done	
