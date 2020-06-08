@@ -84,6 +84,8 @@ def AppendToFile(OutDict, filename, TimeStamp):
     OutDat.insert(0, str(TimeStamp))
     MaxRSS = 0
     for item in Counters:
+        if item == 'SwapEntries':
+            continue
         MaxRSS += int(OutDict[item])
         #OutDat.append(str(OutDict[item]))
     OutDat.append(str(MaxRSS))
