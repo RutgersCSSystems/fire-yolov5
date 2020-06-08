@@ -3,8 +3,8 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("18500")
-declare -a thrdarr=("32")
+declare -a caparr=("22483")
+declare -a thrdarr=("36")
 declare -a workarr=("100")
 declare -a apparr=("GTC")
 
@@ -12,8 +12,10 @@ declare -a apparr=("GTC")
 APPPREFIX=""
 
 #Make sure to compile and install perf
-USEPERF=1
+USEPERF=0
 PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
+
+DMESGREADER="$HOME/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py"
 
 SLEEPNOW() {
 	sleep 2
@@ -83,9 +85,25 @@ RUNAPP()
 	if [ "$APP" = "MADbench" ]; then
 		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> $OUTPUT
 	fi
-
 	if [ "$APP" = "GTC" ]; then
-		$APPPREFIX mpiexec -n $NPROC ./gtc &> $OUTPUT
+		rm -rf DATA_RESTART*
+		#export LD_PRELOAD=/usr/lib/libmigration.so
+		$APPPREFIX mpiexec -n $NPROC ./gtc
+		rm -rf DATA_RESTART*
+		$APPPREFIX mpiexec -n $NPROC ./gtc
+		export LD_PRELOAD=""
+		#$DMESGREADER init
+		#while :
+		#do
+		#	sleep 1
+		#	if pgrep -x "mpiexec" >/dev/null
+		#	then
+		#		$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
+		#	else
+		#		break
+		#	fi
+		#done
+
 	fi
 }
 

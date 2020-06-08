@@ -1,0 +1,132 @@
+ Program starts at DATE=20200608  TIME=144440.764
+&INPUT_PARAMETERS
+ IRUN=          0,
+ MSTEP=          5,
+ MSNAP=     100000,
+ NDIAG=          1,
+ NHYBRID=          0,
+ NONLINEAR=  1.00000000    ,
+ PARANL=  0.00000000    ,
+ MODE00=          1,
+ TSTEP=  1.00000000    ,
+ MICELL=        100,
+ MECELL=        100,
+ MPSI=        200,
+ MTHETAMAX=        150,
+ MZETAMAX=         32,
+ NPARTDOM=         10,
+ NCYCLE=          0,
+ A= 0.358000010    ,
+ A0=  3.58000025E-02,
+ A1= 0.322200000    ,
+ Q0= 0.580999970    ,
+ Q1=  1.09200001    ,
+ Q2=  1.09200001    ,
+ RC= 0.500000000    ,
+ RW= 0.400000006    ,
+ AION=  1.00000000    ,
+ QION=  1.00000000    ,
+ AELECTRON=  5.44365786E-04,
+ QELECTRON= -1.00000000    ,
+ KAPPATI=  6.90000010    ,
+ KAPPATE=  6.90000010    ,
+ KAPPAN=  2.20000005    ,
+ TITE=  1.00000000    ,
+ FLOW0=  0.00000000    ,
+ FLOW1=  0.00000000    ,
+ FLOW2=  0.00000000    ,
+ R0=  186.399994    ,
+ B0=  19100.0000    ,
+ TEMPERATURE=  2500.00000    ,
+ EDENSITY0=  4.60000015E+13,
+ STDOUT=          0,
+ NBOUND=         10,
+ UMAX=  4.00000000    ,
+ ILOAD=          0,
+ TAUII= -1.00000000    ,
+ TRACK_PARTICLES=          0,
+ NPTRACK=          0,
+ RNG_CONTROL=          0,
+ NMODE=          5,         10,         15,         20,         25,,
+          30,         35,         40,
+ MMODE=          7,         14,         21,         28,         35,,
+          42,         49,         56,
+ /
+
+===================================
+  Run without OpenMP threads
+===================================
+
+ *******************************************************
+   Using npartdom=           9  and ntoroidal=           4
+ *******************************************************
+
+recording 94334026559488 
+recording 94334026567680 
+recording 94334026579968 
+recording 94334026588160 
+recording 94334026596352 
+recording 94334026604544 
+&RUN_PARAMETERS
+ NUMBERPE=         36,
+ MI=    2680088,
+ MGRID=      30351,
+ MID_THETA=        150,
+ MTDIAG=        128,
+ DELR= 0.999659479    ,
+ DELT=  5.23420477    ,
+ ULENGTH=  186.399994    ,
+ UTIME=  5.46513768E-09,
+ GYRORADIUS=  1.43248774E-03,
+ /
+recording 140141582544896 
+recording 140141383888896 
+recording 140141285220352 
+ random_seed=          33 -1921355521 -1733042430  -442067421  1021955352  1262681428   967441401 -1116932451  -741278543 -1818442063  1511246963  -121877172  1252148321 -2055880831 -1545281694  1079406590 -1728969446 -1153545565  -196004643   207285307 -1645797067  -191519758  1093609929  -259787622  -575544954  1775530960  1341041133  -628190356  1663646934  -377526037  1201065440  -477338442  1303985543           0
+ w_initial =   1.00000005E-03
+ poisson solver=          31           0   1.00000036       0.00000000           30351     5601780
+ etracer =   1.92500465E-06
+ kappa_T at radial_bin=           1   2.53836632    
+ kappa_T at radial_bin=           2   6.79302549    
+ kappa_T at radial_bin=           3   6.90000010    
+ kappa_T at radial_bin=           4   6.79302597    
+ kappa_T at radial_bin=           5   2.53836823    
+           1   0.00000000       0.00000000       0.00000000       1.51948607E-05   296.899689       0.00000000       0.00000000       0.00000000    
+           2   6.58881436E-06   3.94857534E-06   3.52586189E-11   1.47997871E-05   296.899628       3.19849174E-18   9.25520476E-18   6.05982094E-18
+           3   6.52389645E-06   3.29097975E-06   5.75776267E-11   1.46438042E-05   296.899536       3.06994725E-18   7.22000462E-18   4.15332266E-18
+           4   6.56063821E-06   2.37230347E-06   8.17463111E-11   1.44825890E-05   296.899414       2.98776934E-18   5.07163128E-18   2.08676741E-18
+           5   6.61952436E-06   1.40897487E-06   9.58880059E-11   1.42087674E-05   296.899261       2.96247023E-18   3.60931161E-18   6.49451914E-19
+ Program ends at DATE=20200608   TIME=144535.040 
+ CPU TIME USAGE (in SEC):
+ pusher    shift     charge    poisson   smooth    field     load      total     
+ 1.112E+01 7.654E-01 1.041E+01 2.437E+00 3.052E+00 1.821E-01 2.120E+00 3.067E+01
+
+ WALL CLOCK TIMES (in SEC):
+ pusher    shift     charge    poisson   smooth    field     load      total     
+ 1.112E+01 7.654E-01 1.041E+01 2.437E+00 1.872E+01 1.821E-01 2.202E+00 5.428E+01
+MAIN LOOP TIME(SEC):      52.080
+TOTAL CPU TIME USAGE (SEC):      30.665
+TOTAL WALL CLOCK TIME(SEC):      54.282
+	Command being timed: "mpiexec -n 36 ./gtc"
+	User time (seconds): 1268.86
+	System time (seconds): 110.58
+	Percent of CPU this job got: 2425%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:56.87
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 560144
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 2983
+	Minor (reclaiming a frame) page faults: 6797214
+	Voluntary context switches: 22382
+	Involuntary context switches: 2753
+	Swaps: 0
+	File system inputs: 66360
+	File system outputs: 26771160
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
