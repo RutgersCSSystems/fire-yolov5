@@ -176,11 +176,9 @@ void thread_fn(void) {
 void *PrintRank(void *ptr)
 {
 	int world_rank = -1;
-	while(true)
-	{
-    			MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-			printf("Rank = %d\n", world_rank);
-	}
+	sleep(30);
+    	MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+	printf("Rank = %d\n", world_rank);
 }
 void *ReadDmesg(void *ptr)
 {
