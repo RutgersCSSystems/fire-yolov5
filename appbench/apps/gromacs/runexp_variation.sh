@@ -3,13 +3,16 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("9085")
+declare -a caparr=("2045") #added 1500
+#declare -a caparr=("2276 2288 2545") #added 1500
 declare -a thrdarr=("36")
 declare -a workarr=("100")
 declare -a apparr=("gromacs")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
+
+DMESGREADER="$HOME/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py"
 
 SETUPEXTRAM() {
 
@@ -69,8 +72,21 @@ RUNAPP() {
 		cd $APPDIR
 		echo $CAPACITY
 		mkdir results-sensitivity
-		$APPPREFIX /usr/bin/time -v gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water
-		sleep 5
+#		export LD_PRELOAD=/usr/lib/libmigration.so
+		$APPPREFIX /usr/bin/time -v gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water 
+		export LD_PRELOAD=""
+		$DMESGREADER init
+#		while :
+#		do
+#			sleep 1
+#			if pgrep -x "gmx" >/dev/null
+#			then
+#				$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
+#			else
+#				break
+#			fi
+#		done
+#		sleep 5
 		./clean_out.sh
 	fi
 
