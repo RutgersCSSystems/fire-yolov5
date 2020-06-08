@@ -18,6 +18,14 @@ STATICFILE='/tmp/LastStamp.time'
 
 Counters = ['FilePages', 'AnonPages', 'SharedPages', 'SwapEntries']
 
+def getLastStamp():
+    laststamp = 0
+    out = BashExec('dmesg | tail -1')
+    for line in out.stdout:
+        laststamp = re.findall("\d+\.\d+", line)[0]
+        break
+    return laststamp
+
 #################################################################
 def main():
     if len(sys.argv) < 2 or len(sys.argv) > 3:
@@ -27,20 +35,23 @@ def main():
     OutDict = {}
 
     if sys.argv[1] == 'init':
-        out = BashExec('dmesg | tail -1')
-        for line in out.stdout:
-            laststamp = re.findall("\d+\.\d+", line)[0]
-            #print(laststamp)
-            outfile = open(STATICFILE, 'w+')
-            outfile.write(laststamp)
-            outfile.close()
+        laststamp = getLastStamp()
+        #print(laststamp)
+        outfile = open(STATICFILE, 'w+')
+        outfile.write(laststamp)
+        outfile.close()
 
 
     elif sys.argv[1] == 'readfrom':
         outfile = open(STATICFILE, 'r')
         startStamp = outfile.readline()
+        outfile.close()
+        outfile = open(STATICFILE, 'w')
         #startStamp = sys.argv[2]
         StartConsolidating = False
+        laststamp = getLastStamp()
+        outfile.write(laststamp)
+        outfile.close()
         out = BashExec('dmesg')
 
         for line in out.stdout:
@@ -63,13 +74,19 @@ def main():
 #################################################################
 def AppendToFile(OutDict, filename, TimeStamp):
     outfile = open(filename, 'a+')
-    writeout = csv.writer(outfile, quoting=csv.QUOTE_ALL)
+    #writeout = csv.writer(outfile, quoting=csv.QUOTE_ALL)
+    writeout = csv.writer(outfile)
     Header = Counters.copy()
     Header.insert(0, 'TimeStamp')
-    writeout.writerow(Header)
+    #writeout.writerow(Header)
 
     OutDat = []
     OutDat.insert(0, str(TimeStamp))
+    MaxRSS = 0
+    for item in Counters:
+        MaxRSS += int(OutDict[item])
+        #OutDat.append(str(OutDict[item]))
+    OutDat.append(str(MaxRSS))
     for item in Counters:
         OutDat.append(str(OutDict[item]))
 
