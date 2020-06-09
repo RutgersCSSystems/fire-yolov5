@@ -198,11 +198,13 @@ int reportrank_(int *rank)
 	pthread_t readmesg;
 	if(*rank == 0)
 	{
+#if 0
 		if(pthread_create(&readmesg, NULL, ReadDmesg, NULL))
 		{
 			fprintf(stderr, "reportrank_: Error creating Thread\n");
 			return 1;
 		}
+#endif
 	}
 	return 0;
 }
@@ -214,52 +216,15 @@ void con() {
     struct sigaction action;
     pid_t pid = getpid();
 
+    fprintf(stderr, "initiating tracing...\n");
+
     thread_fn();
 
-    /* Do not enable hetero if HETERO disabled */
-#ifndef _DISABLE_HETERO
-    if(!setinit) {
-        fprintf(stderr, "initiating tracing...\n");
-	/*syscall(__NR_start_trace, CLEAR_COUNT, 0);
-        syscall(__NR_start_trace, COLLECT_ALLOCATE, 0);*/
-        syscall(__NR_start_trace, HETERO_PGCACHE, 0);
-        syscall(__NR_start_trace, HETERO_BUFFER, 0);
-        syscall(__NR_start_trace, HETERO_JOURNAL, 0);
-        syscall(__NR_start_trace, HETERO_RADIX, 0);
-        syscall(__NR_start_trace, HETERO_FULLKERN, 0);
-        syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
-	syscall(__NR_start_trace, (int)pid);
-	syscall(__NR_start_trace, HETERO_SET_FASTMEM_NODE, HETERO_FASTMEM_NODE);
-
-	set_migration_freq();
-	enable_object_affn();
-	disable_migration();
-	set_migrate_list_cnt();
-	enbl_hetero_net();
-	enbl_hetero_pgcache_readahead_set();
-
-        //Register KILL
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = sig_handler;
-        sigaction(SIGKILL, &action, NULL);
-        //setinit = 1;
-     } 
-#endif
-
+    return 0;
 }
 
 
 void init_allocs() {
 	con();
-}
-
-void sig_handler(int sig) {
-  
-    switch (sig) {
-        case SIGKILL:
-            dest();
-        default:
-	    return;
-    }
 }
 /*******************************************/

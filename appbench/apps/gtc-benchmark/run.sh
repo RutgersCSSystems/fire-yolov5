@@ -4,7 +4,7 @@ PCAnonRatio=1.5
 #DBGRATIO=1
 #DRATIO=100
 #BASE_MEM=2758459392
-NPROC=16
+NPROC=32
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
 
@@ -43,27 +43,21 @@ SETUPEXTRAM() {
 }
 
 FlushDisk
-SETUPEXTRAM
+#SETUPEXTRAM
 echo "going to sleep"
 sleep 10
 
 export LD_PRELOAD=/usr/lib/libmigration.so 
-#IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
-#export FILETYPE=SHARED
-#export IOMODE=SYNC
-#export IOMETHOD=POSIX
-
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
-
 
 FlushDisk
 ./umount_ext4ramdisk.sh 0
 ./umount_ext4ramdisk.sh 1
 
-sleep 5
-FlushDisk
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$WORKLOAD-"$NPROC"threads-UNLIMITED.out"
+#sleep 5
+#FlushDisk
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$WORKLOAD-"$NPROC"threads-UNLIMITED.out"
 
 #sudo cgcreate -g memory:npb
 #echo $TotalMem | sudo tee /sys/fs/cgroup/memory/npb/memory.limit_in_bytes
@@ -73,7 +67,3 @@ $APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8
 
 #export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
 #$APPPREFIX  
-
-#/usr/bin/time -v cgexec -g memory:npb mpirun -NP $NPROC ./bin/bt.C.x.ep_io
-
-

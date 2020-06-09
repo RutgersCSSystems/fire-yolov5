@@ -12,8 +12,8 @@ cd $APPDIR
 #Graph500
 declare -a apparr=("graph500")
 declare -a workarr=("25")
-declare -a caparr=("30000 20000 10000")
-declare -a thrdarr=("32")
+declare -a caparr=("12200")
+declare -a thrdarr=("16")
 
 #MADbench
 #declare -a apparr=("MADbench")
@@ -88,14 +88,13 @@ RUNAPP()
 	#Run application
 	cd $APPDIR
 
-	CAPACITY=$1
-	NPROC=$2
-	WORKLOAD=$3
-	APP=$4
+	local CAPACITY=$1
+	local NPROC=$2
+	local WORKLOAD=$3
+	local APPNAME=$4
 
 	mkdir -p $OUTPUTDIR/$APP/results-sensitivity
 	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
-
 
 	if [[ $USEPERF == "1" ]]; then
 		SETPERF
@@ -119,7 +118,10 @@ RUNAPP()
 		export TMPFILE="graph.out"
 		export REUSEFILE=1
 		echo $OUTPUT
-		$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 30 &> $OUTPUT
+		rm -rf $TMPFILE
+		echo "$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20"
+		numactl --hardware  &> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
 	fi
 }
 
@@ -145,7 +147,7 @@ for APP in "${apparr[@]}"
 do
 	for CAPACITY  in "${caparr[@]}"
 	do 
-		#SETUPEXTRAM $CAPACITY
+		SETUPEXTRAM $CAPACITY
 
 		for NPROC in "${thrdarr[@]}"
 		do	

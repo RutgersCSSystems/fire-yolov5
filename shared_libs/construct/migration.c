@@ -45,12 +45,6 @@ static void dest() __attribute__((destructor));
 void dest() {
     int a = 0;
     fprintf(stderr, "application termination...\n");
-
-    /*a = syscall(__NR_start_trace, PRINT_STATS);
-    a = syscall(__NR_start_trace, CLEAR_COUNT);
-    a = syscall(__NR_start_trace, PFN_STAT);
-    a = syscall(__NR_start_trace, TIME_STATS);
-    a = syscall(__NR_start_trace, TIME_RESET);*/
     a = syscall(__NR_start_trace, PRINT_ALLOCATE);
     a = syscall(__NR_start_trace, CLEAR_COUNT);
 }
@@ -62,17 +56,11 @@ void con() {
 
     if(!setinit) {
         fprintf(stderr, "initiating tracing...\n");
-        /*a = syscall(__NR_start_trace, COLLECT_TRACE);
-        a = syscall(__NR_start_trace, PFN_TRACE);
-        a = syscall(__NR_start_trace, COLLECT_TRACE);
-        a = syscall(__NR_start_trace, PFN_TRACE);
-        a = syscall(__NR_start_trace, TIME_TRACE);*/
-        a = syscall(__NR_start_trace, COLLECT_ALLOCATE);
+            a = syscall(__NR_start_trace, COLLECT_ALLOCATE);
         a = syscall(__NR_start_trace, HETERO_PGCACHE);
         a = syscall(__NR_start_trace, HETERO_BUFFER);
         a = syscall(__NR_start_trace, HETERO_JOURNAL);
         a = syscall(__NR_start_trace, HETERO_RADIX);
-
         //Register KILL
         memset(&action, 0, sizeof(struct sigaction));
         action.sa_handler = sig_handler;
