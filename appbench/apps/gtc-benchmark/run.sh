@@ -46,7 +46,7 @@ FlushDisk
 #SETUPEXTRAM
 echo "going to sleep"
 sleep 10
-
+$SHARED_LIBS/construct/reset
 export LD_PRELOAD=/usr/lib/libmigration.so 
 $APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
