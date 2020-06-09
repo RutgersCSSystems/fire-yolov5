@@ -14,6 +14,11 @@ LD_PRELOAD=/usr/lib/libmigration.so /usr/bin/time -v gmx mdrun -ntmpi $NPROC -nt
 /users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init
 while :
 do
-	/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv
 	sleep 1
+	if pgrep -x "gmx" >/dev/null
+	then
+	/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv
+	else
+		break
+	fi
 done
