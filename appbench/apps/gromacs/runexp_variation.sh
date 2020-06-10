@@ -3,7 +3,7 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("1788") #added 1500
+declare -a caparr=("6033") #added 1500
 #declare -a caparr=("2276 2288 2545") #added 1500
 declare -a thrdarr=("36")
 declare -a workarr=("100")
@@ -32,8 +32,8 @@ SETUPEXTRAM() {
         NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
         NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
 
-        let DISKSZ=$NUMAFREE0-$SPLIT
-        let ALLOCSZ=$NUMAFREE1-$SPLIT
+        let DISKSZ=$NUMAFREE0-$SPLIT-700
+        let ALLOCSZ=$NUMAFREE1-$SPLIT-700
 
         echo "NODE 0 $DISKSZ NODE 1 $ALLOCSZ"
 
@@ -72,21 +72,9 @@ RUNAPP() {
 		cd $APPDIR
 		echo $CAPACITY
 		mkdir results-sensitivity
-#		export LD_PRELOAD=/usr/lib/libmigration.so
+		#export LD_PRELOAD=/usr/lib/libmigration.so
 		$APPPREFIX /usr/bin/time -v gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water 
-		export LD_PRELOAD=""
-		$DMESGREADER init
-#		while :
-#		do
-#			sleep 1
-#			if pgrep -x "gmx" >/dev/null
-#			then
-#				$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
-#			else
-#				break
-#			fi
-#		done
-#		sleep 5
+		#export LD_PRELOAD=""
 		./clean_out.sh
 	fi
 
@@ -104,9 +92,12 @@ do
 		do	
 			for WORKLOAD in "${workarr[@]}"
 			do
+				$SHARED_LIBS/construct/reset
 				RUNAPP $CAPACITY $NPROC $WORKLOAD
-				#sleep 5
-				#./clear_cache.sh
+				RUNAPP $CAPACITY $NPROC $WORKLOAD
+				RUNAPP $CAPACITY $NPROC $WORKLOAD
+				$SHARED_LIBS/construct/reset
+				./clear_cache.sh
 			done
 		done	
 	done
