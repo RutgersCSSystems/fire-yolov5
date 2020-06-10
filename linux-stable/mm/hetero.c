@@ -189,10 +189,12 @@ unsigned int max_rss_shmem_pages[MAXPROCS];
 unsigned int max_rss_total[MAXPROCS];
 unsigned int max_total[MAXPROCS];
 
+unsigned int init_sys = 0; //Just anon pages
 unsigned int init_sys_pages = 0;
 unsigned int init_sys_pages_swapcache = 0;
 unsigned int init_sys_pages_swapcache_buffers=0;
 
+unsigned int max_sys = 0;
 unsigned int max_sys_pages = 0;
 unsigned int max_sys_pages_swapcache = 0;
 unsigned int max_sys_pages_swapcache_buffers=0;
@@ -239,9 +241,12 @@ void sys_mem_init(void)
 	max_sys_pages_swapcache_buffers = 0;
 	max_sys_pages_swapcache = 0;
 	max_sys_pages = 0;
+	max_sys = 0;
 
         for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
                 pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+
+	init_sys = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
 
 	init_sys_pages  = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON] + 
 		pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE] + 
@@ -292,7 +297,8 @@ void sys_mem_interval_diff(void)
 {
         struct sysinfo i;
         int lru;
-	unsigned int  m_maxpages = 0;
+	unsigned int m_anonpages = 0;
+	unsigned int m_maxpages = 0;
 	unsigned int m_maxpages_swapcache = 0;
 	unsigned int m_maxpages_swapcache_buffers = 0;
 #if 0
@@ -317,6 +323,8 @@ void sys_mem_interval_diff(void)
         for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
                 pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
 
+	m_anonpages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+
 	m_maxpages  = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON] + 
 		pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE] + 
 		pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK);
@@ -326,6 +334,9 @@ void sys_mem_interval_diff(void)
 	m_maxpages_swapcache_buffers = m_maxpages_swapcache +  i.bufferram;
 
 	/*Calculate the difference */ 
+	if(m_anonpages > max_sys)
+		max_sys = m_anonpages - init_sys;
+
 	if(m_maxpages > max_sys_pages)
 		max_sys_pages = m_maxpages - init_sys_pages;
 
@@ -373,7 +384,11 @@ unsigned long check_node_memsize(struct mm_struct *mm)
 	unsigned int m_rss_anonpages = 0;
 	unsigned int m_rss_shmempages = 0;
 	unsigned int m_rss_swapents = 0;
+
 	unsigned int m_rss_totalpages = 0;
+	unsigned int m_rss_totalanon = 0;
+	unsigned int m_rss_totalfile = 0;
+	unsigned int m_rss_totalother = 0;
 
 	int PID = -1;
 	int CURR_PIDX = -1;
@@ -450,6 +465,9 @@ unsigned long check_node_memsize(struct mm_struct *mm)
 	if(CURR_PIDX == min_pidx) {
 
 		m_rss_totalpages = 0;
+		m_rss_totalanon = 0;
+		m_rss_totalfile = 0;
+		m_rss_totalother = 0;
 
 		 printk(KERN_ALERT "\n\n");
 
@@ -466,10 +484,28 @@ unsigned long check_node_memsize(struct mm_struct *mm)
 					 max_rss_shmem_pages[iter], max_rss_total[iter]);
 
 				m_rss_totalpages += max_rss_total[iter];
+				m_rss_totalanon += max_rss_anon_pages[iter];
+				m_rss_totalfile += max_rss_file_pages[iter];
+				m_rss_totalother += max_rss_shmem_pages[iter];
 			}
 		}
 
 		sys_mem_interval_diff();
+
+
+		printk(KERN_ALERT "AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
+				  m_rss_totalpages, m_rss_totalanon, m_rss_totalfile,
+				  m_rss_totalother);
+
+		printk(KERN_ALERT "SystemUseAVG: Total: %u", max_sys_pages);
+
+		//unsigned int Filepages = max_sys_pages - max_sys;
+
+		printk(KERN_ALERT "SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
+				"= Anon(SYS):%u + File:%u + Other:%u\n",
+				max_sys_pages_swapcache_buffers, max_sys_pages-max_sys,
+				max_sys_pages_swapcache_buffers-max_sys_pages);
+
 		printk(KERN_ALERT "-----TOT: MAX PAGES(ALL PIDS): %u, OVERALL SYS %u, "
 				"SYS+SWAPCACHE %u, SYS+SWAPCACHE+BUFF %u -----\n", 
 				m_rss_totalpages, max_sys_pages, max_sys_pages_swapcache, 
