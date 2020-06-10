@@ -237,6 +237,8 @@ void sys_mem_init(void)
         struct sysinfo i;
         int lru;
         unsigned long pages[NR_LRU_LISTS];
+	si_meminfo(&i);
+        si_swapinfo(&i);
 
 	max_sys_pages_swapcache_buffers = 0;
 	max_sys_pages_swapcache = 0;
@@ -307,6 +309,8 @@ void sys_mem_interval_diff(void)
         long available;
 #endif
         unsigned long pages[NR_LRU_LISTS];
+        si_meminfo(&i);
+        si_swapinfo(&i);
 
 #if 0
         si_meminfo(&i);
