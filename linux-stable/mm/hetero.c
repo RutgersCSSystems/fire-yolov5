@@ -236,6 +236,9 @@ void sys_mem_init(void)
         int lru;
         unsigned long pages[NR_LRU_LISTS];
 
+        si_meminfo(&i);
+        si_swapinfo(&i);
+
 	max_sys_pages_swapcache_buffers = 0;
 	max_sys_pages_swapcache = 0;
 	max_sys_pages = 0;
@@ -302,9 +305,9 @@ void sys_mem_interval_diff(void)
 #endif
         unsigned long pages[NR_LRU_LISTS];
 
-#if 0
         si_meminfo(&i);
         si_swapinfo(&i);
+#if 0
         committed = percpu_counter_read_positive(&vm_committed_as);
 
         cached = global_node_page_state(NR_FILE_PAGES) -
