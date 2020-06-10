@@ -10,17 +10,16 @@ cd $APPDIR
 #Enable whichever applicaiton you are running
 
 #Graph500
-declare -a apparr=("graph500")
-declare -a workarr=("25")
-declare -a caparr=("12200")
-declare -a thrdarr=("16")
+#declare -a apparr=("graph500")
+#declare -a workarr=("25")
+#declare -a caparr=("13000")
+#declare -a thrdarr=("16")
 
 #MADbench
-#declare -a apparr=("MADbench")
-#declare -a workarr=("2000" "4000")
-#declare -a caparr=("10000")
-#declare -a thrdarr=("32")
-
+declare -a apparr=("MADbench")
+declare -a workarr=("2000")
+declare -a caparr=("10000")
+declare -a thrdarr=("16")
 
 #GTC
 #declare -a caparr=("18500")
@@ -96,6 +95,8 @@ RUNAPP()
 	mkdir -p $OUTPUTDIR/$APP/results-sensitivity
 	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 
+	$SHARED_LIBS/construct/reset
+
 	if [[ $USEPERF == "1" ]]; then
 		SETPERF
 		APPPREFIX="sudo $PERFTOOL record -e cpu-cycles,instructions --vmlinux=/lib/modules/4.17.0/build/vmlinux "
@@ -105,12 +106,17 @@ RUNAPP()
 
 	if [ "$APP" = "MADbench" ]; then
 		 cd $APPBENCH/apps/MADbench
+		export LD_PRELOAD=/usr/lib/libmigration.so 
 		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> $OUTPUT
+		export LD_PRELOAD=" "
+
 	fi
 
 	if [ "$APP" = "GTC" ]; then
 		cd $APPBENCH/apps/gtc-benchmark
+		export LD_PRELOAD=/usr/lib/libmigration.so 
 		$APPPREFIX mpiexec -n $NPROC ./gtc &> $OUTPUT
+		export LD_PRELOAD=" "
 	fi
 
 	if [ "$APP" = "graph500" ]; then
@@ -120,9 +126,14 @@ RUNAPP()
 		echo $OUTPUT
 		rm -rf $TMPFILE
 		echo "$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20"
+		sudo dmesg -c &> del.txt
 		numactl --hardware  &> $OUTPUT
+		export LD_PRELOAD=/usr/lib/libmigration.so
 		$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
+		export LD_PRELOAD=" "
 	fi
+
+	 sudo dmesg -c &>> $OUTPUT
 }
 
 
