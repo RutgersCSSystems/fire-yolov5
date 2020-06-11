@@ -14,7 +14,7 @@ mkdir build
 
 cd build
 
-cmake .. -DGMX_BUILD_OWN_FFTW=on -DGMX_MPI=on -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpicxx
+cmake .. -DGMX_BUILD_OWN_FFTW=on -DREGRESSIONTEST_DOWNLOAD=ON
 
 make -j`nproc`
 
