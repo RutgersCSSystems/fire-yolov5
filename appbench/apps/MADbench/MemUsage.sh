@@ -5,9 +5,9 @@ sudo swapoff -a
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("488" "593" "706")
+declare -a caparr=("Unlimited")
 declare -a thrdarr=("36")
-declare -a workarr=("100")
+declare -a workarr=("2000")
 declare -a apparr=("MADbench")
 
 #APPPREFIX="numactl --membind=0"
@@ -53,13 +53,13 @@ RUNAPP()
 
 	if [ "$APP" = "MADbench" ]; then
 		free -m > free-mem-$CAPACITY.dat
-		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &
-
+		mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &
 		while :
 		do
 			sleep 1
 			if pgrep -x "mpiexec" >/dev/null
 			then
+				echo "working"
 				free -m >> free-mem-$CAPACITY.dat
 			else
 				sed -i '/Swap/d' free-mem-$CAPACITY.dat
@@ -74,7 +74,7 @@ for APP in "${apparr[@]}"
 do
 	for CAPACITY  in "${caparr[@]}"
 	do 
-		SETUPEXTRAM $CAPACITY
+		#SETUPEXTRAM $CAPACITY
 
 		for NPROC in "${thrdarr[@]}"
 		do	

@@ -1,6 +1,8 @@
 #!/bin/bash
 #set -x
 
+sudo swapoff -a
+
 APPDIR=$PWD
 cd $APPDIR
 declare -a caparr=("22483")
@@ -87,22 +89,20 @@ RUNAPP()
 	fi
 	if [ "$APP" = "GTC" ]; then
 		rm -rf DATA_RESTART*
-		#export LD_PRELOAD=/usr/lib/libmigration.so
-		$APPPREFIX mpiexec -n $NPROC ./gtc
-		rm -rf DATA_RESTART*
-		$APPPREFIX mpiexec -n $NPROC ./gtc
+		export LD_PRELOAD=/usr/lib/libmigration.so
+		$APPPREFIX mpiexec -n $NPROC ./gtc &
 		export LD_PRELOAD=""
-		#$DMESGREADER init
-		#while :
-		#do
-		#	sleep 1
-		#	if pgrep -x "mpiexec" >/dev/null
-		#	then
-		#		$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
-		#	else
-		#		break
-		#	fi
-		#done
+		$DMESGREADER init
+		while :
+		do
+			sleep 1
+			if pgrep -x "mpiexec" >/dev/null
+			then
+				$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
+			else
+				break
+			fi
+		done
 
 	fi
 }
@@ -136,7 +136,8 @@ do
 			for WORKLOAD in "${workarr[@]}"
 			do
 				RUNAPP $CAPACITY $NPROC $WORKLOAD $APP
-				SLEEPNOW
+				#SLEEPNOW
+				rm -rf DATA*
 				./clear_cache.sh
 				TERMINATE $CAPACITY $NPROC $WORKLOAD
 			done 

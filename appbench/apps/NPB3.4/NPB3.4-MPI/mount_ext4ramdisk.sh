@@ -29,6 +29,6 @@ sudo mkdir /mnt/ext4ramdisk$NUMANODE
 sudo mount -o loop /mnt/ramdisk$NUMANODE/ext4.image /mnt/ext4ramdisk$NUMANODE
 sudo chown -R $USER /mnt/ext4ramdisk$NUMANODE
 sleep 4
-let imagesz=$scount-512
+let imagesz=$scount-800
 echo "imagesz: "$imagesz
 fallocate -l $imagesz"M" /mnt/ext4ramdisk$NUMANODE/test.img

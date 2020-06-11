@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-$APPBENCH/scripts/umout_qemu.sh
+$APPBENCH/scripts/umount_qemu.sh
 sleep 1
 #Launching QEMU
 

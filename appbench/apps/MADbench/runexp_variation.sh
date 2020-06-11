@@ -3,7 +3,7 @@
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("1500")
+declare -a caparr=("Unlimited")
 declare -a thrdarr=("36")
 declare -a workarr=("4000")
 declare -a apparr=("MADbench")

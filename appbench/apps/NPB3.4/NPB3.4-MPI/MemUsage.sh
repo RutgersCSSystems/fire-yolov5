@@ -5,10 +5,10 @@ sudo swapoff -a
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("22077")
+declare -a caparr=("5500")
 declare -a thrdarr=("36")
 declare -a workarr=("100")
-declare -a apparr=("GTC")
+declare -a apparr=("BT")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -25,6 +25,7 @@ SETUPEXTRAM() {
 
 	./umount_ext4ramdisk.sh 0
 	./umount_ext4ramdisk.sh 1
+	./clear_cache.sh
 
         SLEEPNOW
 
@@ -52,12 +53,10 @@ RUNAPP()
 	NPROC=$2
 	WORKLOAD=$3
 	APP=$4
-	OUTPUT=results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
-
 	if [ "$APP" = "GTC" ]; then
 		rm -rf DATA_RESTART*
 		free -m > free-mem-$CAPACITY.dat
-		/usr/bin/time -v mpiexec -n $NPROC ./gtc 
+		$APPPREFIX mpiexec -n $NPROC ./gtc &
 
 		while :
 		do
@@ -71,6 +70,26 @@ RUNAPP()
 			fi
 		done
 
+	fi
+	if [ "$APP" = "BT" ]
+	then
+		cd $APPDIR
+		echo $CAPACITY
+		mkdir results-sensitivity
+		free -m > free-mem-$CAPACITY.dat
+		/usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io &
+		while :
+		do
+			sleep 1
+			if pgrep -x "mpirun" >/dev/null
+			then
+				free -m >> free-mem-$CAPACITY.dat
+			else
+				sed -i '/Swap/d' free-mem-$CAPACITY.dat
+				rm -rf btio*
+				break
+			fi
+		done
 	fi
 }
 

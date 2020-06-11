@@ -5,7 +5,7 @@ sudo swapoff -a
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("278" "288" "545")
+declare -a caparr=("250")
 declare -a thrdarr=("36")
 declare -a workarr=("100")
 declare -a apparr=("gromacs")
@@ -26,6 +26,7 @@ SETUPEXTRAM() {
 	./umount_ext4ramdisk.sh 0
 	./umount_ext4ramdisk.sh 1
 
+	./clear_cache.sh
         SLEEPNOW
 
         NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
@@ -57,7 +58,7 @@ RUNAPP()
 	if [ "$APP" = "gromacs" ]; then
 		./clean_out.sh
 		free -m > free-mem-$CAPACITY.free
-		$APPPREFIX gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water &
+		/usr/bin/time -v gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water &
 
 		while :
 		do
