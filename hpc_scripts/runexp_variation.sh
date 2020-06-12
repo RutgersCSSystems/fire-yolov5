@@ -44,6 +44,16 @@ PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
 #HETERO SPLIT
 USE_HETEROMEM=1
 
+OUTPUTBASE=$OUTPUTDIR/$APP/results-sensitivity
+
+
+if [[ $USE_HETEROMEM == "0" ]]; then
+	OUTPUTBASE=$OUTPUTDIR/results-sensitivity/$APP
+else
+	OUTPUTBASE=$OUTPUTDIR/results-sensitivity-BW/$APP
+fi
+
+
 
 SLEEPNOW() {
 	sleep 2
@@ -109,12 +119,12 @@ RUNAPP()
 	local APPNAME=$4
 	local MEMBW=$5
 
+	mkdir -p $OUTPUTBASE/$APP
+
 	if [[ $USE_HETEROMEM == "0" ]]; then
-		mkdir -p $OUTPUTDIR/$APP/results-sensitivity
-		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	else
-		mkdir -p $OUTPUTDIR/$APP/results-sensitivity-BW
-		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity-BW/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT==$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	fi
 
 	$SHARED_LIBS/construct/reset
@@ -176,11 +186,10 @@ TERMINATE()
 	MEMBW=$5
 
 	if [[ $USE_HETEROMEM == "0" ]]; then
-		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	else
-		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity-BW/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT==$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	fi
-
 
 	if [[ $USEPERF == "1" ]]; then
 		SLEEPNOW
