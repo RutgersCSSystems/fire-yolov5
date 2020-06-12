@@ -41,15 +41,16 @@ SETUPEXTRAM() {
 }
 
 FlushDisk
-SETUPEXTRAM
+#SETUPEXTRAM
 echo "going to sleep"
 sleep 10
 
-export LD_PRELOAD=/usr/lib/libmigration.so 
 APPPOSTFIX=" | grep 'MaxRSS' | awk 'BEGIN {FS = ' '} ; {sum+=\$2} END {print sum}'"
 
-#echo "$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io $APPPOSTFIX"
+$SHARED_LIBS/construct/reset
+export LD_PRELOAD=/usr/lib/libmigration.so 
 $APPPREFIX /usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io
+export LD_PRELOAD=""
 
 #$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io 
 #/usr/bin/time -v mpirun -NP $NPROC ./bin/bt.C.x.ep_io
