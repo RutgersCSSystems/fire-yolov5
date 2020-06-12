@@ -16,26 +16,34 @@ cd $APPDIR
 #declare -a thrdarr=("16")
 
 #MADbench
-declare -a apparr=("MADbench")
-declare -a workarr=("2000")
-declare -a caparr=("10000")
-declare -a thrdarr=("16")
+#declare -a apparr=("MADbench")
+#declare -a workarr=("2000")
+#declare -a caparr=("10000")
+#declare -a thrdarr=("16")
 
 #GTC
-#declare -a caparr=("18500")
+#declare -a caparr=("20000")
 #declare -a thrdarr=("32")
 #declare -a workarr=("100")
 #declare -a apparr=("GTC")
 
-
-
+declare -a caparr=("4000")
+declare -a thrdarr=("32")
+declare -a workarr=("WORK-C")
+declare -a apparr=("BTIO")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
 
 #Make sure to compile and install perf
 USEPERF=0
+MEMBW=4GB
 PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
+
+
+#HETERO SPLIT
+USE_HETEROMEM=1
+
 
 SLEEPNOW() {
 	sleep 2
@@ -55,8 +63,16 @@ SETUPEXTRAM() {
 
 	let CAPACITY=$1
 
-	let SPLIT=$CAPACITY/2
-	echo "SPLIT" $SPLIT
+	if [[ $USE_HETEROMEM == "1" ]]; then
+
+		let SPLIT1=$CAPACITY/4
+		let SPLIT2=($CAPACITY*3)/4
+	else
+		let SPLIT1=$CAPACITY/2
+		let SPLIT2=$CAPACITY/2
+	fi
+
+	echo "SPLIT" $SPLIT1 $SPLIT2
 
         sudo rm -rf  /mnt/ext4ramdisk0/*
         sudo rm -rf  /mnt/ext4ramdisk1/*
@@ -69,8 +85,8 @@ SETUPEXTRAM() {
         NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
         NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
 
-        let DISKSZ=$NUMAFREE0-$SPLIT
-        let ALLOCSZ=$NUMAFREE1-$SPLIT
+        let DISKSZ=$NUMAFREE0-$SPLIT1
+        let ALLOCSZ=$NUMAFREE1-$SPLIT2
 
         echo "NODE 0 $DISKSZ NODE 1 $ALLOCSZ"
 
@@ -91,9 +107,15 @@ RUNAPP()
 	local NPROC=$2
 	local WORKLOAD=$3
 	local APPNAME=$4
+	local MEMBW=$5
 
-	mkdir -p $OUTPUTDIR/$APP/results-sensitivity
-	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	if [[ $USE_HETEROMEM == "0" ]]; then
+		mkdir -p $OUTPUTDIR/$APP/results-sensitivity
+		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	else
+		mkdir -p $OUTPUTDIR/$APP/results-sensitivity-BW
+		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity-BW/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	fi
 
 	$SHARED_LIBS/construct/reset
 
@@ -103,6 +125,8 @@ RUNAPP()
 	else
 		APPPREFIX="/usr/bin/time -v"
 	fi
+
+	sudo dmesg -c &> del.txt
 
 	if [ "$APP" = "MADbench" ]; then
 		 cd $APPBENCH/apps/MADbench
@@ -119,6 +143,12 @@ RUNAPP()
 		export LD_PRELOAD=" "
 	fi
 
+	if [ "$APP" = "BTIO" ]; then
+		export LD_PRELOAD=/usr/lib/libmigration.so
+		$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC $APPBENCH/apps/NPB3.4/NPB3.4-MPI/bin/bt.C.x.ep_io  &> $OUTPUT
+		export LD_PRELOAD=""
+	fi
+
 	if [ "$APP" = "graph500" ]; then
 		cd $APPBENCH/apps/graph500-3.0.0/src
 		export TMPFILE="graph.out"
@@ -126,7 +156,6 @@ RUNAPP()
 		echo $OUTPUT
 		rm -rf $TMPFILE
 		echo "$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20"
-		sudo dmesg -c &> del.txt
 		numactl --hardware  &> $OUTPUT
 		export LD_PRELOAD=/usr/lib/libmigration.so
 		$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
@@ -143,14 +172,23 @@ TERMINATE()
 	CAPACITY=$1
 	NPROC=$2
 	WORKLOAD=$3
-	
-	OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	APP=$4
+	MEMBW=$5
+
+	if [[ $USE_HETEROMEM == "0" ]]; then
+		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	else
+		OUTPUT=$OUTPUTDIR/$APP/results-sensitivity-BW/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	fi
+
 
 	if [[ $USEPERF == "1" ]]; then
 		SLEEPNOW
 		sudo $PERFTOOL report &>> $OUTPUT
 		sudo $PERFTOOL report --sort=dso &>> $OUTPUT
 	fi
+
+	$SCRIPTS/clear_cache.sh
 }
 
 
@@ -164,10 +202,10 @@ do
 		do	
 			for WORKLOAD in "${workarr[@]}"
 			do
-				RUNAPP $CAPACITY $NPROC $WORKLOAD $APP
+				RUNAPP $CAPACITY $NPROC $WORKLOAD $APP $MEMBW
 				SLEEPNOW
 				$SCRIPTS/clear_cache.sh
-				TERMINATE $CAPACITY $NPROC $WORKLOAD
+				TERMINATE $CAPACITY $NPROC $WORKLOAD $APP $MEMBW
 			done 
 		done	
 	done

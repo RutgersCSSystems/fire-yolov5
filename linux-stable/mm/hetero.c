@@ -251,9 +251,14 @@ void sys_mem_init(void)
                 pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
 
 	init_anon_pages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+	max_sys_anon_pages = init_anon_pages;
+
 	init_file_pages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+	max_sys_file_pages = init_file_pages;
+
 	init_other_pages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) 
 		+ total_swapcache_pages() + i.bufferram;
+	max_sys_other_pages = init_other_pages;
 }
 
 
