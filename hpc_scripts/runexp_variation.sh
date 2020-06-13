@@ -10,24 +10,24 @@ cd $APPDIR
 #Enable whichever applicaiton you are running
 
 #Graph500
+declare -a caparr=("60000" "20000" "15000")
 declare -a apparr=("graph500")
 declare -a workarr=("25")
-declare -a caparr=("60000" "40000" "30000" "20000" "15000")
 declare -a thrdarr=("32")
 
 #MADbench
 #declare -a apparr=("MADbench")
-#declare -a workarr=("20000")
+#declare -a workarr=("60000" "20000")
 #declare -a caparr=("60000")
 #declare -a thrdarr=("16")
 
 #GTC
-#declare -a caparr=("60000" "21000" "22000" "23000" "20000")
+#declare -a caparr=("60000" "22000" "20000")
 #declare -a thrdarr=("32")
 #declare -a workarr=("100")
 #declare -a apparr=("GTC")
 
-#declare -a caparr=("4000")
+#declare -a caparr=("20000" "5000" "4000")
 #declare -a thrdarr=("32")
 #declare -a workarr=("WORK-C")
 #declare -a apparr=("BTIO")
