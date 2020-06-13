@@ -15,7 +15,7 @@ cd $APPDIR
 declare -a nodes=("ms0941.utah.cloudlab.us" "ms0942.utah.cloudlab.us" "ms0914.utah.cloudlab.us")
 
 #Graph500
-declare -a caparr=("60000" "20000" "15000")
+declare -a caparr=("unlimited")
 declare -a apparr=("graph500")
 declare -a workarr=("25")
 declare -a thrdarr=("32")
@@ -102,7 +102,7 @@ RUNAPP()
 	if [[ $USE_HETEROMEM == "0" ]]; then
 		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
 	else
-		OUTPUT=$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
+		OUTPUT=$OUTPUTBASE/$APP/"Multi-BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
 	fi
 
 	$SHARED_LIBS/construct/reset
@@ -121,8 +121,9 @@ RUNAPP()
 		cd $APPBENCH/apps/MADbench
 		numactl --hardware  &> $OUTPUT
 		export LD_PRELOAD=/usr/lib/libmigration.so 
-		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &>> $OUTPUT
 		export LD_PRELOAD=" "
+		numactl --hardware  &>> $OUTPUT
 	fi
 
 	if [ "$APP" = "GTC" ]; then
@@ -146,15 +147,15 @@ RUNAPP()
 	fi
 
 	if [ "$APP" = "graph500" ]; then
-		cd $APPBENCH/apps/graph500-3.0.0/src
+		echo $APPBENCH/apps/graph500-3.0.0/src
 		export TMPFILE="graph.out"
 		export REUSEFILE=1
 		echo $OUTPUT
 		rm -rf $TMPFILE
-		echo "$APPPREFIX mpiexec -n $NPROC ./graph500_reference_bfs $WORKLOAD 20"
+		echo "$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/graph500-3.0.0/src/graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT"
 		numactl --hardware  &> $OUTPUT
 		export LD_PRELOAD=/usr/lib/libmigration.so
-		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS ./graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/graph500-3.0.0/src/graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
 		export LD_PRELOAD=" "
 	fi
 
@@ -174,7 +175,8 @@ TERMINATE()
 	if [[ $USE_HETEROMEM == "0" ]]; then
 		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	else
-		OUTPUT=$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		#OUTPUT=$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT=$OUTPUTBASE/$APP/"Multi-BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
 	fi
 
 	if [[ $USEPERF == "1" ]]; then
@@ -191,7 +193,7 @@ for APP in "${apparr[@]}"
 do
 	for CAPACITY  in "${caparr[@]}"
 	do 
-		SETUPEXTRAM $CAPACITY
+#		SETUPEXTRAM $CAPACITY
 
 		for NPROC in "${thrdarr[@]}"
 		do	
@@ -201,7 +203,7 @@ do
 				do
 					RUNAPP $CAPACITY $NPROC $WORKLOAD $APP $MEMBW $RUNNUM
 					SLEEPNOW
-					$SCRIPTS/clear_cache.sh
+					RUNONALL $SCRIPTS/clear_cache.sh
 					TERMINATE $CAPACITY $NPROC $WORKLOAD $APP $MEMBW $RUNNUM
 				done
 			done 
