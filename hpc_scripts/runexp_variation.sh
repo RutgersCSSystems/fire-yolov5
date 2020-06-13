@@ -17,20 +17,20 @@ cd $APPDIR
 
 #MADbench
 #declare -a apparr=("MADbench")
-#declare -a workarr=("2000")
-#declare -a caparr=("10000")
+#declare -a workarr=("20000")
+#declare -a caparr=("60000")
 #declare -a thrdarr=("16")
 
 #GTC
-#declare -a caparr=("20000")
-#declare -a thrdarr=("32")
-#declare -a workarr=("100")
-#declare -a apparr=("GTC")
-
-declare -a caparr=("4000")
+declare -a caparr=("60000" "21000" "22000" "23000" "20000")
 declare -a thrdarr=("32")
-declare -a workarr=("WORK-C")
-declare -a apparr=("BTIO")
+declare -a workarr=("100")
+declare -a apparr=("GTC")
+
+#declare -a caparr=("4000")
+#declare -a thrdarr=("32")
+#declare -a workarr=("WORK-C")
+#declare -a apparr=("BTIO")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -44,12 +44,13 @@ PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
 #HETERO SPLIT
 USE_HETEROMEM=1
 
-OUTPUTBASE=$OUTPUTDIR/$APP/results-sensitivity
+OUTPUTBASE=$OUTPUTDIR/results-sensitivity
 
 
 if [[ $USE_HETEROMEM == "0" ]]; then
 	OUTPUTBASE=$OUTPUTDIR/results-sensitivity/$APP
 else
+	#scripts/install_quartz.sh
 	OUTPUTBASE=$OUTPUTDIR/results-sensitivity-BW/$APP
 fi
 
@@ -124,7 +125,7 @@ RUNAPP()
 	if [[ $USE_HETEROMEM == "0" ]]; then
 		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	else
-		OUTPUT==$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT=$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	fi
 
 	$SHARED_LIBS/construct/reset
@@ -188,7 +189,7 @@ TERMINATE()
 	if [[ $USE_HETEROMEM == "0" ]]; then
 		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	else
-		OUTPUT==$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+		OUTPUT=$OUTPUTBASE/$APP/"BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 	fi
 
 	if [[ $USEPERF == "1" ]]; then
