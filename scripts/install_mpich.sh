@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-if [ -z "$PREFIX" ]; then
-    kernel_error "PREFIX environment variable not defined. Have you ran setvars?"
+if [ -z "$NVMBASE" ]; then
+    echo "PREFIX environment variable not defined. Have you ran setvars?"
     exit 1
 fi
 
