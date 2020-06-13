@@ -11,9 +11,9 @@ NPROC=36
 
 LD_PRELOAD=/usr/lib/libmigration.so /usr/bin/time -v gmx mdrun -ntmpi $NPROC -ntomp 1 -nt $NPROC -s run_water.tpr -o -x -deffnm md_water &
 
-/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init
-while :
-do
-	/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv
-	sleep 1
-done
+#/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init
+#while :
+#do
+#	/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv
+#	sleep 1
+#done
