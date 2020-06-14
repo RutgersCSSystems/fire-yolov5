@@ -98,14 +98,17 @@ RUNAPP()
 	local NUMRUN=$6
 
 	mkdir -p $OUTPUTBASE/$APP
+	sudo dmesg -c &> del.txt
+	sudo dmesg --clear
 
 	if [[ $USE_HETEROMEM == "0" ]]; then
 		OUTPUT=$OUTPUTBASE/$APP/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
 	else
 		OUTPUT=$OUTPUTBASE/$APP/"Multi-BW$MEMBW-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M-${NUMRUN}.out"
+		$SHARED_LIBS/construct/reset
+		LD_PRELOAD=/usr/lib/libmigration.so
 	fi
 
-	$SHARED_LIBS/construct/reset
 
 	if [[ $USEPERF == "1" ]]; then
 		#SETPERF
@@ -114,47 +117,51 @@ RUNAPP()
 		APPPREFIX="/usr/bin/time -v"
 	fi
 
-	sudo dmesg -c &> del.txt
-	sudo dmesg --clear
 
 	if [ "$APP" = "MADbench" ]; then
-		cd $APPBENCH/apps/MADbench
+		#cd $APPBENCH/apps/MADbench
 		numactl --hardware  &> $OUTPUT
-		export LD_PRELOAD=/usr/lib/libmigration.so 
-		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &>> $OUTPUT
+		#export LD_PRELOAD=/usr/lib/libmigration.so 
+		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/MADbench/MADbench2_io $WORKLOAD 140 1 8 8 4 4 &>> $OUTPUT
 		export LD_PRELOAD=" "
 		numactl --hardware  &>> $OUTPUT
 	fi
 
 	if [ "$APP" = "GTC" ]; then
-		cd $APPBENCH/apps/gtc-benchmark
 		numactl --hardware  &> $OUTPUT
-		export LD_PRELOAD=/usr/lib/libmigration.so 
-		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS ./gtc &>> $OUTPUT
+		#export LD_PRELOAD=/usr/lib/libmigration.so 
+		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/gtc-benchmark/gtc &>> $OUTPUT
 		export LD_PRELOAD=" "
 		numactl --hardware  &>> $OUTPUT
 		rm -f DATA*
 	fi
 
-	if [ "$APP" = "BTIO" ]; then
-		cd $APPBENCH/apps/NPB3.4/NPB3.4-MPI/
+	if [ "$APP" = "Gromacs" ]; then
 		numactl --hardware  &> $OUTPUT
-		export LD_PRELOAD=/usr/lib/libmigration.so
-		$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC --hostfile $SCRIPTS/HOSTS ./bin/bt.C.x.ep_io  &>> $OUTPUT
+		#export LD_PRELOAD=/usr/lib/libmigration.so 
+		mpirun.mpich -np 100 --hostfile ~/iphosts mdrun_mpi -v -s run_water.tpr -o -x -deffnm md_water
+		mpirun -np $NPROC --hostfile $SCRIPTS/HOSTS /usr/local/gromacs/bin/mdrun_mpi -v -s $APPBENCH/apps/gromacs/run_water.tpr -o -x -deffnm $APPBENCH/apps/gromacs/md_water.gro
+		export LD_PRELOAD=""
+	fi
+
+	if [ "$APP" = "BTIO" ]; then
+		#cd $APPBENCH/apps/NPB3.4/NPB3.4-MPI/
+		numactl --hardware  &> $OUTPUT
+		#export LD_PRELOAD=/usr/lib/libmigration.so
+		$APPPREFIX /usr/bin/time -v mpirun -NP $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/NPB3.4/NPB3.4-MPI/bin/bt.C.x.ep_io  &>> $OUTPUT
 		export LD_PRELOAD=""
 		numactl --hardware  &>> $OUTPUT
 		rm -f btio*
 	fi
 
 	if [ "$APP" = "graph500" ]; then
-		echo $APPBENCH/apps/graph500-3.0.0/src
 		export TMPFILE="graph.out"
 		export REUSEFILE=1
 		echo $OUTPUT
 		rm -rf $TMPFILE
 		echo "$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/graph500-3.0.0/src/graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT"
 		numactl --hardware  &> $OUTPUT
-		export LD_PRELOAD=/usr/lib/libmigration.so
+		#export LD_PRELOAD=/usr/lib/libmigration.so
 		$APPPREFIX mpiexec -n $NPROC --hostfile $SCRIPTS/HOSTS $APPBENCH/apps/graph500-3.0.0/src/graph500_reference_bfs $WORKLOAD 20 &>> $OUTPUT
 		export LD_PRELOAD=" "
 	fi
