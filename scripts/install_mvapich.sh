@@ -16,9 +16,9 @@ LEVELDBHOME=$CLOUDLABDIR/leveldb-nvm
 YCSBHOME=$CLOUDLABDIR/leveldb-nvm/mapkeeper/ycsb/YCSB
 
 #LIBS Specific to IB
-MVAPICHVER="mvapich2-2.3.3"
+MVAPICHVER="mvapich2-2.3.4"
 #Download URL
-MVAPICHURL="http://mvapich.cse.ohio-state.edu/download/mvapich/mv2/$MVAPICHVER.tar.gz"
+MVAPICHURL="https://mvapich.cse.ohio-state.edu/download/mvapich/mv2/$MVAPICHVER.tar.gz"
 MVAPICHPATH=$CLOUDLABDIR/$MVAPICHVER
 MVAPICHBENCH=$MVAPICHPATH/osu_benchmarks
 MPIPROCS=4 #Number of process to test
@@ -46,7 +46,7 @@ CONFIGURE_GIT() {
 INSTALL_SYSTEM_LIBS(){
 	sudo apt-get update
 	sudo apt-get install -y git
-	sudo apt-get install kernel-package
+	sudo apt-get install -y kernel-package
 	sudo apt-get install -y software-properties-common
 	sudo apt-get install -y python3-software-properties
 	sudo apt-get install -y python-software-properties
@@ -70,7 +70,7 @@ INSTALL_IB_LIBS() {
 	sudo apt-get install -y libibmad-dev libibumad-dev libibumad3
 	sudo apt-get install -y libibverbs-dev
 	sudo apt-get install -y gfortran
-	sudo apt-get install -y infiniband-diags
+	sudo apt-get install -y infiniband-diags rdma-core
 	#INSTALL MVAPICH
 	cd $CLOUDLABDIR
 	wget $MVAPICHURL
@@ -78,11 +78,11 @@ INSTALL_IB_LIBS() {
 
 	cd $MVAPICHPATH
 
-	./configure --with-device=ch3:mrail --with-rdma=gen2
+	./configure --with-device=ch3:mrail --with-rdma=gen2 -enable-g=all -enable-fast=none
 	make clean
 	make -j$NPROC
 	COOL_DOWN
-	sudo make install
+	sudo make install -j
 	COOL_DOWN
 	cd $MVAPICHBENCH
 	./configure CC=/usr/local/bin/mpicc CXX=/usr/local/bin/mpicxx
