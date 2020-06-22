@@ -5,7 +5,7 @@
 To install the necessary files for a new cloudlab instance.
 1. Get a Cloudlab instance:
     - Get profile IBMellanox:8 (Project LSM) or get the profile from https://pastebin.com/p4C8pWYt
-2. $ bash <(wget -qO- https://www.ilab.cs.rutgers.edu/~ssg128/naastik/hpcsetup.sh)
+2. $ bash <(wget --no-check-certificate -qO- https://www.ilab.cs.rutgers.edu/~ssg128/naastik/hpcsetup.sh)
 3. $ cd ssd/Crosslayer
 4. $ source scripts/setvars.sh
 5. $ source scripts/setalias.sh
