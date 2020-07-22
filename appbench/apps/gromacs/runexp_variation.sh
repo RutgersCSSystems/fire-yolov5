@@ -5,8 +5,8 @@ sudo swapoff -a
 
 APPDIR=$PWD
 cd $APPDIR
-declare -a caparr=("288") #added 1500
-#declare -a caparr=("1776" "1788") #added 1500
+declare -a caparr=("6033") #added 1500
+#declare -a caparr=("2276 2288 2545") #added 1500
 declare -a thrdarr=("36")
 declare -a workarr=("100")
 declare -a apparr=("gromacs")
@@ -106,9 +106,12 @@ do
 		do	
 			for WORKLOAD in "${workarr[@]}"
 			do
+				$SHARED_LIBS/construct/reset
 				RUNAPP $CAPACITY $NPROC $WORKLOAD
-				#sleep 5
-				#./clear_cache.sh
+				RUNAPP $CAPACITY $NPROC $WORKLOAD
+				RUNAPP $CAPACITY $NPROC $WORKLOAD
+				$SHARED_LIBS/construct/reset
+				./clear_cache.sh
 			done
 		done	
 	done

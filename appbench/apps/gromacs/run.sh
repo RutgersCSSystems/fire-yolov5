@@ -22,3 +22,9 @@ do
 		break
 	fi
 done
+#/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init
+#while :
+#do
+#	/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py readfrom Cummulate.csv
+#	sleep 1
+#done

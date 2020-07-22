@@ -11,6 +11,7 @@
 #include <linux/slab.h>
 #include <linux/backing-dev.h>
 #include <linux/mm.h>
+#include <linux/mmzone.h>
 #include <linux/vmacache.h>
 #include <linux/shm.h>
 #include <linux/mman.h>
@@ -63,6 +64,8 @@
 #include <linux/time64.h>
 
 #include "internal.h"
+
+#define HETERO_HPC
 
 /* start_trace flag option */
 #define CLEAR_GLOBALCOUNT 0
@@ -164,6 +167,338 @@ unsigned long g_tot_app_pages=0;
 
 DEFINE_SPINLOCK(stats_lock);
 
+
+#ifdef HETERO_HPC
+
+#define K(x) ((x) << (PAGE_SHIFT - 10))
+#define THRESHOLD 100000
+#define FREQCHECK 1000000
+//static unsigned int node_checkfreq = 0;
+//static unsigned int node_checkfreq_default = 0;
+
+#define MAXPROCS 48
+
+unsigned int max_file_pages[MAXPROCS];
+unsigned int max_anon_pages[MAXPROCS];
+unsigned int max_shmem_pages[MAXPROCS];
+
+unsigned int max_rss_file_pages[MAXPROCS];
+unsigned int max_rss_anon_pages[MAXPROCS];
+unsigned int max_rss_shmem_pages[MAXPROCS];
+
+unsigned int max_rss_total[MAXPROCS];
+unsigned int max_total[MAXPROCS];
+
+unsigned int init_anon_pages = 0; //Just anon pages
+unsigned int init_file_pages = 0;
+unsigned int init_other_pages = 0;
+
+unsigned int max_sys_file_pages = 0;
+unsigned int max_sys_anon_pages = 0;
+unsigned int max_sys_other_pages = 0;
+
+
+DEFINE_SPINLOCK(hpcstat_lock);
+
+
+int pidlist[MAXPROCS];
+int total_pids = 0;
+int min_pidx = -1;
+int hpc_stats_init = 0;
+
+void reset_hpc_stats(void) {
+
+	int idx = 0;
+
+	for (idx = 0; idx < MAXPROCS; idx++) 
+	{
+		pidlist[idx] = -1;
+
+		max_file_pages[idx] = 0;
+		max_anon_pages[idx] = 0;
+		max_shmem_pages[idx] = 0;
+
+		max_rss_file_pages[idx] = 0;
+		max_rss_anon_pages[idx] = 0;
+		max_rss_shmem_pages[idx] = 0;
+
+		max_rss_total[idx] = 0;
+		max_total[idx] = 0;
+	}
+	total_pids = 0;
+	min_pidx = -1;
+
+	hpc_stats_init = 0;
+}
+
+
+void sys_mem_init(void) 
+{
+        struct sysinfo i;
+        int lru;
+        unsigned long pages[NR_LRU_LISTS];
+	si_meminfo(&i);
+        si_swapinfo(&i);
+
+        si_meminfo(&i);
+        si_swapinfo(&i);
+
+	max_sys_file_pages = 0;
+	max_sys_anon_pages = 0;
+	max_sys_other_pages = 0;
+
+        for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+                pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+
+	init_anon_pages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+	max_sys_anon_pages = init_anon_pages;
+
+	init_file_pages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+	max_sys_file_pages = init_file_pages;
+
+	init_other_pages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) 
+		+ total_swapcache_pages() + i.bufferram;
+	max_sys_other_pages = init_other_pages;
+}
+
+
+void init_hpc_stats(void) 
+{
+	if(hpc_stats_init)
+		return;
+
+	reset_hpc_stats();
+	hpc_stats_init = 1;
+	sys_mem_init();
+}
+
+
+void sys_mem_interval_diff(void) 
+{
+        struct sysinfo i;
+        int lru;
+	unsigned int m_anonpages = 0;
+	unsigned int m_filepages = 0;
+	unsigned int m_otherpages = 0;
+#if 0
+        unsigned long committed;
+        long cached;
+        long available;
+#endif
+        unsigned long pages[NR_LRU_LISTS];
+        si_meminfo(&i);
+        si_swapinfo(&i);
+
+        si_meminfo(&i);
+        si_swapinfo(&i);
+
+        for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+                pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+
+	m_anonpages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+	m_filepages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+	m_otherpages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) + 
+			total_swapcache_pages() + i.bufferram;
+
+	/*Calculate the difference */ 
+	if(m_anonpages > max_sys_anon_pages)
+		max_sys_anon_pages = m_anonpages - init_anon_pages;
+
+	if(m_filepages > max_sys_file_pages)
+		max_sys_file_pages = m_filepages - init_file_pages;
+
+	if(m_otherpages > max_sys_other_pages)
+		max_sys_other_pages = m_otherpages - init_other_pages;
+
+
+#if 0
+        committed = percpu_counter_read_positive(&vm_committed_as);
+
+        cached = global_node_page_state(NR_FILE_PAGES) -
+                        total_swapcache_pages() - i.bufferram;
+        if (cached < 0)
+                cached = 0;
+
+        available = si_mem_available();
+
+        show_val_kb(m, "MemTotal:       ", i.totalram);
+        show_val_kb(m, "MemFree:        ", i.freeram);
+        show_val_kb(m, "MemAvailable:   ", available);
+        show_val_kb(m, "Buffers:        ", i.bufferram);
+        show_val_kb(m, "Cached:         ", cached);
+        show_val_kb(m, "SwapCached:     ", total_swapcache_pages());
+        show_val_kb(m, "Active:         ", pages[LRU_ACTIVE_ANON] +
+                                           pages[LRU_ACTIVE_FILE]);
+        show_val_kb(m, "Inactive:       ", pages[LRU_INACTIVE_ANON] +
+                                           pages[LRU_INACTIVE_FILE]);
+        show_val_kb(m, "Active(anon):   ", pages[LRU_ACTIVE_ANON]);
+        show_val_kb(m, "Inactive(anon): ", pages[LRU_INACTIVE_ANON]);
+        show_val_kb(m, "Active(file):   ", pages[LRU_ACTIVE_FILE]);
+        show_val_kb(m, "Inactive(file): ", pages[LRU_INACTIVE_FILE]);
+        show_val_kb(m, "Unevictable:    ", pages[LRU_UNEVICTABLE]);
+        show_val_kb(m, "Mlocked:        ", global_zone_page_state(NR_MLOCK));
+#endif
+}
+
+
+
+unsigned long check_node_memsize(struct mm_struct *mm) 
+{
+	unsigned int m_filepages = 0;
+	unsigned int m_anonpages = 0;
+	unsigned int m_shmempages = 0;
+	unsigned int m_totalpages = 0;
+
+
+	unsigned int m_rss_filepages = 0;
+	unsigned int m_rss_anonpages = 0;
+	unsigned int m_rss_shmempages = 0;
+	unsigned int m_rss_swapents = 0;
+
+	unsigned int m_rss_totalpages = 0;
+	unsigned int m_rss_totalanon = 0;
+	unsigned int m_rss_totalfile = 0;
+	unsigned int m_rss_totalother = 0;
+
+	int PID = -1;
+	int CURR_PIDX = -1;
+	int iter = 0;
+
+	//initialize if not initialized
+	init_hpc_stats();
+
+	PID = current->pid;
+	CURR_PIDX = PID % MAXPROCS;
+
+	if(!mm) 
+		return 0;
+
+	spin_lock(&hpcstat_lock);
+
+	if(pidlist[CURR_PIDX] == -1) {
+		pidlist[CURR_PIDX] = PID;
+		total_pids++;
+	}
+
+	spin_unlock(&hpcstat_lock);
+
+	//Get the total stats for this process (CURR_PIDX)
+	m_filepages = get_mm_counter(mm, MM_FILEPAGES);
+	m_anonpages = get_mm_counter(mm, MM_ANONPAGES);
+	m_shmempages = get_mm_counter(mm, MM_SHMEMPAGES);
+	m_totalpages = m_filepages + m_anonpages + m_shmempages;
+
+	spin_lock(&hpcstat_lock);
+
+	if(max_file_pages[CURR_PIDX] < m_filepages)
+		max_file_pages[CURR_PIDX] = m_filepages;
+
+	if(max_anon_pages[CURR_PIDX] < m_anonpages)
+		max_anon_pages[CURR_PIDX] = m_anonpages;
+
+	if(max_shmem_pages[CURR_PIDX] < m_shmempages)
+		max_shmem_pages[CURR_PIDX] = m_shmempages;
+
+	if(max_total[CURR_PIDX]  < m_totalpages)
+	        max_total[CURR_PIDX] = m_totalpages;
+
+	spin_unlock(&hpcstat_lock);
+
+	m_rss_filepages = atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]);
+	m_rss_anonpages = atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]);
+	m_rss_swapents = atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]);
+	m_rss_shmempages = atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES]);
+	m_rss_totalpages = m_rss_filepages + m_rss_anonpages + 
+			m_rss_swapents + m_rss_shmempages;
+	
+	spin_lock(&hpcstat_lock);
+
+	if(max_rss_file_pages[CURR_PIDX] < m_rss_filepages)
+		max_rss_file_pages[CURR_PIDX] = m_rss_filepages;
+
+	if(max_rss_anon_pages[CURR_PIDX] < m_rss_anonpages)
+		max_rss_anon_pages[CURR_PIDX] = m_rss_anonpages;
+
+	if(max_rss_shmem_pages[CURR_PIDX] < m_rss_shmempages)
+		max_rss_shmem_pages[CURR_PIDX] = m_rss_shmempages;
+
+	if(max_rss_total[CURR_PIDX]  < m_rss_totalpages)
+		max_rss_total[CURR_PIDX] = m_rss_totalpages;
+
+	//Find the process in out list with minimum PID
+	if(min_pidx > CURR_PIDX || (min_pidx == -1))
+		min_pidx = CURR_PIDX;
+
+	spin_unlock(&hpcstat_lock);
+
+	//Only print for smallest PID in our list
+	if(CURR_PIDX == min_pidx) {
+
+		m_rss_totalpages = 0;
+		m_rss_totalanon = 0;
+		m_rss_totalfile = 0;
+		m_rss_totalother = 0;
+
+		 printk(KERN_ALERT "\n\n");
+
+		for (iter =0; iter < MAXPROCS; iter++) 
+		{
+			if(pidlist[iter] != -1) {
+			 	printk(KERN_ALERT "PID %d "
+					 "MAX-F %u, MAX-A %u, MAX-SH %u MAX-TOT %u " 
+					 "MAX-RSS-F %u, MAX-RSS-A %u, MAX-RSS-SH %u  OVERALL MAX-RSS-TOT %u" 
+					 "\n", 
+					 pidlist[iter], 
+					 max_file_pages[iter],  max_anon_pages[iter], max_shmem_pages[iter], 
+					 max_total[iter], max_rss_file_pages[iter], max_rss_anon_pages[iter], 
+					 max_rss_shmem_pages[iter], max_rss_total[iter]);
+
+				m_rss_totalpages += max_rss_total[iter];
+				m_rss_totalanon += max_rss_anon_pages[iter];
+				m_rss_totalfile += max_rss_file_pages[iter];
+				m_rss_totalother += max_rss_shmem_pages[iter];
+			}
+		}
+
+		sys_mem_interval_diff();
+
+
+		printk(KERN_ALERT "AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
+				  m_rss_totalpages, m_rss_totalanon, m_rss_totalfile,
+				  m_rss_totalother);
+
+		printk(KERN_ALERT "SystemUseAVG: Total: %u", max_sys_anon_pages + max_sys_file_pages);
+
+		//unsigned int Filepages = max_sys_pages - max_sys;
+		printk(KERN_ALERT "SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
+				"= Anon(SYS):%u + File:%u + Other:%u \n",
+				max_sys_file_pages + max_sys_anon_pages + max_sys_other_pages, 
+				max_sys_anon_pages,  max_sys_file_pages, max_sys_other_pages);
+	}
+	return 0;
+
+#if 0	
+	printk(KERN_ALERT "-----TOT: MAX PAGES(ALL PIDS): %u, OVERALL SYS %u, "
+			"SYS+SWAPCACHE %u, SYS+SWAPCACHE+BUFF %u -----\n", 
+			m_rss_totalpages, max_sys_pages, max_sys_pages_swapcache, 
+			max_sys_pages_swapcache_buffers);
+        struct sysinfo i;
+        int nid = get_fastmem_node();
+	unsigned long memsize = 0;
+
+        si_meminfo_node(&i, nid);
+	memsize = i.freeram;
+	return memsize;
+#endif
+}
+
+
+
+#endif
+
+
+
+
 #ifdef CONFIG_HETERO_STATS
 void incr_tot_cache_pages(void) 
 {
@@ -256,15 +591,16 @@ getmm(struct task_struct *task)
 void 
 print_hetero_stats(struct task_struct *task) 
 {
-#ifdef CONFIG_HETERO_STATS
-	unsigned long buffpgs = 0;
-	unsigned long cachepgs = 0;
 	struct mm_struct *mm = NULL;
 
 	mm = getmm(task);
 	if(!mm)
 		return;
 
+	check_node_memsize(mm);
+	return;
+
+#ifdef CONFIG_HETERO_STATS
         printk(KERN_ALERT "PID %d Proc-name %s " 
 		"page cache %lu " 
 	      	"kernel buffs %lu " 
@@ -552,22 +888,6 @@ is_hetero_vma(struct vm_area_struct *vma)
 
 
 
-#define K(x) ((x) << (PAGE_SHIFT - 10))
-#define THRESHOLD 100000
-#define FREQCHECK 1000000
-static unsigned int node_checkfreq = 0;
-static unsigned int node_checkfreq_default = 0;
-
-unsigned long check_node_memsize(void) {
-
-        struct sysinfo i;
-        int nid = get_fastmem_node();
-	unsigned long memsize = 0;
-
-        si_meminfo_node(&i, nid);
-	memsize = i.freeram;
-	return memsize;
-}
 
 #if 0
         if(!node_checkfreq) {
@@ -881,7 +1201,6 @@ update_hetero_pgcache(int nodeid, struct page *page, int delpage)
 
 ret_pgcache_stat:
 	return;
-
 #endif
 
 }
@@ -1014,7 +1333,6 @@ static int migration_thread_fn(void *arg) {
 
         unsigned long count = 0;
         struct mm_struct *mm = (struct mm_struct *)arg;
-        //struct timeval start, end;
 
         //do_gettimeofday(&start);
         //migration_thrd_active = 1;
@@ -1158,6 +1476,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    hetero_kernpg_cnt = 0;
 	    hetero_usrpg_cnt = 0;
 	    reset_hetero_stats(current);	
+#ifdef HETERO_HPC
+	    reset_hpc_stats();
+#endif
 	    break;
 
 	case COLLECT_TRACE:
@@ -1200,7 +1521,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	    return global_flag;
 	    break;
 	case PRINT_PPROC_PAGESTATS:
-	    printk("flag is set to print hetero allocate stat %d \n", flag);
+	    //printk("flag is set to print hetero allocate stat %d \n", flag);
 	    global_flag = PRINT_PPROC_PAGESTATS;
 	    print_hetero_stats(current);
 	    //print_global_stats(current);	

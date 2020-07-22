@@ -21,7 +21,7 @@ sudo rm -rf /mnt/ramdisk$NUMANODE/ext4.image
 sudo mkdir /mnt/ramdisk$NUMANODE
 sudo mount -t ramfs ramfs /mnt/ramdisk$NUMANODE
 
-sleep 10
+sleep 3
 
 sudo $PREFIX dd if=/dev/zero of=/mnt/ramdisk$NUMANODE/ext4.image bs=1M count="$scount"
 sudo $PREFIX mkfs.ext4 -F /mnt/ramdisk$NUMANODE/ext4.image

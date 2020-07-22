@@ -14,9 +14,9 @@ fi
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA &> compile.out
 grep -r "error:" compile.out &> errors.out
-sudo make modules &>> compile.out
+sudo make modules $PARA &>> compile.out
 grep -r "error:" compile.out &>> errors.out
-sudo make modules_install &>> compile.out
+sudo make modules_install $PARA &>> compile.out
 grep -r "error:" compile.out &>> errors.out
 sudo make install &>> compile.out
 grep -r "error:" compile.out &>> errors.out

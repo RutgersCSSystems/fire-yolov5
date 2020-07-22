@@ -16,3 +16,24 @@ To install the necessary files for a new cloudlab instance.
 10. $ install_mvapich.sh
 11. $ vtune-install
 12. For multi-user support, all this has to be done on other nodes also.
+
+Help for MVAPICH:
+
+1. Ulimit -l: This value should be large (Unlimited)
+For this, 
+vim /etc/security/limits.conf
+
+##add the following line to all your nodes
+
+<username>  hard memlock unlimited
+<username>  soft memlock unlimited
+
+## now reboot the system
+
+
+
+2. Using RoCE: use the following command:
+  $ mpirun -env MV2_SMP_USE_CMA=0 -env MV2_USE_RoCE=1 -np 8 ./a.out
+
+-env MV2_DEBUG_SHOW_BACKTRACE=2 : Provides verbose error messages
+
