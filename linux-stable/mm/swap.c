@@ -333,6 +333,13 @@ void activate_page(struct page *page)
 	spin_lock_irq(zone_lru_lock(zone));
 	__activate_page(page, mem_cgroup_page_lruvec(page, zone->zone_pgdat), NULL);
 	spin_unlock_irq(zone_lru_lock(zone));
+
+	//Remove page from the inactive list and add it to active list
+	if(current->enable_pvt_lru == true)
+	{
+		pvt_lru_rb_remove(current->mm->inactive_rbroot, page);
+		pvt_lru_rb_insert(current->mm->active_rbroot, page);
+	}
 }
 #endif
 
@@ -443,6 +450,11 @@ void lru_cache_add(struct page *page)
 	VM_BUG_ON_PAGE(PageActive(page) && PageUnevictable(page), page);
 	VM_BUG_ON_PAGE(PageLRU(page), page);
 	__lru_cache_add(page);
+	//Add page in private inactive list (A1 is global inactive list)
+	if(current->enable_pvt_lru == true)
+	{
+		pvt_lru_rb_insert(current->mm->inactive_rbroot, page);
+	}
 }
 
 /**

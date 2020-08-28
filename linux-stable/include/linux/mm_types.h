@@ -405,6 +405,8 @@ struct mm_struct {
 	unsigned long 			pgcachedel;
 	unsigned long			pages_migrated;
 	int 				thrd_idx;
+	struct rb_root                  active_rbroot; //Pvt Proc Active List
+	struct rb_root                  inactive_rbroot; //Pvt Proc Inactive List
 #endif
 
 	unsigned long			migrate_attempt;

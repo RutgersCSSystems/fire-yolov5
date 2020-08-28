@@ -693,6 +693,7 @@ struct task_struct {
 
 #ifdef CONFIG_HETERO_ENABLE
 	void *hetero_obj;
+	bool enable_pvt_lru;
 #endif
 
 #ifdef SPLIT_RSS_COUNTING

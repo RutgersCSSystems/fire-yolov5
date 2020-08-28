@@ -97,6 +97,7 @@ Move this to header file later.
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
+#define ENABLE_PVT_LRU 24
 
 /* Collect life time of page 
 */
@@ -1207,6 +1208,44 @@ ret_pgcache_stat:
 EXPORT_SYMBOL(update_hetero_pgcache);
 
 
+//TODO
+//This function adds pages to its owner's Private LRU 
+//(mm_struct->{in}active_page_rb)
+void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
+{
+	struct rb_node **link = &root->rb_node, *parent;
+
+	while(*link)
+	{
+		parent = *link;
+		struct page *this_page = rb_entry(parent, struct page, parent);
+
+		if(/*Some Condition using this_page*/)
+		{
+			link = &(*link)->rb_left;
+		}
+		else if (/*==*/)
+		{
+			printk(KERN_ALERT "!!Duplicate Page in pvt LRU PID:%d"
+					, current->pid);
+		}
+		else
+			link = &(*link)->rb_right;
+	}
+	rb_link_node(page, parent, link);
+	rb_insert_color(page, root);
+	return;
+}
+EXPORT_SYMBOL(pvt_lru_rb_insert);
+
+//TODO
+//This function removes pages from its owner's Private LRU 
+//(mm_struct->{in}active_page_rb)
+void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
+{
+	rb_erase(page, root);
+}
+EXPORT_SYMBOL(pvt_lru_rb_remove);
 
 
 /* 
@@ -1584,6 +1623,11 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
 	     enbl_hetero_pgcache_readahead = 1;	
 	     break;	
+
+	case ENABLE_PVT_LRU:
+	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
+	     current->enable_pvt_lru = true;
+	     break;
 
 	default:
 #ifdef CONFIG_HETERO_DEBUG
