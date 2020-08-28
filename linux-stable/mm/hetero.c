@@ -1211,6 +1211,7 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 //TODO
 //This function adds pages to its owner's Private LRU 
 //(mm_struct->{in}active_page_rb)
+/*
 void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 {
 	struct rb_node **link = &root->rb_node, *parent;
@@ -1220,11 +1221,11 @@ void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 		parent = *link;
 		struct page *this_page = rb_entry(parent, struct page, parent);
 
-		if(/*Some Condition using this_page*/)
+		if() //Add some condition
 		{
 			link = &(*link)->rb_left;
 		}
-		else if (/*==*/)
+		else if () // ==
 		{
 			printk(KERN_ALERT "!!Duplicate Page in pvt LRU PID:%d"
 					, current->pid);
@@ -1246,7 +1247,7 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 	rb_erase(page, root);
 }
 EXPORT_SYMBOL(pvt_lru_rb_remove);
-
+*/
 
 /* 
 * Update STAT 
@@ -1625,8 +1626,12 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     break;	
 
 	case ENABLE_PVT_LRU:
-	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
+	     printk("flag to set enable_pvt_lru with\n");
 	     current->enable_pvt_lru = true;
+	     current->mm->active_rbroot = RB_ROOT;
+	     current->mm->inactive_rbroot = RB_ROOT;
+	     if(current->enable_pvt_lru == true)
+		     printk("Pvt LRU initialized for %d\n", current->pid);
 	     break;
 
 	default:

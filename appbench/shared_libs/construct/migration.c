@@ -65,6 +65,7 @@ static void dest() __attribute__((destructor));
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
+#define ENABLE_PVT_LRU 24
 #define MIGRATE_LIST_CNT 1000
 
 
@@ -82,6 +83,10 @@ void set_migration_freq() {
 #else
     syscall(__NR_start_trace, HETERO_MIGRATE_FREQ, 9000000000);
 #endif
+}
+
+void set_pvt_lru(){
+	syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
 void set_migrate_list_cnt() {
@@ -216,9 +221,11 @@ void con() {
     struct sigaction action;
     pid_t pid = getpid();
 
-    fprintf(stderr, "initiating tracing...\n");
+    //fprintf(stderr, "initiating tracing...\n");
+    fprintf(stderr, "Setting Pvt LRU\n");
 
-    thread_fn();
+    //thread_fn();
+    set_pvt_lru();
 
     return 0;
 }
