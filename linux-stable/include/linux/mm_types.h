@@ -407,6 +407,8 @@ struct mm_struct {
 	int 				thrd_idx;
 	struct rb_root                  active_rbroot; //Pvt Proc Active List
 	struct rb_root                  inactive_rbroot; //Pvt Proc Inactive List
+	int 				nr_active_lru; //Pvt active list nr pages
+	int 				nr_inactive_lru; //Pvt inactive list nr pages
 #endif
 
 	unsigned long			migrate_attempt;

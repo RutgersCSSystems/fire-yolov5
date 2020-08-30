@@ -34,6 +34,7 @@
 #include <linux/uio.h>
 #include <linux/hugetlb.h>
 #include <linux/page_idle.h>
+#include <linux/hetero.h>
 
 #include "internal.h"
 
@@ -393,8 +394,12 @@ void mark_page_accessed(struct page *page)
 		ClearPageReferenced(page);
 		if (page_is_file_cache(page))
 			workingset_activation(page);
+
+
 		
 		//Remove page from the inactive list and add it to active list
+		pvt_inactive_lru_remove(page);
+		pvt_active_lru_insert(page);
 		/*
 		if(current->enable_pvt_lru == true)
 		{
@@ -453,6 +458,8 @@ void lru_cache_add(struct page *page)
 	VM_BUG_ON_PAGE(PageActive(page) && PageUnevictable(page), page);
 	VM_BUG_ON_PAGE(PageLRU(page), page);
 	__lru_cache_add(page);
+
+	pvt_active_lru_insert(page);
 	//Add page in private inactive list (A1 is global inactive list)
 	/*
 	if(current->enable_pvt_lru == true)

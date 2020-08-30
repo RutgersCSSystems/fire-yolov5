@@ -115,6 +115,14 @@ int migrate_pages_slowmem(struct task_struct *task);
 void
 hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
+
+/*Private LRU*/
+void pvt_active_lru_insert(struct page *page);
+void pvt_inactive_lru_insert(struct page *page);
+void pvt_active_lru_remove(struct page *page);
+void pvt_inactive_lru_remove(struct page *page);
+
+
 #ifdef CONFIG_HETERO_STATS
 void incr_tot_cache_pages(void);
 void incr_tot_buff_pages(void);

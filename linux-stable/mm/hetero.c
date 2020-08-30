@@ -45,6 +45,7 @@
 #include <linux/moduleparam.h>
 #include <linux/pkeys.h>
 #include <linux/oom.h>
+#include <asm/page.h>
 
 #include <linux/btree.h>
 #include <linux/radix-tree.h>
@@ -98,6 +99,9 @@ Move this to header file later.
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
 #define ENABLE_PVT_LRU 24
+
+
+#define page_to_pfn(page) pfn_to_virt(page_to_pfn(page))
 
 /* Collect life time of page 
 */
@@ -1211,6 +1215,76 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 //TODO
 //This function adds pages to its owner's Private LRU 
 //(mm_struct->{in}active_page_rb)
+//
+
+void pvt_active_lru_insert(struct page *page)
+{
+	if(current->enable_pvt_lru == true)
+	{
+		printk("%s pid=%d pvt_active_lru_insert addr=%s\n", 
+				current->comm, current->pid, page_to_phys(page));
+		//pvt_lru_rb_insert(current->mm->active_rbroot, page);
+		//current->mm->nr_active_lru += 1;
+	}
+	/*
+	else
+		printk("%s pid=%d doesnt have pvt LRU \n", 
+				current->comm, current->pid);
+				*/
+}
+EXPORT_SYMBOL(pvt_active_lru_insert);
+
+void pvt_inactive_lru_insert(struct page *page)
+{
+	if(current->enable_pvt_lru == true)
+	{
+		printk("%s pid=%d pvt_inactive_lru_insert addr=%x\n", 
+				current->comm, current->pid, page_to_virt(page));
+		//pvt_lru_rb_insert(current->mm->inactive_rbroot, page);
+		//current->mm->nr_inactive_lru += 1;
+	}
+	/*
+	else
+		printk("%s pid=%d doesnt have pvt LRU \n", 
+				current->comm, current->pid);
+				*/
+}
+EXPORT_SYMBOL(pvt_inactive_lru_insert);
+
+void pvt_active_lru_remove(struct page *page)
+{
+	if(current->enable_pvt_lru == true)
+	{
+		printk("%s pid=%d pvt_active_lru_remove addr=%s\n", 
+				current->comm, current->pid, page_to_phys(page));
+		//pvt_lru_rb_remove(current->mm->active_rbroot, page);
+		//current->mm->nr_active_lru -= 1;
+	}
+	/*
+	else
+		printk("%s pid=%d doesnt have pvt LRU \n", 
+				current->comm, current->pid);
+				*/
+}
+EXPORT_SYMBOL(pvt_active_lru_remove);
+
+void pvt_inactive_lru_remove(struct page *page)
+{
+	if(current->enable_pvt_lru == true)
+	{
+		printk("%s pid=%d pvt_inactive_lru_remove addr=%s\n", 
+				current->comm, current->pid, page_to_phys(page));
+		//pvt_lru_rb_remove(current->mm->inactive_rbroot, page);
+		//current->mm->nr_inactive_lru -= 1;
+	}
+	/*
+	else
+		printk("%s pid=%d doesnt have pvt LRU \n", 
+				current->comm, current->pid);
+				*/
+}
+EXPORT_SYMBOL(pvt_inactive_lru_remove);
+
 /*
 void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 {
@@ -1237,7 +1311,6 @@ void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 	rb_insert_color(page, root);
 	return;
 }
-EXPORT_SYMBOL(pvt_lru_rb_insert);
 
 //TODO
 //This function removes pages from its owner's Private LRU 
@@ -1246,7 +1319,6 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
 	rb_erase(page, root);
 }
-EXPORT_SYMBOL(pvt_lru_rb_remove);
 */
 
 /* 
@@ -1630,6 +1702,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     current->enable_pvt_lru = true;
 	     current->mm->active_rbroot = RB_ROOT;
 	     current->mm->inactive_rbroot = RB_ROOT;
+	     current->mm->nr_active_lru = 0;
+	     current->mm->nr_inactive_lru = 0;
 	     if(current->enable_pvt_lru == true)
 		     printk("Pvt LRU initialized for %d\n", current->pid);
 	     break;
