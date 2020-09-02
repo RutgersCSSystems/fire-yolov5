@@ -1225,6 +1225,9 @@ void pvt_active_lru_insert(struct page *page)
 	else
 		return;
 */	
+	//Why will this be needed ? 
+	if(current->mm == NULL)
+		return;
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
@@ -1307,13 +1310,12 @@ void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 	struct pvt_lru_rbnode *data = kmalloc(sizeof(struct pvt_lru_rbnode), GFP_KERNEL);
 
 	data->page = page;
-	
 	struct rb_node **link = &(root->rb_node), *parent=NULL;
-
+	struct pvt_lru_rbnode *this_node = NULL;
 	while(*link)
 	{
 		parent = *link;
-		struct pvt_lru_rbnode *this_node = rb_entry(parent, struct pvt_lru_rbnode, lru_node);
+		this_node = rb_entry(parent, struct pvt_lru_rbnode, lru_node);
 
 		if(page_to_virt(this_node->page) > page_to_virt(page))
 		{
@@ -1335,14 +1337,16 @@ void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 
 struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page)
 {
-	printk("Before root\n");
+	if(root == NULL)
+	{
+		printk("pid:%d, comm:%s, pvt_lru_rb_search, root==NULL\n",
+				current->pid, current->comm);
+		return NULL;
+	}
 	struct rb_node *node = root->rb_node;
-	printk("After root\n");
 	struct pvt_lru_rbnode *this_node = NULL;
 	while(node){
-		printk("Before rb_entry\n");
 		this_node = rb_entry(node, struct pvt_lru_rbnode, lru_node);
-		printk("after rb_entry\n");
 		if(page_to_virt(this_node->page) > page_to_virt(page))
 		{
 			node = node->rb_left;
@@ -1362,7 +1366,6 @@ struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page
 void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
-	printk("pvt_lru_rb_remove search after\n");
 	if(node == NULL)
 		printk("No page with add:%lu in pid: %d, %s\n",
 				page_to_virt(page), current->pid, current->comm);
