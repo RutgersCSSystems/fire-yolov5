@@ -169,6 +169,9 @@ unsigned long g_tot_buff_pages=0;
 unsigned long g_tot_app_pages=0;
 #endif
 
+int activePvtOnce=0;
+int inactivePvtOnce=0;
+
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -1216,6 +1219,11 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 
 void pvt_active_lru_insert(struct page *page)
 {
+	if(activePvtOnce == 0)
+		activePvtOnce += 1;
+	else
+		return;
+	
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
@@ -1233,6 +1241,10 @@ EXPORT_SYMBOL(pvt_active_lru_insert);
 
 void pvt_inactive_lru_insert(struct page *page)
 {
+	if(inactivePvtOnce == 0)
+		inactivePvtOnce += 1;
+	else
+		return;
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_inactive_lru_insert addr=%lu\n", 
