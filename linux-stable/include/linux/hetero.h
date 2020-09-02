@@ -117,6 +117,9 @@ hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
 
 /*Private LRU*/
+void pvt_lru_rb_insert(struct rb_root *root, struct page *page);
+void pvt_lru_rb_remove(struct rb_root *root, struct page *page);
+struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page);
 void pvt_active_lru_insert(struct page *page);
 void pvt_inactive_lru_insert(struct page *page);
 void pvt_active_lru_remove(struct page *page);

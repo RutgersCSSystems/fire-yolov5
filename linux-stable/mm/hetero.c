@@ -45,7 +45,6 @@
 #include <linux/moduleparam.h>
 #include <linux/pkeys.h>
 #include <linux/oom.h>
-#include <asm/page.h>
 
 #include <linux/btree.h>
 #include <linux/radix-tree.h>
@@ -101,7 +100,7 @@ Move this to header file later.
 #define ENABLE_PVT_LRU 24
 
 
-#define page_to_pfn(page) pfn_to_virt(page_to_pfn(page))
+//#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
 
 /* Collect life time of page 
 */
@@ -1212,19 +1211,17 @@ ret_pgcache_stat:
 EXPORT_SYMBOL(update_hetero_pgcache);
 
 
-//TODO
-//This function adds pages to its owner's Private LRU 
-//(mm_struct->{in}active_page_rb)
+//
 //
 
 void pvt_active_lru_insert(struct page *page)
 {
 	if(current->enable_pvt_lru == true)
 	{
-		printk("%s pid=%d pvt_active_lru_insert addr=%s\n", 
-				current->comm, current->pid, page_to_phys(page));
-		//pvt_lru_rb_insert(current->mm->active_rbroot, page);
-		//current->mm->nr_active_lru += 1;
+		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
+				current->comm, current->pid, page_to_virt(page));
+		pvt_lru_rb_insert(&current->mm->active_rbroot, page);
+		current->mm->nr_active_lru += 1;
 	}
 	/*
 	else
@@ -1238,10 +1235,10 @@ void pvt_inactive_lru_insert(struct page *page)
 {
 	if(current->enable_pvt_lru == true)
 	{
-		printk("%s pid=%d pvt_inactive_lru_insert addr=%x\n", 
+		printk("%s pid=%d pvt_inactive_lru_insert addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
-		//pvt_lru_rb_insert(current->mm->inactive_rbroot, page);
-		//current->mm->nr_inactive_lru += 1;
+		pvt_lru_rb_insert(&current->mm->inactive_rbroot, page);
+		current->mm->nr_inactive_lru += 1;
 	}
 	/*
 	else
@@ -1255,10 +1252,10 @@ void pvt_active_lru_remove(struct page *page)
 {
 	if(current->enable_pvt_lru == true)
 	{
-		printk("%s pid=%d pvt_active_lru_remove addr=%s\n", 
-				current->comm, current->pid, page_to_phys(page));
-		//pvt_lru_rb_remove(current->mm->active_rbroot, page);
-		//current->mm->nr_active_lru -= 1;
+		printk("%s pid=%d pvt_active_lru_remove addr=%lu\n", 
+				current->comm, current->pid, page_to_virt(page));
+		pvt_lru_rb_remove(&current->mm->active_rbroot, page);
+		current->mm->nr_active_lru -= 1;
 	}
 	/*
 	else
@@ -1272,10 +1269,10 @@ void pvt_inactive_lru_remove(struct page *page)
 {
 	if(current->enable_pvt_lru == true)
 	{
-		printk("%s pid=%d pvt_inactive_lru_remove addr=%s\n", 
-				current->comm, current->pid, page_to_phys(page));
-		//pvt_lru_rb_remove(current->mm->inactive_rbroot, page);
-		//current->mm->nr_inactive_lru -= 1;
+		printk("%s pid=%d pvt_inactive_lru_remove addr=%lu\n", 
+				current->comm, current->pid, page_to_virt(page));
+		pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
+		current->mm->nr_inactive_lru -= 1;
 	}
 	/*
 	else
@@ -1285,41 +1282,73 @@ void pvt_inactive_lru_remove(struct page *page)
 }
 EXPORT_SYMBOL(pvt_inactive_lru_remove);
 
-/*
 void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 {
-	struct rb_node **link = &root->rb_node, *parent;
+	struct pvt_lru_rbnode *data = kmalloc(sizeof(struct pvt_lru_rbnode), GFP_KERNEL);
+
+	data->page = page;
+	
+	struct rb_node **link = &(root->rb_node), *parent=NULL;
 
 	while(*link)
 	{
 		parent = *link;
-		struct page *this_page = rb_entry(parent, struct page, parent);
+		struct pvt_lru_rbnode *this_node = rb_entry(parent, struct pvt_lru_rbnode, lru_node);
 
-		if() //Add some condition
+		if(page_to_virt(this_node->page) > page_to_virt(page))
 		{
 			link = &(*link)->rb_left;
 		}
-		else if () // ==
+		else if (page_to_virt(this_node->page) == page_to_virt(page)) 
 		{
-			printk(KERN_ALERT "!!Duplicate Page in pvt LRU PID:%d"
-					, current->pid);
+			printk(KERN_ALERT "!!Duplicate Page in pvt LRU PID:%d at add:%lu\n"
+					, current->pid, page_to_virt(page));
+			return;
 		}
 		else
 			link = &(*link)->rb_right;
 	}
-	rb_link_node(page, parent, link);
-	rb_insert_color(page, root);
+	rb_link_node(&data->lru_node, parent, link);
+	rb_insert_color(&data->lru_node, root);
 	return;
 }
 
-//TODO
-//This function removes pages from its owner's Private LRU 
-//(mm_struct->{in}active_page_rb)
+struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page)
+{
+	printk("Before root\n");
+	struct rb_node *node = root->rb_node;
+	printk("After root\n");
+	struct pvt_lru_rbnode *this_node = NULL;
+	while(node){
+		printk("Before rb_entry\n");
+		this_node = rb_entry(node, struct pvt_lru_rbnode, lru_node);
+		printk("after rb_entry\n");
+		if(page_to_virt(this_node->page) > page_to_virt(page))
+		{
+			node = node->rb_left;
+		}
+		else if(page_to_virt(this_node->page) < page_to_virt(page))
+		{
+			node = node->rb_right;
+		}
+		else /*==*/
+		{
+			return this_node;
+		}
+	}
+	return NULL;
+}
+
 void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
-	rb_erase(page, root);
+	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
+	printk("pvt_lru_rb_remove search after\n");
+	if(node == NULL)
+		printk("No page with add:%lu in pid: %d, %s\n",
+				page_to_virt(page), current->pid, current->comm);
+	rb_erase(&node->lru_node, root);
+	//did not free TODO
 }
-*/
 
 /* 
 * Update STAT 

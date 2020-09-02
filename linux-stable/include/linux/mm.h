@@ -467,6 +467,12 @@ static inline int pgd_devmap(pgd_t pgd)
 }
 #endif
 
+struct pvt_lru_rbnode{
+	struct page *page;
+	struct rb_node lru_node;
+};
+
+
 /*
  * FIXME: take this include out, include page-flags.h in
  * files which need it (119 of them)
