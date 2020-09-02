@@ -1219,11 +1219,12 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 
 void pvt_active_lru_insert(struct page *page)
 {
+	/*
 	if(activePvtOnce == 0)
 		activePvtOnce += 1;
 	else
 		return;
-	
+*/	
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
@@ -1241,10 +1242,13 @@ EXPORT_SYMBOL(pvt_active_lru_insert);
 
 void pvt_inactive_lru_insert(struct page *page)
 {
-	if(inactivePvtOnce == 0)
+	if(current->mm == NULL)
+		return;
+	/*if(inactivePvtOnce == 0)
 		inactivePvtOnce += 1;
 	else
 		return;
+		*/
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_inactive_lru_insert addr=%lu\n", 
@@ -1262,6 +1266,8 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
+	if(current->mm == NULL)
+		return;
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_active_lru_remove addr=%lu\n", 
@@ -1279,6 +1285,8 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
 
 void pvt_inactive_lru_remove(struct page *page)
 {
+	if(current->mm == NULL)
+		return;
 	if(current->enable_pvt_lru == true)
 	{
 		printk("%s pid=%d pvt_inactive_lru_remove addr=%lu\n", 
