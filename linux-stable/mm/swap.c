@@ -284,6 +284,10 @@ static void __activate_page(struct page *page, struct lruvec *lruvec,
 		add_page_to_lru_list(page, lruvec, lru);
 		trace_mm_lru_activate(page);
 
+		/*Adding page to pvt LRU*/
+		pvt_inactive_lru_remove(page);
+		pvt_active_lru_insert(page);
+
 		__count_vm_event(PGACTIVATE);
 		update_page_reclaim_stat(lruvec, file, 1);
 	}
@@ -358,6 +362,9 @@ static void __lru_cache_activate_page(struct page *page)
 
 		if (pagevec_page == page) {
 			SetPageActive(page);
+			/*Adding page to pvt active lru*/
+			pvt_inactive_lru_remove(page);
+			pvt_active_lru_insert(page);
 			break;
 		}
 	}
@@ -400,13 +407,7 @@ void mark_page_accessed(struct page *page)
 		//Remove page from the inactive list and add it to active list
 		pvt_inactive_lru_remove(page);
 		pvt_active_lru_insert(page);
-		/*
-		if(current->enable_pvt_lru == true)
-		{
-			pvt_lru_rb_remove(current->mm->inactive_rbroot, page);
-			pvt_lru_rb_insert(current->mm->active_rbroot, page);
-		}
-		*/
+
 	} else if (!PageReferenced(page)) {
 		SetPageReferenced(page);
 	}
@@ -421,7 +422,10 @@ static void __lru_cache_add(struct page *page)
 
 	get_page(page);
 	if (!pagevec_add(pvec, page) || PageCompound(page))
+	{
 		__pagevec_lru_add(pvec);
+		pvt_inactive_lru_insert(page); //Add page to pvt inactive LRU
+	}
 	put_cpu_var(lru_add_pvec);
 }
 
@@ -459,7 +463,6 @@ void lru_cache_add(struct page *page)
 	VM_BUG_ON_PAGE(PageLRU(page), page);
 	__lru_cache_add(page);
 
-	pvt_active_lru_insert(page);
 	//Add page in private inactive list (A1 is global inactive list)
 	/*
 	if(current->enable_pvt_lru == true)
