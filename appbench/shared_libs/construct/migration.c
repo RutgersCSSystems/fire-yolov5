@@ -66,6 +66,7 @@ static void dest() __attribute__((destructor));
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
 #define ENABLE_PVT_LRU 24
+#define PRINT_PVT_LRU_STATS 25
 #define MIGRATE_LIST_CNT 1000
 
 
@@ -129,16 +130,19 @@ void dest() {
     
     //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
 
-    /*a = syscall(__NR_start_trace, CLEAR_COUNT);
+    /*
+    a = syscall(__NR_start_trace, CLEAR_COUNT);
     a = syscall(__NR_start_trace, PFN_STAT);
     a = syscall(__NR_start_trace, TIME_STATS);
     a = syscall(__NR_start_trace, TIME_RESET);
-    syscall(__NR_start_trace, CLEAR_COUNT, 0);*/
+    */
+    syscall(__NR_start_trace, CLEAR_COUNT, 0);
 
 
     /*
      * This code snippet prints the Rusage parameters
      * at destruction
+     */
     struct rusage Hello;
     if (getrusage(RUSAGE_SELF, &Hello) != 0)
     {
@@ -149,7 +153,8 @@ void dest() {
 		"SharedMem= %lu KB, "
 		"HardPageFault= %lu\n"
 		, Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
-    */
+
+    syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
 
 }
 
@@ -224,7 +229,7 @@ void con() {
     //fprintf(stderr, "initiating tracing...\n");
     fprintf(stderr, "Setting Pvt LRU\n");
 
-    //thread_fn();
+    thread_fn();
     set_pvt_lru();
 
     return 0;

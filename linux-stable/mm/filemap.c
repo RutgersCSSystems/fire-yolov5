@@ -1042,7 +1042,6 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
 		} else
 			ClearPageActive(page);
 		lru_cache_add(page);
-
 	}
 	return ret;
 }

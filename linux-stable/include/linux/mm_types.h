@@ -405,11 +405,13 @@ struct mm_struct {
 	unsigned long 			pgcachedel;
 	unsigned long			pages_migrated;
 	int 				thrd_idx;
+#endif
+#ifdef CONFIG_PVT_LRU
 	struct rb_root                  active_rbroot; //Pvt Proc Active List
 	struct rb_root                  inactive_rbroot; //Pvt Proc Inactive List
 	int 				nr_active_lru; //Pvt active list nr pages
 	int 				nr_inactive_lru; //Pvt inactive list nr pages
-#endif
+#endif 
 
 	unsigned long			migrate_attempt;
 #ifdef CONFIG_HETERO_STATS

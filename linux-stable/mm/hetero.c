@@ -98,6 +98,7 @@ Move this to header file later.
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
 #define ENABLE_PVT_LRU 24
+#define PRINT_PVT_LRU_STATS 25
 
 
 //#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
@@ -1758,6 +1759,17 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     current->mm->nr_inactive_lru = 0;
 	     if(current->enable_pvt_lru == true)
 		     printk("Pvt LRU initialized for %d\n", current->pid);
+	     break;
+	
+	case PRINT_PVT_LRU_STATS:
+	     if(current->enable_pvt_lru == true)
+	     {
+	     	printk("PVT_LRU: PID:%d; active:%d, inactive:%d pages\n",
+				current->pid, current->mm->nr_active_lru, 
+				current->mm->nr_inactive_lru);
+	     }
+	     else
+		     printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
 	     break;
 
 	default:
