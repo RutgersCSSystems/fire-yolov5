@@ -170,9 +170,11 @@ unsigned long g_tot_buff_pages=0;
 unsigned long g_tot_app_pages=0;
 #endif
 
-int activePvtOnce=0;
-int inactivePvtOnce=0;
-
+#ifdef CONFIG_PVT_LRU
+unsigned long nr_global_active_lru = 0;
+unsigned long nr_global_inactive_lru = 0;
+bool start_global_accounting = false;
+#endif
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -1222,6 +1224,8 @@ EXPORT_SYMBOL(update_hetero_pgcache);
  */
 void pvt_active_lru_insert(struct page *page)
 {
+	if(start_global_accounting == true)
+		nr_global_active_lru +=1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
@@ -1241,6 +1245,8 @@ EXPORT_SYMBOL(pvt_active_lru_insert);
 
 void pvt_inactive_lru_insert(struct page *page)
 {
+	if(start_global_accounting == true)
+		nr_global_inactive_lru +=1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
@@ -1764,6 +1770,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     current->mm->nr_inactive_lru = 0;
 	     current->mm->nr_max_active_lru = 0;
 	     current->mm->nr_max_inactive_lru = 0;
+	     start_global_accounting = true;
+	     nr_global_active_lru = 0;
+	     nr_global_inactive_lru = 0;
 	     if(current->enable_pvt_lru == true)
 		     printk("Pvt LRU initialized for %d\n", current->pid);
 	     break;
@@ -1774,9 +1783,14 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     	printk(KERN_ALERT "PVT_LRU: PID:%d; max_active:%d, max_inactive:%d pages\n",
 				current->pid, current->mm->nr_max_active_lru, 
 				current->mm->nr_max_inactive_lru);
+	     	printk(KERN_ALERT "GLOBAL_LRU: max_active:%lu, max_inactive:%lu pages\n",
+		      nr_global_active_lru, nr_global_inactive_lru);
 	     }
 	     else
 		     printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+	     start_global_accounting = false;
+	     nr_global_active_lru = 0;
+	     nr_global_inactive_lru = 0;
 	     break;
 #endif
 
