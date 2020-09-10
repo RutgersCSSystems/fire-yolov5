@@ -440,6 +440,7 @@ static void __lru_cache_add(struct page *page)
  */
 void lru_cache_add_anon(struct page *page)
 {
+//	printk("lru_cache_add_anon\n");
 	if (PageActive(page))
 		ClearPageActive(page);
 	__lru_cache_add(page);

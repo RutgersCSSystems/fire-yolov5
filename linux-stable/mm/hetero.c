@@ -1369,8 +1369,11 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
 	if(node == NULL)
+	{
 		printk("No page with add:%lu in pid: %d, %s\n",
 				page_to_virt(page), current->pid, current->comm);
+		return;
+	}
 	rb_erase(&node->lru_node, root);
 }
 
