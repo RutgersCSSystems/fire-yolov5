@@ -411,6 +411,8 @@ struct mm_struct {
 	struct rb_root                  inactive_rbroot; //Pvt Proc Inactive List
 	int 				nr_active_lru; //Pvt active list nr pages
 	int 				nr_inactive_lru; //Pvt inactive list nr pages
+	int 				nr_max_active_lru; //Max Pvt active list nr pages
+	int 				nr_max_inactive_lru; //Max Pvt inactive list nr pages
 #endif 
 
 	unsigned long			migrate_attempt;

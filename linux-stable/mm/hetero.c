@@ -1215,58 +1215,48 @@ ret_pgcache_stat:
 EXPORT_SYMBOL(update_hetero_pgcache);
 
 
-//
-//
-
+/*
+ *The next set of functions take care of a Pvt LRU per process.
+ * pvt_* is the function fingerprint
+ * the pages are stored in an RB tree
+ */
 void pvt_active_lru_insert(struct page *page)
 {
-	/*
-	if(activePvtOnce == 0)
-		activePvtOnce += 1;
-	else
-		return;
-*/	
-	//Why will this be needed ? 
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
 	{
+#ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
+#endif
 		pvt_lru_rb_insert(&current->mm->active_rbroot, page);
 		current->mm->nr_active_lru += 1;
+		if(current->mm->nr_max_active_lru < current->mm->nr_active_lru)
+			current->mm->nr_max_active_lru = current->mm->nr_active_lru;
 	}
-	/*
-	else
-		printk("%s pid=%d doesnt have pvt LRU \n", 
-				current->comm, current->pid);
-				*/
 }
 EXPORT_SYMBOL(pvt_active_lru_insert);
+
 
 void pvt_inactive_lru_insert(struct page *page)
 {
 	if(current->mm == NULL)
 		return;
-	/*if(inactivePvtOnce == 0)
-		inactivePvtOnce += 1;
-	else
-		return;
-		*/
 	if(current->enable_pvt_lru == true)
 	{
+#ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_inactive_lru_insert addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
+#endif
 		pvt_lru_rb_insert(&current->mm->inactive_rbroot, page);
 		current->mm->nr_inactive_lru += 1;
+		if(current->mm->nr_max_inactive_lru < current->mm->nr_inactive_lru)
+			current->mm->nr_max_inactive_lru = current->mm->nr_inactive_lru;
 	}
-	/*
-	else
-		printk("%s pid=%d doesnt have pvt LRU \n", 
-				current->comm, current->pid);
-				*/
 }
 EXPORT_SYMBOL(pvt_inactive_lru_insert);
+
 
 void pvt_active_lru_remove(struct page *page)
 {
@@ -1274,38 +1264,40 @@ void pvt_active_lru_remove(struct page *page)
 		return;
 	if(current->enable_pvt_lru == true)
 	{
+#ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_active_lru_remove addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
+#endif
 		pvt_lru_rb_remove(&current->mm->active_rbroot, page);
 		current->mm->nr_active_lru -= 1;
 	}
-	/*
-	else
-		printk("%s pid=%d doesnt have pvt LRU \n", 
-				current->comm, current->pid);
-				*/
 }
 EXPORT_SYMBOL(pvt_active_lru_remove);
 
+
+/*
+ * TODO: Not thread safe
+ */
 void pvt_inactive_lru_remove(struct page *page)
 {
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
 	{
+#ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_inactive_lru_remove addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
+#endif
 		pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
-		current->mm->nr_inactive_lru -= 1;
+		current->mm->nr_inactive_lru -= 1; //update number of inactive pages
 	}
-	/*
-	else
-		printk("%s pid=%d doesnt have pvt LRU \n", 
-				current->comm, current->pid);
-				*/
 }
 EXPORT_SYMBOL(pvt_inactive_lru_remove);
 
+
+/*
+ * TODO: Not thread safe
+ */
 void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *data = kmalloc(sizeof(struct pvt_lru_rbnode), GFP_KERNEL);
@@ -1336,6 +1328,11 @@ void pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 	return;
 }
 
+
+/*
+ * Searches and returns a page from pvt rb tree
+ *TODO: Not thread Safe
+ */
 struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page)
 {
 	if(root == NULL)
@@ -1364,6 +1361,10 @@ struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page
 	return NULL;
 }
 
+
+/*
+ * TODO: Not thread safe
+ */
 void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
@@ -1371,8 +1372,8 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 		printk("No page with add:%lu in pid: %d, %s\n",
 				page_to_virt(page), current->pid, current->comm);
 	rb_erase(&node->lru_node, root);
-	//did not free TODO
 }
+
 
 /* 
 * Update STAT 
@@ -1750,6 +1751,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     enbl_hetero_pgcache_readahead = 1;	
 	     break;	
 
+#ifdef CONFIG_PVT_LRU
 	case ENABLE_PVT_LRU:
 	     printk("flag to set enable_pvt_lru with\n");
 	     current->enable_pvt_lru = true;
@@ -1757,6 +1759,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	     current->mm->inactive_rbroot = RB_ROOT;
 	     current->mm->nr_active_lru = 0;
 	     current->mm->nr_inactive_lru = 0;
+	     current->mm->nr_max_active_lru = 0;
+	     current->mm->nr_max_inactive_lru = 0;
 	     if(current->enable_pvt_lru == true)
 		     printk("Pvt LRU initialized for %d\n", current->pid);
 	     break;
@@ -1764,13 +1768,14 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 	case PRINT_PVT_LRU_STATS:
 	     if(current->enable_pvt_lru == true)
 	     {
-	     	printk("PVT_LRU: PID:%d; active:%d, inactive:%d pages\n",
-				current->pid, current->mm->nr_active_lru, 
-				current->mm->nr_inactive_lru);
+	     	printk(KERN_ALERT "PVT_LRU: PID:%d; max_active:%d, max_inactive:%d pages\n",
+				current->pid, current->mm->nr_max_active_lru, 
+				current->mm->nr_max_inactive_lru);
 	     }
 	     else
 		     printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
 	     break;
+#endif
 
 	default:
 #ifdef CONFIG_HETERO_DEBUG
