@@ -422,14 +422,13 @@ EXPORT_SYMBOL(mark_page_accessed);
 static void __lru_cache_add(struct page *page)
 {
 	struct pagevec *pvec = &get_cpu_var(lru_add_pvec);
-
+#ifdef CONFIG_PVT_LRU	
+		pvt_inactive_lru_insert(page); //Add page to pvt inactive LRU
+#endif
 	get_page(page);
 	if (!pagevec_add(pvec, page) || PageCompound(page))
 	{
 		__pagevec_lru_add(pvec);
-#ifdef CONFIG_PVT_LRU	
-		pvt_inactive_lru_insert(page); //Add page to pvt inactive LRU
-#endif
 	}
 	put_cpu_var(lru_add_pvec);
 }
@@ -484,6 +483,15 @@ void lru_cache_add_active_or_unevictable(struct page *page,
 					 struct vm_area_struct *vma)
 {
 	VM_BUG_ON_PAGE(PageLRU(page), page);
+
+#ifdef CONFIG_PVT_LRU
+	if(current->enable_pvt_lru)
+	{
+		/*102 is the function identifier
+		 * 1 is the number of pages added*/
+		pvt_lru_accnt_nr(102,1);
+	}
+#endif
 
 	if (likely((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
 		SetPageActive(page);

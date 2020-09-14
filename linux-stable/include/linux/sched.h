@@ -693,6 +693,9 @@ struct task_struct {
 
 #ifdef CONFIG_HETERO_ENABLE
 	void *hetero_obj;
+#endif
+
+#ifdef CONFIG_PVT_LRU
 	bool enable_pvt_lru;
 #endif
 

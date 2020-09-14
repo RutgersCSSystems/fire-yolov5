@@ -69,6 +69,7 @@
 #include <linux/userfaultfd_k.h>
 #include <linux/dax.h>
 #include <linux/oom.h>
+#include <linux/hetero.h>
 
 #include <asm/io.h>
 #include <asm/mmu_context.h>
@@ -3107,6 +3108,16 @@ static int do_anonymous_page(struct vm_fault *vmf)
 	struct page *page;
 	int ret = 0;
 	pte_t entry;
+
+
+#ifdef CONFIG_PVT_LRU
+	if(current->enable_pvt_lru)
+	{
+		/*101 is the Accounting identifier for this function in hetero.c*/
+		/*1 is the number of pages added here*/
+		pvt_lru_accnt_nr(101, 1); 
+	}
+#endif
 
 	/* File mapping without ->vm_ops ? */
 	if (vma->vm_flags & VM_SHARED)
