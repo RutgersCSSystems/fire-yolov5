@@ -100,8 +100,10 @@
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
 
+//PVT lru accounting for function calls
 #define ACC_DOANON 101
 #define ACC_LRUCACHEADD 102
+#define ACC_ACTIVATEPAGE 103
 
 //#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
 
@@ -179,6 +181,7 @@ bool start_global_accounting = false;
 
 int accnt_lru_cache_add_active_or_unevictable = 0;
 int accnt_do_anonymous_page = 0;
+int accnt_activate_page = 0;
 #endif
 
 DEFINE_SPINLOCK(stats_lock);
@@ -1325,6 +1328,8 @@ void pvt_lru_accnt_nr(int flag, int nr)
 		case ACC_LRUCACHEADD:
 			accnt_lru_cache_add_active_or_unevictable += nr;
 			break;
+		case ACC_ACTIVATEPAGE:
+			accnt_activate_page += nr;
 		default:
 			return;
 	}
@@ -1808,6 +1813,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			nr_global_inactive_lru = 0;
 			accnt_lru_cache_add_active_or_unevictable = 0;
 			accnt_do_anonymous_page = 0;
+			accnt_activate_page = 0;
 			if(current->enable_pvt_lru == true)
 				printk("Pvt LRU initialized for %d\n", current->pid);
 			break;
@@ -1820,16 +1826,19 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 						current->mm->nr_max_inactive_lru);
 				printk(KERN_ALERT "GLOBAL_LRU: max_active:%lu, max_inactive:%lu pages\n",
 						nr_global_active_lru, nr_global_inactive_lru);
-				printk(KERN_ALERT "FunctionAcc: do_anon: %d, lru_add: %d\n",
-						accnt_do_anonymous_page, accnt_lru_cache_add_active_or_unevictable);
+				printk(KERN_ALERT "FunctionAcc: do_anon: %d, lru_add: %d, activate:%d\n",
+						accnt_do_anonymous_page, 
+						accnt_lru_cache_add_active_or_unevictable,
+						accnt_activate_page);
 			}
 			else
-				printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+			printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
 			start_global_accounting = false;
 			nr_global_active_lru = 0;
 			nr_global_inactive_lru = 0;
 			accnt_lru_cache_add_active_or_unevictable = 0;
 			accnt_do_anonymous_page = 0;
+			accnt_activate_page = 0;
 			break;
 #endif
 

@@ -309,6 +309,11 @@ static bool need_activate_page_drain(int cpu)
 
 void activate_page(struct page *page)
 {
+#ifdef CONFIG_PVT_LRU
+	//103 is the function identifier
+	//1 is the number of pages
+	pvt_lru_accnt_nr(103, 1);
+#endif
 	page = compound_head(page);
 	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
 		struct pagevec *pvec = &get_cpu_var(activate_page_pvecs);
