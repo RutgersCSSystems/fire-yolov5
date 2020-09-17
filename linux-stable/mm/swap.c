@@ -409,13 +409,13 @@ void mark_page_accessed(struct page *page)
 		if (page_is_file_cache(page))
 			workingset_activation(page);
 
-
+/*
 #ifdef CONFIG_PVT_LRU	
 		//Remove page from the inactive list and add it to active list
 		pvt_inactive_lru_remove(page);
 		pvt_active_lru_insert(page);
 #endif
-
+*/
 	} else if (!PageReferenced(page)) {
 		SetPageReferenced(page);
 	}
