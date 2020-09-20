@@ -184,6 +184,18 @@ int accnt_do_anonymous_page = 0;
 int accnt_activate_page = 0;
 #endif
 
+//PVT Overheads accounting
+//the below struct stores a unique pointer to current &
+// the number of active and inactive pages
+//
+struct overhead_owner{
+	struct task_struct *task;
+	int nr_active;
+	int nr_inactive;
+	struct overhead_owner *next;
+};
+
+
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -1233,8 +1245,14 @@ EXPORT_SYMBOL(update_hetero_pgcache);
  */
 void pvt_active_lru_insert(struct page *page)
 {
-	if(start_global_accounting == true)
+	if(start_global_accounting)
+	{
 		nr_global_active_lru +=1;
+		/*printk("pvt_active_lru_insert: pid=%d, comm=%s\n",
+				current->pid, current->comm);
+				*/
+	}
+
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
@@ -1255,11 +1273,18 @@ EXPORT_SYMBOL(pvt_active_lru_insert);
 
 void pvt_inactive_lru_insert(struct page *page)
 {
-	if(current->mm == NULL) //Dont do it for kernel procs
-		return;
 
 	if(start_global_accounting)
+	{
 		nr_global_inactive_lru +=1;
+		/*
+		printk("pvt_inactive_lru_insert: pid=%d, comm=%s\n",
+				current->pid, current->comm);
+				*/
+	}
+
+	if(current->mm == NULL) //Dont do it for kernel procs
+		return;
 
 	if(current->enable_pvt_lru)
 	{
@@ -1283,7 +1308,7 @@ void pvt_active_lru_remove(struct page *page)
 {
 	if(current->mm == NULL)
 		return;
-	if(current->enable_pvt_lru == true)
+	if(current->enable_pvt_lru)
 	{
 #ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_active_lru_remove addr=%lu\n", 
@@ -1415,8 +1440,8 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
 	if(node == NULL)
 	{
-		printk("No page with add:%lu in pid: %d, %s\n",
-				page_to_virt(page), current->pid, current->comm);
+		//printk("No page with add:%lu in pid: %d, %s\n",
+		//		page_to_virt(page), current->pid, current->comm);
 		return;
 	}
 	rb_erase(&node->lru_node, root);
@@ -1833,7 +1858,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 						accnt_activate_page);
 			}
 			else
-			printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+				printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+
 			start_global_accounting = false;
 			nr_global_active_lru = 0;
 			nr_global_inactive_lru = 0;
