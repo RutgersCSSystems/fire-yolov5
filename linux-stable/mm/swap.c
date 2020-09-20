@@ -420,7 +420,6 @@ void mark_page_accessed(struct page *page)
 		pvt_active_lru_insert(page);
 #endif
 */
-
 	} else if (!PageReferenced(page)) {
 		SetPageReferenced(page);
 	}
