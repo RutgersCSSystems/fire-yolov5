@@ -49,6 +49,26 @@ static __always_inline void add_page_to_lru_list(struct page *page,
 {
 	update_lru_size(lruvec, lru, page_zonenum(page), hpage_nr_pages(page));
 	list_add(&page->lru, &lruvec->lists[lru]);
+#ifdef CONFIG_PVT_LRU
+	switch(lru){ //This info is from the lru_list definition
+		case 0: /*Inactive Anon*/
+			pvt_inactive_lru_insert(page);
+			break;
+		case 1: /*Active Anon*/
+			pvt_inactive_lru_remove(page);
+			pvt_active_lru_insert(page);
+			break;
+		case 2: /*Inactive File*/
+			pvt_inactive_lru_insert(page);
+			break;
+		case 3: /*Active File*/
+			pvt_inactive_lru_remove(page);
+			pvt_active_lru_insert(page);
+			break;
+		default:
+			break;
+	}
+#endif
 }
 
 static __always_inline void add_page_to_lru_list_tail(struct page *page,

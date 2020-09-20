@@ -1243,6 +1243,7 @@ void pvt_active_lru_insert(struct page *page)
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
 #endif
+		//pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
 		pvt_lru_rb_insert(&current->mm->active_rbroot, page);
 		current->mm->nr_active_lru += 1;
 		if(current->mm->nr_max_active_lru < current->mm->nr_active_lru)
