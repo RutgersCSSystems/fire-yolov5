@@ -629,6 +629,7 @@ print_hetero_stats(struct task_struct *task)
 		return;
 
 	check_node_memsize(mm);
+	print_ownership_stats();
 	return;
 
 #ifdef CONFIG_HETERO_STATS
@@ -1247,10 +1248,11 @@ void pvt_active_lru_insert(struct page *page)
 {
 	if(start_global_accounting)
 	{
+		current->nr_owned_pages[1] += 1;
 		nr_global_active_lru +=1;
-		/*printk("pvt_active_lru_insert: pid=%d, comm=%s\n",
-				current->pid, current->comm);
-				*/
+		//printk(KERN_ALERT "pvt_active_lru_insert: pid=%d, comm=%s\n",
+		//		current->pid, current->comm);
+		//overheads_active_rb_insert(current);
 	}
 
 	if(current->mm == NULL)
@@ -1276,11 +1278,11 @@ void pvt_inactive_lru_insert(struct page *page)
 
 	if(start_global_accounting)
 	{
+		current->nr_owned_pages[0] += 1;
 		nr_global_inactive_lru +=1;
-		/*
-		printk("pvt_inactive_lru_insert: pid=%d, comm=%s\n",
-				current->pid, current->comm);
-				*/
+		//printk(KERN_ALERT "pvt_inactive_lru_insert: pid=%d, comm=%s\n",
+		//		current->pid, current->comm);
+		//overheads_inactive_rb_insert(current);
 	}
 
 	if(current->mm == NULL) //Dont do it for kernel procs
@@ -1306,6 +1308,7 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
+	current->nr_owned_pages[1] -= 1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru)
@@ -1326,6 +1329,7 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
  */
 void pvt_inactive_lru_remove(struct page *page)
 {
+	current->nr_owned_pages[0] -= 1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
@@ -1363,9 +1367,6 @@ void pvt_lru_accnt_nr(int flag, int nr)
 EXPORT_SYMBOL(pvt_lru_accnt_nr);
 
 
-	/*
-	 * TODO: Not thread safe
-	 */
 bool pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *data = kmalloc(sizeof(struct pvt_lru_rbnode), GFP_KERNEL);
@@ -1401,7 +1402,6 @@ bool pvt_lru_rb_insert(struct rb_root *root, struct page *page)
 
 /*
  * Searches and returns a page from pvt rb tree
- *TODO: Not thread Safe
  */
 struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page)
 {
@@ -1432,19 +1432,50 @@ struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page
 }
 
 
-/*
- * TODO: Not thread safe
- */
 void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 {
 	struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
 	if(node == NULL)
 	{
-		//printk("No page with add:%lu in pid: %d, %s\n",
-		//		page_to_virt(page), current->pid, current->comm);
 		return;
 	}
 	rb_erase(&node->lru_node, root);
+}
+
+
+/*This function prints all the task > 0 pages
+*/
+void print_ownership_stats(void)
+{
+	struct task_struct *proc;
+
+	if(start_global_accounting)
+	{
+		for_each_process(proc)
+		{
+			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0)	
+			{
+				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE: %d, ACTIVE: %d\n",
+						proc->pid,
+						proc->comm,
+						proc->nr_owned_pages[0],
+						proc->nr_owned_pages[1]);
+			}
+		}
+	}
+	return;
+}
+EXPORT_SYMBOL(print_ownership_stats);
+
+void reset_ownership_stats(void)
+{
+	struct task_struct *proc;
+
+	for_each_process(proc)
+	{
+		proc->nr_owned_pages[0] = 0;
+		proc->nr_owned_pages[1] = 0;
+	}
 }
 
 
@@ -1840,6 +1871,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			accnt_lru_cache_add_active_or_unevictable = 0;
 			accnt_do_anonymous_page = 0;
 			accnt_activate_page = 0;
+			reset_ownership_stats();
 			if(current->enable_pvt_lru == true)
 				printk("Pvt LRU initialized for %d\n", current->pid);
 			break;
@@ -1866,6 +1898,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			accnt_lru_cache_add_active_or_unevictable = 0;
 			accnt_do_anonymous_page = 0;
 			accnt_activate_page = 0;
+			reset_ownership_stats();
 			break;
 #endif
 

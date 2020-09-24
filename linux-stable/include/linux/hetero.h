@@ -125,6 +125,7 @@ void pvt_inactive_lru_insert(struct page *page);
 void pvt_active_lru_remove(struct page *page);
 void pvt_inactive_lru_remove(struct page *page);
 void pvt_lru_accnt_nr(int flag, int nr);
+void print_ownership_stats(void);
 
 
 #ifdef CONFIG_HETERO_STATS
