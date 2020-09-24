@@ -1447,11 +1447,11 @@ void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
 */
 void print_ownership_stats(void)
 {
-	struct task_struct *proc;
+	struct task_struct *p, *proc;
 
 	if(start_global_accounting)
 	{
-		for_each_process(proc)
+		for_each_process_thread(p, proc)
 		{
 			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0)	
 			{
@@ -1469,9 +1469,9 @@ EXPORT_SYMBOL(print_ownership_stats);
 
 void reset_ownership_stats(void)
 {
-	struct task_struct *proc;
+	struct task_struct *p, *proc;
 
-	for_each_process(proc)
+	for_each_process_thread(p, proc)
 	{
 		proc->nr_owned_pages[0] = 0;
 		proc->nr_owned_pages[1] = 0;
