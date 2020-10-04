@@ -698,7 +698,7 @@ struct task_struct {
 #ifdef CONFIG_PVT_LRU
 	bool enable_pvt_lru;
 	//TODO: 4 elements inactiveAnon, activeAnon, inactiveFile, activeFile
-	int nr_owned_pages[2]; //0->inactive pages, 1->active pages
+	int nr_owned_pages[3]; //0->inactive pages, 1->active pages, 2->any pages
 #endif
 
 #ifdef SPLIT_RSS_COUNTING

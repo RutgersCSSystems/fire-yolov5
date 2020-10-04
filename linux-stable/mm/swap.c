@@ -311,11 +311,6 @@ static bool need_activate_page_drain(int cpu)
 
 void activate_page(struct page *page)
 {
-#ifdef CONFIG_PVT_LRU
-	//103 is the function identifier
-	//1 is the number of pages
-	pvt_lru_accnt_nr(103, 1);
-#endif
 	page = compound_head(page);
 	if (PageLRU(page) && !PageActive(page) && !PageUnevictable(page)) {
 		struct pagevec *pvec = &get_cpu_var(activate_page_pvecs);
@@ -494,15 +489,6 @@ void lru_cache_add_active_or_unevictable(struct page *page,
 					 struct vm_area_struct *vma)
 {
 	VM_BUG_ON_PAGE(PageLRU(page), page);
-
-#ifdef CONFIG_PVT_LRU
-	if(current->enable_pvt_lru)
-	{
-		/*102 is the function identifier
-		 * 1 is the number of pages added*/
-		pvt_lru_accnt_nr(102,1);
-	}
-#endif
 
 	if (likely((vma->vm_flags & (VM_LOCKED | VM_SPECIAL)) != VM_LOCKED))
 		SetPageActive(page);

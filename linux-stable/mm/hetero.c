@@ -104,6 +104,7 @@
 #define ACC_DOANON 101
 #define ACC_LRUCACHEADD 102
 #define ACC_ACTIVATEPAGE 103
+#define ACC_HANDLE_MM_FAULT 104
 
 //#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
 
@@ -179,9 +180,8 @@ unsigned long nr_global_active_lru = 0;
 unsigned long nr_global_inactive_lru = 0;
 bool start_global_accounting = false;
 
-int accnt_lru_cache_add_active_or_unevictable = 0;
 int accnt_do_anonymous_page = 0;
-int accnt_activate_page = 0;
+int accnt_handle_mm_fault = 0;
 #endif
 
 //PVT Overheads accounting
@@ -1308,7 +1308,7 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
-	current->nr_owned_pages[1] -= 1;
+	//current->nr_owned_pages[1] -= 1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru)
@@ -1329,7 +1329,7 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
  */
 void pvt_inactive_lru_remove(struct page *page)
 {
-	current->nr_owned_pages[0] -= 1;
+	//current->nr_owned_pages[0] -= 1;
 	if(current->mm == NULL)
 		return;
 	if(current->enable_pvt_lru == true)
@@ -1355,11 +1355,9 @@ void pvt_lru_accnt_nr(int flag, int nr)
 		case ACC_DOANON:
 			accnt_do_anonymous_page += nr;
 			break;
-		case ACC_LRUCACHEADD:
-			accnt_lru_cache_add_active_or_unevictable += nr;
+		case ACC_HANDLE_MM_FAULT:
+			accnt_handle_mm_fault += nr;
 			break;
-		case ACC_ACTIVATEPAGE:
-			accnt_activate_page += nr;
 		default:
 			return;
 	}
@@ -1449,10 +1447,13 @@ void print_ownership_stats(void)
 {
 	struct task_struct *p, *proc;
 
+	int nr_procs_covered = 0;
+
 	if(start_global_accounting)
 	{
 		for_each_process_thread(p, proc)
 		{
+			nr_procs_covered += 1;
 			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0)	
 			{
 				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE: %d, ACTIVE: %d\n",
@@ -1461,8 +1462,17 @@ void print_ownership_stats(void)
 						proc->nr_owned_pages[0],
 						proc->nr_owned_pages[1]);
 			}
+			if(proc->nr_owned_pages[2] > 0)
+			{
+				printk(KERN_ALERT "PID: %d-%s OWNED_ALL: %d\n",
+						proc->pid,
+						proc->comm,
+						proc->nr_owned_pages[2]);
+			}
 		}
+		printk(KERN_ALERT "Number of Procs covered %d\n", nr_procs_covered);
 	}
+
 	return;
 }
 EXPORT_SYMBOL(print_ownership_stats);
@@ -1475,6 +1485,7 @@ void reset_ownership_stats(void)
 	{
 		proc->nr_owned_pages[0] = 0;
 		proc->nr_owned_pages[1] = 0;
+		proc->nr_owned_pages[2] = 0;
 	}
 }
 
@@ -1868,9 +1879,10 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			start_global_accounting = true;
 			nr_global_active_lru = 0;
 			nr_global_inactive_lru = 0;
-			accnt_lru_cache_add_active_or_unevictable = 0;
+
 			accnt_do_anonymous_page = 0;
-			accnt_activate_page = 0;
+			accnt_handle_mm_fault = 0;
+
 			reset_ownership_stats();
 			if(current->enable_pvt_lru == true)
 				printk("Pvt LRU initialized for %d\n", current->pid);
@@ -1884,10 +1896,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 						current->mm->nr_max_inactive_lru);
 				printk(KERN_ALERT "GLOBAL_LRU: max_active:%lu, max_inactive:%lu pages\n",
 						nr_global_active_lru, nr_global_inactive_lru);
-				printk(KERN_ALERT "FunctionAcc: do_anon: %d, lru_add: %d, activate:%d\n",
+				printk(KERN_ALERT "FunctionAcc: do_anon: %d, handle_mm: %d\n",
 						accnt_do_anonymous_page, 
-						accnt_lru_cache_add_active_or_unevictable,
-						accnt_activate_page);
+						accnt_handle_mm_fault);
 			}
 			else
 				printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
@@ -1895,9 +1906,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			start_global_accounting = false;
 			nr_global_active_lru = 0;
 			nr_global_inactive_lru = 0;
-			accnt_lru_cache_add_active_or_unevictable = 0;
 			accnt_do_anonymous_page = 0;
-			accnt_activate_page = 0;
+			accnt_handle_mm_fault = 0;
 			reset_ownership_stats();
 			break;
 #endif
