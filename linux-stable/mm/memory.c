@@ -3964,11 +3964,11 @@ static int handle_pte_fault(struct vm_fault *vmf)
 		}
 	}
 
-	/*
 #ifdef CONFIG_PVT_LRU
-	current->nr_owned_pages[2] += 1;
+	//current->nr_owned_pages[2] += 1;
+	pvt_lru_accnt_nr(105, 1);
 #endif
-*/
+
 	if (!vmf->pte) {
 		if (vma_is_anonymous(vmf->vma))
 			return do_anonymous_page(vmf);

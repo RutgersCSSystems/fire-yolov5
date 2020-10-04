@@ -105,6 +105,7 @@
 #define ACC_LRUCACHEADD 102
 #define ACC_ACTIVATEPAGE 103
 #define ACC_HANDLE_MM_FAULT 104
+#define ACC_HANDLE_PTE_FAULT 105
 
 //#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
 
@@ -182,6 +183,7 @@ bool start_global_accounting = false;
 
 int accnt_do_anonymous_page = 0;
 int accnt_handle_mm_fault = 0;
+int accnt_handle_pte_fault = 0;
 #endif
 
 //PVT Overheads accounting
@@ -1358,6 +1360,9 @@ void pvt_lru_accnt_nr(int flag, int nr)
 		case ACC_HANDLE_MM_FAULT:
 			accnt_handle_mm_fault += nr;
 			break;
+		case ACC_HANDLE_PTE_FAULT:
+			accnt_handle_pte_fault += nr;
+			break;
 		default:
 			return;
 	}
@@ -1882,6 +1887,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 
 			accnt_do_anonymous_page = 0;
 			accnt_handle_mm_fault = 0;
+			accnt_handle_pte_fault = 0;
 
 			reset_ownership_stats();
 			if(current->enable_pvt_lru == true)
@@ -1896,8 +1902,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 						current->mm->nr_max_inactive_lru);
 				printk(KERN_ALERT "GLOBAL_LRU: max_active:%lu, max_inactive:%lu pages\n",
 						nr_global_active_lru, nr_global_inactive_lru);
-				printk(KERN_ALERT "FunctionAcc: do_anon: %d, handle_mm: %d\n",
+				printk(KERN_ALERT "FunctionAcc: do_anon: %d, handle_pte: %d, handle_mm: %d\n",
 						accnt_do_anonymous_page, 
+						accnt_handle_pte_fault,
 						accnt_handle_mm_fault);
 			}
 			else
@@ -1908,6 +1915,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			nr_global_inactive_lru = 0;
 			accnt_do_anonymous_page = 0;
 			accnt_handle_mm_fault = 0;
+			accnt_handle_pte_fault = 0;
 			reset_ownership_stats();
 			break;
 #endif
