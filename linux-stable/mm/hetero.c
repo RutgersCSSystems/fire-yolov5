@@ -11,6 +11,7 @@
 #include <linux/slab.h>
 #include <linux/backing-dev.h>
 #include <linux/mm.h>
+#include <linux/mm_inline.h>
 #include <linux/mmzone.h>
 #include <linux/vmacache.h>
 #include <linux/shm.h>
@@ -177,8 +178,10 @@ unsigned long g_tot_app_pages=0;
 #endif
 
 #ifdef CONFIG_PVT_LRU
-unsigned long nr_global_active_lru = 0;
-unsigned long nr_global_inactive_lru = 0;
+unsigned long nr_global_active_anon_lru = 0;
+unsigned long nr_global_active_cache_lru = 0;
+unsigned long nr_global_inactive_anon_lru = 0;
+unsigned long nr_global_inactive_cache_lru = 0;
 bool start_global_accounting = false;
 
 int accnt_do_anonymous_page = 0;
@@ -1250,16 +1253,23 @@ void pvt_active_lru_insert(struct page *page)
 {
 	if(start_global_accounting)
 	{
-		current->nr_owned_pages[1] += 1;
-		nr_global_active_lru +=1;
-		//printk(KERN_ALERT "pvt_active_lru_insert: pid=%d, comm=%s\n",
-		//		current->pid, current->comm);
-		//overheads_active_rb_insert(current);
+		if(page_is_file_cache(page))
+		{
+			current->nr_owned_pages[3] += 1;
+			nr_global_active_cache_lru += 1;
+		}
+		else
+		{
+			current->nr_owned_pages[1] += 1;
+			nr_global_active_anon_lru +=1;
+		}
+
 	}
 
-	if(current->mm == NULL)
+	if(!current->mm)
 		return;
-	if(current->enable_pvt_lru == true)
+
+	if(current->enable_pvt_lru)
 	{
 #ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
@@ -1267,9 +1277,19 @@ void pvt_active_lru_insert(struct page *page)
 #endif
 		//pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
 		pvt_lru_rb_insert(&current->mm->active_rbroot, page);
-		current->mm->nr_active_lru += 1;
-		if(current->mm->nr_max_active_lru < current->mm->nr_active_lru)
-			current->mm->nr_max_active_lru = current->mm->nr_active_lru;
+
+		if(page_is_file_cache(page))
+		{
+			current->mm->nr_lru[3] += 1;
+			if(current->mm->nr_max_lru[3] < current->mm->nr_lru[3])
+				current->mm->nr_max_lru[3] = current->mm->nr_lru[3];
+		}
+		else
+		{
+			current->mm->nr_lru[1] += 1;
+			if(current->mm->nr_max_lru[1] < current->mm->nr_lru[1])
+				current->mm->nr_max_lru[1] = current->mm->nr_lru[1];
+		}
 	}
 }
 EXPORT_SYMBOL(pvt_active_lru_insert);
@@ -1280,14 +1300,19 @@ void pvt_inactive_lru_insert(struct page *page)
 
 	if(start_global_accounting)
 	{
-		current->nr_owned_pages[0] += 1;
-		nr_global_inactive_lru +=1;
-		//printk(KERN_ALERT "pvt_inactive_lru_insert: pid=%d, comm=%s\n",
-		//		current->pid, current->comm);
-		//overheads_inactive_rb_insert(current);
+		if(page_is_file_cache(page))
+		{
+			current->nr_owned_pages[2] += 1;
+			nr_global_inactive_cache_lru +=1;
+		}
+		else
+		{
+			current->nr_owned_pages[0] += 1;
+			nr_global_inactive_anon_lru +=1;
+		}
 	}
 
-	if(current->mm == NULL) //Dont do it for kernel procs
+	if(!current->mm) //Dont do it for kernel procs
 		return;
 
 	if(current->enable_pvt_lru)
@@ -1299,9 +1324,18 @@ void pvt_inactive_lru_insert(struct page *page)
 		pvt_lru_rb_remove(&current->mm->active_rbroot, page);
 		if(pvt_lru_rb_insert(&current->mm->inactive_rbroot, page))
 		{
-			current->mm->nr_inactive_lru += 1;
-			if(current->mm->nr_max_inactive_lru < current->mm->nr_inactive_lru)
-				current->mm->nr_max_inactive_lru = current->mm->nr_inactive_lru;
+			if(page_is_file_cache(page))
+			{
+				current->mm->nr_lru[2] += 1;
+				if(current->mm->nr_max_lru[2] < current->mm->nr_lru[2])
+					current->mm->nr_max_lru[2] = current->mm->nr_lru[2];
+			}
+			else
+			{
+				current->mm->nr_lru[0] += 1;
+				if(current->mm->nr_max_lru[0] < current->mm->nr_lru[0])
+					current->mm->nr_max_lru[0] = current->mm->nr_lru[0];
+			}
 		}
 	}
 }
@@ -1310,9 +1344,9 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
-	//current->nr_owned_pages[1] -= 1;
-	if(current->mm == NULL)
+	if(!current->mm)
 		return;
+
 	if(current->enable_pvt_lru)
 	{
 #ifdef CONFIG_PVT_LRU_DEBUG
@@ -1320,7 +1354,11 @@ void pvt_active_lru_remove(struct page *page)
 				current->comm, current->pid, page_to_virt(page));
 #endif
 		pvt_lru_rb_remove(&current->mm->active_rbroot, page);
-		current->mm->nr_active_lru -= 1;
+		if(page_is_file_cache(page))
+			current->mm->nr_lru[3] -= 1;
+		else
+			current->mm->nr_lru[1] -= 1;
+
 	}
 }
 EXPORT_SYMBOL(pvt_active_lru_remove);
@@ -1331,17 +1369,20 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
  */
 void pvt_inactive_lru_remove(struct page *page)
 {
-	//current->nr_owned_pages[0] -= 1;
-	if(current->mm == NULL)
+	if(!current->mm)
 		return;
-	if(current->enable_pvt_lru == true)
+
+	if(current->enable_pvt_lru)
 	{
 #ifdef CONFIG_PVT_LRU_DEBUG
 		printk("%s pid=%d pvt_inactive_lru_remove addr=%lu\n", 
 				current->comm, current->pid, page_to_virt(page));
 #endif
 		pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
-		current->mm->nr_inactive_lru -= 1; //update number of inactive pages
+		if(page_is_file_cache(page))
+			current->mm->nr_lru[2] -= 1;
+		else
+			current->mm->nr_lru[0] -= 1;
 	}
 }
 EXPORT_SYMBOL(pvt_inactive_lru_remove);
@@ -1459,23 +1500,22 @@ void print_ownership_stats(void)
 		for_each_process_thread(p, proc)
 		{
 			nr_procs_covered += 1;
-			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0)	
+			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
+					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0)	
 			{
-				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE: %d, ACTIVE: %d\n",
+				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
+						"INACTIVE_Cache: %d, ACTIVE_Cache: %d\n",
 						proc->pid,
 						proc->comm,
 						proc->nr_owned_pages[0],
-						proc->nr_owned_pages[1]);
-			}
-			if(proc->nr_owned_pages[2] > 0)
-			{
-				printk(KERN_ALERT "PID: %d-%s OWNED_ALL: %d\n",
-						proc->pid,
-						proc->comm,
-						proc->nr_owned_pages[2]);
+						proc->nr_owned_pages[1],
+						proc->nr_owned_pages[2],
+						proc->nr_owned_pages[3]);
 			}
 		}
+#ifdef CONFIG_PVT_LRU_DEBUG
 		printk(KERN_ALERT "Number of Procs covered %d\n", nr_procs_covered);
+#endif
 	}
 
 	return;
@@ -1491,7 +1531,25 @@ void reset_ownership_stats(void)
 		proc->nr_owned_pages[0] = 0;
 		proc->nr_owned_pages[1] = 0;
 		proc->nr_owned_pages[2] = 0;
+		proc->nr_owned_pages[3] = 0;
 	}
+}
+
+
+void reset_pvt_lru_counters(void)
+{
+	current->mm->nr_lru[0] = 0;
+	current->mm->nr_lru[1] = 0;
+	current->mm->nr_lru[2] = 0;
+	current->mm->nr_lru[0] = 0;
+	current->mm->nr_max_lru[0] = 0;
+	current->mm->nr_max_lru[1] = 0;
+	current->mm->nr_max_lru[2] = 0;
+	current->mm->nr_max_lru[3] = 0;
+	nr_global_active_anon_lru = 0;
+	nr_global_active_cache_lru = 0;
+	nr_global_inactive_anon_lru = 0;
+	nr_global_inactive_cache_lru = 0;
 }
 
 
@@ -1877,31 +1935,32 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 			current->enable_pvt_lru = true;
 			current->mm->active_rbroot = RB_ROOT;
 			current->mm->inactive_rbroot = RB_ROOT;
-			current->mm->nr_active_lru = 0;
-			current->mm->nr_inactive_lru = 0;
-			current->mm->nr_max_active_lru = 0;
-			current->mm->nr_max_inactive_lru = 0;
-			start_global_accounting = true;
-			nr_global_active_lru = 0;
-			nr_global_inactive_lru = 0;
+
+			reset_pvt_lru_counters();
+			reset_ownership_stats();
 
 			accnt_do_anonymous_page = 0;
 			accnt_handle_mm_fault = 0;
 			accnt_handle_pte_fault = 0;
 
-			reset_ownership_stats();
-			if(current->enable_pvt_lru == true)
-				printk("Pvt LRU initialized for %d\n", current->pid);
+			start_global_accounting = true;
+			printk("Pvt LRU initialized for %d\n", current->pid);
 			break;
 
 		case PRINT_PVT_LRU_STATS:
 			if(current->enable_pvt_lru)
 			{
-				printk(KERN_ALERT "PVT_LRU: PID:%d; max_active:%d, max_inactive:%d pages\n",
-						current->pid, current->mm->nr_max_active_lru, 
-						current->mm->nr_max_inactive_lru);
-				printk(KERN_ALERT "GLOBAL_LRU: max_active:%lu, max_inactive:%lu pages\n",
-						nr_global_active_lru, nr_global_inactive_lru);
+				printk(KERN_ALERT "PVT_LRU: PID:%d; max_inactive_anon:%d, max_active_anon:%d "
+						"max_inactive_cache:%d, max_active_cache:%d pages\n",
+						current->pid, current->mm->nr_max_lru[0], 
+						current->mm->nr_max_lru[1], current->mm->nr_max_lru[2],
+						current->mm->nr_max_lru[3]);
+
+				printk(KERN_ALERT "GLOBAL_LRU: max_inactive_anon:%lu, max_active_anon:%lu "
+						"max_inactive_cache:%lu, max_active_cache:%lu pages\n",
+						nr_global_inactive_anon_lru, nr_global_active_anon_lru,
+						nr_global_inactive_cache_lru, nr_global_active_cache_lru);
+
 				printk(KERN_ALERT "FunctionAcc: do_anon: %d, handle_pte: %d, handle_mm: %d\n",
 						accnt_do_anonymous_page, 
 						accnt_handle_pte_fault,
@@ -1911,8 +1970,12 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 				printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
 
 			start_global_accounting = false;
-			nr_global_active_lru = 0;
-			nr_global_inactive_lru = 0;
+
+			nr_global_active_anon_lru = 0;
+			nr_global_inactive_anon_lru = 0;
+			nr_global_active_cache_lru = 0;
+			nr_global_inactive_cache_lru = 0;
+
 			accnt_do_anonymous_page = 0;
 			accnt_handle_mm_fault = 0;
 			accnt_handle_pte_fault = 0;

@@ -4125,7 +4125,7 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
 		return VM_FAULT_SIGSEGV;
 
 #ifdef CONFIG_PVT_LRU
-	current->nr_owned_pages[2] += 1;
+	//current->nr_owned_pages[2] += 1;
 
 	pvt_lru_accnt_nr(104, 1);
 #endif
