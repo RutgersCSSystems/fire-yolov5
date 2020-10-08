@@ -787,6 +787,10 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
 			freepage(page);
 	}
 
+#ifdef CONFIG_PVT_LRU
+	//printk("dropping cache\n");
+	pvt_unmapped_page_accnt(1, 1); //nr_pages, cache_page
+#endif
 	return 1;
 
 cannot_free:
