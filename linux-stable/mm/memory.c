@@ -1506,18 +1506,12 @@ void unmap_page_range(struct mmu_gather *tlb,
 	BUG_ON(addr >= end);
 	tlb_start_vma(tlb, vma);
 	pgd = pgd_offset(vma->vm_mm, addr);
-	int nr_released = 0;
 	do {
 		next = pgd_addr_end(addr, end);
 		if (pgd_none_or_clear_bad(pgd))
 			continue;
 		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
-		nr_released += 1;
 	} while (pgd++, addr = next, addr != end);
-
-#ifdef CONFIG_PVT_LRU
-	pvt_unmapped_page_accnt(nr_released, 0); //This releases anon pages
-#endif
 
 	tlb_end_vma(tlb, vma);
 }

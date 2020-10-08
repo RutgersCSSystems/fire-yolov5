@@ -2799,6 +2799,13 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
 		}
 	}
 
+
+#ifdef CONFIG_PVT_LRU
+	int nr_removed_pages = len/4096;
+	//printk("Nr Pages unmapped %d:%s, %d", current->pid, current->comm, nr_removed_pages);
+	pvt_unmapped_page_accnt(nr_removed_pages, 0); //This accounts for deleted anon pages
+#endif
+
 	/*
 	 * Remove the vma's, and unmap the actual pages
 	 */

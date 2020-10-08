@@ -1529,7 +1529,8 @@ void print_ownership_stats(void)
 		{
 			nr_procs_covered += 1;
 			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
-					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0)	
+					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
+					|| proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)	
 			{
 				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
 						"INACTIVE_Cache: %d, ACTIVE_Cache: %d "
