@@ -290,6 +290,7 @@ static void __activate_page(struct page *page, struct lruvec *lruvec,
 		pvt_active_lru_insert(page);
 #endif
 */
+
 		__count_vm_event(PGACTIVATE);
 		update_page_reclaim_stat(lruvec, file, 1);
 	}

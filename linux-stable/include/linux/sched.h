@@ -699,6 +699,7 @@ struct task_struct {
 	bool enable_pvt_lru;
 	//TODO: 4 elements inactiveAnon, activeAnon, inactiveFile, activeFile
 	int nr_owned_pages[4]; //0->inactive anon, 1->active anon, 2->inactive cache, 3-> active cache
+	int nr_unmapped_pages[2]; //0->anon pages, 1->cache pages
 	
 #endif
 

@@ -1303,7 +1303,7 @@ void pvt_inactive_lru_insert(struct page *page)
 		if(page_is_file_cache(page))
 		{
 			current->nr_owned_pages[2] += 1;
-			nr_global_inactive_cache_lru +=1;
+			nr_global_inactive_cache_lru += 1;
 		}
 		else
 		{
@@ -1344,6 +1344,18 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
+	if(start_global_accounting)
+	{
+		if(page_is_file_cache(page))
+		{
+			current->nr_owned_pages[3] -= 1;
+		}
+		else
+		{
+			current->nr_owned_pages[1] -= 1;
+		}
+	}
+
 	if(!current->mm)
 		return;
 
@@ -1369,6 +1381,18 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
  */
 void pvt_inactive_lru_remove(struct page *page)
 {
+	if(start_global_accounting)
+	{
+		if(page_is_file_cache(page))
+		{
+			current->nr_owned_pages[2] -= 1;
+		}
+		else
+		{
+			current->nr_owned_pages[0] -= 1;
+		}
+	}
+
 	if(!current->mm)
 		return;
 
@@ -1380,9 +1404,13 @@ void pvt_inactive_lru_remove(struct page *page)
 #endif
 		pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
 		if(page_is_file_cache(page))
+		{
 			current->mm->nr_lru[2] -= 1;
+		}
 		else
+		{
 			current->mm->nr_lru[0] -= 1;
+		}
 	}
 }
 EXPORT_SYMBOL(pvt_inactive_lru_remove);
@@ -1504,13 +1532,16 @@ void print_ownership_stats(void)
 					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0)	
 			{
 				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
-						"INACTIVE_Cache: %d, ACTIVE_Cache: %d\n",
+						"INACTIVE_Cache: %d, ACTIVE_Cache: %d "
+						"DEL_Anon: %d, DEL_Cache: %d\n",
 						proc->pid,
 						proc->comm,
 						proc->nr_owned_pages[0],
 						proc->nr_owned_pages[1],
 						proc->nr_owned_pages[2],
-						proc->nr_owned_pages[3]);
+						proc->nr_owned_pages[3],
+						proc->nr_unmapped_pages[0],
+						proc->nr_unmapped_pages[1]);
 			}
 		}
 #ifdef CONFIG_PVT_LRU_DEBUG
@@ -1532,6 +1563,8 @@ void reset_ownership_stats(void)
 		proc->nr_owned_pages[1] = 0;
 		proc->nr_owned_pages[2] = 0;
 		proc->nr_owned_pages[3] = 0;
+		proc->nr_unmapped_pages[0] = 0;
+		proc->nr_unmapped_pages[1] = 0;
 	}
 }
 
@@ -1552,6 +1585,18 @@ void reset_pvt_lru_counters(void)
 	nr_global_inactive_cache_lru = 0;
 }
 
+
+//Not all unmapped pages goto LRU immediately
+//so we need another probe to get this info
+//type = 0 -> anon, type = 1 -> cache
+void pvt_unmapped_page_accnt(int nr_pages, int type)
+{
+	if(start_global_accounting)
+	{
+		current->nr_unmapped_pages[type] += nr_pages;
+	}
+}
+EXPORT_SYMBOL(pvt_unmapped_page_accnt);
 
 /* 
  * Update STAT 

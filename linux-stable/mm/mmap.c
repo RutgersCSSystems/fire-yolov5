@@ -2591,6 +2591,7 @@ static void unmap_region(struct mm_struct *mm,
 	free_pgtables(&tlb, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
 				 next ? next->vm_start : USER_PGTABLES_CEILING);
 	tlb_finish_mmu(&tlb, start, end);
+
 }
 
 /*

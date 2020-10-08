@@ -55,14 +55,12 @@ static __always_inline void add_page_to_lru_list(struct page *page,
 			pvt_inactive_lru_insert(page);
 			break;
 		case 1: /*Active Anon*/
-			//pvt_inactive_lru_remove(page);
 			pvt_active_lru_insert(page);
 			break;
 		case 2: /*Inactive File*/
 			pvt_inactive_lru_insert(page);
 			break;
 		case 3: /*Active File*/
-			//pvt_inactive_lru_remove(page);
 			pvt_active_lru_insert(page);
 			break;
 		default:
