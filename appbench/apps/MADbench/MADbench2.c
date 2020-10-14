@@ -985,20 +985,30 @@ void finalize()
 
   if (strcmp(IOMODE, "NONE")!=0.0) {
 
-    if (strcmp(IOMETHOD, "POSIX")==0) error_check("fclose", filename, fclose(df)==0);
-    else if (strcmp(IOMETHOD, "MPI")==0) error_check("MPI_File_close", filename, MPI_File_close(&dfh)==0);
+    if (strcmp(IOMETHOD, "POSIX")==0) 
+    {
+	    error_check("fclose", filename, fclose(df)==0);
+    }
+    else if (strcmp(IOMETHOD, "MPI")==0) 
+    {
+	    error_check("MPI_File_close", filename, MPI_File_close(&dfh)==0);
+    }
 
+    /* FIXME: THIS IS TEMPORARY
     if (strcmp(FILETYPE, "SHARED")==0) {
       if (my_pe==0) error_check("unlink", filename, unlink(filename)==0);
     } else {
       error_check("unlink", filename, unlink(filename)==0);
     }
+    */
     PMPI_Barrier(MPI_COMM_WORLD);
 
+    /* FIXME: THIS IS TEMPORARY
     for (n=0; n<no_pe; n++) {
       if (my_pe==n && stat("files", &buf)==0) rmdir("files");
       PMPI_Barrier(MPI_COMM_WORLD);
     }
+    */
  
   }
 
@@ -1049,7 +1059,6 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
   /* POSIX IO */
 
   if (strcmp(IOMETHOD, "POSIX")==0) {
-	  printf("IO POSIX\n");
     error_check("fseek", filename, fseeko64(df, offset, SEEK_SET)==0); 
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) error_check("fread", filename, fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
@@ -1061,7 +1070,6 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
   /* MPI IO */
 
   else if (strcmp(IOMETHOD, "MPI")==0) {
-	  printf("IO MPI\n");
     error_check("MPI_File_seek", filename, MPI_File_seek(dfh, offset, MPI_SEEK_SET)==0); 
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) error_check("MPI_File_read", filename, MPI_File_read(dfh, data, matrix.my_no_elm, MPI_DOUBLE, &mpi_status)==0);
