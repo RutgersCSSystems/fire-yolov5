@@ -10,7 +10,6 @@ reclaimer: cfun.c pre.c
 	$(CC) $(FLAGS) -o libcfun.so cfun.c $(LIBS)
 	$(CC) $(FLAGS) -o pre.so pre.c $(LIBS)
 
-
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
