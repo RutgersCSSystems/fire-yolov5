@@ -158,10 +158,6 @@ void initialize(int argc, char** argv)
     for (p=0; p<PCOUNT; p++) parameter[p] = atoi(argv[p]);
   }
 
-  if (my_pe==0){
-	  reportrank_(&my_pe);
-  }
-
   MPI_Bcast(parameter, PCOUNT, MPI_INT, 0, MPI_COMM_WORLD);
 
   no_pix = parameter[1];
@@ -214,12 +210,14 @@ void initialize(int argc, char** argv)
     fprintf(stderr, " FILETYPE = UNIQUE\n");
   }
 
+  /*
   IOMETHOD = (char *)malloc(SLENGTH*sizeof(char));
   IOMETHOD = "POSIX";
   IOMODE = (char *)malloc(SLENGTH*sizeof(char));
   IOMODE = "SYNC";
   FILETYPE = (char *)malloc(SLENGTH*sizeof(char));
   FILETYPE = "UNIQUE";
+  */
 
   REMAP = getenv("REMAP");
   if (REMAP==NULL) {
@@ -1051,6 +1049,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
   /* POSIX IO */
 
   if (strcmp(IOMETHOD, "POSIX")==0) {
+	  printf("IO POSIX\n");
     error_check("fseek", filename, fseeko64(df, offset, SEEK_SET)==0); 
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) error_check("fread", filename, fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
@@ -1062,6 +1061,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
   /* MPI IO */
 
   else if (strcmp(IOMETHOD, "MPI")==0) {
+	  printf("IO MPI\n");
     error_check("MPI_File_seek", filename, MPI_File_seek(dfh, offset, MPI_SEEK_SET)==0); 
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) error_check("MPI_File_read", filename, MPI_File_read(dfh, data, matrix.my_no_elm, MPI_DOUBLE, &mpi_status)==0);
