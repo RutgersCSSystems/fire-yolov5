@@ -44,6 +44,8 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
   amount_written = real_fwrite(ptr, size, nmemb, stream);
 
   //printf("fwrite Detected\n");
+  int fd = fileno(stream);
+  //posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
   // Behave just like the regular syscall would
   return amount_written;
@@ -56,6 +58,7 @@ ssize_t write(int fd, const void *data, size_t size) {
   amount_written = real_write(fd, data, size);
 
   //printf("write Detected\n");
+  //posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
   // Behave just like the regular syscall would
   return amount_written;
@@ -68,6 +71,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
   amount_read = real_fread(ptr, size, nmemb, stream);
 
   //printf("fread Detected\n");
+  int fd = fileno(stream);
+  posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
   // Behave just like the regular syscall would
   return amount_read;
@@ -80,6 +85,7 @@ ssize_t read(int fd, void *data, size_t size) {
   amount_read = real_read(fd, data, size);
 
   //printf("read Detected\n");
+  posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
   // Behave just like the regular syscall would
   return amount_read;
