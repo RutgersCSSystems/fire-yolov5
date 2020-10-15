@@ -1523,16 +1523,42 @@ void print_ownership_stats(void)
 
 	int nr_procs_covered = 0;
 
+	int all_nr_owned_pages[4];
+	int all_nr_unmapped_pages[1];
+	all_nr_owned_pages[0] = 0;
+	all_nr_owned_pages[1] = 0;
+	all_nr_owned_pages[2] = 0;
+	all_nr_owned_pages[3] = 0;
+	all_nr_unmapped_pages[0] = 0;
+	all_nr_unmapped_pages[1] = 0;
+
 	if(start_global_accounting)
 	{
 		for_each_process_thread(p, proc)
 		{
 			nr_procs_covered += 1;
-			if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
-					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
-					|| proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)	
+			if(proc->enable_pvt_lru) //User program
 			{
-				printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
+				if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
+					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
+					|| proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)
+
+				{
+					all_nr_owned_pages[0] += proc->nr_owned_pages[0];
+					all_nr_owned_pages[1] += proc->nr_owned_pages[1];
+					all_nr_owned_pages[2] += proc->nr_owned_pages[2];
+					all_nr_owned_pages[3] += proc->nr_owned_pages[3];
+					all_nr_unmapped_pages[0] += proc->nr_unmapped_pages[0];
+					all_nr_unmapped_pages[1] += proc->nr_unmapped_pages[2];
+				}
+			}
+			else //Other kernel procs
+			{
+				if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
+					|| proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
+					|| proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)
+				{
+					printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
 						"INACTIVE_Cache: %d, ACTIVE_Cache: %d "
 						"DEL_Anon: %d, DEL_Cache: %d\n",
 						proc->pid,
@@ -1543,8 +1569,18 @@ void print_ownership_stats(void)
 						proc->nr_owned_pages[3],
 						proc->nr_unmapped_pages[0],
 						proc->nr_unmapped_pages[1]);
+				}
 			}
 		}
+		printk(KERN_ALERT "ALL_USER_OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
+				"INACTIVE_Cache: %d, ACTIVE_Cache: %d "
+				"DEL_Anon: %d, DEL_Cache: %d\n",
+				all_nr_owned_pages[0],
+				all_nr_owned_pages[1],
+				all_nr_owned_pages[2],
+				all_nr_owned_pages[3],
+				all_nr_unmapped_pages[0],
+				all_nr_unmapped_pages[1]);
 #ifdef CONFIG_PVT_LRU_DEBUG
 		printk(KERN_ALERT "Number of Procs covered %d\n", nr_procs_covered);
 #endif
