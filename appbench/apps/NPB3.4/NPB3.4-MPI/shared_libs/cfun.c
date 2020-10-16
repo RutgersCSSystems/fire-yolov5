@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <limits.h>
 
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
@@ -44,8 +45,14 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
   amount_written = real_fwrite(ptr, size, nmemb, stream);
 
   //printf("fwrite Detected\n");
+
   int fd = fileno(stream);
-  //posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+  off_t pos = lseek(fd, 0, SEEK_CUR);
+  if(pos != -1)
+  {
+  	//printf("fd: %d, pos: %ld\n", fd, pos);
+  	posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+  }
 
   // Behave just like the regular syscall would
   return amount_written;
@@ -57,7 +64,12 @@ ssize_t write(int fd, const void *data, size_t size) {
   // Perform the actual system call
   amount_written = real_write(fd, data, size);
 
-  //printf("write Detected\n");
+  off_t pos = lseek(fd, 0, SEEK_CUR);
+  if(pos != -1)
+  {
+  	//printf("fd: %d, pos: %ld\n", fd, pos);
+  	posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+  }
   //posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
   // Behave just like the regular syscall would
