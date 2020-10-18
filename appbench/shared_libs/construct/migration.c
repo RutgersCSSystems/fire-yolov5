@@ -229,8 +229,8 @@ void con() {
     //fprintf(stderr, "initiating tracing...\n");
     fprintf(stderr, "Setting Pvt LRU\n");
 
-    thread_fn();
     set_pvt_lru();
+    thread_fn();
 
     return 0;
 }
