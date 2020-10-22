@@ -6,8 +6,8 @@ FLAGS=-fPIC -shared
 
 all: reclaimer
 
-reclaimer: cfun.c pre.c
-	$(CC) $(FLAGS) -o libcfun.so cfun.c $(LIBS)
+reclaimer: cfun.cpp pre.c
+	$(CXX) $(FLAGS) -o libcfun.so cfun.cpp $(LIBS)
 	$(CC) $(FLAGS) -o pre.so pre.c $(LIBS)
 
 install:
