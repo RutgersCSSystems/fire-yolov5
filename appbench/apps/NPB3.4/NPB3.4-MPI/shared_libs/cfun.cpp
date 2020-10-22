@@ -11,18 +11,19 @@
 #include <iterator>
 #include <algorithm>
 #include <map>
+#include <deque>
 
-#define SPEED 2 //Number of fops to monitor before changing rand/seq probs
+#define SPEED 2 //Number of fops to monitor before changing rand/seq probs(stack size)
 #define CHANGE 0.1 //Change values based on observation
 
 struct pos_bytes{
 	off_t pos; //last File seek position
 	size_t bytes; //size of read/write the last time
-}
+};
 
 //This is defined for each file descriptor
 typedef struct probability_cartesian{
-	stack <struct pos_bytes> track;
+	std::deque <struct pos_bytes> track;
 	float read;  // [0, 1]: 0->Random Reads, 1 -> Seq Reads
 	float write; // [0, 1]: 0->Random Writes, 1 -> Seq Writes
 }prob_cart;
@@ -65,8 +66,12 @@ void init(int fd, off_t pos, size_t size)
 	prob_cart init_pc;
 	init_pc.read = 0; //Random read
 	init_pc.write = 0; //Random read
-	init_pc.pos = pos; //file init position
-	init_pc.bytes = size; //Bytes read/write 
+
+	struct pos_bytes pb;
+	pb.pos = pos; //file init position
+	pb.bytes = size; //Bytes read/write 
+
+	init_pc.track.push_back(pb);
 	
 	predictor.insert(std::pair<int, prob_cart>(fd, init_pc));
 }
@@ -83,7 +88,19 @@ void update_read_predictor(int fd, off_t pos, size_t size)
 
 	//check the last reads and see if they match this 
 	//change the values based 
+
+	struct pos_bytes pb;
+	pb.pos = pos;
+	pb.bytes = size;
+
+	iter->second.track.push_back(pb);
+
+	if(iter->second.track.size() > SPEED)
+	{
+		iter->second.track.pop_front();
+	}
 }
+
 
 void update_write_predictor(int fd, off_t pos, size_t size)
 {
@@ -99,6 +116,11 @@ void remove(int fd) //removes the fd
 
 ///////////////////////////////////
 
+///////////////////////////////////
+//Overloaded functions
+///////////////////////////////////
+
+
 int fclose(FILE *stream){
 	//call fadvise
 	int fd = fileno(stream);
@@ -108,10 +130,12 @@ int fclose(FILE *stream){
 	return real_fclose(stream);
 }
 
+
 int close(int fd){
 	//printf("File close detected\n");
 	return real_close(fd);
 }
+
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
@@ -135,6 +159,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 	return amount_written;
 }
 
+
 ssize_t write(int fd, const void *data, size_t size) {
 
 	ssize_t amount_written;
@@ -155,6 +180,7 @@ ssize_t write(int fd, const void *data, size_t size) {
 	return amount_written;
 }
 
+
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	size_t amount_read;
 
@@ -169,6 +195,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	return amount_read;
 }
 
+
 ssize_t read(int fd, void *data, size_t size) {
 	ssize_t amount_read;
 
@@ -181,3 +208,5 @@ ssize_t read(int fd, void *data, size_t size) {
 	// Behave just like the regular syscall would
 	return amount_read;
 }
+
+///////////////////////////////
