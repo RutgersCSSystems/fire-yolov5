@@ -12,10 +12,17 @@
 #include <algorithm>
 #include <map>
 
-//This is defined for each file descriptor
-typedef struct probability_cartesian{
+#define SPEED 2 //Number of fops to monitor before changing rand/seq probs
+#define CHANGE 0.1 //Change values based on observation
+
+struct pos_bytes{
 	off_t pos; //last File seek position
 	size_t bytes; //size of read/write the last time
+}
+
+//This is defined for each file descriptor
+typedef struct probability_cartesian{
+	stack <struct pos_bytes> track;
 	float read;  // [0, 1]: 0->Random Reads, 1 -> Seq Reads
 	float write; // [0, 1]: 0->Random Writes, 1 -> Seq Writes
 }prob_cart;
@@ -69,9 +76,13 @@ void update_read_predictor(int fd, off_t pos, size_t size)
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 
 	if(iter == predictor.end()) //new file
+	{
 		init(fd, pos, size);
+		return;
+	}
 
-
+	//check the last reads and see if they match this 
+	//change the values based 
 }
 
 void update_write_predictor(int fd, off_t pos, size_t size)
