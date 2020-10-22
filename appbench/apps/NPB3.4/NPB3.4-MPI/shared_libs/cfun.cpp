@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <map>
 #include <deque>
+#include <cstdlib>
+#include <ctime>
 
 #define SPEED 2 //Number of fops to monitor before changing rand/seq probs(stack size)
 #define CHANGE 0.1 //Change values based on observation
@@ -29,6 +31,7 @@ typedef struct probability_cartesian{
 }prob_cart;
 
 std::map<int, prob_cart> predictor; //This has characterstic of each file
+std::srand(std::time(NULL));
 
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
@@ -76,7 +79,8 @@ void init(int fd, off_t pos, size_t size)
 	predictor.insert(std::pair<int, prob_cart>(fd, init_pc));
 }
 
-void update_read_predictor(int fd, off_t pos, size_t size)
+//predicts read behaviour per file and gives appropriate probabilistic advice
+void read_predictor(int fd, off_t pos, size_t size)
 {
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 
@@ -99,10 +103,24 @@ void update_read_predictor(int fd, off_t pos, size_t size)
 	{
 		iter->second.track.pop_front();
 	}
+
+	//update the read probabilty values
+	//TODO
+	
+	//toss a biased coin and call fadv based on it
+	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
+	
+	if(rand <= 100.0*iter->second.track.read)
+	{
+		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+	}
+	
+	return;
 }
 
 
-void update_write_predictor(int fd, off_t pos, size_t size)
+//predicts write behaviour per file and gives appropriate probabilistic advice
+void write_predictor(int fd, off_t pos, size_t size)
 {
 	//TODO
 }
@@ -110,6 +128,7 @@ void update_write_predictor(int fd, off_t pos, size_t size)
 
 void remove(int fd) //removes the fd
 {
+	posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 	predictor.erase(iter);
 }
@@ -125,7 +144,8 @@ int fclose(FILE *stream){
 	//call fadvise
 	int fd = fileno(stream);
 	//printf("File %d fadvise running\n", fd);
-	posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+	remove(fd);
+	//posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
 	return real_fclose(stream);
 }
@@ -133,6 +153,7 @@ int fclose(FILE *stream){
 
 int close(int fd){
 	//printf("File close detected\n");
+	remove(fd);
 	return real_close(fd);
 }
 
@@ -188,7 +209,15 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
 	//printf("fread Detected\n");
+
 	int fd = fileno(stream);
+	off_t pos = lseek(fd, 0, SEEK_CUR);
+	if(pos != -1 && fd != -1)
+	{
+		read_predictor(fd, pos, size*nmemb);
+	}
+
+
 	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
 	// Behave just like the regular syscall would
@@ -202,7 +231,12 @@ ssize_t read(int fd, void *data, size_t size) {
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
 
-	//printf("read Detected\n");
+	off_t pos = lseek(fd, 0, SEEK_CUR);
+	if(pos != -1)
+	{
+		read_predictor(fd, pos, size);
+	}
+	
 	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
 	// Behave just like the regular syscall would
