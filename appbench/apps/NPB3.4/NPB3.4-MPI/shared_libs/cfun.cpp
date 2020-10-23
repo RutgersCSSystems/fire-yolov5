@@ -53,18 +53,26 @@ void read_predictor(int fd, off_t pos, size_t size)
 		iter->second.track.pop_front();
 
 		//update the read probability values
-		//TODO
-
 		//for each pair of reads, check if the second off_t is > first off_t
 		// add CHANGE/SPEED else deduct the same
 
 		std::deque <struct pos_bytes>::iterator dqit = iter->second.track.begin();
-		
+		off_t last_pos = dqit.pos;
+		*dqit++;
 		while(dqit != iter->second.track.end())
 		{
-
+			if(last_pos < dqit.pos)
+				iter->second.read += SEQ_CHANGE/SPEED;
+			else if(last_pos > dqit.pos)
+				iter->second.read -= RAND_CHANGE/SPEED;
+			last_pos = dquit.pos;
+			*dqit ++;
 		}
-		//iter->second.read //FIXME
+		if(iter->second.read < -1.0)
+			iter = -1.0;
+		else if(iter->second.read > 1.0)
+			iter = 1.0;
+	
 	}
 
 	
