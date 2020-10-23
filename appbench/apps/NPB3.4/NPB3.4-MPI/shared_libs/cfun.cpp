@@ -1,64 +1,7 @@
 #define _GNU_SOURCE
 //#define _XOPEN_SOURCE 600
 
-#include <dlfcn.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <iostream>
-#include <iterator>
-#include <algorithm>
-#include <map>
-#include <deque>
-#include <cstdlib>
-#include <ctime>
-
-#define SPEED 2 //Number of fops to monitor before changing rand/seq probs(stack size)
-#define CHANGE 0.1 //Change values based on observation
-
-struct pos_bytes{
-	off_t pos; //last File seek position
-	size_t bytes; //size of read/write the last time
-};
-
-//This is defined for each file descriptor
-typedef struct probability_cartesian{
-	std::deque <struct pos_bytes> track;
-	float read;  // [0, 1]: 0->Random Reads, 1 -> Seq Reads
-	float write; // [0, 1]: 0->Random Writes, 1 -> Seq Writes
-}prob_cart;
-
-std::map<int, prob_cart> predictor; //This has characterstic of each file
-std::srand(std::time(NULL));
-
-typedef ssize_t (*real_read_t)(int, void *, size_t);
-typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
-typedef ssize_t (*real_write_t)(int, const void *, size_t);
-typedef size_t (*real_fwrite_t)(const void *, size_t, size_t,FILE *);
-typedef int (*real_fclose_t)(FILE *);
-typedef int (*real_close_t)(int);
-
-size_t real_fclose(FILE *stream){
-	return ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"))(stream);
-}
-size_t real_close(int fd){
-	return ((real_close_t)dlsym(RTLD_NEXT, "close"))(fd);
-}
-size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
-	return ((real_fread_t)dlsym(RTLD_NEXT, "fread"))(ptr, size, nmemb, stream);
-}
-size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
-	return ((real_fwrite_t)dlsym(RTLD_NEXT, "fwrite"))(ptr, size, nmemb, stream);
-}
-ssize_t real_write(int fd, const void *data, size_t size) {
-	return ((real_write_t)dlsym(RTLD_NEXT, "write"))(fd, data, size);
-}
-ssize_t real_read(int fd, void *data, size_t size) {
-	return ((real_read_t)dlsym(RTLD_NEXT, "read"))(fd, data, size);
-}
-
+#include "cfun.hpp"
 
 ///////////////////////////////////
 //Predictor Functions
@@ -68,7 +11,7 @@ void init(int fd, off_t pos, size_t size)
 {
 	prob_cart init_pc;
 	init_pc.read = 0; //Random read
-	init_pc.write = 0; //Random read
+	//init_pc.write = 0; //Random read
 
 	struct pos_bytes pb;
 	pb.pos = pos; //file init position
@@ -82,6 +25,12 @@ void init(int fd, off_t pos, size_t size)
 //predicts read behaviour per file and gives appropriate probabilistic advice
 void read_predictor(int fd, off_t pos, size_t size)
 {
+	if(firsttime)
+	{
+		std::srand(std::time(NULL));
+		firsttime = false;
+	}
+
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 
 	if(iter == predictor.end()) //new file
@@ -102,15 +51,27 @@ void read_predictor(int fd, off_t pos, size_t size)
 	if(iter->second.track.size() > SPEED)
 	{
 		iter->second.track.pop_front();
+
+		//update the read probability values
+		//TODO
+
+		//for each pair of reads, check if the second off_t is > first off_t
+		// add CHANGE/SPEED else deduct the same
+
+		std::deque <struct pos_bytes>::iterator dqit = iter->second.track.begin();
+		
+		while(dqit != iter->second.track.end())
+		{
+
+		}
+		//iter->second.read //FIXME
 	}
 
-	//update the read probabilty values
-	//TODO
 	
 	//toss a biased coin and call fadv based on it
 	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
 	
-	if(rand <= 100.0*iter->second.track.read)
+	if(rand <= 100.0*iter->second.read)
 	{
 		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
 	}
