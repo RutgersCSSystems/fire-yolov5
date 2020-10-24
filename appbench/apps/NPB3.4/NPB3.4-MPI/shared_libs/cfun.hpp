@@ -11,10 +11,16 @@
 #include <deque>
 #include <cstdlib>
 #include <ctime>
+#include <sys/sysinfo.h>
+#include <fstream>
+
+#define MEMINFO "/proc/meminfo"
+
 
 #define SPEED 2 //Number of fops to monitor before changing rand/seq probs(stack size)
 #define SEQ_CHANGE 0.1 //Change values based on seq observation
 #define RAND_CHANGE 0.4 //Change values based on random observation
+
 
 bool firsttime = true;
 
@@ -58,3 +64,18 @@ ssize_t real_read(int fd, void *data, size_t size) {
 	return ((real_read_t)dlsym(RTLD_NEXT, "read"))(fd, data, size);
 }
 
+
+float get_mem_pressure(){
+	std::string token;
+	std::ifstream file(MEMINFO);
+	unsigned long totmem, freemem;
+	while(file >> token) {
+		if(token == "MemTotal:") 
+		{
+			file >> totmem;
+		}
+		else if(token == "MemFree:")
+			file >> freemem;
+	}
+	return (float)(totmem-freemem) /totmem;
+}

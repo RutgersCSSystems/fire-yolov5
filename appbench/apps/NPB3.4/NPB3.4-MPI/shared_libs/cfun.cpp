@@ -18,7 +18,7 @@ void init(int fd, off_t pos, size_t size)
 	pb.bytes = size; //Bytes read/write 
 
 	init_pc.track.push_back(pb);
-	
+
 	predictor.insert(std::pair<int, prob_cart>(fd, init_pc));
 }
 
@@ -57,33 +57,43 @@ void read_predictor(int fd, off_t pos, size_t size)
 		// add CHANGE/SPEED else deduct the same
 
 		std::deque <struct pos_bytes>::iterator dqit = iter->second.track.begin();
-		off_t last_pos = dqit.pos;
+		off_t last_pos = dqit->pos;
 		*dqit++;
 		while(dqit != iter->second.track.end())
 		{
-			if(last_pos < dqit.pos)
+			if(last_pos < dqit->pos)
 				iter->second.read += SEQ_CHANGE/SPEED;
-			else if(last_pos > dqit.pos)
+			else if(last_pos > dqit->pos)
 				iter->second.read -= RAND_CHANGE/SPEED;
-			last_pos = dquit.pos;
+			last_pos = dqit->pos;
 			*dqit ++;
 		}
 		if(iter->second.read < -1.0)
-			iter = -1.0;
+			iter->second.read = -1.0;
 		else if(iter->second.read > 1.0)
-			iter = 1.0;
-	
+			iter->second.read = 1.0;
+
 	}
 
-	
+
 	//toss a biased coin and call fadv based on it
 	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
-	
-	if(rand <= 100.0*iter->second.read)
+
+	if(iter->second.read > 0) //Towards sequential
 	{
-		posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+		if(rand <= 100.0*iter->second.read)
+		{
+			//posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+		}
+		else
+		{
+
+		}
 	}
-	
+
+
+
 	return;
 }
 
@@ -91,6 +101,11 @@ void read_predictor(int fd, off_t pos, size_t size)
 //predicts write behaviour per file and gives appropriate probabilistic advice
 void write_predictor(int fd, off_t pos, size_t size)
 {
+	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
+	if(iter->second.read == 0) //No reads or writes yet
+	{
+		posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+	}
 	//TODO
 }
 
@@ -205,7 +220,7 @@ ssize_t read(int fd, void *data, size_t size) {
 	{
 		read_predictor(fd, pos, size);
 	}
-	
+
 	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
 	// Behave just like the regular syscall would
