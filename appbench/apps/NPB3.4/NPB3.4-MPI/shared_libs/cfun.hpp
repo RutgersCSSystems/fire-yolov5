@@ -74,7 +74,7 @@ float get_mem_pressure(){
 		{
 			file >> totmem;
 		}
-		else if(token == "MemFree:")
+		else if(token == "MemAvailable:")
 			file >> freemem;
 	}
 	return (float)(totmem-freemem) /totmem;
