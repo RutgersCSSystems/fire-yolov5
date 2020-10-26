@@ -42,6 +42,7 @@ void read_predictor(int fd, off_t pos, size_t size)
 	//check the last reads and see if they match this 
 	//change the values based 
 
+	//Add new values to the queue
 	struct pos_bytes pb;
 	pb.pos = pos;
 	pb.bytes = size;
@@ -61,18 +62,17 @@ void read_predictor(int fd, off_t pos, size_t size)
 		*dqit++;
 		while(dqit != iter->second.track.end())
 		{
-			if(last_pos < dqit->pos)
+			if(last_pos < dqit->pos) //Sequential read
 				iter->second.read += SEQ_CHANGE/SPEED;
-			else if(last_pos > dqit->pos)
+			else if(last_pos > dqit->pos) //Random read
 				iter->second.read -= RAND_CHANGE/SPEED;
 			last_pos = dqit->pos;
 			*dqit ++;
 		}
-		if(iter->second.read < -1.0)
+		if(iter->second.read < -1.0) //Values reset to max 
 			iter->second.read = -1.0;
 		else if(iter->second.read > 1.0)
 			iter->second.read = 1.0;
-
 	}
 
 
@@ -81,18 +81,36 @@ void read_predictor(int fd, off_t pos, size_t size)
 
 	if(iter->second.read > 0) //Towards sequential
 	{
-		if(rand <= 100.0*iter->second.read)
+		if(rand <= 100.0*iter->second.read) //Bias towards seq reads
 		{
-			//posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+			//TODO: mechanism to remove multiple of these calls
+			//add and check a bool on per file DS.
+			//will reduce multiple sys call overheads
 			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 		}
 		else
 		{
-
+			//TODO: mechanism to remove multiple of these calls
+			//add and check a bool on per file DS.
+			//will reduce multiple sys call overheads
+			posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
 		}
 	}
-
-
+	else if(iter->second.read < 0) //Towards random reads
+	{
+		//float mempressure = get_mem_pressure();
+		if(rand <= 100.0*get_mem_pressure()) //higher the pressure on mem
+		{
+			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
+		}
+		else
+		{
+			//TODO: mechanism to remove multiple of these calls
+			//add and check a bool on per file DS.
+			//will reduce multiple sys call overheads
+			posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+		}
+	}
 
 	return;
 }
@@ -101,12 +119,32 @@ void read_predictor(int fd, off_t pos, size_t size)
 //predicts write behaviour per file and gives appropriate probabilistic advice
 void write_predictor(int fd, off_t pos, size_t size)
 {
-	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
-	if(iter->second.read == 0) //No reads or writes yet
+	if(firsttime)
 	{
-		posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+		std::srand(std::time(NULL));
+		firsttime = false;
 	}
-	//TODO
+
+	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
+
+	float read_prob;
+
+	if(iter == predictor.end()) //new file -> Hasnt been read
+		read_prob = 0;
+	else
+		read_prob = iter->second.read;
+
+	//Toss a coin
+	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
+
+	//TODO: check if a small limit changes things differently
+	//==0 will only remain if there are no reads what soever
+	if(read_prob == 0) //No reads
+	{
+		if(rand <= 100.0*get_mem_pressure())
+			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+	}
+	return;
 }
 
 
