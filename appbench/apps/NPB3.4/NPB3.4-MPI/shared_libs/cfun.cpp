@@ -25,6 +25,7 @@ void init(int fd, off_t pos, size_t size)
 //predicts read behaviour per file and gives appropriate probabilistic advice
 void read_predictor(int fd, off_t pos, size_t size)
 {
+	printf("Read predictor\n");
 	if(firsttime)
 	{
 		std::srand(std::time(NULL));
@@ -142,7 +143,10 @@ void write_predictor(int fd, off_t pos, size_t size)
 	if(read_prob == 0) //No reads
 	{
 		if(rand <= 100.0*get_mem_pressure())
+		{
 			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+			printf("FADV_DONTNEED\n");
+		}
 	}
 	return;
 }
@@ -165,9 +169,7 @@ void remove(int fd) //removes the fd
 int fclose(FILE *stream){
 	//call fadvise
 	int fd = fileno(stream);
-	//printf("File %d fadvise running\n", fd);
 	remove(fd);
-	//posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
 	return real_fclose(stream);
 }
@@ -182,6 +184,7 @@ int close(int fd){
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
+	printf("fwrite Detected\n");
 
 	size_t amount_written;
 
@@ -192,10 +195,10 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1)
+	if(pos != -1 && fd != -1)
 	{
-		//printf("fd: %d, pos: %ld\n", fd, pos);
-		posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+		//write_predictor(fd, pos, size*nmemb);
+		//posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
 	}
 
 	// Behave just like the regular syscall would
@@ -207,19 +210,19 @@ ssize_t write(int fd, const void *data, size_t size) {
 
 	ssize_t amount_written;
 
-	printf("write Detected \n");
+	printf("write Detected\n");
+
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
 
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1)
+	if(pos != -1 && fd != -1)
 	{
 		//printf("fd: %d, pos: %ld\n", fd, pos);
-		posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+		//write_predictor(fd, pos, size);
+		//posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
 	}
-	//posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
-	// Behave just like the regular syscall would
 	return amount_written;
 }
 
@@ -230,15 +233,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	// Perform the actual system call
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
-	//printf("fread Detected\n");
+	printf("fread Detected\n");
 
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
 	if(pos != -1 && fd != -1)
 	{
-		read_predictor(fd, pos, size*nmemb);
+		//read_predictor(fd, pos, size*nmemb);
 	}
-
 
 	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 
@@ -250,13 +252,15 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 ssize_t read(int fd, void *data, size_t size) {
 	ssize_t amount_read;
 
+	printf("read Detected\n");
+
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
 
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1)
+	if(pos != -1 && fd != -1)
 	{
-		read_predictor(fd, pos, size);
+		//read_predictor(fd, pos, size);
 	}
 
 	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
