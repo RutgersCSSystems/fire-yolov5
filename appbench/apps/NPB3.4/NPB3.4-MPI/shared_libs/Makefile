@@ -2,7 +2,7 @@
 CXX=g++
 CC=gcc
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared
+FLAGS=-fPIC -shared 
 
 all: reclaimer
 

@@ -3,9 +3,6 @@
 
 #include "cfun.hpp"
 
-///////////////////////////////////
-//Predictor Functions
-
 //This function inserts a new file in the map
 void init(int fd, off_t pos, size_t size) 
 {
@@ -25,7 +22,9 @@ void init(int fd, off_t pos, size_t size)
 //predicts read behaviour per file and gives appropriate probabilistic advice
 void read_predictor(int fd, off_t pos, size_t size)
 {
+#ifdef DEBUG
 	printf("Read predictor\n");
+#endif
 	if(firsttime)
 	{
 		std::srand(std::time(NULL));
@@ -120,6 +119,9 @@ void read_predictor(int fd, off_t pos, size_t size)
 //predicts write behaviour per file and gives appropriate probabilistic advice
 void write_predictor(int fd, off_t pos, size_t size)
 {
+#ifdef DEBUG
+	printf("write predictor\n");
+#endif
 	if(firsttime)
 	{
 		std::srand(std::time(NULL));
@@ -145,7 +147,9 @@ void write_predictor(int fd, off_t pos, size_t size)
 		if(rand <= 100.0*get_mem_pressure())
 		{
 			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+#ifdef DEBUG
 			printf("FADV_DONTNEED\n");
+#endif
 		}
 	}
 	return;
@@ -156,52 +160,54 @@ void remove(int fd) //removes the fd
 {
 	posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
-	predictor.erase(iter);
+	if(iter != predictor.end())
+		predictor.erase(iter);
+	return;
 }
 
 ///////////////////////////////////
 
-///////////////////////////////////
-//Overloaded functions
-///////////////////////////////////
-
 
 int fclose(FILE *stream){
+#ifdef DEBUG
+	printf("fclose detected\n");
+#endif
 	//call fadvise
 	int fd = fileno(stream);
-	remove(fd);
+	if(fd != -1)
+		remove(fd);
 
 	return real_fclose(stream);
 }
 
 
 int close(int fd){
-	//printf("File close detected\n");
-	remove(fd);
+#ifdef DEBUG
+	printf("File close detected\n");
+#endif
+	if(fd != -1)
+		remove(fd);
 	return real_close(fd);
 }
 
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-	printf("fwrite Detected\n");
+	//printf("fwrite Detected\n");
 
 	size_t amount_written;
 
 	// Perform the actual system call
 	amount_written = real_fwrite(ptr, size, nmemb, stream);
 
-	//printf("fwrite Detected\n");
-
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
 	if(pos != -1 && fd != -1)
 	{
-		//write_predictor(fd, pos, size*nmemb);
-		//posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+		write_predictor(fd, pos, size*nmemb);
 	}
 
-	// Behave just like the regular syscall would
+	//printf("fwrite Detected\n");
 	return amount_written;
 }
 
@@ -210,7 +216,7 @@ ssize_t write(int fd, const void *data, size_t size) {
 
 	ssize_t amount_written;
 
-	printf("write Detected\n");
+	//printf("write Detected\n");
 
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
@@ -218,9 +224,7 @@ ssize_t write(int fd, const void *data, size_t size) {
 	off_t pos = lseek(fd, 0, SEEK_CUR);
 	if(pos != -1 && fd != -1)
 	{
-		//printf("fd: %d, pos: %ld\n", fd, pos);
-		//write_predictor(fd, pos, size);
-		//posix_fadvise(fd, pos, size/2, POSIX_FADV_DONTNEED);
+		write_predictor(fd, pos, size);
 	}
 
 	return amount_written;
@@ -233,18 +237,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	// Perform the actual system call
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
-	printf("fread Detected\n");
-
+	//printf("fread Detected\n");
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
 	if(pos != -1 && fd != -1)
 	{
-		//read_predictor(fd, pos, size*nmemb);
+		read_predictor(fd, pos, size*nmemb);
 	}
 
-	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-
-	// Behave just like the regular syscall would
 	return amount_read;
 }
 
@@ -252,7 +252,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 ssize_t read(int fd, void *data, size_t size) {
 	ssize_t amount_read;
 
-	printf("read Detected\n");
+	//printf("read Detected\n");
 
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
@@ -260,12 +260,9 @@ ssize_t read(int fd, void *data, size_t size) {
 	off_t pos = lseek(fd, 0, SEEK_CUR);
 	if(pos != -1 && fd != -1)
 	{
-		//read_predictor(fd, pos, size);
+		read_predictor(fd, pos, size);
 	}
 
-	//posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-
-	// Behave just like the regular syscall would
 	return amount_read;
 }
 
