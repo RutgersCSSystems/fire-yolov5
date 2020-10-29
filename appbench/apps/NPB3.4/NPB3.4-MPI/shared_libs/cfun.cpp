@@ -202,7 +202,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd != -1)
+	if(pos != -1 && fd > 2)
 	{
 		write_predictor(fd, pos, size*nmemb);
 	}
@@ -216,13 +216,15 @@ ssize_t write(int fd, const void *data, size_t size) {
 
 	ssize_t amount_written;
 
+	if(fd <= 2) //STD
+
 	//printf("write Detected\n");
 
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
 
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd != -1)
+	if(pos != -1 && fd > 2)
 	{
 		write_predictor(fd, pos, size);
 	}
@@ -240,7 +242,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	//printf("fread Detected\n");
 	int fd = fileno(stream);
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd != -1)
+	if(pos != -1 && fd > 0)
 	{
 		read_predictor(fd, pos, size*nmemb);
 	}
@@ -258,7 +260,7 @@ ssize_t read(int fd, void *data, size_t size) {
 	amount_read = real_read(fd, data, size);
 
 	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd != -1)
+	if(pos != -1 && fd > 0)
 	{
 		read_predictor(fd, pos, size);
 	}
