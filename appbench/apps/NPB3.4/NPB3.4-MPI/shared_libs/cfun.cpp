@@ -195,16 +195,23 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	//printf("fwrite Detected\n");
 
+	struct stat st;
 	size_t amount_written;
 
 	// Perform the actual system call
 	amount_written = real_fwrite(ptr, size, nmemb, stream);
 
 	int fd = fileno(stream);
-	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd > 2)
+	if(fstat(fd, &st))
 	{
-		write_predictor(fd, pos, size*nmemb);
+		if(S_ISREG(st.st_mode))
+		{
+			off_t pos = lseek(fd, 0, SEEK_CUR);
+			if(pos != -1 && fd > 2)
+			{
+				write_predictor(fd, pos, size*nmemb);
+			}
+		}
 	}
 
 	//printf("fwrite Detected\n");
@@ -214,37 +221,53 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t write(int fd, const void *data, size_t size) {
 
+
 	ssize_t amount_written;
-
-	if(fd <= 2) //STD
-
-	//printf("write Detected\n");
+	struct stat st;
 
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
 
-	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd > 2)
+	if(fstat(fd, &st))
 	{
-		write_predictor(fd, pos, size);
+		if(S_ISREG(st.st_mode))
+		{
+			off_t pos = lseek(fd, 0, SEEK_CUR);
+			if(pos != -1 && fd > 2)
+			{
+				write_predictor(fd, pos, size);
+			}
+		}
+
 	}
+
+	//printf("write Detected\n");
+
+
 
 	return amount_written;
 }
 
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+	struct stat st;
 	size_t amount_read;
 
 	// Perform the actual system call
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
-	//printf("fread Detected\n");
 	int fd = fileno(stream);
-	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd > 0)
+
+	if(fstat(fd, &st))
 	{
-		read_predictor(fd, pos, size*nmemb);
+		if(S_ISREG(st.st_mode))
+		{
+			off_t pos = lseek(fd, 0, SEEK_CUR);
+			if(pos != -1 && fd > 0)
+			{
+				read_predictor(fd, pos, size*nmemb);
+			}
+		}
 	}
 
 	return amount_read;
@@ -252,6 +275,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 ssize_t read(int fd, void *data, size_t size) {
+	struct stat st;
 	ssize_t amount_read;
 
 	//printf("read Detected\n");
@@ -259,10 +283,16 @@ ssize_t read(int fd, void *data, size_t size) {
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
 
-	off_t pos = lseek(fd, 0, SEEK_CUR);
-	if(pos != -1 && fd > 0)
+	if(fstat(fd, &st))
 	{
-		read_predictor(fd, pos, size);
+		if(S_ISREG(st.st_mode))
+		{
+			off_t pos = lseek(fd, 0, SEEK_CUR);
+			if(pos != -1 && fd > 0)
+			{
+				read_predictor(fd, pos, size);
+			}
+		}
 	}
 
 	return amount_read;

@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <sys/sysinfo.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fstream>
 
 #define MEMINFO "/proc/meminfo"
