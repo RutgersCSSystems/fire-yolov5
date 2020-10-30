@@ -87,6 +87,9 @@ void read_predictor(int fd, off_t pos, size_t size)
 			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
 			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+#ifdef DEBUG
+			printf("WILL NEED, read=%f, rand=%f\n", iter->second.read, rand);
+#endif
 		}
 		else
 		{
@@ -94,6 +97,9 @@ void read_predictor(int fd, off_t pos, size_t size)
 			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
 			posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+#ifdef DEBUG
+			printf("SEQ read=%f, rand=%f\n", iter->second.read, rand);
+#endif
 		}
 	}
 	else if(iter->second.read < 0) //Towards random reads
@@ -102,6 +108,9 @@ void read_predictor(int fd, off_t pos, size_t size)
 		if(rand <= 100.0*get_mem_pressure()) //higher the pressure on mem
 		{
 			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
+#ifdef DEBUG
+			printf("DONTNEED read=%f, rand=%f\n", iter->second.read, rand);
+#endif
 		}
 		else
 		{
@@ -109,6 +118,9 @@ void read_predictor(int fd, off_t pos, size_t size)
 			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
 			posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+#ifdef DEBUG
+			printf("RANDOM read=%f, rand=%f\n", iter->second.read, rand);
+#endif
 		}
 	}
 
@@ -148,7 +160,8 @@ void write_predictor(int fd, off_t pos, size_t size)
 		{
 			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 #ifdef DEBUG
-			printf("FADV_DONTNEED\n");
+			//printf("FADV_DONTNEED\n");
+			printf("DONTNEED pressure=%f, rand=%f\n", get_mem_pressure(), rand);
 #endif
 		}
 	}
@@ -159,6 +172,9 @@ void write_predictor(int fd, off_t pos, size_t size)
 void remove(int fd) //removes the fd
 {
 	posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+#ifdef DEBUG
+	printf("DONTNEED\n");
+#endif
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 	if(iter != predictor.end())
 		predictor.erase(iter);
@@ -174,7 +190,7 @@ int fclose(FILE *stream){
 #endif
 	//call fadvise
 	int fd = fileno(stream);
-	if(fd != -1)
+	if(fd > 2)
 		remove(fd);
 
 	return real_fclose(stream);
@@ -185,7 +201,7 @@ int close(int fd){
 #ifdef DEBUG
 	printf("File close detected\n");
 #endif
-	if(fd != -1)
+	if(fd > 2)
 		remove(fd);
 	return real_close(fd);
 }
@@ -193,7 +209,6 @@ int close(int fd){
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-	//printf("fwrite Detected\n");
 
 	struct stat st;
 	size_t amount_written;
@@ -202,7 +217,8 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 	amount_written = real_fwrite(ptr, size, nmemb, stream);
 
 	int fd = fileno(stream);
-	if(fstat(fd, &st))
+
+	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{
@@ -214,7 +230,6 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 		}
 	}
 
-	//printf("fwrite Detected\n");
 	return amount_written;
 }
 
@@ -228,7 +243,7 @@ ssize_t write(int fd, const void *data, size_t size) {
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
 
-	if(fstat(fd, &st))
+	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{
@@ -241,15 +256,13 @@ ssize_t write(int fd, const void *data, size_t size) {
 
 	}
 
-	//printf("write Detected\n");
-
-
 
 	return amount_written;
 }
 
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+
 	struct stat st;
 	size_t amount_read;
 
@@ -258,7 +271,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	int fd = fileno(stream);
 
-	if(fstat(fd, &st))
+	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{
@@ -275,15 +288,15 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 ssize_t read(int fd, void *data, size_t size) {
+
 	struct stat st;
 	ssize_t amount_read;
 
-	//printf("read Detected\n");
 
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
 
-	if(fstat(fd, &st))
+	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{

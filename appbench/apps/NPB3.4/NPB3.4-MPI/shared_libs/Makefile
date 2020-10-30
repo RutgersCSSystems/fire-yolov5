@@ -2,12 +2,12 @@
 CXX=g++
 CC=gcc
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared 
+FLAGS=-fPIC -shared
 
 all: reclaimer
 
 reclaimer: cfun.cpp pre.c
-	$(CXX) $(FLAGS) -o libcfun.so cfun.cpp $(LIBS)
+	$(CXX) $(FLAGS) -o libcfun.so cfun.cpp -DDEBUG $(LIBS)
 	$(CC) $(FLAGS) -o pre.so pre.c $(LIBS)
 
 install:
