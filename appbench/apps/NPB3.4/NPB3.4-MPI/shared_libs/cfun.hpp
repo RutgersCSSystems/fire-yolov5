@@ -23,6 +23,8 @@
 #define SEQ_CHANGE 0.1 //Change values based on seq observation
 #define RAND_CHANGE 0.4 //Change values based on random observation
 
+#define TOL 0.1 //Tolerance from 0 to call there is no file read 
+
 
 bool firsttime = true;
 
@@ -35,7 +37,10 @@ struct pos_bytes{
 typedef struct probability_cartesian{
 	std::deque <struct pos_bytes> track;
 	float read;  // [-1, 1]: -1-> Rand Reads, 0->No Reads, 1 -> Seq Reads
-	//float write; // [0, 1]: 0->Random Writes, 1 -> Seq Writes
+	bool SEQ_READ; //Have given advice SEQ read
+	bool WILL_NEED; //Have given advice WILL NEED
+	bool RAND_READ;
+	bool WONT_NEED;
 }prob_cart;
 
 std::map<int, prob_cart> predictor; //This has characterstic of each file
