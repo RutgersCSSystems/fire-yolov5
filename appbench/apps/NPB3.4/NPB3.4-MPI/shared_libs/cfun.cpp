@@ -8,7 +8,10 @@ void init(int fd, off_t pos, size_t size)
 {
 	prob_cart init_pc;
 	init_pc.read = 0; //Random read
-	//init_pc.write = 0; //Random read
+	init_pc.SEQ_READ = false;
+	init_pc.WILL_NEED = false;
+	init_pc.RAND_READ = false;
+	init_pc.WONT_NEED = false;
 
 	struct pos_bytes pb;
 	pb.pos = pos; //file init position
@@ -22,9 +25,6 @@ void init(int fd, off_t pos, size_t size)
 //predicts read behaviour per file and gives appropriate probabilistic advice
 void read_predictor(int fd, off_t pos, size_t size)
 {
-#ifdef DEBUG
-	printf("Read predictor\n");
-#endif
 	if(firsttime)
 	{
 		std::srand(std::time(NULL));
@@ -38,9 +38,6 @@ void read_predictor(int fd, off_t pos, size_t size)
 		init(fd, pos, size);
 		return;
 	}
-
-	//check the last reads and see if they match this 
-	//change the values based 
 
 	//Add new values to the queue
 	struct pos_bytes pb;
@@ -83,21 +80,26 @@ void read_predictor(int fd, off_t pos, size_t size)
 	{
 		if(rand <= 100.0*iter->second.read) //Bias towards seq reads
 		{
-			//TODO: mechanism to remove multiple of these calls
-			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
-			posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-#ifdef DEBUG
+			if(!iter->second.WILL_NEED)
+			{
+				posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+				iter->second.WILL_NEED = true;
+			}
+#ifdef DEBUGREAD
 			printf("WILL NEED, read=%f, rand=%f\n", iter->second.read, rand);
 #endif
 		}
 		else
 		{
-			//TODO: mechanism to remove multiple of these calls
-			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
-			posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
-#ifdef DEBUG
+			if(!iter->second.SEQ_READ)
+			{
+				posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+				iter->second.SEQ_READ = true;
+				iter->second.RAND_READ = false; 
+			}
+#ifdef DEBUGREAD
 			printf("SEQ read=%f, rand=%f\n", iter->second.read, rand);
 #endif
 		}
@@ -107,18 +109,22 @@ void read_predictor(int fd, off_t pos, size_t size)
 		//float mempressure = get_mem_pressure();
 		if(rand <= 100.0*get_mem_pressure()) //higher the pressure on mem
 		{
-			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
-#ifdef DEBUG
+				posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
+				iter->second.WILL_NEED = false;
+#ifdef DEBUGREAD
 			printf("DONTNEED read=%f, rand=%f\n", iter->second.read, rand);
 #endif
 		}
 		else
 		{
-			//TODO: mechanism to remove multiple of these calls
-			//add and check a bool on per file DS.
 			//will reduce multiple sys call overheads
-			posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
-#ifdef DEBUG
+			if(!iter->second.RAND_READ)
+			{
+				posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+				iter->second.SEQ_READ = false;
+				iter->second.RAND_READ = true;
+			}
+#ifdef DEBUGREAD
 			printf("RANDOM read=%f, rand=%f\n", iter->second.read, rand);
 #endif
 		}
@@ -144,25 +150,27 @@ void write_predictor(int fd, off_t pos, size_t size)
 
 	float read_prob;
 
-	if(iter == predictor.end()) //new file -> Hasnt been read
+	if(iter == predictor.end()) //new file
+	{
 		read_prob = 0;
+		init(fd, 0, 0);
+		return;
+	}
 	else
 		read_prob = iter->second.read;
 
 	//Toss a coin
 	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
 
-	//TODO: check if a small limit changes things differently
-	//==0 will only remain if there are no reads what soever
-	if(read_prob == 0) //No reads
+#ifdef DEBUG
+	printf("DONTNEED pressure=%f, rand=%f, read=%f\n", get_mem_pressure(), rand, read_prob);
+#endif
+
+	if(read_prob <= TOL && read_prob >= -TOL) //No reads within tolerance
 	{
 		if(rand <= 100.0*get_mem_pressure())
 		{
-			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
-#ifdef DEBUG
-			//printf("FADV_DONTNEED\n");
-			printf("DONTNEED pressure=%f, rand=%f\n", get_mem_pressure(), rand);
-#endif
+			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
 		}
 	}
 	return;
