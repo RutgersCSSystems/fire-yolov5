@@ -15,6 +15,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <sys/syscall.h>
+#include <sys/types.h>
 
 #define MEMINFO "/proc/meminfo"
 

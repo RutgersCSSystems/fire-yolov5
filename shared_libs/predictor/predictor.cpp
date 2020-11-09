@@ -110,8 +110,8 @@ void read_predictor(int fd, off_t pos, size_t size)
 		//float mempressure = get_mem_pressure();
 		if(rand <= 100.0*get_mem_pressure()) //higher the pressure on mem
 		{
-				posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
-				iter->second.WILL_NEED = false;
+			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
+			iter->second.WILL_NEED = false;
 #ifdef DEBUG
 			printf("DONTNEED read=%f, rand=%f\n", iter->second.read, rand);
 #endif
@@ -190,6 +190,35 @@ void remove(int fd) //removes the fd
 	return;
 }
 
+
+//Print simple access pattern 
+void access_pattern(int fd, off_t pos, size_t size, int type)
+{
+	//pid_t tid = syscall(SYS_gettid);
+	pid_t pid = getpid();
+	struct stat sb;
+	if(fstat(fd, &sb) == 0)
+	{
+		switch (sb.st_mode & S_IFMT) {
+			case S_IFBLK:  printf("block device");            break;
+			case S_IFCHR:  printf("character device");        break;
+			case S_IFDIR:  printf("directory");               break;
+			case S_IFIFO:  printf("FIFO/pipe");               break;
+			case S_IFLNK:  printf("symlink");                 break;
+			case S_IFREG:  printf("regular file");            break;
+			case S_IFSOCK: printf("socket");                  break;
+			default:       printf("unknown?");                break;
+		}
+
+	}
+
+	if(type == 0)
+		printf(" read, pid:%d, fd: %d, Pos: %ld, size: %lu\n", pid, fd, pos, size);
+
+	if(type == 1)
+		printf(" write, pid:%d, fd: %d, Pos: %ld, size: %lu\n", pid, fd, pos, size);
+}
+
 ///////////////////////////////////
 
 
@@ -223,27 +252,32 @@ int close(int fd){
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-
 	struct stat st;
 	size_t amount_written;
 
 	// Perform the actual system call
 	amount_written = real_fwrite(ptr, size, nmemb, stream);
 
-#ifdef PREDICTOR
 	int fd = fileno(stream);
+	off_t pos = -1;
+
 
 	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{
-			off_t pos = lseek(fd, 0, SEEK_CUR);
+			pos = lseek(fd, 0, SEEK_CUR);
 			if(pos != -1 && fd > 2)
 			{
+
+#ifdef PREDICTOR
 				write_predictor(fd, pos, size*nmemb);
+#endif
 			}
 		}
 	}
+#ifdef PATTERN
+				access_pattern(fd, pos, size*nmemb, 1);
 #endif
 
 	return amount_written;
@@ -252,25 +286,31 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t write(int fd, const void *data, size_t size) {
 
+	printf("writes\n");
 
 	ssize_t amount_written;
 	struct stat st;
 
 	// Perform the actual system call
 	amount_written = real_write(fd, data, size);
+	off_t pos = -1;
 
-#ifdef PREDICTOR
 	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
 		{
-			off_t pos = lseek(fd, 0, SEEK_CUR);
+			pos = lseek(fd, 0, SEEK_CUR);
 			if(pos != -1 && fd > 2)
 			{
+
+#ifdef PREDICTOR
 				write_predictor(fd, pos, size);
+#endif
 			}
 		}
 	}
+#ifdef PATTERN
+				access_pattern(fd, pos, size, 1);
 #endif
 
 	return amount_written;
@@ -285,8 +325,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	// Perform the actual system call
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
-#ifdef PREDICTOR
 	int fd = fileno(stream);
+	off_t pos = -1;
 
 	if(fstat(fd, &st) == 0)
 	{
@@ -295,10 +335,15 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 			off_t pos = lseek(fd, 0, SEEK_CUR);
 			if(pos != -1 && fd > 0)
 			{
+
+#ifdef PREDICTOR
 				read_predictor(fd, pos, size*nmemb);
+#endif
 			}
 		}
 	}
+#ifdef PATTERN
+				access_pattern(fd, pos, size*nmemb, 0);
 #endif
 
 	return amount_read;
@@ -313,8 +358,8 @@ ssize_t read(int fd, void *data, size_t size) {
 
 	// Perform the actual system call
 	amount_read = real_read(fd, data, size);
+	off_t pos = -1;
 
-#ifdef PREDICTOR
 	if(fstat(fd, &st) == 0)
 	{
 		if(S_ISREG(st.st_mode))
@@ -322,10 +367,15 @@ ssize_t read(int fd, void *data, size_t size) {
 			off_t pos = lseek(fd, 0, SEEK_CUR);
 			if(pos != -1 && fd > 0)
 			{
+
+#ifdef PREDICTOR
 				read_predictor(fd, pos, size);
+#endif
 			}
 		}
 	}
+#ifdef PATTERN
+				access_pattern(fd, pos, size, 0);
 #endif
 	return amount_read;
 }
