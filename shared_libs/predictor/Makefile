@@ -7,10 +7,10 @@ FLAGS=-fPIC -shared
 all: reclaimer
 
 reclaimer: predictor.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DPREDICT
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DPREDICTOR
 
 debug: predictor.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DDEBUG -DPREDICT
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DDEBUG -DPREDICTOR
 
 pattern: predictor.cpp
 	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DPATTERN
