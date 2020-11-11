@@ -633,7 +633,8 @@ print_hetero_stats(struct task_struct *task)
 	if(!mm)
 		return;
 
-	check_node_memsize(mm);
+	//check_node_memsize(mm); //THIS HAS BEEN REMOVED TEMP FIXME
+	
 	print_ownership_stats();
 	return;
 
@@ -1534,7 +1535,8 @@ void print_ownership_stats(void)
 
 	if(start_global_accounting)
 	{
-		for_each_process_thread(p, proc)
+		//for_each_process_thread(p, proc)
+		for_each_process(proc)
 		{
 			nr_procs_covered += 1;
 			if(proc->enable_pvt_lru) //User program
