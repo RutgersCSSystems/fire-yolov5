@@ -4,6 +4,7 @@
 #include "predictor.hpp"
 
 
+/*
 //This function inserts a new file in the map
 void init(int fd, off_t pos, size_t size) 
 {
@@ -22,58 +23,36 @@ void init(int fd, off_t pos, size_t size)
 
 	predictor.insert(std::pair<int, prob_cart>(fd, init_pc));
 }
+*/
 
 //predicts read behaviour per file and gives appropriate probabilistic advice
 void read_predictor(int fd, off_t pos, size_t size)
 {
+	printf("Reads\n");
 	if(firsttime)
 	{
 		std::srand(std::time(NULL));
 		firsttime = false;
 	}
 
-	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
-
-	if(iter == predictor.end()) //new file
-	{
-		init(fd, pos, size);
-		return;
-	}
-
 	//Add new values to the queue
 	struct pos_bytes pb;
+	pb.fd = fd;
 	pb.pos = pos;
 	pb.bytes = size;
 
-	iter->second.track.push_back(pb);
+	track.push_back(pb);
 
-	if(iter->second.track.size() > SPEED)
+	if(track.size() > GRAMS+1)
 	{
-		iter->second.track.pop_front();
+		printf("this\n");
+		insert_and_predict_from_ngram();
 
-		//update the read probability values
-		//for each pair of reads, check if the second off_t is > first off_t
-		// add CHANGE/SPEED else deduct the same
-
-		std::deque <struct pos_bytes>::iterator dqit = iter->second.track.begin();
-		off_t last_pos = dqit->pos;
-		*dqit++;
-		while(dqit != iter->second.track.end())
-		{
-			if(last_pos < dqit->pos) //Sequential read
-				iter->second.read += SEQ_CHANGE/SPEED;
-			else if(last_pos > dqit->pos) //Random read
-				iter->second.read -= RAND_CHANGE/SPEED;
-			last_pos = dqit->pos;
-			*dqit ++;
-		}
-		if(iter->second.read < -1.0) //Values reset to max 
-			iter->second.read = -1.0;
-		else if(iter->second.read > 1.0)
-			iter->second.read = 1.0;
+		track.pop_front();
 	}
 
 
+	/* DECISION BAAD ME
 	//toss a biased coin and call fadv based on it
 	float rand = (100.0 * std::rand() / (RAND_MAX + 1.0)) + 1; //[1, 100]
 
@@ -130,7 +109,7 @@ void read_predictor(int fd, off_t pos, size_t size)
 #endif
 		}
 	}
-
+*/
 	return;
 }
 
@@ -147,6 +126,7 @@ void write_predictor(int fd, off_t pos, size_t size)
 		firsttime = false;
 	}
 
+	/*
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 
 	float read_prob;
@@ -174,6 +154,7 @@ void write_predictor(int fd, off_t pos, size_t size)
 			posix_fadvise(fd, pos, size, POSIX_FADV_DONTNEED);
 		}
 	}
+	*/
 	return;
 }
 
@@ -184,9 +165,11 @@ void remove(int fd) //removes the fd
 #ifdef DEBUG
 	printf("DONTNEED\n");
 #endif
+	/*
 	std::map<int, prob_cart>::iterator iter = predictor.find(fd);
 	if(iter != predictor.end())
 		predictor.erase(iter);
+		*/
 	return;
 }
 
@@ -286,7 +269,9 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t write(int fd, const void *data, size_t size) {
 
+#ifdef DEBUG
 	printf("writes\n");
+#endif
 
 	ssize_t amount_written;
 	struct stat st;

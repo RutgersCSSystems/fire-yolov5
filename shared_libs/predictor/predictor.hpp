@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -9,6 +10,8 @@
 #include <algorithm>
 #include <map>
 #include <deque>
+#include <unordered_map>
+#include <string>
 #include <cstdlib>
 #include <ctime>
 #include <sys/sysinfo.h>
@@ -21,7 +24,7 @@
 #define MEMINFO "/proc/meminfo"
 
 
-#define SPEED 2 //Number of fops to monitor before changing rand/seq probs(stack size)
+#define GRAMS 5 //Length of n-gram
 #define SEQ_CHANGE 0.1 //Change values based on seq observation
 #define RAND_CHANGE 0.4 //Change values based on random observation
 
@@ -31,11 +34,12 @@
 bool firsttime = true;
 
 struct pos_bytes{
+	int fd; //file descriptor
 	off_t pos; //last File seek position
 	size_t bytes; //size of read/write the last time
-
 };
 
+/*
 //This is defined for each file descriptor
 typedef struct probability_cartesian{
 	std::deque <struct pos_bytes> track;
@@ -45,8 +49,22 @@ typedef struct probability_cartesian{
 	bool RAND_READ;
 	bool WONT_NEED;
 }prob_cart;
+*/
 
-std::map<int, prob_cart> predictor; //This has characterstic of each file
+//std::map<int, prob_cart> predictor; //This has characterstic of each file
+std::deque <struct pos_bytes> track; //This keeps track of the last GRAMS accesses
+std::unordered_map<std::string, std::unordered_map<std::string, int>> predictor;
+//This data structure has the following structure:
+//key to top level map is the string which represents the last n accesses 
+//n = {1, GRAMS}
+//maps to a list of string with the following format "fd:off_t;size+fd2:off_t;size"
+// Functions needed from the n-gram
+
+void insert_and_predict_from_ngram(); //This adds the last entries 
+void print_ngram(); //This prints all the entries of the ngram data structure
+std::string convert_to_string(int);
+//Also add an accuracy measure
+
 
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
@@ -98,4 +116,36 @@ float get_mem_pressure(){
 			break;
 	}
 	return (float)(totmem-freemem) /totmem;
+}
+
+std::string convert_to_string(int length)
+{
+	std::string a;
+	if(track.size() < length)
+		return "";
+
+	std::deque <struct pos_bytes>::iterator dqiter = track.begin();
+	
+	for(int i=0; i<length; i++)
+	{
+		if(dqiter == track.end())
+			return "";
+
+		a += std::to_string(dqiter->fd) + ",";
+		a += std::to_string(dqiter->pos) + ",";
+		a += std::to_string(dqiter->bytes) + "+";
+
+		*dqiter++;
+	}
+	return a;
+}
+
+void insert_and_predict_from_ngram()
+{
+	for(int i=0; i<=GRAMS; i++)
+	{
+		std::cout << convert_to_string(i) << std::endl;
+	}
+
+	return ;
 }
