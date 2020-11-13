@@ -43,9 +43,8 @@ void read_predictor(int fd, off_t pos, size_t size)
 
 	track.push_back(pb);
 
-	if(track.size() > GRAMS+1)
+	if(track.size() >= GRAMS+1)
 	{
-		printf("this\n");
 		insert_and_predict_from_ngram();
 
 		track.pop_front();

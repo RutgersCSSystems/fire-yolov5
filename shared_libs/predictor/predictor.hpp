@@ -62,7 +62,7 @@ std::unordered_map<std::string, std::unordered_map<std::string, int>> predictor;
 
 void insert_and_predict_from_ngram(); //This adds the last entries 
 void print_ngram(); //This prints all the entries of the ngram data structure
-std::string convert_to_string(int);
+std::string convert_to_string(int, int);
 //Also add an accuracy measure
 
 
@@ -92,6 +92,28 @@ ssize_t real_read(int fd, void *data, size_t size) {
 	return ((real_read_t)dlsym(RTLD_NEXT, "read"))(fd, data, size);
 }
 
+void print_ngram()
+{
+	std::cout << "PRINT NGRAM" << std::endl;
+	//print the complete NGRAM
+	auto top_iter = predictor.begin();
+	while (top_iter != predictor.end())
+	{
+		std::cout << "Request_string = " << top_iter->first << std::endl;
+		auto second_map = top_iter->second;
+
+		auto second_iter = second_map.begin();
+		while(second_iter != second_map.end())
+		{
+			std::cout << second_iter->first << ": " << second_iter->second << std::endl;
+			*second_iter ++;
+		}
+		*top_iter ++;
+
+	}
+	std::cout << "END PRINT NGRAM" << std::endl;
+}
+
 
 // returns the pressure on memory
 // values [0, 1]: 0->No pressure, 1->High pressure on mem
@@ -118,15 +140,15 @@ float get_mem_pressure(){
 	return (float)(totmem-freemem) /totmem;
 }
 
-std::string convert_to_string(int length)
+std::string convert_to_string(int start, int length)
 {
 	std::string a;
 	if(track.size() < length)
 		return "";
 
-	std::deque <struct pos_bytes>::iterator dqiter = track.begin();
+	std::deque <struct pos_bytes>::iterator dqiter = track.begin() + start;
 	
-	for(int i=0; i<length; i++)
+	for(int i=start; i<start+length; i++)
 	{
 		if(dqiter == track.end())
 			return "";
@@ -142,10 +164,35 @@ std::string convert_to_string(int length)
 
 void insert_and_predict_from_ngram()
 {
-	for(int i=0; i<=GRAMS; i++)
-	{
-		std::cout << convert_to_string(i) << std::endl;
-	}
+	std::deque <struct pos_bytes>::iterator dqiter = track.begin();
+	if(dqiter == track.end())
+		return;
 
+	for(int i=GRAMS; i>=1; i--) //insert 1 to N gram entries in the predictor
+	{
+		printf("i = %d\n", i);
+		std::string key = convert_to_string(0, i);
+
+		std::unordered_map<std::string,std::unordered_map<std::string, int>>::const_iterator got = predictor.find(key);
+
+		std::string nextread = convert_to_string(i, 1);
+
+		if(got == predictor.end()) //will need to insert
+		{
+			std::unordered_map<std::string, int> a;
+			a[nextread] = 1; //freq = 1
+			predictor[key] = a;
+		}
+		else
+		{
+			auto second_map = got->second; //<string,int>map
+			int freq = second_map[nextread] += 1;
+
+			std::cout << "freq: " << freq << std::endl;
+
+		}
+
+	}
+	//print_ngram();
 	return ;
 }
