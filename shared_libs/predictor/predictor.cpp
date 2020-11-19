@@ -45,7 +45,7 @@ void read_predictor(int fd, off_t pos, size_t size)
 
 	if(latest_req_size() >= GRAMS+1)
 	{
-		insert_and_predict_from_ngram();
+		insert_to_ngram();
 
 		remove_oldest_req();
 	}

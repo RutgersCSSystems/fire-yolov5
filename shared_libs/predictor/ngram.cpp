@@ -65,6 +65,56 @@ void print_ngram()
 }
 
 
+void insert_to_ngram()
+{
+	auto dqiter = track.begin();
+	if(dqiter == track.end())
+		return;
+	
+	std::string key = convert_to_string(track, 0, GRAMS);
+	//std::cout << "Key : " << key << std::endl;
+
+	auto gram_req = ngram_predictor.find(key); //Last N reqs
+
+	std::string next_req = convert_to_string(track, GRAMS, 1); //latest req
+
+	if(gram_req == ngram_predictor.end()) //If never seen such a request string
+	{
+		std::unordered_map<std::string, int> next;
+		next[next_req] = 1;
+		ngram_predictor[key] = next;
+	}
+	else
+	{
+		gram_req->second[next_req] += 1;
+#ifdef DEBUG
+		std::cout << "freq: " << gram_req->second[next_req] << std::endl;
+#endif
+	}
+	return;
+}
+
+std::string predict_from_ngram()
+{
+	//For the latest N requests, check if there is an entry, 
+	//if so, return the predicted next request
+	//else, return NULL
+
+	std::string key = convert_to_string(track, 1, GRAMS+1);
+
+	auto gram_req = ngram_predictor.find(key); //Last N reqs
+
+	if(gram_req != ngram_predictor.end()) //Found the key
+	{
+		auto second_hash = gram_req->second;
+		
+		//get the highest frequency result
+
+	}
+
+}
+
+
 void insert_and_predict_from_ngram()
 {
 	std::deque <struct pos_bytes>::iterator dqiter = track.begin();
