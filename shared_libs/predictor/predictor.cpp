@@ -41,13 +41,13 @@ void read_predictor(int fd, off_t pos, size_t size)
 	pb.pos = pos;
 	pb.bytes = size;
 
-	track.push_back(pb);
+	push_latest_req(pb);
 
-	if(track.size() >= GRAMS+1)
+	if(latest_req_size() >= GRAMS+1)
 	{
 		insert_and_predict_from_ngram();
 
-		track.pop_front();
+		remove_oldest_req();
 	}
 
 

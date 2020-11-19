@@ -6,14 +6,14 @@ FLAGS=-fPIC -shared
 
 all: reclaimer
 
-reclaimer: predictor.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DPREDICTOR
+reclaimer: predictor.cpp ngram.cpp
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp util.cpp $(LIBS) -DPREDICTOR
 
-debug: predictor.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DDEBUG -DPREDICTOR
+debug: predictor.cpp ngram.cpp
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DDEBUG -DPREDICTOR
 
-pattern: predictor.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp $(LIBS) -DPATTERN
+pattern: predictor.cpp ngram.cpp
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPATTERN
 
 install:
 	sudo cp *.so /usr/local/lib
