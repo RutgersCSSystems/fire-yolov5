@@ -14,7 +14,7 @@ void remove_oldest_req();
 
 void insert_and_predict_from_ngram();
 void insert_to_ngram(); //This adds/updates the latest entries
-void predict_from_ngram(); //Predicts the next set of probable calls
+std::string predict_from_ngram(); //Predicts the next set of probable calls
 void print_ngram(); //This prints all the entries of the ngram data structure
 std::string convert_to_string(std::deque<struct pos_bytes>, int, int);
 //Also add an accuracy measure

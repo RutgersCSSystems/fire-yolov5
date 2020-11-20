@@ -47,6 +47,10 @@ void read_predictor(int fd, off_t pos, size_t size)
 	{
 		insert_to_ngram();
 
+		std::string a = predict_from_ngram();
+
+		std::cout << "predicted = " << a << std::endl;
+
 		remove_oldest_req();
 	}
 
