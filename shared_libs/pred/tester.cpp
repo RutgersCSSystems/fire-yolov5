@@ -50,6 +50,30 @@ int main()
     a.bytes = 555;
     obj.insert_to_ngram(a);
 
+    a.fd = 2;
+    a.pos = 22;
+    a.bytes = 222;
+    obj.insert_to_ngram(a);
+
+    a.fd = 3;
+    a.pos = 33;
+    a.bytes = 333;
+    obj.insert_to_ngram(a);
+
+    a.fd = 5;
+    a.pos = 55;
+    a.bytes = 555;
+    obj.insert_to_ngram(a);
+
     cout << obj.current_stream.size() << endl;
     obj.print_ngram();
+
+
+    string str = "2,22,222+3,33,333+";
+
+    cout << obj.get_max_freq_access(str) << endl;
+//std::string ngram::get_max_freq_access(std::string first_key) //ret access with max freq
+
+
+    return 0;
 }
