@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include<fstream>
+#include<string>
 #define GRAMS 2 //length of n-gram
 
 
@@ -23,4 +24,4 @@ class ngram{
 };
 
 std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, int length);
-std::deque<struct pos_bytes> *string_to_deque(std::string input);
+std::deque<struct pos_bytes> string_to_deque(std::string input);

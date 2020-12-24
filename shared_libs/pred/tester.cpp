@@ -72,6 +72,10 @@ int main()
     string str = "2,22,222+3,33,333+";
 
     cout << obj.get_max_freq_access(str) << endl;
+    auto d = string_to_deque(obj.get_max_freq_access(str));
+    cout << d[0].fd << endl;
+    cout << d[0].pos << endl;
+    cout << d[0].bytes << endl;
 //std::string ngram::get_max_freq_access(std::string first_key) //ret access with max freq
 
 

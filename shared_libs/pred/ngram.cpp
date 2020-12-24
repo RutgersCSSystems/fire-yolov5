@@ -120,12 +120,39 @@ std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, in
     return ret;
 }
 
-/*
-std::deque<struct pos_bytes> *string_to_deque(std::string input)
+std::deque<struct pos_bytes> string_to_deque(std::string input)
 {   
     std::deque<struct pos_bytes> ret;
+    struct pos_bytes entry;
 
-    if(input == NULL || input.size() <=0)
+    /*
+    if(input.size() <= 0)
         return NULL;
+        */
+    
+    std::vector<std::string> tokens;
+    std::stringstream check1(input);
+    std::string intermediate;
+
+    while(getline(check1, intermediate, '+'))
+    {
+        tokens.push_back(intermediate);
+    }
+
+    for(int i=0; i<tokens.size(); i++)
+    {
+        std::stringstream check2(tokens[i]);
+        getline(check2, intermediate, ',');
+        entry.fd = stoi(intermediate);
+
+        getline(check2, intermediate, ',');
+        entry.pos = stoi(intermediate);
+
+        getline(check2, intermediate, ',');
+        entry.bytes = stoi(intermediate);
+
+        ret.push_back(entry);
+    }
+
+    return ret;
 }
-*/
