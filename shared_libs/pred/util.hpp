@@ -1,3 +1,6 @@
+#ifndef _UTIL_HPP
+#define _UTIL_HPP
+
 #define MEMINFO "/proc/meminfo"
 
 struct pos_bytes{
@@ -7,3 +10,5 @@ struct pos_bytes{
 };
 
 float get_mem_pressure();
+
+#endif

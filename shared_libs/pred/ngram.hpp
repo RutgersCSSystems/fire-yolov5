@@ -1,14 +1,14 @@
 #include <bits/stdc++.h>
 #include<fstream>
 #include<string>
+#include "util.hpp"
 #define GRAMS 2 //length of n-gram
 
-
-struct pos_bytes{
+/*struct pos_bytes{
     int fd; //fd number
     off_t pos; //last file seek position
     size_t bytes; //size of access
-};
+};*/
 
 class ngram{
     public:

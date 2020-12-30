@@ -5,7 +5,7 @@ FLAGS=-fPIC -shared
 
 #all: reclaimer
 
-test: tester.cpp ngram.cpp
+test: tester.cpp ngram.cpp util.cpp
 	$(CXX) -o $@ $^ 
 
 reclaimer: predictor.cpp ngram.cpp
