@@ -98,11 +98,48 @@ void ngram::print_ngram()
 
     std::cout << "set content " << all_accesses.size()<< std::endl;
     for(auto i : all_accesses) {
-	    std::cout << i << "- " ;
-	    //std::cout << i << "-" << std::hash<std::string>()(i) << " ";
+        std::cout << i << "- " ;
+        //std::cout << i << "-" << std::hash<std::string>()(i) << " ";
     }
     std::cout << std::endl;
     return;
+}
+
+std::multimap<float, std::string> ngram::gnn_recursive(std::multimap<float, std::string> map, int n)
+{
+    if(n==0)
+        return map;
+
+    std::multimap<float, std::string> new_map;
+
+    for(auto i : map)
+    {
+        //i.first is the confidence in this value
+        //i.second is the access(fd:offset:bytes) string of length <= n
+        //query the deque and insert all the new strings
+        auto deq = string_to_deque(i.second);
+        //std::string first_key = 
+    }
+
+    return gnn_recursive(new_map, --n);
+}
+
+//returns map <Priority, Access string> 
+//larger is greater probability
+std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
+{
+    std::multimap<float, std::string> ret;
+
+    if(current_stream.size() <= GRAMS)
+        return ret;
+
+    //get the last stream of GRAMS access
+    std::string latest_access_stream = convert_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
+
+    ret.insert({1, latest_access_stream});
+    return gnn_recursive(ret, n);
+
+    //query MOM to get all the accesses - use recursion
 }
 
 std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, int length)
@@ -118,7 +155,7 @@ std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, in
     {
         if(dqiter == stream.end())
             break;
-        
+
         ret += std::to_string(dqiter->fd) + ",";
         ret += std::to_string(dqiter->pos) + ",";
         ret += std::to_string(dqiter->bytes) + "+";
@@ -134,10 +171,10 @@ std::deque<struct pos_bytes> string_to_deque(std::string input)
     struct pos_bytes entry;
 
     /*
-    if(input.size() <= 0)
-        return NULL;
-        */
-    
+       if(input.size() <= 0)
+       return NULL;
+       */
+
     std::vector<std::string> tokens;
     std::stringstream check1(input);
     std::string intermediate;
