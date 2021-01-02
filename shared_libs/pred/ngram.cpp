@@ -7,6 +7,7 @@ int ngram::insert_to_ngram(struct pos_bytes access)
      * Depending on the length of GRAMS, it will insert in MOM
      */
     current_stream.push_back(access);
+    all_accesses.insert(convert_to_string(current_stream, current_stream.size()-1, 1)); //latest addition to set
 
     if(current_stream.size() > GRAMS) //will insert to MOM now
     {
@@ -94,6 +95,13 @@ void ngram::print_ngram()
         }
         *first_iter ++;
     }
+
+    std::cout << "set content " << all_accesses.size()<< std::endl;
+    for(auto i : all_accesses) {
+	    std::cout << i << "- " ;
+	    //std::cout << i << "-" << std::hash<std::string>()(i) << " ";
+    }
+    std::cout << std::endl;
     return;
 }
 
