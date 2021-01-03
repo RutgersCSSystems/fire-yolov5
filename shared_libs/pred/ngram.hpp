@@ -29,5 +29,5 @@ class ngram{
 
 };
 
-std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, int length);
+std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length);
 std::deque<struct pos_bytes> string_to_deque(std::string input);

@@ -6,15 +6,16 @@ int ngram::insert_to_ngram(struct pos_bytes access)
      * The user will call insert_to_ngram everytime there is an access.
      * Depending on the length of GRAMS, it will insert in MOM
      */
+    std::cout << "access insert " << access.fd << std::endl;
     current_stream.push_back(access);
-    all_accesses.insert(convert_to_string(current_stream, current_stream.size()-1, 1)); //latest addition to set
+    all_accesses.insert(deque_to_string(current_stream, current_stream.size()-1, 1)); //latest addition to set
 
     if(current_stream.size() > GRAMS) //will insert to MOM now
     {
-        std::string first_key = convert_to_string(current_stream, 0, GRAMS); //key to top lvl map
+        std::string first_key = deque_to_string(current_stream, 0, GRAMS); //key to top lvl map
         std::cout << "first_key = " << first_key << std::endl;
 
-        std::string second_key = convert_to_string(current_stream, GRAMS, 1); //Key to second map
+        std::string second_key = deque_to_string(current_stream, GRAMS, 1); //Key to second map
         std::cout << "second_key = " << second_key << std::endl;
 
 
@@ -118,7 +119,26 @@ std::multimap<float, std::string> ngram::gnn_recursive(std::multimap<float, std:
         //i.second is the access(fd:offset:bytes) string of length <= n
         //query the deque and insert all the new strings
         auto deq = string_to_deque(i.second);
-        //std::string first_key = 
+        std::string first_key = deque_to_string(deq, deq.size()-GRAMS, GRAMS);
+
+        //query MOM to see if there is a prior entry
+        auto first_key_loc = past_freq.find(first_key);
+
+        if(first_key_loc == past_freq.end()) //did not find the key
+        {
+            new_map.insert({i.first, i.second});
+        }
+        else //found the entry in past_freq
+        {
+            for(auto j : past_freq[first_key])
+            {
+                //j.first -> single access string
+                //j.second -> access freq
+                // new freq = i.first + n * j.second
+                //
+                new_map.insert({i.first+n*j.second, i.second+j.first});
+            }
+        }
     }
 
     return gnn_recursive(new_map, --n);
@@ -130,11 +150,18 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
 {
     std::multimap<float, std::string> ret;
 
-    if(current_stream.size() <= GRAMS)
+    if(current_stream.size() < GRAMS)
+    {
+        std::cout << "CURRENT_STREAM <= GRAMS" << std::endl;
         return ret;
+    }
+
+    std::cout << "current_stream" << std::endl;
+    for(auto a : current_stream)
+        std::cout << a.fd << std::endl;
 
     //get the last stream of GRAMS access
-    std::string latest_access_stream = convert_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
+    std::string latest_access_stream = deque_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
 
     ret.insert({1, latest_access_stream});
     return gnn_recursive(ret, n);
@@ -142,7 +169,7 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
     //query MOM to get all the accesses - use recursion
 }
 
-std::string convert_to_string(std::deque<struct pos_bytes> stream, int start, int length)
+std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length)
 {
     std::string ret;
 

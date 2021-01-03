@@ -6,7 +6,6 @@ int main()
 {
     ngram obj;
     
-
     struct pos_bytes a; 
 
 
@@ -68,6 +67,13 @@ int main()
     cout << obj.current_stream.size() << endl;
     obj.print_ngram();
 
+
+    std::multimap<float, std::string> next = obj.get_next_n_accesses(2);
+
+    cout << "############################" << endl;
+    for(auto i : next)
+        cout << i.first << " " << i.second << endl;
+    cout << "############################" << endl;
 
     string str = "2,22,222+3,33,333+";
 
