@@ -106,9 +106,9 @@ void ngram::print_ngram()
     return;
 }
 
-std::multimap<float, std::string> ngram::gnn_recursive(std::multimap<float, std::string> map, int n)
+std::multimap<float, std::string> ngram::__gnn_recursive(std::multimap<float, std::string> map, int n)
 {
-    if(n==0)
+    if(n==0 || map.size() == 0)
         return map;
 
     std::multimap<float, std::string> new_map;
@@ -141,7 +141,7 @@ std::multimap<float, std::string> ngram::gnn_recursive(std::multimap<float, std:
         }
     }
 
-    return gnn_recursive(new_map, --n);
+    return __gnn_recursive(new_map, --n);
 }
 
 //returns map <Priority, Access string> 
@@ -152,21 +152,41 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
 
     if(current_stream.size() < GRAMS)
     {
-        std::cout << "CURRENT_STREAM <= GRAMS" << std::endl;
         return ret;
     }
 
+    /*
     std::cout << "current_stream" << std::endl;
     for(auto a : current_stream)
         std::cout << a.fd << std::endl;
+        */
 
     //get the last stream of GRAMS access
     std::string latest_access_stream = deque_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
 
     ret.insert({1, latest_access_stream});
-    return gnn_recursive(ret, n);
+    return __gnn_recursive(ret, n);
+}
 
-    //query MOM to get all the accesses - use recursion
+
+std::set<std::string> ngram::get_notneeded(std::multimap<float, std::string> next_n_accesses)
+{
+	std::set<std::string> ret;
+
+	std::string all_needed;
+
+	for(auto i : next_n_accesses)
+	{
+		all_needed += i.second;
+	}
+	std::cout << "all_needed = " << all_needed << std::endl;
+
+	std::set<std::string> all_needed_set = string_to_set(all_needed);
+	std::set_difference(all_accesses.begin(), all_accesses.end(),
+		       	all_needed_set.begin(), all_needed_set.end(), 
+			std::inserter(ret, ret.end()));
+
+	return ret;
 }
 
 std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length)
@@ -227,4 +247,19 @@ std::deque<struct pos_bytes> string_to_deque(std::string input)
     }
 
     return ret;
+}
+
+
+std::set<std::string> string_to_set(std::string input)
+{
+	std::set<std::string> ret;
+
+	std::stringstream check1(input);
+	std::string intermediate;
+
+	while(getline(check1, intermediate, '+'))
+	{
+		ret.insert(intermediate+'+');
+	}
+	return ret;
 }

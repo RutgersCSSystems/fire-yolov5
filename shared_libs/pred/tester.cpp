@@ -68,11 +68,16 @@ int main()
     obj.print_ngram();
 
 
-    std::multimap<float, std::string> next = obj.get_next_n_accesses(2);
+    std::multimap<float, std::string> next = obj.get_next_n_accesses(3);
+
+    auto not_needed = obj.get_notneeded(next);
 
     cout << "############################" << endl;
     for(auto i : next)
         cout << i.first << " " << i.second << endl;
+    cout << "############################" << endl;
+    for(auto j : not_needed)
+	    cout << j << endl;
     cout << "############################" << endl;
 
     string str = "2,22,222+3,33,333+";
@@ -83,7 +88,6 @@ int main()
     cout << d[0].pos << endl;
     cout << d[0].bytes << endl;
 //std::string ngram::get_max_freq_access(std::string first_key) //ret access with max freq
-
 
     return 0;
 }
