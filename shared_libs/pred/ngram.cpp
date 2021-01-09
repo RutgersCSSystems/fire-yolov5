@@ -50,6 +50,57 @@ int ngram::insert_to_ngram(struct pos_bytes access)
     }
 }
 
+//Remove any keys with this fd and
+//any values with this fd
+void ngram::remove_from_ngram(int fd)
+{
+    auto iter = past_freq.begin();
+    while(iter != past_freq.end())
+    {
+        if(fd_in_string(iter->first, fd))
+        {
+            iter = past_freq.erase(iter);
+            continue;
+        }
+        //check if any of the values has a 
+        auto jter = iter->second.begin();
+        while(jter != iter->second.end())
+        {
+            if(fd_in_string(jter->first, fd))
+            {
+                jter = iter->second.erase(jter);
+            }
+            else
+                jter ++;
+        }
+        iter++;
+    }
+
+
+    //If the current_stream has the element delete current stream
+    for(auto cstream : current_stream)
+    {
+        if(cstream.fd == fd)
+        {
+            current_stream.clear();
+            break;
+        }
+    }
+
+    //Remove all elements from set with fd
+    auto setelem = all_accesses.begin();
+    while(setelem != all_accesses.end())
+    {
+        if(fd_in_string(*setelem, fd))
+        {
+            setelem = all_accesses.erase(setelem);
+        }
+        else
+            setelem ++;
+    }
+
+}
+
 std::string ngram::get_max_freq_access(std::string first_key) //ret access with max freq
 {
     std::string max_freq_access = "";
@@ -156,10 +207,10 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
     }
 
     /*
-    std::cout << "current_stream" << std::endl;
-    for(auto a : current_stream)
-        std::cout << a.fd << std::endl;
-        */
+       std::cout << "current_stream" << std::endl;
+       for(auto a : current_stream)
+       std::cout << a.fd << std::endl;
+       */
 
     //get the last stream of GRAMS access
     std::string latest_access_stream = deque_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
@@ -171,22 +222,22 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
 
 std::set<std::string> ngram::get_notneeded(std::multimap<float, std::string> next_n_accesses)
 {
-	std::set<std::string> ret;
+    std::set<std::string> ret;
 
-	std::string all_needed;
+    std::string all_needed;
 
-	for(auto i : next_n_accesses)
-	{
-		all_needed += i.second;
-	}
-	std::cout << "all_needed = " << all_needed << std::endl;
+    for(auto i : next_n_accesses)
+    {
+        all_needed += i.second;
+    }
+    std::cout << "all_needed = " << all_needed << std::endl;
 
-	std::set<std::string> all_needed_set = string_to_set(all_needed);
-	std::set_difference(all_accesses.begin(), all_accesses.end(),
-		       	all_needed_set.begin(), all_needed_set.end(), 
-			std::inserter(ret, ret.end()));
+    std::set<std::string> all_needed_set = string_to_set(all_needed);
+    std::set_difference(all_accesses.begin(), all_accesses.end(),
+            all_needed_set.begin(), all_needed_set.end(), 
+            std::inserter(ret, ret.end()));
 
-	return ret;
+    return ret;
 }
 
 std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length)
@@ -249,17 +300,36 @@ std::deque<struct pos_bytes> string_to_deque(std::string input)
     return ret;
 }
 
+//TODO: Try doing this using REGEX
+bool fd_in_string(std::string input, int fd)
+{
+    if(input.size() <= 0)
+        return false;
+
+    std::stringstream check1(input);
+    std::string intermediate, inter1;
+    while(getline(check1, intermediate, '+'))
+    {
+        std::stringstream check2(intermediate);
+        getline(check2, inter1, ',');
+        if(stoi(inter1) == fd)
+            return true;
+    }
+
+    return false;
+}
+
 
 std::set<std::string> string_to_set(std::string input)
 {
-	std::set<std::string> ret;
+    std::set<std::string> ret;
 
-	std::stringstream check1(input);
-	std::string intermediate;
+    std::stringstream check1(input);
+    std::string intermediate;
 
-	while(getline(check1, intermediate, '+'))
-	{
-		ret.insert(intermediate+'+');
-	}
-	return ret;
+    while(getline(check1, intermediate, '+'))
+    {
+        ret.insert(intermediate+'+');
+    }
+    return ret;
 }

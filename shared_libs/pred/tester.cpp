@@ -65,9 +65,10 @@ int main()
     obj.insert_to_ngram(a);
 
     cout << obj.current_stream.size() << endl;
-    obj.print_ngram();
+    //obj.print_ngram();
 
 
+    /*
     std::multimap<float, std::string> next = obj.get_next_n_accesses(3);
 
     auto not_needed = obj.get_notneeded(next);
@@ -88,6 +89,10 @@ int main()
     cout << d[0].pos << endl;
     cout << d[0].bytes << endl;
 //std::string ngram::get_max_freq_access(std::string first_key) //ret access with max freq
-
+    */
+    obj.print_ngram();
+    obj.remove_from_ngram(2);
+    cout << "##########################" << endl;
+    obj.print_ngram();
     return 0;
 }
