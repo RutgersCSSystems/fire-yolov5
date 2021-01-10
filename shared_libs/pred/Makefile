@@ -5,8 +5,8 @@ FLAGS=-fPIC -shared
 
 #all: reclaimer
 
-pred: frontend.cpp
-	$(CXX) $(FLAGS) -o libpred.so $^ $(LIBS)
+ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
+	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DDEBUG -DNGRAM
 
 test: tester.cpp ngram.cpp util.cpp
 	$(CXX) -o $@ $^ 

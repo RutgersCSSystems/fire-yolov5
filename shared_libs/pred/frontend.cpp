@@ -23,6 +23,7 @@
 #include <sys/types.h>
 
 #include "frontend.hpp"
+#include "predictor.hpp"
 
 //#include "ngram.hpp"
 
@@ -43,7 +44,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
     if(fd = reg_file(stream)) //this is a regular file
     {
-        // TODO
+        handle_read(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
     }
 
     return amount_read;
@@ -58,6 +59,7 @@ ssize_t read(int fd, void *data, size_t size)
 
     if(reg_fd(fd))
     {
+        handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 
     return amount_read;
@@ -73,7 +75,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
     if(fd = reg_file(stream))
     {
         //insert to the predictor
-        //
+        handle_write(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
     }
 #endif
 
@@ -91,9 +93,11 @@ ssize_t write(int fd, const void *data, size_t size)
     ssize_t amount_written = real_write(fd, data, size);
 
 #ifdef PREDICTOR
+    //DO we need to take care of what results we get from the real call ?
     if(reg_fd(fd))
     {
         //do somthign
+        handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
     return amount_written;
@@ -104,11 +108,13 @@ int fclose(FILE *stream)
 #ifdef DEBUG
     printf("fclose detected\n");
 #endif
-    //TODO:call fadvise
+
 #ifdef PREDICTOR
     int fd;
     if(fd = reg_file(stream))
-        remove(fd);
+    {
+        handle_close(fd);
+    }
 #endif
     return real_fclose(stream);
 }
@@ -124,6 +130,7 @@ int close(int fd)
     if(reg_fd(fd))
     {
         //remove from the predictor data
+        handle_close(fd);
     }
 #endif
     return real_close(fd);
