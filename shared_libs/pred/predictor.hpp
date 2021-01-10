@@ -36,3 +36,5 @@ ssize_t real_read(int fd, void *data, size_t size) {
 int real_open(const char *pathname, int flags){
         return ((real_open_t)dlsym(RTLD_NEXT, "open"))(pathname, flags);
 }
+bool reg_fd(int fd);
+int reg_file(FILE *stream);

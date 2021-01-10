@@ -5,6 +5,9 @@ FLAGS=-fPIC -shared
 
 #all: reclaimer
 
+pred: predictor.cpp
+	$(CXX) $(FLAGS) -o libpred.so $^ $(LIBS)
+
 test: tester.cpp ngram.cpp util.cpp
 	$(CXX) -o $@ $^ 
 

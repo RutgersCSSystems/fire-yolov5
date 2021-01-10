@@ -22,8 +22,69 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
-#include "ngram.hpp"
+#include "predictor.hpp"
 
+//#include "ngram.hpp"
+
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+
+    size_t amount_read;
+
+    // Perform the actual system call
+    amount_read = real_fread(ptr, size, nmemb, stream);
+
+    std::cout << "fread" << std::endl;
+
+    int fd; 
+
+    if(fd = reg_file(stream)) //this is a regular file
+    {
+        // TODO
+    }
+
+    return amount_read;
+}
+
+ssize_t read(int fd, void *data, size_t size)
+{
+    ssize_t amount_read = real_read(fd, data, size);
+
+    printf("Hello read\n");
+    if(reg_fd(fd))
+    {
+    }
+
+    return amount_read;
+}
+
+
+int fclose(FILE *stream){
+#ifdef DEBUG
+	printf("fclose detected\n");
+#endif
+	//TODO:call fadvise
+#ifdef PREDICTOR
+	int fd;
+     if(fd = reg_file(stream))
+		remove(fd);
+#endif
+	return real_fclose(stream);
+}
+
+
+int close(int fd){
+#ifdef DEBUG
+	printf("File close detected\n");
+#endif
+
+#ifdef PREDICTOR
+	if(reg_fd(fd))
+		remove(fd);
+#endif
+	return real_close(fd);
+}
 
 //returns fd if  FILE is a regular file
 int reg_file(FILE *stream)
@@ -54,30 +115,4 @@ bool reg_fd(int fd)
 	   }
     }
     return false;
-}
-
-
-size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
-
-    size_t amount_read;
-
-    // Perform the actual system call
-    amount_read = real_fread(ptr, size, nmemb, stream);
-
-    int fd = fileno(stream);
-    off_t pos = -1;
-
-    if()
-
-#ifdef PREDICTOR
-			 read_predictor(fd, pos, size*nmemb);
-#endif
-		  }
-	   }
-    }
-#ifdef PATTERN
-    access_pattern(fd, pos, size*nmemb, 0);
-#endif
-
-    return amount_read;
 }
