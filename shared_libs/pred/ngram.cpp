@@ -301,6 +301,7 @@ std::deque<struct pos_bytes> string_to_deque(std::string input)
 }
 
 //TODO: Try doing this using REGEX
+//returns true if fd is found in access string
 bool fd_in_string(std::string input, int fd)
 {
     if(input.size() <= 0)
