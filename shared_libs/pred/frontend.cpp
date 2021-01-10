@@ -22,7 +22,7 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 
-#include "predictor.hpp"
+#include "frontend.hpp"
 
 //#include "ngram.hpp"
 
@@ -30,12 +30,14 @@
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
 
+#ifdef DEBUG
+    std::cout << "fread" << std::endl;
+#endif
     size_t amount_read;
 
     // Perform the actual system call
     amount_read = real_fread(ptr, size, nmemb, stream);
 
-    std::cout << "fread" << std::endl;
 
     int fd; 
 
@@ -49,9 +51,11 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
 ssize_t read(int fd, void *data, size_t size)
 {
+#ifdef DEBUG
+    printf("Hello read\n");
+#endif
     ssize_t amount_read = real_read(fd, data, size);
 
-    printf("Hello read\n");
     if(reg_fd(fd))
     {
     }
@@ -59,31 +63,70 @@ ssize_t read(int fd, void *data, size_t size)
     return amount_read;
 }
 
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+    // Perform the actual system call
+    size_t amount_written = real_fwrite(ptr, size, nmemb, stream);
 
-int fclose(FILE *stream){
-#ifdef DEBUG
-	printf("fclose detected\n");
-#endif
-	//TODO:call fadvise
 #ifdef PREDICTOR
-	int fd;
-     if(fd = reg_file(stream))
-		remove(fd);
+    int fd;
+    if(fd = reg_file(stream))
+    {
+        //insert to the predictor
+        //
+    }
 #endif
-	return real_fclose(stream);
+
+    return amount_written;
 }
 
 
-int close(int fd){
+ssize_t write(int fd, const void *data, size_t size)
+{
 #ifdef DEBUG
-	printf("File close detected\n");
+    printf("writes\n");
+#endif
+
+    // Perform the actual system call
+    ssize_t amount_written = real_write(fd, data, size);
+
+#ifdef PREDICTOR
+    if(reg_fd(fd))
+    {
+        //do somthign
+    }
+#endif
+    return amount_written;
+}
+
+int fclose(FILE *stream)
+{
+#ifdef DEBUG
+    printf("fclose detected\n");
+#endif
+    //TODO:call fadvise
+#ifdef PREDICTOR
+    int fd;
+    if(fd = reg_file(stream))
+        remove(fd);
+#endif
+    return real_fclose(stream);
+}
+
+
+int close(int fd)
+{
+#ifdef DEBUG
+    printf("File close detected\n");
 #endif
 
 #ifdef PREDICTOR
-	if(reg_fd(fd))
-		remove(fd);
+    if(reg_fd(fd))
+    {
+        //remove from the predictor data
+    }
 #endif
-	return real_close(fd);
+    return real_close(fd);
 }
 
 //returns fd if  FILE is a regular file
@@ -94,10 +137,10 @@ int reg_file(FILE *stream)
 
     if(fstat(fd, &st) == 0)
     {
-	   if(S_ISREG(st.st_mode))
-	   {
-		  return fd;
-	   }
+        if(S_ISREG(st.st_mode))
+        {
+            return fd;
+        }
     }
     return false;
 }
@@ -109,10 +152,10 @@ bool reg_fd(int fd)
 
     if(fstat(fd, &st) == 0)
     {
-	   if(S_ISREG(st.st_mode))
-	   {
-		  return true;
-	   }
+        if(S_ISREG(st.st_mode))
+        {
+            return true;
+        }
     }
     return false;
 }
