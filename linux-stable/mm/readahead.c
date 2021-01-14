@@ -119,6 +119,7 @@ static int read_pages(struct address_space *mapping, struct file *filp,
 
 	if (mapping->a_ops->readpages) {
 		ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+          //printk("read_pages: %pF\n", mapping->a_ops->readpages);
 		/* Clean up the remaining pages */
 		put_pages_list(pages);
 		goto out;
