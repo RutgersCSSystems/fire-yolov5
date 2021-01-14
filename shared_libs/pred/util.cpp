@@ -1,5 +1,7 @@
 #include <string>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
 #include "util.hpp"
 
 // returns the pressure on memory
@@ -25,4 +27,14 @@ float get_mem_pressure(){
 			break;
 	}
 	return (float)(totmem-freemem) /totmem;
+}
+
+bool toss_biased_coin()
+{
+    float mem_pressure = get_mem_pressure();
+    srand(time(0));
+    int ran = rand() % 1000;
+    if(ran <= (int)mem_pressure*1000)
+        return true;
+    return false;
 }

@@ -33,6 +33,15 @@ int handle_read(int fd, off_t pos, size_t bytes)
     readobj.insert_to_ngram(a);
 #endif
 
+    if(toss_biased_coin()) //High MemPressure
+    {
+        //Relinquish some shiz
+    }
+    else //
+    {
+
+    }
+
     return true;
 }
 

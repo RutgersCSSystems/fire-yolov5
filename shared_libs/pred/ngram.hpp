@@ -13,7 +13,7 @@
 class ngram{
     public:
         /*
-         * Map of Map MOM
+         * Map of Map=MOM
          */
         std::unordered_map<std::string, std::unordered_map<std::string, int>> past_freq; //MOM
         std::deque <struct pos_bytes> current_stream; //keeps the current Length of accesses

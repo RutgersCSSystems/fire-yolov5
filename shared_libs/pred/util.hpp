@@ -9,6 +9,7 @@ struct pos_bytes{
 	size_t bytes; //size of read/write
 };
 
-float get_mem_pressure();
+/*Returns P(true) = MemPressure*/
+bool toss_biased_coin();
 
 #endif
