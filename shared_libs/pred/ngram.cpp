@@ -6,42 +6,35 @@ int ngram::insert_to_ngram(struct pos_bytes access)
      * The user will call insert_to_ngram everytime there is an access.
      * Depending on the length of GRAMS, it will insert in MOM
      */
-    std::cout << "access insert " << access.fd << std::endl;
     current_stream.push_back(access);
     all_accesses.insert(deque_to_string(current_stream, current_stream.size()-1, 1)); //latest addition to set
 
     if(current_stream.size() > GRAMS) //will insert to MOM now
     {
         std::string first_key = deque_to_string(current_stream, 0, GRAMS); //key to top lvl map
-        std::cout << "first_key = " << first_key << std::endl;
 
         std::string second_key = deque_to_string(current_stream, GRAMS, 1); //Key to second map
-        std::cout << "second_key = " << second_key << std::endl;
 
 
         auto first_key_loc = past_freq.find(first_key);
 
         if(first_key_loc == past_freq.end()) //Did not find the first key
         {
-            std::cout << "NOT found first key " << first_key << std::endl;
             std::unordered_map<std::string, int> sec_map;
             sec_map[second_key] = 1;
             past_freq[first_key] = sec_map;
         }
         else //Did find the first key
         {
-            std::cout << "found first key " << first_key << std::endl;
             auto second_map = first_key_loc->second;
             auto second_key_loc = second_map.find(second_key);
             if(second_key_loc == second_map.end()) //Did not find the second key
             {
-                std::cout << "NOT found second key " << second_key << std::endl;
                 //second_map[second_key] = 1;
                 first_key_loc->second[second_key] = 1;
             }
             else
             {
-                std::cout << "found second key " << second_key << std::endl;
                 //second_map[second_key] += 1;
                 first_key_loc->second[second_key] += 1;
             }
@@ -225,7 +218,6 @@ std::deque<struct pos_bytes> ngram::get_notneeded(std::multimap<float, std::stri
     {
         all_needed += i.second;
     }
-    std::cout << "all_needed = " << all_needed << std::endl;
 
     std::set<std::string> all_needed_set = string_to_set(all_needed);
 
