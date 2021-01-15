@@ -38,12 +38,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
     amount_read = real_fread(ptr, size, nmemb, stream);
 
 
+#ifdef PREDICTOR
     int fd; 
 
     if(fd = reg_file(stream)) //this is a regular file
     {
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
     }
+   #endif
 
     return amount_read;
 }
@@ -55,10 +57,12 @@ ssize_t read(int fd, void *data, size_t size)
 #endif
     ssize_t amount_read = real_read(fd, data, size);
 
+#ifdef PREDICTOR
     if(reg_fd(fd))
     {
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
+#endif
 
     return amount_read;
 }

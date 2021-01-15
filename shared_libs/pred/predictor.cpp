@@ -34,7 +34,9 @@ int handle_read(int fd, off_t pos, size_t bytes)
     a.pos = pos;
     a.bytes = bytes;
     readobj.insert_to_ngram(a);
+#endif
 
+#ifdef NGRAM_PREDICT
     std::multimap<float, std::string> next_accesses;
     if(toss_biased_coin()) //High MemPressure
     {
@@ -69,7 +71,9 @@ int handle_write(int fd, off_t pos, size_t bytes)
     a.pos = pos;
     a.bytes = bytes;
     writeobj.insert_to_ngram(a);
+#endif
 
+#ifdef NGRAM_PREDICT
     std::multimap<float, std::string> next_accesses;
     if(toss_biased_coin()) //High MemPressure
     {
@@ -104,7 +108,9 @@ int handle_close(int fd)
     readobj.remove_from_ngram(fd);
 #endif
 
+#ifdef NGRAM_PREDICT
     posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+#endif
     
     //Clear/demote corresponding cache elements from memory
     return true;
@@ -112,11 +118,13 @@ int handle_close(int fd)
 
 int handle_open(int fd)
 {
+#ifdef NGRAM_PREDICT
     //dont know what to do if this rn
     if(!toss_biased_coin()) //Low MemPressure with high prob
     {
         posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
         std::cout << "prefetching fd: " << fd << std::endl;
     }
+#endif
     return true;
 }
