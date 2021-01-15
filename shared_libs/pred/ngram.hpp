@@ -27,8 +27,7 @@ class ngram{
         std::multimap<float, std::string> get_next_n_accesses(int n); //predict the next n accesses based on the last GRAMS access
         std::multimap<float, std::string> __gnn_recursive(std::multimap<float, std::string>, int n); //recrusive call for get_next_n_accesses
 
-        //std::multimap<float, std::string> get_next_n_accesses(int n, std::multimap<float, std::string>); //predict the next n accesses based on the last GRAMS access
-        std::set<std::string> get_notneeded(std::multimap<float, std::string> next_n_accesses);
+        std::deque<struct pos_bytes> get_notneeded(std::multimap<float, std::string> next_n_accesses);
 };
 
 std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length);

@@ -206,12 +206,6 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
         return ret;
     }
 
-    /*
-       std::cout << "current_stream" << std::endl;
-       for(auto a : current_stream)
-       std::cout << a.fd << std::endl;
-       */
-
     //get the last stream of GRAMS access
     std::string latest_access_stream = deque_to_string(current_stream, current_stream.size()-GRAMS, GRAMS); //last GRAMS access
 
@@ -219,8 +213,7 @@ std::multimap<float, std::string> ngram::get_next_n_accesses(int n)
     return __gnn_recursive(ret, n);
 }
 
-
-std::set<std::string> ngram::get_notneeded(std::multimap<float, std::string> next_n_accesses)
+std::deque<struct pos_bytes> ngram::get_notneeded(std::multimap<float, std::string> next_n_accesses)
 {
     std::set<std::string> ret;
 
@@ -233,11 +226,19 @@ std::set<std::string> ngram::get_notneeded(std::multimap<float, std::string> nex
     std::cout << "all_needed = " << all_needed << std::endl;
 
     std::set<std::string> all_needed_set = string_to_set(all_needed);
+
     std::set_difference(all_accesses.begin(), all_accesses.end(),
             all_needed_set.begin(), all_needed_set.end(), 
             std::inserter(ret, ret.end()));
 
-    return ret;
+    all_needed = ""; //reset for deque
+    for(auto i : ret)
+    {
+        all_needed += i;
+    }
+
+    auto ret_dq = string_to_deque(all_needed);
+    return ret_dq;
 }
 
 std::string deque_to_string(std::deque<struct pos_bytes> stream, int start, int length)
