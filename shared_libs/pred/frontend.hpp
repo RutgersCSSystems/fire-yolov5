@@ -15,7 +15,7 @@ typedef int (*real_fclose_t)(FILE *);
 typedef int (*real_close_t)(int);
 typedef int (*real_open_t)(const char *, int flags);
 
-size_t real_fclose(FILE *stream){
+int real_fclose(FILE *stream){
         return ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"))(stream);
 }
 int real_close(int fd){
