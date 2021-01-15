@@ -54,6 +54,8 @@ int ngram::insert_to_ngram(struct pos_bytes access)
 //any values with this fd
 void ngram::remove_from_ngram(int fd)
 {
+    if(past_freq.size() == 0)
+        return;
     auto iter = past_freq.begin();
     while(iter != past_freq.end())
     {
