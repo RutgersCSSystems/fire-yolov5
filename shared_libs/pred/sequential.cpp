@@ -22,6 +22,10 @@ void sequential::remove(int fd)
 
 void sequential::print_all_strides()
 {
+    for(auto a : strides)
+    {
+        std::cout << get_stride(a.first) << std::endl;
+    }
 }
 
 off_t sequential::get_stride(int fd)
