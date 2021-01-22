@@ -9,10 +9,16 @@
 #include "ngram.hpp"
 #include "util.hpp"
 #include "predictor.hpp"
+#include "sequential.hpp"
 
 #ifdef NGRAM
 ngram readobj; //Obj with all the reads info
 ngram writeobj; //Obj with all the write info
+#endif
+
+#ifdef SEQUENTIAL
+sequential seq_readobj;
+sequential seq_writeobj;
 #endif
 
 /*
@@ -28,12 +34,16 @@ int handle_read(int fd, off_t pos, size_t bytes)
 {
     //check if there is a need to take any actions
     //Add this read to the corresponding algorithm
-#ifdef NGRAM
     struct pos_bytes a;
     a.fd = fd;
     a.pos = pos;
     a.bytes = bytes;
+#ifdef NGRAM
     readobj.insert_to_ngram(a);
+#endif
+
+#ifdef SEQUENTIAL
+	seq_readobj.insert(a);
 #endif
 
 #ifdef NGRAM_PREDICT
