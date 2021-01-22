@@ -72,6 +72,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
     // Perform the actual system call
     size_t amount_written = real_fwrite(ptr, size, nmemb, stream);
 
+    /*WRITES GET ABSORBED READILY
 #ifdef PREDICTOR
     int fd;
     if(fd = reg_file(stream))
@@ -80,7 +81,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
         handle_write(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
     }
 #endif
-
+*/
     return amount_written;
 }
 
@@ -94,6 +95,7 @@ ssize_t write(int fd, const void *data, size_t size)
     // Perform the actual system call
     ssize_t amount_written = real_write(fd, data, size);
 
+    /* REMOVED FOR NOW - WRITES GET ABSORBED
 #ifdef PREDICTOR
     //DO we need to take care of what results we get from the real call ?
     if(reg_fd(fd))
@@ -102,6 +104,7 @@ ssize_t write(int fd, const void *data, size_t size)
         handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
+*/
     return amount_written;
 }
 
