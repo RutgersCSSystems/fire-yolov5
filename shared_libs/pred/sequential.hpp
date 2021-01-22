@@ -7,18 +7,20 @@
 #include "util.hpp"
 #define LENGTH 5
 
-struct stride{
+struct stride_dat{
     off_t stride;
 };
 
 class sequential{
 	public:
-         std::unordered_map<int, struct stride> strides;
+         std::unordered_map<int, struct stride_dat> strides;
          std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
 
         void insert(struct pos_bytes);
-        void remove_access(int fd);
+        void remove(int fd);
         void print_all_strides();
+
+        void init_stride(int fd);
         off_t get_stride(int fd);
         void update_stride(int fd);
         bool exists(int fd); // checks if this fd is in the structures
