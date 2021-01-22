@@ -42,9 +42,11 @@ void sequential::init_stride(int fd)
 
 void sequential::update_stride(int fd)
 {
-    if(exists(fd) && current_stream[fd].size() >= LENGTH)
+    if(exists(fd) && current_stream[fd].size() > LENGTH)
     {
+        int this_stride;
         
+        current_stream[fd].pop_front();
     }
 }
 

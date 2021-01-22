@@ -5,10 +5,11 @@
 #include <fstream>
 #include <string>
 #include "util.hpp"
-#define LENGTH 5
+#define LENGTH 10 //should be > 2
 
 struct stride_dat{
     off_t stride;
+    size_t bytes; //Bytes accessed
 };
 
 class sequential{
