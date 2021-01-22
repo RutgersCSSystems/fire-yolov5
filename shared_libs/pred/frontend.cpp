@@ -28,7 +28,6 @@
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-
 #ifdef DEBUG
     std::cout << "fread" << std::endl;
 #endif
@@ -43,7 +42,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 
     if(fd = reg_file(stream)) //this is a regular file
     {
-        handle_read(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
+        ////lseek doesnt work with f* commands
+        //handle_read(fd, lseek(fd, 0, SEEK_CUR), size*nmemb); 
+        handle_read(fd, ftell(stream), size*nmemb);
     }
    #endif
 
@@ -60,6 +61,10 @@ ssize_t read(int fd, void *data, size_t size)
 #ifdef PREDICTOR
     if(reg_fd(fd))
     {
+#ifdef DEBUG
+    printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
+#endif
+
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -88,9 +93,11 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
 ssize_t write(int fd, const void *data, size_t size)
 {
+    /*
 #ifdef DEBUG
     printf("writes\n");
 #endif
+*/
 
     // Perform the actual system call
     ssize_t amount_written = real_write(fd, data, size);
