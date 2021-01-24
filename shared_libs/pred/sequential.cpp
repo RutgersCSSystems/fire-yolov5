@@ -1,6 +1,27 @@
 #include "sequential.hpp"
 
 
+bool sequential::is_sequential(int fd)
+{
+    if(exists(fd))
+    {
+        return (strides[fd].stride == 0);
+    }
+    else
+        return false;
+}
+
+int sequential::is_strided(int fd)
+{
+    if(exists(fd))
+    {
+        if(strides[fd].stride > 0)
+            return strides[fd].stride;
+    }
+    else
+        return false;
+}
+
 void sequential::insert(struct pos_bytes access)
 {
     if(!exists(access.fd))
