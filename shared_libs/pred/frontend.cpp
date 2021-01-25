@@ -1,22 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
 #include <dlfcn.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <limits.h>
-#include <stdlib.h>
+#include <sched.h>
+#include <errno.h>
+
 #include <iostream>
-#include <iterator>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
 #include <algorithm>
 #include <map>
 #include <deque>
 #include <unordered_map>
 #include <string>
-#include <cstdlib>
-#include <ctime>
+#include <iterator>
+
 #include <sys/sysinfo.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fstream>
 #include <sys/syscall.h>
 #include <sys/types.h>
 
@@ -24,7 +29,47 @@
 #include "predictor.hpp"
 
 //#include "ngram.hpp"
+//
+static void con() __attribute__((constructor));
+static void dest() __attribute__((destructor));
 
+
+void *bg_worker(void *ptr)
+{
+
+    return NULL;
+}
+
+void thread_fn(void)
+{
+    pthread_t bg_thread;
+    cpu_set_t cpuset;
+    int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
+    CPU_ZERO(&cpuset);
+    CPU_SET(last_cpu_id, &cpuset);
+
+    //TODO: add FUnction mame
+    if(pthread_create(&bg_thread, NULL, bg_worker, NULL))
+    {
+        fprintf(stderr, "Error creating thread\n");
+        exit(-1);
+    }
+
+}
+
+void con()
+{
+    //struct sigaction action;
+
+    fprintf(stderr, "init tracing...\n");
+
+
+    //initialize a worker thread
+    thread_fn();
+
+    //SignalHandlers();
+
+}
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
@@ -46,7 +91,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
         //handle_read(fd, lseek(fd, 0, SEEK_CUR), size*nmemb); 
         handle_read(fd, ftell(stream), size*nmemb);
     }
-   #endif
+#endif
 
     return amount_read;
 }
@@ -62,7 +107,7 @@ ssize_t read(int fd, void *data, size_t size)
     if(reg_fd(fd))
     {
 #ifdef DEBUG
-    printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
+        printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
 #endif
 
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
@@ -79,23 +124,23 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
     /*WRITES GET ABSORBED READILY
 #ifdef PREDICTOR
-    int fd;
-    if(fd = reg_file(stream))
-    {
-        //insert to the predictor
-        handle_write(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
+int fd;
+if(fd = reg_file(stream))
+{
+    //insert to the predictor
+    handle_write(fd, lseek(fd, 0, SEEK_CUR), size*nmemb);
     }
 #endif
 */
     return amount_written;
-}
+    }
 
 
 ssize_t write(int fd, const void *data, size_t size)
 {
     /*
 #ifdef DEBUG
-    printf("writes\n");
+printf("writes\n");
 #endif
 */
 
@@ -107,8 +152,8 @@ ssize_t write(int fd, const void *data, size_t size)
     //DO we need to take care of what results we get from the real call ?
     if(reg_fd(fd))
     {
-        //do somthign
-        handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
+    //do somthign
+    handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
 */
