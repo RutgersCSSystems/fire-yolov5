@@ -5,7 +5,7 @@ FLAGS=-fPIC -shared
 
 #all: reclaimer
 
-seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp
+seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DDEBUG -DSEQUENTIAL
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp

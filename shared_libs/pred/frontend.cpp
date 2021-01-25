@@ -27,48 +27,23 @@
 
 #include "frontend.hpp"
 #include "predictor.hpp"
+#include "worker.hpp"
 
 //#include "ngram.hpp"
 //
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
-
-void *bg_worker(void *ptr)
-{
-
-    return NULL;
-}
-
-void thread_fn(void)
-{
-    pthread_t bg_thread;
-    cpu_set_t cpuset;
-    int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
-    CPU_ZERO(&cpuset);
-    CPU_SET(last_cpu_id, &cpuset);
-
-    //TODO: add FUnction mame
-    if(pthread_create(&bg_thread, NULL, bg_worker, NULL))
-    {
-        fprintf(stderr, "Error creating thread\n");
-        exit(-1);
-    }
-
-}
-
 void con()
 {
     //struct sigaction action;
 
     fprintf(stderr, "init tracing...\n");
-
-
+    
     //initialize a worker thread
     thread_fn();
 
     //SignalHandlers();
-
 }
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)

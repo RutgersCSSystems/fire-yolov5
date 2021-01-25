@@ -1,12 +1,3 @@
-
-#define SEQ_CHANGE 0.1 //Change values based on seq observation
-#define RAND_CHANGE 0.4 //Change values based on random observation
-
-#define TOL 0.1 //Tolerance from 0 to call there is no file read 
-
-bool firsttime = true;
-
-
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
 typedef ssize_t (*real_write_t)(int, const void *, size_t);
