@@ -29,15 +29,17 @@ sequential seq_writeobj;
  * 4. What advice is not taken by the kernel ?
  * */
 
-
-int handle_read(int fd, off_t pos, size_t bytes)
-{
-    //check if there is a need to take any actions
-    //Add this read to the corresponding algorithm
+/* Every User read will call this fn:
+ * 1. accounts for access pattern and
+ * 2. takes appropriate readahead/DONT NEED action
+ */
+int handle_read(int fd, off_t pos, size_t bytes){
     struct pos_bytes a;
     a.fd = fd;
     a.pos = pos;
     a.bytes = bytes;
+
+    //Recognizer insert the access
 #ifdef NGRAM
     readobj.insert_to_ngram(a);
 #endif
@@ -46,10 +48,23 @@ int handle_read(int fd, off_t pos, size_t bytes)
 	seq_readobj.insert(a);
 #endif
 
+#ifdef SEQUENTIAL
+     int stride;
+     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
+         //Stride = 0 TODO
+         //readahead the next page.
+         //read in page granularity
+     }
+     else if((stride = seq_readobj.is_strided(fd))){
+         //Stride = stride
+         //readahead the next page.
+         //read in page granularity
+     }
+#endif
+
 #ifdef NGRAM_PREDICT
     std::multimap<float, std::string> next_accesses;
-    if(toss_biased_coin()) //High MemPressure
-    {
+    if(toss_biased_coin()){ //High MemPressure
         /*multimap<float, std::string>*/
         next_accesses = readobj.get_next_n_accesses(10);
         /*std::deque<struct pos_bytes>*/
@@ -57,8 +72,7 @@ int handle_read(int fd, off_t pos, size_t bytes)
 
         int bytes_removed = 0, i = 0;
         while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
-                i < not_needed.size())
-        {
+                i < not_needed.size()){
             
             bytes_removed += not_needed[i].bytes;
             posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
@@ -71,8 +85,13 @@ int handle_read(int fd, off_t pos, size_t bytes)
     return true;
 }
 
-int handle_write(int fd, off_t pos, size_t bytes)
-{
+
+/* TO be called at each write by the user 
+ * Functionality of this function is still TBD
+ * Right now its just doing NGRAM accounting and prediction
+ * which is INCOMPLETE/WRONG - We need to change this
+ */
+int handle_write(int fd, off_t pos, size_t bytes){
     //Add this read to the corresponding algorithm
     //check if there is a need to take any actions
 #ifdef NGRAM
@@ -109,13 +128,21 @@ int handle_write(int fd, off_t pos, size_t bytes)
 }
 
 
-int handle_close(int fd)
-{
+/*
+ * Called at each close operation from the user
+ * Remove entries from all accounting methods
+ */
+int handle_close(int fd){
 
     //remove the element from read and write data
 #ifdef NGRAM
     writeobj.remove_from_ngram(fd);
     readobj.remove_from_ngram(fd);
+#endif
+
+#ifdef SEQUENTIAL
+    seq_readobj.remove(fd);
+    seq_writeobj.remove(fd);
 #endif
 
 #ifdef NGRAM_PREDICT
@@ -126,8 +153,11 @@ int handle_close(int fd)
     return true;
 }
 
-int handle_open(int fd)
-{
+
+/* Called at each open operation from the user
+ * This function doesnt have a specific function right now
+ */
+int handle_open(int fd){
 #ifdef NGRAM_PREDICT
     //dont know what to do if this rn
     if(!toss_biased_coin()) //Low MemPressure with high prob

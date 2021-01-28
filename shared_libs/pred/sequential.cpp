@@ -1,39 +1,39 @@
 #include "sequential.hpp"
 
 
-bool sequential::is_sequential(int fd)
-{
-    if(exists(fd))
-    {
-        return (strides[fd].stride == 0);
-    }
+bool sequential::is_sequential(int fd){
+    return(exists(fd) && strides[fd].stride == SEQ_ACCESS);
+}
+
+
+int sequential::is_strided(int fd){
+    if(exists(fd) && strides[fd].stride > SEQ_ACCESS)
+        return strides[fd].stride;
     else
-        return false;
+        return NOT_SEQ;
 }
 
-int sequential::is_strided(int fd)
-{
-    if(exists(fd))
-    {
-        if(strides[fd].stride > 0)
-            return strides[fd].stride;
+
+/*Insert a new access to the current_stream
+ * Also update stride based on current_stream
+ */
+void sequential::insert(struct pos_bytes access){
+    int fd = access.fd;
+
+    if(!exists(fd)){ //FD not seen earlier
+        init_stride(fd);
     }
-    else
-        return false;
+
+    current_stream[fd].push_back(access);
+
+    update_stride(fd); //calculate the stride
+
+    return;
 }
 
-void sequential::insert(struct pos_bytes access)
-{
-    if(!exists(access.fd))
-    {
-        init_stride(access.fd);
-    }
-    current_stream[access.fd].push_back(access);
 
-    update_stride(access.fd);
-
-}
-
+/* fd is invalid now, remove it from the data
+ */
 void sequential::remove(int fd)
 {
     strides.erase(fd);
@@ -41,40 +41,44 @@ void sequential::remove(int fd)
     return;
 }
 
-void sequential::print_all_strides()
-{
-    for(auto a : strides)
-    {
+
+/* prints all the fd and their strides
+ */
+void sequential::print_all_strides(){
+    for(auto a : strides){
+        std::cout << "Stride for fd" << a.first << ": ";
         std::cout << get_stride(a.first) << std::endl;
     }
 }
 
-off_t sequential::get_stride(int fd)
-{
+
+/*
+ */
+off_t sequential::get_stride(int fd){
     if(exists(fd))
         return strides[fd].stride;
+    else
+        return NOT_SEQ;
 }
 
-void sequential::init_stride(int fd)
-{
-    strides[fd].stride = -1;
+
+void sequential::init_stride(int fd){
+    strides[fd].stride = NOT_SEQ;
     return;
 }
 
-void sequential::update_stride(int fd)
-{
-    if(exists(fd) && current_stream[fd].size() > LENGTH)
-    {
+
+void sequential::update_stride(int fd){
+    if(exists(fd) && current_stream[fd].size() > HISTORY){
         long this_stride, check_stride;
         auto deq = current_stream[fd];
         auto stream = deq.begin();
 
-        this_stride = stream->pos + stream->bytes;
+        this_stride = stream->pos + stream->bytes; //Pos1 + Size1
         stream++;
-        this_stride = stream->pos - this_stride;
+        this_stride = stream->pos - this_stride; //Pos2 - (pos1 + size1)
 
-        for(int i=1; i<LENGTH; i++)
-        {
+        for(int i=1; i<HISTORY; i++){
             check_stride = stream->pos + stream->bytes;
             stream++;
             check_stride = stream->pos - check_stride;

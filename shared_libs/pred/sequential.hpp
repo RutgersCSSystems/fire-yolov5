@@ -5,7 +5,11 @@
 #include <fstream>
 #include <string>
 #include "util.hpp"
-#define LENGTH 10 //should be > 2
+
+#define HISTORY 10 // Number of past accesses considered >2
+#define SEQ_ACCESS 0 //Sequential access stride=0
+#define NOT_SEQ -1 //Not seq or strided
+
 
 struct stride_dat{
     off_t stride;

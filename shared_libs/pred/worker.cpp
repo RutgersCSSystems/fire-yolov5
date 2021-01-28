@@ -1,65 +1,98 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>
 #include <pthread.h>
+
+#include <iostream>
 
 #include <sys/wait.h>
 #include <sys/types.h>
 
 #include "worker.hpp"
 
-static void Handler(int Sig, siginfo_t *Info, void *context)
-{
-    pid_t sender_pid = Info->si_pid;
 
-    if(Sig == PREFETCH_SIG) //Want to Run
-    {
+/*
+ * This function will actually do the work at signal recv
+ */
+static void handler(int sig, siginfo_t *info, void *context){
+    pid_t sender_pid = info->si_pid;
+
+    if(sig == PREFETCH_SIG){ //Want to Run
         //Prefetch code
-    }
-    if(Sig == RELINQUISH_SIG)
-    {
+#ifdef DEBUG
+        std::cout << "worker thread prefetch" << std::endl;
+#endif
+        //read the list
+        //perform readhead
+        //just do it for one thread and get the access pattern
+    } else if(sig == RELINQUISH_SIG){
         //Relinquish code
+#ifdef DEBUG
+        std::cout << "worker thread relinquish" << std::endl;
+#endif
     }
+    return;
 }
 
-void Signalhandle()
+
+/* Registering the signal handler
+ */
+void signal_handle()
 {
-    struct sigaction SigAction;
-    SigAction.sa_sigaction = Handler;
-    SigAction.sa_flags |= SA_SIGINFO;
+    struct sigaction sig_action;
+    sig_action.sa_sigaction = handler;
+    sig_action.sa_flags |= SA_SIGINFO;
 
-    sigaddset(&SigAction.sa_mask, PREFETCH_SIG);
-    sigaddset(&SigAction.sa_mask, RELINQUISH_SIG);
+    sigaddset(&sig_action.sa_mask, PREFETCH_SIG);
+    sigaddset(&sig_action.sa_mask, RELINQUISH_SIG);
 
-    if(sigaction(PREFETCH_SIG, &SigAction, NULL) != 0)
+    if(sigaction(PREFETCH_SIG, &sig_action, NULL) != 0)
     {
-        printf("\nThere is a problem with SIGUSR1\n");
-        exit(1);
+        fprintf(stderr,"\nThere is a problem with SIGUSR1\n");
+        exit(-1);
     }
 
-    if(sigaction(RELINQUISH_SIG, &SigAction, NULL) != 0)
+    if(sigaction(RELINQUISH_SIG, &sig_action, NULL) != 0)
     {
-        printf("\nThere is a problem with SIGUSR2\n");
-        exit(1);
+        fprintf(stderr, "\nThere is a problem with SIGUSR2\n");
+        exit(-1);
     }
 }
 
+/*
+ * The worker while waiting for signal from others
+ */
 void *bg_worker(void *ptr)
 {
-    //Call this function from worker pthread
-    printf("hloo \n");    
+#ifdef __NO_BG_THREADS
+    
+#else
+    signal_handle();
+
+    while(1){
+        sleep(DURATION);
+    }
+#endif
     return NULL;
 }
 
+
+/* This function spawns the worker thread
+ */
 void thread_fn(void)
 {
     pthread_t bg_thread;
     cpu_set_t cpuset;
+
+#ifdef __NO_BG_THREADS
+    bg_worker(NULL);
+#else
     int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
     CPU_ZERO(&cpuset);
     CPU_SET(last_cpu_id, &cpuset);
 
-    //TODO: add FUnction mame
+    //TODO: add Function name
     if(pthread_create(&bg_thread, NULL, bg_worker, NULL))
     {
         fprintf(stderr, "Error creating thread\n");
@@ -71,5 +104,5 @@ void thread_fn(void)
         fprintf(stderr, "Error setting thread affinity\n");
         exit(-1);
     }
-
+#endif
 }
