@@ -1,6 +1,6 @@
-#include <bits/stdc++.h>
 #include <fstream>
 #include <string>
+#include <fcntl.h>
 #include "util.hpp"
 
 #include "sequential.hpp"
@@ -38,7 +38,7 @@ void sequential::insert(struct pos_bytes access){
 
 
 /* fd is invalid now, remove it from the data
- */
+*/
 void sequential::remove(int fd)
 {
     strides.erase(fd);
@@ -48,7 +48,7 @@ void sequential::remove(int fd)
 
 
 /* prints all the fd and their strides
- */
+*/
 void sequential::print_all_strides(){
     for(auto a : strides){
         std::cout << "Stride for fd" << a.first << ": ";
@@ -58,7 +58,7 @@ void sequential::print_all_strides(){
 
 
 /*
- */
+*/
 off_t sequential::get_stride(int fd){
     if(exists(fd))
         return strides[fd].stride;
@@ -104,10 +104,33 @@ void sequential::update_stride(int fd){
 
 
 /* Checks if the fd has been seen before
- */
+*/
 bool sequential::exists(int fd)
 {
     //May have to remove(fd) if result is false
     return ((strides.find(fd) != strides.end()) &&
             (current_stream.find(fd) != current_stream.end()));
+}
+
+
+/*
+ * This function will prefetch for strided/seq accesses
+ * returns 0 at success, -1 at failure
+ */
+bool seq_prefetch(struct pos_bytes curr_access, int stride){
+
+    if(stride < 0)
+        return -1;
+
+    off_t nextpos = curr_access.pos + curr_access.bytes + stride;
+    
+    //find the next page aligned position
+    nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
+
+    int bytes_toread = PAGESIZE*NR_READ_PAGES;
+    if(curr_access.bytes > bytes_toread){
+       bytes_toread = ((curr_access.bytes/PAGESIZE)+1)*PAGESIZE;
+    }
+
+    return readahead(curr_access.fd, nextpos, bytes_toread);
 }

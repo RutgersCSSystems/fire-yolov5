@@ -9,8 +9,10 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#include "sequential.hpp"
 #include "worker.hpp"
 
+#define __NO_BG_THREADS //this Makes things go synchronously
 
 /*
  * This function will actually do the work at signal recv

@@ -34,6 +34,10 @@ sequential seq_writeobj;
  * 2. takes appropriate readahead/DONT NEED action
  */
 int handle_read(int fd, off_t pos, size_t bytes){
+
+    if(pos <0 || bytes <0) //Santization check
+        return false;
+
     struct pos_bytes a;
     a.fd = fd;
     a.pos = pos;
@@ -45,21 +49,17 @@ int handle_read(int fd, off_t pos, size_t bytes){
 #endif
 
 #ifdef SEQUENTIAL
-	seq_readobj.insert(a);
+    seq_readobj.insert(a);
 #endif
 
 #ifdef SEQUENTIAL
-     int stride;
-     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-         //Stride = 0 TODO
-         //readahead the next page.
-         //read in page granularity
-     }
-     else if((stride = seq_readobj.is_strided(fd))){
-         //Stride = stride
-         //readahead the next page.
-         //read in page granularity
-     }
+    int stride;
+    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
+       seq_prefetch(a, 0); 
+    }
+    else if((stride = seq_readobj.is_strided(fd))){
+        seq_prefetch(a, stride);
+    }
 #endif
 
 #ifdef NGRAM_PREDICT
@@ -73,7 +73,7 @@ int handle_read(int fd, off_t pos, size_t bytes){
         int bytes_removed = 0, i = 0;
         while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
                 i < not_needed.size()){
-            
+
             bytes_removed += not_needed[i].bytes;
             posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
                     not_needed[i].bytes, POSIX_FADV_DONTNEED);
@@ -115,7 +115,7 @@ int handle_write(int fd, off_t pos, size_t bytes){
         while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
                 i < not_needed.size())
         {
-            
+
             bytes_removed += not_needed[i].bytes;
             posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
                     not_needed[i].bytes, POSIX_FADV_DONTNEED);
@@ -133,8 +133,8 @@ int handle_write(int fd, off_t pos, size_t bytes){
  * Remove entries from all accounting methods
  */
 int handle_close(int fd){
-
     //remove the element from read and write data
+    return true; //dont do anything right now
 #ifdef NGRAM
     writeobj.remove_from_ngram(fd);
     readobj.remove_from_ngram(fd);
@@ -148,7 +148,7 @@ int handle_close(int fd){
 #ifdef NGRAM_PREDICT
     posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 #endif
-    
+
     //Clear/demote corresponding cache elements from memory
     return true;
 }

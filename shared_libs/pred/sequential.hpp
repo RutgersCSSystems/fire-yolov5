@@ -1,6 +1,8 @@
 #ifndef _SEQUENTIAL_HPP
 #define _SEQUENTIAL_HPP
 
+#include <bits/stdc++.h>
+
 #define HISTORY 10 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
 #define NOT_SEQ -1 //Not seq or strided
@@ -28,5 +30,8 @@ class sequential{
         void update_stride(int fd);
         bool exists(int fd);
 };
+
+bool seq_prefetch(struct pos_bytes curr_access, int stride);
+bool seq_relinquish(struct pos_bytes curr_access, int stride);
 
 #endif
