@@ -1,11 +1,6 @@
 #ifndef _SEQUENTIAL_HPP
 #define _SEQUENTIAL_HPP
 
-#include <bits/stdc++.h>
-#include <fstream>
-#include <string>
-#include "util.hpp"
-
 #define HISTORY 10 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
 #define NOT_SEQ -1 //Not seq or strided
@@ -22,7 +17,7 @@ class sequential{
         std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
 
         bool is_sequential(int fd); //True if sequential
-        int is_strided(int fd); //True if strided
+        int is_strided(int fd); //stride if strided
 
         void insert(struct pos_bytes);
         void remove(int fd);
@@ -31,7 +26,7 @@ class sequential{
         void init_stride(int fd);
         off_t get_stride(int fd);
         void update_stride(int fd);
-        bool exists(int fd); // checks if this fd is in the structures
+        bool exists(int fd);
 };
 
 #endif

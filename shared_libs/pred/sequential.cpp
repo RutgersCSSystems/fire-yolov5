@@ -1,3 +1,8 @@
+#include <bits/stdc++.h>
+#include <fstream>
+#include <string>
+#include "util.hpp"
+
 #include "sequential.hpp"
 
 
@@ -86,19 +91,21 @@ void sequential::update_stride(int fd){
 #ifdef DEBUG
             printf("fd:%d check_stride:%ld\n", fd, check_stride);
 #endif
-            if(check_stride != this_stride)
-            {
+            if(check_stride != this_stride){
                 this_stride = -1;
                 break;
             }
         }
-        strides[fd].stride = this_stride;
+        strides[fd].stride = this_stride; //set the new stride
         current_stream[fd].pop_front(); //remove last element
     }
     return;
 }
 
-bool sequential::exists(int fd) // checks if this fd is in the structures
+
+/* Checks if the fd has been seen before
+ */
+bool sequential::exists(int fd)
 {
     //May have to remove(fd) if result is false
     return ((strides.find(fd) != strides.end()) &&

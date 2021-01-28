@@ -38,8 +38,7 @@ static void handler(int sig, siginfo_t *info, void *context){
 
 /* Registering the signal handler
  */
-void signal_handle()
-{
+void signal_handle(){
     struct sigaction sig_action;
     sig_action.sa_sigaction = handler;
     sig_action.sa_flags |= SA_SIGINFO;
@@ -47,14 +46,12 @@ void signal_handle()
     sigaddset(&sig_action.sa_mask, PREFETCH_SIG);
     sigaddset(&sig_action.sa_mask, RELINQUISH_SIG);
 
-    if(sigaction(PREFETCH_SIG, &sig_action, NULL) != 0)
-    {
+    if(sigaction(PREFETCH_SIG, &sig_action, NULL) != 0){
         fprintf(stderr,"\nThere is a problem with SIGUSR1\n");
         exit(-1);
     }
 
-    if(sigaction(RELINQUISH_SIG, &sig_action, NULL) != 0)
-    {
+    if(sigaction(RELINQUISH_SIG, &sig_action, NULL) != 0){
         fprintf(stderr, "\nThere is a problem with SIGUSR2\n");
         exit(-1);
     }
@@ -63,8 +60,7 @@ void signal_handle()
 /*
  * The worker while waiting for signal from others
  */
-void *bg_worker(void *ptr)
-{
+void *bg_worker(void *ptr){
 #ifdef __NO_BG_THREADS
     
 #else
@@ -80,27 +76,24 @@ void *bg_worker(void *ptr)
 
 /* This function spawns the worker thread
  */
-void thread_fn(void)
-{
+void thread_fn(void){
     pthread_t bg_thread;
     cpu_set_t cpuset;
 
 #ifdef __NO_BG_THREADS
     bg_worker(NULL);
 #else
+
     int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
     CPU_ZERO(&cpuset);
     CPU_SET(last_cpu_id, &cpuset);
 
-    //TODO: add Function name
-    if(pthread_create(&bg_thread, NULL, bg_worker, NULL))
-    {
+    if(pthread_create(&bg_thread, NULL, bg_worker, NULL)){
         fprintf(stderr, "Error creating thread\n");
         exit(-1);
     }
     if(pthread_getaffinity_np(bg_thread, 
-                sizeof(cpu_set_t), &cpuset) != 0)
-    {
+                sizeof(cpu_set_t), &cpuset) != 0){
         fprintf(stderr, "Error setting thread affinity\n");
         exit(-1);
     }
