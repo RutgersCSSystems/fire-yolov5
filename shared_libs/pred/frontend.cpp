@@ -29,20 +29,74 @@
 #include "predictor.hpp"
 #include "worker.hpp"
 
-//#include "ngram.hpp"
-//
+#define __NR_start_trace 333
+
+#define CLEAR_COUNT     0
+#define COLLECT_TRACE 1
+#define PRINT_STATS 2
+#define PFN_TRACE 4
+#define PFN_STAT 5
+#define TIME_TRACE 6
+#define TIME_STATS 7
+#define TIME_RESET 8
+#define COLLECT_ALLOCATE 9
+#define PRINT_ALLOCATE 10
+
+#define ENABLE_PVT_LRU 24
+#define PRINT_PVT_LRU_STATS 25
+
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
 
-void con()
-{
+void set_pvt_lru(){
+	syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
+}
+
+
+void con(){
     //struct sigaction action;
 
     fprintf(stderr, "init tracing...\n");
     
-    //initialize a worker thread
-    thread_fn();
+    set_pvt_lru();
+    thread_fn(); //spawn worker thread
+
+}
+
+
+void dest() {
+    fprintf(stderr, "application termination...\n");
+    //syscall(__NR_start_trace, PRINT_STATS);
+    
+    //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
+
+    /*
+    a = syscall(__NR_start_trace, CLEAR_COUNT);
+    a = syscall(__NR_start_trace, PFN_STAT);
+    a = syscall(__NR_start_trace, TIME_STATS);
+    a = syscall(__NR_start_trace, TIME_RESET);
+    */
+
+    //syscall(__NR_start_trace, CLEAR_COUNT, 0);
+
+
+    /*
+     * This code snippet prints the Rusage parameters
+     * at destruction
+     */
+    struct rusage Hello;
+    if (getrusage(RUSAGE_SELF, &Hello) != 0)
+    {
+	    fprintf(stderr, "Unable to get rusage\n");
+    }
+
+    printf("MaxRSS= %lu KB, "
+		"SharedMem= %lu KB, "
+		"HardPageFault= %lu\n"
+		, Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
+
+    syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
 
 }
 
