@@ -2050,6 +2050,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 		case PRINT_PVT_LRU_STATS:
 			if(current->enable_pvt_lru)
 			{
+                    printk(KERN_ALERT "NR_READAHEAD: %lu\n", nr_readahead);
 				printk(KERN_ALERT "PVT_LRU: PID:%d; max_inactive_anon:%d, max_active_anon:%d "
 						"max_inactive_cache:%d, max_active_cache:%d pages\n",
 						current->pid, current->mm->nr_max_lru[0], 
