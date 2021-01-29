@@ -24,6 +24,9 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+
 
 #include "frontend.hpp"
 #include "predictor.hpp"
