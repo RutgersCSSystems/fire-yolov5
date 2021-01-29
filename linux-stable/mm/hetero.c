@@ -182,6 +182,8 @@ unsigned long nr_global_active_anon_lru = 0;
 unsigned long nr_global_active_cache_lru = 0;
 unsigned long nr_global_inactive_anon_lru = 0;
 unsigned long nr_global_inactive_cache_lru = 0;
+unsigned long nr_readahead = 0; //Number of pages readhead
+
 bool start_global_accounting = false;
 
 int accnt_do_anonymous_page = 0;
@@ -1246,6 +1248,18 @@ EXPORT_SYMBOL(update_hetero_pgcache);
 
 
 /*
+ * adds to global readahead page counter
+ * Only for enabled pids
+ */
+void add_global_readahead(int pages){
+    if(start_global_accounting && current->enable_pvt_lru && pages){
+        nr_readahead += pages;
+    }
+}
+EXPORT_SYMBOL(add_global_readahead);
+
+
+/*
  *The next set of functions take care of a Pvt LRU per process.
  * pvt_* is the function fingerprint
  * the pages are stored in an RB tree
@@ -1622,6 +1636,8 @@ void reset_pvt_lru_counters(void)
 	nr_global_active_cache_lru = 0;
 	nr_global_inactive_anon_lru = 0;
 	nr_global_inactive_cache_lru = 0;
+
+     nr_readahead = 0;
 }
 
 

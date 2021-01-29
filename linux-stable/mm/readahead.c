@@ -20,6 +20,8 @@
 #include <linux/file.h>
 #include <linux/mm_inline.h>
 
+#include <linux/hetero.h>
+
 #include "internal.h"
 
 /*
@@ -209,6 +211,9 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 		read_pages(mapping, filp, &page_pool, ret, gfp_mask);
 	BUG_ON(!list_empty(&page_pool));
 out:
+#ifdef CONFIG_PVT_LRU
+     add_global_readahead(ret);
+#endif
 	return ret;
 }
 
