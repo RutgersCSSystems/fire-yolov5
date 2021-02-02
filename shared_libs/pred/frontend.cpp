@@ -53,7 +53,7 @@ static void dest() __attribute__((destructor));
 
 
 void set_pvt_lru(){
-	syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
+    syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
 
@@ -61,25 +61,25 @@ void con(){
     //struct sigaction action;
 
     fprintf(stderr, "init tracing...\n");
-    
+
     set_pvt_lru();
     thread_fn(); //spawn worker thread
 
 }
 
 
-void dest() {
+void dest(){
     fprintf(stderr, "application termination...\n");
     //syscall(__NR_start_trace, PRINT_STATS);
-    
+
     //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
 
     /*
-    a = syscall(__NR_start_trace, CLEAR_COUNT);
-    a = syscall(__NR_start_trace, PFN_STAT);
-    a = syscall(__NR_start_trace, TIME_STATS);
-    a = syscall(__NR_start_trace, TIME_RESET);
-    */
+       a = syscall(__NR_start_trace, CLEAR_COUNT);
+       a = syscall(__NR_start_trace, PFN_STAT);
+       a = syscall(__NR_start_trace, TIME_STATS);
+       a = syscall(__NR_start_trace, TIME_RESET);
+       */
 
     //syscall(__NR_start_trace, CLEAR_COUNT, 0);
 
@@ -91,13 +91,13 @@ void dest() {
     struct rusage Hello;
     if (getrusage(RUSAGE_SELF, &Hello) != 0)
     {
-	    fprintf(stderr, "Unable to get rusage\n");
+        fprintf(stderr, "Unable to get rusage\n");
     }
 
     printf("MaxRSS= %lu KB, "
-		"SharedMem= %lu KB, "
-		"HardPageFault= %lu\n"
-		, Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
+            "SharedMem= %lu KB, "
+            "HardPageFault= %lu\n"
+            , Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
 
     syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
 

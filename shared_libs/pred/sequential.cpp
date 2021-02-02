@@ -11,7 +11,7 @@ bool sequential::is_sequential(int fd){
 }
 
 
-int sequential::is_strided(int fd){
+off_t sequential::is_strided(int fd){
     if(exists(fd) && strides[fd].stride > SEQ_ACCESS)
         return strides[fd].stride;
     else
@@ -75,7 +75,7 @@ void sequential::init_stride(int fd){
 
 void sequential::update_stride(int fd){
     if(exists(fd) && current_stream[fd].size() > HISTORY){
-        long this_stride, check_stride;
+        off_t this_stride, check_stride;
         auto deq = current_stream[fd];
         auto stream = deq.begin();
 
@@ -103,8 +103,7 @@ void sequential::update_stride(int fd){
 }
 
 
-/* Checks if the fd has been seen before
-*/
+/* Checks if the fd has been seen before */
 bool sequential::exists(int fd)
 {
     //May have to remove(fd) if result is false
@@ -117,7 +116,7 @@ bool sequential::exists(int fd)
  * This function will prefetch for strided/seq accesses
  * returns 0 at success, -1 at failure
  */
-bool seq_prefetch(struct pos_bytes curr_access, int stride){
+bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
     if(stride < 0)
         return -1;
@@ -127,10 +126,10 @@ bool seq_prefetch(struct pos_bytes curr_access, int stride){
     //find the next page aligned position
     nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
 
-    int bytes_toread = PAGESIZE*NR_READ_PAGES;
+    size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
     if(curr_access.bytes > bytes_toread){
        bytes_toread = ((curr_access.bytes/PAGESIZE)+1)*PAGESIZE;
     }
 
-    return readahead(curr_access.fd, nextpos, bytes_toread);
+    return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
 }

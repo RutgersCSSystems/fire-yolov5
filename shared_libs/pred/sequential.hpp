@@ -19,7 +19,7 @@ class sequential{
         std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
 
         bool is_sequential(int fd); //True if sequential
-        int is_strided(int fd); //stride if strided
+        off_t is_strided(int fd); //stride if strided
 
         void insert(struct pos_bytes);
         void remove(int fd);
