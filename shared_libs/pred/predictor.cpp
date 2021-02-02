@@ -55,7 +55,7 @@ int handle_read(int fd, off_t pos, size_t bytes){
 #ifdef SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-       seq_prefetch(a, 0);  //prefetch at program path
+       seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){
         seq_prefetch(a, stride); //prefetch in program path

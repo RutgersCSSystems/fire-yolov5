@@ -31,7 +31,7 @@ class sequential{
         bool exists(int fd);
 };
 
-bool seq_prefetch(struct pos_bytes curr_access, int stride);
-bool seq_relinquish(struct pos_bytes curr_access, int stride);
+bool seq_prefetch(struct pos_bytes curr_access, off_t stride);
+bool seq_relinquish(struct pos_bytes curr_access, off_t stride);
 
 #endif
