@@ -25,6 +25,26 @@
 #include "internal.h"
 
 /*
+ * Return number of elements in this list
+ * @list_begin: the head of your list
+ */
+unsigned long list_nr_elements(struct list_head *list_begin)
+{
+    unsigned long nr = 0;
+    struct list_head *begin;
+
+    if(list_empty(list_begin))
+        return nr;
+
+    list_for_each(begin, list_begin){
+        nr += 1;
+    }
+
+    return nr;
+}
+
+
+/*
  * Initialise a struct file's readahead state.  Assumes that the caller has
  * memset *ra to zero.
  */
@@ -121,7 +141,11 @@ static int read_pages(struct address_space *mapping, struct file *filp,
 
 	if (mapping->a_ops->readpages) {
 		ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
+#ifdef CONFIG_PVT_LRU
           //printk("read_pages: %pF\n", mapping->a_ops->readpages);
+          printk("Num Pages req: %i, Num pages notread: %lu\n",
+                  nr_pages, list_nr_elements(pages));
+#endif
 		/* Clean up the remaining pages */
 		put_pages_list(pages);
 		goto out;
@@ -208,12 +232,17 @@ int __do_page_cache_readahead(struct address_space *mapping, struct file *filp,
 	 * will then handle the error.
 	 */
 	if (ret)
+     {
 		read_pages(mapping, filp, &page_pool, ret, gfp_mask);
+#ifdef CONFIG_PVT_LRU
+     //record number of readahead calls from the userland
+     //test multiple times aswell - check if num invocations increased
+    //dump_stack();
+          add_readahead(ret, 3);
+#endif
+     }
 	BUG_ON(!list_empty(&page_pool));
 out:
-#ifdef CONFIG_PVT_LRU
-     add_global_readahead(ret);
-#endif
 	return ret;
 }
 
@@ -236,10 +265,19 @@ int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
 	 * be up to the optimal hardware IO size
 	 */
 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+#ifdef CONFIG_PVT_LRU
+     printk("max_pages:%lu, nr_read_requested:%lu\n", max_pages, nr_to_read);
+	nr_to_read = min(nr_to_read, max_pages);
+     add_readahead(nr_to_read, 2);
+#endif
 	nr_to_read = min(nr_to_read, max_pages);
 	while (nr_to_read) {
 		int err;
 
+          //CROSSLAYER RESEARCH QUESTION
+          //Why 2MB ? What is the logic behind this?
+          //Look at mailing list
+          // Does this remain 2MB down the call stack ?
 		unsigned long this_chunk = (2 * 1024 * 1024) / PAGE_SIZE;
 
 		if (this_chunk > nr_to_read)
@@ -574,6 +612,11 @@ static ssize_t
 do_readahead(struct address_space *mapping, struct file *filp,
 	     pgoff_t index, unsigned long nr)
 {
+
+#ifdef CONFIG_PVT_LRU
+     add_readahead(nr, 1);
+#endif
+
 	if (!mapping || !mapping->a_ops)
 		return -EINVAL;
 

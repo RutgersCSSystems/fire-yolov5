@@ -117,7 +117,7 @@ hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
 
 /*pvt_lru*/
-void add_global_readahead(int pages);
+void add_readahead(unsigned long pages, int func);
 bool pvt_lru_rb_insert(struct rb_root *root, struct page *page);
 void pvt_lru_rb_remove(struct rb_root *root, struct page *page);
 struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page);
