@@ -43,6 +43,10 @@ int handle_read(int fd, off_t pos, size_t bytes){
     a.pos = pos;
     a.bytes = bytes;
 
+#ifdef DEBUG
+	printf("handle_read: fd:%d, pos:%lu, bytes:%zu\n", fd, pos, bytes);
+#endif
+
     //Recognizer insert the access
 #ifdef NGRAM
     readobj.insert_to_ngram(a);

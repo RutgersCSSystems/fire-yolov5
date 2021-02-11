@@ -5,6 +5,8 @@
 
 #include "sequential.hpp"
 
+off_t pages_readahead = 0;
+
 bool sequential::is_sequential(int fd){
     return(exists(fd) && strides[fd].stride == SEQ_ACCESS);
 }
@@ -93,18 +95,22 @@ void sequential::update_stride(int fd){
 
         for(int i=1; i<HISTORY; i++){
             check_stride = stream->pos + stream->bytes;
+	    /*
 #ifdef DEBUG
 	    printf("update_stride: fd:%d, pos:%lu, bytes:%lu\n",
 			    fd, stream->pos, stream->bytes);
 #endif
+*/
             stream++;
             check_stride = stream->pos - check_stride;
+	    /*
 #ifdef DEBUG
 	    printf("update_stride: fd:%d, new_pos:%lu, check_stride:%lu\n",
 			    fd, stream->pos, check_stride);
 
             printf("fd:%d check_stride:%lu\n", fd, check_stride);
 #endif
+*/
             if(check_stride != this_stride){
                 this_stride = NOT_SEQ;
                 break;
@@ -132,22 +138,28 @@ bool sequential::exists(int fd)
  */
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
-#ifdef DEBUG
-    printf("seq_pefetch: stride = %lu\n", stride);
-#endif
-
     if(stride < 0)
         return -1;
 
     off_t nextpos = curr_access.pos + curr_access.bytes + stride;
     
     //find the next page aligned position
-    nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
+    //nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
+    nextpos = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
 
-    size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
-    if(curr_access.bytes > bytes_toread){
-       bytes_toread = ((curr_access.bytes/PAGESIZE)+1)*PAGESIZE;
-    }
+    
+    size_t bytes_toread = ((curr_access.bytes >> PAGESHIFT)+1) << PAGESHIFT;
+   //size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
+
+    pages_readahead += bytes_toread >> PAGESHIFT;
+
+#ifdef DEBUG
+    printf("seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
+		    stride, curr_access.pos, nextpos, bytes_toread);
+
+    /*print number of readahead pages*/
+    printf("nr_pages_readahead %lu\n", pages_readahead);
+#endif
 
     return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
 }

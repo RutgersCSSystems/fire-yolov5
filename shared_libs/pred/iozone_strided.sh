@@ -4,9 +4,9 @@ dmesg --clear
 sudo apt-get install iozone3 -y
 
 FILE=iozone.tmp
-SIZE=1g ##FILESIZE 
-STRIDE=3 ## * $RECORD
-RECORD=5m ##Size of read
+SIZE=5g ##FILESIZE 
+STRIDE=13 ## * $RECORD
+RECORD=1024 ##Size of read in kb
 
 touch $FILE
 chmod 777 $FILE
