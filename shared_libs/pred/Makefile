@@ -5,6 +5,9 @@ FLAGS=-fPIC -shared
 
 #all: reclaimer
 
+nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
+	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
+
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL -DDEBUG
 

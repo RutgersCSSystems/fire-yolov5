@@ -710,6 +710,8 @@ struct task_struct {
     unsigned long nr_do_pc_readahead_calls; //nr of pages asked
     unsigned long nr_ra_submit_pages; // ra_submit function 
     unsigned long nr_ra_submit_calls;
+    unsigned long nr_ondemand_ra_pages; // ra_submit function 
+    unsigned long nr_ondemand_ra_calls;
 	
 #endif
 

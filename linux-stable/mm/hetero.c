@@ -1280,6 +1280,10 @@ void add_readahead(unsigned long pages, int func){
             case 4: /*call from ra_submit*/
                 current->nr_ra_submit_pages += pages;
                 current->nr_ra_submit_calls += 1;
+
+            case 5: /*call from ondemand_readahead*/
+                current->nr_ondemand_ra_calls += 1;
+                current->nr_ondemand_ra_pages += pages;
            default:
                 return;
        } 
@@ -1651,9 +1655,12 @@ void print_readahead_stats(void)
     printk("PID: %d, readahead_calls: %lu, readahead_pages: %lu\n", 
             current->pid, current->nr_readahead_calls,
             current->nr_readahead);
-    printk("PID: %d, force_pc_readahead_calls: %lu, force_pc_readahead_pages: %lu\n", 
+    printk("PID: %d, force_pc_readahead_calls: %lu, force_pc_readahead_pages: %lu\n",
             current->pid, current->nr_force_pc_readahead_calls,
             current->nr_force_pc_readahead_pages);
+    printk("PID: %d, ondemand_ra_calls: %lu, ondemand_ra_pages: %lu\n", 
+            current->pid, current->nr_ondemand_ra_calls,
+            current->nr_ondemand_ra_pages);
     printk("PID: %d, ra_submit_calls: %lu, ra_submit_pages: %lu\n", 
             current->pid, current->nr_ra_submit_calls,
             current->nr_ra_submit_pages);
@@ -1703,6 +1710,8 @@ void reset_pvt_lru_counters(void)
     current->nr_do_pc_readahead_calls = 0; //nr of pages asked
     current->nr_ra_submit_pages = 0;
     current->nr_ra_submit_calls = 0;
+    current->nr_ondemand_ra_calls = 0;
+    current->nr_ondemand_ra_pages = 0;
 }
 
 
