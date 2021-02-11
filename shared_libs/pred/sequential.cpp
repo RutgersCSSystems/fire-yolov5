@@ -5,17 +5,20 @@
 
 #include "sequential.hpp"
 
-
 bool sequential::is_sequential(int fd){
     return(exists(fd) && strides[fd].stride == SEQ_ACCESS);
 }
 
 
+/* if yes, return the stride
+ * else return false
+ */
 off_t sequential::is_strided(int fd){
-    if(exists(fd) && strides[fd].stride > SEQ_ACCESS)
+    if(exists(fd) && strides[fd].stride > SEQ_ACCESS
+		    && strides[fd].stride < NOT_SEQ)
         return strides[fd].stride;
     else
-        return NOT_SEQ;
+        return false;
 }
 
 
@@ -32,6 +35,11 @@ void sequential::insert(struct pos_bytes access){
     current_stream[fd].push_back(access);
 
     update_stride(fd); //calculate the stride
+
+#ifdef DEBUG
+    printf("seq::insert: fd:%d, stride:%lu\n", 
+		    fd, strides[fd].stride);
+#endif
 
     return;
 }
@@ -57,10 +65,10 @@ void sequential::print_all_strides(){
 }
 
 
-/*
+/* returns the stride 
 */
 off_t sequential::get_stride(int fd){
-    if(exists(fd))
+    if(exists(fd) && strides[fd].stride < NOT_SEQ)
         return strides[fd].stride;
     else
         return NOT_SEQ;
@@ -85,14 +93,20 @@ void sequential::update_stride(int fd){
 
         for(int i=1; i<HISTORY; i++){
             check_stride = stream->pos + stream->bytes;
+#ifdef DEBUG
+	    printf("update_stride: fd:%d, pos:%lu, bytes:%lu\n",
+			    fd, stream->pos, stream->bytes);
+#endif
             stream++;
             check_stride = stream->pos - check_stride;
-
 #ifdef DEBUG
-            printf("fd:%d check_stride:%ld\n", fd, check_stride);
+	    printf("update_stride: fd:%d, new_pos:%lu, check_stride:%lu\n",
+			    fd, stream->pos, check_stride);
+
+            printf("fd:%d check_stride:%lu\n", fd, check_stride);
 #endif
             if(check_stride != this_stride){
-                this_stride = -1;
+                this_stride = NOT_SEQ;
                 break;
             }
         }
@@ -117,6 +131,10 @@ bool sequential::exists(int fd)
  * returns 0 at success, -1 at failure
  */
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
+
+#ifdef DEBUG
+    printf("seq_pefetch: stride = %lu\n", stride);
+#endif
 
     if(stride < 0)
         return -1;

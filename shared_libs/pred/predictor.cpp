@@ -38,7 +38,7 @@ int handle_read(int fd, off_t pos, size_t bytes){
     if(pos <0 || bytes <0) //Santization check
         return false;
 
-    struct pos_bytes a;
+    static struct pos_bytes a;
     a.fd = fd;
     a.pos = pos;
     a.bytes = bytes;
@@ -58,6 +58,9 @@ int handle_read(int fd, off_t pos, size_t bytes){
        seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){
+#ifdef DEBUG
+	printf("handle_read: strided: %lu\n", stride);
+#endif
         seq_prefetch(a, stride); //prefetch in program path
     }
 #endif

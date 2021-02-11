@@ -2,10 +2,11 @@
 #define _SEQUENTIAL_HPP
 
 #include <bits/stdc++.h>
+#include <limits.h>
 
 #define HISTORY 10 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
-#define NOT_SEQ -1 //Not seq or strided
+#define NOT_SEQ  (ULONG_MAX - 1) //Not seq or strided(since off_t is ulong)
 
 
 struct stride_dat{
@@ -29,6 +30,7 @@ class sequential{
         off_t get_stride(int fd);
         void update_stride(int fd);
         bool exists(int fd);
+	//bool sane_stride(int fd);
 };
 
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride);
