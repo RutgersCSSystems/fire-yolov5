@@ -1284,6 +1284,8 @@ void add_readahead(unsigned long pages, int func){
             case 5: /*call from ondemand_readahead*/
                 current->nr_ondemand_ra_calls += 1;
                 current->nr_ondemand_ra_pages += pages;
+            case 6: /*nr filemap_pagefaults*/
+                current->nr_filemap_faults += 1;
            default:
                 return;
        } 
@@ -1667,6 +1669,8 @@ void print_readahead_stats(void)
     printk("PID: %d, do_pc_readahead_calls: %lu, readahead_pages: %lu\n", 
             current->pid, current->nr_do_pc_readahead_calls,
             current->nr_do_pc_readahead_pages);
+    printk("PID: %d, nr_filemap_faults: %lu\n", 
+            current->pid, current->nr_filemap_faults);
 }
 EXPORT_SYMBOL(print_readahead_stats);
 
@@ -1712,6 +1716,7 @@ void reset_pvt_lru_counters(void)
     current->nr_ra_submit_calls = 0;
     current->nr_ondemand_ra_calls = 0;
     current->nr_ondemand_ra_pages = 0;
+    current->nr_filemap_faults = 0;
 }
 
 

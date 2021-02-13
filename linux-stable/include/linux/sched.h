@@ -712,6 +712,7 @@ struct task_struct {
     unsigned long nr_ra_submit_calls;
     unsigned long nr_ondemand_ra_pages; // ra_submit function 
     unsigned long nr_ondemand_ra_calls;
+    unsigned long nr_filemap_faults; //number of filemap_faults
 	
 #endif
 

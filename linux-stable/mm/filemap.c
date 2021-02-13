@@ -2770,6 +2770,11 @@ int filemap_fault(struct vm_fault *vmf)
 	if (unlikely(offset >= max_off))
 		return VM_FAULT_SIGBUS;
 
+#ifdef CONFIG_PVT_LRU
+    /*Just counts nr of faults*/
+     add_readahead(1UL, 6); 
+#endif
+
 	/*
 	 * Do we have something in the page cache already?
 	 */
