@@ -1078,9 +1078,12 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
         /*gets filesize*/
         error_check("fseek", filename, fseeko64(df, 0L, SEEK_END)==0);
         int file_size = ftell(df);
-        printf("size of file: %d bytes\n", file_size); 
+        //printf("size of file: %d bytes\n", file_size); 
 
         error_check("fseek", filename, fseeko64(df, offset, SEEK_SET)==0); 
+        file_size = ftell(df);
+        //printf("Initial file offset : %d bytes\n", file_size); 
+
         if (*rw=='r') {
             //printf("number of elements: %d\n", matrix.my_no_elm);
             if (strcmp(IOMODE, "SYNC")==0){
@@ -1091,36 +1094,49 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
                 //number of records to read for one stride
                 int nr_of_strided_rec = (matrix.my_no_elm*sizeof(double))/
                                             ((1+stride)*record_size);
-                printf("nr_of_strided_rec: %d\n", nr_of_strided_rec);
+                //printf("nr_of_strided_rec: %d\n", nr_of_strided_rec);
 
-                int data_offt; // in nr of doubles
                 int nr_doubles = record_size/sizeof(double);
-                printf("nr_doubles: %d\n", nr_doubles);
-                int tot_elems = 0;
+                //printf("nr_doubles: %d\n", nr_doubles);
 
+                //bytes in one complete stride worth
+                int block_size = (1+stride)*record_size;
+
+                //printf("block_size:%d\n", block_size);
+
+                int data_offt; // in nr of doubles addr offset
+                int tot_elems = 0;
                 for(i=0; i<=stride; i++)
                 {
                     //goto the offset for this stride
                     error_check("fseek", filename, 
                         fseeko64(df, offset+(i*record_size), SEEK_SET)==0);
+                    //printf("%d: starting file offset:%ld\n", i, offset+(i*record_size));
                     //read your record in appropriate data offset
                     for(iter=0; iter<nr_of_strided_rec; iter++)
                     {
-                        error_check("fseek", filename, 
-                        fseeko64(df, iter*(1+stride)*record_size, SEEK_CUR)==0);
+                        //printf("current file seek: %ld\n", ftell(df));
 
-                        printf("file seek: %d\n", iter*(1+stride)*record_size);
-
-                        data_offt = (record_size * i) + (iter*((1+stride)*record_size));
+                        data_offt = (record_size * i) + (iter*block_size);
                         data_offt /= sizeof(double);
 
-                        printf("data_offt:%d\n", data_offt);
+                        //printf("iter=%d: data_offt:%d\n", iter, data_offt);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
-                       // printf("fread out: %d\n", a);
                         error_check("fread", filename, a==nr_doubles);
+                        /*
+                        printf("fread out: %d\n", a);
+                        int err = ferror (df);
+                        printf("ferror: %d\n", err);
+                        int eof = feof(df);
+                        printf("feof: %d\n", eof);
+                        */
                         
                         tot_elems += nr_doubles;
+
+                        error_check("fseek", filename, 
+                        fseeko64(df, block_size-record_size, SEEK_CUR)==0);
+
 
                     }
                 }
