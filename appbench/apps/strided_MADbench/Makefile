@@ -1,0 +1,7 @@
+CC=mpicc
+LIBS=-L/usr/local/lib -lm
+
+FLAGS=-D SYSTEM -D COLUMBIA -D IO
+
+all:
+	$(CC) $(FLAGS) -o MADbench2_io MADbench2.c $(LIBS)
