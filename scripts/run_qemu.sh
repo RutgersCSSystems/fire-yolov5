@@ -1,11 +1,11 @@
 #!/bin/bash
 set -x
 
-$APPBENCH/scripts/umout_qemu.sh
+$NVMBASE/scripts/umount_qemu.sh
 sleep 1
 #Launching QEMU
 
-$APPBENCH/scripts/killqemu.sh
+$NVMBASE/scripts/killqemu.sh
 
 #sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -smp maxcpus=16  -numa node,nodeid=0,cpus=0-4 -curses -vga std -numa node,nodeid=1,cpus=10-13
 
