@@ -26,6 +26,11 @@ debug: predictor.cpp ngram.cpp
 pattern: predictor.cpp ngram.cpp
 	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPATTERN
 
+clean:
+	rm -rf *.o
+	rm *.so
+	rm test
+
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
