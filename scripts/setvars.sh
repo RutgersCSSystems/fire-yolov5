@@ -20,7 +20,9 @@ export KERNEL=$NVMBASE/KERNEL
 #BENCHMARKS AND LIBS
 export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
-export SHARED_LIBS=$APPBENCH/shared_libs
+export APPS=$NVMBASE/appbench/apps
+export SHARED_LIBS=$NVMBASE/shared_libs
+export PREDICT_LIB=$SHARED_LIBS/pred
 export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
@@ -41,8 +43,6 @@ export APPPREFIX="numactl --preferred=0"
 
 export OUTPUTDIR=$NVMBASE/HPC-OUTPUT
 export TEST_TMPDIR=/mnt/pmemdir
-
-
 
 
 export CODE="/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code"
