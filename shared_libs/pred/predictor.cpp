@@ -44,7 +44,7 @@ int handle_read(int fd, off_t pos, size_t bytes){
     a.bytes = bytes;
 
 #ifdef DEBUG
-	printf("handle_read: fd:%d, pos:%lu, bytes:%zu\n", fd, pos, bytes);
+	fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", fd, pos, bytes);
 #endif
 
     //Recognizer insert the access
@@ -63,7 +63,7 @@ int handle_read(int fd, off_t pos, size_t bytes){
     }
     else if((stride = seq_readobj.is_strided(fd))){
 #ifdef DEBUG
-	printf("handle_read: strided: %lu\n", stride);
+	 fprintf(stderr,"handle_read: strided: %lu\n", stride);
 #endif
         seq_prefetch(a, stride); //prefetch in program path
     }
@@ -136,7 +136,7 @@ int handle_write(int fd, off_t pos, size_t bytes){
 
 
 /*
- * Called at each close operation from the user
+ * FIXME: Called at each close operation from the user
  * Remove entries from all accounting methods
  */
 int handle_close(int fd){

@@ -12,7 +12,7 @@ RECORD=1048576 # bytes read at once
 STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
 NPROC=1
 
-#export LD_PRELOAD="/usr/lib/libcrosslayer.so"
+export LD_PRELOAD="/usr/lib/libcrosslayer.so"
 #export LD_PRELOAD="/usr/lib/libnopred.so"
 
 #last two values should multiply to NPROC
