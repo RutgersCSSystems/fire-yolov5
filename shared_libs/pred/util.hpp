@@ -3,7 +3,7 @@
 
 #define PAGESIZE 4096 //Page size
 #define PAGESHIFT 12 //2^12 is 4096 bytes
-#define NR_READ_PAGES 50 //Number of pages to be readahead at once
+#define NR_READ_PAGES 5 //Number of pages to be readahead at once
 #define NR_FREE_PAGES 5 //Number of pages to be released at once
 
 #define MEMINFO "/proc/meminfo"
