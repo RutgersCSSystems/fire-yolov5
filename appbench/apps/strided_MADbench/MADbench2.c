@@ -1126,7 +1126,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
                         data_offt = (record_size * i) + (iter*block_size);
                         data_offt /= sizeof(double);
 
-                        //printf("iter=%d: data_offt:%d\n", iter, data_offt);
+                        printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
                         error_check("fread", filename, a==nr_doubles);
@@ -1166,6 +1166,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
     /* MPI IO */
 
     else if (strcmp(IOMETHOD, "MPI")==0) {
+        printf("DOING MPI I/O\n");
         error_check("MPI_File_seek", filename, MPI_File_seek(dfh, offset+stride, MPI_SEEK_SET)==0); 
         if (*rw=='r') {
             if (strcmp(IOMODE, "SYNC")==0) error_check("MPI_File_read", filename, MPI_File_read(dfh, data, matrix.my_no_elm, MPI_DOUBLE, &mpi_status)==0);
