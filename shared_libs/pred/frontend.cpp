@@ -113,10 +113,11 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
 
 #ifdef PREDICTOR
-    int fd; 
+    int fd = fileno(stream); 
 
-    if(fd = reg_file(stream)){ //this is a regular file
+    if(reg_file(stream)){ //this is a regular file
         ////lseek doesnt work with f* commands
+        
         handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
