@@ -1529,8 +1529,10 @@ struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page
 {
     if(root == NULL)
     {
+#ifdef CONFIG_PVT_LRU_DEBUG
         printk("pid:%d, comm:%s, pvt_lru_rb_search, root==NULL\n",
                 current->pid, current->comm);
+#endif
         return NULL;
     }
     struct rb_node *node = root->rb_node;
@@ -2123,7 +2125,9 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             accnt_handle_pte_fault = 0;
 
             start_global_accounting = true;
+#ifdef CONFIG_PVT_LRU_DEBUG
             printk("Pvt LRU initialized for %d\n", current->pid);
+#endif
             break;
 
         case PRINT_PVT_LRU_STATS:
@@ -2148,7 +2152,11 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
                         accnt_handle_mm_fault);
             }
             else
+            {
+#ifdef CONFIG_PVT_LRU_DEBUG
                 printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+#endif
+            }
 
             start_global_accounting = false;
 

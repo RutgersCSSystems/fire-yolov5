@@ -141,7 +141,7 @@ static int read_pages(struct address_space *mapping, struct file *filp,
 
 	if (mapping->a_ops->readpages) {
 		ret = mapping->a_ops->readpages(filp, mapping, pages, nr_pages);
-#ifdef CONFIG_PVT_LRU
+#ifdef CONFIG_PVT_LRU_DEBUG
           //printk("read_pages: %pF\n", mapping->a_ops->readpages);
           /*printk("Num Pages req: %i, Num pages notread: %lu\n",
                   nr_pages, list_nr_elements(pages));
@@ -267,7 +267,9 @@ int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
 	 */
 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
 #ifdef CONFIG_PVT_LRU
-     //printk("max_pages:%lu, nr_read_requested:%lu\n", max_pages, nr_to_read);
+#ifdef CONFIG_PVT_LRU_DEBUG
+     //printk("max_pages:%lu, nr_read_requested:%lu\n", max_pages, nr_to_read
+#endif
 	nr_to_read = min(nr_to_read, max_pages);
      add_readahead(nr_to_read, 2);
 #endif
