@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <math.h>
 #include "mpi.h"
 #include "MADbench2.h"
@@ -1085,6 +1086,11 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
         //printf("Initial file offset : %d bytes\n", file_size); 
 
         if (*rw=='r') {
+		/*DONT NEED right before read*/
+		int fd = fileno(df);
+		printf("fd: %d\n", fd);
+		posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+
             //printf("number of elements: %d\n", matrix.my_no_elm);
             if (strcmp(IOMODE, "SYNC")==0){
                 //read at strides and fill the data in steps

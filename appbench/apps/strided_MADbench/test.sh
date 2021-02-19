@@ -2,15 +2,15 @@
 
 
 rm -rf files/
-./clear_cache.sh
-#dmesg -c
+$NVMBASE/scripts/clear_cache.sh
+dmesg --clear
 
 export IOMODE=SYNC
 export FILETYPE=UNIQUE
 export IOMETHOD=POSIX
 RECORD=1048576 # bytes read at once
 STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
-NPROC=1
+NPROC=1 ##Num MPI procs
 
 export LD_PRELOAD="/usr/lib/libcrosslayer.so"
 #export LD_PRELOAD="/usr/lib/libnopred.so"
