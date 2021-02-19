@@ -35,7 +35,7 @@ sequential seq_writeobj;
  */
 int handle_read(int fd, off_t pos, size_t bytes){
 
-    if(pos <0 || bytes <0) //Santization check
+    if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
     static struct pos_bytes a;
