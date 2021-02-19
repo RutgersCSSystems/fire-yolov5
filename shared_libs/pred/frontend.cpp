@@ -104,7 +104,6 @@ void dest(){
 
 }
 
-
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 #ifdef DEBUG
     std::cout << "fread" << std::endl;
@@ -119,7 +118,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     if(fd = reg_file(stream)){ //this is a regular file
         ////lseek doesnt work with f* commands
-        handle_read(fd, ftell(stream), size*nmemb);
+        handle_read(fd, fileno(stream), size*nmemb);
     }
 #endif
 
@@ -129,7 +128,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t read(int fd, void *data, size_t size){
 #ifdef DEBUG
-    printf("Hello read\n");
+    printf("Hello read: %d\n", fd);
 #endif
     ssize_t amount_read = real_read(fd, data, size);
 
