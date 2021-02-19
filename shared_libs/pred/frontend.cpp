@@ -106,19 +106,18 @@ void dest(){
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 #ifdef DEBUG
-    std::cout << "fread" << std::endl;
+    std::cout << "frontend: fread: fd:" << fileno(stream) << std::endl;
 #endif
-    size_t amount_read;
 
     // Perform the actual system call
-    amount_read = real_fread(ptr, size, nmemb, stream);
+    size_t amount_read = real_fread(ptr, size, nmemb, stream);
 
 #ifdef PREDICTOR
     int fd; 
 
     if(fd = reg_file(stream)){ //this is a regular file
         ////lseek doesnt work with f* commands
-        handle_read(fd, fileno(stream), size*nmemb);
+        handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
 
@@ -203,9 +202,38 @@ bool reg_fd(int fd)
     struct stat st;
 
     if(fstat(fd, &st) == 0){
+        switch (st.st_mode & S_IFMT) {
+           case S_IFBLK:
+               printf("fd:%d block device\n", fd);
+               break;
+           case S_IFCHR:
+               printf("fd:%d character device\n", fd);
+               break;
+           case S_IFDIR:
+               printf("fd:%d directory\n", fd);
+               break;
+           case S_IFIFO:
+               printf("fd:%d FIFO/pipe\n", fd);
+               break;
+           case S_IFLNK:
+               printf("fd:%d symlink\n", fd);
+               break;
+           case S_IFREG:
+               printf("fd:%d regular file\n", fd); 
+               return true;            
+               break;
+           case S_IFSOCK:
+               printf("fd:%d socket\n", fd);
+               break;
+           default:
+               printf("fd:%d unknown?\n", fd);
+               break;
+           }
+        /*
         if(S_ISREG(st.st_mode)){
             return true;
         }
+        */
     }
     return false;
 }

@@ -3,7 +3,7 @@ CC=gcc
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared
 
-#all: reclaimer
+all: nopred seq install 
 
 nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
@@ -29,7 +29,6 @@ pattern: predictor.cpp ngram.cpp
 clean:
 	rm -rf *.o
 	rm *.so
-	rm test
 
 install:
 	sudo cp *.so /usr/local/lib
