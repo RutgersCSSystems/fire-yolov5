@@ -208,7 +208,7 @@ bool reg_fd(int fd)
                debug_print("fd:%d directory\n", fd);
                break;
            case S_IFIFO:
-               debug_print("fd:%d FIFO/pipe\n", fd);
+               //debug_print("fd:%d FIFO/pipe\n", fd);
                break;
            case S_IFLNK:
                debug_print("fd:%d symlink\n", fd);
@@ -218,7 +218,7 @@ bool reg_fd(int fd)
                return true;            
                break;
            case S_IFSOCK:
-               debug_print("fd:%d socket\n", fd);
+               //debug_print("fd:%d socket\n", fd);
                break;
            default:
                debug_print("fd:%d unknown?\n", fd);
