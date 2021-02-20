@@ -214,7 +214,7 @@ bool reg_fd(int fd)
                printf("fd:%d directory\n", fd);
                break;
            case S_IFIFO:
-               printf("fd:%d FIFO/pipe\n", fd);
+               //printf("fd:%d FIFO/pipe\n", fd);
                break;
            case S_IFLNK:
                printf("fd:%d symlink\n", fd);
@@ -224,7 +224,7 @@ bool reg_fd(int fd)
                return true;            
                break;
            case S_IFSOCK:
-               printf("fd:%d socket\n", fd);
+               //printf("fd:%d socket\n", fd);
                break;
            default:
                printf("fd:%d unknown?\n", fd);

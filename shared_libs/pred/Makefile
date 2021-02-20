@@ -9,7 +9,7 @@ nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
 
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
-	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL -DDEBUG
+	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL #-DDEBUG
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
 	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DDEBUG -DNGRAM

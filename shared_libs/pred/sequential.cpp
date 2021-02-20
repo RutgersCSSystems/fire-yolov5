@@ -158,8 +158,9 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 		    stride, curr_access.pos, nextpos, bytes_toread);
 
     /*print number of readahead pages*/
-    printf("nr_pages_readahead %lu\n", pages_readahead);
 #endif
+   printf("nr_pages_readahead %lu\n", pages_readahead);
+
 
     return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
 }
