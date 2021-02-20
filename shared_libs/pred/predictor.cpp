@@ -46,6 +46,9 @@ int handle_read(int fd, off_t pos, size_t bytes){
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
+    fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
+            fd, pos, bytes);
+
     //Recognizer insert the access
 #ifdef NGRAM
     readobj.insert_to_ngram(a);
@@ -163,6 +166,9 @@ int handle_close(int fd){
  * This function doesnt have a specific function right now
  */
 int handle_open(int fd){
+
+    fprintf(stderr, "handle_open: fd:%d \n", fd);
+
 #ifdef NGRAM_PREDICT
     //dont know what to do if this rn
     if(!toss_biased_coin()) //Low MemPressure with high prob
