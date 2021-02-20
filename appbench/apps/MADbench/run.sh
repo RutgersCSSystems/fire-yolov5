@@ -4,10 +4,9 @@ PCAnonRatio=1.5
 #DBGRATIO=1
 #DRATIO=100
 #BASE_MEM=2758459392
-NPROC=16
-APPPREFIX="numactl --membind=0"
+#APPPREFIX="numactl --membind=0"
+APPPREFIX=""
 
-WORKLOAD=2000
 CAPACITY=$1
 
 FlushDisk()
@@ -36,20 +35,20 @@ SETUPEXTRAM() {
         ./mount_ext4ramdisk.sh $ALLOCSZ 1
 }
 
-FlushDisk
 #SETUPEXTRAM
 echo "going to sleep"
-sleep 10
-
 #IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
-#export FILETYPE=SHARED
+export FILETYPE=SHARED
+
+WORKLOAD=5000
+NPROC=36
+RMOD=1
+WMOD=1
+
 #export IOMODE=SYNC
 #export IOMETHOD=POSIX
-
 $SHARED_LIBS/construct/reset
 #export LD_PRELOAD=/usr/lib/libmigration.so 
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 80 1 8 8 $RMOD $WMOD  #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
-sleep 5
 FlushDisk
-
