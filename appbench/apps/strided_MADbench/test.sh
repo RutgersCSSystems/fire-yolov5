@@ -10,14 +10,14 @@ export FILETYPE=UNIQUE
 export IOMETHOD=POSIX
 RECORD=1048576 # bytes read at once
 STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
-NPROC=1 ##Num MPI procs
+NPROC=4 ##Num MPI procs
 
-export LD_PRELOAD="/usr/lib/libcrosslayer.so"
-#export LD_PRELOAD="/usr/lib/libnopred.so"
+#export LD_PRELOAD="/usr/lib/libcrosslayer.so"
+export LD_PRELOAD="/usr/lib/libnopred.so"
 
 #last two values should multiply to NPROC
 
-/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 4096 1 1 8 64 1 1 $RECORD $STRIDE
+/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 8192 10 1 8 64 1 1 $RECORD $STRIDE
 #strace ./MADbench2_io 4096 1 1 8 64 1 1 $RECORD $STRIDE 2> mystrace
 #strace ./MADbench2_io 4096 1 1 8 64 1 1 $RECORD $STRIDE 2> mystrace
 #mpiexec -n $NPROC ./MADbench2_io 400 140 1 8 8 1 1
