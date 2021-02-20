@@ -43,9 +43,8 @@ int handle_read(int fd, off_t pos, size_t bytes){
     a.pos = pos;
     a.bytes = bytes;
 
-#ifdef DEBUG
-	fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", fd, pos, bytes);
-#endif
+    debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
+            fd, pos, bytes);
 
     //Recognizer insert the access
 #ifdef NGRAM
@@ -59,12 +58,11 @@ int handle_read(int fd, off_t pos, size_t bytes){
 #ifdef SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-       seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
+        seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){
-#ifdef DEBUG
-	 fprintf(stderr,"handle_read: strided: %lu\n", stride);
-#endif
+
+        debug_print("handle_read: strided: %lu\n", stride);
         seq_prefetch(a, stride); //prefetch in program path
     }
 #endif

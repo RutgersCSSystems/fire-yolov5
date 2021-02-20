@@ -31,6 +31,7 @@
 #include "frontend.hpp"
 #include "predictor.hpp"
 #include "worker.hpp"
+#include "util.hpp"
 
 #define __NR_start_trace 333
 
@@ -60,7 +61,7 @@ void set_pvt_lru(){
 void con(){
     //struct sigaction action;
 
-    fprintf(stderr, "init tracing...\n");
+    debug_print("init tracing...\n");
 
     set_pvt_lru();
     thread_fn(); //spawn worker thread
@@ -69,7 +70,7 @@ void con(){
 
 
 void dest(){
-    fprintf(stderr, "application termination...\n");
+    debug_print("application termination...\n");
     //syscall(__NR_start_trace, PRINT_STATS);
 
     //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
@@ -91,7 +92,7 @@ void dest(){
     struct rusage Hello;
     if (getrusage(RUSAGE_SELF, &Hello) != 0)
     {
-        fprintf(stderr, "Unable to get rusage\n");
+        debug_print("Unable to get rusage\n");
     }
 
     printf("MaxRSS= %lu KB, "
@@ -105,9 +106,8 @@ void dest(){
 }
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
-#ifdef DEBUG
-    std::cout << "frontend: fread: fd:" << fileno(stream) << std::endl;
-#endif
+
+    debug_print("hello_fread, fd:%d\n", fileno(stream));
 
     // Perform the actual system call
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
@@ -127,16 +127,14 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 ssize_t read(int fd, void *data, size_t size){
-#ifdef DEBUG
-    printf("Hello read: %d\n", fd);
-#endif
+
+    debug_print("Hello read: %d\n", fd);
+
     ssize_t amount_read = real_read(fd, data, size);
 
 #ifdef PREDICTOR
     if(reg_fd(fd)){
-#ifdef DEBUG
-        printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
-#endif
+        debug_print("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -160,9 +158,7 @@ ssize_t write(int fd, const void *data, size_t size){
 
 
 int fclose(FILE *stream){
-#ifdef DEBUG
-    printf("fclose detected\n");
-#endif
+    debug_print("fclose detected\n");
 
 #ifdef PREDICTOR
     int fd;
@@ -175,9 +171,7 @@ int fclose(FILE *stream){
 
 
 int close(int fd){
-#ifdef DEBUG
-    printf("File close detected\n");
-#endif
+    debug_print("File close detected\n");
 
 #ifdef PREDICTOR
     if(reg_fd(fd)){
@@ -205,29 +199,29 @@ bool reg_fd(int fd)
     if(fstat(fd, &st) == 0){
         switch (st.st_mode & S_IFMT) {
            case S_IFBLK:
-               printf("fd:%d block device\n", fd);
+               debug_print("fd:%d block device\n", fd);
                break;
            case S_IFCHR:
-               printf("fd:%d character device\n", fd);
+               debug_print("fd:%d character device\n", fd);
                break;
            case S_IFDIR:
-               printf("fd:%d directory\n", fd);
+               debug_print("fd:%d directory\n", fd);
                break;
            case S_IFIFO:
-               printf("fd:%d FIFO/pipe\n", fd);
+               debug_print("fd:%d FIFO/pipe\n", fd);
                break;
            case S_IFLNK:
-               printf("fd:%d symlink\n", fd);
+               debug_print("fd:%d symlink\n", fd);
                break;
            case S_IFREG:
-               printf("fd:%d regular file\n", fd); 
+               debug_print("fd:%d regular file\n", fd); 
                return true;            
                break;
            case S_IFSOCK:
-               printf("fd:%d socket\n", fd);
+               debug_print("fd:%d socket\n", fd);
                break;
            default:
-               printf("fd:%d unknown?\n", fd);
+               debug_print("fd:%d unknown?\n", fd);
                break;
            }
         /*

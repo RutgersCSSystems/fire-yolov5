@@ -17,7 +17,7 @@ bool sequential::is_sequential(int fd){
  */
 off_t sequential::is_strided(int fd){
     if(exists(fd) && strides[fd].stride > SEQ_ACCESS
-		    && strides[fd].stride < NOT_SEQ)
+            && strides[fd].stride < NOT_SEQ)
         return strides[fd].stride;
     else
         return false;
@@ -38,10 +38,8 @@ void sequential::insert(struct pos_bytes access){
 
     update_stride(fd); //calculate the stride
 
-#ifdef DEBUG
-    printf("seq::insert: fd:%d, stride:%lu\n", 
-		    fd, strides[fd].stride);
-#endif
+    debug_print("seq::insert: fd:%d, stride:%lu\n", 
+            fd, strides[fd].stride);
 
     return;
 }
@@ -95,20 +93,20 @@ void sequential::update_stride(int fd){
 
         for(int i=1; i<HISTORY; i++){
             check_stride = stream->pos + stream->bytes;
-	    /*
+            /*
 #ifdef DEBUG
-	    printf("update_stride: fd:%d, pos:%lu, bytes:%lu\n",
-			    fd, stream->pos, stream->bytes);
+printf("update_stride: fd:%d, pos:%lu, bytes:%lu\n",
+fd, stream->pos, stream->bytes);
 #endif
 */
             stream++;
             check_stride = stream->pos - check_stride;
-	    /*
+            /*
 #ifdef DEBUG
-	    printf("update_stride: fd:%d, new_pos:%lu, check_stride:%lu\n",
-			    fd, stream->pos, check_stride);
+printf("update_stride: fd:%d, new_pos:%lu, check_stride:%lu\n",
+fd, stream->pos, check_stride);
 
-            printf("fd:%d check_stride:%lu\n", fd, check_stride);
+printf("fd:%d check_stride:%lu\n", fd, check_stride);
 #endif
 */
             if(check_stride != this_stride){
@@ -142,24 +140,22 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
         return -1;
 
     off_t nextpos = curr_access.pos + curr_access.bytes + stride;
-    
+
     //find the next page aligned position
     //nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
     nextpos = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
 
-    
+
     size_t bytes_toread = ((curr_access.bytes >> PAGESHIFT)+1) << PAGESHIFT;
-   //size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
+    //size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
 
     pages_readahead += bytes_toread >> PAGESHIFT;
 
-#ifdef DEBUG
-    printf("seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
-		    stride, curr_access.pos, nextpos, bytes_toread);
+    debug_print("seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
+            stride, curr_access.pos, nextpos, bytes_toread);
 
     /*print number of readahead pages*/
-    printf("nr_pages_readahead %lu\n", pages_readahead);
-#endif
+    debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
     return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
 }

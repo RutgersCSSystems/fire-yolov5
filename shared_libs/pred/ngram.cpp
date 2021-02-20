@@ -2,9 +2,7 @@
 
 int ngram::insert_to_ngram(struct pos_bytes access)
 {
-#ifdef DEBUG
-	std::cout << "access fd: " << access.fd << std::endl;
-#endif
+     debug_print("access fd: %d\n", access.fd);
     /*
      * The user will call insert_to_ngram everytime there is an access.
      * Depending on the length of GRAMS, it will insert in MOM

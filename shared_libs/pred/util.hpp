@@ -8,6 +8,12 @@
 
 #define MEMINFO "/proc/meminfo"
 
+#ifdef DEBUG
+#define debug_print(...) fprintf( stderr, __VA_ARGS__ )
+#else
+#define debug_print(...) do{ }while(0)
+#endif
+
 struct pos_bytes{
 	int fd; //file descriptor
 	off_t pos; //File seek position
