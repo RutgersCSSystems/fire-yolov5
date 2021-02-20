@@ -1,7 +1,7 @@
 CXX=g++
 CC=gcc
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11
+FLAGS=-fPIC -shared -std=gnu++11 #-DDEBUG
 
 all: nopred seq install 
 

@@ -936,6 +936,7 @@ ReduceIterResults(IOR_test_t *test, double *timer, const int rep, const int acce
 static void RemoveFile(char *testFileName, int filePerProc, IOR_param_t * test)
 {
         int tmpRankOffset = 0;
+
         if (filePerProc) {
                 /* in random tasks, delete own file */
                 if (test->reorderTasksRandom == TRUE) {

@@ -109,6 +109,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     debug_print("hello_fread, fd:%d\n", fileno(stream));
 
+     fprintf(stderr, "hello_fread, fd:%d\n", fileno(stream));
+
     // Perform the actual system call
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
 
@@ -129,12 +131,11 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 ssize_t read(int fd, void *data, size_t size){
 
     debug_print("Hello read: %d\n", fd);
-
     ssize_t amount_read = real_read(fd, data, size);
 
 #ifdef PREDICTOR
     if(reg_fd(fd)){
-        debug_print("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
+        //printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -213,7 +214,7 @@ bool reg_fd(int fd)
            case S_IFLNK:
                debug_print("fd:%d symlink\n", fd);
                break;
-           case S_IFREG:
+           case S_IFREG | S_IFMT:
                debug_print("fd:%d regular file\n", fd); 
                return true;            
                break;
@@ -221,8 +222,8 @@ bool reg_fd(int fd)
                //debug_print("fd:%d socket\n", fd);
                break;
            default:
-               debug_print("fd:%d unknown?\n", fd);
-               break;
+               //printf("fd:%d unknown?\n", fd);
+	       return true;
            }
         /*
         if(S_ISREG(st.st_mode)){
@@ -230,5 +231,6 @@ bool reg_fd(int fd)
         }
         */
     }
+    return true;
     return false;
 }

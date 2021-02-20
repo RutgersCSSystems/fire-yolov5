@@ -45,9 +45,11 @@ echo "going to sleep"
 sleep 1
 
 $SHARED_LIBS/construct/reset
-export LD_PRELOAD=/usr/lib/libcrosslayer.so
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
-export LD_PRELOAD=""
+LD_PRELOAD=/usr/lib/libcrosslayer.so  mpiexec -n $NPROC ./gtc
+
+#export LD_PRELOAD=/usr/lib/libcrosslayer.so
+#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+#export LD_PRELOAD=""
 
 
 FlushDisk
