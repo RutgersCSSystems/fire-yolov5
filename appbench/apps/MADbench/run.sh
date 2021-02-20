@@ -38,17 +38,20 @@ SETUPEXTRAM() {
 #SETUPEXTRAM
 echo "going to sleep"
 #IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
-export FILETYPE=SHARED
 
-WORKLOAD=5000
-NPROC=36
-RMOD=1
-WMOD=1
+export FILETYPE=SHARED
+WORKLOAD=2000
+NPROC=16
+GANG=80
+RMOD=16
+WMOD=16
 
 #export IOMODE=SYNC
 #export IOMETHOD=POSIX
-$SHARED_LIBS/construct/reset
-#export LD_PRELOAD=/usr/lib/libmigration.so 
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 80 1 8 8 $RMOD $WMOD  #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+#$SHARED_LIBS/construct/reset
+
+export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+
 export LD_PRELOAD=""
 FlushDisk

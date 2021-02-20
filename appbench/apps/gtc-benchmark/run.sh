@@ -7,13 +7,10 @@ PCAnonRatio=1.5
 NPROC=32
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
-
 WORKLOAD=2000
-
 #ProgMem=`echo "74828 * $NPROC * 1024" | bc` #in bytes For size C
 #TotalMem=`echo "$ProgMem * $PCAnonRatio" | bc`
 #TotalMem=`echo $TotalMem | perl -nl -MPOSIX -e 'print ceil($_)'`
-
 CAPACITY=$1
 
 FlushDisk()
@@ -45,25 +42,14 @@ SETUPEXTRAM() {
 FlushDisk
 #SETUPEXTRAM
 echo "going to sleep"
-sleep 10
+sleep 1
+
 $SHARED_LIBS/construct/reset
-export LD_PRELOAD=/usr/lib/libmigration.so 
+export LD_PRELOAD=/usr/lib/libcrosslayer.so
 $APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
 
+
 FlushDisk
-./umount_ext4ramdisk.sh 0
-./umount_ext4ramdisk.sh 1
-
-#sleep 5
-#FlushDisk
-#$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &> "MEMSIZE-$WORKLOAD-"$NPROC"threads-UNLIMITED.out"
-
-#sudo cgcreate -g memory:npb
-#echo $TotalMem | sudo tee /sys/fs/cgroup/memory/npb/memory.limit_in_bytes
-
-#sudo echo $DRATIO > /proc/sys/vm/dirty_ratio
-#sudo echo $DBGRATIO > /proc/sys/vm/dirty_background_ratio
-
-#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
-#$APPPREFIX  
+#./umount_ext4ramdisk.sh 0
+#./umount_ext4ramdisk.sh 1
