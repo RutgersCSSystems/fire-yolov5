@@ -22,7 +22,7 @@ export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
 export APPS=$NVMBASE/appbench/apps
 export SHARED_LIBS=$NVMBASE/shared_libs
-export PREDICT_LIB=$SHARED_LIBS/pred
+export PREDICT_LIB_DIR=$SHARED_LIBS/pred
 export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
@@ -36,6 +36,8 @@ export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
 
 export APPPREFIX="numactl --preferred=0"
+
+
 #export APPPREFIX="perf record -e instructions,mem-loads,mem-stores --vmlinux=/lib/modules/4.17.0/build/vmlinux -I 1000"
 #export APPPREFIX="perf stat -e dTLB-load-misses,iTLB-load-misses,instructions,L1-dcache-loads,L1-dcache-stores"
 #export APPPREFIX="numactl --membind=1"

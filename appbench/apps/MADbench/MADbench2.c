@@ -393,8 +393,15 @@ void build_S()
     if (b<no_bin) {
       lmin = lmax; 
       lmax += binwidth;
+
 #ifdef IO
+
+#ifndef NO_BUSY_WORK
+      fprintf(stderr, "Busy work \n");
       busy_work(&no_pix, 2, gang1);
+#endif
+
+
 #else
       build_dSdC(S, dSdCb, LP_lminus1, LP_l, ra, dec, lmin, lmax);
 #endif
