@@ -37,7 +37,11 @@ NPROC=16
 SEGMENTS=16
 BLOCKSIZE=16m
 TRANSFERSZ=1m
-FILESPERPROC=-F
+
+#Make this to an empty value if no per-file process
+#FILESPERPROC=-F
+FILESPERPROC=
+
 
 #$SHARED_LIBS/construct/reset
 export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
