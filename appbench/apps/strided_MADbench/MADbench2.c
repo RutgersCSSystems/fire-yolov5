@@ -121,13 +121,17 @@ int main(int argc, char** argv)
 
     initialize(argc, argv); PMPI_Barrier(MPI_COMM_WORLD);
 
+    printf("build_S\n");
     build_S(); PMPI_Barrier(MPI_COMM_WORLD);
+    printf("build_S done\n");
 
 #ifndef IO
     invert_D(); PMPI_Barrier(MPI_COMM_WORLD);
 #endif
 
+    printf("calc_W\n");
     calc_W(); PMPI_Barrier(MPI_COMM_WORLD);
+    printf("calc_W done\n");
 
     calc_dC(); PMPI_Barrier(MPI_COMM_WORLD);
 
@@ -407,7 +411,7 @@ void build_S()
         if (b<no_bin) {
             lmin = lmax; 
             lmax += binwidth;
-#ifdef IO
+#ifdef IO 
             busy_work(&no_pix, 2, gang1);
 #else
             build_dSdC(S, dSdCb, LP_lminus1, LP_l, ra, dec, lmin, lmax);
@@ -666,9 +670,11 @@ void calc_W()
             }
         }
 
+#ifdef COMPUTE
         /* Solve */
 
         if (b>0 && b<=no_bin) pdgemm(&no, &no, &no_pix, &no_pix, &no_pix, &d1, invD2, &i1, &i1, pp_matrix2.desc, dSdCb, &i1, &i1, pp_matrix2.desc, &d0, Wb, &i1, &i1, pp_matrix2.desc);
+#endif
 
         /* Resynchronize writing */
 
@@ -1126,7 +1132,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
                         data_offt = (record_size * i) + (iter*block_size);
                         data_offt /= sizeof(double);
 
-                        printf("MAD: fread: fd:%d\n", fd);
+                        //printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
                         error_check("fread", filename, a==nr_doubles);
