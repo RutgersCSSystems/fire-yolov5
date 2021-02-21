@@ -33,10 +33,11 @@ SETUPEXTRAM() {
 #SETUPEXTRAM
 echo "going to sleep"
 
-NPROC=16
-SEGMENTS=16
+NPROC=32
+SEGMENTS=32
 BLOCKSIZE=16m
 TRANSFERSZ=1m
+KEEP_FILES_AFTER_RUN=-k
 
 #Make this to an empty value if no per-file process
 #FILESPERPROC=-F
@@ -45,6 +46,6 @@ FILESPERPROC=
 
 #$SHARED_LIBS/construct/reset
 export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
-$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC
+$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN
 export LD_PRELOAD=""
 FlushDisk

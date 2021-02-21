@@ -109,8 +109,6 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     debug_print("hello_fread, fd:%d\n", fileno(stream));
 
-     fprintf(stderr, "hello_fread, fd:%d\n", fileno(stream));
-
     // Perform the actual system call
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
 

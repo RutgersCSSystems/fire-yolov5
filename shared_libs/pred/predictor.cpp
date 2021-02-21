@@ -46,8 +46,8 @@ int handle_read(int fd, off_t pos, size_t bytes){
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
-    fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-            fd, pos, bytes);
+    //fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
+      //      fd, pos, bytes);
 
     //Recognizer insert the access
 #ifdef NGRAM

@@ -153,7 +153,6 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
     debug_print("seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
             stride, curr_access.pos, nextpos, bytes_toread);
-
     /*print number of readahead pages*/
     debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
