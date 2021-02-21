@@ -1,5 +1,5 @@
 #!/bin/bash
-
+OUTPUT="out.txt"
 PCAnonRatio=1.5
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -34,8 +34,8 @@ SETUPEXTRAM() {
 echo "going to sleep"
 
 NPROC=32
-SEGMENTS=32
-BLOCKSIZE=16m
+SEGMENTS=1024
+BLOCKSIZE=1m
 TRANSFERSZ=1m
 KEEP_FILES_AFTER_RUN=-k
 
@@ -46,6 +46,11 @@ FILESPERPROC=
 
 #$SHARED_LIBS/construct/reset
 export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
-$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN
+$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN &>> $OUTPUT && grep -r "Elapsed" $OUTPUT
 export LD_PRELOAD=""
+FlushDisk
+
+
+$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN &>> $OUTPUT  && grep -r "Elapsed" $OUTPUT
+
 FlushDisk
