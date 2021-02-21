@@ -3,6 +3,8 @@
  * Prefetching and Demotion/relinquishing of memory
  `*/
 #include <bits/stdc++.h>
+#include <string>
+#include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -21,6 +23,9 @@ sequential seq_readobj;
 sequential seq_writeobj;
 #endif
 
+/* Keeps track of all filenames wrt its corresponding fd*/
+std::unordered_map<int, std::string> fd_to_filename;
+
 /*
  * Questions to answer
  * 1. How much to remove/prefetch?
@@ -28,6 +33,46 @@ sequential seq_writeobj;
  * 3. What about conflicting advises ?
  * 4. What advice is not taken by the kernel ?
  * */
+
+
+/* Called at each open operation from the user
+ * populates fd_to_filename hashmap
+ */
+bool handle_open(int fd, const char *filename){
+
+    if(fd<=2 || filename == NULL)
+        return false;
+
+    debug_print("handle_open: fd:%d %s\n", fd, filename);
+
+    /* REMOVED DUE TO UNINTERPRETABLE ERROR: FIXME
+    std::string str(filename);
+    fd_to_filename[fd] = filename;
+    */
+
+    /*
+    if(fd_to_filename.find(fd) == fd_to_filename.end() ||
+            fd_to_filename[fd] == str)
+        fd_to_filename[fd] = str;
+    else{
+        debug_print("%s: fd:%d associated with new file: %s\n", 
+                __func__, fd, filename);
+        fd_to_filename[fd] = str;
+        return false;
+    }
+    */
+
+#ifdef NGRAM_PREDICT
+    //dont know what to do if this rn
+    if(!toss_biased_coin()) //Low MemPressure with high prob
+    {
+        posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
+        std::cout << "prefetching fd: " << fd << std::endl;
+    }
+#endif
+    return true;
+}
+
 
 /* Every User read will call this fn:
  * 1. accounts for access pattern and
@@ -44,9 +89,6 @@ int handle_read(int fd, off_t pos, size_t bytes){
     a.bytes = bytes;
 
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-            fd, pos, bytes);
-
-    fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
     //Recognizer insert the access
@@ -141,41 +183,28 @@ int handle_write(int fd, off_t pos, size_t bytes){
  * Remove entries from all accounting methods
  */
 int handle_close(int fd){
-    //remove the element from read and write data
-    return true; //dont do anything right now
-#ifdef NGRAM
-    writeobj.remove_from_ngram(fd);
-    readobj.remove_from_ngram(fd);
-#endif
 
+    /*FIXME: erase function is giving signal 8*/
+    //fd_to_filename.erase(fd);
+    return true;
+
+    /*
 #ifdef SEQUENTIAL
     seq_readobj.remove(fd);
     seq_writeobj.remove(fd);
+#endif
+*/
+
+/*
+#ifdef NGRAM
+    writeobj.remove_from_ngram(fd);
+    readobj.remove_from_ngram(fd);
 #endif
 
 #ifdef NGRAM_PREDICT
     posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 #endif
 
-    //Clear/demote corresponding cache elements from memory
-    return true;
-}
-
-
-/* Called at each open operation from the user
- * This function doesnt have a specific function right now
- */
-int handle_open(int fd){
-
-    fprintf(stderr, "handle_open: fd:%d \n", fd);
-
-#ifdef NGRAM_PREDICT
-    //dont know what to do if this rn
-    if(!toss_biased_coin()) //Low MemPressure with high prob
-    {
-        posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-        std::cout << "prefetching fd: " << fd << std::endl;
-    }
-#endif
+    */
     return true;
 }

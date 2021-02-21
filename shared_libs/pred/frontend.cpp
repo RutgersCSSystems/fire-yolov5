@@ -105,11 +105,30 @@ void dest(){
 
 }
 
+
+FILE *fopen(const char *filename, const char *mode){
+
+    FILE *ret;
+    ret = real_fopen(filename, mode);
+    if(!ret)
+        return ret;
+
+    int fd = fileno(ret);
+
+
+    printf("%s: %s -> %d\n", __func__, filename, fd);
+
+    if(reg_file(ret)){
+        handle_open(fd, filename);
+    }
+
+    return ret;
+}
+
+
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-    debug_print("hello_fread, fd:%d\n", fileno(stream));
-
-     fprintf(stderr, "hello_fread, fd:%d\n", fileno(stream));
+    //debug_print("hello_fread, fd:%d\n", fileno(stream));
 
     // Perform the actual system call
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
@@ -161,9 +180,9 @@ ssize_t write(int fd, const void *data, size_t size){
 int fclose(FILE *stream){
     debug_print("fclose detected\n");
 
+    int fd = fileno(stream);
 #ifdef PREDICTOR
-    int fd;
-    if(fd = reg_file(stream)){
+    if(reg_file(stream)){
         handle_close(fd);
     }
 #endif
@@ -192,7 +211,7 @@ int reg_file(FILE *stream){
 //returns true if fd is regular file
 bool reg_fd(int fd)
 {
-    if(!fd)
+    if(fd<=2)
         return false;
 
     struct stat st;
@@ -209,21 +228,20 @@ bool reg_fd(int fd)
                debug_print("fd:%d directory\n", fd);
                break;
            case S_IFIFO:
-               //debug_print("fd:%d FIFO/pipe\n", fd);
+               debug_print("fd:%d FIFO/pipe\n", fd);
                break;
            case S_IFLNK:
                debug_print("fd:%d symlink\n", fd);
                break;
-           case S_IFREG | S_IFMT:
+           case S_IFREG:
                debug_print("fd:%d regular file\n", fd); 
                return true;            
                break;
            case S_IFSOCK:
-               //debug_print("fd:%d socket\n", fd);
+               debug_print("fd:%d socket\n", fd);
                break;
            default:
-               //printf("fd:%d unknown?\n", fd);
-	       return true;
+               debug_print("fd:%d unknown?\n", fd);
            }
         /*
         if(S_ISREG(st.st_mode)){
@@ -231,6 +249,6 @@ bool reg_fd(int fd)
         }
         */
     }
-    return true;
+    //return true;
     return false;
 }
