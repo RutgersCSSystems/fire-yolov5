@@ -3,16 +3,18 @@ CC=gcc
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 #-DDEBUG
 
+#DEBUGFLAGS="-DDEBUG"
+
 all: nopred seq install 
 
 nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
 
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
-	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL -DDEBUG
+	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS)
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
-	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DDEBUG -DNGRAM
+	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DNGRAM $(DEBUGFLAGS)
 
 test: tester.cpp ngram.cpp util.cpp
 	$(CXX) -o $@ $^ 
@@ -21,7 +23,7 @@ reclaimer: predictor.cpp ngram.cpp
 	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp util.cpp $(LIBS) -DPREDICTOR
 
 debug: predictor.cpp ngram.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DDEBUG -DPREDICTOR
+	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPREDICTOR $(DEBUGFLAGS)
 
 pattern: predictor.cpp ngram.cpp
 	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPATTERN

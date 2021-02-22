@@ -140,11 +140,10 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
         return -1;
 
     off_t nextpos = curr_access.pos + curr_access.bytes + stride;
+    off_t nextpos_align = nextpos;
 
     //find the next page aligned position
-    //nextpos = (PAGESIZE - (nextpos%PAGESIZE)) + nextpos;
-    nextpos = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
-
+    nextpos_align = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
 
     size_t bytes_toread = ((curr_access.bytes >> PAGESHIFT)+1) << PAGESHIFT;
     //size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
@@ -156,5 +155,7 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     /*print number of readahead pages*/
     debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
-    return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
+    //return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
+    return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
+
 }

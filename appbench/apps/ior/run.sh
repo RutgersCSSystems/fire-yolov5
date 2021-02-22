@@ -1,5 +1,10 @@
 #!/bin/bash
-OUTPUT="out.txt"
+#$OUTPUTDIR is set in setvars.sh
+OUTPUTVANILLA=$OUTPUTDIR/IOR/"vanilla.txt"
+OUTPUTCROSS=$OUTPUTDIR/IOR/"crosslayer.txt"
+
+mkdir -p $OUTPUTDIR/IOR/
+
 PCAnonRatio=1.5
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -38,19 +43,28 @@ SEGMENTS=1024
 BLOCKSIZE=1m
 TRANSFERSZ=1m
 KEEP_FILES_AFTER_RUN=-k
-
+#Sync after write operations
+SYNCAFTERWRITE="-e"
 #Make this to an empty value if no per-file process
-#FILESPERPROC=-F
-FILESPERPROC=
+FILESPERPROC="-F"
+#FILESPERPROC=
+#(reorderTasks) to do this, and it forces each MPI process to read the data written by its
+#neighboring node. Running IOR with this option gives much more credible read performance:
+REORDER="-C"
 
+FlushDisk
 
-#$SHARED_LIBS/construct/reset
+OPTIONS="-t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN $SYNCAFTERWRITE $REORDER"
+
+OUTPUT=$OUTPUTCROSS
+rm $OUTPUT
 export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
-$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN &>> $OUTPUT && grep -r "Elapsed" $OUTPUT
+$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior $OPTIONS &> $OUTPUT && grep -r "Elapsed" $OUTPUT
 export LD_PRELOAD=""
 FlushDisk
 
 
-$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior -t $TRANSFERSZ -b $BLOCKSIZE -s $SEGMENTS $FILESPERPROC $KEEP_FILES_AFTER_RUN &>> $OUTPUT  && grep -r "Elapsed" $OUTPUT
-
+OUTPUT=$OUTPUTVANILLA
+rm $OUTPUT
+$APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior $OPTIONS &> $OUTPUT  && grep -r "Elapsed" $OUTPUT
 FlushDisk
