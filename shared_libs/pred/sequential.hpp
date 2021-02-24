@@ -16,8 +16,11 @@ struct stride_dat{
 
 class sequential{
     public:
+	bool init;
         std::unordered_map<int, struct stride_dat> strides;
         std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
+
+	sequential();     // Constructor
 
         bool is_sequential(int fd); //True if sequential
         off_t is_strided(int fd); //stride if strided

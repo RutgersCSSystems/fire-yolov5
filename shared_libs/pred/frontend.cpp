@@ -64,7 +64,7 @@ void con(){
     debug_print("init tracing...\n");
 
     set_pvt_lru();
-    thread_fn(); //spawn worker thread
+    //thread_fn(); //spawn worker thread
 
 }
 
@@ -116,7 +116,7 @@ FILE *fopen(const char *filename, const char *mode){
     int fd = fileno(ret);
 
 
-    printf("%s: %s -> %d\n", __func__, filename, fd);
+    printf("%s: PID:%d - %s -> %d\n", __func__, getpid(), filename, fd);
 
     if(reg_file(ret)){
         handle_open(fd, filename);
@@ -181,6 +181,7 @@ int fclose(FILE *stream){
     debug_print("fclose detected\n");
 
     int fd = fileno(stream);
+    printf("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 #ifdef PREDICTOR
     if(reg_file(stream)){
         handle_close(fd);

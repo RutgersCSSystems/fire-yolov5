@@ -189,14 +189,11 @@ int handle_close(int fd){
 
     /*FIXME: erase function is giving signal 8*/
     //fd_to_filename.erase(fd);
-    return true;
 
-    /*
 #ifdef SEQUENTIAL
     seq_readobj.remove(fd);
     seq_writeobj.remove(fd);
 #endif
-*/
 
 /*
 #ifdef NGRAM

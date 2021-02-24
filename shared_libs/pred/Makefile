@@ -1,11 +1,11 @@
 CXX=g++
 CC=gcc
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11 #-DDEBUG
+FLAGS=-fPIC -shared -std=gnu++11 
 
-#DEBUGFLAGS="-DDEBUG"
+DEBUGFLAGS=-DDEBUG
 
-all: nopred seq install 
+all: nopred seq 
 
 nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 

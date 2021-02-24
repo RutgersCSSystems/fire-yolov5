@@ -7,6 +7,10 @@
 
 off_t pages_readahead = 0;
 
+sequential::sequential(void){
+	init = false;
+}
+
 bool sequential::is_sequential(int fd){
     return(exists(fd) && strides[fd].stride == SEQ_ACCESS);
 }
@@ -30,6 +34,8 @@ off_t sequential::is_strided(int fd){
 void sequential::insert(struct pos_bytes access){
     int fd = access.fd;
 
+    init = true;
+
     if(!exists(fd)){ //FD not seen earlier
         init_stride(fd);
     }
@@ -49,8 +55,12 @@ void sequential::insert(struct pos_bytes access){
 */
 void sequential::remove(int fd)
 {
-    strides.erase(fd);
-    current_stream.erase(fd);
+    printf("%s FD:%d\n", __func__, fd);
+    if(init)
+    {
+	strides.erase(fd);
+    	current_stream.erase(fd);
+    }
     return;
 }
 
@@ -58,6 +68,9 @@ void sequential::remove(int fd)
 /* prints all the fd and their strides
 */
 void sequential::print_all_strides(){
+    if(!init)
+	return;
+
     for(auto a : strides){
         std::cout << "Stride for fd" << a.first << ": ";
         std::cout << get_stride(a.first) << std::endl;
@@ -68,6 +81,9 @@ void sequential::print_all_strides(){
 /* returns the stride 
 */
 off_t sequential::get_stride(int fd){
+    if(!init)
+	return NOT_SEQ;
+
     if(exists(fd) && strides[fd].stride < NOT_SEQ)
         return strides[fd].stride;
     else
@@ -124,6 +140,8 @@ printf("fd:%d check_stride:%lu\n", fd, check_stride);
 /* Checks if the fd has been seen before */
 bool sequential::exists(int fd)
 {
+    if(!init)
+	return false;
     //May have to remove(fd) if result is false
     return ((strides.find(fd) != strides.end()) &&
             (current_stream.find(fd) != current_stream.end()));
