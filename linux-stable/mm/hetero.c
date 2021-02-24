@@ -1262,7 +1262,8 @@ EXPORT_SYMBOL(update_hetero_pgcache);
  * Only for enabled pids
  */
 void add_readahead(unsigned long pages, int func){
-    if(start_global_accounting && current->enable_pvt_lru && pages){
+    //if(start_global_accounting && current->enable_pvt_lru && pages){
+    if(current->enable_pvt_lru && pages){
        switch(func){
            case 1: /* call from do_readahead*/
                 current->nr_readahead += pages;
@@ -1305,12 +1306,12 @@ void pvt_active_lru_insert(struct page *page)
     {
         if(page_is_file_cache(page))
         {
-            current->nr_owned_pages[3] += 1;
+            //current->nr_owned_pages[3] += 1;
             nr_global_active_cache_lru += 1;
         }
         else
         {
-            current->nr_owned_pages[1] += 1;
+            //current->nr_owned_pages[1] += 1;
             nr_global_active_anon_lru +=1;
         }
 
@@ -1330,12 +1331,14 @@ void pvt_active_lru_insert(struct page *page)
 
         if(page_is_file_cache(page))
         {
+            current->nr_owned_pages[3] += 1;
             current->mm->nr_lru[3] += 1;
             if(current->mm->nr_max_lru[3] < current->mm->nr_lru[3])
                 current->mm->nr_max_lru[3] = current->mm->nr_lru[3];
         }
         else
         {
+            current->nr_owned_pages[1] += 1;
             current->mm->nr_lru[1] += 1;
             if(current->mm->nr_max_lru[1] < current->mm->nr_lru[1])
                 current->mm->nr_max_lru[1] = current->mm->nr_lru[1];
@@ -1352,12 +1355,10 @@ void pvt_inactive_lru_insert(struct page *page)
     {
         if(page_is_file_cache(page))
         {
-            current->nr_owned_pages[2] += 1;
             nr_global_inactive_cache_lru += 1;
         }
         else
         {
-            current->nr_owned_pages[0] += 1;
             nr_global_inactive_anon_lru +=1;
         }
     }
@@ -1376,12 +1377,14 @@ void pvt_inactive_lru_insert(struct page *page)
         {
             if(page_is_file_cache(page))
             {
+            	current->nr_owned_pages[2] += 1;
                 current->mm->nr_lru[2] += 1;
                 if(current->mm->nr_max_lru[2] < current->mm->nr_lru[2])
                     current->mm->nr_max_lru[2] = current->mm->nr_lru[2];
             }
             else
             {
+            	current->nr_owned_pages[0] += 1;
                 current->mm->nr_lru[0] += 1;
                 if(current->mm->nr_max_lru[0] < current->mm->nr_lru[0])
                     current->mm->nr_max_lru[0] = current->mm->nr_lru[0];
@@ -1727,7 +1730,8 @@ void reset_pvt_lru_counters(void)
 //type = 0 -> anon, type = 1 -> cache
 void pvt_unmapped_page_accnt(int nr_pages, int type)
 {
-    if(start_global_accounting)
+    //if(start_global_accounting)
+    if(current->enable_pvt_lru)
     {
         current->nr_unmapped_pages[type] += nr_pages;
     }
@@ -2124,7 +2128,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             accnt_handle_mm_fault = 0;
             accnt_handle_pte_fault = 0;
 
-            start_global_accounting = true;
+            //start_global_accounting = true;
 #ifdef CONFIG_PVT_LRU_DEBUG
             printk("Pvt LRU initialized for %d\n", current->pid);
 #endif
