@@ -1302,6 +1302,7 @@ EXPORT_SYMBOL(add_readahead);
  */
 void pvt_active_lru_insert(struct page *page)
 {
+	return;
     if(start_global_accounting)
     {
         if(page_is_file_cache(page))
@@ -1350,7 +1351,7 @@ EXPORT_SYMBOL(pvt_active_lru_insert);
 
 void pvt_inactive_lru_insert(struct page *page)
 {
-
+	return;
     if(start_global_accounting)
     {
         if(page_is_file_cache(page))
@@ -1397,6 +1398,7 @@ EXPORT_SYMBOL(pvt_inactive_lru_insert);
 
 void pvt_active_lru_remove(struct page *page)
 {
+	return;
     if(start_global_accounting)
     {
         if(page_is_file_cache(page))
@@ -1434,6 +1436,7 @@ EXPORT_SYMBOL(pvt_active_lru_remove);
  */
 void pvt_inactive_lru_remove(struct page *page)
 {
+	return;
     if(start_global_accounting)
     {
         if(page_is_file_cache(page))
@@ -1475,6 +1478,7 @@ EXPORT_SYMBOL(pvt_inactive_lru_remove);
  */
 void pvt_lru_accnt_nr(int flag, int nr)
 {
+	return;
     switch(flag){
         case ACC_DOANON:
             accnt_do_anonymous_page += nr;
@@ -1659,6 +1663,7 @@ void print_readahead_stats(void)
                 current->nr_ra_submit_pages += pages;
                 current->nr_ra_submit_calls += 1;
     */
+    printk("PID: %d - %s\n", current->pid, current->comm);
     printk("PID: %d, readahead_calls: %lu, readahead_pages: %lu\n", 
             current->pid, current->nr_readahead_calls,
             current->nr_readahead);
