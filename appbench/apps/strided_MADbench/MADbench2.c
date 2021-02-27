@@ -16,7 +16,7 @@
 #include "mpi.h"
 #include "MADbench2.h"
 
-#define PCOUNT 10 
+#define PCOUNT 11
 #define TCOUNT 5
 #define SLENGTH 64
 
@@ -89,6 +89,7 @@ int no_pix, no_bin, no_gang, sblocksize, fblocksize, r_mod, w_mod;
 char *IOMETHOD, *IOMODE, *FILETYPE, *REMAP;
 off_t record_size; //bytes to read at once
 int stride; // set stride of file access to # * record_size
+int flushit = 0; // true if flushit
 double BWEXP = -1.0;
 
 int no_pe, my_pe;
@@ -176,6 +177,7 @@ void initialize(int argc, char** argv)
     w_mod = parameter[7];
     record_size = parameter[8];
     stride = parameter[9];
+    flushit = parameter[10];
 
     if (my_pe==0) {
 #ifdef IO
@@ -1093,9 +1095,6 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
 
         if (*rw=='r') {
 		/*DONT NEED right before read*/
-		int fd = fileno(df);
-		printf("fd: %d\n", fd);
-		posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 
             //printf("number of elements: %d\n", matrix.my_no_elm);
             if (strcmp(IOMODE, "SYNC")==0){
@@ -1161,9 +1160,17 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
         } 
         else {
             if (strcmp(IOMODE, "SYNC")==0) {
-                error_check("fwrite", filename, fwrite(data, sizeof(double), 
+		 error_check("fwrite", filename, fwrite(data, sizeof(double), 
                             matrix.my_no_elm, df)==matrix.my_no_elm);
                 printf("\nWrite the data to file:%ld bytes\n", matrix.my_no_elm*sizeof(double));
+
+		if(flushit)
+		{
+			printf("***********WAITING************\n");
+			fflush(df);
+			int fd = fileno(df);
+			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+		}
             }
         }
     }
