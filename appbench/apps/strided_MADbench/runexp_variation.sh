@@ -2,7 +2,8 @@
 #set -x
 
 APPDIR=$PWD
-mkdir results-sensitivity
+RESULTS_FOLDER=results-sensitivity-nodbg
+mkdir $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a predict=("0" "1")
@@ -12,6 +13,7 @@ declare -a apparr=("MADbench")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
+FLUSH=1 ##FLUSHES and clears cache AFTER EACH WRITE
 
 export IOMODE=SYNC
 export FILETYPE=UNIQUE
@@ -41,8 +43,7 @@ RUNAPP()
 	PREDICT=$4
 
 
-	#OUTPUT=results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
-	OUTPUT=results-sensitivity/$APP"_PROC-"$NPROC"PRED-"$PREDICT"LOAD-"$WORKLOAD".out"
+	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"PRED-"$PREDICT"LOAD-"$WORKLOAD".out"
 
 	echo "*********** running $OUTPUT ***********"
 
@@ -56,16 +57,15 @@ RUNAPP()
 
 
 	if [[ "$APP" == "MADbench" ]]; then
-		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 8 1 8 64 1 1 $RECORD $STRIDE $PREDICT"
-		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 8 1 8 64 1 1 $RECORD $STRIDE $PREDICT &> $OUTPUT
-		sync
+		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
+		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &> $OUTPUT
+		export LD_PRELOAD=""
+		wait; sync
 		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
-		sync
 		dmesg | grep -v -F "systemd-journald" >> $OUTPUT
-		sync
+		wait; sync
 	fi
 
-	export LD_PRELOAD=""
 }
 
 
