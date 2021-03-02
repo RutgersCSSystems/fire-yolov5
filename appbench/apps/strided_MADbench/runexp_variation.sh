@@ -54,7 +54,7 @@ RUNAPP()
 
 	echo "*********** running $OUTPUT ***********"
 
-	APPPREFIX="TIMESPREFETCH="$TIMESPREFETCH
+	set "TIMESPREFETCH="$TIMESPREFETCH
 	APPPREFIX+=" /usr/bin/time -v"
 
 	if [[ "$PREDICT" == "1" ]]; then
