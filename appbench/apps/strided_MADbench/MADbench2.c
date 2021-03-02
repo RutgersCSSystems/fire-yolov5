@@ -1105,10 +1105,19 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
                 //number of records to read for one stride
                 int nr_of_strided_rec = (matrix.my_no_elm*sizeof(double))/
                                             ((1+stride)*record_size);
-                //printf("nr_of_strided_rec: %d\n", nr_of_strided_rec);
+                printf("nr_of_strided_rec: %d\n", nr_of_strided_rec);
+
+		//prescribed readsize is > what is really needed
+		if(nr_of_strided_rec < 1.0)
+		{
+			nr_of_strided_rec = 1.0;
+			record_size = matrix.my_no_elm*sizeof(double);
+			stride = 0;
+			printf("WARNING: RECORD_SIZE >> READ_NEEDED\n");
+		}
 
                 int nr_doubles = record_size/sizeof(double);
-                //printf("nr_doubles: %d\n", nr_doubles);
+                printf("nr_doubles: %d\n", nr_doubles);
 
                 //bytes in one complete stride worth
                 int block_size = (1+stride)*record_size;
