@@ -482,7 +482,7 @@ unsigned long check_node_memsize(struct mm_struct *mm)
         for (iter =0; iter < MAXPROCS; iter++) 
         {
             if(pidlist[iter] != -1) {
-                printk(KERN_ALERT "PID %d "
+                printk("PID %d "
                         "MAX-F %u, MAX-A %u, MAX-SH %u MAX-TOT %u " 
                         "MAX-RSS-F %u, MAX-RSS-A %u, MAX-RSS-SH %u  OVERALL MAX-RSS-TOT %u" 
                         "\n", 
@@ -501,14 +501,14 @@ unsigned long check_node_memsize(struct mm_struct *mm)
         sys_mem_interval_diff();
 
 
-        printk(KERN_ALERT "AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
+        printk("AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
                 m_rss_totalpages, m_rss_totalanon, m_rss_totalfile,
                 m_rss_totalother);
 
-        printk(KERN_ALERT "SystemUseAVG: Total: %u", max_sys_anon_pages + max_sys_file_pages);
+        printk("SystemUseAVG: Total: %u", max_sys_anon_pages + max_sys_file_pages);
 
         //unsigned int Filepages = max_sys_pages - max_sys;
-        printk(KERN_ALERT "SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
+        printk("SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
                 "= Anon(SYS):%u + File:%u + Other:%u \n",
                 max_sys_file_pages + max_sys_anon_pages + max_sys_other_pages, 
                 max_sys_anon_pages,  max_sys_file_pages, max_sys_other_pages);
@@ -635,9 +635,9 @@ print_hetero_stats(struct task_struct *task)
     if(!mm)
         return;
 
-    //check_node_memsize(mm); //THIS HAS BEEN REMOVED TEMP FIXME
+    check_node_memsize(mm);
 
-    print_ownership_stats();
+    //print_ownership_stats();
     return;
 
 #ifdef CONFIG_HETERO_STATS
@@ -2144,6 +2144,8 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
             {
                 print_readahead_stats();
 
+		if(start_global_accounting)
+		{
                 printk(KERN_ALERT "PVT_LRU: PID:%d; max_inactive_anon:%d, max_active_anon:%d "
                         "max_inactive_cache:%d, max_active_cache:%d pages\n",
                         current->pid, current->mm->nr_max_lru[0], 
@@ -2159,6 +2161,7 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
                         accnt_do_anonymous_page, 
                         accnt_handle_pte_fault,
                         accnt_handle_mm_fault);
+		}
             }
             else
             {
