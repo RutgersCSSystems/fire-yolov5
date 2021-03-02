@@ -15,6 +15,7 @@ declare -a workarr=("4096" "8192" "16384")
 declare -a thrdarr=("1" "4" "16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
 declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
+#sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 
 #APPPREFIX="numactl --membind=0"
@@ -65,7 +66,7 @@ RUNAPP()
 
 	if [[ "$APP" == "MADbench" ]]; then
 		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
-		#$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &> $OUTPUT
 		export LD_PRELOAD=""
 		wait; sync
 		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
@@ -105,5 +106,6 @@ git add $RESULTS_FOLDER
 message="results_at "
 message+=`date`
 git commit -m "$message"
+git push
 
 ##IMplement the per proc bg thread
