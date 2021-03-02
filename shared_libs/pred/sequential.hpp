@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 #include <limits.h>
 
-#define HISTORY 10 // Number of past accesses considered >2
+#define HISTORY 5 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
 #define NOT_SEQ  (ULONG_MAX - 1) //Not seq or strided(since off_t is ulong)
 
