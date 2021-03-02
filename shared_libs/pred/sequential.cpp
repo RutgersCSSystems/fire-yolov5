@@ -174,13 +174,15 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     //find the next page aligned position
     nextpos_align = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
 
-    size_t bytes_toread = ((curr_access.bytes >> PAGESHIFT)+1) << PAGESHIFT;
-    
+    size_t bytes_toread = curr_access.bytes;
+
+    debug_print("seq_pefetch: prev_bytes:%zu\n", bytes_toread);
     //increase the prefetch window by times_prefetch
     bytes_toread *= times_prefetch; 
+    debug_print("seq_pefetch: bytes:%zu\n", bytes_toread);
 
     if(bytes_toread <= 0){
-	    debug_print("ERROR: %s: bytes_toread <= 0 \n", __func__);
+	    printf("ERROR: %s: bytes_toread <= 0 \n", __func__);
 	    return false;
     }
 
