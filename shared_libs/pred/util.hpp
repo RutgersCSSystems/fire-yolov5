@@ -6,9 +6,7 @@
 #define NR_FREE_PAGES 5 //Number of pages to be released at once
 #define DEFAULT_TIMES_PREFETCH 1 //prefetch window is x*readsize
 
-#define ENV_PREFETCH "TIMESPREFETCH"
-
-
+#define ENV_PREFETCH "TIMESPREFETCH" //ENV variable
 #define MEMINFO "/proc/meminfo"
 
 #ifdef DEBUG
