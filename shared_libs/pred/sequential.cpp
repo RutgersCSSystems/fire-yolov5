@@ -6,6 +6,7 @@
 #include "sequential.hpp"
 
 off_t pages_readahead = 0;
+int times_prefetch = 0;
 
 sequential::sequential(void){
 	init = false;
@@ -55,7 +56,7 @@ void sequential::insert(struct pos_bytes access){
 */
 void sequential::remove(int fd)
 {
-    printf("%s FD:%d\n", __func__, fd);
+    debug_print("%s FD:%d\n", __func__, fd);
     if(init)
     {
 	strides.erase(fd);
@@ -157,6 +158,16 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     if(stride < 0)
         return -1;
 
+    //initialize times_prefetch
+    if(times_prefetch == 0)
+    {
+	    char *times = getenv(ENV_PREFETCH);
+	    if(!times)
+		times_prefetch = DEFAULT_TIMES_PREFETCH;
+	    else
+		times_prefetch = atoi(times);
+    }
+
     off_t nextpos = curr_access.pos + curr_access.bytes + stride;
     off_t nextpos_align = nextpos;
 
@@ -164,7 +175,14 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     nextpos_align = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
 
     size_t bytes_toread = ((curr_access.bytes >> PAGESHIFT)+1) << PAGESHIFT;
-    //size_t bytes_toread = PAGESIZE*NR_READ_PAGES;
+    
+    //increase the prefetch window by times_prefetch
+    bytes_toread *= times_prefetch; 
+
+    if(bytes_toread <= 0){
+	    debug_print("ERROR: %s: bytes_toread <= 0 \n", __func__);
+	    return false;
+    }
 
     pages_readahead += bytes_toread >> PAGESHIFT;
 
@@ -173,7 +191,7 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     /*print number of readahead pages*/
     debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
-    //return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
-    return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
+    return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
+    //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
 
 }

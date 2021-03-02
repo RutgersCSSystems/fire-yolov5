@@ -44,10 +44,11 @@
 #define TIME_STATS 7
 #define TIME_RESET 8
 #define COLLECT_ALLOCATE 9
-#define PRINT_ALLOCATE 10
+#define PRINT_PPROC_PAGESTATS 10
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
+
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
@@ -71,6 +72,8 @@ void con(){
 
 void dest(){
     debug_print("application termination...\n");
+
+    print_readahead_time();
     //syscall(__NR_start_trace, PRINT_STATS);
 
     //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
@@ -101,8 +104,7 @@ void dest(){
             , Hello.ru_maxrss, Hello.ru_ixrss, Hello.ru_majflt);
 
     syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
-
-
+    syscall(__NR_start_trace, PRINT_PPROC_PAGESTATS, 0);
 }
 
 
@@ -116,7 +118,7 @@ FILE *fopen(const char *filename, const char *mode){
     int fd = fileno(ret);
 
 
-    printf("%s: PID:%d - %s -> %d\n", __func__, getpid(), filename, fd);
+    debug_print("%s: PID:%d - %s -> %d\n", __func__, getpid(), filename, fd);
 
     if(reg_file(ret)){
         handle_open(fd, filename);

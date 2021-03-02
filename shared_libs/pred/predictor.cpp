@@ -7,6 +7,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/time.h>
 
 #include "ngram.hpp"
 #include "util.hpp"
@@ -25,6 +26,11 @@ sequential seq_writeobj;
 
 /* Keeps track of all filenames wrt its corresponding fd*/
 std::unordered_map<int, std::string> fd_to_filename;
+
+
+/*Time Spent in prefetching*/
+struct timeval stop, start;
+double total_readahead_time = 0.0; //Time in microseconds
 
 /*
  * Questions to answer
@@ -91,9 +97,6 @@ int handle_read(int fd, off_t pos, size_t bytes){
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
-    //fprintf(stderr, "handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-      //      fd, pos, bytes);
-
     //Recognizer insert the access
 #ifdef NGRAM
     readobj.insert_to_ngram(a);
@@ -103,6 +106,8 @@ int handle_read(int fd, off_t pos, size_t bytes){
     seq_readobj.insert(a);
 #endif
 
+gettimeofday(&start, NULL);
+/*Prefetch data for next read*/
 #ifdef SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
@@ -134,7 +139,9 @@ int handle_read(int fd, off_t pos, size_t bytes){
         }
     }
 #endif
+gettimeofday(&stop, NULL);
 
+total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
     return true;
 }
 
@@ -208,3 +215,10 @@ int handle_close(int fd){
     */
     return true;
 }
+
+
+void print_readahead_time(){
+
+	printf("READAHEAD_TIME:%lf us\n", total_readahead_time);
+}
+

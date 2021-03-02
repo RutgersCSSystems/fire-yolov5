@@ -3,7 +3,7 @@ CC=gcc
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
-DEBUGFLAGS=-DDEBUG
+#DEBUGFLAGS=-DDEBUG
 
 all: nopred seq 
 
