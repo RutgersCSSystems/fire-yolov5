@@ -49,14 +49,16 @@ def get_num(line, delim=":"):
     return nums[0]
 
 
-def get_filename(workload, proc, pred, load, readsize, timespfetch, postfix=".out"):
+#def get_filename(workload, PROC, PRED, LOAD, READSIZE, TIMESPFETCH, postfix=".out"):
+#def get_filename(workload, invariants, tup_inv, x, x_vals, y, y_vals, postfix=".out"):
+def get_filename(para_dict, postfix=".out"):
     filename = ""
-    filename += workload+"_"
-    filename += "PROC-"+str(proc)+"_"
-    filename += "PRED-"+str(pred)+"_"
-    filename += "LOAD-"+str(load)+"_"
-    filename += "READSIZE-"+str(readsize)+"_"
-    filename += "TIMESPFETCH-"+str(timespfeth)
+    filename += para_dict["workload"]+"_"
+    filename += "PROC-"+str(para_dict["PROC"])+"_"
+    filename += "PRED-"+str(para_dict["PRED"])+"_"
+    filename += "LOAD-"+str(para_dict["LOAD"])+"_"
+    filename += "READSIZE-"+str(para_dict["READSIZE"])+"_"
+    filename += "TIMESPFETCH-"+str(para_dict["TIMESPFETCH"])
     filename += postfix
     return filename
 
@@ -68,7 +70,7 @@ def Extract(filepath, dataname):
         with open(filepath) as f:
             filedata = f.readlines()
     except IOError:
-        print("Error: File does not appear to exist.")
+        print("Error: File does not appear to exist. ", filepath)
         return "-"
 
     for line in filedata:
@@ -90,22 +92,27 @@ def main():
 
     iter_invariants = list(itertools.product(*all_invariants))
     filename = ""
+    para_dict = {}
     for workload in WORKLOADS:
+        para_dict["workload"] = workload
         print("Starting to Extract data from " + workload)
         for tup_inv in iter_invariants:
+            para_dict[invariants[0]] = tup_inv[0]
+            para_dict[invariants[1]] = tup_inv[1]
+            para_dict[invariants[2]] = tup_inv[2]
             for x in xaxis:
                 list_x = globals()[x]
                 for x_vals in list_x:
+                    para_dict[x] = x_vals
                     for y in yaxis:
                         list_y = globals()[y]
                         for y_vals in list_y:
+                            para_dict[y] = y_vals
                             for dat in data:
-                                print(invariants, tup_inv, x, x_vals, y, y_vals, dat)
-                                # filename = get_filename(tup_inv, )
-                                # Extract(filename, dat)
+                                filename = get_filename(para_dict)
+                                print(filename)
+                                Extract(filename, dat)
 
-
-    
     return
 
     for inv in invariants:
