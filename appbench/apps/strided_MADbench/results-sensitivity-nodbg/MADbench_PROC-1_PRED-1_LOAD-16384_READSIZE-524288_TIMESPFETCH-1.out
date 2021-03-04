@@ -1,0 +1,90 @@
+fclose PID:10762 fd:12
+
+MADbench 2.0 IO-mode
+no_pe = 1  no_pix = 16384  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=524288 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+
+Write the data to file:2147483648 bytes
+***********WAITING************
+PE 0 failed fseek on files/data_0
+application called MPI_Abort(MPI_COMM_WORLD, 0) - process 0
+fclose PID:10760 fd:3
+fclose PID:10760 fd:4
+fclose PID:10760 fd:4
+fclose PID:10760 fd:3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4936 KB, SharedMem= 0 KB, HardPageFault= 5
+	Command being timed: "mpiexec -n 1 ./MADbench2_io 16384 30 1 8 64 1 1 524288 7 1"
+	User time (seconds): 0.00
+	System time (seconds): 0.00
+	Percent of CPU this job got: 0%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:58.69
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5124
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 7
+	Minor (reclaiming a frame) page faults: 496
+	Voluntary context switches: 38
+	Involuntary context switches: 2
+	Swaps: 0
+	File system inputs: 2344
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 3836 KB, SharedMem= 0 KB, HardPageFault= 11
+*******************DMESG OUTPUT******************
+[30305.652449] flag to set enable_pvt_lru with
+[30305.750104] flag to set enable_pvt_lru with
+[30305.774383] flag to set enable_pvt_lru with
+[30305.798047] flag to set enable_pvt_lru with
+[30364.330905] PID: 10760 - mpiexec
+[30364.330909] PID: 10760, readahead_calls: 0, readahead_pages: 0
+[30364.330911] PID: 10760, force_pc_readahead_calls: 0, force_pc_readahead_pages: 0
+[30364.330912] PID: 10760, ondemand_ra_calls: 2, ondemand_ra_pages: 64
+[30364.330914] PID: 10760, ra_submit_calls: 1, ra_submit_pages: 32
+[30364.330916] PID: 10760, do_pc_readahead_calls: 0, readahead_pages: 0
+[30364.330917] PID: 10760, nr_filemap_faults: 2
+[30364.352651] PID: 10761 - hydra_pmi_proxy
+[30364.352653] PID: 10761, readahead_calls: 0, readahead_pages: 0
+[30364.352654] PID: 10761, force_pc_readahead_calls: 0, force_pc_readahead_pages: 0
+[30364.352656] PID: 10761, ondemand_ra_calls: 0, ondemand_ra_pages: 0
+[30364.352657] PID: 10761, ra_submit_calls: 0, ra_submit_pages: 0
+[30364.352658] PID: 10761, do_pc_readahead_calls: 0, readahead_pages: 0
+[30364.352659] PID: 10761, nr_filemap_faults: 0
+[30364.355885] PID: 10759 - time
+[30364.355887] PID: 10759, readahead_calls: 0, readahead_pages: 0
+[30364.355889] PID: 10759, force_pc_readahead_calls: 0, force_pc_readahead_pages: 0
+[30364.355890] PID: 10759, ondemand_ra_calls: 8, ondemand_ra_pages: 232
+[30364.355891] PID: 10759, ra_submit_calls: 7, ra_submit_pages: 200
+[30364.355893] PID: 10759, do_pc_readahead_calls: 6, readahead_pages: 116
+[30364.355894] PID: 10759, nr_filemap_faults: 14
