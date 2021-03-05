@@ -3,18 +3,21 @@
 import os, mmap
 from datetime import datetime
 import itertools
+import re
 
 
 folder = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/results-sensitivity-nodbg/"
+folder_out = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/cleaned_dat/"
 #Data Info
 
+NODAT = "-"
 ##From Filename
 xaxis = ["PROC"]
 yaxis = ["PRED"]
 invariants = ["LOAD", "READSIZE", "TIMESPFETCH"]
 data = ["Elapsed", "nr_filemap_faults"] ##From files
 
-WORKLOADS = ["MADBench"]
+WORKLOADS = ["MADbench"]
 PROC = [1, 4, 16]
 PRED = [0, 1]
 LOAD = [4096, 8192, 16384]
@@ -30,8 +33,8 @@ def is_number(s):
         return False
 
 
-def get_time_sec(line, delim=":"):
-    nums = [float(s) for s in str.split(delim) if is_number(s)]
+def get_time_sec(line, delim=':| |,'):
+    nums = [float(s.strip()) for s in re.split(delim, line) if is_number(s.strip())]
     time = 0.
     if len(nums) == 3: #hrs, mins, secs
         time = nums[0]*3600 + nums[1]*60 + nums[2]
@@ -42,8 +45,9 @@ def get_time_sec(line, delim=":"):
     return time
 
 
-def get_num(line, delim=":"):
-    nums = [int(s) for s in str.split(delim) if s.isdigit()]
+def get_num(in_line, keyword = "", delim=':| |,'):
+    line = in_line.split(keyword, 1)[-1]
+    nums = [int(s.strip()) for s in re.split(delim, line) if s.strip().isdigit()]
     if len(nums) > 1:
         print("WARNING: get_num has more numbers than anticipated")
     return nums[0]
@@ -65,27 +69,42 @@ def get_filename(para_dict, postfix=".out"):
 #given a file name, extracts the numbers corresponding
 #to the keywords provided
 def Extract(filepath, dataname):
-    ret = 0.
+    ret = []
     try:
         with open(filepath) as f:
             filedata = f.readlines()
     except IOError:
         print("Error: File does not appear to exist. ", filepath)
-        return "-"
+        return NODAT
 
     for line in filedata:
         if dataname in line:
             if "Elapsed" in dataname or "time" in dataname:
-                ret = get_time_sec(line)
-                return ret
+                return get_time_sec(line)
             else:
-                ret = get_num(line)
-                return ret
+                ret.append(get_num(line, dataname))
+    if(len(ret) < 1):
+        return NODAT
+    return max(ret)
+
+
+
+
+def write_dat(filepath, x, y, z, delim=", "):
+    try:
+         f = open(filepath, "a")
+         string = str(x) + delim + str(y) + delim + str(z) 
+         f.write(string + "\n")
+
+    except IOError:
+        print("Error: Unable to open file ", filepath)
+        return False
+
+    finally:
+        f.close()
 
 
 def main():
-    #fname = "MADbench_PROC-4_PRED-1_LOAD-8192_READSIZE-1048576_TIMESPFETCH-1.out"
-    #Extract(folder+fname, "Elapsed")
     all_invariants = []
     for inv in invariants:
         all_invariants.append(globals()[inv])
@@ -97,31 +116,29 @@ def main():
         para_dict["workload"] = workload
         print("Starting to Extract data from " + workload)
         for tup_inv in iter_invariants:
-            para_dict[invariants[0]] = tup_inv[0]
-            para_dict[invariants[1]] = tup_inv[1]
-            para_dict[invariants[2]] = tup_inv[2]
-            for x in xaxis:
-                list_x = globals()[x]
-                for x_vals in list_x:
-                    para_dict[x] = x_vals
-                    for y in yaxis:
-                        list_y = globals()[y]
-                        for y_vals in list_y:
-                            para_dict[y] = y_vals
-                            for dat in data:
+            outfile = para_dict["workload"]
+            for i in range(len(invariants)):
+                para_dict[invariants[i]] = tup_inv[i]
+                outfile += "_"+invariants[i]+"-"+ str(tup_inv[i])
+            for dat in data:
+                outfile_now = outfile + "_"+dat+"_CLEANED.dat"
+                first = True
+                for x in xaxis:
+                    list_x = globals()[x]
+                    for x_vals in list_x:
+                        para_dict[x] = x_vals
+                        for y in yaxis:
+                            list_y = globals()[y]
+                            for y_vals in list_y:
+                                para_dict[y] = y_vals
+                                if first == True:
+                                    write_dat(folder_out+outfile_now, "#"+x, y, dat)
+                                    first = False
                                 filename = get_filename(para_dict)
-                                print(filename)
-                                Extract(filename, dat)
+                                data_val = Extract(folder+filename, dat)
+                                write_dat(folder_out+outfile_now, x_vals, y_vals, data_val)
 
-    return
 
-    for inv in invariants:
-        for x in xaxis:
-            for y in yaxis:
-                for dat in data:
-                    outfile = ".out"
-                    Extract(filename, dat)
-    
 
 if __name__ == "__main__":
     main()
