@@ -55,7 +55,7 @@ RUNAPP()
 	echo "*********** running $OUTPUT ***********"
 
 	set "TIMESPREFETCH="$TIMESPREFETCH
-	APPPREFIX+=" /usr/bin/time -v"
+	APPPREFIX="/usr/bin/time -v"
 
 	if [[ "$PREDICT" == "1" ]]; then
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
