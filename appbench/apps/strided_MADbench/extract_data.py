@@ -6,16 +6,17 @@ import itertools
 import re
 
 
-folder = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/results-sensitivity-nodbg/"
-folder_out = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/cleaned_dat/"
+folder = "/Users/shaleen/Research/NVM/appbench/apps/strided_MADbench/results-sensitivity-nodbg/"
+folder_out = "/Users/shaleen/Research/NVM/appbench/apps/strided_MADbench/cleaned_dat/"
 #Data Info
 
+DELIM = ","
 NODAT = "-"
 ##From Filename
-xaxis = ["PROC"]
-yaxis = ["PRED"]
-invariants = ["LOAD", "READSIZE", "TIMESPFETCH"]
-data = ["Elapsed", "nr_filemap_faults"] ##From files
+xaxis = ["PROC"] #one only
+yaxis = ["PRED"] # one only
+invariants = ["LOAD", "READSIZE", "TIMESPFETCH"] # multiple
+data = ["Elapsed", "nr_filemap_faults"] ##multiple
 
 WORKLOADS = ["MADbench"]
 PROC = [1, 4, 16]
@@ -55,7 +56,7 @@ def get_num(in_line, keyword = "", delim=':| |,'):
 
 #def get_filename(workload, PROC, PRED, LOAD, READSIZE, TIMESPFETCH, postfix=".out"):
 #def get_filename(workload, invariants, tup_inv, x, x_vals, y, y_vals, postfix=".out"):
-def get_filename(para_dict, postfix=".out"):
+def get_infilename(para_dict, postfix=".out"):
     filename = ""
     filename += para_dict["workload"]+"_"
     filename += "PROC-"+str(para_dict["PROC"])+"_"
@@ -90,11 +91,11 @@ def Extract(filepath, dataname):
 
 
 
-def write_dat(filepath, x, y, z, delim=", "):
+def write_dat(filepath, line):
     try:
          f = open(filepath, "a")
-         string = str(x) + delim + str(y) + delim + str(z) 
-         f.write(string + "\n")
+         #string = str(x) + delim + str(y) + delim + str(z) 
+         f.write(line + "\n")
 
     except IOError:
         print("Error: Unable to open file ", filepath)
@@ -120,24 +121,47 @@ def main():
             for i in range(len(invariants)):
                 para_dict[invariants[i]] = tup_inv[i]
                 outfile += "_"+invariants[i]+"-"+ str(tup_inv[i])
-            for dat in data:
-                outfile_now = outfile + "_"+dat+"_CLEANED.dat"
-                first = True
-                for x in xaxis:
-                    list_x = globals()[x]
-                    for x_vals in list_x:
-                        para_dict[x] = x_vals
-                        for y in yaxis:
-                            list_y = globals()[y]
-                            for y_vals in list_y:
-                                para_dict[y] = y_vals
-                                if first == True:
-                                    write_dat(folder_out+outfile_now, "#"+x, y, dat)
-                                    first = False
-                                filename = get_filename(para_dict)
-                                data_val = Extract(folder+filename, dat)
-                                write_dat(folder_out+outfile_now, x_vals, y_vals, data_val)
+            #for dat in data:
+            #    outfile += ":"+dat
+    
+            for x in xaxis: #For all x axis types
+                list_x = globals()[x]
+                first_x = True #first time writing to outfile_now
+                if(first_x == True):
+                    outfile_x = outfile + "_Xaxis="+str(x)
+                    first_line_x = "#" + x
+                for y in yaxis: #for all yaxis types
+                    list_y = globals()[y]
+                    first_y = True
+                    if first_y == True:
+                        outfile_now = outfile_x + "_Yaxis="+str(y)
+                        first_line = first_line_x + DELIM + y
 
+                    for x_vals in list_x: #for each element in that xaxis
+                        para_dict[x] = x_vals
+                        for y_vals in list_y: #for each element in that yaxis
+                            para_dict[y] = y_vals
+                            out_line = str(x_vals) + DELIM + str(y_vals)
+                            
+                            for dat in data: # For each data types    
+                                #Dynamic generation of filename + first line
+                                if first_x == True or first_y == True:
+                                    first_line += DELIM + dat
+                                    outfile_now += ":"+dat
+                                
+                                in_filename = get_infilename(para_dict)
+                                data_val = Extract(folder+in_filename, dat)
+                                
+                                out_line += DELIM + str(data_val)
+
+                            if first_x == True or first_y == True: #write first line
+                                outfile_now += "_CLEANED.dat"
+                                print(outfile_now)
+                                write_dat(folder_out+outfile_now, first_line)
+                                first_x = False
+                                first_y = False
+
+                            write_dat(folder_out+outfile_now, out_line)
 
 
 if __name__ == "__main__":
