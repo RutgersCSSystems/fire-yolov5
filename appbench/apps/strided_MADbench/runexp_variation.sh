@@ -48,13 +48,13 @@ RUNAPP()
 	APP=$3
 	PREDICT=$4
 	RECORD=$5
-	TIMESPREFETCH=$6
+	TPREFETCH=$6
 
-	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TIMESPREFETCH".out"
+	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH".out"
 
 	echo "*********** running $OUTPUT ***********"
 
-	set "TIMESPREFETCH="$TIMESPREFETCH
+	export TIMESPREFETCH=$TPREFETCH
 	APPPREFIX="/usr/bin/time -v"
 
 	if [[ "$PREDICT" == "1" ]]; then
@@ -66,7 +66,8 @@ RUNAPP()
 
 	if [[ "$APP" == "MADbench" ]]; then
 		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
-		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &> $OUTPUT
+		numactl --hard &> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &>> $OUTPUT
 		export LD_PRELOAD=""
 		wait; sync
 		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
