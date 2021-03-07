@@ -67,6 +67,7 @@ RUNAPP()
 	if [[ "$APP" == "MADbench" ]]; then
 		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
 		numactl --hard &> $OUTPUT
+		wait; sync
 		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &>> $OUTPUT
 		export LD_PRELOAD=""
 		wait; sync
