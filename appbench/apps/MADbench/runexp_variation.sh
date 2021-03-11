@@ -5,16 +5,18 @@
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-oom
+RESULTS_FOLDER=results-sensitivity-sudarsun
 mkdir $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a apparr=("MADbench")
 declare -a predict=("0" "1")
-declare -a workarr=("4096" "8192" "16384")
-declare -a thrdarr=("1" "4" "16")
+#declare -a workarr=("4096" "8192" "16384")
+declare -a workarr=("16384")
+declare -a thrdarr=("16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
-declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
+#declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
+declare -a readsize=("1048576")
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 

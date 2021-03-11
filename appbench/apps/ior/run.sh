@@ -40,9 +40,11 @@ echo "going to sleep"
 
 NPROC=32
 SEGMENTS=1024
-BLOCKSIZE=1m
+BLOCKSIZE=16m
 TRANSFERSZ=1m
-KEEP_FILES_AFTER_RUN=-k
+
+#KEEP_FILES_AFTER_RUN=-k
+KEEP_FILES_AFTER_RUN=
 #Sync after write operations
 SYNCAFTERWRITE="-e"
 #Make this to an empty value if no per-file process
