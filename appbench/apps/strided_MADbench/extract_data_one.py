@@ -14,7 +14,7 @@ DELIM = ","
 NODAT = "-"
 ##From Filename
 variants = ["PROC", "LOAD", "READSIZE", "TIMESPFETCH", "PRED"] ##multiple
-data = ["Elapsed"] ##multiple
+data = ["Elapsed", "READAHEAD_TIME"] ##multiple
 out_order = variants + data
 
 WORKLOADS = ["MADbench"]
@@ -31,6 +31,12 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+
+def micro_to_sec(line, delim=':| |,'):
+    print(line)
+    nums = [float(s.strip()) for s in re.split(delim, line) if is_number(s.strip())]
+    return nums[0]/1000000
 
 
 def get_time_sec(line, delim=':| |,'):
@@ -79,8 +85,10 @@ def Extract(filepath, dataname):
 
     for line in filedata:
         if dataname in line:
-            if "Elapsed" in dataname or "time" in dataname:
+            if "Elapsed" in dataname:
                 return get_time_sec(line)
+            elif "READAHEAD_TIME" in dataname:
+                ret.append(micro_to_sec(line))
             else:
                 ret.append(get_num(line, dataname))
     if(len(ret) < 1):
