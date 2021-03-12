@@ -11,8 +11,8 @@ cd $APPDIR
 
 declare -a apparr=("ior")
 declare -a predict=("0" "1")
-declare -a thrdarr=("1" "2" "4" "8" "16")
-declare -a transfersizearr=("4096" "8192" "16384" "1048576") #transfer size
+declare -a thrdarr=("2" "4" "8" "16")
+declare -a transfersizearr=("4096" "8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1") #segmentsize
 #sizeofprefetch = prefetchwindow * readsize
