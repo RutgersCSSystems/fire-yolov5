@@ -7,8 +7,8 @@ import re
 
 
 one_dat_file = "oneanalysis.dat"
-folder = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/results-sensitivity-oldlinux/"
-folder_out = "/users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/"
+folder = "/users/shaleen/ssd/NVM/appbench/apps/ior/benchmarks/results-sensitivity-oldlinux/"
+folder_out = "/users/shaleen/ssd/NVM/appbench/apps/ior/benchmarks/"
 
 DELIM = ","
 NODAT = "-"
@@ -20,7 +20,7 @@ out_order = variants + data
 WORKLOADS = ["ior"]
 PROC = [1, 2, 4, 8, 16]
 PRED = [0, 1]
-TRANSFER = [4096, 8192, 16384, 1048576]
+TRANSFER = [4096, 8192, 16384]
 BLOCKPROD = [100000, 150000, 200000]
 SEGMENT = [1]
 TIMESPFETCH = [1, 2, 4]
@@ -60,15 +60,16 @@ def get_num(in_line, keyword = "", delim=':| |,'):
     return nums[0]
 
 
-#def get_filename(workload, PROC, PRED, LOAD, READSIZE, TIMESPFETCH, postfix=".out"):
-#def get_filename(workload, variants, tup_inv, x, x_vals, y, y_vals, postfix=".out"):
+#ior_PROC-8_PRED-1_BLKSIZE-409600000_TRANSFERSIZE-4096_SEGMENTS-1_TIMESPFETCH-4.out
 def get_infilename(para_dict, postfix=".out"):
     filename = ""
     filename += para_dict["workload"]+"_"
     filename += "PROC-"+str(para_dict["PROC"])+"_"
     filename += "PRED-"+str(para_dict["PRED"])+"_"
-    filename += "LOAD-"+str(para_dict["LOAD"])+"_"
-    filename += "READSIZE-"+str(para_dict["READSIZE"])+"_"
+    blocksize = int(para_dict["TRANSFER"]) * int(para_dict["BLOCKPROD"])
+    filename += "BLKSIZE-"+str(blocksize)+"_"
+    filename += "TRANSFERSIZE-"+str(para_dict["TRANSFER"])+"_"
+    filename += "SEGMENTS-"+str(para_dict["SEGMENT"])+"_"
     filename += "TIMESPFETCH-"+str(para_dict["TIMESPFETCH"])
     filename += postfix
     return filename
