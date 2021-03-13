@@ -5,14 +5,14 @@
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-oldlinux
+RESULTS_FOLDER=results-sensitivity-oldlinux-16
 mkdir $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a apparr=("ior")
 declare -a predict=("0" "1")
-declare -a thrdarr=("2" "4" "8" "16")
-declare -a transfersizearr=("4096" "8192" "16384") #transfer size
+declare -a thrdarr=("16")
+declare -a transfersizearr=("8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1") #segmentsize
 #sizeofprefetch = prefetchwindow * readsize
@@ -24,7 +24,7 @@ FILENAME=test_outfile_ior
 
 REFRESH() {
 	export LD_PRELOAD=""
-	rm -rf files/
+	rm -rf $FILENAME*
 	$NVMBASE/scripts/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
@@ -49,8 +49,8 @@ RUNAPP() {
 
 	echo "********** prepping File **************"
 	echo "mpirun -np $NPROC ior -w -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
-	mpirun -np $NPROC ior -w -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT
-	REFRESH
+	mpirun -np $NPROC ior -w -F -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT
+	$NVMBASE/scripts/clear_cache.sh
 
 	export TIMESPREFETCH=$TPREFETCH
 	APPPREFIX="/usr/bin/time -v"
@@ -64,10 +64,10 @@ RUNAPP() {
 
 
 	if [[ "$APP" == "ior" ]]; then
-		echo "$APPPREFIX mpirun -np $NPROC ior -r -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
+		echo "$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
 		numactl --hard &> $OUTPUT
 		wait; sync
-		$APPPREFIX mpirun -np $NPROC ior -r -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
+		$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
 		export LD_PRELOAD=""
 
 		wait; sync
