@@ -1,9 +1,10 @@
 #!/bin/bash
 #$OUTPUTDIR is set in setvars.sh
-OUTPUTVANILLA=$OUTPUTDIR/IOR/"vanilla.txt"
-OUTPUTCROSS=$OUTPUTDIR/IOR/"crosslayer.txt"
+OUTPUTVANILLA=$OUTPUTDIR/sudarsun/IOR/"vanilla.txt"
+OUTPUTCROSS=$OUTPUTDIR/sudarsun/IOR/"crosslayer.txt"
 
-mkdir -p $OUTPUTDIR/IOR/
+mkdir -p $OUTPUTVANILLA
+mkdir -p $OUTPUTCROSS
 
 PCAnonRatio=1.5
 #APPPREFIX="numactl --membind=0"
