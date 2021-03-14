@@ -13,10 +13,18 @@ cd $APPDIR
 
 declare -a apparr=("ior")
 declare -a predict=("0" "1")
-declare -a thrdarr=("16")
+declare -a thrdarr=("16" "32")
+
 declare -a transfersizearr=("8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1" "256" "1024" "2048") #segmentsize
+
+
+declare -a transfersizearr=("16384") #transfer size
+declare -a blockprodarr=("100000") #blocksize = transfersize*blockprod
+declare -a segmentarr=("1") #segmentsize
+
+
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 
@@ -67,7 +75,7 @@ RUNAPP() {
 	if [[ "$APP" == "ior" ]]; then
 		rm -rf $OUTPUT
 		echo "$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
-		numactl --hard &> $OUTPUT
+		numactl --hardware &> $OUTPUT
 		wait; sync
 		$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
 		export LD_PRELOAD=""
@@ -98,10 +106,13 @@ do
 					do 
 						for PREFETCHTIMES in "${prefetchwindow[@]}"
 						do 
-
 							RUNAPP $NPROC $APP $PREDICT $SEGMENT $TRANSFERSIZE $BLOCKPROD $PREFETCHTIMES
 							REFRESH
 							rm -rf $FILENAME*
+
+							if [ "$PREDICT" -eq "0" ]; then
+								break;
+							fi
 						done
 					done
 				done
