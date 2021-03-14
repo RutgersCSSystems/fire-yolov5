@@ -25,8 +25,6 @@ APPPREFIX=""
 FILENAME=test_outfile_ior
 
 REFRESH() {
-	export LD_PRELOAD=""
-	rm -rf $FILENAME*
 	$NVMBASE/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
@@ -52,7 +50,8 @@ RUNAPP() {
 	echo "********** prepping File **************"
 	echo "mpirun -np $NPROC ior -w -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
 	mpirun -np $NPROC ior -w -F -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT
-	$NVMBASE/scripts/clear_cache.sh
+
+	REFRESH
 
 	export TIMESPREFETCH=$TPREFETCH
 	APPPREFIX="/usr/bin/time -v"
@@ -66,11 +65,14 @@ RUNAPP() {
 
 
 	if [[ "$APP" == "ior" ]]; then
+		rm -rf $OUTPUT
 		echo "$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
 		numactl --hard &> $OUTPUT
 		wait; sync
 		$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
 		export LD_PRELOAD=""
+
+		REFRESH
 
 		wait; sync
 		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
@@ -99,6 +101,7 @@ do
 
 							RUNAPP $NPROC $APP $PREDICT $SEGMENT $TRANSFERSIZE $BLOCKPROD $PREFETCHTIMES
 							REFRESH
+							rm -rf $FILENAME*
 						done
 					done
 				done
