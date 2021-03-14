@@ -1,10 +1,10 @@
 #!/bin/bash
+set -x
 #$OUTPUTDIR is set in setvars.sh
-OUTPUTVANILLA=$OUTPUTDIR/sudarsun/IOR/"vanilla.txt"
-OUTPUTCROSS=$OUTPUTDIR/sudarsun/IOR/"crosslayer.txt"
-
-mkdir -p $OUTPUTVANILLA
-mkdir -p $OUTPUTCROSS
+DIR=$OUTPUTDIR/IOR
+mkdir -p $DIR
+OUTPUTVANILLA=$DIR/"vanilla.txt"
+OUTPUTCROSS=$DIR/"crosslayer.txt"
 
 PCAnonRatio=1.5
 #APPPREFIX="numactl --membind=0"
@@ -64,6 +64,7 @@ rm $OUTPUT
 export LD_PRELOAD=$PREDICT_LIB_DIR/libcrosslayer.so
 $APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior $OPTIONS &> $OUTPUT && grep -r "Elapsed" $OUTPUT
 export LD_PRELOAD=""
+rm -rf $DIR/testFile.*
 FlushDisk
 
 
@@ -71,3 +72,4 @@ OUTPUT=$OUTPUTVANILLA
 rm $OUTPUT
 $APPPREFIX /usr/bin/time -v mpirun -n $NPROC src/ior $OPTIONS &> $OUTPUT  && grep -r "Elapsed" $OUTPUT
 FlushDisk
+rm -rf $DIR/testFile.*

@@ -5,8 +5,10 @@
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-oldlinux-16
+RESULTS_FOLDER=results-sensitivity-sudarsun
+
 mkdir $RESULTS_FOLDER
+
 cd $APPDIR
 
 declare -a apparr=("ior")
@@ -25,7 +27,7 @@ FILENAME=test_outfile_ior
 REFRESH() {
 	export LD_PRELOAD=""
 	rm -rf $FILENAME*
-	$NVMBASE/scripts/clear_cache.sh
+	$NVMBASE/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
 }
