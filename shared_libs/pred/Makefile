@@ -4,6 +4,7 @@ LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
 #DEBUGFLAGS=-DDEBUG
+#NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 
 all: nopred seq 
 
@@ -11,22 +12,10 @@ nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
 
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
-	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS)
+	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS)
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
 	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DNGRAM $(DEBUGFLAGS)
-
-test: tester.cpp ngram.cpp util.cpp
-	$(CXX) -o $@ $^ 
-
-reclaimer: predictor.cpp ngram.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp util.cpp $(LIBS) -DPREDICTOR
-
-debug: predictor.cpp ngram.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPREDICTOR $(DEBUGFLAGS)
-
-pattern: predictor.cpp ngram.cpp
-	$(CXX) $(FLAGS) -o libpredictor.so predictor.cpp ngram.cpp $(LIBS) -DPATTERN
 
 clean:
 	rm -rf *.o
