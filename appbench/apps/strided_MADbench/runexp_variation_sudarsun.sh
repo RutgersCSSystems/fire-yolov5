@@ -31,7 +31,7 @@ STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
 REFRESH() {
 	export LD_PRELOAD=""
 	rm -rf files/
-	$NVMBASE/scripts/clear_cache.sh
+	$NVMBASE/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
 }
