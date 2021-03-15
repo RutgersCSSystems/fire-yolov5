@@ -111,7 +111,7 @@ bool get_semaphore(){
     int sts = sem_timedwait(mysemp, &abs_time);
     if (sts == 0) // got the lock
     {
-        debug_print("%s: got semaphore : %ld\n", __func__, getpid());
+        debug_print("%s: got semaphore : %d\n", __func__, getpid());
         return true;
     }
     else if (errno == ETIMEDOUT)
