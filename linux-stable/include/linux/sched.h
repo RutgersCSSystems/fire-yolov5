@@ -695,6 +695,27 @@ struct task_struct {
 	void *hetero_obj;
 #endif
 
+#ifdef CONFIG_PVT_LRU
+	bool enable_pvt_lru;
+	//TODO: 4 elements inactiveAnon, activeAnon, inactiveFile, activeFile
+	int nr_owned_pages[4]; //0->inactive anon, 1->active anon, 2->inactive cache, 3-> active cache
+	int nr_unmapped_pages[2]; //0->anon pages, 1->cache pages
+
+
+    unsigned long nr_readahead; //Number of pages readhead
+    unsigned long nr_readahead_calls; //Number of pages readhead calls
+    unsigned long nr_force_pc_readahead_calls; //force_page_cache_readahead
+    unsigned long nr_force_pc_readahead_pages; //force_page_cache_readahead
+    unsigned long nr_do_pc_readahead_pages; // __do_page_cache_readahead
+    unsigned long nr_do_pc_readahead_calls; //nr of pages asked
+    unsigned long nr_ra_submit_pages; // ra_submit function 
+    unsigned long nr_ra_submit_calls;
+    unsigned long nr_ondemand_ra_pages; // ra_submit function 
+    unsigned long nr_ondemand_ra_calls;
+    unsigned long nr_filemap_faults; //number of filemap_faults
+	
+#endif
+
 #ifdef SPLIT_RSS_COUNTING
 	struct task_rss_stat		rss_stat;
 #endif

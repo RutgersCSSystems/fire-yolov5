@@ -34,6 +34,7 @@
 #include <linux/uio.h>
 #include <linux/hugetlb.h>
 #include <linux/page_idle.h>
+#include <linux/hetero.h>
 
 #include "internal.h"
 
@@ -282,6 +283,13 @@ static void __activate_page(struct page *page, struct lruvec *lruvec,
 		lru += LRU_ACTIVE;
 		add_page_to_lru_list(page, lruvec, lru);
 		trace_mm_lru_activate(page);
+/*
+#ifdef CONFIG_PVT_LRU
+		//Adding page to pvt LRU
+		pvt_inactive_lru_remove(page);
+		pvt_active_lru_insert(page);
+#endif
+*/
 
 		__count_vm_event(PGACTIVATE);
 		update_page_reclaim_stat(lruvec, file, 1);
@@ -333,6 +341,7 @@ void activate_page(struct page *page)
 	spin_lock_irq(zone_lru_lock(zone));
 	__activate_page(page, mem_cgroup_page_lruvec(page, zone->zone_pgdat), NULL);
 	spin_unlock_irq(zone_lru_lock(zone));
+
 }
 #endif
 
@@ -356,6 +365,13 @@ static void __lru_cache_activate_page(struct page *page)
 
 		if (pagevec_page == page) {
 			SetPageActive(page);
+			/*
+#ifdef CONFIG_PVT_LRU
+			//Adding page to pvt active lru
+			pvt_inactive_lru_remove(page);
+			pvt_active_lru_insert(page);
+#endif
+*/
 			break;
 		}
 	}
@@ -392,6 +408,14 @@ void mark_page_accessed(struct page *page)
 		ClearPageReferenced(page);
 		if (page_is_file_cache(page))
 			workingset_activation(page);
+
+/*
+#ifdef CONFIG_PVT_LRU	
+		//Remove page from the inactive list and add it to active list
+		pvt_inactive_lru_remove(page);
+		pvt_active_lru_insert(page);
+#endif
+*/
 	} else if (!PageReferenced(page)) {
 		SetPageReferenced(page);
 	}
@@ -403,10 +427,16 @@ EXPORT_SYMBOL(mark_page_accessed);
 static void __lru_cache_add(struct page *page)
 {
 	struct pagevec *pvec = &get_cpu_var(lru_add_pvec);
-
+	/*
+#ifdef CONFIG_PVT_LRU	
+		pvt_inactive_lru_insert(page); //Add page to pvt inactive LRU
+#endif
+*/
 	get_page(page);
 	if (!pagevec_add(pvec, page) || PageCompound(page))
+	{
 		__pagevec_lru_add(pvec);
+	}
 	put_cpu_var(lru_add_pvec);
 }
 
@@ -416,6 +446,7 @@ static void __lru_cache_add(struct page *page)
  */
 void lru_cache_add_anon(struct page *page)
 {
+//	printk("lru_cache_add_anon\n");
 	if (PageActive(page))
 		ClearPageActive(page);
 	__lru_cache_add(page);

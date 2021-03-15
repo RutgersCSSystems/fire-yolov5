@@ -115,6 +115,21 @@ int migrate_pages_slowmem(struct task_struct *task);
 void
 hetero_replace_cache(gfp_t gfp_mask, struct page *oldpage);
 
+
+/*pvt_lru*/
+void add_readahead(unsigned long pages, int func);
+bool pvt_lru_rb_insert(struct rb_root *root, struct page *page);
+void pvt_lru_rb_remove(struct rb_root *root, struct page *page);
+struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page);
+void pvt_active_lru_insert(struct page *page);
+void pvt_inactive_lru_insert(struct page *page);
+void pvt_active_lru_remove(struct page *page);
+void pvt_inactive_lru_remove(struct page *page);
+void pvt_lru_accnt_nr(int flag, int nr);
+void print_ownership_stats(void);
+void pvt_unmapped_page_accnt(int nr_pages, int type);
+
+
 #ifdef CONFIG_HETERO_STATS
 void incr_tot_cache_pages(void);
 void incr_tot_buff_pages(void);

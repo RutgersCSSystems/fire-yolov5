@@ -172,6 +172,13 @@ config HETERO_NET_ENABLE
 	def_bool n
 	depends on HETERO_ENABLE
 
+config PVT_LRU
+	def_bool y
+
+config PVT_LRU_DEBUG
+	def_bool n
+	depends on PVT_LRU
+
 #
 # Only be set on architectures that have completely implemented memory hotplug
 # feature. If you are not sure, don't touch it.

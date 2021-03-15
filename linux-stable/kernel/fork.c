@@ -1760,6 +1760,22 @@ static __latent_entropy struct task_struct *copy_process(
 	p->sequential_io_avg	= 0;
 #endif
 
+#ifdef CONFIG_PVT_LRU
+     p->enable_pvt_lru = false;
+     p->nr_readahead = 0UL; //Number of pages readhead
+     p->nr_readahead_calls = 0UL; //Number of pages readhead calls
+     p->nr_force_pc_readahead_calls = 0UL; //force_page_cache_readahead
+     p->nr_force_pc_readahead_pages = 0UL; //force_page_cache_readahead
+     p->nr_do_pc_readahead_pages = 0UL; // __do_page_cache_readahead
+     p->nr_do_pc_readahead_calls = 0UL; //nr of pages asked
+     p->nr_ra_submit_pages = 0UL; // ra_submit function
+     p->nr_ra_submit_calls = 0UL;
+     p->nr_ondemand_ra_pages = 0UL; // ra_submit function
+     p->nr_ondemand_ra_calls = 0UL;
+     p->nr_filemap_faults = 0UL; //number of filemap_faults
+#endif
+
+
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);
 	if (retval)

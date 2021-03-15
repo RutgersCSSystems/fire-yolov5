@@ -69,6 +69,7 @@
 #include <linux/userfaultfd_k.h>
 #include <linux/dax.h>
 #include <linux/oom.h>
+#include <linux/hetero.h>
 
 #include <asm/io.h>
 #include <asm/mmu_context.h>
@@ -1511,6 +1512,7 @@ void unmap_page_range(struct mmu_gather *tlb,
 			continue;
 		next = zap_p4d_range(tlb, vma, pgd, addr, next, details);
 	} while (pgd++, addr = next, addr != end);
+
 	tlb_end_vma(tlb, vma);
 }
 
@@ -3108,6 +3110,13 @@ static int do_anonymous_page(struct vm_fault *vmf)
 	int ret = 0;
 	pte_t entry;
 
+
+#ifdef CONFIG_PVT_LRU
+		/*101 is the Accounting identifier for this function in hetero.c*/
+		/*1 is the number of pages added here*/
+		pvt_lru_accnt_nr(101, 1); 
+#endif
+
 	/* File mapping without ->vm_ops ? */
 	if (vma->vm_flags & VM_SHARED)
 		return VM_FAULT_SIGBUS;
@@ -3956,6 +3965,11 @@ static int handle_pte_fault(struct vm_fault *vmf)
 		}
 	}
 
+#ifdef CONFIG_PVT_LRU
+	//current->nr_owned_pages[2] += 1;
+	pvt_lru_accnt_nr(105, 1);
+#endif
+
 	if (!vmf->pte) {
 		if (vma_is_anonymous(vmf->vma))
 			return do_anonymous_page(vmf);
@@ -4110,6 +4124,12 @@ int handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
 					    flags & FAULT_FLAG_INSTRUCTION,
 					    flags & FAULT_FLAG_REMOTE))
 		return VM_FAULT_SIGSEGV;
+
+#ifdef CONFIG_PVT_LRU
+	//current->nr_owned_pages[2] += 1;
+
+	pvt_lru_accnt_nr(104, 1);
+#endif
 
 	/*
 	 * Enable the memcg OOM handling for faults triggered in user

@@ -2591,6 +2591,7 @@ static void unmap_region(struct mm_struct *mm,
 	free_pgtables(&tlb, vma, prev ? prev->vm_end : FIRST_USER_ADDRESS,
 				 next ? next->vm_start : USER_PGTABLES_CEILING);
 	tlb_finish_mmu(&tlb, start, end);
+
 }
 
 /*
@@ -2797,6 +2798,13 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
 			tmp = tmp->vm_next;
 		}
 	}
+
+
+#ifdef CONFIG_PVT_LRU
+	int nr_removed_pages = len/4096;
+	//printk("Nr Pages unmapped %d:%s, %d", current->pid, current->comm, nr_removed_pages);
+	pvt_unmapped_page_accnt(nr_removed_pages, 0); //This accounts for deleted anon pages
+#endif
 
 	/*
 	 * Remove the vma's, and unmap the actual pages

@@ -1,143 +1,115 @@
 #!/bin/bash
 #set -x
 
+##prefetch window multiple factor 1, 2, 4
+##grep the elapsed time, file faults, minor faults, system time, user time
+
 APPDIR=$PWD
+RESULTS_FOLDER=results-sensitivity-sudarsun
+mkdir $RESULTS_FOLDER
 cd $APPDIR
-declare -a caparr=("Unlimited")
-declare -a thrdarr=("36")
-declare -a workarr=("4000")
 declare -a apparr=("MADbench")
+declare -a predict=("0" "1")
+#declare -a workarr=("4096" "8192" "16384")
+declare -a workarr=("16384")
+declare -a thrdarr=("16")
+##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
+#declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
+declare -a readsize=("1048576")
+#sizeofprefetch = prefetchwindow * readsize
+declare -a prefetchwindow=("1" "2" "4")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
-DMESGREADER="$HOME/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py"
+FLUSH=1 ##FLUSHES and clears cache AFTER EACH WRITE
 
-#Make sure to compile and install perf
-USEPERF=0
-PERFTOOL="$HOME/ssd/NVM/linux-stable/tools/perf/perf"
+export IOMODE=SYNC
+export FILETYPE=UNIQUE
+export IOMETHOD=POSIX
 
-SLEEPNOW() {
+STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
+
+REFRESH() {
+	export LD_PRELOAD=""
+	rm -rf files/
+	$NVMBASE/scripts/clear_cache.sh
+	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
 }
-
-
-SETPERF() {
-
-	sudo sh -c "echo 0 > /proc/sys/kernel/perf_event_paranoid"
-	sudo sh -c "echo 0 > /proc/sys/kernel/kptr_restrict"
-	SLEEPNOW
-}
-
-
-#Mount ramdisk to reserve memory and reduce overall memory availability
-SETUPEXTRAM() {
-
-	let CAPACITY=$1
-
-	let SPLIT=$CAPACITY/2
-	echo "SPLIT" $SPLIT
-
-        sudo rm -rf  /mnt/ext4ramdisk0/*
-        sudo rm -rf  /mnt/ext4ramdisk1/*
-
-	./umount_ext4ramdisk.sh 0
-	./umount_ext4ramdisk.sh 1
-
-        SLEEPNOW
-
-        NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-        NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
-
-        let DISKSZ=$NUMAFREE0-$SPLIT
-        let ALLOCSZ=$NUMAFREE1-$SPLIT
-
-        echo "NODE 0 $DISKSZ NODE 1 $ALLOCSZ"
-
-        ./mount_ext4ramdisk.sh $DISKSZ 0
-        ./mount_ext4ramdisk.sh $ALLOCSZ 1
-
-	SLEEPNOW
-}
-
 
 #Here is where we run the application
 RUNAPP() 
 {
+	echo "**********RUNAPP**********"
 	#Run application
 	cd $APPDIR
-	mkdir results-sensitivity
 
-	CAPACITY=$1
-	NPROC=$2
-	WORKLOAD=$3
-	APP=$4
-	OUTPUT=results-sensitivity/"MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+	NPROC=$1
+	WORKLOAD=$2
+	APP=$3
+	PREDICT=$4
+	RECORD=$5
+	TPREFETCH=$6
 
+	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH".out"
 
-	if [[ $USEPERF == "1" ]]; then
-		SETPERF
-		APPPREFIX="sudo $PERFTOOL record -e cpu-cycles,instructions --vmlinux=/lib/modules/4.17.0/build/vmlinux "
+	echo "*********** running $OUTPUT ***********"
+
+	export TIMESPREFETCH=$TPREFETCH
+	APPPREFIX="/usr/bin/time -v"
+
+	numactl --hard &> $OUTPUT
+	wait; sync
+
+	if [[ "$PREDICT" == "1" ]]; then
+		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
-		APPPREFIX="/usr/bin/time -v"
+		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
-	if [ "$APP" = "MADbench" ]; then
-		mkdir results-sensitivity
-		echo $CAPACITY
-		export LD_PRELOAD=/usr/lib/libmigration.so
-		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 140 1 8 8 4 4 &
+
+	if [[ "$APP" == "MADbench" ]]; then
+		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
+		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $FLUSH &>> $OUTPUT
 		export LD_PRELOAD=""
-		$DMESGREADER init
-		while :
-		do
-			sleep 1
-			if pgrep -x "mpiexec" >/dev/null
-			then
-				$DMESGREADER readfrom Cum_mem-$CAPACITY.csv
-			else
-				break
-			fi
-		done
+		wait; sync
+		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
+		dmesg | grep -v -F "systemd-journald" >> $OUTPUT
+		wait; sync
 	fi
 
-	if [ "$APP" = "GTC" ]; then
-		$APPPREFIX mpiexec -n $NPROC ./gtc &> $OUTPUT
-	fi
 }
 
 
-#Do all things during termination
-TERMINATE() 
-{
-	CAPACITY=$1
-	NPROC=$2
-	WORKLOAD=$3
-	
-	OUTPUT=results-sensitivity/"PERF-MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
-
-	if [[ $USEPERF == "1" ]]; then
-		SLEEPNOW
-		sudo $PERFTOOL report &>> $OUTPUT
-		sudo $PERFTOOL report --sort=dso &>> $OUTPUT
-	fi
-}
-
+make clean; make -j ##Make MADBench
+REFRESH
 
 for APP in "${apparr[@]}"
 do
-	for CAPACITY  in "${caparr[@]}"
-	do 
-		SETUPEXTRAM $CAPACITY
-
-		for NPROC in "${thrdarr[@]}"
-		do	
-			for WORKLOAD in "${workarr[@]}"
+	for NPROC in "${thrdarr[@]}"
+	do	
+		for WORKLOAD in "${workarr[@]}"
+		do
+			for READSIZE in "${readsize[@]}"
 			do
-				RUNAPP $CAPACITY $NPROC $WORKLOAD $APP
-				SLEEPNOW
-				./clear_cache.sh
-				TERMINATE $CAPACITY $NPROC $WORKLOAD
+				for PREDICT in "${predict[@]}"
+				do 
+					for PREFETCHTIMES in "${prefetchwindow[@]}"
+					do 
+
+						RUNAPP $NPROC $WORKLOAD $APP $PREDICT $READSIZE $PREFETCHTIMES
+						REFRESH
+					done
+				done
 			done 
 		done	
 	done
 done
+
+git add $RESULTS_FOLDER
+message="results_at "
+message+=`date`
+git commit -m "$message"
+git push
+
+##IMplement the per proc bg thread

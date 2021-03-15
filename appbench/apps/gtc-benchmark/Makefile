@@ -163,7 +163,7 @@ CPPFLAGS := -DMALLOC_PRODUCTION -lstdc++
 
 
 #OPT:= -cpp -D_NOCHECKPOINT $(OPT)  -D_GTC_STATS
-OPT:= -D_USENVRAM -cpp $(OPT)
+OPT:=  -cpp $(OPT) #-D_USENVRAM
 #OPT:= -DVALIDATE_CHKSM -cpp $(OPT)
 #OPT:= -cpp $(OPT) 
 #OPT:= -cpp -D_USESCR $(OPT) -lscrf
@@ -185,7 +185,7 @@ JEMALLOC_OBJS=  $(src_path)/jemalloc.o $(src_path)/arena.o $(src_path)/atomic.o 
                 $(src_path)/bitmap.o $(src_path)/chunk_mmap.o $(src_path)/chunk_dss.o\
 		$(src_path)/gtthread_spinlocks.o \
 		$(src_path)/rbtree.o $(src_path)/nv_map.o $(src_path)/checkpoint.o	\
-		$(src_path)/util_func.o $(src_path)/nv_rmtckpt.o 
+		$(src_path)/util_func.o #$(src_path)/nv_rmtckpt.o 
 		#$(src_path)/armci_checkpoint.o \
 #$(src_path)/zone.o
 
@@ -194,7 +194,7 @@ JEMALLOC_OBJS=  $(src_path)/jemalloc.o $(src_path)/arena.o $(src_path)/atomic.o 
 OBJ:=allocate.o module.o main.o function.o $(SETUP) ran_num_gen.o set_random_values.o \
     load.o restart.o diagnosis.o snapshot.o $(CHARGEI) $(POISSON) smooth.o \
     field.o $(PUSHI) $(SHIFTI) $(FFT) tracking.o \
-    dataout3d.o  $(JEMALLOC_OBJS) c_io.o
+    dataout3d.o  c_io.o $(JEMALLOC_OBJS)
 
 
 
@@ -208,7 +208,7 @@ $(CMD): $(OBJ)
 	$(CMP) $(OMPOPT) $(OPT) -o $(CMD) $(OBJ) $(LIB) $(CPPFLAGS) $(CFLAGS) $(NVLIBS)
 
 c_io.o: $(src_path)/c_io.c
-		$(CC) -c  $(src_path)/c_io.c $(src_path)/nv_rmtckpt.o $(CFLAGS) $(NVLIBS) $(CPPFLAGS)
+		$(CC) -c  $(src_path)/c_io.c $(CFLAGS) $(NVLIBS) $(CPPFLAGS) #$(src_path)/nv_rmtckpt.o 
 
 $(src_path)/nv_map.o: $(src_path)/nv_map.cc 
 	$(CXX) -c $(src_path)/nv_map.cc -o $(src_path)/nv_map.o $(NVLIBS) $(CPPFLAGS)

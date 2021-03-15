@@ -406,6 +406,12 @@ struct mm_struct {
 	unsigned long			pages_migrated;
 	int 				thrd_idx;
 #endif
+#ifdef CONFIG_PVT_LRU
+	struct rb_root                  active_rbroot; //Pvt Proc Active List
+	struct rb_root                  inactive_rbroot; //Pvt Proc Inactive List
+	int 				nr_lru[4]; //inactive_anon, active_anon, inactive_cache, active_cache
+	int 				nr_max_lru[4]; //inactive_anon, active_anon, inactive_cache, active_cache
+#endif 
 
 	unsigned long			migrate_attempt;
 #ifdef CONFIG_HETERO_STATS

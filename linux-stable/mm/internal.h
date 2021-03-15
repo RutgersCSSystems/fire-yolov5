@@ -15,6 +15,7 @@
 #include <linux/mm.h>
 #include <linux/pagemap.h>
 #include <linux/tracepoint-defs.h>
+#include <linux/hetero.h>
 
 /*
  * The set of flags that only affect watermark checking and reclaim
@@ -63,6 +64,9 @@ extern int __do_page_cache_readahead(struct address_space *mapping,
 static inline unsigned long ra_submit(struct file_ra_state *ra,
 		struct address_space *mapping, struct file *filp)
 {
+#ifdef CONFIG_PVT_LRU
+     add_readahead(ra->size, 4);
+#endif
 	return __do_page_cache_readahead(mapping, filp,
 					ra->start, ra->size, ra->async_size);
 }

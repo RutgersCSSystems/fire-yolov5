@@ -11,6 +11,7 @@
 #include <linux/slab.h>
 #include <linux/backing-dev.h>
 #include <linux/mm.h>
+#include <linux/mm_inline.h>
 #include <linux/mmzone.h>
 #include <linux/vmacache.h>
 #include <linux/shm.h>
@@ -81,9 +82,9 @@
 #define PRINT_PPROC_PAGESTATS 10
 
 /* 
-Flags to enable hetero allocations.
-Move this to header file later.
-*/
+   Flags to enable hetero allocations.
+   Move this to header file later.
+   */
 #define HETERO_PGCACHE 11
 #define HETERO_BUFFER 12
 #define HETERO_JOURNAL 13
@@ -97,6 +98,17 @@ Move this to header file later.
 #define HETERO_SET_CONTEXT 21
 #define HETERO_NET 22
 #define HETERO_PGCACHE_READAHEAD 23
+#define ENABLE_PVT_LRU 24
+#define PRINT_PVT_LRU_STATS 25
+
+//PVT lru accounting for function calls
+#define ACC_DOANON 101
+#define ACC_LRUCACHEADD 102
+#define ACC_ACTIVATEPAGE 103
+#define ACC_HANDLE_MM_FAULT 104
+#define ACC_HANDLE_PTE_FAULT 105
+
+//#define page_to_virt(page) (char *)pfn_to_virt(page_to_pfn(page))
 
 /* Collect life time of page 
 */
@@ -113,7 +125,7 @@ unsigned int g_buff_pages_deleted = 0;
 #ifdef _ENABLE_HETERO_THREAD
 #define MAXTHREADS 10
 struct migrate_threads {
-	struct task_struct *thrd;
+    struct task_struct *thrd;
 };
 struct migrate_threads THREADS[MAXTHREADS] = {0};
 
@@ -165,6 +177,32 @@ unsigned long g_tot_buff_pages=0;
 unsigned long g_tot_app_pages=0;
 #endif
 
+#ifdef CONFIG_PVT_LRU
+unsigned long nr_global_active_anon_lru = 0;
+unsigned long nr_global_active_cache_lru = 0;
+unsigned long nr_global_inactive_anon_lru = 0;
+unsigned long nr_global_inactive_cache_lru = 0;
+
+
+bool start_global_accounting = false;
+
+int accnt_do_anonymous_page = 0;
+int accnt_handle_mm_fault = 0;
+int accnt_handle_pte_fault = 0;
+#endif
+
+//PVT Overheads accounting
+//the below struct stores a unique pointer to current &
+// the number of active and inactive pages
+//
+struct overhead_owner{
+    struct task_struct *task;
+    int nr_active;
+    int nr_inactive;
+    struct overhead_owner *next;
+};
+
+
 DEFINE_SPINLOCK(stats_lock);
 
 
@@ -208,135 +246,135 @@ int hpc_stats_init = 0;
 
 void reset_hpc_stats(void) {
 
-	int idx = 0;
+    int idx = 0;
 
-	for (idx = 0; idx < MAXPROCS; idx++) 
-	{
-		pidlist[idx] = -1;
+    for (idx = 0; idx < MAXPROCS; idx++) 
+    {
+        pidlist[idx] = -1;
 
-		max_file_pages[idx] = 0;
-		max_anon_pages[idx] = 0;
-		max_shmem_pages[idx] = 0;
+        max_file_pages[idx] = 0;
+        max_anon_pages[idx] = 0;
+        max_shmem_pages[idx] = 0;
 
-		max_rss_file_pages[idx] = 0;
-		max_rss_anon_pages[idx] = 0;
-		max_rss_shmem_pages[idx] = 0;
+        max_rss_file_pages[idx] = 0;
+        max_rss_anon_pages[idx] = 0;
+        max_rss_shmem_pages[idx] = 0;
 
-		max_rss_total[idx] = 0;
-		max_total[idx] = 0;
-	}
-	total_pids = 0;
-	min_pidx = -1;
+        max_rss_total[idx] = 0;
+        max_total[idx] = 0;
+    }
+    total_pids = 0;
+    min_pidx = -1;
 
-	hpc_stats_init = 0;
+    hpc_stats_init = 0;
 }
 
 
 void sys_mem_init(void) 
 {
-        struct sysinfo i;
-        int lru;
-        unsigned long pages[NR_LRU_LISTS];
-	si_meminfo(&i);
-        si_swapinfo(&i);
+    struct sysinfo i;
+    int lru;
+    unsigned long pages[NR_LRU_LISTS];
+    si_meminfo(&i);
+    si_swapinfo(&i);
 
-        si_meminfo(&i);
-        si_swapinfo(&i);
+    si_meminfo(&i);
+    si_swapinfo(&i);
 
-	max_sys_file_pages = 0;
-	max_sys_anon_pages = 0;
-	max_sys_other_pages = 0;
+    max_sys_file_pages = 0;
+    max_sys_anon_pages = 0;
+    max_sys_other_pages = 0;
 
-        for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
-                pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+    for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+        pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
 
-	init_anon_pages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
-	max_sys_anon_pages = init_anon_pages;
+    init_anon_pages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+    max_sys_anon_pages = init_anon_pages;
 
-	init_file_pages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
-	max_sys_file_pages = init_file_pages;
+    init_file_pages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+    max_sys_file_pages = init_file_pages;
 
-	init_other_pages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) 
-		+ total_swapcache_pages() + i.bufferram;
-	max_sys_other_pages = init_other_pages;
+    init_other_pages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) 
+        + total_swapcache_pages() + i.bufferram;
+    max_sys_other_pages = init_other_pages;
 }
 
 
 void init_hpc_stats(void) 
 {
-	if(hpc_stats_init)
-		return;
+    if(hpc_stats_init)
+        return;
 
-	reset_hpc_stats();
-	hpc_stats_init = 1;
-	sys_mem_init();
+    reset_hpc_stats();
+    hpc_stats_init = 1;
+    sys_mem_init();
 }
 
 
 void sys_mem_interval_diff(void) 
 {
-        struct sysinfo i;
-        int lru;
-	unsigned int m_anonpages = 0;
-	unsigned int m_filepages = 0;
-	unsigned int m_otherpages = 0;
+    struct sysinfo i;
+    int lru;
+    unsigned int m_anonpages = 0;
+    unsigned int m_filepages = 0;
+    unsigned int m_otherpages = 0;
 #if 0
-        unsigned long committed;
-        long cached;
-        long available;
+    unsigned long committed;
+    long cached;
+    long available;
 #endif
-        unsigned long pages[NR_LRU_LISTS];
-        si_meminfo(&i);
-        si_swapinfo(&i);
+    unsigned long pages[NR_LRU_LISTS];
+    si_meminfo(&i);
+    si_swapinfo(&i);
 
-        si_meminfo(&i);
-        si_swapinfo(&i);
+    si_meminfo(&i);
+    si_swapinfo(&i);
 
-        for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
-                pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
+    for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
+        pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
 
-	m_anonpages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
-	m_filepages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
-	m_otherpages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) + 
-			total_swapcache_pages() + i.bufferram;
+    m_anonpages = pages[LRU_ACTIVE_ANON] + pages[LRU_INACTIVE_ANON];
+    m_filepages = pages[LRU_ACTIVE_FILE] + pages[LRU_INACTIVE_FILE];
+    m_otherpages = pages[LRU_UNEVICTABLE] + global_zone_page_state(NR_MLOCK) + 
+        total_swapcache_pages() + i.bufferram;
 
-	/*Calculate the difference */ 
-	if(m_anonpages > max_sys_anon_pages)
-		max_sys_anon_pages = m_anonpages - init_anon_pages;
+    /*Calculate the difference */ 
+    if(m_anonpages > max_sys_anon_pages)
+        max_sys_anon_pages = m_anonpages - init_anon_pages;
 
-	if(m_filepages > max_sys_file_pages)
-		max_sys_file_pages = m_filepages - init_file_pages;
+    if(m_filepages > max_sys_file_pages)
+        max_sys_file_pages = m_filepages - init_file_pages;
 
-	if(m_otherpages > max_sys_other_pages)
-		max_sys_other_pages = m_otherpages - init_other_pages;
+    if(m_otherpages > max_sys_other_pages)
+        max_sys_other_pages = m_otherpages - init_other_pages;
 
 
 #if 0
-        committed = percpu_counter_read_positive(&vm_committed_as);
+    committed = percpu_counter_read_positive(&vm_committed_as);
 
-        cached = global_node_page_state(NR_FILE_PAGES) -
-                        total_swapcache_pages() - i.bufferram;
-        if (cached < 0)
-                cached = 0;
+    cached = global_node_page_state(NR_FILE_PAGES) -
+        total_swapcache_pages() - i.bufferram;
+    if (cached < 0)
+        cached = 0;
 
-        available = si_mem_available();
+    available = si_mem_available();
 
-        show_val_kb(m, "MemTotal:       ", i.totalram);
-        show_val_kb(m, "MemFree:        ", i.freeram);
-        show_val_kb(m, "MemAvailable:   ", available);
-        show_val_kb(m, "Buffers:        ", i.bufferram);
-        show_val_kb(m, "Cached:         ", cached);
-        show_val_kb(m, "SwapCached:     ", total_swapcache_pages());
-        show_val_kb(m, "Active:         ", pages[LRU_ACTIVE_ANON] +
-                                           pages[LRU_ACTIVE_FILE]);
-        show_val_kb(m, "Inactive:       ", pages[LRU_INACTIVE_ANON] +
-                                           pages[LRU_INACTIVE_FILE]);
-        show_val_kb(m, "Active(anon):   ", pages[LRU_ACTIVE_ANON]);
-        show_val_kb(m, "Inactive(anon): ", pages[LRU_INACTIVE_ANON]);
-        show_val_kb(m, "Active(file):   ", pages[LRU_ACTIVE_FILE]);
-        show_val_kb(m, "Inactive(file): ", pages[LRU_INACTIVE_FILE]);
-        show_val_kb(m, "Unevictable:    ", pages[LRU_UNEVICTABLE]);
-        show_val_kb(m, "Mlocked:        ", global_zone_page_state(NR_MLOCK));
+    show_val_kb(m, "MemTotal:       ", i.totalram);
+    show_val_kb(m, "MemFree:        ", i.freeram);
+    show_val_kb(m, "MemAvailable:   ", available);
+    show_val_kb(m, "Buffers:        ", i.bufferram);
+    show_val_kb(m, "Cached:         ", cached);
+    show_val_kb(m, "SwapCached:     ", total_swapcache_pages());
+    show_val_kb(m, "Active:         ", pages[LRU_ACTIVE_ANON] +
+            pages[LRU_ACTIVE_FILE]);
+    show_val_kb(m, "Inactive:       ", pages[LRU_INACTIVE_ANON] +
+            pages[LRU_INACTIVE_FILE]);
+    show_val_kb(m, "Active(anon):   ", pages[LRU_ACTIVE_ANON]);
+    show_val_kb(m, "Inactive(anon): ", pages[LRU_INACTIVE_ANON]);
+    show_val_kb(m, "Active(file):   ", pages[LRU_ACTIVE_FILE]);
+    show_val_kb(m, "Inactive(file): ", pages[LRU_INACTIVE_FILE]);
+    show_val_kb(m, "Unevictable:    ", pages[LRU_UNEVICTABLE]);
+    show_val_kb(m, "Mlocked:        ", global_zone_page_state(NR_MLOCK));
 #endif
 }
 
@@ -344,151 +382,151 @@ void sys_mem_interval_diff(void)
 
 unsigned long check_node_memsize(struct mm_struct *mm) 
 {
-	unsigned int m_filepages = 0;
-	unsigned int m_anonpages = 0;
-	unsigned int m_shmempages = 0;
-	unsigned int m_totalpages = 0;
+    unsigned int m_filepages = 0;
+    unsigned int m_anonpages = 0;
+    unsigned int m_shmempages = 0;
+    unsigned int m_totalpages = 0;
 
 
-	unsigned int m_rss_filepages = 0;
-	unsigned int m_rss_anonpages = 0;
-	unsigned int m_rss_shmempages = 0;
-	unsigned int m_rss_swapents = 0;
+    unsigned int m_rss_filepages = 0;
+    unsigned int m_rss_anonpages = 0;
+    unsigned int m_rss_shmempages = 0;
+    unsigned int m_rss_swapents = 0;
 
-	unsigned int m_rss_totalpages = 0;
-	unsigned int m_rss_totalanon = 0;
-	unsigned int m_rss_totalfile = 0;
-	unsigned int m_rss_totalother = 0;
+    unsigned int m_rss_totalpages = 0;
+    unsigned int m_rss_totalanon = 0;
+    unsigned int m_rss_totalfile = 0;
+    unsigned int m_rss_totalother = 0;
 
-	int PID = -1;
-	int CURR_PIDX = -1;
-	int iter = 0;
+    int PID = -1;
+    int CURR_PIDX = -1;
+    int iter = 0;
 
-	//initialize if not initialized
-	init_hpc_stats();
+    //initialize if not initialized
+    init_hpc_stats();
 
-	PID = current->pid;
-	CURR_PIDX = PID % MAXPROCS;
+    PID = current->pid;
+    CURR_PIDX = PID % MAXPROCS;
 
-	if(!mm) 
-		return 0;
+    if(!mm) 
+        return 0;
 
-	spin_lock(&hpcstat_lock);
+    spin_lock(&hpcstat_lock);
 
-	if(pidlist[CURR_PIDX] == -1) {
-		pidlist[CURR_PIDX] = PID;
-		total_pids++;
-	}
+    if(pidlist[CURR_PIDX] == -1) {
+        pidlist[CURR_PIDX] = PID;
+        total_pids++;
+    }
 
-	spin_unlock(&hpcstat_lock);
+    spin_unlock(&hpcstat_lock);
 
-	//Get the total stats for this process (CURR_PIDX)
-	m_filepages = get_mm_counter(mm, MM_FILEPAGES);
-	m_anonpages = get_mm_counter(mm, MM_ANONPAGES);
-	m_shmempages = get_mm_counter(mm, MM_SHMEMPAGES);
-	m_totalpages = m_filepages + m_anonpages + m_shmempages;
+    //Get the total stats for this process (CURR_PIDX)
+    m_filepages = get_mm_counter(mm, MM_FILEPAGES);
+    m_anonpages = get_mm_counter(mm, MM_ANONPAGES);
+    m_shmempages = get_mm_counter(mm, MM_SHMEMPAGES);
+    m_totalpages = m_filepages + m_anonpages + m_shmempages;
 
-	spin_lock(&hpcstat_lock);
+    spin_lock(&hpcstat_lock);
 
-	if(max_file_pages[CURR_PIDX] < m_filepages)
-		max_file_pages[CURR_PIDX] = m_filepages;
+    if(max_file_pages[CURR_PIDX] < m_filepages)
+        max_file_pages[CURR_PIDX] = m_filepages;
 
-	if(max_anon_pages[CURR_PIDX] < m_anonpages)
-		max_anon_pages[CURR_PIDX] = m_anonpages;
+    if(max_anon_pages[CURR_PIDX] < m_anonpages)
+        max_anon_pages[CURR_PIDX] = m_anonpages;
 
-	if(max_shmem_pages[CURR_PIDX] < m_shmempages)
-		max_shmem_pages[CURR_PIDX] = m_shmempages;
+    if(max_shmem_pages[CURR_PIDX] < m_shmempages)
+        max_shmem_pages[CURR_PIDX] = m_shmempages;
 
-	if(max_total[CURR_PIDX]  < m_totalpages)
-	        max_total[CURR_PIDX] = m_totalpages;
+    if(max_total[CURR_PIDX]  < m_totalpages)
+        max_total[CURR_PIDX] = m_totalpages;
 
-	spin_unlock(&hpcstat_lock);
+    spin_unlock(&hpcstat_lock);
 
-	m_rss_filepages = atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]);
-	m_rss_anonpages = atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]);
-	m_rss_swapents = atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]);
-	m_rss_shmempages = atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES]);
-	m_rss_totalpages = m_rss_filepages + m_rss_anonpages + 
-			m_rss_swapents + m_rss_shmempages;
-	
-	spin_lock(&hpcstat_lock);
+    m_rss_filepages = atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]);
+    m_rss_anonpages = atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]);
+    m_rss_swapents = atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]);
+    m_rss_shmempages = atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES]);
+    m_rss_totalpages = m_rss_filepages + m_rss_anonpages + 
+        m_rss_swapents + m_rss_shmempages;
 
-	if(max_rss_file_pages[CURR_PIDX] < m_rss_filepages)
-		max_rss_file_pages[CURR_PIDX] = m_rss_filepages;
+    spin_lock(&hpcstat_lock);
 
-	if(max_rss_anon_pages[CURR_PIDX] < m_rss_anonpages)
-		max_rss_anon_pages[CURR_PIDX] = m_rss_anonpages;
+    if(max_rss_file_pages[CURR_PIDX] < m_rss_filepages)
+        max_rss_file_pages[CURR_PIDX] = m_rss_filepages;
 
-	if(max_rss_shmem_pages[CURR_PIDX] < m_rss_shmempages)
-		max_rss_shmem_pages[CURR_PIDX] = m_rss_shmempages;
+    if(max_rss_anon_pages[CURR_PIDX] < m_rss_anonpages)
+        max_rss_anon_pages[CURR_PIDX] = m_rss_anonpages;
 
-	if(max_rss_total[CURR_PIDX]  < m_rss_totalpages)
-		max_rss_total[CURR_PIDX] = m_rss_totalpages;
+    if(max_rss_shmem_pages[CURR_PIDX] < m_rss_shmempages)
+        max_rss_shmem_pages[CURR_PIDX] = m_rss_shmempages;
 
-	//Find the process in out list with minimum PID
-	if(min_pidx > CURR_PIDX || (min_pidx == -1))
-		min_pidx = CURR_PIDX;
+    if(max_rss_total[CURR_PIDX]  < m_rss_totalpages)
+        max_rss_total[CURR_PIDX] = m_rss_totalpages;
 
-	spin_unlock(&hpcstat_lock);
+    //Find the process in out list with minimum PID
+    if(min_pidx > CURR_PIDX || (min_pidx == -1))
+        min_pidx = CURR_PIDX;
 
-	//Only print for smallest PID in our list
-	if(CURR_PIDX == min_pidx) {
+    spin_unlock(&hpcstat_lock);
 
-		m_rss_totalpages = 0;
-		m_rss_totalanon = 0;
-		m_rss_totalfile = 0;
-		m_rss_totalother = 0;
+    //Only print for smallest PID in our list
+    if(CURR_PIDX == min_pidx) {
 
-		 printk(KERN_ALERT "\n\n");
+        m_rss_totalpages = 0;
+        m_rss_totalanon = 0;
+        m_rss_totalfile = 0;
+        m_rss_totalother = 0;
 
-		for (iter =0; iter < MAXPROCS; iter++) 
-		{
-			if(pidlist[iter] != -1) {
-			 	printk(KERN_ALERT "PID %d "
-					 "MAX-F %u, MAX-A %u, MAX-SH %u MAX-TOT %u " 
-					 "MAX-RSS-F %u, MAX-RSS-A %u, MAX-RSS-SH %u  OVERALL MAX-RSS-TOT %u" 
-					 "\n", 
-					 pidlist[iter], 
-					 max_file_pages[iter],  max_anon_pages[iter], max_shmem_pages[iter], 
-					 max_total[iter], max_rss_file_pages[iter], max_rss_anon_pages[iter], 
-					 max_rss_shmem_pages[iter], max_rss_total[iter]);
+        printk(KERN_ALERT "\n\n");
 
-				m_rss_totalpages += max_rss_total[iter];
-				m_rss_totalanon += max_rss_anon_pages[iter];
-				m_rss_totalfile += max_rss_file_pages[iter];
-				m_rss_totalother += max_rss_shmem_pages[iter];
-			}
-		}
+        for (iter =0; iter < MAXPROCS; iter++) 
+        {
+            if(pidlist[iter] != -1) {
+                printk("PID %d "
+                        "MAX-F %u, MAX-A %u, MAX-SH %u MAX-TOT %u " 
+                        "MAX-RSS-F %u, MAX-RSS-A %u, MAX-RSS-SH %u  OVERALL MAX-RSS-TOT %u" 
+                        "\n", 
+                        pidlist[iter], 
+                        max_file_pages[iter],  max_anon_pages[iter], max_shmem_pages[iter], 
+                        max_total[iter], max_rss_file_pages[iter], max_rss_anon_pages[iter], 
+                        max_rss_shmem_pages[iter], max_rss_total[iter]);
 
-		sys_mem_interval_diff();
+                m_rss_totalpages += max_rss_total[iter];
+                m_rss_totalanon += max_rss_anon_pages[iter];
+                m_rss_totalfile += max_rss_file_pages[iter];
+                m_rss_totalother += max_rss_shmem_pages[iter];
+            }
+        }
+
+        sys_mem_interval_diff();
 
 
-		printk(KERN_ALERT "AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
-				  m_rss_totalpages, m_rss_totalanon, m_rss_totalfile,
-				  m_rss_totalother);
+        printk("AppUse(pages): Total:%u = Anon:%u + File:%u + Other:%u\n",
+                m_rss_totalpages, m_rss_totalanon, m_rss_totalfile,
+                m_rss_totalother);
 
-		printk(KERN_ALERT "SystemUseAVG: Total: %u", max_sys_anon_pages + max_sys_file_pages);
+        printk("SystemUseAVG: Total: %u", max_sys_anon_pages + max_sys_file_pages);
 
-		//unsigned int Filepages = max_sys_pages - max_sys;
-		printk(KERN_ALERT "SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
-				"= Anon(SYS):%u + File:%u + Other:%u \n",
-				max_sys_file_pages + max_sys_anon_pages + max_sys_other_pages, 
-				max_sys_anon_pages,  max_sys_file_pages, max_sys_other_pages);
-	}
-	return 0;
+        //unsigned int Filepages = max_sys_pages - max_sys;
+        printk("SystemUseMAX: Total(SYS+SWAPCACHE+BUFF): %u"
+                "= Anon(SYS):%u + File:%u + Other:%u \n",
+                max_sys_file_pages + max_sys_anon_pages + max_sys_other_pages, 
+                max_sys_anon_pages,  max_sys_file_pages, max_sys_other_pages);
+    }
+    return 0;
 
 #if 0	
-	printk(KERN_ALERT "-----TOT: MAX PAGES(ALL PIDS): %u, OVERALL SYS %u, "
-			"SYS+SWAPCACHE %u, SYS+SWAPCACHE+BUFF %u -----\n", 
-			m_rss_totalpages, max_sys_pages, max_sys_pages_swapcache, 
-			max_sys_pages_swapcache_buffers);
-        struct sysinfo i;
-        int nid = get_fastmem_node();
-	unsigned long memsize = 0;
+    printk(KERN_ALERT "-----TOT: MAX PAGES(ALL PIDS): %u, OVERALL SYS %u, "
+            "SYS+SWAPCACHE %u, SYS+SWAPCACHE+BUFF %u -----\n", 
+            m_rss_totalpages, max_sys_pages, max_sys_pages_swapcache, 
+            max_sys_pages_swapcache_buffers);
+    struct sysinfo i;
+    int nid = get_fastmem_node();
+    unsigned long memsize = 0;
 
-        si_meminfo_node(&i, nid);
-	memsize = i.freeram;
-	return memsize;
+    si_meminfo_node(&i, nid);
+    memsize = i.freeram;
+    return memsize;
 #endif
 }
 
@@ -502,145 +540,147 @@ unsigned long check_node_memsize(struct mm_struct *mm)
 #ifdef CONFIG_HETERO_STATS
 void incr_tot_cache_pages(void) 
 {
-	if(!is_hetero_pgcache_set())
-		return;
+    if(!is_hetero_pgcache_set())
+        return;
 
-	//spin_lock(&stats_lock);
-	g_tot_cache_pages++;
-	//spin_unlock(&stats_lock);
+    //spin_lock(&stats_lock);
+    g_tot_cache_pages++;
+    //spin_unlock(&stats_lock);
 }
 
 void incr_tot_buff_pages(void) 
 {
-	if(!is_hetero_buffer_set())
-		return;
+    if(!is_hetero_buffer_set())
+        return;
 
-	//spin_lock(&stats_lock);
-	g_tot_buff_pages++;
-	//spin_unlock(&stats_lock);
+    //spin_lock(&stats_lock);
+    g_tot_buff_pages++;
+    //spin_unlock(&stats_lock);
 }
 
 void incr_tot_app_pages(void) 
 {
-	if(!is_hetero_pgcache_set()) 
-		return;
+    if(!is_hetero_pgcache_set()) 
+        return;
 
-	//spin_lock(&stats_lock);
-	g_tot_app_pages++;
-	/*if(g_tot_app_pages) {
-		g_tot_app_pages = (g_tot_app_pages - g_tot_cache_pages  -
-					g_tot_buff_pages);
-	}*/
-	//spin_unlock(&stats_lock);
+    //spin_lock(&stats_lock);
+    g_tot_app_pages++;
+    /*if(g_tot_app_pages) {
+      g_tot_app_pages = (g_tot_app_pages - g_tot_cache_pages  -
+      g_tot_buff_pages);
+      }*/
+    //spin_unlock(&stats_lock);
 }
 #endif
 
 
 #ifdef CONFIG_HETERO_ENABLE
 void incr_global_stats(unsigned long *counter){
-	//spin_lock(&stats_lock);
-	*counter = *counter + 1;	
-	//spin_unlock(&stats_lock);
+    //spin_lock(&stats_lock);
+    *counter = *counter + 1;	
+    //spin_unlock(&stats_lock);
 }
 
 void print_global_stats(struct task_struct *task) {
 
-       printk("PID %d: cache-hits %lu cache-miss %lu " 
-	      "buff-hits %lu buff-miss %lu " 
-	      "migrated %lu cache-del %lu " 
-	      "buff-del %lu \n", 
-		task->pid,
-		g_cachehits, g_cachemiss, g_buffhits, 
-		g_buffmiss, g_migrated, g_cachedel,
-		g_buffdel);
+    printk("PID %d: cache-hits %lu cache-miss %lu " 
+            "buff-hits %lu buff-miss %lu " 
+            "migrated %lu cache-del %lu " 
+            "buff-del %lu \n", 
+            task->pid,
+            g_cachehits, g_cachemiss, g_buffhits, 
+            g_buffmiss, g_migrated, g_cachedel,
+            g_buffdel);
 
 #ifdef CONFIG_HETERO_STATS
-  	printk("ANALYSIS STAT PID %d, CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
-		current->pid, g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
+    printk("ANALYSIS STAT PID %d, CACHE-PAGES %lu, BUFF-PAGES %lu, APP-PAGES %lu \n",
+            current->pid, g_tot_cache_pages, g_tot_buff_pages, g_tot_app_pages);
 #endif
 
 #ifdef HETERO_COLLECT_LIFETIME
-	//buffpgs = mm->pgbuffdel;
-	//cachepgs = mm->pgcachedel;
-	if(g_avg_cachepage_life && g_avg_kbufpage_life && g_buff_pages_deleted && g_cache_pages_deleted) {
-		  printk("ANALYSIS LIFESTAT PID %d, CACHE-PAGE-LIFE %lu, BUFF-PAGE-LIFE %lu CACHE_PAGES_ALLOC_DELETE %lu " 
-			" BUFF_PAGES_ALLOC_DELETE %lu g_avg_cachepage_life %lu, g_avg_kbufpage_life %lu \n",
-			  current->pid, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted), jiffies_to_msecs(g_avg_kbufpage_life/g_buff_pages_deleted), 
-			  g_cache_pages_deleted, g_buff_pages_deleted, g_avg_cachepage_life/g_cache_pages_deleted, g_avg_kbufpage_life/g_buff_pages_deleted);
-	}
+    //buffpgs = mm->pgbuffdel;
+    //cachepgs = mm->pgcachedel;
+    if(g_avg_cachepage_life && g_avg_kbufpage_life && g_buff_pages_deleted && g_cache_pages_deleted) {
+        printk("ANALYSIS LIFESTAT PID %d, CACHE-PAGE-LIFE %lu, BUFF-PAGE-LIFE %lu CACHE_PAGES_ALLOC_DELETE %lu " 
+                " BUFF_PAGES_ALLOC_DELETE %lu g_avg_cachepage_life %lu, g_avg_kbufpage_life %lu \n",
+                current->pid, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted), jiffies_to_msecs(g_avg_kbufpage_life/g_buff_pages_deleted), 
+                g_cache_pages_deleted, g_buff_pages_deleted, g_avg_cachepage_life/g_cache_pages_deleted, g_avg_kbufpage_life/g_buff_pages_deleted);
+    }
 #endif
 }
 EXPORT_SYMBOL(print_global_stats);
 
 
-struct mm_struct* 
+    struct mm_struct* 
 getmm(struct task_struct *task) 
 {
-        struct mm_struct *mm = NULL;
+    struct mm_struct *mm = NULL;
 
-        if(task->mm) {
-                mm = task->mm;
-	}
-        else if(task->active_mm) {
-                mm = task->active_mm;
-	}
-	return mm;
+    if(task->mm) {
+        mm = task->mm;
+    }
+    else if(task->active_mm) {
+        mm = task->active_mm;
+    }
+    return mm;
 }
 
 
-void 
+    void 
 print_hetero_stats(struct task_struct *task) 
 {
-	struct mm_struct *mm = NULL;
+    struct mm_struct *mm = NULL;
 
-	mm = getmm(task);
-	if(!mm)
-		return;
+    mm = getmm(task);
+    if(!mm)
+        return;
 
-	check_node_memsize(mm);
-	return;
+    check_node_memsize(mm);
+
+    //print_ownership_stats();
+    return;
 
 #ifdef CONFIG_HETERO_STATS
-        printk(KERN_ALERT "PID %d Proc-name %s " 
-		"page cache %lu " 
-	      	"kernel buffs %lu " 
-		"app pages %lu \n",
-	  	task->pid, task->comm, 
-		//mm->pgcache_hits_cnt + mm->pgcache_miss_cnt, 
-	      	//mm->pgbuff_hits_cnt + mm->pgbuff_miss_cnt, 
-		mm->pgcache_hits_cnt, 
-		mm->pgbuff_hits_cnt, 
-		g_tot_app_pages
-       	);
+    printk(KERN_ALERT "PID %d Proc-name %s " 
+            "page cache %lu " 
+            "kernel buffs %lu " 
+            "app pages %lu \n",
+            task->pid, task->comm, 
+            //mm->pgcache_hits_cnt + mm->pgcache_miss_cnt, 
+            //mm->pgbuff_hits_cnt + mm->pgbuff_miss_cnt, 
+            mm->pgcache_hits_cnt, 
+            mm->pgbuff_hits_cnt, 
+            g_tot_app_pages
+          );
 
-	printk(KERN_ALERT "ATOMICs PID %d Proc-name %s "
-			"FilePages %ld "
-			"AnonPages %ld "
-			"SwapEntries %ld "
-			"SharedPages %ld \n",
-			task->pid, task->comm,
-			atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]),
-			atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]),
-			atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]),
-			atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES])
-			);
+    printk(KERN_ALERT "ATOMICs PID %d Proc-name %s "
+            "FilePages %ld "
+            "AnonPages %ld "
+            "SwapEntries %ld "
+            "SharedPages %ld \n",
+            task->pid, task->comm,
+            atomic_long_read(&mm->rss_stat.count[MM_FILEPAGES]),
+            atomic_long_read(&mm->rss_stat.count[MM_ANONPAGES]),
+            atomic_long_read(&mm->rss_stat.count[MM_SWAPENTS]),
+            atomic_long_read(&mm->rss_stat.count[MM_SHMEMPAGES])
+          );
 
 #if 0
-        printk("EXITING PROCESS PID %d Currname %s " 
-		"cache-hits %lu cache-miss %lu " 
-	      	"buff-hits %lu buff-miss %lu " 
-		"migrated %lu migrate_time %ld " 
-                "avg_buff_life(us) %ld pgbuff-del %lu " 
-		"avg_cache_life(us) %ld pgcache-del %lu " 
-		"active-cache %lu\n ", 
-	  	task->pid, task->comm, mm->pgcache_hits_cnt, 
-		mm->pgcache_miss_cnt, 
-	      	mm->pgbuff_hits_cnt, mm->pgbuff_miss_cnt, 
-		mm->pages_migrated, migrate_time, 
-                avgbuff_life, mm->pgbuffdel, avgcache_life, 
-		mm->pgcachedel, 
-		(mm->pgcache_hits_cnt - mm->pgcachedel)
-       );
+    printk("EXITING PROCESS PID %d Currname %s " 
+            "cache-hits %lu cache-miss %lu " 
+            "buff-hits %lu buff-miss %lu " 
+            "migrated %lu migrate_time %ld " 
+            "avg_buff_life(us) %ld pgbuff-del %lu " 
+            "avg_cache_life(us) %ld pgcache-del %lu " 
+            "active-cache %lu\n ", 
+            task->pid, task->comm, mm->pgcache_hits_cnt, 
+            mm->pgcache_miss_cnt, 
+            mm->pgbuff_hits_cnt, mm->pgbuff_miss_cnt, 
+            mm->pages_migrated, migrate_time, 
+            avgbuff_life, mm->pgbuffdel, avgcache_life, 
+            mm->pgcachedel, 
+            (mm->pgcache_hits_cnt - mm->pgcachedel)
+          );
 #endif
 #endif
 }
@@ -650,113 +690,113 @@ EXPORT_SYMBOL(print_hetero_stats);
 void reset_hetero_stats(struct task_struct *task) {
 
 #ifdef CONFIG_HETERO_STATS
-	g_cachehits = 0;
-	g_cachemiss = 0;
-	g_buffhits = 0;
-	g_buffmiss = 0;
-	g_migrated = 0;
-	g_cachedel = 0;
-	g_buffdel = 0;
+    g_cachehits = 0;
+    g_cachemiss = 0;
+    g_buffhits = 0;
+    g_buffmiss = 0;
+    g_migrated = 0;
+    g_cachedel = 0;
+    g_buffdel = 0;
 
-	g_tot_cache_pages = 0;
-	g_tot_buff_pages = 0;
-	g_tot_app_pages = 0;
+    g_tot_cache_pages = 0;
+    g_tot_buff_pages = 0;
+    g_tot_app_pages = 0;
 #endif
 }
 EXPORT_SYMBOL(reset_hetero_stats);
 
 #if 0
-long 
+    long 
 timediff (struct timeval *start, struct timeval *end) 
 {
-	long diff = 0;
+    long diff = 0;
 
-	if(start->tv_sec*1000000 + start->tv_usec == 0) {
-		return 0;
-	}
-	diff = (end->tv_sec*1000000 + end->tv_usec) - 
-			(start->tv_sec*1000000 + start->tv_usec);
-	return diff;
+    if(start->tv_sec*1000000 + start->tv_usec == 0) {
+        return 0;
+    }
+    diff = (end->tv_sec*1000000 + end->tv_usec) - 
+        (start->tv_sec*1000000 + start->tv_usec);
+    return diff;
 }
 #endif
 
-unsigned long 
+    unsigned long 
 timediff (unsigned long start, unsigned long end) 
 {
-	return (end - start);
+    return (end - start);
 }
 
 
-int 
+    int 
 check_listcnt_threshold (unsigned int count)
 {
 
-	if(min_migrate_cnt > count) 
-		return 0;
-	else
-		return 1;
+    if(min_migrate_cnt > count) 
+        return 0;
+    else
+        return 1;
 }
 EXPORT_SYMBOL(check_listcnt_threshold);
 
 /*
-* Callers responsibility to check mm is not NULL
-*/
-int
+ * Callers responsibility to check mm is not NULL
+ */
+    int
 check_parent_hetero (struct task_struct *task, struct mm_struct *mm) 
 {
-	struct task_struct *realp = NULL;
-	struct task_struct *parent = NULL;
-	struct task_struct *group_leader = NULL;
-	struct mm_struct *parent_mm = NULL;
+    struct task_struct *realp = NULL;
+    struct task_struct *parent = NULL;
+    struct task_struct *group_leader = NULL;
+    struct mm_struct *parent_mm = NULL;
 
 
 
-	realp  = task->real_parent;
-	parent = task->parent;
-	group_leader = task->group_leader;
-	if(realp) {
-		parent_mm = getmm(realp); 
-	}/*else if (parent) {
-		parent_mm = getmm(parent);
-	}else if (group_leader) {
-		parent_mm = getmm(group_leader);
-	}*/
+    realp  = task->real_parent;
+    parent = task->parent;
+    group_leader = task->group_leader;
+    if(realp) {
+        parent_mm = getmm(realp); 
+    }/*else if (parent) {
+       parent_mm = getmm(parent);
+       }else if (group_leader) {
+       parent_mm = getmm(group_leader);
+       }*/
 
-	if(strcmp(realp->comm, "java")) {
-		return 0;
-        }
+    if(strcmp(realp->comm, "java")) {
+        return 0;
+    }
 
-	if(parent_mm && parent_mm->hetero_task == HETERO_PROC) {
-		mm->hetero_task = HETERO_PROC;
-		return 1;
-	}
-	return 0;
+    if(parent_mm && parent_mm->hetero_task == HETERO_PROC) {
+        mm->hetero_task = HETERO_PROC;
+        return 1;
+    }
+    return 0;
 }
 
 
 /*
  * Check whether is a hetero process 
  */
-int 
+    int 
 check_hetero_proc (struct task_struct *task) 
 {
     struct mm_struct *mm = NULL; 
-    
+
     mm = getmm(task);
     if(!mm ) 
-	return 0;
+        return 0;
 
     if (mm->hetero_task == HETERO_PROC) {
-	return 1;
+        return 1;
     }
 
     /*if (check_parent_hetero(task, mm)) {
-	return 1;
-    }*/
+      return 1;
+      }*/
 
     if(!strcmp(task->comm, "java")) {
-	mm->hetero_task = HETERO_PROC;
-	return 1;
+        mm->hetero_task = HETERO_PROC;
+        return 1;
     }
 
     return 0; 	
@@ -764,64 +804,64 @@ check_hetero_proc (struct task_struct *task)
 EXPORT_SYMBOL(check_hetero_proc);
 
 
-int 
+    int 
 check_hetero_page(struct mm_struct *mm, struct page *page) 
 {
 
-	int rc = -1;
+    int rc = -1;
 
-	if(mm && (mm->hetero_task == HETERO_PROC) && page) {
-		if(page->hetero == HETERO_PG_FLAG) {
-			rc = 0;
-		}
-	}
-	return rc;
+    if(mm && (mm->hetero_task == HETERO_PROC) && page) {
+        if(page->hetero == HETERO_PG_FLAG) {
+            rc = 0;
+        }
+    }
+    return rc;
 }
 EXPORT_SYMBOL(check_hetero_page);
 
 
-static int 
+    static int 
 stop_threads(struct task_struct *task, int force) 
 {
 
 #ifdef _ENABLE_HETERO_THREAD
-	int idx = 0;
+    int idx = 0;
 
-        spin_lock(&kthread_lock);
-        for(idx = 0; idx < MAXTHREADS; idx++) {
-		/*if(force && THREADS[idx].thrd) {
-			kthread_stop(THREADS[idx].thrd);
-			THREADS[idx].thrd = NULL;
-			thrd_idx--;
-		}else if(THREADS[idx].thrd == task) {
-			kthread_stop(THREADS[idx].thrd);
-			THREADS[idx].thrd = NULL;
-			if(thrd_idx > 0)
-	                        thrd_idx--;
-			break;
-		}*/
-		if(thrd_idx)
-			thrd_idx--;
-        }
-        spin_unlock(&kthread_lock);
+    spin_lock(&kthread_lock);
+    for(idx = 0; idx < MAXTHREADS; idx++) {
+        /*if(force && THREADS[idx].thrd) {
+          kthread_stop(THREADS[idx].thrd);
+          THREADS[idx].thrd = NULL;
+          thrd_idx--;
+          }else if(THREADS[idx].thrd == task) {
+          kthread_stop(THREADS[idx].thrd);
+          THREADS[idx].thrd = NULL;
+          if(thrd_idx > 0)
+          thrd_idx--;
+          break;
+          }*/
+        if(thrd_idx)
+            thrd_idx--;
+    }
+    spin_unlock(&kthread_lock);
 #endif
-	return 0;
+    return 0;
 }
 
 
 /* 
-* Exit function called during process exit 
-*/
-int 
+ * Exit function called during process exit 
+ */
+    int 
 is_hetero_exit(struct task_struct *task) 
 {
     if(task && check_hetero_proc(task)) {
-	//print_hetero_stats(task);
+        //print_hetero_stats(task);
 #ifdef _ENABLE_HETERO_THREAD
-	spin_lock(&kthread_lock);
-	if(thrd_idx)
-		thrd_idx--;
-	spin_unlock(&kthread_lock);
+        spin_lock(&kthread_lock);
+        if(thrd_idx)
+            thrd_idx--;
+        spin_unlock(&kthread_lock);
 
 #endif
     }
@@ -830,244 +870,244 @@ is_hetero_exit(struct task_struct *task)
 EXPORT_SYMBOL(is_hetero_exit);
 
 
-void 
+    void 
 debug_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_DEBUG
-        struct dentry *dentry, *curr_dentry = NULL;
-	struct inode *inode = (struct inode *)obj;
+    struct dentry *dentry, *curr_dentry = NULL;
+    struct inode *inode = (struct inode *)obj;
 
-	//struct inode *currinode = (struct inode *)current->mm->hetero_obj;
-	struct inode *currinode = (struct inode *)current->hetero_obj;
-	if(inode && currinode) {
+    //struct inode *currinode = (struct inode *)current->mm->hetero_obj;
+    struct inode *currinode = (struct inode *)current->hetero_obj;
+    if(inode && currinode) {
 
-		if(execute_ok(inode))
-			return;
+        if(execute_ok(inode))
+            return;
 
-		dentry = d_find_any_alias(inode);
-		curr_dentry = d_find_any_alias(currinode);
-		printk(KERN_ALERT "%s:%d Proc %s Hetero Proc? %d Inode %lu FNAME %s "
-		 "current->heterobj_name %s Write access? %d \n",
-		__func__,__LINE__,current->comm, current->mm->hetero_task, inode->i_ino, 
-		dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
-	}
+        dentry = d_find_any_alias(inode);
+        curr_dentry = d_find_any_alias(currinode);
+        printk(KERN_ALERT "%s:%d Proc %s Hetero Proc? %d Inode %lu FNAME %s "
+                "current->heterobj_name %s Write access? %d \n",
+                __func__,__LINE__,current->comm, current->mm->hetero_task, inode->i_ino, 
+                dentry->d_iname, curr_dentry->d_iname, get_write_access(currinode));
+    }
 #endif
 }
 EXPORT_SYMBOL(debug_hetero_obj);
 
 
-int 
+    int 
 is_hetero_cacheobj(void *obj)
 {
-	if(!enbl_hetero_net)
-		return 0;
+    if(!enbl_hetero_net)
+        return 0;
 
-	return enbl_hetero_net;
+    return enbl_hetero_net;
 }
 EXPORT_SYMBOL(is_hetero_cacheobj);
 
 
 /*
-* Checked only for object affinity 
-* when CONFIG_HETERO_OBJAFF is enabled
-*/
-int 
+ * Checked only for object affinity 
+ * when CONFIG_HETERO_OBJAFF is enabled
+ */
+    int 
 is_hetero_vma(struct vm_area_struct *vma) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
-	if(!enbl_hetero_objaff)
-		return 1;
-        if(!vma || !vma->vm_file) {
-		//printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__,
-		//__LINE__);
-                return 0;
-        }
+    if(!enbl_hetero_objaff)
+        return 1;
+    if(!vma || !vma->vm_file) {
+        //printk(KERN_ALERT "%s : %d NOT HETERO \n", __func__,
+        //__LINE__);
+        return 0;
+    }
 #endif
-	return 1;
+    return 1;
 }
 
 
 
 
 #if 0
-        if(!node_checkfreq) {
-                if(K(i.freeram) < THRESHOLD) {
-                        node_checkfreq = FREQCHECK;
-                        printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
-	                 printk(KERN_ALERT "%s : %d Node: %d, Free pages %8lu kB  \n", 
-				 __func__, __LINE__, nid,  K(i.freeram));
-			 memsize = K(i.freeram);
-                }
-                node_checkfreq = FREQCHECK;
-        }else {
-                node_checkfreq--;
-        }
+if(!node_checkfreq) {
+    if(K(i.freeram) < THRESHOLD) {
+        node_checkfreq = FREQCHECK;
+        printk(KERN_ALERT "%s : %d  \n", __func__, __LINE__);
+        printk(KERN_ALERT "%s : %d Node: %d, Free pages %8lu kB  \n", 
+                __func__, __LINE__, nid,  K(i.freeram));
+        memsize = K(i.freeram);
+    }
+    node_checkfreq = FREQCHECK;
+}else {
+    node_checkfreq--;
+}
 #endif
 
 
 
-int 
+    int 
 is_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
-        /*If we do not enable object affinity then we simply 
-	return true for all the case*/
-	if(!enbl_hetero_objaff)
-		return 1;
+    /*If we do not enable object affinity then we simply 
+      return true for all the case*/
+    if(!enbl_hetero_objaff)
+        return 1;
 #endif
 
-	if(obj && current && current->mm && 
-		current->hetero_obj && current->hetero_obj == obj){
-		//debug_hetero_obj(obj);
-		return 1;
-	//}else if(obj && current && current->mm && current->mm->hetero_obj) {
-	}else if(obj && current && current->hetero_obj) {
-		//dump_stack();
-       		//debug_hetero_obj(obj);
-        }
-	return 0;
+    if(obj && current && current->mm && 
+            current->hetero_obj && current->hetero_obj == obj){
+        //debug_hetero_obj(obj);
+        return 1;
+        //}else if(obj && current && current->mm && current->mm->hetero_obj) {
+}else if(obj && current && current->hetero_obj) {
+    //dump_stack();
+    //debug_hetero_obj(obj);
+}
+return 0;
 }
 EXPORT_SYMBOL(is_hetero_obj);
 
 /* 
-* Functions to test different allocation strategies 
-*/
-int 
+ * Functions to test different allocation strategies 
+ */
+    int 
 is_hetero_pgcache_set(void)
 {
-        if(check_hetero_proc(current)) 
-	        return enbl_hetero_pgcache;
-        return 0;
+    if(check_hetero_proc(current)) 
+        return enbl_hetero_pgcache;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_set);
 
 
-int 
+    int 
 is_hetero_pgcache_readahead_set(void)
 {
-	if(check_hetero_proc(current))
-		return enbl_hetero_pgcache_readahead;
-	return 0;
+    if(check_hetero_proc(current))
+        return enbl_hetero_pgcache_readahead;
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_pgcache_readahead_set);
 
 
-int 
+    int 
 is_hetero_buffer_set(void)
 {
-        if(check_hetero_proc(current)) 
-                return enbl_hetero_buffer;
+    if(check_hetero_proc(current)) 
+        return enbl_hetero_buffer;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_buffer_set);
 
 
 /*
-* Sets current task with hetero obj
-*/
+ * Sets current task with hetero obj
+ */
 void set_curr_hetero_obj(void *obj) 
 {
 #ifdef CONFIG_HETERO_OBJAFF
-        //current->mm->hetero_obj = obj;
-	current->hetero_obj = obj;
+    //current->mm->hetero_obj = obj;
+    current->hetero_obj = obj;
 #endif
 }
 EXPORT_SYMBOL(set_curr_hetero_obj);
 
 
 /*
-* Sets page with hetero obj
-*/
-void 
+ * Sets page with hetero obj
+ */
+    void 
 set_hetero_obj_page(struct page *page, void *obj)                          
 {
 #ifdef CONFIG_HETERO_OBJAFF
-        page->hetero_obj = obj;
+    page->hetero_obj = obj;
 #endif
 }
 EXPORT_SYMBOL(set_hetero_obj_page);
 
 
-void 
+    void 
 set_fsmap_hetero_obj(void *mapobj)                                        
 {
 
-        struct address_space *mapping = NULL;
-	struct inode *inode = NULL;
-	void *current_obj = current->hetero_obj;
+    struct address_space *mapping = NULL;
+    struct inode *inode = NULL;
+    void *current_obj = current->hetero_obj;
 
 #ifdef CONFIG_HETERO_DEBUG
-	struct dentry *res = NULL;
+    struct dentry *res = NULL;
 #endif
 
 #ifdef CONFIG_HETERO_OBJAFF
-        /*If we do not enable object affinity then we simply 
-	return true for all the case*/
-	if(!enbl_hetero_objaff)
-		return;
+    /*If we do not enable object affinity then we simply 
+      return true for all the case*/
+    if(!enbl_hetero_objaff)
+        return;
 #endif
 
-	mapping = (struct address_space *)mapobj;
-        mapping->hetero_obj = NULL;
-	inode = (struct inode *)mapping->host;
+    mapping = (struct address_space *)mapobj;
+    mapping->hetero_obj = NULL;
+    inode = (struct inode *)mapping->host;
 
-	/*if(execute_ok(inode)) {
-		mapping->hetero_obj = NULL;
-		return;
-	}*/
-	if(!inode)
-		return;
+    /*if(execute_ok(inode)) {
+      mapping->hetero_obj = NULL;
+      return;
+      }*/
+    if(!inode)
+        return;
 
-	if(current_obj && current_obj == (void *)inode)
-		return;
+    if(current_obj && current_obj == (void *)inode)
+        return;
 
-        if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+    if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
 
-                mapping->hetero_obj = (void *)inode;
+        mapping->hetero_obj = (void *)inode;
 
-                //current->mm->hetero_obj = (void *)inode;
-		current->hetero_obj = (void *)inode;
+        //current->mm->hetero_obj = (void *)inode;
+        current->hetero_obj = (void *)inode;
 
 #ifdef CONFIG_HETERO_DEBUG
-		if(mapping->host) {
-			res = d_find_any_alias(inode);
-			printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
-			 __func__,__LINE__,current->comm, mapping->host->i_ino, 
-		         res->d_iname);
-		}
-#endif
+        if(mapping->host) {
+            res = d_find_any_alias(inode);
+            printk(KERN_ALERT "%s:%d Proc %s Inode %lu FNAME %s\n",
+                    __func__,__LINE__,current->comm, mapping->host->i_ino, 
+                    res->d_iname);
         }
+#endif
+    }
 }
 EXPORT_SYMBOL(set_fsmap_hetero_obj);
 
 
 /* 
-* Mark the socket to Hetero target object 
-*/
+ * Mark the socket to Hetero target object 
+ */
 void set_sock_hetero_obj(void *socket_obj, void *inode)                                        
 {
-        struct sock *sock = NULL;
-	struct socket *socket = (struct socket *)socket_obj;
-	sock = (struct sock *)socket->sk;
+    struct sock *sock = NULL;
+    struct socket *socket = (struct socket *)socket_obj;
+    sock = (struct sock *)socket->sk;
 
-	if(!sock) {
-		printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
-		return;
-	}
+    if(!sock) {
+        printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
+        return;
+    }
 
-        if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
+    if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
 
-		sock->hetero_obj = (void *)inode;
+        sock->hetero_obj = (void *)inode;
 
-		//current->mm->hetero_obj = (void *)inode;
-		current->hetero_obj = (void *)inode;
+        //current->mm->hetero_obj = (void *)inode;
+        current->hetero_obj = (void *)inode;
 
-		sock->__sk_common.hetero_obj = (void *)inode;
+        sock->__sk_common.hetero_obj = (void *)inode;
 #ifdef CONFIG_HETERO_DEBUG
-		printk(KERN_ALERT "%s:%d Proc %s \n", __func__,__LINE__,
-			current->comm);
+        printk(KERN_ALERT "%s:%d Proc %s \n", __func__,__LINE__,
+                current->comm);
 #endif
-	}
+    }
 }
 EXPORT_SYMBOL(set_sock_hetero_obj);
 
@@ -1076,26 +1116,26 @@ void set_sock_hetero_obj_netdev(void *socket_obj, void *inode)
 {
 #ifdef CONFIG_HETERO_NET_ENABLE
     struct sock *sock = NULL;
-	struct socket *socket = (struct socket *)socket_obj;
-	sock = (struct sock *)socket->sk;
+    struct socket *socket = (struct socket *)socket_obj;
+    sock = (struct sock *)socket->sk;
 
-	if(!sock) {
-		printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
-		return;
-	}
+    if(!sock) {
+        printk(KERN_ALERT "%s:%d SOCK NULL \n", __func__,__LINE__);
+        return;
+    }
 
     if((is_hetero_buffer_set() || is_hetero_pgcache_set())){
-		sock->hetero_obj = (void *)inode;
-		//current->mm->hetero_obj = (void *)inode;
-		current->hetero_obj = (void *)inode;
-		sock->__sk_common.hetero_obj = (void *)inode;
-		if (sock->sk_dst_cache && sock->sk_dst_cache->dev) {
-			hetero_dbg("net device is 0x%lx | %s:%d\n", 
-				sock->sk_dst_cache->dev, __FUNCTION__, __LINE__);
-			if (!sock->sk_dst_cache->dev->hetero_sock)
-				sock->sk_dst_cache->dev->hetero_sock = sock;
-		}
-	}
+        sock->hetero_obj = (void *)inode;
+        //current->mm->hetero_obj = (void *)inode;
+        current->hetero_obj = (void *)inode;
+        sock->__sk_common.hetero_obj = (void *)inode;
+        if (sock->sk_dst_cache && sock->sk_dst_cache->dev) {
+            hetero_dbg("net device is 0x%lx | %s:%d\n", 
+                    sock->sk_dst_cache->dev, __FUNCTION__, __LINE__);
+            if (!sock->sk_dst_cache->dev->hetero_sock)
+                sock->sk_dst_cache->dev->hetero_sock = sock;
+        }
+    }
 #endif
 }
 EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
@@ -1103,182 +1143,676 @@ EXPORT_SYMBOL(set_sock_hetero_obj_netdev);
 #ifdef HETERO_COLLECT_LIFETIME
 void update_page_life_time(struct page *page, int delpage, int kbuff) {
 
-	if(!delpage) {
+    if(!delpage) {
 
-		//if(!page->hetero_create_time)
-		page->hetero_create_time = jiffies;
-		//if(!(page->hetero_create_time.tv_sec + page->hetero_create_time.tv_usec))
-		//	do_gettimeofday(&page->hetero_create_time);
-	}else {
-	
-		//do_gettimeofday(&page->hetero_del_time);
-		//if(page->hetero_create_time)
-			page->hetero_del_time = jiffies;
-		//else
-		//	return;
+        //if(!page->hetero_create_time)
+        page->hetero_create_time = jiffies;
+        //if(!(page->hetero_create_time.tv_sec + page->hetero_create_time.tv_usec))
+        //	do_gettimeofday(&page->hetero_create_time);
+    }else {
 
-		if(kbuff) {
+        //do_gettimeofday(&page->hetero_del_time);
+        //if(page->hetero_create_time)
+        page->hetero_del_time = jiffies;
+        //else
+        //	return;
 
-			//g_avg_kbufpage_life += timediff(&page->hetero_create_time, &page->hetero_del_time);
-			g_avg_kbufpage_life += (page->hetero_del_time - page->hetero_create_time);
-			g_buff_pages_deleted++;
+        if(kbuff) {
 
-		} else  {
-			g_avg_cachepage_life += (page->hetero_del_time - page->hetero_create_time);
-			g_cache_pages_deleted++;
-			/*if(g_cache_pages_deleted) {
-				printk(KERN_ALERT "start %ld, end %ld del_pages %lu life_sum %u avg %ld life_msec %lu\n", 
-					page->hetero_create_time, page->hetero_del_time,
-					g_cache_pages_deleted, g_avg_cachepage_life, 
-					g_avg_cachepage_life/g_cache_pages_deleted, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted));
-			}*/
-		}
-		page->hetero_del_time = 0;  //(struct timeval){0};
-                page->hetero_create_time = 0; //(struct timeval){0};
-	}
+            //g_avg_kbufpage_life += timediff(&page->hetero_create_time, &page->hetero_del_time);
+            g_avg_kbufpage_life += (page->hetero_del_time - page->hetero_create_time);
+            g_buff_pages_deleted++;
+
+        } else  {
+            g_avg_cachepage_life += (page->hetero_del_time - page->hetero_create_time);
+            g_cache_pages_deleted++;
+            /*if(g_cache_pages_deleted) {
+              printk(KERN_ALERT "start %ld, end %ld del_pages %lu life_sum %u avg %ld life_msec %lu\n", 
+              page->hetero_create_time, page->hetero_del_time,
+              g_cache_pages_deleted, g_avg_cachepage_life, 
+              g_avg_cachepage_life/g_cache_pages_deleted, jiffies_to_msecs(g_avg_cachepage_life/g_cache_pages_deleted));
+              }*/
+        }
+        page->hetero_del_time = 0;  //(struct timeval){0};
+        page->hetero_create_time = 0; //(struct timeval){0};
+    }
 }
 #endif
 
 
 
 /* Update STAT
-* TODO: Currently not setting HETERO_PG_FLAG for testing
-*/
-void 
+ * TODO: Currently not setting HETERO_PG_FLAG for testing
+ */
+    void 
 update_hetero_pgcache(int nodeid, struct page *page, int delpage) 
 {
-	int correct_node = 0; 
-	struct mm_struct *mm = NULL;
+    int correct_node = 0; 
+    struct mm_struct *mm = NULL;
 
-	if(!page) 
-		return;
+    if(!page) 
+        return;
 
-	if(page_to_nid(page) == nodeid)
-		correct_node = 1;
+    if(page_to_nid(page) == nodeid)
+        correct_node = 1;
 
-	if (!current)
-		return;
+    if (!current)
+        return;
 
-	mm = getmm(current);
-	if(!mm)
-		return;
+    mm = getmm(current);
+    if(!mm)
+        return;
 
 
-	mm->pgcache_hits_cnt++;
+    mm->pgcache_hits_cnt++;
 
 #if 0
-	//check_node_memsize();
+    //check_node_memsize();
 #ifdef HETERO_COLLECT_LIFETIME
-	page->hetero = HETERO_PG_FLAG;
-	update_page_life_time(page, delpage, 0);
+    page->hetero = HETERO_PG_FLAG;
+    update_page_life_time(page, delpage, 0);
 #else
-	if(page->hetero != HETERO_PG_FLAG)
-		return;
+    if(page->hetero != HETERO_PG_FLAG)
+        return;
 #endif
-	/*Check if page is in the correct node and 
-	we are not deleting and only inserting the page*/
-	if(correct_node && !delpage) {
-		//printk(KERN_ALERT "Page hits %d Node free mem %8lu kB\n", 
-		//			page_to_nid(page), check_node_memsize());
-		mm->pgcache_hits_cnt += 1;
-		page->hetero = HETERO_PG_FLAG;
-		incr_global_stats(&g_cachehits);
-	} else if(!correct_node && !delpage) {
-		printk(KERN_ALERT "Page miss %d Node free mem %8lu kB\n", 
-					page_to_nid(page), check_node_memsize());
-		mm->pgcache_miss_cnt += 1;
-		page->hetero = 0;
-		incr_global_stats(&g_cachemiss);
-	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
-			&& delpage) {
-		mm->pgcachedel++;
-		incr_global_stats(&g_cachedel);
-	}
-	/* Either if object affinity is disabled or page node is 
-	incorrect, then return */
-	if(!correct_node || !enbl_hetero_objaff)
-		goto ret_pgcache_stat;
+    /*Check if page is in the correct node and 
+      we are not deleting and only inserting the page*/
+    if(correct_node && !delpage) {
+        //printk(KERN_ALERT "Page hits %d Node free mem %8lu kB\n", 
+        //			page_to_nid(page), check_node_memsize());
+        mm->pgcache_hits_cnt += 1;
+        page->hetero = HETERO_PG_FLAG;
+        incr_global_stats(&g_cachehits);
+    } else if(!correct_node && !delpage) {
+        printk(KERN_ALERT "Page miss %d Node free mem %8lu kB\n", 
+                page_to_nid(page), check_node_memsize());
+        mm->pgcache_miss_cnt += 1;
+        page->hetero = 0;
+        incr_global_stats(&g_cachemiss);
+    }else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
+            && delpage) {
+        mm->pgcachedel++;
+        incr_global_stats(&g_cachedel);
+    }
+    /* Either if object affinity is disabled or page node is 
+       incorrect, then return */
+    if(!correct_node || !enbl_hetero_objaff)
+        goto ret_pgcache_stat;
 
 ret_pgcache_stat:
-	return;
+    return;
 #endif
 
 }
 EXPORT_SYMBOL(update_hetero_pgcache);
 
+/*
+    unsigned long nr_readahead; //Number of pages readhead
+    unsigned long nr_readahead_calls; //Number of pages readhead calls
+    unsigned long nr_force_pc_readahead_calls; //force_page_cache_readahead
+    unsigned long nr_force_pc_readahead_pages; //force_page_cache_readahead
+    unsigned long nr_do_pc_readahead_pages; // __do_page_cache_readahead
+    unsigned long nr_do_pc_readahead_calls; //nr of pages asked
+*/
+
+/*
+ * Per proc readahead function counters
+ * @pages : nr pages requested for readahead
+ * @func : function number with those requests
+ * Only for enabled pids
+ */
+void add_readahead(unsigned long pages, int func){
+    //if(start_global_accounting && current->enable_pvt_lru && pages){
+    if(current->enable_pvt_lru && pages){
+       switch(func){
+           case 1: /* call from do_readahead*/
+                current->nr_readahead += pages;
+                current->nr_readahead_calls += 1;
+                break;
+           case 2: /*Call from force_page_cache_readahead*/
+                current->nr_force_pc_readahead_calls += 1;
+                current->nr_force_pc_readahead_pages += pages;
+                break;
+           case 3: /*Call from __do_page_cache_readahead*/
+                current->nr_do_pc_readahead_pages += pages;
+                current->nr_do_pc_readahead_calls += 1;
+                break;
+
+            case 4: /*call from ra_submit*/
+                current->nr_ra_submit_pages += pages;
+                current->nr_ra_submit_calls += 1;
+
+            case 5: /*call from ondemand_readahead*/
+                current->nr_ondemand_ra_calls += 1;
+                current->nr_ondemand_ra_pages += pages;
+            case 6: /*nr filemap_pagefaults*/
+                current->nr_filemap_faults += 1;
+           default:
+                return;
+       } 
+    }
+}
+EXPORT_SYMBOL(add_readahead);
 
 
+/*
+ *The next set of functions take care of a Pvt LRU per process.
+ * pvt_* is the function fingerprint
+ * the pages are stored in an RB tree
+ */
+void pvt_active_lru_insert(struct page *page)
+{
+	return;
+    if(start_global_accounting)
+    {
+        if(page_is_file_cache(page))
+        {
+            //current->nr_owned_pages[3] += 1;
+            nr_global_active_cache_lru += 1;
+        }
+        else
+        {
+            //current->nr_owned_pages[1] += 1;
+            nr_global_active_anon_lru +=1;
+        }
+
+    }
+
+    if(!current->mm)
+        return;
+
+    if(current->enable_pvt_lru)
+    {
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk("%s pid=%d pvt_active_lru_insert addr=%lu\n", 
+                current->comm, current->pid, page_to_virt(page));
+#endif
+        //pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
+        pvt_lru_rb_insert(&current->mm->active_rbroot, page);
+
+        if(page_is_file_cache(page))
+        {
+            current->nr_owned_pages[3] += 1;
+            current->mm->nr_lru[3] += 1;
+            if(current->mm->nr_max_lru[3] < current->mm->nr_lru[3])
+                current->mm->nr_max_lru[3] = current->mm->nr_lru[3];
+        }
+        else
+        {
+            current->nr_owned_pages[1] += 1;
+            current->mm->nr_lru[1] += 1;
+            if(current->mm->nr_max_lru[1] < current->mm->nr_lru[1])
+                current->mm->nr_max_lru[1] = current->mm->nr_lru[1];
+        }
+    }
+}
+EXPORT_SYMBOL(pvt_active_lru_insert);
+
+
+void pvt_inactive_lru_insert(struct page *page)
+{
+	return;
+    if(start_global_accounting)
+    {
+        if(page_is_file_cache(page))
+        {
+            nr_global_inactive_cache_lru += 1;
+        }
+        else
+        {
+            nr_global_inactive_anon_lru +=1;
+        }
+    }
+
+    if(!current->mm) //Dont do it for kernel procs
+        return;
+
+    if(current->enable_pvt_lru)
+    {
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk("%s pid=%d pvt_inactive_lru_insert addr=%lu\n", 
+                current->comm, current->pid, page_to_virt(page));
+#endif
+        pvt_lru_rb_remove(&current->mm->active_rbroot, page);
+        if(pvt_lru_rb_insert(&current->mm->inactive_rbroot, page))
+        {
+            if(page_is_file_cache(page))
+            {
+            	current->nr_owned_pages[2] += 1;
+                current->mm->nr_lru[2] += 1;
+                if(current->mm->nr_max_lru[2] < current->mm->nr_lru[2])
+                    current->mm->nr_max_lru[2] = current->mm->nr_lru[2];
+            }
+            else
+            {
+            	current->nr_owned_pages[0] += 1;
+                current->mm->nr_lru[0] += 1;
+                if(current->mm->nr_max_lru[0] < current->mm->nr_lru[0])
+                    current->mm->nr_max_lru[0] = current->mm->nr_lru[0];
+            }
+        }
+    }
+}
+EXPORT_SYMBOL(pvt_inactive_lru_insert);
+
+
+void pvt_active_lru_remove(struct page *page)
+{
+	return;
+    if(start_global_accounting)
+    {
+        if(page_is_file_cache(page))
+        {
+            current->nr_owned_pages[3] -= 1;
+        }
+        else
+        {
+            current->nr_owned_pages[1] -= 1;
+        }
+    }
+
+    if(!current->mm)
+        return;
+
+    if(current->enable_pvt_lru)
+    {
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk("%s pid=%d pvt_active_lru_remove addr=%lu\n", 
+                current->comm, current->pid, page_to_virt(page));
+#endif
+        pvt_lru_rb_remove(&current->mm->active_rbroot, page);
+        if(page_is_file_cache(page))
+            current->mm->nr_lru[3] -= 1;
+        else
+            current->mm->nr_lru[1] -= 1;
+
+    }
+}
+EXPORT_SYMBOL(pvt_active_lru_remove);
+
+
+/*
+ * TODO: Not thread safe
+ */
+void pvt_inactive_lru_remove(struct page *page)
+{
+	return;
+    if(start_global_accounting)
+    {
+        if(page_is_file_cache(page))
+        {
+            current->nr_owned_pages[2] -= 1;
+        }
+        else
+        {
+            current->nr_owned_pages[0] -= 1;
+        }
+    }
+
+    if(!current->mm)
+        return;
+
+    if(current->enable_pvt_lru)
+    {
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk("%s pid=%d pvt_inactive_lru_remove addr=%lu\n", 
+                current->comm, current->pid, page_to_virt(page));
+#endif
+        pvt_lru_rb_remove(&current->mm->inactive_rbroot, page);
+        if(page_is_file_cache(page))
+        {
+            current->mm->nr_lru[2] -= 1;
+        }
+        else
+        {
+            current->mm->nr_lru[0] -= 1;
+        }
+    }
+}
+EXPORT_SYMBOL(pvt_inactive_lru_remove);
+
+
+/* This function is just a page accounting function
+ * Flag is an identified for the function
+ * nr is the number of pages to be added
+ */
+void pvt_lru_accnt_nr(int flag, int nr)
+{
+	return;
+    switch(flag){
+        case ACC_DOANON:
+            accnt_do_anonymous_page += nr;
+            break;
+        case ACC_HANDLE_MM_FAULT:
+            accnt_handle_mm_fault += nr;
+            break;
+        case ACC_HANDLE_PTE_FAULT:
+            accnt_handle_pte_fault += nr;
+            break;
+        default:
+            return;
+    }
+}
+EXPORT_SYMBOL(pvt_lru_accnt_nr);
+
+
+bool pvt_lru_rb_insert(struct rb_root *root, struct page *page)
+{
+    struct pvt_lru_rbnode *data = kmalloc(sizeof(struct pvt_lru_rbnode), GFP_KERNEL);
+
+    data->page = page;
+    struct rb_node **link = &(root->rb_node), *parent=NULL;
+    struct pvt_lru_rbnode *this_node = NULL;
+    while(*link)
+    {
+        parent = *link;
+        this_node = rb_entry(parent, struct pvt_lru_rbnode, lru_node);
+
+        if(page_to_virt(this_node->page) > page_to_virt(page))
+        {
+            link = &(*link)->rb_left;
+        }
+        else if (page_to_virt(this_node->page) == page_to_virt(page)) 
+        {
+#ifdef CONFIG_PVT_LRU_DEBUG
+            printk(KERN_ALERT "!!Duplicate Page in pvt LRU PID:%d at add:%lu\n"
+                    , current->pid, page_to_virt(page));
+#endif
+            return false;
+        }
+        else
+            link = &(*link)->rb_right;
+    }
+    rb_link_node(&data->lru_node, parent, link);
+    rb_insert_color(&data->lru_node, root);
+    return true;
+}
+
+
+/*
+ * Searches and returns a page from pvt rb tree
+ */
+struct pvt_lru_rbnode *pvt_lru_rb_search(struct rb_root *root, struct page *page)
+{
+    if(root == NULL)
+    {
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk("pid:%d, comm:%s, pvt_lru_rb_search, root==NULL\n",
+                current->pid, current->comm);
+#endif
+        return NULL;
+    }
+    struct rb_node *node = root->rb_node;
+    struct pvt_lru_rbnode *this_node = NULL;
+    while(node){
+        this_node = rb_entry(node, struct pvt_lru_rbnode, lru_node);
+        if(page_to_virt(this_node->page) > page_to_virt(page))
+        {
+            node = node->rb_left;
+        }
+        else if(page_to_virt(this_node->page) < page_to_virt(page))
+        {
+            node = node->rb_right;
+        }
+        else /*==*/
+        {
+            return this_node;
+        }
+    }
+    return NULL;
+}
+
+
+void pvt_lru_rb_remove(struct rb_root *root, struct page *page)
+{
+    struct pvt_lru_rbnode *node = pvt_lru_rb_search(root, page);
+    if(node == NULL)
+    {
+        return;
+    }
+    rb_erase(&node->lru_node, root);
+}
+
+
+/*This function prints all the task > 0 pages
+*/
+void print_ownership_stats(void)
+{
+    struct task_struct *p, *proc;
+
+    int nr_procs_covered = 0;
+
+    int all_nr_owned_pages[4];
+    int all_nr_unmapped_pages[1];
+    all_nr_owned_pages[0] = 0;
+    all_nr_owned_pages[1] = 0;
+    all_nr_owned_pages[2] = 0;
+    all_nr_owned_pages[3] = 0;
+    all_nr_unmapped_pages[0] = 0;
+    all_nr_unmapped_pages[1] = 0;
+
+    if(start_global_accounting)
+    {
+        //for_each_process_thread(p, proc)
+        for_each_process(proc)
+        {
+            nr_procs_covered += 1;
+            if(proc->enable_pvt_lru) //User program
+            {
+                if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
+                        || proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
+                        || proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)
+
+                {
+                    all_nr_owned_pages[0] += proc->nr_owned_pages[0];
+                    all_nr_owned_pages[1] += proc->nr_owned_pages[1];
+                    all_nr_owned_pages[2] += proc->nr_owned_pages[2];
+                    all_nr_owned_pages[3] += proc->nr_owned_pages[3];
+                    all_nr_unmapped_pages[0] += proc->nr_unmapped_pages[0];
+                    all_nr_unmapped_pages[1] += proc->nr_unmapped_pages[2];
+                }
+            }
+            else //Other kernel procs
+            {
+                if(proc->nr_owned_pages[0] > 0 || proc->nr_owned_pages[1] > 0
+                        || proc->nr_owned_pages[2] > 0 || proc->nr_owned_pages[3] > 0
+                        || proc->nr_unmapped_pages[0] > 0 || proc->nr_unmapped_pages[1] > 0)
+                {
+                    printk(KERN_ALERT "PID: %d-%s OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
+                            "INACTIVE_Cache: %d, ACTIVE_Cache: %d "
+                            "DEL_Anon: %d, DEL_Cache: %d\n",
+                            proc->pid,
+                            proc->comm,
+                            proc->nr_owned_pages[0],
+                            proc->nr_owned_pages[1],
+                            proc->nr_owned_pages[2],
+                            proc->nr_owned_pages[3],
+                            proc->nr_unmapped_pages[0],
+                            proc->nr_unmapped_pages[1]);
+                }
+            }
+        }
+        printk(KERN_ALERT "ALL_USER_OWNED: INACTIVE_Anon: %d, ACTIVE_Anon: %d "
+                "INACTIVE_Cache: %d, ACTIVE_Cache: %d "
+                "DEL_Anon: %d, DEL_Cache: %d\n",
+                all_nr_owned_pages[0],
+                all_nr_owned_pages[1],
+                all_nr_owned_pages[2],
+                all_nr_owned_pages[3],
+                all_nr_unmapped_pages[0],
+                all_nr_unmapped_pages[1]);
+#ifdef CONFIG_PVT_LRU_DEBUG
+        printk(KERN_ALERT "Number of Procs covered %d\n", nr_procs_covered);
+#endif
+    }
+
+    return;
+}
+EXPORT_SYMBOL(print_ownership_stats);
+
+
+void print_readahead_stats(void)
+{
+    /*
+    current->nr_readahead = 0; //Number of pages readhead
+    current->nr_readahead_calls = 0; //Number of pages readhead calls
+    current->nr_force_pc_readahead_calls = 0; //nr of calls
+    current->nr_force_pc_readahead_pages = 0; //nr of pages asked
+    current->nr_do_pc_readahead_pages = 0; //nr of pages asked
+    current->nr_do_pc_readahead_calls = 0; //nr of pages asked
+                current->nr_ra_submit_pages += pages;
+                current->nr_ra_submit_calls += 1;
+    */
+    printk("PID: %d - %s\n", current->pid, current->comm);
+    printk("PID: %d, readahead_calls: %lu, readahead_pages: %lu\n", 
+            current->pid, current->nr_readahead_calls,
+            current->nr_readahead);
+    printk("PID: %d, force_pc_readahead_calls: %lu, force_pc_readahead_pages: %lu\n",
+            current->pid, current->nr_force_pc_readahead_calls,
+            current->nr_force_pc_readahead_pages);
+    printk("PID: %d, ondemand_ra_calls: %lu, ondemand_ra_pages: %lu\n", 
+            current->pid, current->nr_ondemand_ra_calls,
+            current->nr_ondemand_ra_pages);
+    printk("PID: %d, ra_submit_calls: %lu, ra_submit_pages: %lu\n", 
+            current->pid, current->nr_ra_submit_calls,
+            current->nr_ra_submit_pages);
+    printk("PID: %d, do_pc_readahead_calls: %lu, readahead_pages: %lu\n", 
+            current->pid, current->nr_do_pc_readahead_calls,
+            current->nr_do_pc_readahead_pages);
+    printk("PID: %d, nr_filemap_faults: %lu\n", 
+            current->pid, current->nr_filemap_faults);
+}
+EXPORT_SYMBOL(print_readahead_stats);
+
+
+void reset_ownership_stats(void)
+{
+    struct task_struct *p, *proc;
+
+    for_each_process_thread(p, proc)
+    {
+        proc->nr_owned_pages[0] = 0;
+        proc->nr_owned_pages[1] = 0;
+        proc->nr_owned_pages[2] = 0;
+        proc->nr_owned_pages[3] = 0;
+        proc->nr_unmapped_pages[0] = 0;
+        proc->nr_unmapped_pages[1] = 0;
+    }
+}
+
+
+void reset_pvt_lru_counters(void)
+{
+    current->mm->nr_lru[0] = 0;
+    current->mm->nr_lru[1] = 0;
+    current->mm->nr_lru[2] = 0;
+    current->mm->nr_lru[0] = 0;
+    current->mm->nr_max_lru[0] = 0;
+    current->mm->nr_max_lru[1] = 0;
+    current->mm->nr_max_lru[2] = 0;
+    current->mm->nr_max_lru[3] = 0;
+    nr_global_active_anon_lru = 0;
+    nr_global_active_cache_lru = 0;
+    nr_global_inactive_anon_lru = 0;
+    nr_global_inactive_cache_lru = 0;
+
+    current->nr_readahead = 0; //Number of pages readhead
+    current->nr_readahead_calls = 0; //Number of pages readhead calls
+    current->nr_force_pc_readahead_calls = 0; //nr of calls
+    current->nr_force_pc_readahead_pages = 0; //nr of pages asked
+    current->nr_do_pc_readahead_pages = 0; //nr of pages asked
+    current->nr_do_pc_readahead_calls = 0; //nr of pages asked
+    current->nr_ra_submit_pages = 0;
+    current->nr_ra_submit_calls = 0;
+    current->nr_ondemand_ra_calls = 0;
+    current->nr_ondemand_ra_pages = 0;
+    current->nr_filemap_faults = 0;
+}
+
+
+//Not all unmapped pages goto LRU immediately
+//so we need another probe to get this info
+//type = 0 -> anon, type = 1 -> cache
+void pvt_unmapped_page_accnt(int nr_pages, int type)
+{
+    //if(start_global_accounting)
+    if(current->enable_pvt_lru)
+    {
+        current->nr_unmapped_pages[type] += nr_pages;
+    }
+}
+EXPORT_SYMBOL(pvt_unmapped_page_accnt);
 
 /* 
-* Update STAT 
-* TODO: Currently not setting HETERO_PG_FLAG for testing 
-*/
+ * Update STAT 
+ * TODO: Currently not setting HETERO_PG_FLAG for testing 
+ */
 void update_hetero_pgbuff_stat(int nodeid, struct page *page, int delpage) 
 {
-	int correct_node = 0; 
-	struct mm_struct *mm = NULL;
+    int correct_node = 0; 
+    struct mm_struct *mm = NULL;
 
-	if(!page) 
-		return;
+    if(!page) 
+        return;
 
-	if(page_to_nid(page) == nodeid)
-		correct_node = 1;
+    if(page_to_nid(page) == nodeid)
+        correct_node = 1;
 
-	mm = getmm(current);
-	if(!mm)
-		return;
+    mm = getmm(current);
+    if(!mm)
+        return;
 
-	mm->pgbuff_hits_cnt++;
+    mm->pgbuff_hits_cnt++;
 
 #if 0	
 
 #ifdef HETERO_COLLECT_LIFETIME
-	page->hetero = HETERO_PG_FLAG;
-	update_page_life_time(page, delpage, 1);
+    page->hetero = HETERO_PG_FLAG;
+    update_page_life_time(page, delpage, 1);
 #else
-	if(page->hetero != HETERO_PG_FLAG)
-		return;
+    if(page->hetero != HETERO_PG_FLAG)
+        return;
 #endif
-	//Check if page is in the correct node and 
-	//we are not deleting and only inserting the page
-	if(correct_node && !delpage) {
+    //Check if page is in the correct node and 
+    //we are not deleting and only inserting the page
+    if(correct_node && !delpage) {
 
-		mm->pgbuff_hits_cnt += 1;
-		incr_global_stats(&g_buffhits);
+        mm->pgbuff_hits_cnt += 1;
+        incr_global_stats(&g_buffhits);
 
-		//page->hetero = HETERO_PG_FLAG;
-	}else if(!correct_node && !delpage) {
+        //page->hetero = HETERO_PG_FLAG;
+    }else if(!correct_node && !delpage) {
 
-		incr_global_stats(&g_buffmiss);
-		mm->pgbuff_miss_cnt += 1;
-		page->hetero = 0;
-	}else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
-			&& delpage) {
+        incr_global_stats(&g_buffmiss);
+        mm->pgbuff_miss_cnt += 1;
+        page->hetero = 0;
+    }else if(correct_node && (page->hetero == HETERO_PG_FLAG) 
+            && delpage) {
 
 #ifdef CONFIG_HETERO_STATS
-		mm->pgbuffdel++;
+        mm->pgbuffdel++;
 #endif		
-	}
-	//Either if object affinity is disabled or page node is 
-	//incorrect, then return
-	if(!correct_node || !enbl_hetero_objaff)
-		goto ret_pgbuff_stat;
+    }
+    //Either if object affinity is disabled or page node is 
+    //incorrect, then return
+    if(!correct_node || !enbl_hetero_objaff)
+        goto ret_pgbuff_stat;
 
 ret_pgbuff_stat:
-	return;
+    return;
 #endif
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat);
 
 
 /* 
-* Simple miss increment; called specifically from 
-* functions that do not explicity aim to place pages 
-* on heterogeneous memory
-*/
+ * Simple miss increment; called specifically from 
+ * functions that do not explicity aim to place pages 
+ * on heterogeneous memory
+ */
 void update_hetero_pgbuff_stat_miss(void) 
 {
-        current->mm->pgbuff_miss_cnt += 1;
+    current->mm->pgbuff_miss_cnt += 1;
 }
 EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
 
@@ -1289,10 +1823,10 @@ EXPORT_SYMBOL(update_hetero_pgbuff_stat_miss);
  */
 int is_hetero_page(struct page *page, int nodeid){
 
-   if(page_to_nid(page) == nodeid) {
-	return 1;
-   }
-   return 0;
+    if(page_to_nid(page) == nodeid) {
+        return 1;
+    }
+    return 0;
 }
 EXPORT_SYMBOL(is_hetero_page);
 
@@ -1308,7 +1842,7 @@ EXPORT_SYMBOL(is_hetero_journ_set);
 
 int is_hetero_radix_set(void){
     if(check_hetero_proc(current))
-    	return enbl_hetero_radix;
+        return enbl_hetero_radix;
     return 0;
 }
 EXPORT_SYMBOL(is_hetero_radix_set);
@@ -1321,80 +1855,80 @@ int is_hetero_kernel_set(void){
 EXPORT_SYMBOL(is_hetero_kernel_set);
 
 int get_fastmem_node(void) {
-        return hetero_fastmem_node;
+    return hetero_fastmem_node;
 }
 
 int get_slowmem_node(void) {
-        return NUMA_HETERO_NODE;
+    return NUMA_HETERO_NODE;
 }
 
 
 static int migration_thread_fn(void *arg) {
 
-        unsigned long count = 0;
-        struct mm_struct *mm = (struct mm_struct *)arg;
+    unsigned long count = 0;
+    struct mm_struct *mm = (struct mm_struct *)arg;
 
-        //do_gettimeofday(&start);
-        //migration_thrd_active = 1;
-        if(!mm) {
+    //do_gettimeofday(&start);
+    //migration_thrd_active = 1;
+    if(!mm) {
 #ifdef _ENABLE_HETERO_THREAD
-		thrd_idx--;
+        thrd_idx--;
 #endif
-                return 0;
-        }
-        count = migrate_to_node_hetero(mm, get_fastmem_node(),
-                        get_slowmem_node(),MPOL_MF_MOVE_ALL);
-
-#ifdef _ENABLE_HETERO_THREAD
-        spin_lock(&kthread_lock);
-	if(thrd_idx)
-		thrd_idx--;
-        spin_unlock(&kthread_lock); 
-#endif
-        //do_gettimeofday(&end);
-        //migrate_time += timediff(&start, &end);
-	//stop_threads(current, 0);
-	//if(kthread_should_stop()) {
-	//	do_exit(0);
-	//}
-	//spin_lock(&kthread_lock);
-	//spin_unlock(&kthread_lock);
-	//printk(KERN_ALERT "%s:%d THREAD %d EXITING %d\n", 
-	//	__func__, __LINE__, current->pid, thrd_idx);
         return 0;
+    }
+    count = migrate_to_node_hetero(mm, get_fastmem_node(),
+            get_slowmem_node(),MPOL_MF_MOVE_ALL);
+
+#ifdef _ENABLE_HETERO_THREAD
+    spin_lock(&kthread_lock);
+    if(thrd_idx)
+        thrd_idx--;
+    spin_unlock(&kthread_lock); 
+#endif
+    //do_gettimeofday(&end);
+    //migrate_time += timediff(&start, &end);
+    //stop_threads(current, 0);
+    //if(kthread_should_stop()) {
+    //	do_exit(0);
+    //}
+    //spin_lock(&kthread_lock);
+    //spin_unlock(&kthread_lock);
+    //printk(KERN_ALERT "%s:%d THREAD %d EXITING %d\n", 
+    //	__func__, __LINE__, current->pid, thrd_idx);
+    return 0;
 }
 
 #if 0
 static int migration_thread_fn(void *arg) {
 
-	unsigned long count = 0;
-	struct mm_struct *mm = (struct mm_struct *)arg;
-	struct timeval start, end;
+    unsigned long count = 0;
+    struct mm_struct *mm = (struct mm_struct *)arg;
+    struct timeval start, end;
 
-        //do_gettimeofday(&start);
-	 migration_thrd_active = 1;
+    //do_gettimeofday(&start);
+    migration_thrd_active = 1;
 
-	hetero_force_dbg("%s:%d MIGRATE_THREAD_FUNC \n", __func__, __LINE__);
-	while(migration_thrd_active) {
+    hetero_force_dbg("%s:%d MIGRATE_THREAD_FUNC \n", __func__, __LINE__);
+    while(migration_thrd_active) {
 
-		while(!spinlock) {
-			if (kthread_should_stop())
-                        	break;
-		}
-		//migration_thrd_active = 1;
-		if(!mm) {
-			return 0;
-		}	
-		count = migrate_to_node_hetero(mm, get_fastmem_node(), 
-			get_slowmem_node(),MPOL_MF_MOVE_ALL);
-		//migration_thrd_active = 0;
-		//do_gettimeofday(&end);
-		//migrate_time += timediff(&start, &end);
-		spinlock = 0;
-	}
+        while(!spinlock) {
+            if (kthread_should_stop())
+                break;
+        }
+        //migration_thrd_active = 1;
+        if(!mm) {
+            return 0;
+        }	
+        count = migrate_to_node_hetero(mm, get_fastmem_node(), 
+                get_slowmem_node(),MPOL_MF_MOVE_ALL);
+        //migration_thrd_active = 0;
+        //do_gettimeofday(&end);
+        //migrate_time += timediff(&start, &end);
+        spinlock = 0;
+    }
 
-	hetero_force_dbg("%s:%d THREAD EXITING \n", __func__, __LINE__);
-	return 0;
+    hetero_force_dbg("%s:%d THREAD EXITING \n", __func__, __LINE__);
+    return 0;
 }
 #endif
 
@@ -1402,46 +1936,46 @@ static int migration_thread_fn(void *arg) {
 void 
 try_hetero_migration(void *map, gfp_t gfp_mask){
 
-	//int threshold=0;
-	unsigned long *target=0;
-	unsigned long *cachemiss=0;
-        unsigned long *buffmiss=0;
+    //int threshold=0;
+    unsigned long *target=0;
+    unsigned long *cachemiss=0;
+    unsigned long *buffmiss=0;
 
-	if(disabl_hetero_migrate) {
-		return;
-	}
+    if(disabl_hetero_migrate) {
+        return;
+    }
 
-	if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
-		return;
+    if(!current->mm || (current->mm->hetero_task != HETERO_PROC))
+        return;
 
-	if(!g_cachemiss) {
-		return;
-	}
+    if(!g_cachemiss) {
+        return;
+    }
 
-	cachemiss = &current->mm->pgcache_miss_cnt;
-        buffmiss = &current->mm->pgbuff_miss_cnt;
-	target = &current->mm->migrate_attempt;
+    cachemiss = &current->mm->pgcache_miss_cnt;
+    buffmiss = &current->mm->pgbuff_miss_cnt;
+    target = &current->mm->migrate_attempt;
 
-	if((*cachemiss +  *buffmiss) <  *target) {
-		return;
-	}else {
-		*target = *target + g_migrate_freq;
-	}
+    if((*cachemiss +  *buffmiss) <  *target) {
+        return;
+    }else {
+        *target = *target + g_migrate_freq;
+    }
 
 #ifdef _ENABLE_HETERO_THREAD
-	//print_hetero_stats(current);
-	THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
-				current->mm, "HETEROTHRD");	
+    //print_hetero_stats(current);
+    THREADS[thrd_idx].thrd = kthread_run(migration_thread_fn,
+            current->mm, "HETEROTHRD");	
 
-	spin_lock(&kthread_lock);
-	thrd_idx++;
-	spin_unlock(&kthread_lock);
+    spin_lock(&kthread_lock);
+    thrd_idx++;
+    spin_unlock(&kthread_lock);
 #else
-	//print_hetero_stats(current);
-	migrate_to_node_hetero(current->mm, get_fastmem_node(),
-				get_slowmem_node(), MPOL_MF_MOVE_ALL);
+    //print_hetero_stats(current);
+    migrate_to_node_hetero(current->mm, get_fastmem_node(),
+            get_slowmem_node(), MPOL_MF_MOVE_ALL);
 #endif
-        return;
+    return;
 }
 EXPORT_SYMBOL(try_hetero_migration);
 #endif
@@ -1451,149 +1985,214 @@ SYSCALL_DEFINE2(start_trace, int, flag, int, val)
 {
 
 #ifdef _ENABLE_HETERO_THREAD
-	int idx = 0;
+    int idx = 0;
 #endif
-        /*if(strcmp(current->comm, "java"))
-	        return;*/
+    /*if(strcmp(current->comm, "java"))
+      return;*/
 
 #ifdef CONFIG_HETERO_ENABLE
     switch(flag) {
-	case CLEAR_GLOBALCOUNT:
-	    printk("flag set to clear count %d\n", flag);
-	    global_flag = CLEAR_GLOBALCOUNT;
-	    /*reset hetero allocate flags */
-	    enbl_hetero_pgcache = 0;
-	    enbl_hetero_buffer = 0; 
-	    enbl_hetero_radix = 0;
-	    enbl_hetero_journal = 0; 
+        case CLEAR_GLOBALCOUNT:
+            printk("flag set to clear count %d\n", flag);
+            global_flag = CLEAR_GLOBALCOUNT;
+            /*reset hetero allocate flags */
+            enbl_hetero_pgcache = 0;
+            enbl_hetero_buffer = 0; 
+            enbl_hetero_radix = 0;
+            enbl_hetero_journal = 0; 
             enbl_hetero_kernel = 0;
-	    enbl_hetero_net = 0;
-	    enbl_hetero_pgcache_readahead=0;
-	    /* Enable application defined context */
-	    enbl_hetero_set_context = 0;
-	    enbl_hetero_objaff = 0;	
-	    hetero_pid = 0;
-	    hetero_kernpg_cnt = 0;
-	    hetero_usrpg_cnt = 0;
-	    reset_hetero_stats(current);	
+            enbl_hetero_net = 0;
+            enbl_hetero_pgcache_readahead=0;
+            /* Enable application defined context */
+            enbl_hetero_set_context = 0;
+            enbl_hetero_objaff = 0;	
+            hetero_pid = 0;
+            hetero_kernpg_cnt = 0;
+            hetero_usrpg_cnt = 0;
+            reset_hetero_stats(current);	
 #ifdef HETERO_HPC
-	    reset_hpc_stats();
+            reset_hpc_stats();
 #endif
-	    break;
+            break;
 
-	case COLLECT_TRACE:
-	    printk("flag is set to collect trace %d\n", flag);
-	    global_flag = COLLECT_TRACE;
-	    return global_flag;
-	    break;
-	case PRINT_GLOBAL_STATS:
-	    printk("flag is set to print stats %d\n", flag);
-	    global_flag = PRINT_GLOBAL_STATS;
-	    print_global_stats(current);
-	    break;
-	case PFN_TRACE:
-	    printk("flag is set to collect pfn trace %d\n", flag);
-	    global_flag = PFN_TRACE;
-	    return global_flag;
-	    break;
-	case PFN_STAT:
-	    printk("flag is set to print pfn stats %d\n", flag);
-	    print_pfn_hashtable();
-	    break;
-	case TIME_TRACE:
-	    printk("flag is set to collect time %d \n", flag);
-	    global_flag = TIME_TRACE;
-	    return global_flag;
-	    break;
-	case TIME_STATS:
-	    printk("flag is set to print time stats %d \n", flag);
-	    global_flag = TIME_STATS;
-	    print_rbtree_time_stat();
-	    break;
-	case TIME_RESET:
-	    printk("flag is set to reset time %d \n", flag);
-	    global_flag = TIME_RESET;
-	    rbtree_reset_time();
-	    break;
-	case COLLECT_ALLOCATE:
-	    printk("flag is set to collect hetero allocate  %d \n", flag);
-	    global_flag = COLLECT_ALLOCATE;
-	    return global_flag;
-	    break;
-	case PRINT_PPROC_PAGESTATS:
-	    //printk("flag is set to print hetero allocate stat %d \n", flag);
-	    global_flag = PRINT_PPROC_PAGESTATS;
-	    print_hetero_stats(current);
-	    //print_global_stats(current);	
-	    break;
-	case HETERO_PGCACHE:
-	    printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
-	    enbl_hetero_pgcache = 1;
-	    break;
-	case HETERO_BUFFER:
-	    printk("flag is set to enable HETERO_BUFFER %d \n", flag);
-	    enbl_hetero_buffer = 1;
-	    break;
-	case HETERO_JOURNAL:
-	    printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
-	    enbl_hetero_journal = 1;
-	    break;
-	case HETERO_RADIX:
-	    printk("flag is set to enable HETERO_RADIX %d \n", flag);
-	    enbl_hetero_radix = 1;
-	    break;
-	case HETERO_FULLKERN:
-	    printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
-	    enbl_hetero_kernel = 1;
-	    break;
-	case HETERO_SET_FASTMEM_NODE:
-	    printk("flag to set FASTMEM node to %d \n", val);
-	    hetero_fastmem_node = val;
-	    break;
-	case HETERO_MIGRATE_FREQ:
-	     g_migrate_freq = val;
-	     printk("flag to set MIGRATION FREQ to %d \n", g_migrate_freq);
-	     break;	
-	case HETERO_OBJ_AFF:
+        case COLLECT_TRACE:
+            printk("flag is set to collect trace %d\n", flag);
+            global_flag = COLLECT_TRACE;
+            return global_flag;
+            break;
+        case PRINT_GLOBAL_STATS:
+            printk("flag is set to print stats %d\n", flag);
+            global_flag = PRINT_GLOBAL_STATS;
+            print_global_stats(current);
+            break;
+        case PFN_TRACE:
+            printk("flag is set to collect pfn trace %d\n", flag);
+            global_flag = PFN_TRACE;
+            return global_flag;
+            break;
+        case PFN_STAT:
+            printk("flag is set to print pfn stats %d\n", flag);
+            print_pfn_hashtable();
+            break;
+        case TIME_TRACE:
+            printk("flag is set to collect time %d \n", flag);
+            global_flag = TIME_TRACE;
+            return global_flag;
+            break;
+        case TIME_STATS:
+            printk("flag is set to print time stats %d \n", flag);
+            global_flag = TIME_STATS;
+            print_rbtree_time_stat();
+            break;
+        case TIME_RESET:
+            printk("flag is set to reset time %d \n", flag);
+            global_flag = TIME_RESET;
+            rbtree_reset_time();
+            break;
+        case COLLECT_ALLOCATE:
+            printk("flag is set to collect hetero allocate  %d \n", flag);
+            global_flag = COLLECT_ALLOCATE;
+            return global_flag;
+            break;
+        case PRINT_PPROC_PAGESTATS:
+            //printk("flag is set to print hetero allocate stat %d \n", flag);
+            global_flag = PRINT_PPROC_PAGESTATS;
+            print_hetero_stats(current);
+            //print_global_stats(current);	
+            break;
+        case HETERO_PGCACHE:
+            printk("flag is set to enable HETERO_PGCACHE %d \n", flag);
+            enbl_hetero_pgcache = 1;
+            break;
+        case HETERO_BUFFER:
+            printk("flag is set to enable HETERO_BUFFER %d \n", flag);
+            enbl_hetero_buffer = 1;
+            break;
+        case HETERO_JOURNAL:
+            printk("flag is set to enable HETERO_JOURNAL %d \n", flag);
+            enbl_hetero_journal = 1;
+            break;
+        case HETERO_RADIX:
+            printk("flag is set to enable HETERO_RADIX %d \n", flag);
+            enbl_hetero_radix = 1;
+            break;
+        case HETERO_FULLKERN:
+            printk("flag is set to enable HETERO_FULLKERN %d \n", flag);
+            enbl_hetero_kernel = 1;
+            break;
+        case HETERO_SET_FASTMEM_NODE:
+            printk("flag to set FASTMEM node to %d \n", val);
+            hetero_fastmem_node = val;
+            break;
+        case HETERO_MIGRATE_FREQ:
+            g_migrate_freq = val;
+            printk("flag to set MIGRATION FREQ to %d \n", g_migrate_freq);
+            break;	
+        case HETERO_OBJ_AFF:
 #ifdef CONFIG_HETERO_OBJAFF
-	    enbl_hetero_objaff = 1;
-	    printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
+            enbl_hetero_objaff = 1;
+            printk("flag enables HETERO_OBJAFF %d \n", enbl_hetero_objaff);
 #endif 
-	    break;	
-	case HETERO_DISABLE_MIGRATE:
-	     printk("flag to disable migration %d \n", val);
-	     disabl_hetero_migrate = 1;
-	     break;	
-	case HETERO_MIGRATE_LISTCNT:
-	     printk("flag to MIGRATE_LISTCNT %d \n", val);
-	     min_migrate_cnt = val;
-	     break;	
+            break;	
+        case HETERO_DISABLE_MIGRATE:
+            printk("flag to disable migration %d \n", val);
+            disabl_hetero_migrate = 1;
+            break;	
+        case HETERO_MIGRATE_LISTCNT:
+            printk("flag to MIGRATE_LISTCNT %d \n", val);
+            min_migrate_cnt = val;
+            break;	
 
-	/* Set current file context */
-	case HETERO_SET_CONTEXT:
-	     printk("flag to set HETERO_SET_CONTEXT with fd %d \n", val);
-	     enbl_hetero_set_context = 1;
-	     break;
+            /* Set current file context */
+        case HETERO_SET_CONTEXT:
+            printk("flag to set HETERO_SET_CONTEXT with fd %d \n", val);
+            enbl_hetero_set_context = 1;
+            break;
 
-	case HETERO_NET:
-	     printk("flag to set HETERO_NET with %d \n", val);
-	     enbl_hetero_net = 1;
-	     break;		
+        case HETERO_NET:
+            printk("flag to set HETERO_NET with %d \n", val);
+            enbl_hetero_net = 1;
+            break;		
 
-	case HETERO_PGCACHE_READAHEAD:
-	     printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
-	     enbl_hetero_pgcache_readahead = 1;	
-	     break;	
+        case HETERO_PGCACHE_READAHEAD:
+            printk("flag to set HETERO_PGCACHE_READAHEAD with %d \n", val);
+            enbl_hetero_pgcache_readahead = 1;	
+            break;	
 
-	default:
-#ifdef CONFIG_HETERO_DEBUG
-	   hetero_dbgmask = 1;	
+#ifdef CONFIG_PVT_LRU
+        case ENABLE_PVT_LRU:
+            printk("flag to set enable_pvt_lru with\n");
+            current->enable_pvt_lru = true;
+            current->mm->active_rbroot = RB_ROOT;
+            current->mm->inactive_rbroot = RB_ROOT;
+
+            reset_pvt_lru_counters();
+            reset_ownership_stats();
+
+            accnt_do_anonymous_page = 0;
+            accnt_handle_mm_fault = 0;
+            accnt_handle_pte_fault = 0;
+
+            //start_global_accounting = true;
+#ifdef CONFIG_PVT_LRU_DEBUG
+            printk("Pvt LRU initialized for %d\n", current->pid);
 #endif
-	    hetero_pid = flag;
-	    current->mm->hetero_task = HETERO_PROC;
-	    printk("hetero_pid set to %d %d procname %s\n", hetero_pid,
-		current->pid, current->comm);			
-	    break;
+            break;
+
+        case PRINT_PVT_LRU_STATS:
+            if(current->enable_pvt_lru)
+            {
+                print_readahead_stats();
+
+		if(start_global_accounting)
+		{
+                printk(KERN_ALERT "PVT_LRU: PID:%d; max_inactive_anon:%d, max_active_anon:%d "
+                        "max_inactive_cache:%d, max_active_cache:%d pages\n",
+                        current->pid, current->mm->nr_max_lru[0], 
+                        current->mm->nr_max_lru[1], current->mm->nr_max_lru[2],
+                        current->mm->nr_max_lru[3]);
+
+                printk(KERN_ALERT "GLOBAL_LRU: max_inactive_anon:%lu, max_active_anon:%lu "
+                        "max_inactive_cache:%lu, max_active_cache:%lu pages\n",
+                        nr_global_inactive_anon_lru, nr_global_active_anon_lru,
+                        nr_global_inactive_cache_lru, nr_global_active_cache_lru);
+
+                printk(KERN_ALERT "FunctionAcc: do_anon: %d, handle_pte: %d, handle_mm: %d\n",
+                        accnt_do_anonymous_page, 
+                        accnt_handle_pte_fault,
+                        accnt_handle_mm_fault);
+		}
+            }
+            else
+            {
+#ifdef CONFIG_PVT_LRU_DEBUG
+                printk("pid:%d, Did not enable_pvt_lru\n", current->pid);
+#endif
+            }
+
+            start_global_accounting = false;
+
+            nr_global_active_anon_lru = 0;
+            nr_global_inactive_anon_lru = 0;
+            nr_global_active_cache_lru = 0;
+            nr_global_inactive_cache_lru = 0;
+
+            accnt_do_anonymous_page = 0;
+            accnt_handle_mm_fault = 0;
+            accnt_handle_pte_fault = 0;
+            reset_ownership_stats();
+            break;
+#endif
+
+        default:
+#ifdef CONFIG_HETERO_DEBUG
+            hetero_dbgmask = 1;	
+#endif
+            hetero_pid = flag;
+            current->mm->hetero_task = HETERO_PROC;
+            printk("hetero_pid set to %d %d procname %s\n", hetero_pid,
+                    current->pid, current->comm);			
+            break;
     }
 #endif
 

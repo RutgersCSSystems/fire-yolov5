@@ -22,6 +22,9 @@ do
 		break
 	fi
 done
+#mpirun -np 32 gmx_mpi mdrun -s run_water.tpr -o -x -deffnm md_water
+
+
 #/users/shaleen/ssd/NVM/appbench/apps/NPB3.4/NPB3.4-MPI/scripts/readdmesg.py init
 #while :
 #do

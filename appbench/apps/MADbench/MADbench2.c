@@ -7,14 +7,16 @@
 /*****************************/
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <math.h>
+#include <fcntl.h>
 #include "mpi.h"
 #include "MADbench2.h"
 
-#define PCOUNT 8
+#define PCOUNT 9
 #define TCOUNT 5
 #define SLENGTH 64
 
@@ -86,6 +88,7 @@ double checksum(double *, int);
 int no_pix, no_bin, no_gang, sblocksize, fblocksize, r_mod, w_mod;
 char *IOMETHOD, *IOMODE, *FILETYPE, *REMAP;
 double BWEXP = -1.0;
+int flushit = 0; //true if flushit
 
 int no_pe, my_pe;
 GANG gang1, gang2;
@@ -112,7 +115,7 @@ static char lo='L', no='N', tr='T';
 
 /**********************************************************************************************************************************/
 
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 
   initialize(argc, argv); PMPI_Barrier(MPI_COMM_WORLD);
@@ -157,10 +160,6 @@ void initialize(int argc, char** argv)
     for (p=0; p<PCOUNT; p++) parameter[p] = atoi(argv[p]);
   }
 
-  if (my_pe==0){
-	  reportrank_(&my_pe);
-  }
-
   MPI_Bcast(parameter, PCOUNT, MPI_INT, 0, MPI_COMM_WORLD);
 
   no_pix = parameter[1];
@@ -170,6 +169,7 @@ void initialize(int argc, char** argv)
   fblocksize=parameter[5];
   r_mod = parameter[6];
   w_mod = parameter[7];
+  flushit = parameter[8];
 
   if (my_pe==0) {
 #ifdef IO
@@ -213,12 +213,14 @@ void initialize(int argc, char** argv)
     fprintf(stderr, " FILETYPE = UNIQUE\n");
   }
 
+  /*
   IOMETHOD = (char *)malloc(SLENGTH*sizeof(char));
   IOMETHOD = "POSIX";
   IOMODE = (char *)malloc(SLENGTH*sizeof(char));
   IOMODE = "SYNC";
   FILETYPE = (char *)malloc(SLENGTH*sizeof(char));
   FILETYPE = "UNIQUE";
+  */
 
   REMAP = getenv("REMAP");
   if (REMAP==NULL) {
@@ -394,6 +396,7 @@ void build_S()
     if (b<no_bin) {
       lmin = lmax; 
       lmax += binwidth;
+
 #ifdef IO
       busy_work(&no_pix, 2, gang1);
 #else
@@ -653,9 +656,11 @@ void calc_W()
       }
     }
 
+#ifdef COMPUTE
     /* Solve */
 
     if (b>0 && b<=no_bin) pdgemm(&no, &no, &no_pix, &no_pix, &no_pix, &d1, invD2, &i1, &i1, pp_matrix2.desc, dSdCb, &i1, &i1, pp_matrix2.desc, &d0, Wb, &i1, &i1, pp_matrix2.desc);
+#endif
 
     /* Resynchronize writing */
 
@@ -986,20 +991,30 @@ void finalize()
 
   if (strcmp(IOMODE, "NONE")!=0.0) {
 
-    if (strcmp(IOMETHOD, "POSIX")==0) error_check("fclose", filename, fclose(df)==0);
-    else if (strcmp(IOMETHOD, "MPI")==0) error_check("MPI_File_close", filename, MPI_File_close(&dfh)==0);
+    if (strcmp(IOMETHOD, "POSIX")==0) 
+    {
+	    error_check("fclose", filename, fclose(df)==0);
+    }
+    else if (strcmp(IOMETHOD, "MPI")==0) 
+    {
+	    error_check("MPI_File_close", filename, MPI_File_close(&dfh)==0);
+    }
 
+    /* FIXME: THIS IS TEMPORARY
     if (strcmp(FILETYPE, "SHARED")==0) {
       if (my_pe==0) error_check("unlink", filename, unlink(filename)==0);
     } else {
       error_check("unlink", filename, unlink(filename)==0);
     }
+    */
     PMPI_Barrier(MPI_COMM_WORLD);
 
+    /* FIXME: THIS IS TEMPORARY
     for (n=0; n<no_pe; n++) {
       if (my_pe==n && stat("files", &buf)==0) rmdir("files");
       PMPI_Barrier(MPI_COMM_WORLD);
     }
+    */
  
   }
 
@@ -1055,6 +1070,13 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
       if (strcmp(IOMODE, "SYNC")==0) error_check("fread", filename, fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
     } else {
       if (strcmp(IOMODE, "SYNC")==0) error_check("fwrite", filename, fwrite(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
+      if(flushit)
+      {
+	      printf("*************WAITING*************\n");
+	      fflush(df);
+	      int fd = fileno(df);
+	      posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+      }
     }
   } 
   

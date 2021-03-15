@@ -1,0 +1,27 @@
+
+mpiexec -n $NO_PROC MADbench2.x $NO_PIX $NO_BIN $NO_GANG $SBLOCKSIZE $FBLOCKSIZE $RMOD $WMOD $STRIDE
+
+Parameters
+NO_PIX      Sets the size of the pseudo-data - all the component matrices have NO_PIX x NO_PIX elements
+NO_BIN      Sets the size of the pseudo-dataset - there are NO_BIN component matrices
+NO_GANG     Sets the level of gang-parallelism - there are NO_GANG gangs
+SBLOCKSIZE  Sets the ScaLAPACK blocksize - all matrices will be block-cycically distributed with side SBLOCKSIZE.
+FBLOCKSIZE  Sets the file blocksize - all IO will start at a file-offset that is an integer multiple of FBLOCKSIZE.
+RMOD        Sets the degree of simultaneous reading - 1:RMOD processors will read at once.
+WMOD        Sets the degree of simultaneous writing - 1:WMOD processors will write at once.
+RECORD      Sets the amount of read to be done at once (strided I/O) (bytes)
+STRIDE      Sets the stride of read to (1+STRIDE)*RECORD 
+
+Note: Stride and Record should be so chosen as the following conditions meet:
+1. (RECORD)%sizeof(double)==0
+2. (NO_PIX*NO_PIX*sizeof(double))%((1+STRIDE)*RECORD) == 0
+
+TODO: MAX filesize is 2GB since I am using ints for most of the strided pattern code
+
+
+Additional environment variables
+IOMETHOD  = POSIX | MPI
+IOMODE    = SYNC | ASYNC
+FILETYPE  = UNIQUE | SHARED
+REMAP     = CUSTOM | SCALAPACK
+BWEXP     = Any number

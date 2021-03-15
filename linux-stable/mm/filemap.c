@@ -2770,6 +2770,7 @@ int filemap_fault(struct vm_fault *vmf)
 	if (unlikely(offset >= max_off))
 		return VM_FAULT_SIGBUS;
 
+
 	/*
 	 * Do we have something in the page cache already?
 	 */
@@ -2782,6 +2783,10 @@ int filemap_fault(struct vm_fault *vmf)
 		do_async_mmap_readahead(vmf->vma, ra, file, page, offset);
 	} else if (!page) {
 		/* No page in the page cache at all */
+#ifdef CONFIG_PVT_LRU
+          /*Just counts nr of faults*/
+          add_readahead(1UL, 6); //FIXME: GIVE PROPER IDENTIFIER
+#endif
 		do_sync_mmap_readahead(vmf->vma, ra, file, offset);
 		count_vm_event(PGMAJFAULT);
 		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);

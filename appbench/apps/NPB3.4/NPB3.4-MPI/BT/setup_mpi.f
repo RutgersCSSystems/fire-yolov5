@@ -23,9 +23,6 @@ c---------------------------------------------------------------------
       call mpi_comm_size(MPI_COMM_WORLD, total_nodes, error)
       call mpi_comm_rank(MPI_COMM_WORLD, node, error)
     
-      !Shaleen Added a new library to be used
-      call reportrank(node)
-      !Shaleen Added a new library to be used
 
       if (.not. convertdouble) then
          dp_type = MPI_DOUBLE_PRECISION

@@ -234,6 +234,7 @@ void start_async_commit()
      iret1 = pthread_create(&thread1, NULL, set_protection, (void*)NULL);
 }
 
+#ifdef REMOTE_CHECKPOINT
 void start_rmt_checkpoint(int numprocs, int rank)
 {
      pthread_t thread1;
@@ -247,6 +248,7 @@ void start_rmt_checkpoint(int numprocs, int rank)
     /* Create independent threads each of which will execute function */
      iret1 = pthread_create( &thread1, NULL, run_rmt_checkpoint, (void*)s);
 }
+#endif
 
 /* To calculate simulation time */
 long simulation_time(struct timeval start, struct timeval end )

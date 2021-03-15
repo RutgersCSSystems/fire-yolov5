@@ -6,10 +6,9 @@ FLAGS=-fPIC -shared
 
 all: reclaimer
 
-reclaimer: cfun.c pre.c
-	$(CC) $(FLAGS) -o libcfun.so cfun.c $(LIBS)
+reclaimer: cfun.cpp pre.c
+	$(CXX) $(FLAGS) -o libcfun.so cfun.cpp -DDEBUG $(LIBS)
 	$(CC) $(FLAGS) -o pre.so pre.c $(LIBS)
-
 
 install:
 	sudo cp *.so /usr/local/lib
