@@ -18,14 +18,12 @@
 #include "sequential.hpp"
 #include "worker.hpp"
 
-#define INFOFILE "/tmp/workerinfo"
-#define FIFO "/tmp/passmessages"
+#define WORKERQ "/tmp/passmessages"
 #define SEMAPHORE "just_one_bg_thread"
 
-#ifndef __NO_BG_THREADS
 sem_t   *mysemp;
 const char semname[] = "mysem";
-#endif
+int fifofd = -1;
 
 
 /*
@@ -52,8 +50,7 @@ static void handler(int sig, siginfo_t *info, void *context){
 }
 
 
-/* Registering the signal handler
-*/
+/* Registering the signal handler*/
 void signal_handle(){
     struct sigaction sig_action;
     sig_action.sa_sigaction = handler;
@@ -73,21 +70,31 @@ void signal_handle(){
     }
 }
 
+
 /*
  * The worker while waiting for signal from others
  */
 void *bg_worker(void *ptr){
-#ifdef __NO_BG_THREADS
-
-#else
-    signal_handle();
-
+    struct msg message;
     while(1){
-        sleep(DURATION);
+        if(!fifofd)
+            continue;
+        while(read(fifofd, &message, sizeof(struct msg)) <= 0){
+            strcpy(message.instr, "");
+        }
+
+        /*Prefetch*/
+        if(strcmp(message.instr, PREFETCH) == 0){
+            if(__seq_prefetch(message.pos, message.stride) != true){
+                printf("ERROR: %s: unable to prefetch\n", __func__);
+            }
+        }
+        else if(strcmp(message.instr, RELINQUISH) == 0){
+            debug_print("recvd RELINQUISH_SIG\n");
+        }
     }
-#endif
-    return NULL;
 }
+
 
 /*creates and tries to get the semaphore*/
 bool get_semaphore(){
@@ -103,15 +110,14 @@ bool get_semaphore(){
 
     int sts = sem_timedwait(mysemp, &abs_time);
     if (sts == 0) // got the lock
+    {
+        debug_print("%s: got semaphore : %ld\n", __func__, getpid());
         return true;
+    }
     else if (errno == ETIMEDOUT)
         return false;
 }
 
-void destroy_semaphore(){
-    sem_close(mysemp);
-    sem_unlink(semname);
-}
 
 /* This function spawns the worker thread
 */
@@ -124,10 +130,15 @@ void thread_fn(void){
 #else
     //if this proc is successful in generating FIFO
     //generate the pthread and populate such 
-    if(get_semaphore() == true)
+    if(get_semaphore())
     {
         //create fifo
+        if(mkfifo(WORKERQ, 0666) != 0){
+            printf("ERROR: mkfifo : %s\n", strerror(errno));
+            exit(-1);
+        }
         //create pthread
+
         int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
         CPU_ZERO(&cpuset);
         CPU_SET(last_cpu_id, &cpuset);
@@ -142,5 +153,39 @@ void thread_fn(void){
             exit(-1);
         }
     }
+    /*open fifo*/
+    if((fifofd = open(WORKERQ, O_RDWR | O_SYNC | O_CREAT, 0666)) == -1){
+        printf("ERROR: unable to open fifo: %s\n", strerror(errno));
+        exit(-1);
+    }
+
 #endif
+}
+
+
+/*send message to prefetch */
+bool instruct_prefetch(struct pos_bytes pos, off_t stride){
+    if(stride < 0)
+        return false; 
+
+    struct msg message;
+
+    message.pos = pos;
+    message.stride = stride;
+    strcpy(message.instr, PREFETCH);
+
+    if(fifofd)
+        return write(fifofd, &message, sizeof(struct msg));
+
+    return false;
+}
+
+
+/*Cleans all state at destruction*/
+void clean_state(){
+    sem_close(mysemp);
+    sem_unlink(semname);
+
+    close(fifofd);
+    unlink(WORKERQ);
 }

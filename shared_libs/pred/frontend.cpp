@@ -66,7 +66,9 @@ void con(){
 
     set_pvt_lru();
 
+#ifndef __NO_BG_THREAD
     thread_fn();
+#endif
 }
 
 
@@ -74,7 +76,7 @@ void dest(){
     debug_print("application termination...\n");
 
 #ifndef __NO_BG_THREAD
-    destroy_semaphore();
+    clean_state();
 #endif
 
     print_readahead_time();
