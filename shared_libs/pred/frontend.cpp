@@ -65,13 +65,17 @@ void con(){
     debug_print("init tracing...\n");
 
     set_pvt_lru();
-    //thread_fn(); //spawn worker thread
 
+    thread_fn();
 }
 
 
 void dest(){
     debug_print("application termination...\n");
+
+#ifndef __NO_BG_THREAD
+    destroy_semaphore();
+#endif
 
     print_readahead_time();
     //syscall(__NR_start_trace, PRINT_STATS);
