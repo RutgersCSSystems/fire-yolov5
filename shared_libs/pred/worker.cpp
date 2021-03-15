@@ -3,16 +3,30 @@
 #include <signal.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <semaphore.h>
+#include <string.h>
 
 #include <iostream>
 
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include "sequential.hpp"
 #include "worker.hpp"
 
-#define __NO_BG_THREADS //this Makes things go synchronously
+#define INFOFILE "/tmp/workerinfo"
+#define FIFO "/tmp/passmessages"
+#define SEMAPHORE "just_one_bg_thread"
+
+#ifndef __NO_BG_THREADS
+sem_t   *mysemp;
+const char semname[] = "mysem";
+#endif
+
 
 /*
  * This function will actually do the work at signal recv
@@ -39,7 +53,7 @@ static void handler(int sig, siginfo_t *info, void *context){
 
 
 /* Registering the signal handler
- */
+*/
 void signal_handle(){
     struct sigaction sig_action;
     sig_action.sa_sigaction = handler;
@@ -64,7 +78,7 @@ void signal_handle(){
  */
 void *bg_worker(void *ptr){
 #ifdef __NO_BG_THREADS
-    
+
 #else
     signal_handle();
 
@@ -75,29 +89,58 @@ void *bg_worker(void *ptr){
     return NULL;
 }
 
+/*creates and tries to get the semaphore*/
+bool get_semaphore(){
+
+    mysemp = sem_open(semname, O_CREAT, 0666, 1);
+    if (mysemp == SEM_FAILED) {
+        printf("sem_open() failed %s\n", strerror(errno));
+    }
+
+    struct timespec abs_time;
+    abs_time.tv_sec = 1;
+    abs_time.tv_nsec = 0;
+
+    int sts = sem_timedwait(mysemp, &abs_time);
+    if (sts == 0) // got the lock
+        return true;
+    else if (errno == ETIMEDOUT)
+        return false;
+}
+
+void destroy_semaphore(){
+    sem_close(mysemp);
+    sem_unlink(semname);
+}
 
 /* This function spawns the worker thread
- */
+*/
 void thread_fn(void){
     pthread_t bg_thread;
     cpu_set_t cpuset;
 
 #ifdef __NO_BG_THREADS
-    bg_worker(NULL);
+    return;
 #else
+    //if this proc is successful in generating FIFO
+    //generate the pthread and populate such 
+    if(get_semaphore() == true)
+    {
+        //create fifo
+        //create pthread
+        int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
+        CPU_ZERO(&cpuset);
+        CPU_SET(last_cpu_id, &cpuset);
 
-    int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
-    CPU_ZERO(&cpuset);
-    CPU_SET(last_cpu_id, &cpuset);
-
-    if(pthread_create(&bg_thread, NULL, bg_worker, NULL)){
-        fprintf(stderr, "Error creating thread\n");
-        exit(-1);
-    }
-    if(pthread_getaffinity_np(bg_thread, 
-                sizeof(cpu_set_t), &cpuset) != 0){
-        fprintf(stderr, "Error setting thread affinity\n");
-        exit(-1);
+        if(pthread_create(&bg_thread, NULL, bg_worker, NULL)){
+            fprintf(stderr, "Error creating thread\n");
+            exit(-1);
+        }
+        if(pthread_getaffinity_np(bg_thread, 
+                    sizeof(cpu_set_t), &cpuset) != 0){
+            fprintf(stderr, "Error setting thread affinity\n");
+            exit(-1);
+        }
     }
 #endif
 }
