@@ -5,15 +5,18 @@
 
 #define PREFETCH_SIG SIGUSR1
 #define RELINQUISH_SIG SIGUSR2
+#define PREFETCH "prefetch"
+#define RELINQUISH "relinq"
 #define DURATION 1
 
 struct msg{
 	struct pos_bytes pos;
 	off_t stride;
-	char msg[10];
+	char instr[10]; //instruction
 };
 
 void thread_fn(void);
-void destroy_semaphore();
+void clean_state();
+bool instruct_prefetch(struct pos_bytes pos, off_t stride);
 
 #endif

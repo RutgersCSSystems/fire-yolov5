@@ -4,6 +4,7 @@
 #include "util.hpp"
 
 #include "sequential.hpp"
+#include "worker.hpp"
 
 off_t pages_readahead = 0;
 int times_prefetch = 0;
@@ -110,22 +111,8 @@ void sequential::update_stride(int fd){
 
         for(int i=1; i<HISTORY; i++){
             check_stride = stream->pos + stream->bytes;
-            /*
-#ifdef DEBUG
-printf("update_stride: fd:%d, pos:%lu, bytes:%lu\n",
-fd, stream->pos, stream->bytes);
-#endif
-*/
             stream++;
             check_stride = stream->pos - check_stride;
-            /*
-#ifdef DEBUG
-printf("update_stride: fd:%d, new_pos:%lu, check_stride:%lu\n",
-fd, stream->pos, check_stride);
-
-printf("fd:%d check_stride:%lu\n", fd, check_stride);
-#endif
-*/
             if(check_stride != this_stride){
                 this_stride = NOT_SEQ;
                 break;
@@ -149,11 +136,21 @@ bool sequential::exists(int fd)
 }
 
 
+/*seq_prefetch frontend*/
+bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
+#ifdef __NO_BG_THREAD
+    return __seq_prefetch(curr_access, stride);
+#else
+    return instruct_prefetch(curr_access, stride);
+#endif
+}
+
+
 /*
  * This function will prefetch for strided/seq accesses
  * returns 0 at success, -1 at failure
  */
-bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
+bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
     if(stride < 0)
         return -1;
