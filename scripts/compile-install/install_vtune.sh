@@ -162,6 +162,8 @@ post_installation () {
 	sudo echo "kernel.kptr_restrict=0" >> /etc/sysctl.conf         
 	sudo echo "kernel.perf_event_paranoid=0" >> /etc/sysctl.conf   
 	sudo sysctl -p /etc/sysctl.conf
+	sudo sysctl -w kernel.kptr_restrict=0
+	sudo sysctl -w kernel.perf_event_paranoid=-1
 	
 }
 
