@@ -4,9 +4,10 @@
 ##prefetch window multiple factor 1, 2, 4
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
+APP="strided_MADbench"
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-nodbg
-mkdir $RESULTS_FOLDER
+RESULTS_FOLDER=$OUTPUTDIR/$APP/results-sensitivity-sudarsun
+mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a apparr=("MADbench")
