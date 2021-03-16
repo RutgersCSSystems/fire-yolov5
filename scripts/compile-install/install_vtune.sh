@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -z "$PREFIX" ]; then
-    kernel_error "PREFIX environment variable not defined. Have you ran setvars?"
+if [ -z "$NVMBASE" ]; then
+    echo "NVMBASE environment variable not defined. Have you ran setvars?"
     exit 1
 fi
 
@@ -32,7 +32,7 @@ check_prerequisites () {
 		vtune_debug "Could not find xorg prequisite"
 		
 		vtune_debug "Trying to install xorg"
-		sudo apt-get install xorg
+		sudo apt-get install xorg -y
 
 		if [ $? -eq 0 ]; then
 			vtune_debug "Sucessfully installed Xorg"
@@ -42,7 +42,7 @@ check_prerequisites () {
 		fi
 	fi
 
-	sudo apt-get install libnss3 libcanberra-gtk3-module libcanberra-gtk-module gnome-keyring
+	sudo apt-get install -y libnss3 libcanberra-gtk3-module libcanberra-gtk-module gnome-keyring
 
 }
 
