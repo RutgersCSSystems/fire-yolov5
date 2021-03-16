@@ -3,8 +3,8 @@ CC=gcc
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
-#DEBUGFLAGS=-DDEBUG
-#NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
+DEBUGFLAGS=-DDEBUG
+NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 
 all: nopred seq 
 
