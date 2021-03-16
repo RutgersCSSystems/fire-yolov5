@@ -5,9 +5,9 @@
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-sudarsun
+RESULTS_FOLDER=results-sensitivity-sudarsun/noprep
 
-mkdir $RESULTS_FOLDER
+mkdir -p $RESULTS_FOLDER
 
 cd $APPDIR
 
@@ -20,13 +20,20 @@ declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*b
 declare -a segmentarr=("1" "256" "1024" "2048") #segmentsize
 
 
-declare -a transfersizearr=("16384") #transfer size
-declare -a blockprodarr=("100000") #blocksize = transfersize*blockprod
+declare -a transfersizearr=("1048576") #transfer size
+declare -a blockprodarr=("1000" "2000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1") #segmentsize
-
+declare -a predict=("0" "1")
 
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
+
+declare -a prefetchwindow=("8")
+
+
+
+#reduce the dirty files aggressively
+$ENVPATH/set_disk_dirty.sh
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -36,6 +43,15 @@ REFRESH() {
 	$NVMBASE/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
+}
+
+SYNCFILES() {
+
+	OUTPUT=$1
+	wait; sync
+	echo "*******************DMESG OUTPUT******************" >> $OUTPUT
+	dmesg | grep -v -F "systemd-journald" >> $OUTPUT
+	wait; sync
 }
 
 #Here is where we run the application
@@ -52,12 +68,24 @@ RUNAPP() {
 	BLOCKTIMES=$6
 	BLOCKSIZE=`echo "$TRANSFER * $BLOCKTIMES" | bc`
 	TPREFETCH=$7
+	REORDER="-C"
+	FILEPERPROC="-F"
+	KEEPFILE="-k"
+
+	#Unused
+	MADVICE="--mmap.madv_dont_need" #Currently not used
+	REORDERTASKRAND="-Z" #reorderTasksRandom -- changes task ordering to random ordering for readback
 
 	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_BLKSIZE-"$BLOCKSIZE"_TRANSFERSIZE-"$TRANSFER"_SEGMENTS-"$SEGMENT"_TIMESPFETCH-"$TPREFETCH".out"
 
 	echo "********** prepping File **************"
-	echo "mpirun -np $NPROC ior -w -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
-	mpirun -np $NPROC ior -w -F -k -e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT
+
+	PARAMS="-e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT $REORDER $FILEPERPROC $KEEPFILE"
+	WRITE=" -w "
+	READ=" -r "
+
+	#echo "mpirun -np $NPROC ior $WRITE $PARAMS"
+	#mpirun -np $NPROC ior $WRITE $PARAMS
 
 	REFRESH
 
@@ -71,21 +99,17 @@ RUNAPP() {
 		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
+	numactl --hardware &> $OUTPUT
+	wait; sync
 
 	if [[ "$APP" == "ior" ]]; then
-		rm -rf $OUTPUT
-		echo "$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
-		numactl --hardware &> $OUTPUT
-		wait; sync
-		$APPPREFIX mpirun -np $NPROC ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
+
+		echo "$APPPREFIX mpirun -np $NPROC $READ $PARAMS"
+		#$APPPREFIX mpirun -np $NPROC ior $READ $PARAMS &>> $OUTPUT
+		$APPPREFIX mpirun -np $NPROC ior $PARAMS &>> $OUTPUT
 		export LD_PRELOAD=""
-
 		REFRESH
-
-		wait; sync
-		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
-		dmesg | grep -v -F "systemd-journald" >> $OUTPUT
-		wait; sync
+		SYNCFILES $OUTPUT
 	fi
 }
 
