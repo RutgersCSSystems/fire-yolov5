@@ -154,7 +154,7 @@ void thread_fn(void){
         }
     }
     /*open fifo*/
-    if((fifofd = open(WORKERQ, O_RDWR | O_SYNC | O_CREAT, 0666)) == -1){
+    if((fifofd = open(WORKERQ, O_RDWR | O_CREAT, 0666)) == -1){
         printf("ERROR: unable to open fifo: %s\n", strerror(errno));
         exit(-1);
     }

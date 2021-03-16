@@ -66,7 +66,7 @@ void con(){
 
     set_pvt_lru();
 
-#ifndef __NO_BG_THREAD
+#if defined PREDICTOR && !defined __NO_BG_THREADS
     thread_fn();
 #endif
 }
@@ -75,7 +75,7 @@ void con(){
 void dest(){
     debug_print("application termination...\n");
 
-#ifndef __NO_BG_THREAD
+#ifndef __NO_BG_THREADS
     clean_state();
 #endif
 

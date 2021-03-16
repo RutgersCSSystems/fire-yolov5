@@ -138,7 +138,7 @@ bool sequential::exists(int fd)
 
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
-#ifdef __NO_BG_THREAD
+#ifdef __NO_BG_THREADS
     return __seq_prefetch(curr_access, stride);
 #else
     return instruct_prefetch(curr_access, stride);
