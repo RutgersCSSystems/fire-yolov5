@@ -17,11 +17,11 @@ mkdir -p $RESULTS_FOLDER
 
 cd $APPDIR
 
-declare -a predict=("0" "1")
-declare -a workarr=("16384")
-declare -a thrdarr=("16")
+declare -a predict=("0")
+declare -a workarr=("4096" "8192" "16384")
+declare -a thrdarr=("1" "4" "16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
-declare -a readsize=("524288" "1048576")
+declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 
@@ -64,30 +64,31 @@ RUNAPP()
 
 	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH".out"
 
+	APPPREFIX="/usr/bin/time -v"
 	VTUNE_TRACE=""
 	if [[ "$VTUNE_ENABLE" == "1" ]]; then
 		VTUNE_ROOT=$RESULTS_FOLDER/vtune
 		VTUNE_RESULT="vtune_"$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH
 		VTUNE_TRACE="${AMPLXE} ${CONFIG_AMPLXE} -r $VTUNE_ROOT/$VTUNE_RESULT --"
+		APPPREFIX=""
 		mkdir $VTUNE_ROOT
 	fi
 
 	echo "*********** running $OUTPUT ***********"
 
 	export TIMESPREFETCH=$TPREFETCH
-	APPPREFIX="/usr/bin/time -v"
 
 	if [[ "$PREDICT" == "1" ]]; then
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
-		export LD_PRELOAD=/usr/lib/libnopred.so
+		export LD_PRELOAD=""
 	fi
 
 	if [[ "$APP" == "strided_MADbench" ]]; then
 		echo "$APPPREFIX mpiexec -n $NPROC $VTUNE_TRACE ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
 		numactl --hard &> $OUTPUT
 		wait; sync
-		$APPPREFIX mpiexec -n $NPROC $VTUNE_TRACE ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &>> $OUTPUT
+		$APPPREFIX mpiexec -n $NPROC $VTUNE_TRACE ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH  &>> $OUTPUT
 		export LD_PRELOAD=""
 		wait; sync
 		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
