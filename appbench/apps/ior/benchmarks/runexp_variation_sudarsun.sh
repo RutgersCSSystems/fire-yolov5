@@ -5,7 +5,7 @@
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-sudarsun/noprep
+RESULTS_FOLDER=results-sensitivity-sudarsun/noprep-threading
 
 mkdir -p $RESULTS_FOLDER
 
@@ -19,16 +19,14 @@ declare -a transfersizearr=("8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1" "256" "1024" "2048") #segmentsize
 
-
+declare -a thrdarr=("8")
 declare -a transfersizearr=("1048576") #transfer size
-declare -a blockprodarr=("1000" "2000") #blocksize = transfersize*blockprod
-declare -a segmentarr=("1") #segmentsize
+declare -a blockprodarr=("1000") #blocksize = transfersize*blockprod
+declare -a segmentarr=("256") #segmentsize
 declare -a predict=("0" "1")
-
 #sizeofprefetch = prefetchwindow * readsize
-declare -a prefetchwindow=("1" "2" "4")
-
-declare -a prefetchwindow=("8")
+declare -a prefetchwindow=("1" "2")
+#declare -a prefetchwindow=("8")
 
 
 
@@ -76,7 +74,10 @@ RUNAPP() {
 	MADVICE="--mmap.madv_dont_need" #Currently not used
 	REORDERTASKRAND="-Z" #reorderTasksRandom -- changes task ordering to random ordering for readback
 
-	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_BLKSIZE-"$BLOCKSIZE"_TRANSFERSIZE-"$TRANSFER"_SEGMENTS-"$SEGMENT"_TIMESPFETCH-"$TPREFETCH".out"
+	OUTPUTDIR=$RESULTS_FOLDER/"BLKSIZE-"$BLOCKSIZE
+	mkdir -p $OUTPUTDIR
+
+	OUTPUT=$OUTPUTDIR/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_BLKSIZE-"$BLOCKSIZE"_TRANSFERSIZE-"$TRANSFER"_SEGMENTS-"$SEGMENT"_TIMESPFETCH-"$TPREFETCH".out"
 
 	echo "********** prepping File **************"
 
