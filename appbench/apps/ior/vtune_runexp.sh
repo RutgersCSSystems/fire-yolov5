@@ -18,10 +18,10 @@ mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a predict=("0")
-declare -a thrdarr=("16")
+declare -a thrdarr=("4")
 declare -a transfersizearr=("8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000") #blocksize = transfersize*blockprod
-declare -a segmentarr=("1" "256" ) #segmentsize
+declare -a segmentarr=("1") #segmentsize
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 
@@ -66,7 +66,7 @@ RUNAPP() {
 	VTUNE_TRACE=""
 	if [[ "$VTUNE_ENABLE" == "1" ]]; then
 		VTUNE_ROOT=$RESULTS_FOLDER/vtune
-		VTUNE_RESULT="vtune_"$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH
+		VTUNE_RESULT="vtune_"$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_BLKSIZE-"$BLOCKSIZE"_TRANSFERSIZE-"$TRANSFER"_SEGMENTS-"$SEGMENT"_TIMESPFETCH-"$TPREFETCH
 		VTUNE_TRACE="${AMPLXE} ${CONFIG_AMPLXE} -r $VTUNE_ROOT/$VTUNE_RESULT --"
 		APPPREFIX=""
 		mkdir $VTUNE_ROOT
@@ -80,12 +80,12 @@ RUNAPP() {
 	fi
 
 
-	if [[ "$APP" == "ior" ]]; then
+	if [[ "$APP" == "IOR" ]]; then
 		rm -rf $OUTPUT
 		echo "$APPPREFIX mpirun -np $NPROC $VTUNE_TRACE ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT"
 		numactl --hard &> $OUTPUT
 		wait; sync
-		$APPPREFIX mpirun -np $NPROC $VTUNE_TRACE ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT &>> $OUTPUT
+		mpirun -np $NPROC $VTUNE_TRACE ior -r -F -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT
 		export LD_PRELOAD=""
 
 		REFRESH
