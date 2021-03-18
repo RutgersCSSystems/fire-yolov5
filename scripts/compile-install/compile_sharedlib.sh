@@ -1,7 +1,9 @@
-FILE=$1
+#!/bin/bash
 
-cd $SHARED_LIBS/construct
-cp "migration"_$1".c" migration.c
-make clean 
-make
-sudo make install
+if [ -z "$NVMBASE" ]; then
+    echo "NVMBASE environment variable not defined. Have you ran setvars?"
+    exit 1
+fi
+
+cd $SHARED_LIBS/pred
+make clean; make -j; make install
