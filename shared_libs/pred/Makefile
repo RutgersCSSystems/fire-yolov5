@@ -1,9 +1,9 @@
-CXX=g++
-CC=gcc
+CXX=g++-4.8
+CC=gcc-4.8
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
-DEBUGFLAGS=-DDEBUG
+#DEBUGFLAGS=-DDEBUG
 NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 
 all: nopred seq 
