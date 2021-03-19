@@ -18,10 +18,10 @@ mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a predict=("0")
-declare -a thrdarr=("4")
+declare -a thrdarr=("4" "8")
 declare -a transfersizearr=("8192" "16384") #transfer size
 declare -a blockprodarr=("100000" "150000") #blocksize = transfersize*blockprod
-declare -a segmentarr=("1") #segmentsize
+declare -a segmentarr=("1" "10") #segmentsize
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2" "4")
 
