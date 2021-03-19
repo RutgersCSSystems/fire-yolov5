@@ -173,7 +173,7 @@ kernel_instrumentation () {
 	cd $NVMBASE
 	wget https://software.intel.com/content/dam/develop/external/us/en/documents/sepdk.tar.gz
 	tar -xvf sepdk.tar.gz
-	sudo cp sepdk/* $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk
+	sudo cp -r sepdk/* $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk
 	cd $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk/src
 	sudo ./build-driver -ni -pu --kernel-src-dir=$NVMBASE/linux-4.15.1
 	sudo sh -c "./insmod-sep -r -pu -g root"
