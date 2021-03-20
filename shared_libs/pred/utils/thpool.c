@@ -22,7 +22,7 @@
 
 #include "thpool.h"
 
-#ifdef THPOOL_DEBUG
+#ifdef DEBUG
 #define THPOOL_DEBUG 1
 #else
 #define THPOOL_DEBUG 0

@@ -17,15 +17,17 @@
 
 #include "sequential.hpp"
 #include "worker.hpp"
+#include "utils/thpool.h"
 
-#define WORKERQ "/tmp/passmessages"
-#define SEMAPHORE "just_one_bg_thread"
+//Worker pool for prefetching
+threadpool workerpool = NULL;
 
 sem_t   *mysemp;
 const char semname[] = "mysem";
 int fifofd = -1;
 
 
+#if 0
 /*
  * This function will actually do the work at signal recv
  */
@@ -70,7 +72,6 @@ void signal_handle(){
     }
 }
 
-
 /*
  * The worker while waiting for signal from others
  */
@@ -94,6 +95,7 @@ void *bg_worker(void *ptr){
         }
     }
 }
+#endif
 
 
 /*creates and tries to get the semaphore*/
@@ -121,63 +123,29 @@ bool get_semaphore(){
 
 /* This function spawns the worker thread
 */
-void thread_fn(void){
+void thread_fn(int nr_workers){
     pthread_t bg_thread;
     cpu_set_t cpuset;
 
 #ifdef __NO_BG_THREADS
     return;
 #else
-    //if this proc is successful in generating FIFO
-    //generate the pthread and populate such 
-    if(get_semaphore())
-    {
-        //create fifo
-        if(mkfifo(WORKERQ, 0666) != 0){
-            printf("ERROR: mkfifo : %s\n", strerror(errno));
-            exit(-1);
-        }
-        //create pthread
-
-        int last_cpu_id= sysconf(_SC_NPROCESSORS_ONLN) -1;
-        CPU_ZERO(&cpuset);
-        CPU_SET(last_cpu_id, &cpuset);
-
-        if(pthread_create(&bg_thread, NULL, bg_worker, NULL)){
-            fprintf(stderr, "Error creating thread\n");
-            exit(-1);
-        }
-        if(pthread_getaffinity_np(bg_thread, 
-                    sizeof(cpu_set_t), &cpuset) != 0){
-            fprintf(stderr, "Error setting thread affinity\n");
-            exit(-1);
-        }
-    }
-    /*open fifo*/
-    if((fifofd = open(WORKERQ, O_RDWR | O_CREAT, 0666)) == -1){
-        printf("ERROR: unable to open fifo: %s\n", strerror(errno));
-        exit(-1);
-    }
-
+    //if(get_semaphore())
+    workerpool = thpool_init(nr_workers);
 #endif
 }
 
 
-/*send message to prefetch */
-bool instruct_prefetch(struct pos_bytes pos, off_t stride){
-    if(stride < 0)
-        return false; 
+/* add  prefetch work to workerpool
+ * returns 0 if successful, -1 otherwise
+ */
+bool instruct_prefetch(void *work){
+    if(!work)
+        return -1; 
 
-    struct msg message;
-
-    message.pos = pos;
-    message.stride = stride;
-    strcpy(message.instr, PREFETCH);
-
-    if(fifofd)
-        return write(fifofd, &message, sizeof(struct msg));
-
-    return false;
+    //struct msg w = *(struct msg*)work;
+    return thpool_add_work(workerpool, __seq_prefetch, work);
+    //thpool_add_work(workerpool, __seq_prefetch, (struct msg *)&w);
 }
 
 
@@ -186,6 +154,6 @@ void clean_state(){
     sem_close(mysemp);
     sem_unlink(semname);
 
-    close(fifofd);
-    unlink(WORKERQ);
+    thpool_wait(workerpool);
+    thpool_destroy(workerpool);
 }

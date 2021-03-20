@@ -67,7 +67,9 @@ void con(){
     set_pvt_lru();
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
-    thread_fn();
+    int nr_workers = 1;
+    //provide nr_workers from env var
+    thread_fn(nr_workers);
 #endif
 }
 

@@ -138,10 +138,14 @@ bool sequential::exists(int fd)
 
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
-#ifdef __NO_BG_THREADS
-    return __seq_prefetch(curr_access, stride);
+    struct msg ret;
+    ret.pos = curr_access;
+    ret.stride = stride;
+
+#ifdef __NO_BG_THREAD
+    return __seq_prefetch((struct msg*)&ret);
 #else
-    return instruct_prefetch(curr_access, stride);
+    return instruct_prefetch((struct msg*)&ret);
 #endif
 }
 
@@ -150,10 +154,15 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
  * This function will prefetch for strided/seq accesses
  * returns 0 at success, -1 at failure
  */
-bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
+//bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
+void __seq_prefetch(void *pfetch_info){
+
+    struct msg dat = *(struct msg*)pfetch_info;
+    struct pos_bytes curr_access = dat.pos;
+    off_t stride = dat.stride;
 
     if(stride < 0)
-        return -1;
+        return;
 
     //initialize times_prefetch
     if(times_prefetch == 0)
@@ -177,7 +186,7 @@ bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
     if(bytes_toread <= 0){
 	    printf("ERROR: %s: bytes_toread <= 0 \n", __func__);
-	    return false;
+	    return;
     }
 
     pages_readahead += (bytes_toread >> PAGESHIFT);
@@ -187,10 +196,16 @@ bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
     /*print number of readahead pages*/
     debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
+<<<<<<< HEAD
     //fprintf(stderr, "seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n",
 	//    stride, curr_access.pos, nextpos, bytes_toread);
 
     return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
     //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
 
+=======
+    //do readhead
+    readahead(curr_access.fd, nextpos, bytes_toread);
+    return;
+>>>>>>> ef757efa3... thpool completion
 }

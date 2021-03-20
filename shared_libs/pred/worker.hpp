@@ -9,14 +9,14 @@
 #define RELINQUISH "relinq"
 #define DURATION 1
 
+/*used to add work to queue*/
 struct msg{
 	struct pos_bytes pos;
 	off_t stride;
-	char instr[10]; //instruction
 };
 
-void thread_fn(void);
+void thread_fn(int nr_workers);
+bool instruct_prefetch(void *work);
 void clean_state();
-bool instruct_prefetch(struct pos_bytes pos, off_t stride);
 
 #endif
