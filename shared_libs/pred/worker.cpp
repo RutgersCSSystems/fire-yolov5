@@ -130,6 +130,7 @@ void thread_fn(int nr_workers){
 #ifdef __NO_BG_THREADS
     return;
 #else
+    //Just one proc goes in this
     //if(get_semaphore())
     workerpool = thpool_init(nr_workers);
 #endif

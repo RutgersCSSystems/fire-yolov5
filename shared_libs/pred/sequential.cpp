@@ -138,6 +138,7 @@ bool sequential::exists(int fd)
 
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
+
     struct msg ret;
     ret.pos = curr_access;
     ret.stride = stride;
@@ -197,12 +198,18 @@ void __seq_prefetch(void *pfetch_info){
     debug_print("nr_pages_readahead %lu\n", pages_readahead);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     //fprintf(stderr, "seq_pefetch: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n",
 	//    stride, curr_access.pos, nextpos, bytes_toread);
 
     return readahead(curr_access.fd, nextpos, bytes_toread); //Do readahead
     //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
 
+=======
+    //do readhead
+    readahead(curr_access.fd, nextpos, bytes_toread);
+    return;
+>>>>>>> ef757efa3... thpool completion
 =======
     //do readhead
     readahead(curr_access.fd, nextpos, bytes_toread);
