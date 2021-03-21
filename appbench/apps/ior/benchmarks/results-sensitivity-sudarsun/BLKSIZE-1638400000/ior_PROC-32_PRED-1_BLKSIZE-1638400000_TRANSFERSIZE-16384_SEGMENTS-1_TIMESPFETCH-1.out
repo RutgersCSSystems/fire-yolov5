@@ -1,0 +1,200 @@
+fclose PID:10090 fd:3
+fclose PID:10090 fd:4
+fclose PID:10090 fd:4
+fclose PID:10090 fd:3
+available: 2 nodes (0-1)
+fclose PID:10090 fd:3
+node 0 cpus:fclose PID:10090 fd:3
+ 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23
+node 0 size: 64178 MB
+node 0 free: 63914 MB
+fclose PID:10090 fd:3
+node 1 cpus:fclose PID:10090 fd:3
+ 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31
+node 1 size: 64487 MB
+node 1 free: 64306 MB
+fclose PID:10090 fd:3
+fclose PID:10090 fd:3
+node distances:
+node   0   1 
+  0:  10  21 
+  1:  21  10 
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2256 KB, SharedMem= 0 KB, HardPageFault= 2
+fclose PID:10095 fd:12
+fclose PID:10100 fd:8
+fclose PID:10102 fd:8
+fclose PID:10103 fd:8
+fclose PID:10104 fd:8
+fclose PID:10105 fd:8
+fclose PID:10107 fd:8
+fclose PID:10108 fd:8
+fclose PID:10124 fd:8
+fclose PID:10099 fd:8
+fclose PID:10106 fd:8
+fclose PID:10101 fd:8
+fclose PID:10119 fd:8
+fclose PID:10114 fd:8
+fclose PID:10115 fd:8
+fclose PID:10109 fd:8
+fclose PID:10110 fd:8
+fclose PID:10112 fd:8
+fclose PID:10117 fd:8
+fclose PID:10121 fd:8
+fclose PID:10122 fd:8
+fclose PID:10125 fd:8
+fclose PID:10096 fd:10
+fclose PID:10097 fd:8
+fclose PID:10111 fd:8
+fclose PID:10113 fd:8
+fclose PID:10116 fd:8
+fclose PID:10118 fd:8
+fclose PID:10120 fd:8
+fclose PID:10123 fd:8
+fclose PID:10126 fd:8
+fclose PID:10098 fd:8
+IOR-3.4.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Sun Mar 14 15:15:21 2021
+Command line        : ior -r -F -o test_outfile_ior -v -b 1638400000 -t 16384 -s 1
+Machine             : Linux c220g1.sudarsun4.fsperfatscale-pg0.wisc.cloudlab.us
+Start time skew across all tasks: 0.01 sec
+TestID              : 0
+StartTime           : Sun Mar 14 15:15:21 2021
+Path                : test_outfile_ior.00000000
+FS                  : 439.1 GiB   Used FS: 12.0%   Inodes: 28.0 Mi   Used Inodes: 0.6%
+Participating tasks : 32
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : test_outfile_ior
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : no tasks offsets
+nodes               : 1
+tasks               : 32
+clients per node    : 32
+repetitions         : 1
+xfersize            : 16384 bytes
+blocksize           : 1.53 GiB
+aggregate filesize  : 48.83 GiB
+verbose             : 1
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Sun Mar 14 15:15:21 2021
+
+read      479.93     30716      0.001034    1600000    16.00      0.015363   104.18     2.76       104.18     0   
+remove    -          -          -           -          -          -          -          -          0.538348   0   
+Max Read:  479.93 MiB/sec (503.24 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          479.93     479.93     479.93       0.00   30715.46   30715.46   30715.46       0.00  104.18207         NA            NA     0     32  32    1   1     0        1         0    0      1 1638400000    16384   50000.0 POSIX      0
+Finished            : Sun Mar 14 15:17:06 2021
+READAHEAD_TIME:127311.000000 us
+MaxRSS= 11360 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:131490.000000 us
+MaxRSS= 11252 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:129554.000000 us
+MaxRSS= 11352 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:127534.000000 us
+MaxRSS= 11320 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:126891.000000 us
+MaxRSS= 11232 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:130486.000000 us
+MaxRSS= 11280 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:129393.000000 us
+MaxRSS= 11372 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:125221.000000 us
+MaxRSS= 11248 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:131205.000000 us
+MaxRSS= 10980 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:125783.000000 us
+MaxRSS= 11284 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:128189.000000 us
+MaxRSS= 11196 KB, SharedMem= 0 KB, HardPageFault= 6
+READAHEAD_TIME:125037.000000 us
+MaxRSS= 11152 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:121871.000000 us
+MaxRSS= 11228 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:124233.000000 us
+MaxRSS= 11032 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:125260.000000 us
+MaxRSS= 11244 KB, SharedMem= 0 KB, HardPageFault= 6
+READAHEAD_TIME:131752.000000 us
+MaxRSS= 11272 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:125343.000000 us
+MaxRSS= 11136 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:132773.000000 us
+MaxRSS= 11172 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:126964.000000 us
+MaxRSS= 11212 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:128473.000000 us
+MaxRSS= 11360 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:132385.000000 us
+MaxRSS= 11276 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:126749.000000 us
+MaxRSS= 11360 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:126983.000000 us
+MaxRSS= 11256 KB, SharedMem= 0 KB, HardPageFault= 7
+READAHEAD_TIME:134043.000000 us
+MaxRSS= 11276 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:127549.000000 us
+MaxRSS= 11144 KB, SharedMem= 0 KB, HardPageFault= 7
+READAHEAD_TIME:135858.000000 us
+MaxRSS= 11348 KB, SharedMem= 0 KB, HardPageFault= 6
+READAHEAD_TIME:129668.000000 us
+MaxRSS= 11220 KB, SharedMem= 0 KB, HardPageFault= 7
+READAHEAD_TIME:132820.000000 us
+MaxRSS= 11056 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:130052.000000 us
+MaxRSS= 11800 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:126617.000000 us
+MaxRSS= 11656 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:130710.000000 us
+MaxRSS= 11848 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:130467.000000 us
+MaxRSS= 11664 KB, SharedMem= 0 KB, HardPageFault= 8
+fclose PID:10094 fd:0
+fclose PID:10094 fd:6
+fclose PID:10094 fd:6
+fclose PID:10094 fd:0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5276 KB, SharedMem= 0 KB, HardPageFault= 2
+fclose PID:10093 fd:3
+fclose PID:10093 fd:4
+fclose PID:10093 fd:4
+fclose PID:10093 fd:3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4888 KB, SharedMem= 0 KB, HardPageFault= 4
+	Command being timed: "mpirun -np 32 ior -r -F -o test_outfile_ior -v -b 1638400000 -t 16384 -s 1"
+	User time (seconds): 50.50
+	System time (seconds): 39.28
+	Percent of CPU this job got: 85%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:45.32
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 11848
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 282
+	Minor (reclaiming a frame) page faults: 57707
+	Voluntary context switches: 225683
+	Involuntary context switches: 746
+	Swaps: 0
+	File system inputs: 102409568
+	File system outputs: 24
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2192 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************

@@ -1,0 +1,104 @@
+fclose PID:8070 fd:3
+fclose PID:8070 fd:4
+fclose PID:8070 fd:4
+fclose PID:8070 fd:3
+available: 2 nodes (0-1)
+fclose PID:8070 fd:4
+node 0 cpus:fclose PID:8070 fd:4
+ 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23
+node 0 size: 64178 MB
+node 0 free: 63898 MB
+fclose PID:8070 fd:4
+node 1 cpus:fclose PID:8070 fd:4
+ 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31
+node 1 size: 64487 MB
+node 1 free: 64301 MB
+fclose PID:8070 fd:4
+fclose PID:8070 fd:4
+node distances:
+node   0   1 
+  0:  10  21 
+  1:  21  10 
+READAHEAD_TIME:0.000000 us
+MaxRSS= 3896 KB, SharedMem= 0 KB, HardPageFault= 9
+fclose PID:8079 fd:15
+fclose PID:8080 fd:14
+fclose PID:8084 fd:12
+fclose PID:8088 fd:12
+fclose PID:8092 fd:12
+fclose PID:8093 fd:12
+fclose PID:8081 fd:12
+fclose PID:8082 fd:12
+fclose PID:8083 fd:12
+fclose PID:8086 fd:12
+fclose PID:8087 fd:12
+fclose PID:8089 fd:12
+fclose PID:8090 fd:12
+fclose PID:8094 fd:12
+fclose PID:8085 fd:12
+fclose PID:8091 fd:12
+IOR-3.4.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Tue Mar 16 14:21:59 2021
+Command line        : ior -e -o test_outfile_ior -v -b 1048576000 -t 1048576 -s 256 -C -F -k
+Machine             : Linux c220g1.sudarsun4.fsperfatscale-pg0.wisc.cloudlab.us
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Tue Mar 16 14:21:59 2021
+Path                : test_outfile_ior.00000000
+FS                  : 439.1 GiB   Used FS: 0.9%   Inodes: 28.0 Mi   Used Inodes: 0.6%
+Participating tasks : 16
+Using reorderTasks '-C' (useful to avoid read cache in client)
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : test_outfile_ior
+access              : file-per-process
+type                : independent
+segments            : 256
+ordering in a file  : sequential
+ordering inter file : constant task offset
+task offset         : 1
+nodes               : 1
+tasks               : 16
+clients per node    : 16
+repetitions         : 1
+xfersize            : 1 MiB
+blocksize           : 1000 MiB
+aggregate filesize  : 3.91 TiB
+verbose             : 1
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Tue Mar 16 14:21:59 2021
+WARNING: Task 2, partial write(), 135168 of 1048576 bytes at offset 27601666048
+WARNING: Task 11, partial write(), 364544 of 1048576 bytes at offset 27639414784
+WARNING: Task 11, partial write(), 675840 of 684032 bytes at offset 27639779328
+WARNING: Task 5, partial write(), 323584 of 1048576 bytes at offset 27802992640
+ERROR: write(12, 0x7f9e2e7d1000, 724992) failed, (aiori-POSIX.c:563)
+WARNING: Task 8, partial write(), 282624 of 1048576 bytes at offset 27604811776
+ERROR: write(12, 0x7f3cd2df0000, 765952) failed, (aiori-POSIX.c:563)
+WARNING: Task 12, partial write(), 315392 of 1048576 bytes at offset 27627880448
+ERROR: write(12, 0x7ff4dcc4a000, 733184) failed, (aiori-POSIX.c:563)
+WARNING: Task 13, partial write(), 942080 of 1048576 bytes at offset 27699183616
+ERROR: write(12, 0x7f06c7965000, 106496) failed, (aiori-POSIX.c:563)
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 5
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 13
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 8
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 12
+WARNING: Task 3, partial write(), 966656 of 1048576 bytes at offset 27678212096
+ERROR: write(12, 0x7f1e99d0d000, 81920) failed, (aiori-POSIX.c:563)
+WARNING: Task 6, partial write(), 77824 of 1048576 bytes at offset 27801944064
+ERROR: write(12, 0x7f447164e000, 970752) failed, (aiori-POSIX.c:563)
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 3
+application called MPI_Abort(MPI_COMM_WORLD, -1) - process 6
+fclose PID:8077 fd:4
+fclose PID:8077 fd:5
+fclose PID:8077 fd:5
+fclose PID:8077 fd:4
+READAHEAD_TIME:0.000000 us
+MaxRSS= 7572 KB, SharedMem= 0 KB, HardPageFault= 4
+Command exited with non-zero status 255
+	Command being timed: "mpirun -np 16 ior -e -o

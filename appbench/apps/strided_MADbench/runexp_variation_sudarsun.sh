@@ -4,9 +4,10 @@
 ##prefetch window multiple factor 1, 2, 4
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
+APP="strided_MADbench"
 APPDIR=$PWD
-RESULTS_FOLDER=results-sensitivity-nodbg
-mkdir $RESULTS_FOLDER
+RESULTS_FOLDER=$OUTPUTDIR/$APP/results-sensitivity-sudarsun
+mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
 declare -a apparr=("MADbench")
@@ -31,7 +32,7 @@ STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
 REFRESH() {
 	export LD_PRELOAD=""
 	rm -rf files/
-	$NVMBASE/scripts/clear_cache.sh
+	$NVMBASE/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
 }

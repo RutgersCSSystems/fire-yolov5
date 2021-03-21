@@ -199,5 +199,6 @@ void __seq_prefetch(void *pfetch_info){
 
     //do readhead
     readahead(curr_access.fd, nextpos, bytes_toread);
+    //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
     return;
 }

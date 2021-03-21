@@ -66,7 +66,7 @@ void con(){
 
     set_pvt_lru();
 
-#ifndef __NO_BG_THREAD
+#if defined PREDICTOR && !defined __NO_BG_THREADS
     int nr_workers = 1;
     //provide nr_workers from env var
     thread_fn(nr_workers);
@@ -77,7 +77,7 @@ void con(){
 void dest(){
     debug_print("application termination...\n");
 
-#ifndef __NO_BG_THREAD
+#ifndef __NO_BG_THREADS
     clean_state();
 #endif
 
@@ -191,7 +191,7 @@ int fclose(FILE *stream){
     debug_print("fclose detected\n");
 
     int fd = fileno(stream);
-    printf("%s PID:%d fd:%d\n", __func__, getpid(), fd);
+    debug_print("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 #ifdef PREDICTOR
     if(reg_file(stream)){
         handle_close(fd);

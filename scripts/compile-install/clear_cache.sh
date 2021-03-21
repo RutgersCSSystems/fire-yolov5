@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 FlushDisk()
 {
@@ -10,4 +10,4 @@ FlushDisk()
 }
 
 FlushDisk
-numactl --hardware
+#numactl --hardware
