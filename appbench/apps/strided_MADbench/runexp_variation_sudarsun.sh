@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 if [ -z "$NVMBASE" ]; then
 	echo "NVMBASE environment variable not defined. Have you ran setvars?"
@@ -68,7 +68,7 @@ RUNAPP()
 		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
-	COMMAND=$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+	COMMAND="$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
 	echo "$COMMAND"
 	numactl --hardware &> $OUTPUT
 	wait; sync
