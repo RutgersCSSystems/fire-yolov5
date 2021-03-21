@@ -17,7 +17,6 @@
 
 #include "sequential.hpp"
 #include "worker.hpp"
-#include "utils/thpool.h"
 
 //Worker pool for prefetching
 threadpool workerpool = NULL;
@@ -137,16 +136,9 @@ void thread_fn(int nr_workers){
 }
 
 
-/* add  prefetch work to workerpool
- * returns 0 if successful, -1 otherwise
- */
-bool instruct_prefetch(void *work){
-    if(!work)
-        return -1; 
-
-    //struct msg w = *(struct msg*)work;
-    return thpool_add_work(workerpool, __seq_prefetch, work);
-    //thpool_add_work(workerpool, __seq_prefetch, (struct msg *)&w);
+/*to be called only after thread_fn*/
+threadpool get_thpool(){
+	return workerpool;
 }
 
 

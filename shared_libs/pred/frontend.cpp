@@ -77,7 +77,7 @@ void con(){
 void dest(){
     debug_print("application termination...\n");
 
-#ifndef __NO_BG_THREADS
+#if defined PREDICTOR && !defined __NO_BG_THREADS
     clean_state();
 #endif
 
@@ -159,7 +159,6 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t read(int fd, void *data, size_t size){
 
-    debug_print("Hello read: %d\n", fd);
     ssize_t amount_read = real_read(fd, data, size);
 
 #ifdef PREDICTOR
@@ -188,8 +187,6 @@ ssize_t write(int fd, const void *data, size_t size){
 
 
 int fclose(FILE *stream){
-    debug_print("fclose detected\n");
-
     int fd = fileno(stream);
     debug_print("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 #ifdef PREDICTOR

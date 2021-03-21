@@ -2,12 +2,14 @@
 #define _WORKER_HPP
 
 #include "util.hpp"
+#include "utils/thpool.h"
 
 #define PREFETCH_SIG SIGUSR1
 #define RELINQUISH_SIG SIGUSR2
 #define PREFETCH "prefetch"
 #define RELINQUISH "relinq"
 #define DURATION 1
+
 
 /*used to add work to queue*/
 struct msg{
@@ -16,7 +18,7 @@ struct msg{
 };
 
 void thread_fn(int nr_workers);
-bool instruct_prefetch(void *work);
+threadpool get_thpool();
 void clean_state();
 
 #endif

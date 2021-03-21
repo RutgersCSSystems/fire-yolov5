@@ -111,6 +111,7 @@ gettimeofday(&start, NULL);
 #ifdef SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
+        debug_print("handle_read: sequential\n");
         seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){

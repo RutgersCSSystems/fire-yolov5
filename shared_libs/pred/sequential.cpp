@@ -139,15 +139,17 @@ bool sequential::exists(int fd)
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
-    struct msg ret;
-    ret.pos = curr_access;
-    ret.stride = stride;
+    /*TODO: Make this malloc scalable*/
+    struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
+    ret->pos = curr_access;
+    ret->stride = stride;
 
-#ifdef __NO_BG_THREAD
-    return __seq_prefetch((struct msg*)&ret);
+#ifdef __NO_BG_THREADS
+    __seq_prefetch((struct msg*)ret);
 #else
-    return instruct_prefetch((struct msg*)&ret);
+    return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
 #endif
+    return true;
 }
 
 
