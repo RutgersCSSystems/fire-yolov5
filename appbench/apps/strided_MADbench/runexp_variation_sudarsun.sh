@@ -1,16 +1,21 @@
 #!/bin/bash
 #set -x
 
+if [ -z "$NVMBASE" ]; then
+	echo "NVMBASE environment variable not defined. Have you ran setvars?"
+	exit 1
+fi
+
 ##prefetch window multiple factor 1, 2, 4
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APP="strided_MADbench"
-APPDIR=$PWD
-RESULTS_FOLDER=$OUTPUTDIR/$APP/results-sensitivity-sudarsun
+RIGHTNOW=`date +"%H-%M_%m-%d-%y"`
+APPDIR=$APPS/strided_MADbench
+RESULTS_FOLDER=$OUTPUTDIR/$APP/bg-thpool-sensitivity-$RIGHTNOW
 mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
-declare -a apparr=("MADbench")
 declare -a predict=("0" "1")
 declare -a workarr=("4096" "8192" "16384")
 declare -a thrdarr=("1" "4" "16")
@@ -46,10 +51,9 @@ RUNAPP()
 
 	NPROC=$1
 	WORKLOAD=$2
-	APP=$3
-	PREDICT=$4
-	RECORD=$5
-	TPREFETCH=$6
+	PREDICT=$3
+	RECORD=$4
+	TPREFETCH=$5
 
 	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH".out"
 
@@ -64,18 +68,16 @@ RUNAPP()
 		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
-
-	if [[ "$APP" == "MADbench" ]]; then
-		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
-		numactl --hard &> $OUTPUT
-		wait; sync
-		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH &>> $OUTPUT
-		export LD_PRELOAD=""
-		wait; sync
-		echo "*******************DMESG OUTPUT******************" >> $OUTPUT
-		dmesg | grep -v -F "systemd-journald" >> $OUTPUT
-		wait; sync
-	fi
+	COMMAND=$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+	echo "$COMMAND"
+	numactl --hardware &> $OUTPUT
+	wait; sync
+	$COMMAND &>> $OUTPUT
+	export LD_PRELOAD=""
+	wait; sync
+	echo "*******************DMESG OUTPUT******************" >> $OUTPUT
+	dmesg | grep -v -F "systemd-journald" >> $OUTPUT
+	wait; sync
 
 }
 
@@ -83,32 +85,27 @@ RUNAPP()
 make clean; make -j ##Make MADBench
 REFRESH
 
-for APP in "${apparr[@]}"
-do
-	for NPROC in "${thrdarr[@]}"
-	do	
-		for WORKLOAD in "${workarr[@]}"
+for NPROC in "${thrdarr[@]}"
+do	
+	for WORKLOAD in "${workarr[@]}"
+	do
+		for READSIZE in "${readsize[@]}"
 		do
-			for READSIZE in "${readsize[@]}"
-			do
-				for PREDICT in "${predict[@]}"
+			for PREDICT in "${predict[@]}"
+			do 
+				for PREFETCHTIMES in "${prefetchwindow[@]}"
 				do 
-					for PREFETCHTIMES in "${prefetchwindow[@]}"
-					do 
 
-						RUNAPP $NPROC $WORKLOAD $APP $PREDICT $READSIZE $PREFETCHTIMES
-						REFRESH
-					done
+					RUNAPP $NPROC $WORKLOAD $PREDICT $READSIZE $PREFETCHTIMES
+					REFRESH
 				done
-			done 
-		done	
-	done
+			done
+		done 
+	done	
 done
 
 git add $RESULTS_FOLDER
 message="results_at "
-message+=`date`
+message+=$RIGHTNOW
 git commit -m "$message"
 git push
-
-##IMplement the per proc bg thread
