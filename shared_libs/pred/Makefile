@@ -4,14 +4,14 @@ LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
 #DEBUGFLAGS=-DDEBUG
-NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
+#NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 
 all: nopred seq 
 
-nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
+nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
 
-seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp
+seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS)
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
