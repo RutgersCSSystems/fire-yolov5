@@ -223,9 +223,12 @@ if [ $# -eq 1 ]; then
 		vtune_uninstall
 	elif [ $1 == "run" ]; then
 		vtune_run
+	elif [ $1 == "enable_kernel" ]; then ##has to be done on reboot
+		kernel_instrumentation
+	else
 	else
 		vtune_debug "Unknown Option"
-		vtune_print_usage
+		#vtune_print_usage
 	fi	
 else
 	vtune_print_usage
