@@ -1,0 +1,164 @@
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3 4 5 6 7 8 9 20 21 22 23 24 25 26 27 28 29
+node 0 size: 80461 MB
+node 0 free: 79909 MB
+node 1 cpus: 10 11 12 13 14 15 16 17 18 19 30 31 32 33 34 35 36 37 38 39
+node 1 size: 80614 MB
+node 1 free: 80273 MB
+node distances:
+node   0   1 
+  0:  10  21 
+  1:  21  10 
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2188 KB, SharedMem= 0 KB, HardPageFault= 12
+
+MADbench 2.0 IO-mode
+no_pe = 16  no_pix = 4096  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=4096 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+S_cc         0.28   [      0.28:      0.29]
+S_bw         0.08   [      0.08:      0.08]
+S_w          5.54   [      5.54:      5.54]
+          -------
+S_total      5.90   [      5.90:      5.90]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         0.57   [      0.57:      0.57]
+W_r         24.36   [     24.36:     24.36]
+W_w          4.49   [      4.49:      4.49]
+          -------
+W_total     29.42   [     29.42:     29.42]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         0.36   [      0.35:      0.36]
+C_bw         0.08   [      0.08:      0.08]
+C_r         14.45   [     14.45:     14.46]
+          -------
+C_total     14.89   [     14.89:     14.89]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:230536.000000 us
+MaxRSS= 46108 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:228836.000000 us
+MaxRSS= 46240 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:229276.000000 us
+MaxRSS= 47116 KB, SharedMem= 0 KB, HardPageFault= 14
+READAHEAD_TIME:224185.000000 us
+MaxRSS= 46188 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:229839.000000 us
+MaxRSS= 46064 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:224028.000000 us
+MaxRSS= 46056 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:226253.000000 us
+MaxRSS= 46284 KB, SharedMem= 0 KB, HardPageFault= 14
+READAHEAD_TIME:214553.000000 us
+MaxRSS= 46096 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:227972.000000 us
+MaxRSS= 46112 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:219463.000000 us
+MaxRSS= 47456 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:222920.000000 us
+MaxRSS= 46108 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:222443.000000 us
+MaxRSS= 46108 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:219950.000000 us
+MaxRSS= 46204 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:228672.000000 us
+MaxRSS= 46140 KB, SharedMem= 0 KB, HardPageFault= 13
+READAHEAD_TIME:224824.000000 us
+MaxRSS= 46212 KB, SharedMem= 0 KB, HardPageFault= 8
+READAHEAD_TIME:225207.000000 us
+MaxRSS= 45916 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5412 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4940 KB, SharedMem= 0 KB, HardPageFault= 4
+	Command being timed: "mpiexec -n 16 ./MADbench2_io 4096 30 1 8 64 1 1 4096 7 1"
+	User time (seconds): 164.27
+	System time (seconds): 54.74
+	Percent of CPU this job got: 433%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:50.52
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 47456
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 181
+	Minor (reclaiming a frame) page faults: 909041
+	Voluntary context switches: 891322
+	Involuntary context switches: 1878
+	Swaps: 0
+	File system inputs: 15253472
+	File system outputs: 15728656
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4004 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************
