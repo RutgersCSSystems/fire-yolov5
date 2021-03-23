@@ -141,11 +141,11 @@ def main():
     for workload in WORKLOADS:
         first_time = True
         para_dict["workload"] = workload
+        if first_time == True: #Write the first line in file
+            write_dat(folder_out+one_dat_file, ",".join(out_order))
+            first_time = False
         #for each invariant permutation
         for tup_inv in iter_variants:
-            if first_time == True: #Write the first line in file
-                write_dat(folder_out+one_dat_file, ",".join(out_order))
-                first_time = False
 
             for i in range(len(variants)): #populate para_dict
                 para_dict[variants[i]] = tup_inv[i]
