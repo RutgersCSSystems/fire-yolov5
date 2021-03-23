@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 if [ -z "$NVMBASE" ]; then
 	echo "NVMBASE environment variable not defined. Have you ran setvars?"
@@ -98,6 +98,9 @@ do
 
 					RUNAPP $NPROC $WORKLOAD $PREDICT $READSIZE $PREFETCHTIMES
 					REFRESH
+					if [ "$PREDICT" -eq "0" ]; then
+						break;
+					fi
 				done
 			done
 		done 

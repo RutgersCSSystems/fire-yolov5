@@ -17,7 +17,7 @@ mkdir -p $RESULTS_FOLDER
 
 cd $APPDIR
 
-declare -a predict=("0")
+declare -a predict=("0" "1")
 declare -a workarr=("4096" "8192" "16384")
 declare -a thrdarr=("1" "4" "16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
@@ -81,7 +81,7 @@ RUNAPP()
 	if [[ "$PREDICT" == "1" ]]; then
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
-		export LD_PRELOAD=""
+		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
 	if [[ "$APP" == "strided_MADbench" ]]; then
@@ -124,6 +124,7 @@ do
 	done	
 done
 
+exit
 git add $RESULTS_FOLDER
 message="results_at "
 message+=$RIGHTNOW
