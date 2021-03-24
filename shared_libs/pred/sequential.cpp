@@ -140,18 +140,21 @@ bool sequential::exists(int fd)
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
     /*TODO: Make this malloc scalable*/
-    struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
-    ret->pos = curr_access;
-    ret->stride = stride;
+    //struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
+    struct msg ret;
+    ret.pos = curr_access;
+    ret.stride = stride;
 
 #ifdef __NO_BG_THREADS
-    __seq_prefetch((struct msg*)ret);
+    __seq_prefetch(&ret);
 #else
-    return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
+    return thpool_add_work(get_thpool(), __seq_prefetch, &ret);
 #endif
     return true;
 }
 
+
+off_t g_bytes_prefetched=0;
 
 /*
  * This function will prefetch for strided/seq accesses
@@ -166,6 +169,12 @@ void __seq_prefetch(void *pfetch_info){
 
     if(stride < 0)
         return;
+
+    if(g_bytes_prefetched > curr_access.bytes) {
+	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;
+        //printf("g_bytes_prefetched %lu\n", g_bytes_prefetched);
+	return;
+    }
 
     //initialize times_prefetch
     if(times_prefetch == 0)
@@ -196,11 +205,15 @@ void __seq_prefetch(void *pfetch_info){
 
     debug_print("%s: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
             __func__, stride, curr_access.pos, nextpos, bytes_toread);
+
     /*print number of readahead pages*/
-    debug_print("nr_pages_readahead %lu\n", pages_readahead);
+    debug_print("nr_pages_readahead %lu\n", bytes_toread);
 
     //do readhead
     readahead(curr_access.fd, nextpos, bytes_toread);
     //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
+    
+    g_bytes_prefetched = bytes_toread;
+
     return;
 }

@@ -1,10 +1,13 @@
 CXX=g++-4.8
 CC=gcc-4.8
+CXX=g++
+CC=gcc
+
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 
 #DEBUGFLAGS=-DDEBUG
-#NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
+NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 
 all: nopred seq 
 
