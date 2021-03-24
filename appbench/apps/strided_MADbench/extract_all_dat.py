@@ -151,8 +151,11 @@ def main():
                 para_dict[variants[i]] = tup_inv[i]
 
             para_dict["PRED"] = 0 
+            timesprefetch = para_dict["TIMESPFETCH"]
+            para_dict["TIMESPFETCH"] = 1
             no_pred_infilename = get_infilename(para_dict)
             para_dict["PRED"] = 1
+            para_dict["TIMESPFETCH"] = timesprefetch
             pred_infilename = get_infilename(para_dict)
 
             #first populate no_pred
