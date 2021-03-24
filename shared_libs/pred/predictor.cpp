@@ -106,7 +106,13 @@ int handle_read(int fd, off_t pos, size_t bytes){
     seq_readobj.insert(a);
 #endif
 
-gettimeofday(&start, NULL);
+   
+#ifdef STATS    
+    //FIXME: Why are we not calling this inside a TIMER? This is super-high overhead
+    gettimeofday(&start, NULL);
+#endif
+
+
 /*Prefetch data for next read*/
 #ifdef SEQUENTIAL
     off_t stride;
@@ -115,7 +121,6 @@ gettimeofday(&start, NULL);
         seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){
-
         debug_print("handle_read: strided: %lu\n", stride);
         seq_prefetch(a, stride); //prefetch in program path
     }
@@ -140,9 +145,12 @@ gettimeofday(&start, NULL);
         }
     }
 #endif
-gettimeofday(&stop, NULL);
 
-total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
+#ifdef STATS
+    gettimeofday(&stop, NULL);
+    total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
+#endif
+
     return true;
 }
 
