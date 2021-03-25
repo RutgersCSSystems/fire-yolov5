@@ -84,12 +84,14 @@ bool handle_open(int fd, const char *filename){
  * 1. accounts for access pattern and
  * 2. takes appropriate readahead/DONT NEED action
  */
-int handle_read(int fd, off_t pos, size_t bytes){
+int handle_read(int fd, off_t pos, size_t bytes) {
+
+    //FIXME: @Shaleen, why is defined as static?
+    static struct pos_bytes a;
 
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
-    static struct pos_bytes a;
     a.fd = fd;
     a.pos = pos;
     a.bytes = bytes;
@@ -112,8 +114,15 @@ int handle_read(int fd, off_t pos, size_t bytes){
     gettimeofday(&start, NULL);
 #endif
 
+#ifdef _DELAY_PREFETCH
+    /*Check if we need to prefetch or we have read enough and can wait for some time?*/
+    if(!prefetch_now((void *)&a)) {
+        //printf("Delay prefetch \n");
+	return 0;
+    }
+#endif
 
-/*Prefetch data for next read*/
+    /* Prefetch data for next read*/
 #ifdef SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0

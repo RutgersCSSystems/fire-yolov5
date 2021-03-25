@@ -12,22 +12,20 @@ cd $APPDIR
 
 declare -a apparr=("ior")
 declare -a predict=("0" "1")
-declare -a thrdarr=("16" "32")
+declare -a thrdarr=("32" "8")
 
 declare -a transfersizearr=("8192" "16384") #transfer size
-declare -a blockprodarr=("100000" "150000" "200000") #blocksize = transfersize*blockprod
+declare -a blockprodarr=("100000" "150000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("1" "256" "1024" "2048") #segmentsize
 
-declare -a thrdarr=("8")
-declare -a transfersizearr=("16384") #transfer size
-declare -a blockprodarr=("1000") #blocksize = transfersize*blockprod
+#declare -a thrdarr=("16")
+#declare -a transfersizearr=("8192") #transfer size
+declare -a blockprodarr=("1000" "5000" "10000" "100000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("256") #segmentsize
-declare -a predict=("1")
+#declare -a predict=("0")
 #sizeofprefetch = prefetchwindow * readsize
-declare -a prefetchwindow=("8")
+declare -a prefetchwindow=("2" "4" "8" "1")
 #declare -a prefetchwindow=("8")
-
-
 
 #reduce the dirty files aggressively
 $ENVPATH/set_disk_dirty.sh
@@ -82,10 +80,10 @@ RUNAPP() {
 	MADVICE="--mmap.madv_dont_need" #Currently not used
 	REORDERTASKRAND="-Z" #reorderTasksRandom -- changes task ordering to random ordering for readback
 
-	OUTPUTDIR=$RESULTS_FOLDER/"BLKSIZE-"$BLOCKSIZE
+	OUTPUTDIR=$RESULTS_FOLDER/"_PROC-"$NPROC/"BLKSIZE-"$BLOCKSIZE/"-SEGMENTS-"$SEGMENT
 	mkdir -p $OUTPUTDIR
 
-	OUTPUT=$OUTPUTDIR/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_BLKSIZE-"$BLOCKSIZE"_TRANSFERSIZE-"$TRANSFER"_SEGMENTS-"$SEGMENT"_TIMESPFETCH-"$TPREFETCH".out"
+	OUTPUT=$OUTPUTDIR/$APP"_PRED-"$PREDICT"_TRANSFERSIZE-"$TRANSFER"_TIMESPFETCH-"$TPREFETCH".out"
 
 	#echo "********** prepping File **************"
 	PARAMS="-e -o $FILENAME -v -b $BLOCKSIZE -t $TRANSFER -s $SEGMENT $REORDER $FILEPERPROC $KEEPFILE"
@@ -114,7 +112,7 @@ RUNAPP() {
 
 		echo "$APPPREFIX mpirun -np $NPROC $READ $PARAMS"
 		#$APPPREFIX mpirun -np $NPROC ior $READ $PARAMS &>> $OUTPUT
-		$APPPREFIX mpirun -np $NPROC ior $PARAMS #&>> $OUTPUT
+		$APPPREFIX mpirun -np $NPROC ior $PARAMS &>> $OUTPUT
 		#cat $OUTPUT | grep "Elapsed"
 
 		export LD_PRELOAD=""
@@ -142,7 +140,7 @@ do
 						do 
 							RUNAPP $NPROC $APP $PREDICT $SEGMENT $TRANSFERSIZE $BLOCKPROD $PREFETCHTIMES
 							REFRESH
-							#rm -rf $FILENAME*
+							rm -rf $FILENAME*
 
 							if [ "$PREDICT" -eq "0" ]; then
 								break;

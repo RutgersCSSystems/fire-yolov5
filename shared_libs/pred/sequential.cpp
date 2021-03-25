@@ -8,6 +8,8 @@
 
 off_t pages_readahead = 0;
 int times_prefetch = 0;
+off_t g_bytes_prefetched=0;
+
 
 sequential::sequential(void){
 	init = false;
@@ -154,7 +156,25 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 }
 
 
-off_t g_bytes_prefetched=0;
+int prefetch_now(void *pfetch_info) {
+
+    struct pos_bytes curr_access;
+    struct msg *dat = (struct msg*)pfetch_info;	
+
+    if(!dat)
+	    return true;
+
+    curr_access = dat->pos;
+
+    if(g_bytes_prefetched > curr_access.bytes) {
+	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;    
+	//fprintf(stderr, "Returning false g_bytes_prefetched %u "
+	//		"curr_access.bytes %u\n", g_bytes_prefetched, curr_access.bytes);
+	return 0;
+    }
+ 	
+    return 1;
+}
 
 /*
  * This function will prefetch for strided/seq accesses
@@ -170,11 +190,11 @@ void __seq_prefetch(void *pfetch_info){
     if(stride < 0)
         return;
 
-    if(g_bytes_prefetched > curr_access.bytes) {
+    /*if(g_bytes_prefetched > curr_access.bytes) {
 	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;
         //printf("g_bytes_prefetched %lu\n", g_bytes_prefetched);
 	return;
-    }
+    }*/
 
     //initialize times_prefetch
     if(times_prefetch == 0)

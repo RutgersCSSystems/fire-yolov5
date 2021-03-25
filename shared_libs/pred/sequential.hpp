@@ -41,4 +41,7 @@ void __seq_prefetch(void *pfetch_info);
 //XXX:To implement seq_relinquish
 bool seq_relinquish(struct pos_bytes curr_access, off_t stride);
 
+//Prefetch or not?
+int prefetch_now(void *pfetch_info);
+
 #endif

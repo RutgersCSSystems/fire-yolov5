@@ -8,6 +8,8 @@ FLAGS=-fPIC -shared -std=gnu++11
 
 #DEBUGFLAGS=-DDEBUG
 NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
+DELYAPRFETCH=-D_DELAY_PREFETCH
+
 
 all: nopred seq 
 
@@ -15,10 +17,10 @@ nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp 
 	$(CXX) $(FLAGS) -o libnopred.so $^ $(LIBS) 
 
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS)
+	$(CXX) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS) $(DELAYPRFETCH)
 
 ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
-	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DNGRAM $(DEBUGFLAGS)
+	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DNGRAM $(DEBUGFLAGS) $(DELAYPRFETCH)
 
 clean:
 	rm -rf *.o
