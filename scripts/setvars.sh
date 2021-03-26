@@ -1,7 +1,7 @@
 export NVMBASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
-export OS_RELEASE_NAME=$1
+export OS_RELEASE_NAME="bionic"
 export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
 export PARA="-j`nproc`"

@@ -3,8 +3,8 @@ set -x
 
 IMAGE_CREATE() {
 	#Install Quemu
-	sudo apt-get install qemu
-	sudo apt-get kernel-package
+	sudo apt-get update
+	sudo apt-get install -y qemu kernel-package debootstrap
 
 	#Please do not change beyond this
 	#Now create a disk for your virtual machine 
@@ -21,9 +21,6 @@ IMAGE_CREATE() {
 
 	#Next, mount your image to the directory
 	sudo mount -o loop $QEMU_IMG_FILE $MOUNT_DIR
-
-	#Install debootstrap
-	sudo apt-get install debootstrap
 
 	#Now get the OS release version using
 	cat /etc/os-release
@@ -57,7 +54,7 @@ then
     echo "$0: File '${file}' not found."
     IMAGE_CREATE
 fi
-SETUP_IMAGE
+#SETUP_IMAGE
 exit
 
 
