@@ -32,7 +32,7 @@ IMAGE_CREATE() {
 	sudo chroot $MOUNT_DIR && sudo apt-get install vim && sudo apt-get install build-essential && sudo apt-get install ssh
 	#You are all set. Now unmount your image file from the directory.
         
-	sudo cp /etc/apt/source.list
+	sudo cp /etc/apt/source.list $MOUNTH_DIR/etc/apt
 }
 
 
