@@ -226,7 +226,6 @@ if [ $# -eq 1 ]; then
 	elif [ $1 == "enable_kernel" ]; then ##has to be done on reboot
 		kernel_instrumentation
 	else
-	else
 		vtune_debug "Unknown Option"
 		#vtune_print_usage
 	fi	
