@@ -141,16 +141,18 @@ bool sequential::exists(int fd)
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
 
-    /*TODO: Make this malloc scalable*/
-    //struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
-    struct msg ret;
-    ret.pos = curr_access;
-    ret.stride = stride;
+    /*TODO: Make this malloc scalable
+     * without the malloc, the stack memory gets corrupted before
+     * the worker threads uses it.
+     */
+    struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
+    ret->pos = curr_access;
+    ret->stride = stride;
 
 #ifdef __NO_BG_THREADS
-    __seq_prefetch(&ret);
+    __seq_prefetch((struct msg*)ret);
 #else
-    return thpool_add_work(get_thpool(), __seq_prefetch, &ret);
+    return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
 #endif
     return true;
 }
