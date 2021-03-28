@@ -36,6 +36,7 @@
 #include <linux/cleancache.h>
 #include <linux/shmem_fs.h>
 #include <linux/rmap.h>
+#include <linux/jiffies.h>
 #include "internal.h"
 
 #include <asm/page.h>
@@ -2343,6 +2344,9 @@ find_page:
 
 		page = find_get_page(mapping, index);
 		if (!page) {
+#ifdef CONFIG_PVT_LRU
+			add_readahead(1, 7);
+#endif
 			if (iocb->ki_flags & IOCB_NOWAIT)
 				goto would_block;
 			page_cache_sync_readahead(mapping,
@@ -2618,8 +2622,14 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
 		    IS_DAX(inode))
 			goto out;
 	}
-
+#ifdef CONFIG_PVT_LRU
+	unsigned long generic_buffered_read_start = jiffies;
+#endif
 	retval = generic_file_buffered_read(iocb, iter, retval);
+#ifdef CONFIG_PVT_LRU
+	unsigned long jiffies_spent = jiffies - generic_buffered_read_start;
+	add_readahead(jiffies_spent, 8);
+#endif
 out:
 	return retval;
 }

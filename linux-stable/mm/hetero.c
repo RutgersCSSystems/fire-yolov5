@@ -1287,6 +1287,10 @@ void add_readahead(unsigned long pages, int func){
                 current->nr_ondemand_ra_pages += pages;
             case 6: /*nr filemap_pagefaults*/
                 current->nr_filemap_faults += 1;
+	    case 7: /*generic_file_buffered_read*/
+		current->nr_not_found += 1;
+	    case 8: /*Stores jiffies spent in generic_file_buffered_read*/
+		current->generic_buffered_read_jiffies += pages;
            default:
                 return;
        } 
@@ -1664,6 +1668,11 @@ void print_readahead_stats(void)
                 current->nr_ra_submit_calls += 1;
     */
     printk("PID: %d - %s\n", current->pid, current->comm);
+    printk("PID: %d, nr_not_found: %lu\n", 
+            current->pid, current->nr_not_found);
+    printk("PID: %d, total buffered reads time in msecs: %lu\n", 
+            current->pid, jiffies_to_msecs(current->generic_buffered_read_jiffies));
+    return; /*XXX: Temporary testing*/
     printk("PID: %d, readahead_calls: %lu, readahead_pages: %lu\n", 
             current->pid, current->nr_readahead_calls,
             current->nr_readahead);
@@ -1727,6 +1736,8 @@ void reset_pvt_lru_counters(void)
     current->nr_ondemand_ra_calls = 0;
     current->nr_ondemand_ra_pages = 0;
     current->nr_filemap_faults = 0;
+    current->nr_not_found = 0;
+    current->generic_buffered_read_jiffies = 0;
 }
 
 
