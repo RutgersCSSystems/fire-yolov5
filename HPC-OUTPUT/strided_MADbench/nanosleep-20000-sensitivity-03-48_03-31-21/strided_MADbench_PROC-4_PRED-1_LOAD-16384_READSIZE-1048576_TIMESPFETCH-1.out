@@ -1,0 +1,80 @@
+./runexp_variation_sudarsun.sh: line 73: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 4  no_pix = 16384  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=1048576 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+build_S
+build_S
+build_S
+S_cc         3.20   [      3.19:      3.21]
+S_bw         2.61   [      2.61:      2.61]
+S_w        102.04   [    102.04:    102.04]
+          -------
+S_total    107.85   [    107.84:    107.86]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         4.50   [      4.48:      4.51]
+W_r        275.59   [    275.59:    275.60]
+W_w         60.57   [     60.56:     60.58]
+          -------
+W_total    340.66   [    340.64:    340.67]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         2.74   [      2.74:      2.74]
+C_bw         2.54   [      2.54:      2.54]
+C_r        161.20   [    161.20:    161.20]
+          -------
+C_total    166.48   [    166.48:    166.48]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2108412 KB, SharedMem= 0 KB, HardPageFault= 14
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2107988 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2108064 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2108260 KB, SharedMem= 0 KB, HardPageFault= 13
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5364 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4860 KB, SharedMem= 0 KB, HardPageFault= 5
+	Command being timed: "mpiexec -n 4 ./MADbench2_io 16384 30 1 8 64 1 1 1048576 7 1"
+	User time (seconds): 225.17
+	System time (seconds): 247.31
+	Percent of CPU this job got: 76%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:15.77
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2108412
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 59
+	Minor (reclaiming a frame) page faults: 6894630
+	Voluntary context switches: 369613
+	Involuntary context switches: 2228
+	Swaps: 0
+	File system inputs: 210447288
+	File system outputs: 251658272
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2220 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************
