@@ -6,13 +6,9 @@ if [ -z "$NVMBASE" ]; then
 fi
 
 
-VTUNE_DOWNLOAD_URL=http://registrationcenter-download.intel.com/akdlm/irc_nas/tec/15518/vtune_amplifier_2019_update4.tar.gz
-
-VTUNE_INSTALLER_ARCHIVE=vtune_amplifier_2019_update4.tar.gz
-VTUNE_INSTALLER_FOLDER=vtune_amplifier_2019_update4
-VTUNE_INSTALLER_PATH=$VTUNE_INSTALLER_FOLDER/install.sh
-VTUNE_DEFAULT_INSTALLATION_PATH=/opt/intel/vtune_amplifier
-KERNEL=4.15.1 ##should be equal to current compiled and running kernel version
+VTUNE_DOWNLOAD_URL=https://registrationcenter-download.intel.com/akdlm/irc_nas/tec/17527/l_oneapi_vtune_p_2021.1.2.150_offline.sh
+VTUNE_INSTALLER_PATH=l_oneapi_vtune_p_2021.1.2.150_offline.sh
+VTUNE_DEFAULT_INSTALLATION_PATH=/opt/intel/oneapi/vtune/latest
 
 vtune_debug () {
 	echo "[VTUNE.sh] $1"
@@ -68,23 +64,10 @@ download_vtune () {
 	fi
 }
 
-extract_installer () {
-
-	# unzip 
-	vtune_debug "Extracting VTUNE Installer"
-	tar -zxf $VTUNE_INSTALLER_ARCHIVE 
-
-	if [ $? -ne 0 ]; then
-		debug "Failed to extract VTUNE installer"
-		exit 1
-	fi
-
-
-}	
-
 install_vtune () {
 	# run installer 
 	vtune_debug "Running Installer"
+	sudo chmod +x $VTUNE_INSTALLER_PATH
 	sudo $VTUNE_INSTALLER_PATH 
 
 	if [ $? -ne 0 ]; then
@@ -93,35 +76,14 @@ install_vtune () {
 	fi
 }
 
-cleanup_installer () {
-	
-	# Delete intaller folder 
-	rm -rf $VTUNE_INSTALLER_FOLDER
-
-	if [ $? -ne 0 ]; then
-		vtune_error "Could not delete installer folder"
-	fi
-
-
-	# Delete install archive
-	rm $VTUNE_INSTALLER_ARCHIVE
-
-	if [ $? -ne 0 ]; then
-		vtune_error "Could not delete installer archive"
-	fi
-
-}
-
 check_installation () {
 
 	# Run installation self-checker
 	vtune_debug "Checking VTUNE Installation. This will take a minute."
-	cmdouput=$($VTUNE_DEFAULT_INSTALLATION_PATH/bin64/amplxe-self-checker.sh)
-
+	cmdouput=$($VTUNE_DEFAULT_INSTALLATION_PATH/bin64/vtune-self-checker.sh)
 	if [ $? -ne 0 ]; then
 		vtune_error "VTUNE Installation seems to have failed"
 		vtune_error "Rerun the VTUNE self checker manually for more information"
-		vtune_error "Location: ($VTUNE_DEFAULT_INSTALLATION_PATH/bin64/amplxe-self-checker.sh)"
 		exit 1
 	else
 		vtune_debug "VTUNE Installation seems to be good"
@@ -131,12 +93,9 @@ check_installation () {
 
 post_installation () {
 
-	# Run Post installtion script 
-	#source /opt/intel/vtune_amplifier_2019.4.0.597835/amplxe-vars.sh
-
 	# Ensuring installation directory is writable so vtune can be run a non-root 
 	#vtune_debug "Ensuring VTUNE installation directory permissions are set for non-root use"
-	sudo chmod -R ug+rw $VTUNE_DEFAULT_INSTALLATION_PATH/..
+	sudo chmod -R ug+rw /opt/intel
 
 	if [ $? -ne  0 ]; then 
 		echo "Could not set vtune installation directory permissions"
@@ -144,7 +103,7 @@ post_installation () {
 
 	# Set ptrace scope temporarily
 	vtune_debug "Setting current ptrace scope to 0 for current session"
-	sudo bash -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
+	sudo sh -c "echo 0 > /proc/sys/kernel/yama/ptrace_scope"
 
 	if [ $? -ne 0 ]; then
 		echo "Could not set the current ptrace scope"
@@ -175,12 +134,11 @@ kernel_instrumentation () {
 	tar -xvf sepdk.tar.gz
 	sudo cp -r sepdk/* $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk
 	cd $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk/src
-	sudo ./build-driver -ni -pu --kernel-src-dir=$NVMBASE/linux-4.15.1
+	sudo ./build-driver -ni -pu --kernel-src-dir=$NVMBASE/linux-$VER
 	sudo sh -c "./insmod-sep -r -pu -g root"
 	sudo sh -c "./boot-script -pu --install"
 	./insmod-sep -q
 }
-
 
 vtune_install () {
 	check_previous_vtune
@@ -204,17 +162,6 @@ vtune_uninstall () {
 		vtune_error "Failed to uninstall VTUNE"
 	fi
 }
-
-#download_vtune
-#extract_installer
-#install_vtune
-#post_installation
-#check_installation
-
-#check_previous_vtune
-
-#cleanup_installer
-
 
 if [ $# -eq 1 ]; then
 	if [ $1 == "install" ]; then

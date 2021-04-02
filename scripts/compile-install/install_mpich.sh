@@ -7,10 +7,10 @@ if [ -z "$NVMBASE" ]; then
 fi
 
 LINK=http://www.mpich.org/static/downloads/3.2.1/mpich-3.2.1.tar.gz
-DOWNLOAD_LOC=$HOME/ssd/Downloads
+DOWNLOAD_LOC=$NVMBASE/Downloads
 INSTALL_LOC=$PREFIX
 
-sudo apt-get install gfortran libpthread-stubs0-dev -y
+sudo apt-get install -y gfortran libpthread-stubs0-dev
 
 stat $DOWNLOAD_LOC
 if [ $? -ne 0 ]
