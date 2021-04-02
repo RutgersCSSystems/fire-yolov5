@@ -5,7 +5,8 @@ export OS_RELEASE_NAME="bionic"
 export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
 export PARA="-j`nproc`"
-export VER="4.17.0"
+#export VER="4.17.0"
+export VER="4.15.1"
 #export VER="4.18.0-2-amd64"
 
 #QEMU
