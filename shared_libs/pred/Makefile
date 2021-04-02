@@ -1,7 +1,5 @@
 CXX=g++-4.8
 CC=gcc-4.8
-CXX=g++
-CC=gcc
 
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
