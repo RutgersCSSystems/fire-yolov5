@@ -27,7 +27,8 @@ tar -xvf mpich-3.2.1.tar.gz
 cd mpich-3.2.1
 
 #./configure --disable-fortran --prefix=$INSTALL_LOC --enable-g=yes --enable-debuginfo
-./configure --enable-g=yes --enable-debuginfo
+./configure
+#./configure --enable-g=yes
 
 make -j`nproc`
 sudo make install
