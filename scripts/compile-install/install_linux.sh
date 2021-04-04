@@ -13,9 +13,12 @@ export CONCURRENCY_LEVEL=$PROC
 export CONCURRENCYLEVEL=$PROC 
 
 cd $NVMBASE
-git clone https://github.com/shaleengarg/$KERNEL.git
-#wget https://mirrors.edge.kernel.org/pub/linux/kernel/v4.x/$KERNEL.tar.gz
-#tar -xvf  $KERNEL.tar.gz
+#git clone https://github.com/shaleengarg/$KERNEL.git
+wget https://mirrors.edge.kernel.org/pub/linux/kernel/v4.x/$KERNEL.tar.gz
+tar -xf  $KERNEL.tar.gz
+cp $NVMBASE/scripts/helperscripts/linuxMakefile $KERNEL/Makefile
+cp $NVMBASE/scripts/helperscripts/compile_deb.sh $KERNEL/compile_deb.sh
+cp $NVMBASE/scripts/helperscripts/compile_make.sh $KERNEL/compile_make.sh
 cd $KERNEL
 
 sudo apt-get update
