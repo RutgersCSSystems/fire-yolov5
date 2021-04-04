@@ -68,7 +68,7 @@ install_vtune () {
 	# run installer 
 	vtune_debug "Running Installer"
 	sudo chmod +x $VTUNE_INSTALLER_PATH
-	sudo $VTUNE_INSTALLER_PATH 
+	sudo ./$VTUNE_INSTALLER_PATH 
 
 	if [ $? -ne 0 ]; then
 		vtune_error "Failed to install VTUNE"
@@ -134,7 +134,7 @@ kernel_instrumentation () {
 	tar -xvf sepdk.tar.gz
 	sudo cp -r sepdk/* $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk
 	cd $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk/src
-	sudo ./build-driver -ni -pu --kernel-src-dir=$NVMBASE/linux-$VER
+	sudo ./build-driver -ni -pu --kernel-src-dir=$HOME/ssd/linux-$VER
 	sudo sh -c "./insmod-sep -r -pu -g root"
 	sudo sh -c "./boot-script -pu --install"
 	./insmod-sep -q
@@ -144,7 +144,6 @@ vtune_install () {
 	check_previous_vtune
 	check_prerequisites
 	download_vtune
-	extract_installer
 	install_vtune
 	cleanup_installer
 	post_installation
