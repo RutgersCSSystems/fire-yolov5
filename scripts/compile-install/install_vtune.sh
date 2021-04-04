@@ -134,7 +134,7 @@ kernel_instrumentation () {
 	tar -xvf sepdk.tar.gz
 	sudo cp -r sepdk/* $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk
 	cd $VTUNE_DEFAULT_INSTALLATION_PATH/sepdk/src
-	sudo ./build-driver -ni -pu --kernel-src-dir=$HOME/ssd/linux-$VER
+	sudo ./build-driver -ni -pu --kernel-src-dir=$NVMBASE/linux-$VER
 	sudo sh -c "./insmod-sep -r -pu -g root"
 	sudo sh -c "./boot-script -pu --install"
 	./insmod-sep -q
