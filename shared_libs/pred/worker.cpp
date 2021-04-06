@@ -147,6 +147,6 @@ void clean_state(){
     sem_close(mysemp);
     sem_unlink(semname);
 
-    thpool_wait(workerpool);
-    thpool_destroy(workerpool);
+    //thpool_wait(workerpool);
+    //forced_thpool_destroy(workerpool);
 }
