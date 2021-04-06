@@ -68,7 +68,7 @@ install_vtune () {
 	# run installer 
 	vtune_debug "Running Installer"
 	sudo chmod +x $VTUNE_INSTALLER_PATH
-	sudo $VTUNE_INSTALLER_PATH 
+	sudo ./$VTUNE_INSTALLER_PATH 
 
 	if [ $? -ne 0 ]; then
 		vtune_error "Failed to install VTUNE"
@@ -144,7 +144,6 @@ vtune_install () {
 	check_previous_vtune
 	check_prerequisites
 	download_vtune
-	extract_installer
 	install_vtune
 	cleanup_installer
 	post_installation

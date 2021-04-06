@@ -31,5 +31,5 @@ cd mpich-3.2.1
 #./configure --enable-g=yes
 
 make -j`nproc`
-sudo make install
+sudo make install -j
 set +x
