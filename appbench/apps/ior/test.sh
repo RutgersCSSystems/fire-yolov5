@@ -1,11 +1,6 @@
 #!/bin/bash
 #set -x
 
-if [ -z "$NVMBASE" ]; then
-	echo "NVMBASE environment variable not defined. Have you ran setvars?"
-	exit 1
-fi
-
 REFRESH() {
 	/users/shaleen/ssd/NVM/scripts/compile-install/clear_cache.sh
 	sudo sh -c "dmesg --clear" ##clear dmesg
