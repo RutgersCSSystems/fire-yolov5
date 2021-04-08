@@ -36,10 +36,10 @@ rm -rf $FILENAME*
 $APPPREFIX mpirun -np $NPROC ior $WRITE $PARAMS
 REFRESH
 
+#export LD_PRELOAD="/usr/lib/libcrosslayer.so"
+export LD_PRELOAD="/usr/lib/libnopred.so"
 #echo "********** read workload *************"
 $APPPREFIX mpirun -np $NPROC ior $READ $PARAMS
 
 
-#export LD_PRELOAD="/usr/lib/libcrosslayer.so"
-export LD_PRELOAD="/usr/lib/libnopred.so"
 
