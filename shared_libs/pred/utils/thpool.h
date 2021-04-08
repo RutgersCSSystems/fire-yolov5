@@ -159,6 +159,18 @@ void thpool_resume(threadpool);
 void thpool_destroy(threadpool);
 
 
+
+
+/**
+ * @brief Forcefully destroy the threadpool
+ *
+ * This will NOT wait for the currently active threads to finish and kill
+ * the whole threadpool.
+ * NOTE: Can lead to incomplete tasks given. Only call if it is urgent to stop now
+ */
+void forced_thpool_destroy(threadpool);
+
+
 /**
  * @brief Show currently working threads
  *

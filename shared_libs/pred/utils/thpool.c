@@ -127,6 +127,23 @@ struct thpool_* thpool_init(int num_threads){
 		num_threads = 0;
 	}
 
+#ifdef PIN_ALL
+	/*set affinity*/
+	pid_t proc_pid = getpid();
+	int core_id = proc_pid % 16;
+	cpu_set_t proc_cpuset;
+	CPU_ZERO(&proc_cpuset);
+	CPU_SET(core_id, &proc_cpuset);
+	if (sched_setaffinity(getpid(), sizeof(cpu_set_t), &proc_cpuset) == -1){
+		err("thpool_init(): Could not set proc affinity\n");
+	}
+	core_id += 16; //ID for worker thread
+	cpu_set_t th_cpuset;
+	CPU_ZERO(&th_cpuset);
+	CPU_SET(core_id, &th_cpuset);
+	/**/
+#endif
+
 	/* Make new thread pool */
 	thpool_* thpool_p;
 	thpool_p = (struct thpool_*)malloc(sizeof(struct thpool_));
@@ -162,6 +179,12 @@ struct thpool_* thpool_init(int num_threads){
 		thread_init(thpool_p, &thpool_p->threads[n], n);
 #if THPOOL_DEBUG
 			printf("THPOOL_DEBUG: Created thread %d in pool \n", n);
+#endif
+#ifdef PIN_ALL
+		/*set thread affinity*/
+		if (pthread_setaffinity_np(thpool_p->threads[n]->pthread, sizeof(cpu_set_t), &th_cpuset) != 0){
+			err("thpool_init(): Could not set affinity for pthread\n");
+		}
 #endif
 	}
 
@@ -241,6 +264,33 @@ void thpool_destroy(thpool_* thpool_p){
 	free(thpool_p);
 }
 
+#if 0
+/* XXX: DOESNT WORK Destroy the threadpool forcefully*/
+void  forced_thpool_destroy(thpool_* thpool_p){
+	/* No need to destory if it's NULL */
+	if (thpool_p == NULL) return ;
+	int n;
+
+	volatile int threads_total = thpool_p->num_threads_alive;
+
+	/* End each thread 's infinite loop */
+	threads_keepalive = 0;
+
+	for(n=0; n < threads_total; n++)
+	{
+		pthread_kill(thpool_p->threads[n]->pthread, SIGKILL);
+	}
+
+	/* Job queue cleanup */
+	jobqueue_destroy(&thpool_p->jqueue);
+	/* Deallocs */
+	for (n=0; n < threads_total; n++){
+		thread_destroy(thpool_p->threads[n]);
+	}
+	free(thpool_p->threads);
+	free(thpool_p);
+}
+#endif
 
 /* Pause all threads in threadpool */
 void thpool_pause(thpool_* thpool_p) {
