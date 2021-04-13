@@ -8,27 +8,29 @@ from datetime import datetime
 import itertools
 import re
 
-one_dat_file = "nopred_nobg_v_bg_oneanalysis.csv"
-in_folder1 = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/nobg-thpool-sensitivity-05-41_03-21-21/"
-in_folder2 = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/bg-thpool-sensitivity-05-38_03-21-21/"
+one_dat_file = "bg_pinned_analysis.csv"
+in_folder1 = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/sensitivity-bg-pinned-17-02_04-07-21/"
+#in_folder2 = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/nanosleep-20000-sensitivity-03-48_03-31-21"
 folder_out = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/"
 
 DELIM = ","
 NODAT = "-"
 ##From Filename
 variants = ["PROC", "LOAD", "READSIZE", "TIMESPFETCH"] ##multiple
-data = ["Elapsed", "READAHEAD_TIME"] ##multiple
+#data = ["Elapsed", "READAHEAD_TIME"] ##multiple
+data = ["Elapsed"]
 
 identifier_0 = "nopred_"
-identifier_1 = "nobg_"
-identifier_2 = "bg_"
+identifier_1 = "sleep_nobg_"
+#identifier_2 = "bg_"
 
 
-out_order = variants + [identifier_1 + s for s in data] + [identifier_2 + s for s in data]
+#out_order = variants + [identifier_1 + s for s in data] + [identifier_2 + s for s in data]
+out_order = variants + [identifier_1 + s for s in data]
 out_order += [identifier_0+"Elapsed"]
 
 WORKLOADS = ["strided_MADbench"]
-PROC = [1, 4, 16]
+PROC = [4, 16]
 PRED = [0, 1]
 LOAD = [4096, 8192, 16384]
 READSIZE = [4096, 131072, 524288, 1048576, 4194304, 16777216]
@@ -166,8 +168,8 @@ def main():
                 data_val = Extract(in_folder1+pred_infilename, dat)
                 para_dict[identifier_1+dat] = str(data_val)
 
-                data_val = Extract(in_folder2+pred_infilename, dat)
-                para_dict[identifier_2+dat] = str(data_val)
+                #data_val = Extract(in_folder2+pred_infilename, dat)
+                #para_dict[identifier_2+dat] = str(data_val)
 
             write_from_dict(folder_out+one_dat_file, para_dict)
 
