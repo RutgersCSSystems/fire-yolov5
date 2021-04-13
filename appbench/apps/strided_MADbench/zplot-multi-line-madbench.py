@@ -7,9 +7,9 @@ import itertools
 import re
 
 
-one_dat_file = "sleep_oneanalysis.csv"
+one_dat_file = "bg_pinned_analysis.csv"
 folder_in = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/"
-folder_out = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/sleep-zplotout/"
+folder_out = "/Users/shaleen/Research/NVM/HPC-OUTPUT/strided_MADbench/bg_pinned-zplotout/"
 
 
 DELIM = ","
@@ -19,7 +19,7 @@ variants = ["PROC", "LOAD", "READSIZE", "TIMESPFETCH"] ##multiple
 data = ["Elapsed", "READAHEAD_TIME"] ##multiple
 
 identifier_0 = "nopred_"
-identifier_1 = "sleep_nobg_"
+identifier_1 = "bg_"
 #identifier_2 = "bg_"
 
 out_invariants = ["LOAD", "READSIZE", "TIMESPFETCH"]
@@ -81,7 +81,7 @@ def main():
                     #dimensions=[215, 68])
             
             max_y = this_table.getmax(column="nopred_Elapsed")
-            d = drawable(canvas=c, coord=[15,15], 
+            d = drawable(canvas=c, coord=[40,15], 
                     xrange=[-0.5,this_table.getmax('rownumber')+0.5], 
                     yrange=[0, max_y])#, dimensions=[95, 50])
 
@@ -100,7 +100,7 @@ def main():
                     'linewidth':0, 'fill':True, 'barwidth':0.7,
 		    'legend':L}
 
-            barargs['yfield'] = 'nopred_Elapsed'
+            barargs['yfield'] = identifier_0+'Elapsed'
             barargs['legendtext'] = 'No user-lvl prefetch'
             barargs['fillcolor'] = 'royalblue'
             barargs['fillstyle'] = 'solid'
@@ -112,8 +112,8 @@ def main():
             #TEMP p.line(d, this_table, xfield='PROC', yfield='bg_Elapsed', linewidth=1,
             #    linecolor='0,1,0', legend=L, legendtext='background prefetch')
 
-            barargs['yfield'] = 'sleep_nobg_Elapsed'
-            barargs['legendtext'] = 'sleep foreground prefetch'
+            barargs['yfield'] = identifier_1+'Elapsed'
+            barargs['legendtext'] = 'pinned bg prefetch'
             barargs['fillcolor'] = 'darkorange'
             barargs['fillstyle'] = 'solid'
             barargs['fillsize'] = '1'
@@ -129,3 +129,4 @@ def main():
 ##main
 if __name__ == "__main__":
     main()
+
