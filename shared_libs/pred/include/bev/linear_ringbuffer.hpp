@@ -13,144 +13,146 @@
 
 namespace bev {
 
-// # Linear Ringbuffer
-//
-// This is an implementation of a ringbuffer that will always expose its contents
-// as a flat array using the mmap trick. It is mainly useful for interfacing with
-// C APIs, where this feature can vastly simplify program logic by eliminating all
-// special case handling when reading or writing data that wraps around the edge
-// of the ringbuffer.
-//
-//
-// # Data Layout
-//
-// From the outside, the ringbuffer contents always look like a flat array
-// due to the mmap trick:
-//
-//
-//         (head)  <-- size -->    (tail)
-//          v                       v
-//     /-----------------------------------|-------------------------------\
-//     |  buffer area                      | mmapped clone of buffer area  |
-//     \-----------------------------------|-------------------------------/
-//      <---------- capacity ------------->
-//
-//
-//     --->(tail)              (head) -----~~~~>
-//          v                   v
-//     /-----------------------------------|-------------------------------\
-//     |  buffer area                      | mmapped clone of buffer area  |
-//     \-----------------------------------|-------------------------------/
-//
-//
-// # Usage
-//
-// The buffer provides two (pointer, length)-pairs that can be passed to C APIs,
-// `(write_head(), free_size())` and `(read_head(), size())`.
-//
-// The general idea is to pass the appropriate one to a C function expecting
-// a pointer and size, and to afterwards call `commit()` to adjust the write
-// head or `consume()` to adjust the read head.
-//
-// Writing into the buffer:
-//
-//     bev::linear_ringbuffer rb;
-//     FILE* f = fopen("input.dat", "r");
-//     ssize_t n = ::read(fileno(f), rb.write_head(), rb.free_size());
-//     rb.commit(n);
-//
-// Reading from the buffer:
-//
-//     bev::linear_ringbuffer rb;
-//     FILE* f = fopen("output.dat", "w");
-//     ssize_t n = ::write(fileno(f), rb.read_head(), rb.size();
-//     rb.consume(n);
-//
-// If there are multiple readers/writers, it is the calling code's
-// responsibility to ensure that the reads/writes and the calls to
-// produce/consume appear atomic to the buffer, otherwise data loss
-// can occur.
-//
-// # Errors and Exceptions
-//
-// The ringbuffer provides two way of initialization, one using exceptions
-// and one using error codes. After initialization is completed, all
-// operations on the buffer are `noexcept` and will never return an error.
-//
-// To use error codes, the `linear_ringbuffer(delayed_init {})` constructor.
-// can be used. In this case, the internal buffers are not allocated until
-// `linear_ringbuffer::initialize()` is called, and all other member function
-// must not be called before the buffers have been initialized.
-//
-//     bev::linear_ringbuffer rb(linear_ringbuffer::delayed_init {});
-//     int error = rb.initialize(MIN_BUFSIZE);
-//     if (error) {
-//        [...]
-//     }
-//
-// The possible error codes returned by `initialize()` are:
-//
-//  ENOMEM - The system ran out of memory, file descriptors, or the maximum
-//           number of mappings would have been exceeded.
-//
-//  EINVAL - The `minsize` argument was 0, or 2*`minsize` did overflow.
-//
-//  EAGAIN - Another thread allocated memory in the area that was intended
-//           to use for the second copy of the buffer. Callers are encouraged
-//           to try again.
-//
-// If exceptions are preferred, the `linear_ringbuffer(int minsize)`
-// constructor will attempt to initialize the internal buffers immediately and
-// throw a `bev::initialization_error` on failure, which is an exception class
-// derived from `std::runtime_error`. The error code as described above is
-// stored in the `errno_` member of the exception.
-//
-//
-// # Concurrency
-//
-// It is safe to be use the buffer concurrently for a single reader and a
-// single writer, but mutiple readers or multiple writers must serialize
-// their accesses with a mutex.
-//
-// If the ring buffer is used in a single-threaded application, the
-// `linear_ringbuffer_st` class can be used to avoid paying for atomic
-// increases and decreases of the internal size.
-//
-//
-// # Implementation Notes
-//
-// Note that only unsigned chars are allowed as the element type. While we could
-// in principle add an arbitrary element type as an additional argument, there
-// would be comparatively strict requirements:
-//
-//  - It needs to be trivially relocatable
-//  - The size needs to exactly divide PAGE_SIZE
-//
-// Since the main use case is interfacing with C APIs, it seems more pragmatic
-// to just let the caller cast their data to `void*` rather than supporting
-// arbitrary element types.
-//
-// The initialization of the buffer is subject to failure, and sadly this cannot
-// be avoided. [1] There are two sources of errors:
-//
-//  1) Resource exhaustion. The maximum amount of available memory, file
-//  descriptors, memory mappings etc. may be exceeded. This is similar to any
-//  other container type.
-//
-//  2) To allocate the ringbuffer storage, first a memory region twice the
-//  required size is mapped, then it is shrunk by half and a copy of the first
-//  half of the buffer is mapped into the (now empty) second half.
-//  If some other thread is creating its own mapping in the second half after
-//  the buffer has been shrunk but before the second half has been mapped, this
-//  will fail. To ensure success, allocate the buffers before branching into
-//  multi-threaded code.
-//
-// [1] Technically, we could use `MREMAP_FIXED` to enforce creation of the
-// second buffer, but at the cost of potentially unmapping random mappings made
-// by other threads, which seems much worse than just failing. I've spent some
-// time scouring the manpages and implementation of `mmap()` for a technique to
-// make it work atomically but came up empty. If there is one, please tell me.
-//
+/*
+ # Linear Ringbuffer
+
+ This is an implementation of a ringbuffer that will always expose its contents
+ as a flat array using the mmap trick. It is mainly useful for interfacing with
+ C APIs, where this feature can vastly simplify program logic by eliminating all
+ special case handling when reading or writing data that wraps around the edge
+ of the ringbuffer.
+
+
+ # Data Layout
+
+ From the outside, the ringbuffer contents always look like a flat array
+ due to the mmap trick:
+
+
+         (head)  <-- size -->    (tail)
+          v                       v
+     /-----------------------------------|-------------------------------\
+     |  buffer area                      | mmapped clone of buffer area  |
+     \-----------------------------------|-------------------------------/
+      <---------- capacity ------------->
+
+
+     --->(tail)              (head) -----~~~~>
+          v                   v
+     /-----------------------------------|-------------------------------\
+     |  buffer area                      | mmapped clone of buffer area  |
+     \-----------------------------------|-------------------------------/
+
+
+ # Usage
+
+ The buffer provides two (pointer, length)-pairs that can be passed to C APIs,
+ `(write_head(), free_size())` and `(read_head(), size())`.
+
+ The general idea is to pass the appropriate one to a C function expecting
+ a pointer and size, and to afterwards call `commit()` to adjust the write
+ head or `consume()` to adjust the read head.
+
+ Writing into the buffer:
+
+     bev::linear_ringbuffer rb;
+     FILE* f = fopen("input.dat", "r");
+     ssize_t n = ::read(fileno(f), rb.write_head(), rb.free_size());
+     rb.commit(n);
+
+ Reading from the buffer:
+
+     bev::linear_ringbuffer rb;
+     FILE* f = fopen("output.dat", "w");
+     ssize_t n = ::write(fileno(f), rb.read_head(), rb.size();
+     rb.consume(n);
+
+ If there are multiple readers/writers, it is the calling code's
+ responsibility to ensure that the reads/writes and the calls to
+ produce/consume appear atomic to the buffer, otherwise data loss
+ can occur.
+
+ # Errors and Exceptions
+
+ The ringbuffer provides two way of initialization, one using exceptions
+ and one using error codes. After initialization is completed, all
+ operations on the buffer are `noexcept` and will never return an error.
+
+ To use error codes, the `linear_ringbuffer(delayed_init {})` constructor.
+ can be used. In this case, the internal buffers are not allocated until
+ `linear_ringbuffer::initialize()` is called, and all other member function
+ must not be called before the buffers have been initialized.
+
+     bev::linear_ringbuffer rb(linear_ringbuffer::delayed_init {});
+     int error = rb.initialize(MIN_BUFSIZE);
+     if (error) {
+        [...]
+     }
+
+ The possible error codes returned by `initialize()` are:
+
+  ENOMEM - The system ran out of memory, file descriptors, or the maximum
+           number of mappings would have been exceeded.
+
+  EINVAL - The `minsize` argument was 0, or 2*`minsize` did overflow.
+
+  EAGAIN - Another thread allocated memory in the area that was intended
+           to use for the second copy of the buffer. Callers are encouraged
+           to try again.
+
+ If exceptions are preferred, the `linear_ringbuffer(int minsize)`
+ constructor will attempt to initialize the internal buffers immediately and
+ throw a `bev::initialization_error` on failure, which is an exception class
+ derived from `std::runtime_error`. The error code as described above is
+ stored in the `errno_` member of the exception.
+
+
+ # Concurrency
+
+ It is safe to be use the buffer concurrently for a single reader and a
+ single writer, but mutiple readers or multiple writers must serialize
+ their accesses with a mutex.
+
+ If the ring buffer is used in a single-threaded application, the
+ `linear_ringbuffer_st` class can be used to avoid paying for atomic
+ increases and decreases of the internal size.
+
+
+ # Implementation Notes
+
+ Note that only unsigned chars are allowed as the element type. While we could
+ in principle add an arbitrary element type as an additional argument, there
+ would be comparatively strict requirements:
+
+  - It needs to be trivially relocatable
+  - The size needs to exactly divide PAGE_SIZE
+
+ Since the main use case is interfacing with C APIs, it seems more pragmatic
+ to just let the caller cast their data to `void*` rather than supporting
+ arbitrary element types.
+
+ The initialization of the buffer is subject to failure, and sadly this cannot
+ be avoided. [1] There are two sources of errors:
+
+  1) Resource exhaustion. The maximum amount of available memory, file
+  descriptors, memory mappings etc. may be exceeded. This is similar to any
+  other container type.
+
+  2) To allocate the ringbuffer storage, first a memory region twice the
+  required size is mapped, then it is shrunk by half and a copy of the first
+  half of the buffer is mapped into the (now empty) second half.
+  If some other thread is creating its own mapping in the second half after
+  the buffer has been shrunk but before the second half has been mapped, this
+  will fail. To ensure success, allocate the buffers before branching into
+  multi-threaded code.
+
+ [1] Technically, we could use `MREMAP_FIXED` to enforce creation of the
+ second buffer, but at the cost of potentially unmapping random mappings made
+ by other threads, which seems much worse than just failing. I've spent some
+ time scouring the manpages and implementation of `mmap()` for a technique to
+ make it work atomically but came up empty. If there is one, please tell me.
+
+ */
 
 template<typename T, size_t howbig>
 class linear_ringbuffer_ {
@@ -165,13 +167,15 @@ public:
 
 	struct delayed_init {};
 
-	// "640KiB should be enough for everyone."
-	//   - Not Bill Gates.
-	//linear_ringbuffer_(size_t minsize = 640*1024);
+     /*
+	 "640KiB should be enough for everyone."
+	   - Not Bill Gates.
+	linear_ringbuffer_(size_t minsize = 640*1024);
+    */
      linear_ringbuffer_();
 	~linear_ringbuffer_();
 
-	// Noexcept initialization interface, see description above.
+	/*Noexcept initialization interface, see description above.*/
 	linear_ringbuffer_(const delayed_init) noexcept;
 	int initialize(size_t minsize) noexcept;
 
@@ -180,6 +184,8 @@ public:
 	iterator read_head() noexcept;
 	iterator write_head() noexcept;
 	void clear() noexcept;
+
+
 
 	bool empty() const noexcept;
 	size_t size() const noexcept;
@@ -190,7 +196,7 @@ public:
 	const_iterator end() const noexcept;
 	const_iterator cend() const noexcept;
 
-	// Plumbing
+	 //Plumbing
 
 	linear_ringbuffer_(linear_ringbuffer_&& other) noexcept;
 	linear_ringbuffer_& operator=(linear_ringbuffer_&& other) noexcept;
@@ -208,7 +214,6 @@ private:
 };
 
 
-//template<typename Count>
 template<typename Count, size_t howbig>
 void swap(
 	linear_ringbuffer_<Count, howbig>& lhs,
@@ -222,14 +227,15 @@ struct initialization_error : public std::runtime_error
 };
 
 
-//using linear_ringbuffer_st = linear_ringbuffer_<int64_t>;
-//using linear_ringbuffer_mt = linear_ringbuffer_<std::atomic<int64_t>>;
-//using linear_ringbuffer = linear_ringbuffer_mt;
+/*
+using linear_ringbuffer_st = linear_ringbuffer_<int64_t>;
+using linear_ringbuffer_mt = linear_ringbuffer_<std::atomic<int64_t>>;
+using linear_ringbuffer = linear_ringbuffer_mt;
+*/
 
 
 // Implementation.
 
-//template<typename T>
 template<typename T, size_t howbig>
 void linear_ringbuffer_<T, howbig>::commit(size_t n) noexcept {
      size_t N = sizeof(T)*n;
@@ -239,7 +245,6 @@ void linear_ringbuffer_<T, howbig>::commit(size_t n) noexcept {
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 void linear_ringbuffer_<T, howbig>::consume(size_t n) noexcept {
      size_t N = sizeof(T)*n;
@@ -249,42 +254,36 @@ void linear_ringbuffer_<T, howbig>::consume(size_t n) noexcept {
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 void linear_ringbuffer_<T, howbig>::clear() noexcept {
 	tail_ = head_ = size_ = 0;
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 size_t linear_ringbuffer_<T, howbig>::size() const noexcept {
 	return size_/sizeof(T);
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 bool linear_ringbuffer_<T, howbig>::empty() const noexcept {
 	return size_ == 0;
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 size_t linear_ringbuffer_<T, howbig>::capacity() const noexcept {
 	return capacity_;
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 size_t linear_ringbuffer_<T, howbig>::free_size() const noexcept {
 	return capacity_ - size_;
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::cbegin() const noexcept -> const_iterator
 {
@@ -292,7 +291,6 @@ auto linear_ringbuffer_<T, howbig>::cbegin() const noexcept -> const_iterator
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::begin() const noexcept -> const_iterator
 {
@@ -300,7 +298,6 @@ auto linear_ringbuffer_<T, howbig>::begin() const noexcept -> const_iterator
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::read_head() noexcept -> iterator
 {
@@ -308,19 +305,18 @@ auto linear_ringbuffer_<T, howbig>::read_head() noexcept -> iterator
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::cend() const noexcept -> const_iterator
 {
-	// Fix up `end` if needed so that [begin, end) is always a
-	// valid range.
+	 /*Fix up `end` if needed so that [begin, end) is always a
+	 valid range.
+      */
 	return head_ < tail_ ?
 		buffer_ + tail_ :
 		buffer_ + tail_ + capacity_;
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::end() const noexcept -> const_iterator
 {
@@ -328,7 +324,6 @@ auto linear_ringbuffer_<T, howbig>::end() const noexcept -> const_iterator
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::write_head() noexcept -> iterator
 {
@@ -336,7 +331,6 @@ auto linear_ringbuffer_<T, howbig>::write_head() noexcept -> iterator
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 linear_ringbuffer_<T, howbig>::linear_ringbuffer_(const delayed_init) noexcept
   : buffer_(nullptr)
@@ -347,7 +341,6 @@ linear_ringbuffer_<T, howbig>::linear_ringbuffer_(const delayed_init) noexcept
 {}
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 linear_ringbuffer_<T, howbig>::linear_ringbuffer_()
   : buffer_(nullptr)
@@ -363,7 +356,6 @@ linear_ringbuffer_<T, howbig>::linear_ringbuffer_()
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 linear_ringbuffer_<T, howbig>::linear_ringbuffer_(linear_ringbuffer_&& other) noexcept
 {
@@ -373,7 +365,6 @@ linear_ringbuffer_<T, howbig>::linear_ringbuffer_(linear_ringbuffer_&& other) no
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 auto linear_ringbuffer_<T, howbig>::operator=(linear_ringbuffer_&& other) noexcept
 	-> linear_ringbuffer_&
@@ -385,7 +376,6 @@ auto linear_ringbuffer_<T, howbig>::operator=(linear_ringbuffer_&& other) noexce
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 int linear_ringbuffer_<T, howbig>::initialize(size_t minsize) noexcept
 {
@@ -395,30 +385,32 @@ int linear_ringbuffer_<T, howbig>::initialize(size_t minsize) noexcept
 	static const unsigned int PAGE_SIZE = ::sysconf(_SC_PAGESIZE);
 #endif
 
-	// Use `char*` instead of `void*` because we need to do arithmetic on them.
+	/*Use `char*` instead of `void*` because we need to do arithmetic on them.*/
 	unsigned char* addr =nullptr;
 	unsigned char* addr2=nullptr;
 
-	// Technically, we could also report sucess here since a zero-length
-	// buffer can't be legally used anyways.
+     /*
+	 Technically, we could also report sucess here since a zero-length
+	 buffer can't be legally used anyways.
+    */
 	if (minsize == 0) {
 		errno = EINVAL;
 		return -1;
 	}
-
-	// Round up to nearest multiple of page size.
+ 
+	/* Round up to nearest multiple of page size.*/
 	int bytes = minsize & ~(PAGE_SIZE-1);
 	if (minsize % PAGE_SIZE) {
 		bytes += PAGE_SIZE;
 	}
 
-	// Check for overflow.
+	/*Check for overflow.*/
 	if (bytes*2u < bytes) {
 		errno = EINVAL;
 		return -1;
 	}
 
-	// Allocate twice the buffer size
+	/*Allocate twice the buffer size*/
 	addr = static_cast<unsigned char*>(::mmap(NULL, 2*bytes,
 		PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0));
 
@@ -426,13 +418,13 @@ int linear_ringbuffer_<T, howbig>::initialize(size_t minsize) noexcept
 		goto errout;
 	}
 
-	// Shrink to actual buffer size.
+	/*Shrink to actual buffer size.*/
 	addr = static_cast<unsigned char*>(::mremap(addr, 2*bytes, bytes, 0));
 	if (addr == MAP_FAILED) {
 		goto errout;
 	}
 
-	// Create the second copy right after the shrinked buffer.
+	/*Create the second copy right after the shrinked buffer.*/
 	addr2 = static_cast<unsigned char*>(::mremap(addr, 0, bytes, MREMAP_MAYMOVE,
 		addr+bytes));
 
@@ -445,7 +437,7 @@ int linear_ringbuffer_<T, howbig>::initialize(size_t minsize) noexcept
 		goto errout;
 	}
 
-	// Sanity check.
+	//Sanity check.
 	*(char*)addr = 'x';
 	assert(*(char*)addr2 == 'x');
 
@@ -459,9 +451,11 @@ int linear_ringbuffer_<T, howbig>::initialize(size_t minsize) noexcept
 
 errout:
 	int error = errno;
-	// We actually have to check for non-null here, since even if `addr` is
-	// null, `bytes` might be large enough that this overlaps some actual
-	// mappings.
+     /*
+	 We actually have to check for non-null here, since even if `addr` is
+	 null, `bytes` might be large enough that this overlaps some actual
+	 mappings.
+      */
 	if (addr) {
 		::munmap(addr, bytes);
 	}
@@ -473,18 +467,18 @@ errout:
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 linear_ringbuffer_<T, howbig>::~linear_ringbuffer_()
 {
-	// Either `buffer_` and `capacity_` are both initialized properly,
-	// or both are zero.
+    /*
+	 Either `buffer_` and `capacity_` are both initialized properly,
+	 or both are zero.
+    */
 	::munmap(buffer_, capacity_);
 	::munmap(buffer_+capacity_, capacity_);
 }
 
 
-//template<typename T>
 template<typename T, size_t howbig>
 void linear_ringbuffer_<T, howbig>::swap(linear_ringbuffer_<T, howbig>& other) noexcept
 {
@@ -497,7 +491,6 @@ void linear_ringbuffer_<T, howbig>::swap(linear_ringbuffer_<T, howbig>& other) n
 }
 
 
-//template<typename Count>
 template<typename T, size_t howbig>
 void swap(
 	linear_ringbuffer_<T, howbig>& lhs,
@@ -512,4 +505,4 @@ inline initialization_error::initialization_error(int errno_)
   , error(errno_)
 {}
 
-} // namespace bev
+}  namespace bev
