@@ -184,8 +184,9 @@ public:
 	iterator read_head() noexcept;
 	iterator write_head() noexcept;
 	void clear() noexcept;
-
-
+ 
+     void push_back(T insert_this) noexcept; 
+     void read_window(T *ret, size_t nr) noexcept;
 
 	bool empty() const noexcept;
 	size_t size() const noexcept;
@@ -212,6 +213,22 @@ private:
 	size_t tail_;
 	size_t size_;
 };
+
+//Inserts an element and commits it
+template<typename T, size_t howbig>
+void linear_ringbuffer_<T, howbig>::push_back(T insert_this) noexcept
+{
+    memcpy(write_head(), &insert_this, sizeof(T));
+    commit(1);
+}
+
+
+template<typename T, size_t howbig>
+void linear_ringbuffer_<T, howbig>::read_window(T *ret, size_t nr) noexcept
+{
+    memcpy(ret, read_head(), sizeof(T)*nr);
+    consume(1);
+}
 
 
 template<typename Count, size_t howbig>
@@ -505,4 +522,4 @@ inline initialization_error::initialization_error(int errno_)
   , error(errno_)
 {}
 
-}  namespace bev
+}  //namespace bev

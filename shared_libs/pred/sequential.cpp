@@ -1,10 +1,10 @@
 #include <fstream>
 #include <string>
 #include <fcntl.h>
+#include <unistd.h>
 #include "util.hpp"
 
 #include "sequential.hpp"
-#include "worker.hpp"
 
 off_t pages_readahead = 0;
 int times_prefetch = 0;
@@ -103,25 +103,35 @@ void sequential::init_stride(int fd){
 
 void sequential::update_stride(int fd){
     if(exists(fd) && current_stream[fd].size() > HISTORY){
-        off_t this_stride, check_stride;
-        auto deq = current_stream[fd];
-        auto stream = deq.begin();
+        off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
+        current_stream[fd].read_window(present_hist, HISTORY);
+        //auto deq = current_stream[fd];
+        //auto stream = deq.begin();
 
+        /*
         this_stride = stream->pos + stream->bytes; //Pos1 + Size1
         stream++;
         this_stride = stream->pos - this_stride; //Pos2 - (pos1 + size1)
+        */
 
-        for(int i=1; i<HISTORY; i++){
-            check_stride = stream->pos + stream->bytes;
-            stream++;
-            check_stride = stream->pos - check_stride;
+        for(int i=0; i<HISTORY-1; i++){
+            if(this_stride == NOT_SEQ)
+            {
+                this_stride = present_hist[i].pos + present_hist[i].bytes;
+                this_stride = present_hist[i+1].pos - this_stride;
+                continue;
+            }
+            check_stride = present_hist[i].pos + present_hist[i].bytes;
+            //check_stride = stream->pos + stream->bytes;
+            check_stride = present_hist[i+1].pos - check_stride;
+            //check_stride = stream->pos - check_stride;
             if(check_stride != this_stride){
                 this_stride = NOT_SEQ;
                 break;
             }
         }
         strides[fd].stride = this_stride; //set the new stride
-        current_stream[fd].pop_front(); //remove last element
+        //current_stream[fd].pop_front(); //remove last element
     }
     return;
 }
@@ -140,7 +150,6 @@ bool sequential::exists(int fd)
 
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
-
     /*TODO: Make this malloc scalable
      * without the malloc, the stack memory gets corrupted before
      * the worker threads uses it.
@@ -150,13 +159,26 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     ret->stride = stride;
 
 #ifdef __NO_BG_THREADS
-    __seq_prefetch((struct msg*)ret);
+    //__seq_prefetch(&ret);
+    __seq_prefetch((struct msg*)ret); //Correct
 #else
+    //return thpool_add_work(get_thpool(), __seq_prefetch, &ret);
     return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
+    //return thpool_add_work(get_thpool(), infinite_loop, NULL);
 #endif
     return true;
 }
 
+void infinite_loop(void *num){
+	unsigned long int a;
+
+	for(a=0; a<2000000000000; a++)
+	{
+		sleep(100);
+	}
+	printf("a = %lu\n", a);
+
+}
 
 int prefetch_now(void *pfetch_info) {
 
@@ -234,7 +256,6 @@ void __seq_prefetch(void *pfetch_info){
     //do readhead
     readahead(curr_access.fd, nextpos, bytes_toread);
     //return posix_fadvise(curr_access.fd, nextpos, pages_readahead*4096, POSIX_FADV_SEQUENTIAL);
-    
     g_bytes_prefetched = bytes_toread;
 
     return;

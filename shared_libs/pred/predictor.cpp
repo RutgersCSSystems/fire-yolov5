@@ -23,6 +23,7 @@ ngram writeobj; //Obj with all the write info
 sequential seq_readobj;
 sequential seq_writeobj;
 #endif
+struct pos_bytes acc;
 
 /* Keeps track of all filenames wrt its corresponding fd*/
 std::unordered_map<int, std::string> fd_to_filename;
@@ -85,38 +86,34 @@ bool handle_open(int fd, const char *filename){
  * 2. takes appropriate readahead/DONT NEED action
  */
 int handle_read(int fd, off_t pos, size_t bytes) {
-
-    //FIXME: @Shaleen, why is defined as static?
-    static struct pos_bytes a;
-
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
-    a.fd = fd;
-    a.pos = pos;
-    a.bytes = bytes;
+    acc.fd = fd;
+    acc.pos = pos;
+    acc.bytes = bytes;
 
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
     //Recognizer insert the access
 #ifdef NGRAM
-    readobj.insert_to_ngram(a);
+    readobj.insert_to_ngram(acc);
 #endif
 
 #ifdef SEQUENTIAL
-    seq_readobj.insert(a);
+    seq_readobj.insert(acc);
 #endif
 
    
-#ifdef STATS    
+#ifdef STATS 
     //FIXME: Why are we not calling this inside a TIMER? This is super-high overhead
     gettimeofday(&start, NULL);
 #endif
 
 #ifdef _DELAY_PREFETCH
     /*Check if we need to prefetch or we have read enough and can wait for some time?*/
-    if(!prefetch_now((void *)&a)) {
+    if(!prefetch_now((void *)&acc)) {
         //printf("Delay prefetch \n");
 	return 0;
     }
@@ -127,11 +124,11 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
         debug_print("handle_read: sequential\n");
-        seq_prefetch(a, SEQ_ACCESS);  //prefetch at program path
+        seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
     }
     else if((stride = seq_readobj.is_strided(fd))){
         debug_print("handle_read: strided: %lu\n", stride);
-        seq_prefetch(a, stride); //prefetch in program path
+        seq_prefetch(acc, stride); //prefetch in program path
     }
 #endif
 
