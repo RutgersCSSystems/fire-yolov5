@@ -34,24 +34,31 @@ int readit()
         int fd = fileno(file);
         for(int i=1; i<nr_loops; i++)
         {
-            readahead(fd, i*MAX_READAHEAD, MAX_READAHEAD);
+            //readahead(fd, i*MAX_READAHEAD, MAX_READAHEAD);
         }
     }
     else
     {
         int nr_ints = MAX_READAHEAD/sizeof(int);
-        for(int i=0; i<nr_loops; i++)
+        for(int j=3; j>=0; j--)
         {
-            int a = fread(out, sizeof(int), nr_ints, file);
-            if(a != nr_ints)
+            for(int i=j; i<nr_loops; i+=4)
             {
-               // printf("a  not eqyal\n");
-                if (feof(file))
-                    printf("Error reading test.bin: unexpected end of file\n");
-                else if (ferror(file)) {
-                    perror("Error reading test.bin");
+                long offset = i * MAX_READAHEAD;
+                fseeko64(file, offset, SEEK_SET);
+                // printf("read at location %ld\n", offset);
+
+                int a = fread(out, sizeof(int), nr_ints, file);
+                if(a != nr_ints)
+                {
+                    // printf("a  not eqyal\n");
+                    if (feof(file))
+                        printf("Error reading test.bin: unexpected end of file\n");
+                    else if (ferror(file)) {
+                        perror("Error reading test.bin");
+                    }
+                    break;
                 }
-                break;
             }
         }
 
@@ -70,7 +77,7 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
     int a = readit();
-    printf("sum = %d\n", a);
+    printf("sum = %d from proc %d\n", a, my_id);
     PMPI_Barrier(MPI_COMM_WORLD);
 
     return 0;
