@@ -32,14 +32,14 @@ IMAGE_CREATE() {
 	sudo chroot $MOUNT_DIR && sudo apt-get install vim && sudo apt-get install build-essential && sudo apt-get install ssh
 	#You are all set. Now unmount your image file from the directory.
         
-	sudo cp /etc/apt/source.list $MOUNTH_DIR/etc/apt
+	sudo cp /etc/apt/sources.list $MOUNT_DIR/etc/apt
 }
 
 
 SETUP_IMAGE() {
 	scripts/umount_qemu.sh
         sudo mount -o loop $QEMU_IMG_FILE $MOUNT_DIR
-        QEMUNVM=/users/$USER/ssd/NVM/mountdir/skannan/ssd/NVM
+        QEMUNVM=/users/$USER/ssd/NVM/mountdir/$USER/ssd/NVM
         QEMUAPPBENCH=$QEMUNVM/appbench
 	sudo mkdir -p $QEMUAPPBENCH
         sudo cp -r scripts $QEMUNVM

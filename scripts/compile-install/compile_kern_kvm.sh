@@ -1,6 +1,11 @@
 #!/bin/bash
 set -x
 
+if [ -z "$NVMBASE" ]; then
+	echo "NVMBASE environment variable not defined. Have you ran setvars?"
+	exit 1
+fi
+
 sudo umount $MOUNT_DIR
 #Compile the kernel
 cd $KERN_SRC
@@ -16,16 +21,9 @@ grep -r "error:|undefined|warning" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 #sudo make install &>> $KERN_SRC/compile.out
 #grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
 
- y="4.17.0"
-   if [[ x$ == x ]];
-  then
-      echo You have to say a version!
-      exit 1
-   fi
-
-sudo cp ./arch/x86/boot/bzImage $KERNEL/vmlinuz-$y
-sudo cp System.map $KERNEL/System.map-$y
-sudo cp .config $KERNEL/config-$y
+sudo cp ./arch/x86/boot/bzImage $KERNEL/vmlinuz-$VER
+sudo cp System.map $KERNEL/System.map-$VER
+sudo cp .config $KERNEL/config-$VER
 #sudo update-initramfs -c -k $y
 grep -r "error:" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 cat $KERN_SRC/errors.out
