@@ -11,7 +11,8 @@ CC=/usr/lib/ccache/bin/gcc make -j$PROC &>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
 
-CC=/usr/lib/ccache/bin/gcc make bzImage -j$PROC &>>compile.out
+#CC=/usr/lib/ccache/bin/gcc make bzImage -j$PROC &>>compile.out
+CC=/usr/lib/ccache/bin/gcc make vmlinux -j$PROC &>>compile.out
 grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
 
@@ -22,7 +23,8 @@ grep -r "error:" compile.out &> errors.out
 grep -r "undefined:" compile.out &> errors.out
 
 
-cp ./arch/x86/boot/bzImage /boot/vmlinuz-$VER
+#cp ./arch/x86/boot/bzImage /boot/vmlinuz-$VER
+cp ./vmlinux /boot/vmlinux-$VER
 cp System.map /boot/System.map-$VER
 cp .config /boot/config-$VER
 rm -rf /boot/initrd.img-$VER
