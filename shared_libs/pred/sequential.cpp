@@ -8,6 +8,7 @@
 
 off_t pages_readahead = 0;
 int times_prefetch = 0;
+int future_prefetch = 0;
 off_t g_bytes_prefetched=0;
 
 
@@ -230,7 +231,18 @@ void __seq_prefetch(void *pfetch_info){
 		times_prefetch = atoi(times);
     }
 
-    off_t nextpos = curr_access.pos + curr_access.bytes + stride;
+    //initialize future_prefetch
+    if(future_prefetch == 0)
+    {
+	    char *future = getenv(ENV_FUTURE);
+	    if(!future)
+		future_prefetch = DEFAULT_FUTURE_PREFETCH;
+	    else
+		future_prefetch = atoi(future);
+    }
+
+
+    off_t nextpos = curr_access.pos + curr_access.bytes + (stride * future_prefetch);
     off_t nextpos_align = nextpos;
 
     //find the next page aligned position

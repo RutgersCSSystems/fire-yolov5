@@ -14,7 +14,7 @@ PINCORES=-DPIN_ALL
 all: nopred seq 
 
 nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -o libnopred.so $^ $(LIBS)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS)
 
 seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS) $(DELAYPRFETCH) $(PINCORES)
