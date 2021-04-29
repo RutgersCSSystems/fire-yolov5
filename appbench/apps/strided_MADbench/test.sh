@@ -23,9 +23,12 @@ FLUSH=1 ##flush writes
 #CONFIG_AMPLXE="-trace-mpi -collect platform-profiler"
 
 #export LD_PRELOAD="/usr/local/lib/libdarshan.so"
-#export LD_PRELOAD="/usr/lib/libcrosslayer.so"
-export LD_PRELOAD="/usr/lib/libnopred.so"
+export LD_PRELOAD="/usr/lib/libcrosslayer.so"
+#export LD_PRELOAD="/usr/lib/libnopred.so"
+export FUTUREPREFETCH=10
+export TIMESPREFETCH=2
 
-TIMESPREFETCH=2 /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 16384 10 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 16384 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+#TIMESPREFETCH=2 /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 16384 3 1 8 64 1 1 $RECORD $STRIDE $FLUSH
 
 export LD_PRELOAD=
