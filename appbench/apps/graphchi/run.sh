@@ -1,12 +1,17 @@
 #!/bin/bash
 set -x
+if [ -z "$NVMBASE" ]; then
+    echo "NVMBASE environment variable not defined. Have you ran setvars?"
+    exit 1
+fi
+
+
 DATA=com-orkut.ungraph.txt
 #DATA=com-youtube.ungraph.txt
 INPUT=$SHARED_DATA/$DATA
-APPBASE=$APPBENCH/graphchi/graphchi-cpp/bin/example_apps
+APPBASE=$APPBENCH/apps/graphchi/graphchi-cpp/bin/example_apps
 APP=$APPBASE/pagerank
-PARAM=$1
-OUTPUT=$2
+APPPREFIX="/usr/bin/time -v"
 
 FlushDisk()
 {
@@ -16,8 +21,9 @@ FlushDisk()
 	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 }
 
-cd $APPBENCH/graphchi 
+export GRAPHCHI_ROOT=$APPBENCH/apps/graphchi/graphchi-cpp
+
+#cd $APPBENCH/apps/graphchi 
 FlushDisk
 echo "edgelist" | $APPPREFIX $APP file $INPUT niters 8
 set +x
-
