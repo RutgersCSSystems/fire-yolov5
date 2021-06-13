@@ -266,14 +266,13 @@ int force_page_cache_readahead(struct address_space *mapping, struct file *filp,
 	 * be up to the optimal hardware IO size
 	 */
 	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+	nr_to_read = min(nr_to_read, max_pages);
 #ifdef CONFIG_PVT_LRU
 #ifdef CONFIG_PVT_LRU_DEBUG
      //printk("max_pages:%lu, nr_read_requested:%lu\n", max_pages, nr_to_read
 #endif
-	nr_to_read = min(nr_to_read, max_pages);
      add_readahead(nr_to_read, 2);
 #endif
-	nr_to_read = min(nr_to_read, max_pages);
 	while (nr_to_read) {
 		int err;
 
