@@ -1,0 +1,80 @@
+./variation_runexp.sh: line 88: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 4  no_pix = 8192  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=1048576 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+build_S
+build_S
+build_S
+S_cc         1.63   [      1.63:      1.63]
+S_bw         0.66   [      0.66:      0.66]
+S_w         49.03   [     49.03:     49.03]
+          -------
+S_total     51.32   [     51.32:     51.32]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         3.69   [      3.69:      3.69]
+W_r         76.21   [     76.21:     76.21]
+W_w         43.11   [     43.11:     43.11]
+          -------
+W_total    123.01   [    123.01:    123.01]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         1.34   [      1.34:      1.35]
+C_bw         0.89   [      0.89:      0.89]
+C_r         42.93   [     42.93:     42.93]
+          -------
+C_total     45.17   [     45.17:     45.17]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534864 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535100 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535160 KB, SharedMem= 0 KB, HardPageFault= 1
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535128 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5308 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4992 KB, SharedMem= 0 KB, HardPageFault= 4
+	Command being timed: "mpiexec.mpich -n 4 ./MADbench2_io 8192 30 1 8 64 1 1 1048576 7 1"
+	User time (seconds): 123.15
+	System time (seconds): 90.19
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:39.67
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 535160
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 14
+	Minor (reclaiming a frame) page faults: 5310358
+	Voluntary context switches: 41183
+	Involuntary context switches: 1528
+	Swaps: 0
+	File system inputs: 78884944
+	File system outputs: 62914592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 3888 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************
