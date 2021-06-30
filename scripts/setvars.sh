@@ -2,10 +2,12 @@ export NVMBASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME="bionic"
-export KERN_SRC=$NVMBASE/linux-stable
+#export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
 export PARA="-j`nproc`"
-export VER="4.17.0"
+#export VER="4.17.0"
+export VER="4.19.193"
+export KERN_SRC=$NVMBASE/linux-$VER
 #export VER="4.15.1"
 
 #QEMU
