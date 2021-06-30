@@ -16,9 +16,9 @@ RESULTS_FOLDER=$OUTPUTDIR/$APP/bg-future-sensitivity-$RIGHTNOW
 mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 
-declare -a predict=("0" "1")
+declare -a predict=("0")
 declare -a workarr=("16384")
-declare -a thrdarr=("16")
+declare -a thrdarr=("2" "4" "16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
 declare -a readsize=("4096")
 #sizeofprefetch = prefetchwindow * readsize
@@ -56,6 +56,7 @@ RUNAPP()
     RECORD=$4
     TPREFETCH=$5
     FPREFETCH=$6
+    
 
     OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH"_FUTUREPREFETCH-"$FPREFETCH".out"
 

@@ -9,11 +9,15 @@ export IOMODE=SYNC
 export FILETYPE=UNIQUE
 export IOMETHOD=POSIX
 #RECORD=16777216 # bytes read at once
-RECORD=4096 # bytes read at once
-#RECORD=1048576 # bytes read at once
+#RECORD=4194304 # bytes read at once 4MB read size
+RECORD=1048576 # bytes read at once 1MB read size
 STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
-NPROC=16 ##Num MPI procs
+NPROC=1 ##Num MPI procs
 FLUSH=1 ##flush writes
+DEV=/dev/sda4
+#force_page_cache_readahead - max_pages = 320, 512, 1024, 2048 (rasize = $maxpages*4096/512)
+declare -a rasize=("2560" "4096" "8192" "16384") 
+RASIZE=8192 #Pages allowed to readahead (320 = 1280 KB, 512 pages = 2048 KB)
 
 #AMPLXE=/opt/intel/vtune_amplifier_2019/bin64/amplxe-cl
 #CONFIG_AMPLXE="-trace-mpi -collect hotspots -k enable-stack-collection=true -k stack-size=0 -k sampling-mode=hw"
@@ -26,9 +30,13 @@ FLUSH=1 ##flush writes
 export LD_PRELOAD="/usr/lib/libcrosslayer.so"
 #export LD_PRELOAD="/usr/lib/libnopred.so"
 export FUTUREPREFETCH=10
-export TIMESPREFETCH=2
+export TIMESPREFETCH=15
 
-/usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 16384 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+sudo blockdev --setra $RASIZE $DEV
+echo -n "blockdev getra = "; sudo blockdev --getra $DEV
+#/usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io 16384 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+/usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io 16384 5 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+#/usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io 8192 5 1 8 64 1 1 $RECORD $STRIDE $FLUSH
 #TIMESPREFETCH=2 /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io 16384 3 1 8 64 1 1 $RECORD $STRIDE $FLUSH
 
 export LD_PRELOAD=

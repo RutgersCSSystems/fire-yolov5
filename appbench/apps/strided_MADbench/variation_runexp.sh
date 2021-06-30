@@ -19,14 +19,14 @@ cd $APPDIR
 
 declare -a predict=("0" "1")
 declare -a workarr=("4096" "8192")
-declare -a thrdarr=("1" "4" "16")
+declare -a thrdarr=("1" "4")
 ##application read size 4KB, 512KB, 1MB, 4MB
-declare -a readsize=("4096" "524288" "1048576" "4194304")
+declare -a readsize=("1048576" "4194304")
 #sizeofprefetch = prefetchwindow * readsize
 declare -a prefetchwindow=("1" "2")
-declare -a futureprefetch=("1" "4" "10" "20" "50") 
+declare -a futureprefetch=("1" "4") 
 
-#force_page_cache_readahead - max_pages = 320, 512, 1024, 2048 ($maxpages*4096/512)
+#force_page_cache_readahead - max_pages = 320, 512, 1024, 2048 (rasize = $maxpages*4096/512)
 declare -a rasize=("2560" "4096" "8192" "16384") 
 
 
@@ -83,7 +83,7 @@ RUNAPP()
         export LD_PRELOAD=/usr/lib/libnopred.so
     fi
 
-    COMMAND="$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
+    COMMAND="$APPPREFIX mpiexec.mpich -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
     echo "$COMMAND"
     numactl --hardware &> $OUTPUT
     wait; sync
