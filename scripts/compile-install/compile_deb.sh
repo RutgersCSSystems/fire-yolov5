@@ -1,6 +1,6 @@
 #!/bin/bash -x
 cd $KERN_SRC
-sudo apt-get install libdpkg-dev kernel-package libncurses-dev
+sudo apt-get install -y libdpkg-dev kernel-package libncurses-dev
 export CONCURRENCY_LEVEL=40
 export CONCURRENCYLEVEL=40
 touch REPORTING-BUGS
