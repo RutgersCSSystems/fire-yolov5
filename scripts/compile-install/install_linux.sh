@@ -6,7 +6,7 @@ if [ -z "$NVMBASE" ]; then
     exit 1
 fi
 
-VERSION=4.15.1
+VERSION=4.19.197
 KERNEL=linux-$VERSION
 PROC=`nproc`
 export CONCURRENCY_LEVEL=$PROC
@@ -17,7 +17,8 @@ cd $NVMBASE
 wget https://mirrors.edge.kernel.org/pub/linux/kernel/v4.x/$KERNEL.tar.gz
 tar -xf  $KERNEL.tar.gz
 cp $NVMBASE/scripts/helperscripts/linuxMakefile-$VERSION $KERNEL/Makefile
-if [ $? -ne 0 ] then
+if [ $? -ne 0 ]
+then
 	echo "no custom makefile for $KERNEL"
 	exit
 fi
