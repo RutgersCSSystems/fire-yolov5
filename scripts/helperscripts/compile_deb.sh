@@ -6,7 +6,7 @@ export CONCURRENCY_LEVEL=$PROC
 export CONCURRENCYLEVEL=$PROC
 
 touch REPORTING-BUGS
-sudo make distclean
+sudo make distclean -j
 sudo make menuconfig
 #fakeroot make-kpkg clean
 sudo fakeroot make-kpkg -j$PROC --initrd kernel-image kernel-headers
