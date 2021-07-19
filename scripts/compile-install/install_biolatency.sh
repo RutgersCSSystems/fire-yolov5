@@ -1,5 +1,6 @@
 #!/bin/bash
 
+##/usr/share/bcc/tools/biolatency
 
 sudo apt update
 
