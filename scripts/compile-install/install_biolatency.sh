@@ -9,5 +9,5 @@ echo "deb https://repo.iovisor.org/apt/$(lsb_release -cs) $(lsb_release -cs) mai
 sudo apt update
 sudo apt-get install bcc-tools libbcc-examples blktrace collectl perf-tools-unstable nmon htop -y
 
-echo 'export $PATH=/usr/share/bcc/tools:$PATH' >> ~/.bashrc
+echo 'export PATH=/usr/share/bcc/tools:$PATH' >> ~/.bashrc
 echo "source ~/.bashrc #do it before using biolatency"
