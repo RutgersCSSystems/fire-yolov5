@@ -1,0 +1,66 @@
+./runexp_variation_sudarsun.sh: line 73: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 4  no_pix = 16384  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=1048576 stride=7
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
+
+build_S
+build_S
+build_S
+build_S
+S_cc         3.99   [      3.98:      3.99]
+S_bw         2.66   [      2.66:      2.66]
+S_w        103.86   [    103.86:    103.86]
+          -------
+S_total    110.50   [    110.49:    110.51]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         3.91   [      3.90:      3.91]
+W_r        250.45   [    250.45:    250.45]
+W_w         65.89   [     65.89:     65.89]
+          -------
+W_total    320.25   [    320.24:    320.25]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+[mpiexec@node-0.shaleen-qv94834.lsm-pg0.wisc.cloudlab.us] Sending Ctrl-C to processes as requested
+[mpiexec@node-0.shaleen-qv94834.lsm-pg0.wisc.cloudlab.us] Press Ctrl-C again to force abort
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5396 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4872 KB, SharedMem= 0 KB, HardPageFault= 5
+	Command being timed: "mpiexec -n 4 ./MADbench2_io 16384 30 1 8 64 1 1 1048576 7 1"
+	User time (seconds): 172.20
+	System time (seconds): 236.14
+	Percent of CPU this job got: 71%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:28.37
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2108208
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 52
+	Minor (reclaiming a frame) page faults: 6563640
+	Voluntary context switches: 324530
+	Involuntary context switches: 2011
+	Swaps: 0
+	File system inputs: 186447960
+	File system outputs: 251658272
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2232 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************

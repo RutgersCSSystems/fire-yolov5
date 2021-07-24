@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
+#include <time.h>
 #include "mpi.h"
 #include "MADbench2.h"
 
@@ -1126,6 +1127,10 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
 
                 int data_offt; // in nr of doubles addr offset
                 int tot_elems = 0;
+		struct timespec tim, tim2;
+		tim.tv_sec = 0;
+		tim.tv_nsec = 20000;
+
                 for(i=0; i<=stride; i++)
                 {
                     //goto the offset for this stride
@@ -1139,6 +1144,12 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
 
                         data_offt = (record_size * i) + (iter*block_size);
                         data_offt /= sizeof(double);
+			
+			/*nanosleep*/
+			/*
+			if(nanosleep(&tim , &tim2) < 0)
+				printf("Nanosleep not working\n");
+			*/
 
                         //printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 

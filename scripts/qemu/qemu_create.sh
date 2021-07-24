@@ -3,8 +3,8 @@ set -x
 
 IMAGE_CREATE() {
 	#Install Quemu
-	sudo apt-get install qemu
-	sudo apt-get kernel-package
+	sudo apt-get update
+	sudo apt-get install -y qemu kernel-package debootstrap
 
 	#Please do not change beyond this
 	#Now create a disk for your virtual machine 
@@ -22,9 +22,6 @@ IMAGE_CREATE() {
 	#Next, mount your image to the directory
 	sudo mount -o loop $QEMU_IMG_FILE $MOUNT_DIR
 
-	#Install debootstrap
-	sudo apt-get install debootstrap
-
 	#Now get the OS release version using
 	cat /etc/os-release
 
@@ -35,14 +32,14 @@ IMAGE_CREATE() {
 	sudo chroot $MOUNT_DIR && sudo apt-get install vim && sudo apt-get install build-essential && sudo apt-get install ssh
 	#You are all set. Now unmount your image file from the directory.
         
-	sudo cp /etc/apt/source.list
+	sudo cp /etc/apt/sources.list $MOUNT_DIR/etc/apt
 }
 
 
 SETUP_IMAGE() {
 	scripts/umount_qemu.sh
         sudo mount -o loop $QEMU_IMG_FILE $MOUNT_DIR
-        QEMUNVM=/users/$USER/ssd/NVM/mountdir/skannan/ssd/NVM
+        QEMUNVM=/users/$USER/ssd/NVM/mountdir/$USER/ssd/NVM
         QEMUAPPBENCH=$QEMUNVM/appbench
 	sudo mkdir -p $QEMUAPPBENCH
         sudo cp -r scripts $QEMUNVM
@@ -57,7 +54,7 @@ then
     echo "$0: File '${file}' not found."
     IMAGE_CREATE
 fi
-SETUP_IMAGE
+#SETUP_IMAGE
 exit
 
 

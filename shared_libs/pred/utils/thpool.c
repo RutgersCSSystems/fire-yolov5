@@ -83,7 +83,7 @@ typedef struct thpool_{
 	volatile int num_threads_working;    /* threads currently working */
 	pthread_mutex_t  thcount_lock;       /* used for thread count etc */
 	pthread_cond_t  threads_all_idle;    /* signal to thpool_wait     */
-	jobqueue  jobqueue;                  /* job queue                 */
+	jobqueue  jqueue;                  /* job queue                 */
 } thpool_;
 
 
@@ -127,6 +127,23 @@ struct thpool_* thpool_init(int num_threads){
 		num_threads = 0;
 	}
 
+#ifdef PIN_ALL
+	/*set affinity*/
+	pid_t proc_pid = getpid();
+	int core_id = proc_pid % 16;
+	cpu_set_t proc_cpuset;
+	CPU_ZERO(&proc_cpuset);
+	CPU_SET(core_id, &proc_cpuset);
+	if (sched_setaffinity(getpid(), sizeof(cpu_set_t), &proc_cpuset) == -1){
+		err("thpool_init(): Could not set proc affinity\n");
+	}
+	core_id += 16; //ID for worker thread
+	cpu_set_t th_cpuset;
+	CPU_ZERO(&th_cpuset);
+	CPU_SET(core_id, &th_cpuset);
+	/**/
+#endif
+
 	/* Make new thread pool */
 	thpool_* thpool_p;
 	thpool_p = (struct thpool_*)malloc(sizeof(struct thpool_));
@@ -138,7 +155,7 @@ struct thpool_* thpool_init(int num_threads){
 	thpool_p->num_threads_working = 0;
 
 	/* Initialise the job queue */
-	if (jobqueue_init(&thpool_p->jobqueue) == -1){
+	if (jobqueue_init(&thpool_p->jqueue) == -1){
 		err("thpool_init(): Could not allocate memory for job queue\n");
 		free(thpool_p);
 		return NULL;
@@ -148,7 +165,7 @@ struct thpool_* thpool_init(int num_threads){
 	thpool_p->threads = (struct thread**)malloc(num_threads * sizeof(struct thread *));
 	if (thpool_p->threads == NULL){
 		err("thpool_init(): Could not allocate memory for threads\n");
-		jobqueue_destroy(&thpool_p->jobqueue);
+		jobqueue_destroy(&thpool_p->jqueue);
 		free(thpool_p);
 		return NULL;
 	}
@@ -162,6 +179,12 @@ struct thpool_* thpool_init(int num_threads){
 		thread_init(thpool_p, &thpool_p->threads[n], n);
 #if THPOOL_DEBUG
 			printf("THPOOL_DEBUG: Created thread %d in pool \n", n);
+#endif
+#ifdef PIN_ALL
+		/*set thread affinity*/
+		if (pthread_setaffinity_np(thpool_p->threads[n]->pthread, sizeof(cpu_set_t), &th_cpuset) != 0){
+			err("thpool_init(): Could not set affinity for pthread\n");
+		}
 #endif
 	}
 
@@ -187,7 +210,7 @@ int thpool_add_work(thpool_* thpool_p, void (*function_p)(void*), void* arg_p){
 	newjob->arg=arg_p;
 
 	/* add job to queue */
-	jobqueue_push(&thpool_p->jobqueue, newjob);
+	jobqueue_push(&thpool_p->jqueue, newjob);
 
 	return 0;
 }
@@ -196,7 +219,7 @@ int thpool_add_work(thpool_* thpool_p, void (*function_p)(void*), void* arg_p){
 /* Wait until all jobs have finished */
 void thpool_wait(thpool_* thpool_p){
 	pthread_mutex_lock(&thpool_p->thcount_lock);
-	while (thpool_p->jobqueue.len || thpool_p->num_threads_working) {
+	while (thpool_p->jqueue.len || thpool_p->num_threads_working) {
 		pthread_cond_wait(&thpool_p->threads_all_idle, &thpool_p->thcount_lock);
 	}
 	pthread_mutex_unlock(&thpool_p->thcount_lock);
@@ -219,19 +242,19 @@ void thpool_destroy(thpool_* thpool_p){
 	double tpassed = 0.0;
 	time (&start);
 	while (tpassed < TIMEOUT && thpool_p->num_threads_alive){
-		bsem_post_all(thpool_p->jobqueue.has_jobs);
+		bsem_post_all(thpool_p->jqueue.has_jobs);
 		time (&end);
 		tpassed = difftime(end,start);
 	}
 
 	/* Poll remaining threads */
 	while (thpool_p->num_threads_alive){
-		bsem_post_all(thpool_p->jobqueue.has_jobs);
+		bsem_post_all(thpool_p->jqueue.has_jobs);
 		sleep(1);
 	}
 
 	/* Job queue cleanup */
-	jobqueue_destroy(&thpool_p->jobqueue);
+	jobqueue_destroy(&thpool_p->jqueue);
 	/* Deallocs */
 	int n;
 	for (n=0; n < threads_total; n++){
@@ -241,6 +264,33 @@ void thpool_destroy(thpool_* thpool_p){
 	free(thpool_p);
 }
 
+#if 0
+/* XXX: DOESNT WORK Destroy the threadpool forcefully*/
+void  forced_thpool_destroy(thpool_* thpool_p){
+	/* No need to destory if it's NULL */
+	if (thpool_p == NULL) return ;
+	int n;
+
+	volatile int threads_total = thpool_p->num_threads_alive;
+
+	/* End each thread 's infinite loop */
+	threads_keepalive = 0;
+
+	for(n=0; n < threads_total; n++)
+	{
+		pthread_kill(thpool_p->threads[n]->pthread, SIGKILL);
+	}
+
+	/* Job queue cleanup */
+	jobqueue_destroy(&thpool_p->jqueue);
+	/* Deallocs */
+	for (n=0; n < threads_total; n++){
+		thread_destroy(thpool_p->threads[n]);
+	}
+	free(thpool_p->threads);
+	free(thpool_p);
+}
+#endif
 
 /* Pause all threads in threadpool */
 void thpool_pause(thpool_* thpool_p) {
@@ -348,7 +398,7 @@ static void* thread_do(struct thread* thread_p){
 
 	while(threads_keepalive){
 
-		bsem_wait(thpool_p->jobqueue.has_jobs);
+		bsem_wait(thpool_p->jqueue.has_jobs);
 
 		if (threads_keepalive){
 
@@ -359,7 +409,7 @@ static void* thread_do(struct thread* thread_p){
 			/* Read job from queue and execute it */
 			void (*func_buff)(void*);
 			void*  arg_buff;
-			job* job_p = jobqueue_pull(&thpool_p->jobqueue);
+			job* job_p = jobqueue_pull(&thpool_p->jqueue);
 			if (job_p) {
 				func_buff = job_p->function;
 				arg_buff  = job_p->arg;

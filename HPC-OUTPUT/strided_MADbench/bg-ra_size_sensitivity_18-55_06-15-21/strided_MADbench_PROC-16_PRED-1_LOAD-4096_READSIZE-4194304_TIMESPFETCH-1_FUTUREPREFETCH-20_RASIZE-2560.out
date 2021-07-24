@@ -1,0 +1,168 @@
+./variation_runexp.sh: line 88: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 16  no_pix = 4096  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=4194304 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+S_cc         0.16   [      0.16:      0.16]
+S_bw         0.07   [      0.07:      0.07]
+S_w          8.37   [      8.37:      8.37]
+          -------
+S_total      8.60   [      8.60:      8.60]
+
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+build_S done
+calc_W
+WARNING: RECORD_SIZE >> READ_NEEDED
+W_cc         0.43   [      0.43:      0.43]
+W_r         16.19   [     16.19:     16.19]
+W_w         10.29   [     10.29:     10.29]
+          -------
+W_total     26.91   [     26.91:     26.91]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         0.21   [      0.21:      0.21]
+C_bw         0.10   [      0.10:      0.10]
+C_r          8.61   [      8.61:      8.61]
+          -------
+C_total      8.92   [      8.92:      8.92]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43576 KB, SharedMem= 0 KB, HardPageFault= 4
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43464 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43320 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43452 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43444 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43440 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43548 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43640 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43512 KB, SharedMem= 0 KB, HardPageFault= 3
+MaxRSS= 43520 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43320 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43524 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43556 KB, SharedMem= 0 KB, HardPageFault= 1
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43528 KB, SharedMem= 0 KB, HardPageFault= 1
+READAHEAD_TIME:0.000000 us
+MaxRSS= 43448 KB, SharedMem= 0 KB, HardPageFault= 1
+READAHEAD_TIME:0.000000 us
+MaxRSS= 44416 KB, SharedMem= 0 KB, HardPageFault= 3
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5272 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4988 KB, SharedMem= 0 KB, HardPageFault= 4
+	Command being timed: "mpiexec.mpich -n 16 ./MADbench2_io 4096 30 1 8 64 1 1 4194304 7 1"
+	User time (seconds): 222.93
+	System time (seconds): 58.38
+	Percent of CPU this job got: 631%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:44.55
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 44416
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 48
+	Minor (reclaiming a frame) page faults: 906938
+	Voluntary context switches: 6645
+	Involuntary context switches: 1032
+	Swaps: 0
+	File system inputs: 14924304
+	File system outputs: 15728656
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2128 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************

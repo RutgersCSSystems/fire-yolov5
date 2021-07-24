@@ -1,4 +1,4 @@
-CC=mpicc
+CC=mpicc.mpich
 LIBS=-L/usr/local/lib -lm
 
 FLAGS=-D SYSTEM -D COLUMBIA -D IO

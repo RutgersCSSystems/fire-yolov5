@@ -4,7 +4,7 @@ PCAnonRatio=1.5
 #DBGRATIO=1
 #DRATIO=100
 #BASE_MEM=2758459392
-NPROC=32
+NPROC=16
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
 WORKLOAD=2000
@@ -45,7 +45,10 @@ echo "going to sleep"
 sleep 1
 
 $SHARED_LIBS/construct/reset
-LD_PRELOAD=/usr/lib/libcrosslayer.so  mpiexec -n $NPROC ./gtc
+#export LD_PRELOAD=/usr/lib/libcrosslayer.so
+export LD_PRELOAD=/usr/lib/libnopred.so
+
+/usr/bin/time -v mpiexec -n $NPROC ./gtc
 
 #export LD_PRELOAD=/usr/lib/libcrosslayer.so
 #$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./gtc #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"

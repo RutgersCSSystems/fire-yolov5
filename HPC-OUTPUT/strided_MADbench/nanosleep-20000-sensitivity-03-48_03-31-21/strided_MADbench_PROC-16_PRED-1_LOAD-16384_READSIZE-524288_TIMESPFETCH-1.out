@@ -1,0 +1,152 @@
+./runexp_variation_sudarsun.sh: line 73: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 16  no_pix = 16384  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=524288 stride=7
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
+
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_Sbuild_S
+build_S
+
+S_cc         2.10   [      2.02:      2.11]
+S_bw         1.06   [      1.06:      1.06]
+S_w        111.44   [    111.44:    111.44]
+          -------
+S_total    114.59   [    114.51:    114.60]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         2.82   [      2.82:      2.82]
+W_r        166.59   [    166.59:    166.59]
+W_w        139.55   [    139.55:    139.55]
+          -------
+W_total    308.96   [    308.96:    308.96]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         1.79   [      1.78:      1.79]
+C_bw         1.07   [      1.07:      1.07]
+C_r        120.31   [    120.31:    120.31]
+          -------
+C_total    123.17   [    123.16:    123.17]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535076 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534800 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535832 KB, SharedMem= 0 KB, HardPageFault= 13
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534892 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534968 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534816 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534960 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534920 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534988 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534904 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535004 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535040 KB, SharedMem= 0 KB, HardPageFault= 11
+MaxRSS= 535008 KB, SharedMem= 0 KB, HardPageFault= 13
+READAHEAD_TIME:0.000000 us
+MaxRSS= 534816 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535072 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 535096 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5380 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4924 KB, SharedMem= 0 KB, HardPageFault= 5
+	Command being timed: "mpiexec -n 16 ./MADbench2_io 16384 30 1 8 64 1 1 524288 7 1"
+	User time (seconds): 892.37
+	System time (seconds): 427.89
+	Percent of CPU this job got: 241%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:07.20
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 535832
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 192
+	Minor (reclaiming a frame) page faults: 6827915
+	Voluntary context switches: 570277
+	Involuntary context switches: 3953
+	Swaps: 0
+	File system inputs: 212224584
+	File system outputs: 251658272
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2128 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************

@@ -1,0 +1,152 @@
+./runexp_variation_sudarsun.sh: line 73: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 16  no_pix = 8192  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=4194304 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_S
+build_Sbuild_S
+build_S
+build_S
+build_S
+build_S
+build_S
+
+S_cc         0.53   [      0.53:      0.54]
+S_bw         0.30   [      0.30:      0.30]
+S_w         31.95   [     31.95:     31.95]
+          -------
+S_total     32.78   [     32.77:     32.78]
+
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+build_S done
+calc_W
+W_cc         0.96   [      0.96:      0.97]
+W_r         39.69   [     39.69:     39.69]
+W_w         17.07   [     17.07:     17.07]
+          -------
+W_total     57.73   [     57.72:     57.73]
+
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+calc_W done
+C_cc         0.58   [      0.58:      0.58]
+C_bw         0.32   [      0.32:      0.32]
+C_r         24.96   [     24.96:     24.96]
+          -------
+C_total     25.86   [     25.86:     25.86]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141612 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141596 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 142480 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141468 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141640 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141580 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141580 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141452 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141764 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141600 KB, SharedMem= 0 KB, HardPageFault= 11
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141740 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141588 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141864 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141652 KB, SharedMem= 0 KB, HardPageFault= 10
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141612 KB, SharedMem= 0 KB, HardPageFault= 12
+READAHEAD_TIME:0.000000 us
+MaxRSS= 141616 KB, SharedMem= 0 KB, HardPageFault= 9
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5244 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4956 KB, SharedMem= 0 KB, HardPageFault= 5
+	Command being timed: "mpiexec -n 16 ./MADbench2_io 8192 30 1 8 64 1 1 4194304 7 1"
+	User time (seconds): 705.80
+	System time (seconds): 161.35
+	Percent of CPU this job got: 743%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:56.70
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 142480
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 171
+	Minor (reclaiming a frame) page faults: 2002515
+	Voluntary context switches: 87550
+	Involuntary context switches: 2069
+	Swaps: 0
+	File system inputs: 44250384
+	File system outputs: 61571096
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2132 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************

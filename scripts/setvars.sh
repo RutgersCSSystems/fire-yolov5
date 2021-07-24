@@ -1,12 +1,14 @@
 export NVMBASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
-export OS_RELEASE_NAME=$1
-export KERN_SRC=$NVMBASE/linux-stable
+export OS_RELEASE_NAME="bionic"
+#export KERN_SRC=$NVMBASE/linux-stable
 #CPU parallelism
 export PARA="-j`nproc`"
-export VER="4.17.0"
-#export VER="4.18.0-2-amd64"
+#export VER="4.17.0"
+export VER="4.19.193"
+export KERN_SRC=$NVMBASE/linux-$VER
+#export VER="4.15.1"
 
 #QEMU
 export QEMU_IMG=$NVMBASE
@@ -47,7 +49,7 @@ export OUTPUTDIR=$NVMBASE/HPC-OUTPUT
 export TEST_TMPDIR=/mnt/pmemdir
 
 
-export CODE="/users/skannan/ssd/NVM/appbench/apps/butterflyeffect/code"
+export CODE="/users/$USER/ssd/NVM/appbench/apps/butterflyeffect/code"
 export CSRC=$CODE/cassandra
 export SERVERS=`ifconfig | grep "inet addr" | head -1 | awk '{print $2}' | cut -d ":" -f2`
 export YCSBHOME=$CODE/mapkeeper/ycsb/YCSB

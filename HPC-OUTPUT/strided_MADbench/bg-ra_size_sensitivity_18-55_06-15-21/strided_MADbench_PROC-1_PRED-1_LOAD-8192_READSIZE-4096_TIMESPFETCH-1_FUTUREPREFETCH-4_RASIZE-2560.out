@@ -1,0 +1,62 @@
+./variation_runexp.sh: line 88: numactl: command not found
+
+MADbench 2.0 IO-mode
+no_pe = 1  no_pix = 8192  no_bin = 30  no_gang = 1 sblocksize = 8  fblocksize = 64  r_mod = 1  w_mod = 1 record_size=4096 stride=7
+
+
+IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOMbuild_S
+S_cc         4.51   [      4.51:      4.51]
+S_bw         2.42   [      2.42:      2.42]
+S_w         42.83   [     42.83:     42.83]
+          -------
+S_total     49.76   [     49.76:     49.76]
+
+build_S done
+calc_W
+W_cc         7.88   [      7.88:      7.88]
+W_r        277.35   [    277.35:    277.35]
+W_w         45.23   [     45.23:     45.23]
+          -------
+W_total    330.45   [    330.45:    330.45]
+
+calc_W done
+C_cc         5.69   [      5.69:      5.69]
+C_bw         2.35   [      2.35:      2.35]
+C_r        249.00   [    249.00:    249.00]
+          -------
+C_total    257.04   [    257.04:    257.04]
+
+
+dC[0] = 0.00000e+00
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2291900 KB, SharedMem= 0 KB, HardPageFault= 4
+READAHEAD_TIME:0.000000 us
+MaxRSS= 5428 KB, SharedMem= 0 KB, HardPageFault= 2
+READAHEAD_TIME:0.000000 us
+MaxRSS= 4896 KB, SharedMem= 0 KB, HardPageFault= 4
+	Command being timed: "mpiexec.mpich -n 1 ./MADbench2_io 8192 30 1 8 64 1 1 4096 7 1"
+	User time (seconds): 93.99
+	System time (seconds): 196.72
+	Percent of CPU this job got: 45%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:37.72
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2291900
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 10
+	Minor (reclaiming a frame) page faults: 6584945
+	Voluntary context switches: 9601338
+	Involuntary context switches: 20551
+	Swaps: 0
+	File system inputs: 62776120
+	File system outputs: 62914592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+READAHEAD_TIME:0.000000 us
+MaxRSS= 2204 KB, SharedMem= 0 KB, HardPageFault= 0
+*******************DMESG OUTPUT******************
