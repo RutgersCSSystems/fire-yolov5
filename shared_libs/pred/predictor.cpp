@@ -9,15 +9,9 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
-#include "ngram.hpp"
 #include "util.hpp"
 #include "predictor.hpp"
 #include "sequential.hpp"
-
-#ifdef NGRAM
-ngram readobj; //Obj with all the reads info
-ngram writeobj; //Obj with all the write info
-#endif
 
 #ifdef SEQUENTIAL
 sequential seq_readobj;
@@ -69,14 +63,6 @@ bool handle_open(int fd, const char *filename){
     }
     */
 
-#ifdef NGRAM_PREDICT
-    //dont know what to do if this rn
-    if(!toss_biased_coin()) //Low MemPressure with high prob
-    {
-        posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-        std::cout << "prefetching fd: " << fd << std::endl;
-    }
-#endif
     return true;
 }
 
@@ -95,11 +81,6 @@ int handle_read(int fd, off_t pos, size_t bytes) {
 
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
-
-    //Recognizer insert the access
-#ifdef NGRAM
-    readobj.insert_to_ngram(acc);
-#endif
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
@@ -132,26 +113,6 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     }
 #endif
 
-#ifdef NGRAM_PREDICT
-    std::multimap<float, std::string> next_accesses;
-    if(toss_biased_coin()){ //High MemPressure
-        /*multimap<float, std::string>*/
-        next_accesses = readobj.get_next_n_accesses(10);
-        /*std::deque<struct pos_bytes>*/
-        auto not_needed = readobj.get_notneeded(next_accesses);
-
-        int bytes_removed = 0, i = 0;
-        while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
-                i < not_needed.size()){
-
-            bytes_removed += not_needed[i].bytes;
-            posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
-                    not_needed[i].bytes, POSIX_FADV_DONTNEED);
-            i++;
-        }
-    }
-#endif
-
 #ifdef STATS
     gettimeofday(&stop, NULL);
     total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
@@ -163,42 +124,10 @@ int handle_read(int fd, off_t pos, size_t bytes) {
 
 /* TO be called at each write by the user 
  * Functionality of this function is still TBD
- * Right now its just doing NGRAM accounting and prediction
- * which is INCOMPLETE/WRONG - We need to change this
  */
 int handle_write(int fd, off_t pos, size_t bytes){
     //Add this read to the corresponding algorithm
     //check if there is a need to take any actions
-#ifdef NGRAM
-    struct pos_bytes a;
-    a.fd = fd;
-    a.pos = pos;
-    a.bytes = bytes;
-    writeobj.insert_to_ngram(a);
-#endif
-
-#ifdef NGRAM_PREDICT
-    std::multimap<float, std::string> next_accesses;
-    if(toss_biased_coin()) //High MemPressure
-    {
-        /*multimap<float, std::string>*/
-        next_accesses = writeobj.get_next_n_accesses(10);
-        /*std::deque<struct pos_bytes>*/
-        auto not_needed = writeobj.get_notneeded(next_accesses);
-
-        int bytes_removed = 0, i = 0;
-        while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
-                i < not_needed.size())
-        {
-
-            bytes_removed += not_needed[i].bytes;
-            posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
-                    not_needed[i].bytes, POSIX_FADV_DONTNEED);
-            i++;
-        }
-    }
-#endif
-
     return true;
 }
 
@@ -217,17 +146,6 @@ int handle_close(int fd){
     seq_writeobj.remove(fd);
 #endif
 
-/*
-#ifdef NGRAM
-    writeobj.remove_from_ngram(fd);
-    readobj.remove_from_ngram(fd);
-#endif
-
-#ifdef NGRAM_PREDICT
-    posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
-#endif
-
-    */
     return true;
 }
 

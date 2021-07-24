@@ -67,8 +67,7 @@ void con(){
     set_pvt_lru();
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
-    int nr_workers = 1;
-    //provide nr_workers from env var
+    int nr_workers = 1; //TODO: provide nr_workers from env var
     thread_fn(nr_workers);
 #endif
 }
@@ -117,6 +116,7 @@ void dest(){
 
 
 FILE *fopen(const char *filename, const char *mode){
+    debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
     FILE *ret;
     ret = real_fopen(filename, mode);
@@ -137,8 +137,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
-
-    //debug_print("hello_fread, fd:%d\n", fileno(stream));
+    debug_print("%s: TID:%ld\n", __func__, gettid());
 
     // Perform the actual system call
     size_t amount_read = real_fread(ptr, size, nmemb, stream);
@@ -158,6 +157,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 ssize_t read(int fd, void *data, size_t size){
+    debug_print("%s: TID:%ld\n", __func__, gettid());
 
     ssize_t amount_read = real_read(fd, data, size);
 
@@ -172,16 +172,49 @@ ssize_t read(int fd, void *data, size_t size){
 }
 
 
+ssize_t pread(int fd, void *data, size_t size, off_t offset){
+    debug_print("%s: TID:%ld\n", __func__, gettid());
+
+    ssize_t amount_read = real_pread(fd, data, size, offset);
+#ifdef PREDICTOR
+    if(reg_fd(fd)){
+        handle_read(fd, offset, size);
+    }
+#endif
+    return amount_read;
+}
+
+
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
+    debug_print("%s: TID:%ld\n", __func__, gettid());
     // Perform the actual system call
     size_t amount_written = real_fwrite(ptr, size, nmemb, stream);
+
+#ifdef PREDICTOR
+    /*XXX: handle after read_write will probably
+     * change the ftell position in file*/
+    int fd = fileno(stream);
+    if(reg_fd(fd)){
+        handle_write(fd, ftell(stream), size*nmemb);
+    }
+#endif
 
     return amount_written;
 }
 
 
 ssize_t write(int fd, const void *data, size_t size){
+    debug_print("%s: TID:%ld\n", __func__, gettid());
+
     ssize_t amount_written = real_write(fd, data, size);
+
+#ifdef PREDICTOR
+    /*XXX: handle after read_write will probably
+     * change the lseek position in file*/
+    if(reg_fd(fd)){
+        handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
+    }
+#endif
     return amount_written;
 }
 
@@ -199,7 +232,7 @@ int fclose(FILE *stream){
 
 
 int close(int fd){
-    debug_print("File close detected\n");
+    debug_print("%s: TID:%ld\n", __func__, gettid());
 
 #ifdef PREDICTOR
     if(reg_fd(fd)){
@@ -217,8 +250,7 @@ int reg_file(FILE *stream){
 }
 
 //returns true if fd is regular file
-bool reg_fd(int fd)
-{
+bool reg_fd(int fd){
     if(fd<=2)
         return false;
 
