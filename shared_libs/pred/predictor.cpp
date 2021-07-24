@@ -14,18 +14,18 @@
 #include "sequential.hpp"
 
 #ifdef SEQUENTIAL
-sequential seq_readobj;
-sequential seq_writeobj;
+thread_local sequential seq_readobj;
+thread_local sequential seq_writeobj;
 #endif
-struct pos_bytes acc;
+thread_local struct pos_bytes acc;
 
 /* Keeps track of all filenames wrt its corresponding fd*/
-std::unordered_map<int, std::string> fd_to_filename;
+thread_local std::unordered_map<int, std::string> fd_to_filename;
 
 
 /*Time Spent in prefetching*/
-struct timeval stop, start;
-double total_readahead_time = 0.0; //Time in microseconds
+thread_local struct timeval stop, start;
+thread_local double total_readahead_time = 0.0; //Time in microseconds
 
 /*
  * Questions to answer

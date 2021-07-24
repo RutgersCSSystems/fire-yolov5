@@ -21,12 +21,15 @@ class sequential{
     public:
 	bool init;
         std::unordered_map<int, struct stride_dat> strides;
-        //std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
-        std::unordered_map<int, 
+        std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
+
+        /* //This is ring buffer DataStructures
+         * std::unordered_map<int, 
             bev::linear_ringbuffer_<struct pos_bytes, HISTORY>> current_stream;
 
         struct pos_bytes *present_hist = (struct pos_bytes*) 
             malloc(sizeof(struct pos_bytes)*HISTORY);
+            */
 
 	   sequential();     // Constructor
 

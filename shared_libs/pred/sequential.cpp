@@ -6,10 +6,10 @@
 
 #include "sequential.hpp"
 
-off_t pages_readahead = 0;
-int times_prefetch = 0;
-int future_prefetch = 0;
-off_t g_bytes_prefetched=0;
+thread_local off_t pages_readahead = 0;
+thread_local int times_prefetch = 0;
+thread_local int future_prefetch = 0;
+thread_local off_t g_bytes_prefetched=0;
 
 
 sequential::sequential(void){
@@ -105,9 +105,9 @@ void sequential::init_stride(int fd){
 void sequential::update_stride(int fd){
     if(exists(fd) && current_stream[fd].size() > HISTORY){
         off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
-        current_stream[fd].read_window(present_hist, HISTORY);
-        //auto deq = current_stream[fd];
-        //auto stream = deq.begin();
+        //current_stream[fd].read_window(present_hist, HISTORY);
+        auto deq = current_stream[fd];
+        auto stream = deq.begin();
 
         /*
         this_stride = stream->pos + stream->bytes; //Pos1 + Size1
@@ -118,21 +118,24 @@ void sequential::update_stride(int fd){
         for(int i=0; i<HISTORY-1; i++){
             if(this_stride == NOT_SEQ)
             {
-                this_stride = present_hist[i].pos + present_hist[i].bytes;
-                this_stride = present_hist[i+1].pos - this_stride;
+                //this_stride = present_hist[i].pos + present_hist[i].bytes;
+                this_stride = stream->pos + stream->bytes; //Pos1 + Size1
+                stream++;
+                this_stride = stream->pos - this_stride; //Pos2 - (pos1 + size1)
+                //this_stride = present_hist[i+1].pos - this_stride;
                 continue;
             }
-            check_stride = present_hist[i].pos + present_hist[i].bytes;
-            //check_stride = stream->pos + stream->bytes;
-            check_stride = present_hist[i+1].pos - check_stride;
-            //check_stride = stream->pos - check_stride;
+            //check_stride = present_hist[i].pos + present_hist[i].bytes;
+            check_stride = stream->pos + stream->bytes;
+            //check_stride = present_hist[i+1].pos - check_stride;
+            check_stride = stream->pos - check_stride;
             if(check_stride != this_stride){
                 this_stride = NOT_SEQ;
                 break;
             }
         }
         strides[fd].stride = this_stride; //set the new stride
-        //current_stream[fd].pop_front(); //remove last element
+        current_stream[fd].pop_front(); //remove last element
     }
     return;
 }
