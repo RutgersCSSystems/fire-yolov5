@@ -53,10 +53,12 @@
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
+#if 0
 
 void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
+
 
 
 void con(){
@@ -157,6 +159,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 ssize_t read(int fd, void *data, size_t size){
+
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
     ssize_t amount_read = real_read(fd, data, size);
@@ -202,7 +205,6 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
     return amount_written;
 }
 
-
 ssize_t write(int fd, const void *data, size_t size){
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
@@ -243,6 +245,7 @@ int close(int fd){
 
     return real_close(fd);
 }
+
 
 //returns fd if  FILE is a regular file
 int reg_file(FILE *stream){
@@ -292,3 +295,5 @@ bool reg_fd(int fd){
     //return true;
     return false;
 }
+#endif
+

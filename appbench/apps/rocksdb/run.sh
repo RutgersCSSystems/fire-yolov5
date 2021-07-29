@@ -6,7 +6,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=100000
+NUM=200000
 DBDIR=$DBHOME/DATA
 
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0"
@@ -32,6 +32,15 @@ FlushDisk
 $DBHOME/db_bench $PARAMS $WRITEARGS
 
 
+export LD_PRELOAD=""
+
+FlushDisk
+
+
+./db_bench $PARAMS $READARGS
+
+FlushDisk
+
 if [[ "$PREDICT" == "1" ]]; then
     export LD_PRELOAD=/usr/lib/libcrosslayer.so
 else
@@ -40,8 +49,5 @@ fi
 
 ./db_bench $PARAMS $READARGS
 
-
 export LD_PRELOAD=""
-
-./db_bench $PARAMS $READARGS
 

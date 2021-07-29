@@ -75,6 +75,8 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
+    return 0;
+
     acc.fd = fd;
     acc.pos = pos;
     acc.bytes = bytes;
@@ -82,7 +84,7 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
             fd, pos, bytes);
 
-#ifdef SEQUENTIAL
+#if 0 //def SEQUENTIAL
     seq_readobj.insert(acc);
 #endif
 
@@ -92,7 +94,7 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&start, NULL);
 #endif
 
-#ifdef _DELAY_PREFETCH
+#if 0 //def _DELAY_PREFETCH
     /*Check if we need to prefetch or we have read enough and can wait for some time?*/
     if(!prefetch_now((void *)&acc)) {
         //printf("Delay prefetch \n");
@@ -101,7 +103,7 @@ int handle_read(int fd, off_t pos, size_t bytes) {
 #endif
 
     /* Prefetch data for next read*/
-#ifdef SEQUENTIAL
+#if 0 //def SEQUENTIAL
     off_t stride;
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
         debug_print("handle_read: sequential\n");
