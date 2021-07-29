@@ -6,7 +6,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=500000
+NUM=1000000
 DBDIR=$DBHOME/DATA
 
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
@@ -32,10 +32,21 @@ SETPRELOAD()
 	fi
 }
 
+BUILD_LIB()
+{
+	cd $SHARED_LIBS/pred
+	./compile.sh
+	cd $DBHOME
+}
+
+
 cd $DBDIR
 rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
 cd ..
 
+
+#Build the predictor library
+BUILD_LIB
 
 #Run write workload twice
 $DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt

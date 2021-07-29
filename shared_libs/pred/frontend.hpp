@@ -26,6 +26,7 @@ FILE *fopen(const char *restrict filename, const char *restrict mode);
 
  * */
 
+#if 0
 int real_open(const char *pathname, int flags){
         return ((real_open_t)dlsym(RTLD_NEXT, "open"))
             (pathname, flags);
@@ -59,11 +60,11 @@ ssize_t real_read(int fd, void *data, size_t size) {
             (fd, data, size);
 }
 
-
 ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
         return ((real_pread_t)dlsym(RTLD_NEXT, "pread"))
             (fd, data, size, offset);
 }
+#endif
 
 
 int real_fclose(FILE *stream){

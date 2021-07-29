@@ -53,6 +53,74 @@
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
+real_fopen_t fopen_ptr = NULL;
+
+real_pread_t pread_ptr = NULL;
+real_read_t read_ptr = NULL;
+
+real_write_t write_ptr = NULL;
+
+real_fread_t fread_ptr = NULL;
+real_fwrite_t fwrite_ptr = NULL;
+
+FILE *real_fopen(const char *filename, const char *mode){
+
+	if(!fopen_ptr)
+		fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
+
+        return ((real_fopen_t)fopen_ptr)(filename, mode);
+}
+
+size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+	if(!fread_ptr)
+		fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+
+        return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
+}
+
+size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+	if(!fwrite_ptr)
+        	fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
+
+        return ((real_fwrite_t)fwrite_ptr)(ptr, size, nmemb, stream);
+}
+
+ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
+
+	if(!pread_ptr)
+		pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+
+        return ((real_pread_t)pread_ptr)(fd, data, size, offset);
+}
+
+ssize_t real_write(int fd, const void *data, size_t size) {
+
+	if(!write_ptr)
+		write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+
+        return ((real_write_t)write_ptr)(fd, data, size);
+}
+
+ssize_t real_read(int fd, void *data, size_t size) {
+
+	if(!read_ptr)
+		read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
+
+        return ((real_read_t)read_ptr)(fd, data, size);
+}
+
+
+int real_open(const char *pathname, int flags){
+        return ((real_open_t)dlsym(RTLD_NEXT, "open"))
+            (pathname, flags);
+}
+
+
+
+
+
 void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
@@ -115,7 +183,6 @@ void dest(){
 }
 
 
-#if 0
 FILE *fopen(const char *filename, const char *mode){
 
     FILE *ret;
@@ -173,6 +240,8 @@ ssize_t read(int fd, void *data, size_t size){
 }
 
 
+
+#if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     ssize_t amount_read = real_pread(fd, data, size, offset);
@@ -185,6 +254,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
     return amount_read;
 }
+#endif
 
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){ 
@@ -206,6 +276,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
     return amount_written;
 }
 
+
 ssize_t write(int fd, const void *data, size_t size){
 
     ssize_t amount_written = real_write(fd, data, size);
@@ -221,7 +292,6 @@ ssize_t write(int fd, const void *data, size_t size){
 #endif
     return amount_written;
 }
-#endif
 
 int fclose(FILE *stream){
 #ifdef PREDICTOR
