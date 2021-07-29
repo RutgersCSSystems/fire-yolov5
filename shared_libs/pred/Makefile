@@ -17,7 +17,7 @@ nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpo
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS)
 
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) #$(NOBGTHREADS) $(DELAYPRFETCH) $(PINCORES) -DPREDICTOR -DSEQUENTIAL 
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) #$(PINCORES) 
 
 clean:
 	rm -rf *.o
