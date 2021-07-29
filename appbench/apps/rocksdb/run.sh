@@ -1,15 +1,15 @@
 #!/bin/bash
 DBHOME=$PWD
 PREDICT=1
-THREAD=1
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=200000
+NUM=500000
 DBDIR=$DBHOME/DATA
 
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0"
+WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=readrandom --use_existing_db=1"
 APPPREFIX="/usr/bin/time -v"
 
@@ -23,31 +23,39 @@ FlushDisk()
         sudo sh -c "sync"
 }
 
+SETPRELOAD()
+{
+	if [[ "$PREDICT" == "1" ]]; then
+	    export LD_PRELOAD=/usr/lib/libcrosslayer.so
+	else
+	    export LD_PRELOAD=/usr/lib/libnopred.so
+	fi
+}
+
 cd $DBDIR
 rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
 cd ..
 
+
+#Run write workload twice
+$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
+echo "RUNNING CROSSLAYER.................."
+#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+FlushDisk
+FlushDisk
+SETPRELOAD
+$DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 
-$DBHOME/db_bench $PARAMS $WRITEARGS
 
+$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
 export LD_PRELOAD=""
-
+FlushDisk
+echo "RUNNING VANILLA.................."
+$DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 
 
-./db_bench $PARAMS $READARGS
-
-FlushDisk
-
-if [[ "$PREDICT" == "1" ]]; then
-    export LD_PRELOAD=/usr/lib/libcrosslayer.so
-else
-    export LD_PRELOAD=/usr/lib/libnopred.so
-fi
-
-./db_bench $PARAMS $READARGS
-
-export LD_PRELOAD=""
 
