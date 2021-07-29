@@ -1,5 +1,5 @@
 #!/bin/bash
-
+DBHOME=$PWD
 PREDICT=1
 THREAD=16
 VALUE_SIZE=4096
@@ -7,7 +7,7 @@ SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 NUM=100000
-DBDIR=DATA
+DBDIR=$DBHOME/DATA
 
 FlushDisk()
 {
@@ -24,7 +24,7 @@ rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
 
 #exit
 
-./db_bench --db=./ --value_size=4096 --benchmarks=fillrandom --wal_dir=./WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=0 --threads=$THREAD --num=100000
+./db_bench --db=$DBDIR --value_size=4096 --benchmarks=fillrandom --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=0 --threads=$THREAD --num=100000
 
 if [[ "$PREDICT" == "1" ]]; then
     export LD_PRELOAD=/usr/lib/libcrosslayer.so
@@ -34,7 +34,7 @@ fi
 
 FlushDisk
 
-/usr/bin/time -v ./db_bench --db=./DATA/ --value_size=4096 --benchmarks=readrandom --wal_dir=./WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=1 --threads=$THREAD --num=1000000
+/usr/bin/time -v ./db_bench --db=$DBDIR --value_size=4096 --benchmarks=readrandom --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=1 --threads=$THREAD --num=1000000
 
 
 export LD_PRELOAD=""
