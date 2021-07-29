@@ -1,12 +1,13 @@
 #!/bin/bash
 
-PREDICT=0
+PREDICT=1
 THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 NUM=100000
+DBDIR=DATA
 
 FlushDisk()
 {
@@ -33,7 +34,7 @@ fi
 
 FlushDisk
 
-/usr/bin/time -v ./db_bench --db=./ --value_size=4096 --benchmarks=readrandom --wal_dir=./WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=1 --threads=$THREAD --num=1000000
+/usr/bin/time -v ./db_bench --db=./DATA/ --value_size=4096 --benchmarks=readrandom --wal_dir=./WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --use_existing_db=1 --threads=$THREAD --num=1000000
 
 
 export LD_PRELOAD=""
