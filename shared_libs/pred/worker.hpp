@@ -15,6 +15,7 @@
 struct msg{
 	struct pos_bytes pos;
 	off_t stride;
+	size_t prefetch_bytes;
 };
 
 void thread_fn(int nr_workers);

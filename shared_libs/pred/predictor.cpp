@@ -86,7 +86,6 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     seq_readobj.insert(acc);
 #endif
 
-   
 #ifdef STATS 
     //FIXME: Why are we not calling this inside a TIMER? This is super-high overhead
     gettimeofday(&start, NULL);
@@ -94,24 +93,40 @@ int handle_read(int fd, off_t pos, size_t bytes) {
 
 #ifdef _DELAY_PREFETCH
     /*Check if we need to prefetch or we have read enough and can wait for some time?*/
-    if(!prefetch_now((void *)&acc)) {
-        //printf("Delay prefetch \n");
+    /*if(!prefetch_now((void *)&acc)) {
+        printf("Delay prefetch \n");
+	return 0;
+    }*/
+
+    if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
+        printf("Delay prefetch \n");
 	return 0;
     }
-#endif
 
-    //printf("handle_read: sequential %d\n", fd);
+#endif
 
     /* Prefetch data for next read*/
 #ifdef SEQUENTIAL
     off_t stride;
+    off_t prefetch_fd_pos = 0;
+    size_t prefetch_size = 0;
 
    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
+
         debug_print("handle_read: sequential\n");
-        seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
+        prefetch_size = seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
+
   } else if((stride = seq_readobj.is_strided(fd))){
+
         debug_print("handle_read: strided: %lu\n", stride);
-        seq_prefetch(acc, stride); //prefetch in program path
+        prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
+    }
+  
+    if(prefetch_size) {	   
+	prefetch_fd_pos = acc.pos + prefetch_size;    
+	//printf("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
+	//		fd, acc.pos, prefetch_fd_pos, prefetch_size);
+    	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
     }
 #endif
 

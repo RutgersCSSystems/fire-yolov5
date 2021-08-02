@@ -42,7 +42,7 @@ void sequential::insert(struct pos_bytes access){
     init = true;
 
     if(!exists(fd)){ //FD not seen earlier
-        init_stride(fd);
+        init_fd_maps(fd);
     }
 
     current_stream[fd].push_back(access);
@@ -77,6 +77,16 @@ void sequential::print_all_strides(){
     }
 }
 
+/* Checks if the fd has been seen before */
+bool sequential::exists(int fd)
+{
+    if(!init)
+	return false;
+    //May have to remove(fd) if result is false
+    return ((strides.find(fd) != strides.end()) &&
+            (current_stream.find(fd) != current_stream.end()));
+}
+
 
 /* returns the stride 
 */
@@ -91,9 +101,56 @@ off_t sequential::get_stride(int fd){
 }
 
 
-void sequential::init_stride(int fd){
+void sequential::init_fd_maps(int fd){
     strides[fd].stride = NOT_SEQ;
+    prefetch_fd_map[fd] = 0;
     return;
+}
+
+/* returns the prefetched position
+*/
+off_t sequential::get_prefetch_pos(int fd) {
+    return prefetch_fd_map[fd];
+}
+
+void sequential::insert_prefetch_pos(int fd, off_t pos) {
+    prefetch_fd_map[fd] = pos;
+}
+
+int sequential::prefetch_now_fd(void *pfetch_info, int fd) {
+
+    struct pos_bytes curr_access;
+    struct msg *dat = (struct msg*)pfetch_info;
+    off_t fd_pos = get_prefetch_pos(fd); 	
+
+    curr_access = dat->pos;
+
+    if((curr_access.pos +  curr_access.bytes) < fd_pos) {
+	fprintf(stderr, "Readahead pos %lu curr pos %lu \n", 
+			fd_pos, ( curr_access.pos +  curr_access.bytes));
+	return 0;
+    }
+    return 1;
+}
+
+int prefetch_now(void *pfetch_info) {
+
+    struct pos_bytes curr_access;
+    struct msg *dat = (struct msg*)pfetch_info;
+
+    if(!dat)
+	    return true;
+
+    curr_access = dat->pos;
+
+    if(g_bytes_prefetched > curr_access.bytes) {
+	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;
+	//fprintf(stderr, "Returning false g_bytes_prefetched %u "
+	//		"curr_access.bytes %u\n", g_bytes_prefetched, curr_access.bytes);
+	return 0;
+    }
+
+    return 1;
 }
 
 #if 0
@@ -141,7 +198,7 @@ void sequential::update_stride(int fd) {
 
         off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
        
-        if(exists(fd) && current_stream[fd].size() > HISTORY){
+       if(exists(fd) && current_stream[fd].size() > HISTORY){
 
                //current_stream[fd].read_window(present_hist, HISTORY);
                 auto deq = current_stream[fd];
@@ -159,14 +216,12 @@ void sequential::update_stride(int fd) {
 			next_stride = stream->pos;
 			diff = next_stride - this_stride;
 
-		 
 			if(next_stride - (this_stride_off) <= PAGESIZE) {
 				seq_history++;
 			}
 			
 			if(diff > max_stride)
 				max_stride = diff;
-	
 	       }
 
 	    	if(seq_history >= 2) {
@@ -189,43 +244,31 @@ void sequential::update_stride(int fd) {
 #endif
 
 
-/* Checks if the fd has been seen before */
-bool sequential::exists(int fd)
-{
-    if(!init)
-	return false;
-    //May have to remove(fd) if result is false
-    return ((strides.find(fd) != strides.end()) &&
-            (current_stream.find(fd) != current_stream.end()));
-}
-
-
 /*seq_prefetch frontend*/
-bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
+size_t seq_prefetch(struct pos_bytes curr_access, off_t stride){
     
      /*TODO: Make this malloc scalable
      * without the malloc, the stack memory gets corrupted before
      * the worker threads uses it.
      */
     struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
+    size_t bytes_fetched = 0;
+    
     ret->pos = curr_access;
     ret->stride = stride;
-
 #ifdef __NO_BG_THREADS
     __seq_prefetch((struct msg*)ret); //Correct
-    
+     bytes_fetched = ret->prefetch_bytes;
     free(ret);
     ret = NULL;
 #else
     //return thpool_add_work(get_thpool(), __seq_prefetch, &ret);
-    return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
-    //return thpool_add_work(get_thpool(), infinite_loop, NULL);
+    thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
+    bytes_fetched = ret->prefetch_bytes;
 #endif
 
     //FIXME: Who releases the memory of allocated msg?
-
-
-    return true;
+    return bytes_fetched;
 }
 
 void infinite_loop(void *num){
@@ -239,25 +282,7 @@ void infinite_loop(void *num){
 
 }
 
-int prefetch_now(void *pfetch_info) {
 
-    struct pos_bytes curr_access;
-    struct msg *dat = (struct msg*)pfetch_info;
-
-    if(!dat)
-	    return true;
-
-    curr_access = dat->pos;
-
-    if(g_bytes_prefetched > curr_access.bytes) {
-	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;
-	//fprintf(stderr, "Returning false g_bytes_prefetched %u "
-	//		"curr_access.bytes %u\n", g_bytes_prefetched, curr_access.bytes);
-	return 0;
-    }
-
-    return 1;
-}
 
 #if 1
 /*
@@ -267,9 +292,9 @@ int prefetch_now(void *pfetch_info) {
 //bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
 void __seq_prefetch(void *pfetch_info){
 
-    struct msg dat = *(struct msg*)pfetch_info;
-    struct pos_bytes curr_access = dat.pos;
-    off_t stride = dat.stride;
+    struct msg *dat = (struct msg*)pfetch_info;
+    struct pos_bytes curr_access = dat->pos;
+    off_t stride = dat->stride;
 
     if(stride < 0)
         return;
@@ -309,6 +334,7 @@ void __seq_prefetch(void *pfetch_info){
     //do readhead
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
     g_bytes_prefetched = bytes_toread;
+    dat->prefetch_bytes = bytes_toread;
 
     return;
 }
