@@ -46,12 +46,7 @@ void sequential::insert(struct pos_bytes access){
     }
 
     current_stream[fd].push_back(access);
-
     update_stride(fd); //calculate the stride
-
-    debug_print("seq::insert: fd:%d, stride:%lu\n", 
-            fd, strides[fd].stride);
-
     return;
 }
 
@@ -101,7 +96,7 @@ void sequential::init_stride(int fd){
     return;
 }
 
-
+#if 0
 void sequential::update_stride(int fd){
     if(exists(fd) && current_stream[fd].size() > HISTORY){
         off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
@@ -139,6 +134,59 @@ void sequential::update_stride(int fd){
     }
     return;
 }
+#endif
+
+#if 1
+void sequential::update_stride(int fd) {
+
+        off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
+       
+        if(exists(fd) && current_stream[fd].size() > HISTORY){
+
+               //current_stream[fd].read_window(present_hist, HISTORY);
+                auto deq = current_stream[fd];
+                auto stream = deq.begin();
+		off_t next_stride = NOT_SEQ;
+		off_t diff = 0;
+		off_t max_stride = 0;
+		int seq_history = 0;
+		off_t this_stride_off = 0;
+
+                for(int i=0; i < current_stream[fd].size()-3; i++){
+                        this_stride = stream->pos; //Pos1 + Size1
+			this_stride_off = stream->pos + stream->bytes;
+			stream++;
+			next_stride = stream->pos;
+			diff = next_stride - this_stride;
+
+		 
+			if(next_stride - (this_stride_off) <= PAGESIZE) {
+				seq_history++;
+			}
+			
+			if(diff > max_stride)
+				max_stride = diff;
+	
+	       }
+
+	    	if(seq_history >= 2) {
+			if(max_stride < PAGESIZE) {
+				max_stride = PAGESIZE;
+				this_stride = max_stride;
+			}
+		}
+	    	else 
+			this_stride = NOT_SEQ;    
+
+		 //if(fd == 13)	    
+		//	printf("fd: %d this_stride %lu, max_stride %lu seq_history %d\n", 
+		//			fd, this_stride, max_stride, seq_history);
+               strides[fd].stride = this_stride; //set the new stride
+               current_stream[fd].pop_front(); //remove last element
+	}
+	return;
+}
+#endif
 
 
 /* Checks if the fd has been seen before */
@@ -154,7 +202,8 @@ bool sequential::exists(int fd)
 
 /*seq_prefetch frontend*/
 bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
-    /*TODO: Make this malloc scalable
+    
+     /*TODO: Make this malloc scalable
      * without the malloc, the stack memory gets corrupted before
      * the worker threads uses it.
      */
@@ -163,13 +212,19 @@ bool seq_prefetch(struct pos_bytes curr_access, off_t stride){
     ret->stride = stride;
 
 #ifdef __NO_BG_THREADS
-    //__seq_prefetch(&ret);
     __seq_prefetch((struct msg*)ret); //Correct
+    
+    free(ret);
+    ret = NULL;
 #else
     //return thpool_add_work(get_thpool(), __seq_prefetch, &ret);
     return thpool_add_work(get_thpool(), __seq_prefetch, (struct msg*)ret);
     //return thpool_add_work(get_thpool(), infinite_loop, NULL);
 #endif
+
+    //FIXME: Who releases the memory of allocated msg?
+
+
     return true;
 }
 
@@ -187,7 +242,7 @@ void infinite_loop(void *num){
 int prefetch_now(void *pfetch_info) {
 
     struct pos_bytes curr_access;
-    struct msg *dat = (struct msg*)pfetch_info;	
+    struct msg *dat = (struct msg*)pfetch_info;
 
     if(!dat)
 	    return true;
@@ -195,15 +250,69 @@ int prefetch_now(void *pfetch_info) {
     curr_access = dat->pos;
 
     if(g_bytes_prefetched > curr_access.bytes) {
-	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;    
+	g_bytes_prefetched = g_bytes_prefetched - curr_access.bytes;
 	//fprintf(stderr, "Returning false g_bytes_prefetched %u "
 	//		"curr_access.bytes %u\n", g_bytes_prefetched, curr_access.bytes);
 	return 0;
     }
- 	
+
     return 1;
 }
 
+#if 1
+/*
+ * This function will prefetch for strided/seq accesses
+ * returns 0 at success, -1 at failure
+ */
+//bool __seq_prefetch(struct pos_bytes curr_access, off_t stride){
+void __seq_prefetch(void *pfetch_info){
+
+    struct msg dat = *(struct msg*)pfetch_info;
+    struct pos_bytes curr_access = dat.pos;
+    off_t stride = dat.stride;
+
+    if(stride < 0)
+        return;
+
+    //initialize times_prefetch
+    if(times_prefetch == 0)
+    {
+	    char *times = getenv(ENV_PREFETCH);
+	    if(!times)
+		times_prefetch = DEFAULT_TIMES_PREFETCH;
+	    else
+		times_prefetch = atoi(times);
+    }
+
+    //initialize future_prefetch
+    if(future_prefetch == 0)
+    {
+	    char *future = getenv(ENV_FUTURE);
+	    if(!future)
+		future_prefetch = DEFAULT_FUTURE_PREFETCH;
+	    else
+		future_prefetch = atoi(future);
+    }
+
+    size_t bytes_toread = stride * times_prefetch;
+
+    if(bytes_toread <= 0){
+	    printf("ERROR: %s: bytes_toread <= 0 \n", __func__);
+	    return;
+    }
+
+    pages_readahead += (bytes_toread >> PAGESHIFT);
+
+    /*print number of readahead pages*/
+    debug_print("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
+
+    //do readhead
+    readahead(curr_access.fd, curr_access.pos, bytes_toread);
+    g_bytes_prefetched = bytes_toread;
+
+    return;
+}
+#else
 /*
  * This function will prefetch for strided/seq accesses
  * returns 0 at success, -1 at failure
@@ -249,11 +358,11 @@ void __seq_prefetch(void *pfetch_info){
     off_t nextpos_align = nextpos;
 
     //find the next page aligned position
-    nextpos_align = ((nextpos >> PAGESHIFT)) << PAGESHIFT; 
+    nextpos_align = ((nextpos >> PAGESHIFT)) << PAGESHIFT;
 
     size_t bytes_toread = curr_access.bytes;
     //increase the prefetch window by times_prefetch
-    bytes_toread *= times_prefetch; 
+    bytes_toread *= times_prefetch;
 
     if(bytes_toread <= 0){
 	    printf("ERROR: %s: bytes_toread <= 0 \n", __func__);
@@ -262,11 +371,11 @@ void __seq_prefetch(void *pfetch_info){
 
     pages_readahead += (bytes_toread >> PAGESHIFT);
 
-    debug_print("%s: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n", 
+    debug_print("%s: stride:%lu, currpos:%lu, nextpos:%lu, bytes:%zu\n",
             __func__, stride, curr_access.pos, nextpos, bytes_toread);
 
     /*print number of readahead pages*/
-    debug_print("nr_pages_readahead %lu\n", bytes_toread);
+    printf("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
 
     //do readhead
     readahead(curr_access.fd, nextpos, bytes_toread);
@@ -275,3 +384,4 @@ void __seq_prefetch(void *pfetch_info){
 
     return;
 }
+#endif

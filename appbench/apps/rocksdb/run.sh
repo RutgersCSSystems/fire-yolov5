@@ -1,7 +1,7 @@
 #!/bin/bash
 DBHOME=$PWD
 PREDICT=1
-THREAD=16
+THREAD=1
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -10,7 +10,7 @@ NUM=1000000
 DBDIR=$DBHOME/DATA
 
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=readrandom --use_existing_db=1"
+READARGS="--benchmarks=readseq --use_existing_db=1 --mmap_read=0"
 APPPREFIX="/usr/bin/time -v"
 
 PARAMS="--db=$DBDIR --value_size=4096 --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --threads=$THREAD --num=$NUM"

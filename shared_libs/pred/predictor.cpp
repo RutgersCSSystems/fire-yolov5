@@ -75,14 +75,12 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
-    return 0;
-
     acc.fd = fd;
     acc.pos = pos;
     acc.bytes = bytes;
 
-    debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-            fd, pos, bytes);
+   //printf("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
+     //       fd, pos, bytes);
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
@@ -102,14 +100,16 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     }
 #endif
 
+    //printf("handle_read: sequential %d\n", fd);
+
     /* Prefetch data for next read*/
 #ifdef SEQUENTIAL
     off_t stride;
-    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
+
+   if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
         debug_print("handle_read: sequential\n");
         seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
-    }
-    else if((stride = seq_readobj.is_strided(fd))){
+  } else if((stride = seq_readobj.is_strided(fd))){
         debug_print("handle_read: strided: %lu\n", stride);
         seq_prefetch(acc, stride); //prefetch in program path
     }
