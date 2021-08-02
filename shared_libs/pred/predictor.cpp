@@ -71,6 +71,8 @@ bool handle_open(int fd, const char *filename){
  * 1. accounts for access pattern and
  * 2. takes appropriate readahead/DONT NEED action
  */
+int g_num_prefetches = 0;
+
 int handle_read(int fd, off_t pos, size_t bytes) {
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
@@ -78,9 +80,6 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     acc.fd = fd;
     acc.pos = pos;
     acc.bytes = bytes;
-
-   //printf("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-     //       fd, pos, bytes);
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
@@ -91,17 +90,11 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&start, NULL);
 #endif
 
-#if 0 //def _DELAY_PREFETCH
-    /*Check if we need to prefetch or we have read enough and can wait for some time?*/
-    if(!prefetch_now((void *)&acc)) {
-        printf("Delay prefetch \n");
+#ifdef _DELAY_PREFETCH
+    if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
+        //printf("Delay prefetch %d\n", g_num_prefetches);
 	return 0;
     }
-
-    /*if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
-        printf("Delay prefetch \n");
-	return 0;
-    }*/
 
 #endif
 
@@ -111,25 +104,25 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     off_t prefetch_fd_pos = 0;
     size_t prefetch_size = 0;
 
+#if 0
     if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
         debug_print("handle_read: sequential\n");
         prefetch_size = seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
-
     } 
-#if 0    
-    else if((stride = seq_readobj.is_strided(fd))){
-
+    else 
+#endif
+    if((stride = seq_readobj.is_strided(fd))){
         debug_print("handle_read: strided: %lu\n", stride);
         prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
+	g_num_prefetches++;
     }
-  
+
     if(prefetch_size) {	   
 	prefetch_fd_pos = acc.pos + prefetch_size;    
-	printf("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
+	debug_print("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
 			fd, acc.pos, prefetch_fd_pos, prefetch_size);
-    	//seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
+    	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
     }
-#endif
 
 #endif
 
@@ -137,7 +130,6 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&stop, NULL);
     total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
 #endif
-
     return true;
 }
 

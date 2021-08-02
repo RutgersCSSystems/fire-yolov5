@@ -25,7 +25,11 @@ bool sequential::is_sequential(int fd){
  * else return false
  */
 off_t sequential::is_strided(int fd){
+
+#if 0
     if(exists(fd) && strides[fd].stride > SEQ_ACCESS
+#endif
+    if((get_seq_likelyness(fd) == true) && strides[fd].stride > SEQ_ACCESS
             && strides[fd].stride < NOT_SEQ)
         return strides[fd].stride;
     else
@@ -128,8 +132,8 @@ int sequential::prefetch_now_fd(void *pfetch_info, int fd) {
     curr_access = dat->pos;
 
     if((curr_access.pos +  curr_access.bytes) < fd_pos) {
-	fprintf(stderr, "Readahead pos %lu curr pos %lu \n", 
-			fd_pos, ( curr_access.pos +  curr_access.bytes));
+	//fprintf(stderr, "Readahead pos %lu curr pos %lu \n", 
+	//		fd_pos, ( curr_access.pos +  curr_access.bytes));
 	return 0;
     }
     return 1;
@@ -198,10 +202,10 @@ void sequential::update_stride(int fd){
 #if 1
 /*val can be positive or negative? 
  */
-void sequential::update_seq_likelyness(int fd, int val) {
+int sequential::update_seq_likelyness(int fd, int val) {
 
 	fd_access_map[fd] = fd_access_map[fd] + val;
-	//fprintf(stderr,"fd_access_map[fd] %d \n", fd_access_map[fd]);
+	return fd_access_map[fd];
 }
 
 bool sequential::get_seq_likelyness(int fd) {
@@ -254,9 +258,9 @@ void sequential::update_stride(int fd) {
 			if(max_stride < PAGESIZE) {
 				max_stride = PAGESIZE;
 			}	
-			this_stride = max_stride;
 			/* increment by one */
-			update_seq_likelyness(fd, 1);
+			max_stride = max_stride * update_seq_likelyness(fd, 1);
+			this_stride = max_stride;
 		}
 	    	else {
 			this_stride = NOT_SEQ;
@@ -267,6 +271,7 @@ void sequential::update_stride(int fd) {
 		 //if(fd == 13)	    
 		//	printf("fd: %d this_stride %lu, max_stride %lu seq_history %d\n", 
 		//		fd, this_stride, max_stride, seq_history);
+
                strides[fd].stride = this_stride; //set the new stride
                current_stream[fd].pop_front(); //remove last element
 	}
@@ -284,11 +289,15 @@ size_t seq_prefetch(struct pos_bytes curr_access, off_t stride){
      */
     struct msg *ret = (struct msg*)malloc(sizeof(struct msg));
     size_t bytes_fetched = 0;
+
+    if(!ret)
+	    return 0;
     
     ret->pos = curr_access;
     ret->stride = stride;
+
 #ifdef __NO_BG_THREADS
-    __seq_prefetch((struct msg*)ret); //Correct
+     __seq_prefetch((struct msg*)ret); //Correct
      bytes_fetched = ret->prefetch_bytes;
     free(ret);
     ret = NULL;

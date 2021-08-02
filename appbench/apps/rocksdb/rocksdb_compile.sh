@@ -25,6 +25,5 @@ rocksdb_clean
 echo "compiling rocksdb"
 pushd $ROCKSDB_PATH
 make clean
-#DEBUG_LEVEL=0 
-make db_bench -j$(nproc)
+DEBUG_LEVEL=0 make db_bench -j$(nproc)
 popd

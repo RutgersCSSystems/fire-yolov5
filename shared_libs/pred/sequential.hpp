@@ -15,7 +15,8 @@
 
 #define NOTLIKELY 1
 #define LIKELY 2
-#define DEFINITELY 3
+#define MORELIKELY 4
+#define DEFINITELY 8
 
 
 struct stride_dat{
@@ -69,7 +70,7 @@ class sequential{
 
 	int prefetch_now_fd(void *pfetch_info, int fd);
 
-	void update_seq_likelyness(int fd, int val);
+	int update_seq_likelyness(int fd, int val);
 	bool get_seq_likelyness(int fd);
 
 };
