@@ -91,17 +91,17 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&start, NULL);
 #endif
 
-#ifdef _DELAY_PREFETCH
+#if 0 //def _DELAY_PREFETCH
     /*Check if we need to prefetch or we have read enough and can wait for some time?*/
-    /*if(!prefetch_now((void *)&acc)) {
-        printf("Delay prefetch \n");
-	return 0;
-    }*/
-
-    if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
+    if(!prefetch_now((void *)&acc)) {
         printf("Delay prefetch \n");
 	return 0;
     }
+
+    /*if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
+        printf("Delay prefetch \n");
+	return 0;
+    }*/
 
 #endif
 
@@ -111,12 +111,13 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     off_t prefetch_fd_pos = 0;
     size_t prefetch_size = 0;
 
-   if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-
+    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
         debug_print("handle_read: sequential\n");
         prefetch_size = seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
 
-  } else if((stride = seq_readobj.is_strided(fd))){
+    } 
+#if 0    
+    else if((stride = seq_readobj.is_strided(fd))){
 
         debug_print("handle_read: strided: %lu\n", stride);
         prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
@@ -124,10 +125,12 @@ int handle_read(int fd, off_t pos, size_t bytes) {
   
     if(prefetch_size) {	   
 	prefetch_fd_pos = acc.pos + prefetch_size;    
-	//printf("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
-	//		fd, acc.pos, prefetch_fd_pos, prefetch_size);
-    	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
+	printf("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
+			fd, acc.pos, prefetch_fd_pos, prefetch_size);
+    	//seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
     }
+#endif
+
 #endif
 
 #ifdef STATS

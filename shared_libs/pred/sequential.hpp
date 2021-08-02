@@ -7,9 +7,15 @@
 
 #include "worker.hpp"
 
+#include "robin_hood.h"
+
 #define HISTORY 5 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
 #define NOT_SEQ (ULONG_MAX - 1) //Not seq or strided(since off_t is ulong)
+
+#define NOTLIKELY 1
+#define LIKELY 2
+#define DEFINITELY 3
 
 
 struct stride_dat{
@@ -20,10 +26,20 @@ struct stride_dat{
 class sequential{
     public:
 	bool init;
-        std::unordered_map<int, struct stride_dat> strides;
-        std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
 
-        std::unordered_map<int, off_t> prefetch_fd_map;
+#if 0
+        std::unordered_map<int, struct stride_dat> strides;
+	std::unordered_map<int, std::deque<struct pos_bytes>> current_stream;
+	std::unordered_map<int, off_t> prefetch_fd_map;
+
+#endif
+#if 1	
+	robin_hood::unordered_node_map<int, struct stride_dat> strides;
+	robin_hood::unordered_node_map<int, std::deque<struct pos_bytes>> current_stream;
+	robin_hood::unordered_node_map<int, off_t> prefetch_fd_map;
+	robin_hood::unordered_node_map<int, int> fd_access_map;
+
+#endif
 
         /* //This is ring buffer DataStructures
          * std::unordered_map<int, 
@@ -52,6 +68,10 @@ class sequential{
 	void insert_prefetch_pos(int fd, off_t pos);
 
 	int prefetch_now_fd(void *pfetch_info, int fd);
+
+	void update_seq_likelyness(int fd, int val);
+	bool get_seq_likelyness(int fd);
+
 };
 
 

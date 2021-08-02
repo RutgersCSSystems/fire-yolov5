@@ -41,12 +41,14 @@ void sequential::insert(struct pos_bytes access){
 
     init = true;
 
-    if(!exists(fd)){ //FD not seen earlier
+    /*if(!exists(fd)){ //FD not seen earlier
         init_fd_maps(fd);
-    }
+    }*/
 
-    current_stream[fd].push_back(access);
-    update_stride(fd); //calculate the stride
+    if(get_seq_likelyness(fd) != true) {
+    	current_stream[fd].push_back(access);
+	update_stride(fd); //calculate the stride
+    }
     return;
 }
 
@@ -194,13 +196,30 @@ void sequential::update_stride(int fd){
 #endif
 
 #if 1
+/*val can be positive or negative? 
+ */
+void sequential::update_seq_likelyness(int fd, int val) {
+
+	fd_access_map[fd] = fd_access_map[fd] + val;
+	//fprintf(stderr,"fd_access_map[fd] %d \n", fd_access_map[fd]);
+}
+
+bool sequential::get_seq_likelyness(int fd) {
+
+	if(fd_access_map[fd] >= DEFINITELY)
+		return true;
+	else
+		return false;
+}
+
+
 void sequential::update_stride(int fd) {
 
         off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
        
-       if(exists(fd) && current_stream[fd].size() > HISTORY){
+       //if(exists(fd) && current_stream[fd].size() > HISTORY){
+       if(current_stream[fd].size() > HISTORY){
 
-               //current_stream[fd].read_window(present_hist, HISTORY);
                 auto deq = current_stream[fd];
                 auto stream = deq.begin();
 		off_t next_stride = NOT_SEQ;
@@ -209,13 +228,19 @@ void sequential::update_stride(int fd) {
 		int seq_history = 0;
 		off_t this_stride_off = 0;
 
+		//FIXME: Currently not sure why the current_stream size is less than 2 
                 for(int i=0; i < current_stream[fd].size()-3; i++){
+
                         this_stride = stream->pos; //Pos1 + Size1
 			this_stride_off = stream->pos + stream->bytes;
 			stream++;
 			next_stride = stream->pos;
 			diff = next_stride - this_stride;
 
+			/* Check if the difference between current offset and 
+			 * previous offset + access bytes is smaller than the 
+			 * page size
+			 */
 			if(next_stride - (this_stride_off) <= PAGESIZE) {
 				seq_history++;
 			}
@@ -224,18 +249,24 @@ void sequential::update_stride(int fd) {
 				max_stride = diff;
 	       }
 
-	    	if(seq_history >= 2) {
+	    	if(seq_history >= 2) { 
+			/* pad to atleast a page size */
 			if(max_stride < PAGESIZE) {
 				max_stride = PAGESIZE;
-				this_stride = max_stride;
-			}
+			}	
+			this_stride = max_stride;
+			/* increment by one */
+			update_seq_likelyness(fd, 1);
 		}
-	    	else 
-			this_stride = NOT_SEQ;    
+	    	else {
+			this_stride = NOT_SEQ;
+			/* reduce by one */
+			update_seq_likelyness(fd, -1);
+		}
 
 		 //if(fd == 13)	    
 		//	printf("fd: %d this_stride %lu, max_stride %lu seq_history %d\n", 
-		//			fd, this_stride, max_stride, seq_history);
+		//		fd, this_stride, max_stride, seq_history);
                strides[fd].stride = this_stride; //set the new stride
                current_stream[fd].pop_front(); //remove last element
 	}
