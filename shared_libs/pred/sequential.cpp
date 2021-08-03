@@ -267,7 +267,6 @@ void sequential::update_stride(int fd) {
 			/* reduce by one */
 			update_seq_likelyness(fd, -1);
 		}
-
 		 //if(fd == 13)	    
 		//	printf("fd: %d this_stride %lu, max_stride %lu seq_history %d\n", 
 		//		fd, this_stride, max_stride, seq_history);

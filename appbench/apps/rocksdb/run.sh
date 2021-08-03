@@ -9,8 +9,9 @@ WRITE_BUFF_SIZE=67108864
 NUM=1000000
 DBDIR=$DBHOME/DATA
 
+WORKLOADS="readrandom"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=readseq --use_existing_db=1 --mmap_read=0"
+READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
 APPPREFIX="/usr/bin/time -v"
 
 PARAMS="--db=$DBDIR --value_size=4096 --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --threads=$THREAD --num=$NUM"
