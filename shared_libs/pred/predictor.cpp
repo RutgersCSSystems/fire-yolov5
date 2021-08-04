@@ -44,25 +44,11 @@ bool handle_open(int fd, const char *filename){
     if(fd<=2 || filename == NULL)
         return false;
 
-    debug_print("handle_open: fd:%d %s\n", fd, filename);
+    printf("handle_open: fd:%d %s\n", fd, filename);
 
-    /* REMOVED DUE TO UNINTERPRETABLE ERROR: FIXME
-    std::string str(filename);
-    fd_to_filename[fd] = filename;
-    */
-
-    /*
-    if(fd_to_filename.find(fd) == fd_to_filename.end() ||
-            fd_to_filename[fd] == str)
-        fd_to_filename[fd] = str;
-    else{
-        debug_print("%s: fd:%d associated with new file: %s\n", 
-                __func__, fd, filename);
-        fd_to_filename[fd] = str;
-        return false;
-    }
-    */
-
+#if 0 //def SEQUENTIAL
+	seq_readobj.init_seq_likelyness(fd);
+#endif
     return true;
 }
 
@@ -95,24 +81,16 @@ int handle_read(int fd, off_t pos, size_t bytes) {
         //printf("Delay prefetch %d\n", g_num_prefetches);
 	return 0;
     }
-
 #endif
 
     /* Prefetch data for next read*/
 #ifdef SEQUENTIAL
-    off_t stride;
+    long stride;
     off_t prefetch_fd_pos = 0;
     size_t prefetch_size = 0;
 
-#if 0
-    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-        debug_print("handle_read: sequential\n");
-        prefetch_size = seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
-    } 
-    else 
-#endif
     if((stride = seq_readobj.is_strided(fd))){
-        debug_print("handle_read: strided: %lu\n", stride);
+        debug_print("handle_read: strided: %ld\n", stride);
         prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
 	g_num_prefetches++;
     }

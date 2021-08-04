@@ -194,7 +194,6 @@ FILE *fopen(const char *filename, const char *mode){
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
     int fd = fileno(ret);
-    debug_print("%s: PID:%d - %s -> %d\n", __func__, getpid(), filename, fd);
     if(reg_file(ret)){
         handle_open(fd, filename);
     }

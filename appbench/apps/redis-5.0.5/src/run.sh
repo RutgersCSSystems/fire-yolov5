@@ -1,10 +1,8 @@
 #!/bin/bash
 set -x
-REDISROOT=$APPBENCH/redis-5.0.5
+REDISROOT=$APPBENCH/apps/redis-5.0.5
 REDISCONF=$REDISROOT/config
 APPBASE=$REDISROOT/src
-#APPBASE=/usr/bin/
-APP=$APPBASE/pagerank
 PARAM=$1
 OUTPUT=$2
 READS=1000000
@@ -68,9 +66,8 @@ RUN(){
 
   for (( r=1; r<=$MAXINST; r++))
   do
-    #$PHYSCPU=$physcpu,$physcpu2 
-    LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
-    #LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
+    #LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
+    $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
 
     let port=$port+1
     let physcpu=$physcpu+2

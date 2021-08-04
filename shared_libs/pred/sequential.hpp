@@ -11,16 +11,18 @@
 
 #define HISTORY 5 // Number of past accesses considered >2
 #define SEQ_ACCESS 0 //Sequential access stride=0
-#define NOT_SEQ (ULONG_MAX - 1) //Not seq or strided(since off_t is ulong)
 
-#define NOTLIKELY 1
-#define LIKELY 2
-#define MORELIKELY 4
-#define DEFINITELY 8
+#define DEFNSEQ (-8) //Not seq or strided(since off_t is ulong)
+#define LIKELYNSEQ (-4) /*possibly not seq */
+#define POSSNSEQ 0 /*possibly not seq */
+#define MAYBESEQ 1 /*maybe seq */
+#define POSSSEQ 2 /* possibly seq? */
+#define LIKELYSEQ 4 /* likely seq? */
+#define DEFSEQ 8 /* definitely seq */
 
 
 struct stride_dat{
-    off_t stride;
+    long stride;
     size_t bytes; //Bytes accessed
 };
 
@@ -38,7 +40,7 @@ class sequential{
 	robin_hood::unordered_node_map<int, struct stride_dat> strides;
 	robin_hood::unordered_node_map<int, std::deque<struct pos_bytes>> current_stream;
 	robin_hood::unordered_node_map<int, off_t> prefetch_fd_map;
-	robin_hood::unordered_node_map<int, int> fd_access_map;
+	robin_hood::unordered_node_map<int, long> fd_access_map;
 
 #endif
 
@@ -71,16 +73,21 @@ class sequential{
 	int prefetch_now_fd(void *pfetch_info, int fd);
 
 	int update_seq_likelyness(int fd, int val);
-	bool get_seq_likelyness(int fd);
+	void init_seq_likelyness(int fd);
+
+	long get_seq_likelyness(int fd); /*likelyness of being sequential */
+
+	bool is_definitely_seq(int fd);
+	bool is_definitely_notseq(int fd);
 
 };
 
 
 void infinite_loop(void* num);
-size_t seq_prefetch(struct pos_bytes curr_access, off_t stride);
+size_t seq_prefetch(struct pos_bytes curr_access, long stride);
 void __seq_prefetch(void *pfetch_info);
 //XXX:To implement seq_relinquish
-bool seq_relinquish(struct pos_bytes curr_access, off_t stride);
+bool seq_relinquish(struct pos_bytes curr_access, long stride);
 
 //Prefetch or not?
 int prefetch_now(void *pfetch_info);

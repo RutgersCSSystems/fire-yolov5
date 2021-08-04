@@ -16,9 +16,11 @@ sequential::sequential(void){
 	init = false;
 }
 
+#if 0
 bool sequential::is_sequential(int fd){
     return(exists(fd) && strides[fd].stride == SEQ_ACCESS);
 }
+#endif
 
 
 /* if yes, return the stride
@@ -28,9 +30,10 @@ off_t sequential::is_strided(int fd){
 
 #if 0
     if(exists(fd) && strides[fd].stride > SEQ_ACCESS
-#endif
     if((get_seq_likelyness(fd) == true) && strides[fd].stride > SEQ_ACCESS
-            && strides[fd].stride < NOT_SEQ)
+            && strides[fd].stride < DEFNSEQ)
+#endif
+    if(get_seq_likelyness(fd) == true)   
         return strides[fd].stride;
     else
         return false;
@@ -49,10 +52,12 @@ void sequential::insert(struct pos_bytes access){
         init_fd_maps(fd);
     }*/
 
-    if(get_seq_likelyness(fd) != true) {
+    if((is_definitely_seq(fd) != true) && (is_definitely_notseq(fd) != true)) {
     	current_stream[fd].push_back(access);
 	update_stride(fd); //calculate the stride
-    }
+    }//else {
+	//printf("%s FD:%d stride %ld\n", __func__, fd, get_seq_likelyness(fd));	
+    //}
     return;
 }
 
@@ -97,18 +102,22 @@ bool sequential::exists(int fd)
 /* returns the stride 
 */
 off_t sequential::get_stride(int fd){
-    if(!init)
-	return NOT_SEQ;
 
-    if(exists(fd) && strides[fd].stride < NOT_SEQ)
+	return strides[fd].stride;
+#if 0	
+    if(!init)
+	return DEFNSEQ;
+
+    if(exists(fd) && strides[fd].stride < DEFNSEQ)
         return strides[fd].stride;
     else
-        return NOT_SEQ;
+        return DEFNSEQ;
+#endif
 }
 
 
 void sequential::init_fd_maps(int fd){
-    strides[fd].stride = NOT_SEQ;
+    strides[fd].stride = DEFNSEQ;
     prefetch_fd_map[fd] = 0;
     return;
 }
@@ -159,47 +168,11 @@ int prefetch_now(void *pfetch_info) {
     return 1;
 }
 
-#if 0
-void sequential::update_stride(int fd){
-    if(exists(fd) && current_stream[fd].size() > HISTORY){
-        off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
-        //current_stream[fd].read_window(present_hist, HISTORY);
-        auto deq = current_stream[fd];
-        auto stream = deq.begin();
-
-        /*
-        this_stride = stream->pos + stream->bytes; //Pos1 + Size1
-        stream++;
-        this_stride = stream->pos - this_stride; //Pos2 - (pos1 + size1)
-        */
-
-        for(int i=0; i<HISTORY-1; i++){
-            if(this_stride == NOT_SEQ)
-            {
-                //this_stride = present_hist[i].pos + present_hist[i].bytes;
-                this_stride = stream->pos + stream->bytes; //Pos1 + Size1
-                stream++;
-                this_stride = stream->pos - this_stride; //Pos2 - (pos1 + size1)
-                //this_stride = present_hist[i+1].pos - this_stride;
-                continue;
-            }
-            //check_stride = present_hist[i].pos + present_hist[i].bytes;
-            check_stride = stream->pos + stream->bytes;
-            //check_stride = present_hist[i+1].pos - check_stride;
-            check_stride = stream->pos - check_stride;
-            if(check_stride != this_stride){
-                this_stride = NOT_SEQ;
-                break;
-            }
-        }
-        strides[fd].stride = this_stride; //set the new stride
-        current_stream[fd].pop_front(); //remove last element
-    }
-    return;
+void sequential::init_seq_likelyness(int fd) {
+	fd_access_map[fd] = DEFNSEQ;
 }
-#endif
 
-#if 1
+
 /*val can be positive or negative? 
  */
 int sequential::update_seq_likelyness(int fd, int val) {
@@ -208,27 +181,45 @@ int sequential::update_seq_likelyness(int fd, int val) {
 	return fd_access_map[fd];
 }
 
-bool sequential::get_seq_likelyness(int fd) {
 
-	if(fd_access_map[fd] >= DEFINITELY)
+/* Function gets the likelyness of sequentiality
+ * DEFINITELY_XX sets the likelyness of sequentiality or randomness
+ * Most likely the caller is going to skip prefetching (random) or increase 
+ * prefetching window size (sequential)
+ */
+long sequential::get_seq_likelyness(int fd) {
+
+	return fd_access_map[fd];
+}
+
+bool sequential::is_definitely_seq(int fd) {
+
+	if(fd_access_map[fd] >= DEFSEQ)
 		return true;
 	else
 		return false;
 }
 
+bool sequential::is_definitely_notseq(int fd) {
+
+	if(fd_access_map[fd] <= DEFNSEQ)
+		return true;
+	else
+		return false;
+}
 
 void sequential::update_stride(int fd) {
 
-        off_t this_stride = NOT_SEQ, check_stride = NOT_SEQ;
+        long this_stride = DEFNSEQ, check_stride = DEFNSEQ;
        
        //if(exists(fd) && current_stream[fd].size() > HISTORY){
        if(current_stream[fd].size() > HISTORY){
 
                 auto deq = current_stream[fd];
                 auto stream = deq.begin();
-		off_t next_stride = NOT_SEQ;
-		off_t diff = 0;
-		off_t max_stride = 0;
+		long next_stride = DEFNSEQ;
+		long diff = 0;
+		long max_stride = 0;
 		int seq_history = 0;
 		off_t this_stride_off = 0;
 
@@ -245,15 +236,22 @@ void sequential::update_stride(int fd) {
 			 * previous offset + access bytes is smaller than the 
 			 * page size
 			 */
-			if(next_stride - (this_stride_off) <= PAGESIZE) {
+			if(next_stride - (long)(this_stride_off) <= PAGESIZE) {
 				seq_history++;
 			}
 			
-			if(diff > max_stride)
+			if(diff > max_stride) {
 				max_stride = diff;
+				//printf("fd: %d this_stride %ld, next_stride %ld this_stride_off %lu next_stride %ld seq_history %d\n", 
+				//		fd, this_stride, max_stride, this_stride_off, next_stride, seq_history);
+
+			}
 	       }
 
-	    	if(seq_history >= 2) { 
+		printf("fd: %d this_stride %ld, max_stride %ld seq_history %d sequence? %ld\n", 
+				fd, this_stride, max_stride, seq_history, update_seq_likelyness(fd, 1));
+
+	    	if(seq_history > 2) { 
 			/* pad to atleast a page size */
 			if(max_stride < PAGESIZE) {
 				max_stride = PAGESIZE;
@@ -263,24 +261,18 @@ void sequential::update_stride(int fd) {
 			this_stride = max_stride;
 		}
 	    	else {
-			this_stride = NOT_SEQ;
 			/* reduce by one */
-			update_seq_likelyness(fd, -1);
+			this_stride = update_seq_likelyness(fd, -1);
 		}
-		 //if(fd == 13)	    
-		//	printf("fd: %d this_stride %lu, max_stride %lu seq_history %d\n", 
-		//		fd, this_stride, max_stride, seq_history);
-
                strides[fd].stride = this_stride; //set the new stride
                current_stream[fd].pop_front(); //remove last element
 	}
 	return;
 }
-#endif
 
 
 /*seq_prefetch frontend*/
-size_t seq_prefetch(struct pos_bytes curr_access, off_t stride){
+size_t seq_prefetch(struct pos_bytes curr_access, long stride){
     
      /*TODO: Make this malloc scalable
      * without the malloc, the stack memory gets corrupted before
