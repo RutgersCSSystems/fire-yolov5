@@ -1,13 +1,21 @@
 #!/bin/bash
 set -x
+PREDICT=1
+
 REDISROOT=$APPBENCH/apps/redis-5.0.5
 REDISCONF=$REDISROOT/config
 APPBASE=$REDISROOT/src
+
+OUTPUTDIR=$PWD/RESULTS
+mkdir -p $OUTPUTDIR
+
 PARAM=$1
 OUTPUT=$2
-READS=1000000
-KEYS=4000000
+READS=500000
+KEYS=1000000
 let MAXINST=4
+
+
 
 #READS=10000
 #KEYS=20000
@@ -21,7 +29,6 @@ let physcpu=0
 let physcpu2=1
 
 SIGNAL="-9"
-#SIGNAL="-9"
 
 
 CLEAN() {
@@ -59,14 +66,34 @@ FlushDisk()
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 }
 
+BUILD_LIB()
+{
+	cd $SHARED_LIBS/pred
+	./compile.sh
+	cd $APPBASE
+}
+
+SETPRELOAD()
+{
+	if [[ "$PREDICT" == "1" ]]; then
+	    export LD_PRELOAD=/usr/lib/libcrosslayer.so
+	else
+	    export LD_PRELOAD=/usr/lib/libnopred.so
+	fi
+}
+
+
+
+
 RUN(){
   let port=$STARTPORT
   let physcpu=$SERVERCPU
   let physcpu2=$physcpu+1
 
+  SETPRELOAD	  
+
   for (( r=1; r<=$MAXINST; r++))
   do
-    #LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
     $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
 
     let port=$port+1
@@ -74,8 +101,10 @@ RUN(){
     let physcpu2=$physcpu2+2   	
     sleep 1	
   done
+
   export LD_PRELOAD=""
 }
+
 
 RUNCLIENT(){
   let port=$STARTPORT
@@ -87,27 +116,14 @@ RUNCLIENT(){
 
   for (( c=1; c<$MAXINST; c++))
   do
-    # $PHYSCPU=$physcpu
-    $CLIPREFIX $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt" &
-    #$CLIPREFIX $APPBASE/../memtier_benchmark/memtier_benchmark -s localhost -p $port -d 2 --pipeline=10 --threads=50 -c 50 --key-pattern=S:S --ratio=1:1 -n $KEYS --out-file $OUTPUTDIR/redis$c".txt"  --data-size=4096 &
-
+    $CLIPREFIX $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/"predict"$PREDICT"_"redis$c".txt" &
     let port=$port+1
     let physcpu=$physcpu+1
     let physcpu2=$physcpu2+2   	
   done
-  #$PHYSCPU=$physcpu
-  #$PHYSCPU=$physcpu 
-  $CLIPREFIX  $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/redis$c".txt"
-
-  let port=$STARTPORT
-  for (( c=1; c<=$MAXINST; c++))
-  do
-   # $CLIPREFIX $APPBASE/redis-benchmark$c $PARAMS -p $port shutdown &> $OUTPUTDIR/redis$c".txt" 
-    let port=$port+1
-  done
-  #sleep 5
-  #ps aux | grep redis-server | awk '{print $2; system("sudo kill -9 " $2); kill $(pgrep -f redis-server)}'
+  $CLIPREFIX  $APPBASE/redis-benchmark$c $PARAMS -p $port &> $OUTPUTDIR/"predict"$PREDICT"_"redis$c".txt" 
 }
+
 
 cd $REDISROOT/src
 CLEAN
@@ -115,10 +131,21 @@ sleep 5
 PREPARE
 FlushDisk
 cd $SHARED_DATA
+
 RUN
 sleep 10
 RUNCLIENT
 CLEAN
 CLEAN
-#$SHARED_LIBS/construct/reset
+
+sleep 10
+FlushDisk
+PREDICT=0
+RUN
+sleep 10
+RUNCLIENT
+CLEAN
+CLEAN
+
+
 set +x
