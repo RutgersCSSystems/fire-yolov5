@@ -90,11 +90,13 @@ RUN(){
   let physcpu=$SERVERCPU
   let physcpu2=$physcpu+1
 
-  SETPRELOAD	  
 
   for (( r=1; r<=$MAXINST; r++))
   do
-    $APPPREFIX $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
+
+    SETPRELOAD	  
+    $APPBASE/redis-server$r $REDISCONF/redis-$port".conf" &
+    export LD_PRELOAD=""
 
     let port=$port+1
     let physcpu=$physcpu+2
@@ -102,7 +104,6 @@ RUN(){
     sleep 1	
   done
 
-  export LD_PRELOAD=""
 }
 
 

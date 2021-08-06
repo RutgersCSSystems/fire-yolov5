@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 ##prefetch window multiple factor 1, 2, 4
 ##grep the elapsed time, file faults, minor faults, system time, user time
@@ -12,20 +12,20 @@ cd $APPDIR
 
 declare -a apparr=("ior")
 declare -a predict=("0" "1")
-declare -a thrdarr=("32" "8")
+declare -a thrdarr=("32")
 
-declare -a transfersizearr=("8192" "16384") #transfer size
-declare -a blockprodarr=("100000" "150000") #blocksize = transfersize*blockprod
-declare -a segmentarr=("1" "256" "1024" "2048") #segmentsize
+declare -a transfersizearr=("1024") #transfer size
+declare -a blockprodarr=("1024") #blocksize = transfersize*blockprod
+declare -a segmentarr=("2048") #segmentsize
 
 #declare -a thrdarr=("16")
 #declare -a transfersizearr=("8192") #transfer size
-declare -a blockprodarr=("1000" "5000" "10000" "100000") #blocksize = transfersize*blockprod
+#declare -a blockprodarr=("1000" "5000" "10000" "100000") #blocksize = transfersize*blockprod
 declare -a segmentarr=("256") #segmentsize
 #declare -a predict=("0")
 #sizeofprefetch = prefetchwindow * readsize
-declare -a prefetchwindow=("2" "4" "8" "1")
-#declare -a prefetchwindow=("8")
+#declare -a prefetchwindow=("2" "4" "8" "1")
+declare -a prefetchwindow=("8")
 
 #reduce the dirty files aggressively
 $ENVPATH/set_disk_dirty.sh

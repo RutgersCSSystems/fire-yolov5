@@ -6,8 +6,10 @@ if [ -z "$NVMBASE" ]; then
 fi
 
 
-DATA=com-orkut.ungraph.txt
-#DATA=com-youtube.ungraph.txt
+
+PREDICT=0
+#DATA=com-orkut.ungraph.txt
+DATA=com-friendster.ungraph.txt
 INPUT=$SHARED_DATA/$DATA
 APPBASE=$APPBENCH/apps/graphchi/graphchi-cpp/bin/example_apps
 APP=$APPBASE/pagerank
@@ -21,9 +23,34 @@ FlushDisk()
 	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 }
 
+SETPRELOAD()
+{
+	if [[ "$PREDICT" == "1" ]]; then
+	    export LD_PRELOAD=/usr/lib/libcrosslayer.so
+	else
+	    export LD_PRELOAD=/usr/lib/libnopred.so
+	fi
+}
+
+BUILD_LIB()
+{
+	cd $SHARED_LIBS/pred
+	./compile.sh
+	cd $DBHOME
+}
+
+
 export GRAPHCHI_ROOT=$APPBENCH/apps/graphchi/graphchi-cpp
 
 #cd $APPBENCH/apps/graphchi 
 FlushDisk
+
+echo "RUNNING CROSSLAYER.................."
+#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+FlushDisk
+FlushDisk
+SETPRELOAD
 echo "edgelist" | $APPPREFIX $APP file $INPUT niters 8
+export LD_PRELOAD=""
+
 set +x

@@ -248,7 +248,7 @@ void sequential::update_stride(int fd) {
 			}
 	       }
 
-		printf("fd: %d this_stride %ld, max_stride %ld seq_history %d sequence? %ld\n", 
+		printf("***************fd: %d this_stride %ld, max_stride %ld seq_history %d sequence? %ld\n", 
 				fd, this_stride, max_stride, seq_history, update_seq_likelyness(fd, 1));
 
 	    	if(seq_history > 2) { 
