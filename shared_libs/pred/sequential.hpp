@@ -18,7 +18,7 @@
 #define MAYBESEQ 1 /*maybe seq */
 #define POSSSEQ 2 /* possibly seq? */
 #define LIKELYSEQ 4 /* likely seq? */
-#define DEFSEQ 8 /* definitely seq */
+#define DEFSEQ 64 /* definitely seq */
 
 
 struct stride_dat{

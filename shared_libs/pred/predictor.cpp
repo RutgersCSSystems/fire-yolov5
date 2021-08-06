@@ -67,6 +67,8 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     acc.pos = pos;
     acc.bytes = bytes;
 
+
+
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
 #endif
@@ -90,7 +92,7 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     size_t prefetch_size = 0;
 
     if((stride = seq_readobj.is_strided(fd))){
-        debug_print("handle_read: strided: %ld\n", stride);
+        //printf("handle_read: strided: %ld\n", stride);
         prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
 	g_num_prefetches++;
     }

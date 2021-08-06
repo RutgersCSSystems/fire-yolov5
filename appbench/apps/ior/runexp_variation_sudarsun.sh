@@ -14,7 +14,7 @@ declare -a apparr=("ior")
 declare -a predict=("0" "1")
 declare -a thrdarr=("32")
 
-declare -a transfersizearr=("1024") #transfer size
+declare -a transfersizearr=("4096") #transfer size
 declare -a blockprodarr=("1024") #blocksize = transfersize*blockprod
 declare -a segmentarr=("2048") #segmentsize
 
@@ -33,6 +33,15 @@ $ENVPATH/set_disk_dirty.sh
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
 FILENAME=test_outfile_ior
+
+FlushDisk()
+{
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+}
+
 
 COMPILE_SHAREDLIB() {
     cd $NVMBASE/shared_libs/pred
@@ -112,7 +121,7 @@ RUNAPP() {
 
 		echo "$APPPREFIX mpirun -np $NPROC $READ $PARAMS"
 		#$APPPREFIX mpirun -np $NPROC ior $READ $PARAMS &>> $OUTPUT
-		$APPPREFIX mpirun -np $NPROC ior $PARAMS &>> $OUTPUT
+		$APPPREFIX mpirun -np $NPROC ior $PARAMS &> $OUTPUT
 		#cat $OUTPUT | grep "Elapsed"
 
 		export LD_PRELOAD=""
@@ -138,6 +147,7 @@ do
 					do 
 						for PREFETCHTIMES in "${prefetchwindow[@]}"
 						do 
+							FlushDisk
 							RUNAPP $NPROC $APP $PREDICT $SEGMENT $TRANSFERSIZE $BLOCKPROD $PREFETCHTIMES
 							REFRESH
 							rm -rf $FILENAME*

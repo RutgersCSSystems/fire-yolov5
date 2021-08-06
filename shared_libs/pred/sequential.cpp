@@ -33,7 +33,7 @@ off_t sequential::is_strided(int fd){
     if((get_seq_likelyness(fd) == true) && strides[fd].stride > SEQ_ACCESS
             && strides[fd].stride < DEFNSEQ)
 #endif
-    if(get_seq_likelyness(fd) == true)   
+    if(get_seq_likelyness(fd) > 0)   
         return strides[fd].stride;
     else
         return false;
@@ -223,11 +223,14 @@ void sequential::update_stride(int fd) {
 		int seq_history = 0;
 		off_t this_stride_off = 0;
 
+		//printf("***************\n");
+
 		//FIXME: Currently not sure why the current_stream size is less than 2 
                 for(int i=0; i < current_stream[fd].size()-3; i++){
 
                         this_stride = stream->pos; //Pos1 + Size1
 			this_stride_off = stream->pos + stream->bytes;
+
 			stream++;
 			next_stride = stream->pos;
 			diff = next_stride - this_stride;
@@ -242,14 +245,8 @@ void sequential::update_stride(int fd) {
 			
 			if(diff > max_stride) {
 				max_stride = diff;
-				//printf("fd: %d this_stride %ld, next_stride %ld this_stride_off %lu next_stride %ld seq_history %d\n", 
-				//		fd, this_stride, max_stride, this_stride_off, next_stride, seq_history);
-
 			}
 	       }
-
-		printf("***************fd: %d this_stride %ld, max_stride %ld seq_history %d sequence? %ld\n", 
-				fd, this_stride, max_stride, seq_history, update_seq_likelyness(fd, 1));
 
 	    	if(seq_history > 2) { 
 			/* pad to atleast a page size */
@@ -259,6 +256,9 @@ void sequential::update_stride(int fd) {
 			/* increment by one */
 			max_stride = max_stride * update_seq_likelyness(fd, 1);
 			this_stride = max_stride;
+
+			//printf("PID %d fd: %d this_stride %ld, this_stride_off  %lu next_stride %ld seq_history %d sequence? %ld\n", 
+			//	getpid(), fd, this_stride, this_stride_off, next_stride, seq_history, update_seq_likelyness(fd, 1));
 		}
 	    	else {
 			/* reduce by one */
@@ -360,7 +360,7 @@ void __seq_prefetch(void *pfetch_info){
     pages_readahead += (bytes_toread >> PAGESHIFT);
 
     /*print number of readahead pages*/
-    debug_print("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
+    //printf("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
 
     //do readhead
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
