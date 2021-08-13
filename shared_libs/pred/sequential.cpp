@@ -360,7 +360,7 @@ void __seq_prefetch(void *pfetch_info){
     pages_readahead += (bytes_toread >> PAGESHIFT);
 
     /*print number of readahead pages*/
-    //printf("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
+    printf("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
 
     //do readhead
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
