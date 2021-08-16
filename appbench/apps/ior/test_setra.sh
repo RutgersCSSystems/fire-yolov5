@@ -10,7 +10,6 @@ APP="IOR"
 APPDIR=$PWD
 PREDICT=0
 #RESULTS_FILE=$OUTPUTDIR/$APP/13Aug-ior-sensitest.txt
-RESULTS_FILE=./13Aug-ior-sensitest.txt
 
 KB=1024
 MB=`echo "1024*$KB" | bc`
@@ -27,8 +26,10 @@ echo "BLOCKSIZE = " $BLOCKSIZE
 DEV="/dev/sda4"
 
 #declare -a setra=("256" "320" "512" "1024" "2048" "4096")
-declare -a setra=("4096")
+declare -a setra=("256" "1024")
 declare -a nproc=("1" "2" "4" "8" "16" "32")
+#declare -a totsize=("30" "100" "200" "300") #in GB
+declare -a totsize=("30") #in GB
 
 #declare -a transfersizearr=("4096") #transfer size
 #declare -a blockprodarr=("1024") #blocksize = transfersize*blockprod
@@ -66,7 +67,7 @@ BUILD_LIB()
 
 VERBOSE="-v"
 REORDER="-C"
-FILEPERPROC="-F"
+#FILEPERPROC="-F"
 KEEPFILE="-k"
 WRITE=" -w "
 READ=" -r "
@@ -75,19 +76,24 @@ READ=" -r "
 for SETRA in "${setra[@]}"
 do
     sudo blockdev --setra $SETRA $DEV
-    for NPROC in "${nproc[@]}"
+    for TOTSIZE in "${totsize[@]}"
     do
-        NR_SEGMENTS=`echo "$TOT_FILE_SIZE/($BLOCKSIZE*$NPROC)" | bc`
-        PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
-        echo "NR_SEGMENTS=" $NR_SEGMENTS
-        rm $FILENAME*
+        TOT_FILE_SIZE=`echo "$TOTSIZE*$GB" | bc`
+        RESULTS_FILE=./15Aug-ior-sensitest-${TOTSIZE}_GB_singleFile_setra-${SETRA}.txt
+        for NPROC in "${nproc[@]}"
+        do
+            rm $FILENAME*
+            NR_SEGMENTS=`echo "$TOT_FILE_SIZE/($BLOCKSIZE*$NPROC)" | bc`
+            PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
+            echo "NR_SEGMENTS=" $NR_SEGMENTS
 
-        mpirun -np $NPROC ior $WRITE $PARAMS
+            mpirun -np $NPROC ior $WRITE $PARAMS
 
-        FlushDisk
+            FlushDisk
 
-        echo "############################################################" >> $RESULTS_FILE
-        sudo blockdev --getra $DEV >> $RESULTS_FILE
-        $APPPREFIX mpirun -np $NPROC ior $READ $PARAMS $VERBOSE >> $RESULTS_FILE
+            echo "############################################################" >> $RESULTS_FILE
+            sudo blockdev --getra $DEV >> $RESULTS_FILE
+            $APPPREFIX mpirun -np $NPROC ior $READ $PARAMS $VERBOSE &>> $RESULTS_FILE
+        done
     done
 done
