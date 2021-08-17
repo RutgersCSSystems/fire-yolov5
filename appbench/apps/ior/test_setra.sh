@@ -15,7 +15,8 @@ KB=1024
 MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 NPROC=1
-FILENAME="ior_test.dat"
+FILENAME="/mnt/ext4ramdisk/ior_test.dat"
+OUTFOLDER="$PWD/ramdisk-analysis"
 TRANSFERSZ=`echo "4*$KB" | bc`
 NR_READS=200 ##Number of TRANSFERSZ reads by each mpi proc per segment
 BLOCKSIZE=`echo "$NR_READS*$TRANSFERSZ" | bc`
@@ -26,10 +27,10 @@ echo "BLOCKSIZE = " $BLOCKSIZE
 DEV="/dev/sda4"
 
 #declare -a setra=("256" "320" "512" "1024" "2048" "4096")
-declare -a setra=("256" "1024")
+declare -a setra=("256" "320" "512" "1024" "2048" "4096")
 declare -a nproc=("1" "2" "4" "8" "16" "32")
 #declare -a totsize=("30" "100" "200" "300") #in GB
-declare -a totsize=("30") #in GB
+declare -a totsize=("30" "60" "80") #in GB
 
 #declare -a transfersizearr=("4096") #transfer size
 #declare -a blockprodarr=("1024") #blocksize = transfersize*blockprod
@@ -67,7 +68,7 @@ BUILD_LIB()
 
 VERBOSE="-v"
 REORDER="-C"
-#FILEPERPROC="-F"
+FILEPERPROC="-F"
 KEEPFILE="-k"
 WRITE=" -w "
 READ=" -r "
@@ -79,7 +80,7 @@ do
     for TOTSIZE in "${totsize[@]}"
     do
         TOT_FILE_SIZE=`echo "$TOTSIZE*$GB" | bc`
-        RESULTS_FILE=./15Aug-ior-sensitest-${TOTSIZE}_GB_singleFile_setra-${SETRA}.txt
+        RESULTS_FILE=${OUTFOLDER}/15Aug-ior-sensitest-${TOTSIZE}_GB_diff-file_setra-${SETRA}.txt
         for NPROC in "${nproc[@]}"
         do
             rm $FILENAME*
