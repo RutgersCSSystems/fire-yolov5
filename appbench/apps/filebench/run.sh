@@ -6,16 +6,26 @@ DATA=$SHARED_DATA
 SIZE=" --size=4G"
 PARAM=" --directory=$DATA $SIZE"
 OUTPUT=$2
+PREDICT=1
+
 mkdir -p $DATA
 
 sudo chown -R $USER $SHARED_DATA
 
-FlushDisk()
+SETPRELOAD()
 {
-        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
-        sudo sh -c "sync"
-        sudo sh -c "sync"
-        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+	if [[ "$PREDICT" == "1" ]]; then
+	    export LD_PRELOAD=/usr/lib/libcrosslayer.so
+	else
+	    export LD_PRELOAD=/usr/lib/libnopred.so
+	fi
+}
+
+BUILD_LIB()
+{
+	cd $SHARED_LIBS/pred
+	./compile.sh
+	cd $DBHOME
 }
 
 FlushDisk()
@@ -65,6 +75,12 @@ $APPPREFIX $APP $APPBASE/examples/fio-seq-read.job --name=seqread $PARAM
 
 cd $APPBASE
 FlushDisk
+
+echo "RUNNING CROSSLAYER.................."
+#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+FlushDisk
+FlushDisk
+SETPRELOAD
 RANDOM_MONGO
 #RANDOM_WRITE
 #FlushDisk

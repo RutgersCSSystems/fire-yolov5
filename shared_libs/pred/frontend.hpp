@@ -9,6 +9,7 @@ typedef int (*real_creat_t)(const char *, mode_t);
 typedef FILE *(*real_fopen_t)(const char *, const char *);
 
 typedef ssize_t (*real_read_t)(int, void *, size_t);
+typedef ssize_t (*real_pread_t)(int, void *, size_t, off_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
 typedef ssize_t (*real_write_t)(int, const void *, size_t);
 typedef size_t (*real_fwrite_t)(const void *, size_t, 
@@ -25,6 +26,7 @@ FILE *fopen(const char *restrict filename, const char *restrict mode);
 
  * */
 
+#if 0
 int real_open(const char *pathname, int flags){
         return ((real_open_t)dlsym(RTLD_NEXT, "open"))
             (pathname, flags);
@@ -57,6 +59,12 @@ ssize_t real_read(int fd, void *data, size_t size) {
         return ((real_read_t)dlsym(RTLD_NEXT, "read"))
             (fd, data, size);
 }
+
+ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
+        return ((real_pread_t)dlsym(RTLD_NEXT, "pread"))
+            (fd, data, size, offset);
+}
+#endif
 
 
 int real_fclose(FILE *stream){

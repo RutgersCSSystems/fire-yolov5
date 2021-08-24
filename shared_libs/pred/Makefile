@@ -1,25 +1,22 @@
-CXX=g++-4.8
-CC=gcc-4.8
+CXX=g++
+CC=gcc
 
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 
 INCLUDE=-I./include
 
 #DEBUGFLAGS=-DDEBUG
-#NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
-DELYAPRFETCH=-D_DELAY_PREFETCH
+NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
+DELAYPRFETCH=-D_DELAY_PREFETCH
 PINCORES=-DPIN_ALL
 
 all: nopred seq 
 
-nopred: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS)
 
-seq: frontend.cpp sequential.cpp ngram.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DSEQUENTIAL $(DEBUGFLAGS) $(NOBGTHREADS) $(DELAYPRFETCH) $(PINCORES)
-
-ngram: frontend.cpp ngram.cpp util.cpp predictor.cpp
-	$(CXX) $(FLAGS) -o libcrosslayer.so $^ $(LIBS) -DPREDICTOR -DNGRAM $(DEBUGFLAGS) $(DELAYPRFETCH)
+seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) #$(PINCORES) 
 
 clean:
 	rm -rf *.o

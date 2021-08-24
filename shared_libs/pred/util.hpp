@@ -18,10 +18,13 @@
 #define debug_print(...) do{ }while(0)
 #endif
 
+#define gettid() syscall(SYS_gettid)
+
 struct pos_bytes{
 	int fd; //file descriptor
 	off_t pos; //File seek position
 	size_t bytes; //size of read/write
+	off_t prefetch_pos; //position prefetched up to
 };
 
 /*Returns P(true) = MemPressure*/

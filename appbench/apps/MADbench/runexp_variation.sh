@@ -1,23 +1,23 @@
 #!/bin/bash
-#set -x
+set -x
 
 ##prefetch window multiple factor 1, 2, 4
 ##grep the elapsed time, file faults, minor faults, system time, user time
 
 APPDIR=$PWD
 RESULTS_FOLDER=results-sensitivity-sudarsun
-mkdir $RESULTS_FOLDER
+mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 declare -a apparr=("MADbench")
-declare -a predict=("0" "1")
+declare -a predict=("1")
 #declare -a workarr=("4096" "8192" "16384")
-declare -a workarr=("16384")
+declare -a workarr=("8192")
 declare -a thrdarr=("16")
 ##application read size 4KB, 128KB, 512KB, 1MB, 4MB, 16MB
 #declare -a readsize=("4096" "131072" "524288" "1048576" "4194304" "16777216")
 declare -a readsize=("1048576")
 #sizeofprefetch = prefetchwindow * readsize
-declare -a prefetchwindow=("1" "2" "4")
+declare -a prefetchwindow=("1")
 
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
@@ -29,13 +29,32 @@ export IOMETHOD=POSIX
 
 STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
 
+FlushDisk()
+{
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+}
+
+BUILD_LIB()
+{
+	cd $SHARED_LIBS/pred
+	./compile.sh
+	cd $APPDIR
+}
+
+
+
+
 REFRESH() {
 	export LD_PRELOAD=""
 	rm -rf files/
-	$NVMBASE/scripts/clear_cache.sh
+	FlushDisk
 	sudo sh -c "dmesg --clear" ##clear dmesg
 	sleep 2
 }
+
 
 #Here is where we run the application
 RUNAPP() 
@@ -51,6 +70,7 @@ RUNAPP()
 	RECORD=$5
 	TPREFETCH=$6
 
+	mkdir -p $RESULTS_FOLDER
 	OUTPUT=$RESULTS_FOLDER/$APP"_PROC-"$NPROC"_PRED-"$PREDICT"_LOAD-"$WORKLOAD"_READSIZE-"$RECORD"_TIMESPFETCH-"$TPREFETCH".out"
 
 	echo "*********** running $OUTPUT ***********"
@@ -61,15 +81,16 @@ RUNAPP()
 	numactl --hard &> $OUTPUT
 	wait; sync
 
+	BUILD_LIB
+
 	if [[ "$PREDICT" == "1" ]]; then
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
 		export LD_PRELOAD=/usr/lib/libnopred.so
 	fi
 
-
 	if [[ "$APP" == "MADbench" ]]; then
-		echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
+		#echo "$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $RECORD $STRIDE $FLUSH"
 		$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD 30 1 8 64 1 1 $FLUSH &>> $OUTPUT
 		export LD_PRELOAD=""
 		wait; sync

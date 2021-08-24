@@ -382,6 +382,9 @@ void serverLogRaw(int level, const char *msg) {
  * is used across the code. The raw version is only used in order to dump
  * the INFO output on crash. */
 void serverLog(int level, const char *fmt, ...) {
+
+    return;	
+
     va_list ap;
     char msg[LOG_MAX_LEN];
 

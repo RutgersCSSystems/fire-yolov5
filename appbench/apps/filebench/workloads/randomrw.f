@@ -23,7 +23,7 @@
 # Use is subject to license terms.
 #
 
-set $dir=/users/skannan/ssd/HPC/NVM/appbench/apps/filebench/data
+set $dir=/localhome/sudarsun/projects/HPC/NVM/appbench/apps/filebench/data
 set $filesize=10g
 set $iosize=8k
 set $nthreads=8

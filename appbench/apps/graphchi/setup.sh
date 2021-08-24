@@ -16,11 +16,11 @@ if [ ! -f com-orkut.ungraph.txt ]; then
         wget $GRAPHDATAURL/com-orkut.ungraph.txt
 fi
 
-#datafiles=($APPBASE/$SHARED_DATA/com-friendster*)
-#if [[ ${#datafiles[@]} -gt 0 ]]; then
-	#wget $GRAPHDATAURL/com-friendster.ungraph.txt.gz
-	#gzip -d com-friendster.ungraph.txt.gz
-#fi
+datafiles=($APPBASE/$SHARED_DATA/com-friendster*)
+if [[ ${#datafiles[@]} -gt 0 ]]; then
+	wget $GRAPHDATAURL/com-friendster.ungraph.txt.gz
+	gzip -d com-friendster.ungraph.txt.gz
+fi
 
 if [ ! -f crime.data ]; then
 	wget -O crime.data https://norvig.com/big.txt

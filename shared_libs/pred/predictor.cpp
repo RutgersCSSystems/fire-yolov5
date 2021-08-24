@@ -9,29 +9,23 @@
 #include <fcntl.h>
 #include <sys/time.h>
 
-#include "ngram.hpp"
 #include "util.hpp"
 #include "predictor.hpp"
 #include "sequential.hpp"
 
-#ifdef NGRAM
-ngram readobj; //Obj with all the reads info
-ngram writeobj; //Obj with all the write info
-#endif
-
 #ifdef SEQUENTIAL
-sequential seq_readobj;
-sequential seq_writeobj;
+thread_local sequential seq_readobj;
+thread_local sequential seq_writeobj;
 #endif
-struct pos_bytes acc;
+thread_local struct pos_bytes acc;
 
 /* Keeps track of all filenames wrt its corresponding fd*/
-std::unordered_map<int, std::string> fd_to_filename;
+thread_local std::unordered_map<int, std::string> fd_to_filename;
 
 
 /*Time Spent in prefetching*/
-struct timeval stop, start;
-double total_readahead_time = 0.0; //Time in microseconds
+thread_local struct timeval stop, start;
+thread_local double total_readahead_time = 0.0; //Time in microseconds
 
 /*
  * Questions to answer
@@ -50,32 +44,10 @@ bool handle_open(int fd, const char *filename){
     if(fd<=2 || filename == NULL)
         return false;
 
-    debug_print("handle_open: fd:%d %s\n", fd, filename);
+    printf("handle_open: fd:%d %s\n", fd, filename);
 
-    /* REMOVED DUE TO UNINTERPRETABLE ERROR: FIXME
-    std::string str(filename);
-    fd_to_filename[fd] = filename;
-    */
-
-    /*
-    if(fd_to_filename.find(fd) == fd_to_filename.end() ||
-            fd_to_filename[fd] == str)
-        fd_to_filename[fd] = str;
-    else{
-        debug_print("%s: fd:%d associated with new file: %s\n", 
-                __func__, fd, filename);
-        fd_to_filename[fd] = str;
-        return false;
-    }
-    */
-
-#ifdef NGRAM_PREDICT
-    //dont know what to do if this rn
-    if(!toss_biased_coin()) //Low MemPressure with high prob
-    {
-        posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
-        std::cout << "prefetching fd: " << fd << std::endl;
-    }
+#if 0 //def SEQUENTIAL
+	seq_readobj.init_seq_likelyness(fd);
 #endif
     return true;
 }
@@ -85,6 +57,8 @@ bool handle_open(int fd, const char *filename){
  * 1. accounts for access pattern and
  * 2. takes appropriate readahead/DONT NEED action
  */
+int g_num_prefetches = 0;
+
 int handle_read(int fd, off_t pos, size_t bytes) {
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
@@ -93,112 +67,59 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     acc.pos = pos;
     acc.bytes = bytes;
 
-    debug_print("handle_read: fd:%d, pos:%lu, bytes:%zu\n", 
-            fd, pos, bytes);
 
-    //Recognizer insert the access
-#ifdef NGRAM
-    readobj.insert_to_ngram(acc);
-#endif
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
 #endif
 
-   
 #ifdef STATS 
     //FIXME: Why are we not calling this inside a TIMER? This is super-high overhead
     gettimeofday(&start, NULL);
 #endif
 
 #ifdef _DELAY_PREFETCH
-    /*Check if we need to prefetch or we have read enough and can wait for some time?*/
-    if(!prefetch_now((void *)&acc)) {
-        //printf("Delay prefetch \n");
+    if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
+        //printf("Delay prefetch %d\n", g_num_prefetches);
 	return 0;
     }
 #endif
 
     /* Prefetch data for next read*/
 #ifdef SEQUENTIAL
-    off_t stride;
-    if(seq_readobj.is_sequential(fd)){ //Serial access = stride 0
-        debug_print("handle_read: sequential\n");
-        seq_prefetch(acc, SEQ_ACCESS);  //prefetch at program path
-    }
-    else if((stride = seq_readobj.is_strided(fd))){
-        debug_print("handle_read: strided: %lu\n", stride);
-        seq_prefetch(acc, stride); //prefetch in program path
-    }
-#endif
+    long stride;
+    off_t prefetch_fd_pos = 0;
+    size_t prefetch_size = 0;
 
-#ifdef NGRAM_PREDICT
-    std::multimap<float, std::string> next_accesses;
-    if(toss_biased_coin()){ //High MemPressure
-        /*multimap<float, std::string>*/
-        next_accesses = readobj.get_next_n_accesses(10);
-        /*std::deque<struct pos_bytes>*/
-        auto not_needed = readobj.get_notneeded(next_accesses);
-
-        int bytes_removed = 0, i = 0;
-        while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
-                i < not_needed.size()){
-
-            bytes_removed += not_needed[i].bytes;
-            posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
-                    not_needed[i].bytes, POSIX_FADV_DONTNEED);
-            i++;
-        }
+    if((stride = seq_readobj.is_strided(fd))){
+        //printf("handle_read: strided: %ld\n", stride);
+        prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
+	g_num_prefetches++;
     }
+
+    if(prefetch_size) {	   
+	prefetch_fd_pos = acc.pos + prefetch_size;    
+	debug_print("handle_read: fd: %d, acc.pos %lu strided: %lu prefetch_size %lu\n", 
+			fd, acc.pos, prefetch_fd_pos, prefetch_size);
+    	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
+    }
+
 #endif
 
 #ifdef STATS
     gettimeofday(&stop, NULL);
     total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
 #endif
-
     return true;
 }
 
 
 /* TO be called at each write by the user 
  * Functionality of this function is still TBD
- * Right now its just doing NGRAM accounting and prediction
- * which is INCOMPLETE/WRONG - We need to change this
  */
 int handle_write(int fd, off_t pos, size_t bytes){
     //Add this read to the corresponding algorithm
     //check if there is a need to take any actions
-#ifdef NGRAM
-    struct pos_bytes a;
-    a.fd = fd;
-    a.pos = pos;
-    a.bytes = bytes;
-    writeobj.insert_to_ngram(a);
-#endif
-
-#ifdef NGRAM_PREDICT
-    std::multimap<float, std::string> next_accesses;
-    if(toss_biased_coin()) //High MemPressure
-    {
-        /*multimap<float, std::string>*/
-        next_accesses = writeobj.get_next_n_accesses(10);
-        /*std::deque<struct pos_bytes>*/
-        auto not_needed = writeobj.get_notneeded(next_accesses);
-
-        int bytes_removed = 0, i = 0;
-        while(bytes_removed < MAX_REMOVAL_AT_ONCE ||
-                i < not_needed.size())
-        {
-
-            bytes_removed += not_needed[i].bytes;
-            posix_fadvise(not_needed[i].fd, not_needed[i].pos, 
-                    not_needed[i].bytes, POSIX_FADV_DONTNEED);
-            i++;
-        }
-    }
-#endif
-
     return true;
 }
 
@@ -217,17 +138,6 @@ int handle_close(int fd){
     seq_writeobj.remove(fd);
 #endif
 
-/*
-#ifdef NGRAM
-    writeobj.remove_from_ngram(fd);
-    readobj.remove_from_ngram(fd);
-#endif
-
-#ifdef NGRAM_PREDICT
-    posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
-#endif
-
-    */
     return true;
 }
 

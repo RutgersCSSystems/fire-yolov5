@@ -19,11 +19,11 @@
 #include "worker.hpp"
 
 //Worker pool for prefetching
-threadpool workerpool = NULL;
+thread_local threadpool workerpool = NULL;
 
-sem_t   *mysemp;
-const char semname[] = "mysem";
-int fifofd = -1;
+thread_local sem_t   *mysemp;
+const thread_local char semname[] = "mysem";
+thread_local int fifofd = -1;
 
 
 #if 0

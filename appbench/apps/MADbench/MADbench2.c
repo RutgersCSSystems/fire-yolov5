@@ -1072,7 +1072,6 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
       if (strcmp(IOMODE, "SYNC")==0) error_check("fwrite", filename, fwrite(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
       if(flushit)
       {
-	      printf("*************WAITING*************\n");
 	      fflush(df);
 	      int fd = fileno(df);
 	      posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
