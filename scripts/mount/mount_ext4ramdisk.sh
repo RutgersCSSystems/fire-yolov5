@@ -2,7 +2,7 @@
 #script to create and mount a pmemdir
 #requires size as input
 #xfs
-PREFIX="numactl --membind=0"
+#PREFIX="numactl --membind=0"
 #DISKSZ=58000
 DISKSZ=$1
 
