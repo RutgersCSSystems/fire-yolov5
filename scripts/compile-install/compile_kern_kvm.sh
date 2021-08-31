@@ -13,8 +13,9 @@ cd $KERN_SRC
 #sudo make x86_64_defconfig
 #sudo make kvmconfig 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
+sudo make prepare ##Uses the modified .config file to compile kernel
 sudo make $PARA &> $KERN_SRC/compile.out
-grep -r "error:|undefined|warning" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
+grep -r "error:|undefined|warning|Permission" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 #sudo make modules &>> $KERN_SRC/compile.out
 #sudo make modules_install &>> $KERN_SRC/compile.out
 #grep -r "error:|undefined" $KERN_SRC/compile.out &>> $KERN_SRC/errors.out
