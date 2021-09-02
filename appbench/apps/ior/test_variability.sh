@@ -13,7 +13,7 @@ mkdir $OUTFOLDER
 APP="IOR"
 PREDICT=0
 NPROC=1
-NR_REPEATS=5
+NR_REPEATS=3
 
 NR_READS=200 ##Number of TRANSFERSZ reads by each mpi proc per segment
 TRANSFERSZ=`echo "4*$KB" | bc` #4K
@@ -28,8 +28,8 @@ TODAY=`date +'%d-%B'` ##todays date
 declare -a setra=("256" "512" "1024" "2048" "4096" "8192" "16384")
 declare -a nproc=("16" "32")
 #declare -a transfersz=("4096" "32768" "131072" "1048576") #4K, 32K, 128K, 1M
-#declare -a transfersz=("4" "32" "128" "1024") #4K, 32K, 128K, 1M
-declare -a transfersz=("4") #4K, 32K, 128K, 1M
+declare -a transfersz=("4" "32" "128" "1024") #4K, 32K, 128K, 1M
+#declare -a transfersz=("4") #4K, 32K, 128K, 1M
 declare -a totsize=("30") #in GB
 
 #declare -a transfersizearr=("4096") #transfer size
@@ -92,7 +92,6 @@ do
         echo -n "$SETRA_PAGES" >> $RESULTS_FILE
 
         sudo blockdev --setra $SETRA $DEV
-        rm $FILENAME*
         for TXSZ in "${transfersz[@]}" ##For each read size
         do
             TRANSFERSZ=`echo "$TXSZ*$KB" | bc`
@@ -102,23 +101,29 @@ do
             PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
 
             #####################################################
+            rm $FILENAME*
             mpirun -np $NPROC ior $WRITE $PARAMS
             #####################################################
             
             min_bw=100000000
             max_bw=0
             avg_bw=0
+            this_bw=0
             for NR in $(seq 1 1 $NR_REPEATS)
             do
                 FlushDisk
-                $APPPREFIX mpirun -np $NPROC ior $READ $PARAMS $VERBOSE 
+                this_bw=`$APPPREFIX mpirun -np $NPROC ior $READ $PARAMS $VERBOSE | grep "Max Read" | awk '{print $3}'`
+
+                ##########################
+                min_bw=$(min_number $this_bw $min_bw)
+                max_bw=$(max_number $this_bw $max_bw)
+                avg_bw=`echo "scale=2; $avg_bw + $this_bw" | bc -l`
+                ##########################
 
             done
             avg_bw=`echo "scale=2; $avg_bw/$NR_REPEATS" | bc -l`
-            
-
-
-
+            echo -n ",$min_bw,$avg_bw,$max_bw" >> $RESULTS_FILE
         done
+        echo >> $RESULTS_FILE
     done
 done
