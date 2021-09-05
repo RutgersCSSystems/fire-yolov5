@@ -7,16 +7,33 @@ sleep 1
 
 $NVMBASE/scripts/qemu/killqemu.sh
 
+KB=1024
+MB=`echo "1024*$KB" | bc`
+GB=`echo "1024*$MB" | bc`
+
+TOT_MEM=`echo "100*$GB" | bc`
+HALF_MEM=`echo "$TOT_MEM/2" | bc`
+
 #sudo qemu-system-x86_64 -kernel $KERNEL/vmlinuz-$VER -hda $QEMU_IMG_FILE -append "root=/dev/sda rw" --enable-kvm -m $QEMUMEM -smp maxcpus=16  -numa node,nodeid=0,cpus=0-4 -curses -vga std -numa node,nodeid=1,cpus=10-13
+
+#sudo qemu-system-x86_64 \
+#	-kernel $KERNEL/vmlinuz-$VER \
+#	-hda $QEMU_IMG_FILE \
+#	-append "root=/dev/sda rw" \
+#	--enable-kvm -m 100G \
+#	-numa node,nodeid=0,cpus=0-39,mem=100G \
+#	-smp sockets=1,cores=10,threads=2,maxcpus=40 \
+#	-curses -device e1000,netdev=net0 \
+#	-netdev user,id=net0,hostfwd=tcp::5555-:22
 
 sudo qemu-system-x86_64 \
 	-kernel $KERNEL/vmlinuz-$VER \
 	-hda $QEMU_IMG_FILE \
 	-append "root=/dev/sda rw" \
-	--enable-kvm -m $QEMUMEM \
-	-numa node,nodeid=0,cpus=0-7,mem=20G \
-	-numa node,nodeid=1,cpus=16-23,mem=20G \
-	-smp sockets=2,cores=4,threads=2,maxcpus=32 \
+	--enable-kvm -m $TOT_MEM \
+	-numa node,nodeid=0,cpus=0-9,mem=$HALF_MEM \
+	-numa node,nodeid=1,cpus=20-39,mem=$HALF_MEM \
+	-smp sockets=2,cores=5,threads=2,maxcpus=40 \
 	-curses -device e1000,netdev=net0 \
 	-netdev user,id=net0,hostfwd=tcp::5555-:22
 
