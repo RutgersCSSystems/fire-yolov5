@@ -34,6 +34,7 @@
 #include "util.hpp"
 
 #define __NR_start_trace 333
+#define __NR_start_crosslayer 448
 
 #define CLEAR_COUNT     0
 #define COLLECT_TRACE 1
@@ -45,6 +46,9 @@
 #define TIME_RESET 8
 #define COLLECT_ALLOCATE 9
 #define PRINT_PPROC_PAGESTATS 10
+
+#define ENABLE_FILE_STATS 1
+#define DISABLE_FILE_STATS 2
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
@@ -118,8 +122,13 @@ int real_open(const char *pathname, int flags){
 }
 
 
+void set_crosslayer(){
+    syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
+}
 
-
+void unset_crosslayer(){
+    syscall(__NR_start_crosslayer, DISABLE_FILE_STATS, 0);
+}
 
 void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
@@ -128,11 +137,14 @@ void set_pvt_lru(){
 
 
 void con(){
+#ifdef CROSSLAYER
+	set_crosslayer();
+#endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("init tracing...\n");
 
-    set_pvt_lru();
+    //set_pvt_lru();
 
     int nr_workers = 1; //TODO: provide nr_workers from env var
     thread_fn(nr_workers);
@@ -141,6 +153,9 @@ void con(){
 
 
 void dest(){
+#ifdef CROSSLAYER
+	unset_crosslayer();
+#endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("application termination...\n");
