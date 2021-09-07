@@ -101,6 +101,7 @@ KEEPFILE="-k"
 WRITE=" -w "
 READ=" -r "
 
+BUILD_LIB
 
 mount_extr4ramdisk 130
 
