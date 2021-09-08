@@ -10,7 +10,7 @@ FILENAME="/mnt/ext4ramdisk/ior_test.dat"
 DEV="/dev/loop0"
 SETRA=256
 
-PREDICT=0
+PREDICT=1
 NPROC=32
 TOT_FILE_SIZE=`echo "120*$GB" | bc`
 
@@ -32,6 +32,7 @@ FlushDisk()
 
 SETPRELOAD()
 {
+	sudo dmesg --clear
 	if [[ "$PREDICT" == "1" ]]; then
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
@@ -62,8 +63,8 @@ sudo blockdev --setra $SETRA $DEV
 PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
 
 #####################################################
-rm $FILENAME*
-mpirun -np $NPROC ior $WRITE $PARAMS
+#rm $FILENAME*
+#mpirun -np $NPROC ior $WRITE $PARAMS
 #####################################################
 
 FlushDisk
