@@ -16,7 +16,7 @@ FILENAME="/mnt/ext4ramdisk/ior_test.dat"
 OUTFOLDER="$PWD/ramdisk-analysis"
 mkdir $OUTFOLDER
 
-APP="IOR"
+APP="newnix_IOR"
 PREDICT=0
 NPROC=32
 NR_REPEATS=10
@@ -101,12 +101,12 @@ KEEPFILE="-k"
 WRITE=" -w "
 READ=" -r "
 
-BUILD_LIB
+#BUILD_LIB
 
-mount_extr4ramdisk 130
+#mount_extr4ramdisk 130
 
-echo "RASIZE,pred-min,pred,pred-max,nopred-min,nopred,nopred-max" > $BW_PLOT_FILE
-echo "RASIZE,pred-min,pred,pred-max,nopred-min,nopred,nopred-max" > $RT_PLOT_FILE
+echo "RASIZE,nopred-min,nopred,nopred-max,pred-min,pred,pred-max" > $BW_PLOT_FILE
+echo "RASIZE,nopred-min,nopred,nopred-max,pred-min,pred,pred-max" > $RT_PLOT_FILE
 
 PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
 
@@ -145,14 +145,14 @@ do
             export LD_PRELOAD=""
             ###############################################################
 
-            this_bw=`echo tmp | grep "Max Read" | awk '{print $3}'`
+            this_bw=`cat tmp | grep "Max Read" | awk '{print $3}'`
             ##########################
             min_bw=$(min_number $this_bw $min_bw)
             max_bw=$(max_number $this_bw $max_bw)
             avg_bw=`echo "scale=2; $avg_bw + $this_bw" | bc -l`
             ##########################
 
-            this_rt=`echo tmp | grep "Elapsed" | awk '{print $8}' | awk -F":" '{print $1*60 +$2}'` #time in mins
+            this_rt=`cat tmp | grep "Elapsed" | awk '{print $8}' | awk -F":" '{print $1*60 +$2}'` #time in mins
             ##########################
             min_rt=$(min_number $this_rt $min_rt)
             max_rt=$(max_number $this_rt $max_rt)
