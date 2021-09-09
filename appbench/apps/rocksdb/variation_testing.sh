@@ -1,6 +1,6 @@
 #!/bin/bash
 
-##For a given IOR configuration, plot bandwidth and runtime wrt prediction and setra
+##For a given rocksdb configuration, plot bandwidth and runtime wrt prediction and setra
 
 APPPREFIX="/usr/bin/time -v"
 TODAY=`date +'%d-%B'` ##todays date
@@ -29,7 +29,7 @@ KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 NUM=1000000
 DBDIR=$DBHOME/DATA
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=$THREAD"
+WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --threads=$THREAD --num=$NUM"
 ###############
 
