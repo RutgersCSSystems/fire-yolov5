@@ -34,7 +34,7 @@ PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SY
 ###############
 
 
-declare -a setra=("256" "1024" "2048" "4096" "16384" "32768" "65536" "131072") #in nr_512byte_blocks
+declare -a setra=("256" "1024" "2048" "4096" "16384" "32768" "65536" "131072" "262144" "2147483640") #in nr_512byte_blocks
 declare -a predict=("0") #disable predictor
 declare -a workloads=("readseq" "readrandom")
 
@@ -56,6 +56,7 @@ SETPRELOAD()
 	else
 		#export LD_PRELOAD=/usr/lib/libnopred.so
 		#do nothing for now
+		echo "skipping preload"
 	fi
 }
 
@@ -115,8 +116,8 @@ echo "Done write load"
 
 for WORKLOAD in "${workloads[@]}"
 do
-	BW_PLOT_FILE=${OUTFOLDER}/$TODAY-$APP-BW-$WORKLOAD-${THREAD}_proc.dat
-	RT_PLOT_FILE=${OUTFOLDER}/$TODAY-$APP-RT-$WORKLOAD-${THREAD}_proc.dat
+	BW_PLOT_FILE=${OUTFOLDER}/$TODAY-$APP-BW-$WORKLOAD-${THREAD}_th-${VALUE_SIZE}_valsz-${KEYSIZE}_keysz-${NUM}_num-${WRITE_BUFF_SIZE}_writebufsz.dat
+	RT_PLOT_FILE=${OUTFOLDER}/$TODAY-$APP-RT-$WORKLOAD-${THREAD}_th-${VALUE_SIZE}_valsz-${KEYSIZE}_keysz-${NUM}_num-${WRITE_BUFF_SIZE}_writebufsz.dat
 	echo "RASIZE,nopred-min,nopred,nopred-max" > $BW_PLOT_FILE
 	echo "RASIZE,nopred-min,nopred,nopred-max" > $RT_PLOT_FILE
 
