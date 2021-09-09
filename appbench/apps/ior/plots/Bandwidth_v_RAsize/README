@@ -1,3 +1,31 @@
-This plot 
+Experimental Setting:
 
-Bandwidth vs RAsize plot for different read sizes
+Original Linux:
+1. 2MB limit on fadvice is enabled (default)
+2. max_hw_sectors_kb is set to 1280 KB (default)
+
+Modified Linux:
+1. 2MB limit on fadvice is disabled
+2. max_hw_sectors_kb is set to INT_MAX
+
+
+Cloudlab node c220g5@wisc is used for this experiment:
+1. Processors = 40
+2. DRAM = 200 GB
+
+Configuration:
+1. Ramdisk size = 130 GB (To restrict available memory for page cache)
+2. App prediction enable/disable
+3. RAsize increasing
+
+IOR config:
+1. NP = 32
+2. Sequential read with per proc file
+3. Total file size = 120 GB
+
+
+script used ior/variation_testing.sh : it generates a dat file for GNUPLOT
+
+
+==============================================
+The idea here is to see the max bandwidth while memory is scarce
