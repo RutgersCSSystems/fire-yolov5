@@ -39,5 +39,5 @@ set yrange [0:400]
 plot '10-September-ssd_oldnix_IOR-BW-seqread-diff-file-2097152_setra-120G_fsize-1M_tsize.dat' u "nopred":"nopred-min":"nopred-max":xtic(1) title "No App Pred", \
      '' u "pred":"pred-min":"pred-max" title "App Pred"
 
-set output 'ssd_oldnix_IOR_32np_120GB_seq_Bandwidth_v_RAsize.eps'
+set output 'ssd_oldnix_IOR_120GB_seq_Bandwidth_v_nproc.eps'
 replot
