@@ -14,8 +14,8 @@ INTMAX=2147483647
 DEV="/dev/sda4"
 FILENAME="$PWD/DATA/ior_test.dat"
 mkdir $PWD/DATA
-OUTFOLDER="$PWD/ssd_c220g5-analysis"
-mkdir $OUTFOLDER
+OUTFOLDER="$PWD/ssd_c220g5-analysis/nproc_vari"
+mkdir -p $OUTFOLDER
 
 APP="ssd_oldnix_IOR"
 PREDICT=0
@@ -27,7 +27,6 @@ NR_READS=200 ##Number of TRANSFERSZ reads by each mpi proc per segment
 TRANSFERSZ=`echo "1*$MB" | bc` #1M
 BLOCKSIZE=`echo "$NR_READS*$TRANSFERSZ" | bc`
 TOT_FILE_SIZE=`echo "120*$GB" | bc` #120GB
-NR_SEGMENTS=`echo "$TOT_FILE_SIZE/($BLOCKSIZE*$NPROC)" | bc`
 
 declare -a nproc=("4" "8" "16" "32")
 declare -a predict=("0" "1")
@@ -109,7 +108,6 @@ READ=" -r "
 echo "NPROC,nopred-min,nopred,nopred-max,pred-min,pred,pred-max" > $BW_PLOT_FILE
 echo "NPROC,nopred-min,nopred,nopred-max,pred-min,pred,pred-max" > $RT_PLOT_FILE
 
-PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
 
 
 sudo blockdev --setra $SETRA $DEV
@@ -118,6 +116,9 @@ for NPROC in "${nproc[@]}" #For each setra size
 do
 	echo -n "$NPROC" >> $BW_PLOT_FILE
 	echo -n "$NPROC" >> $RT_PLOT_FILE
+
+	NR_SEGMENTS=`echo "$TOT_FILE_SIZE/($BLOCKSIZE*$NPROC)" | bc`
+	PARAMS="-e -o=$FILENAME -b=$BLOCKSIZE -t=$TRANSFERSZ -s=$NR_SEGMENTS $FILEPERPROC $KEEPFILE"
 
 	echo "Starting write load"
 	rm $FILENAME*
