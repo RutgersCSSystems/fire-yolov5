@@ -1,0 +1,31 @@
+Experimental Setting
+
+Node:
+c220g5
+Total Mem = 198 GB
+Nr Cores = 40
+Ramdisk = 130GB
+
+
+IOR:
+writing to SATA-SSD
+Total File size = 120GB
+ReadSize = 1MB
+
+SetRA = 2097152 blocks (262144 pages)
+
+
+Experimental Idea:
+The idea of this experiment is to see how application Bandwidth changes when increasing number of mpi procs given a single IOR and SETRA setting.
+
+We chose SetRA value to be above because when we keep corecount constant and increase the RAsize, Bandwidth percieved by IOR reduces at this point. (plots/Bandwidth_v_RAsize/ssd-c220g5/original_linux) 
+
+
+In these experiments the available disposable memory for file cache is around 60GB, half the total file size, increasing the RAsize would pollute the cache and reduce bandwidth
+
+With the two experiments we wanted to show the following:
+1. Default static values for different OS parameters may not provide the best performance.
+2. Setting extreme static values for OS parameters might hurt performance.
+3. Ideal OS parameters should be chosen Based on the current system scenario (disposable memory, disk load, app procs/threads etc).
+4. Hence static values cannot be used, OS parameters should be dynamic since system scenario changes over time.
+
