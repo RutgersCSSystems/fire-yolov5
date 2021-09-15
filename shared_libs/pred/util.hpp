@@ -30,4 +30,6 @@ struct pos_bytes{
 /*Returns P(true) = MemPressure*/
 bool toss_biased_coin();
 
+extern bool enable_lib_prefetch;
+
 #endif
