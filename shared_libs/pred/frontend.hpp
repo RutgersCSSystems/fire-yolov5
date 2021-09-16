@@ -18,6 +18,9 @@ typedef size_t (*real_fwrite_t)(const void *, size_t,
 typedef int (*real_fclose_t)(FILE *);
 typedef int (*real_close_t)(int);
 
+typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
+typedef ssize_t (*real_readahead_t)(int, off_t, size_t);
+
 /*
  * int open(const char *path, int oflag, .../,mode_t mode /);
 int openat(int fd, const char *path, int oflag, ...);

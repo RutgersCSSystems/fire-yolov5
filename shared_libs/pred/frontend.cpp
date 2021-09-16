@@ -67,6 +67,27 @@ real_write_t write_ptr = NULL;
 real_fread_t fread_ptr = NULL;
 real_fwrite_t fwrite_ptr = NULL;
 
+/*Advise calls*/
+
+real_posix_fadvise_t posix_fadvise_ptr = NULL;
+real_readahead_t readahead_ptr = NULL;
+
+bool enable_lib_prefetch;
+
+int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
+	if(!posix_fadvise_ptr)
+		posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
+
+	return ((real_posix_fadvise_t)posix_fadvise_ptr)(fd, offset, len, advice);
+}
+
+ssize_t real_readahead(int fd, off_t offset, size_t count){
+	if(!readahead_ptr)
+		readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+
+	return ((real_readahead_t)readahead_ptr)(fd, offset, count);
+}
+
 FILE *real_fopen(const char *filename, const char *mode){
 
 	if(!fopen_ptr)
@@ -137,6 +158,7 @@ void set_pvt_lru(){
 
 
 void con(){
+	enable_lib_prefetch = false;
 #ifdef CROSSLAYER
 	set_crosslayer();
 #endif
@@ -154,7 +176,7 @@ void con(){
 
 void dest(){
 #ifdef CROSSLAYER
-	unset_crosslayer();
+//	unset_crosslayer();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -195,6 +217,26 @@ void dest(){
     syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
     syscall(__NR_start_trace, PRINT_PPROC_PAGESTATS, 0);
 #endif
+}
+
+
+ssize_t readahead(int fd, off_t offset, size_t count){
+	ssize_t ret = 0;
+	if(enable_lib_prefetch){
+		ret = real_readahead(fd, offset, count);
+	}
+
+	return ret;
+}
+
+
+int posix_fadvise(int fd, off_t offset, off_t len, int advice){
+	int ret = 0;
+	if(enable_lib_prefetch){ //prefetch from lib
+		ret = real_posix_fadvise(fd, offset, len, advice);
+	}
+
+	return ret;
 }
 
 

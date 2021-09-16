@@ -1,6 +1,5 @@
 #!/bin/bash
 DBHOME=$PWD
-PREDICT=1
 THREAD=1
 VALUE_SIZE=4096
 SYNC=0
@@ -26,7 +25,7 @@ FlushDisk()
 
 SETPRELOAD()
 {
-	if [[ "$PREDICT" == "1" ]]; then
+	if [[ "$1" == "1" ]]; then
 		echo "setting pred"
 		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
@@ -52,23 +51,11 @@ CLEAR_PWD()
 
 #Run write workload twice
 CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+$DBHOME/db_bench $PARAMS $WRITEARGS
 
 echo "RUNNING Vanilla.................."
 FlushDisk
-PREDICT=0
-SETPRELOAD
-$DBHOME/db_bench $PARAMS $READARGS
-FlushDisk
-export LD_PRELOAD=""
-
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
-
-FlushDisk
-echo "RUNNING Crosslayer.................."
-PREDICT=1
-SETPRELOAD
+SETPRELOAD 0
 strace $DBHOME/db_bench $PARAMS $READARGS
-export LD_PRELOAD=""
 FlushDisk
+export LD_PRELOAD=""
