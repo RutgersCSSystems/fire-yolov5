@@ -72,7 +72,7 @@ real_fwrite_t fwrite_ptr = NULL;
 real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 
-bool enable_lib_prefetch;
+std::atomic<bool> enable_advise;
 
 int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
 	if(!posix_fadvise_ptr)
@@ -158,9 +158,13 @@ void set_pvt_lru(){
 
 
 void con(){
-	enable_lib_prefetch = false;
 #ifdef CROSSLAYER
+	enable_advise = true; //Enable app_advise if only crosslayer
 	set_crosslayer();
+#endif
+
+#ifdef PREDICTOR
+    enable_advise = false; //Disable app_advise if predictor
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -185,19 +189,6 @@ void dest(){
     clean_state();
 
     print_readahead_time();
-    //syscall(__NR_start_trace, PRINT_STATS);
-
-    //syscall(__NR_start_trace, PRINT_ALLOCATE, 0);
-
-    /*
-       a = syscall(__NR_start_trace, CLEAR_COUNT);
-       a = syscall(__NR_start_trace, PFN_STAT);
-       a = syscall(__NR_start_trace, TIME_STATS);
-       a = syscall(__NR_start_trace, TIME_RESET);
-       */
-
-    //syscall(__NR_start_trace, CLEAR_COUNT, 0);
-
 
     /*
      * This code snippet prints the Rusage parameters
@@ -219,20 +210,22 @@ void dest(){
 #endif
 }
 
-
+/*
 ssize_t readahead(int fd, off_t offset, size_t count){
 	ssize_t ret = 0;
-	if(enable_lib_prefetch){
+	//if(enable_advise){
+//		printf("Doing readahead\n");
 		ret = real_readahead(fd, offset, count);
-	}
+//	}
 
 	return ret;
 }
+*/
 
 
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 	int ret = 0;
-	if(enable_lib_prefetch){ //prefetch from lib
+	if(enable_advise){ //prefetch from lib
 		ret = real_posix_fadvise(fd, offset, len, advice);
 	}
 

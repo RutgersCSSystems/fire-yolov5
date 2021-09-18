@@ -364,9 +364,10 @@ void __seq_prefetch(void *pfetch_info){
 
     //do readhead
 
-    enable_lib_prefetch = true;
+    //enable_advise = true;
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
-    enable_lib_prefetch = false;
+    //enable_advise = false;
+
     g_bytes_prefetched = bytes_toread;
     dat->prefetch_bytes = bytes_toread;
 

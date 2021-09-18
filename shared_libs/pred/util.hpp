@@ -1,6 +1,8 @@
 #ifndef _UTIL_HPP
 #define _UTIL_HPP
 
+#include <atomic>
+
 #define PAGESIZE 4096 //Page size
 #define PAGESHIFT 12 //2^12 is 4096 bytes
 #define NR_FREE_PAGES 5 //Number of pages to be released at once
@@ -30,6 +32,7 @@ struct pos_bytes{
 /*Returns P(true) = MemPressure*/
 bool toss_biased_coin();
 
-extern bool enable_lib_prefetch;
+//extern bool enable_lib_prefetch;
+extern std::atomic<bool> enable_advise;
 
 #endif
