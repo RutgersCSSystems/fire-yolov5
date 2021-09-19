@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <sched.h>
+#include <stdarg.h>
 #include <errno.h>
 
 #include <iostream>
@@ -72,74 +73,74 @@ real_fwrite_t fwrite_ptr = NULL;
 real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 
-std::atomic<bool> enable_advise;
+std::atomic<bool> enable_advise; //Enables and disables application advise
 
 int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
-	if(!posix_fadvise_ptr)
-		posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
+    if(!posix_fadvise_ptr)
+        posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
 
-	return ((real_posix_fadvise_t)posix_fadvise_ptr)(fd, offset, len, advice);
+    return ((real_posix_fadvise_t)posix_fadvise_ptr)(fd, offset, len, advice);
 }
 
 ssize_t real_readahead(int fd, off_t offset, size_t count){
-	if(!readahead_ptr)
-		readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+    if(!readahead_ptr)
+        readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
 
-	return ((real_readahead_t)readahead_ptr)(fd, offset, count);
+    return ((real_readahead_t)readahead_ptr)(fd, offset, count);
 }
 
 FILE *real_fopen(const char *filename, const char *mode){
 
-	if(!fopen_ptr)
-		fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
+    if(!fopen_ptr)
+        fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
 
-        return ((real_fopen_t)fopen_ptr)(filename, mode);
+    return ((real_fopen_t)fopen_ptr)(filename, mode);
 }
 
 size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-	if(!fread_ptr)
-		fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+    if(!fread_ptr)
+        fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
 
-        return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
+    return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
 }
 
 size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-	if(!fwrite_ptr)
-        	fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
+    if(!fwrite_ptr)
+        fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
 
-        return ((real_fwrite_t)fwrite_ptr)(ptr, size, nmemb, stream);
+    return ((real_fwrite_t)fwrite_ptr)(ptr, size, nmemb, stream);
 }
 
 ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
-	if(!pread_ptr)
-		pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+    if(!pread_ptr)
+        pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
 
-        return ((real_pread_t)pread_ptr)(fd, data, size, offset);
+    return ((real_pread_t)pread_ptr)(fd, data, size, offset);
 }
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
-	if(!write_ptr)
-		write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+    if(!write_ptr)
+        write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
 
-        return ((real_write_t)write_ptr)(fd, data, size);
+    return ((real_write_t)write_ptr)(fd, data, size);
 }
 
 ssize_t real_read(int fd, void *data, size_t size) {
 
-	if(!read_ptr)
-		read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
+    if(!read_ptr)
+        read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
 
-        return ((real_read_t)read_ptr)(fd, data, size);
+    return ((real_read_t)read_ptr)(fd, data, size);
 }
 
 
 int real_open(const char *pathname, int flags){
-        return ((real_open_t)dlsym(RTLD_NEXT, "open"))
-            (pathname, flags);
+    return ((real_open_t)dlsym(RTLD_NEXT, "open"))
+        (pathname, flags);
 }
 
 
@@ -159,8 +160,8 @@ void set_pvt_lru(){
 
 void con(){
 #ifdef CROSSLAYER
-	enable_advise = true; //Enable app_advise if only crosslayer
-	set_crosslayer();
+    enable_advise = true; //Enable app_advise if only crosslayer
+    set_crosslayer();
 #endif
 
 #ifdef PREDICTOR
@@ -180,7 +181,7 @@ void con(){
 
 void dest(){
 #ifdef CROSSLAYER
-//	unset_crosslayer();
+    //	unset_crosslayer();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -211,25 +212,25 @@ void dest(){
 }
 
 /*
-ssize_t readahead(int fd, off_t offset, size_t count){
-	ssize_t ret = 0;
-	//if(enable_advise){
+   ssize_t readahead(int fd, off_t offset, size_t count){
+   ssize_t ret = 0;
+//if(enable_advise){
 //		printf("Doing readahead\n");
-		ret = real_readahead(fd, offset, count);
+ret = real_readahead(fd, offset, count);
 //	}
 
-	return ret;
+return ret;
 }
 */
 
 
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
-	int ret = 0;
-	if(enable_advise){ //prefetch from lib
-		ret = real_posix_fadvise(fd, offset, len, advice);
-	}
+    int ret = 0;
+    if(enable_advise){ //prefetch from lib
+        ret = real_posix_fadvise(fd, offset, len, advice);
+    }
 
-	return ret;
+    return ret;
 }
 
 
@@ -264,7 +265,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     int fd = fileno(stream); 
     if(reg_file(stream)){ //this is a regular file
         ////lseek doesnt work with f* commands
-        
+
         handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -384,36 +385,36 @@ bool reg_fd(int fd){
 
     if(fstat(fd, &st) == 0){
         switch (st.st_mode & S_IFMT) {
-           case S_IFBLK:
-               debug_print("fd:%d block device\n", fd);
-               break;
-           case S_IFCHR:
-               debug_print("fd:%d character device\n", fd);
-               break;
-           case S_IFDIR:
-               debug_print("fd:%d directory\n", fd);
-               break;
-           case S_IFIFO:
-               debug_print("fd:%d FIFO/pipe\n", fd);
-               break;
-           case S_IFLNK:
-               debug_print("fd:%d symlink\n", fd);
-               break;
-           case S_IFREG:
-               debug_print("fd:%d regular file\n", fd); 
-               return true;            
-               break;
-           case S_IFSOCK:
-               debug_print("fd:%d socket\n", fd);
-               break;
-           default:
-               debug_print("fd:%d unknown?\n", fd);
-           }
-        /*
-        if(S_ISREG(st.st_mode)){
-            return true;
+            case S_IFBLK:
+                debug_print("fd:%d block device\n", fd);
+                break;
+            case S_IFCHR:
+                debug_print("fd:%d character device\n", fd);
+                break;
+            case S_IFDIR:
+                debug_print("fd:%d directory\n", fd);
+                break;
+            case S_IFIFO:
+                debug_print("fd:%d FIFO/pipe\n", fd);
+                break;
+            case S_IFLNK:
+                debug_print("fd:%d symlink\n", fd);
+                break;
+            case S_IFREG:
+                debug_print("fd:%d regular file\n", fd); 
+                return true;            
+                break;
+            case S_IFSOCK:
+                debug_print("fd:%d socket\n", fd);
+                break;
+            default:
+                debug_print("fd:%d unknown?\n", fd);
         }
-        */
+        /*
+           if(S_ISREG(st.st_mode)){
+           return true;
+           }
+           */
     }
     //return true;
     return false;
