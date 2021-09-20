@@ -11,11 +11,17 @@ DELAYPRFETCH=-D_DELAY_PREFETCH
 PINCORES=-DPIN_ALL
 CROSSLAYER=-DCROSSLAYER
 
-all: nopred seq 
+all: nopred seq onlyapppred
 
+#This allows app predictor but switches off lib predictor
+onlyapppred:
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER)
+
+#This doesnt allow app or lib predictor
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS)
 
+#This doesnt limit app predictor and activates lib predictor
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) #$(PINCORES)
 
@@ -28,5 +34,9 @@ install:
 	sudo cp *.so /usr/lib
 
 uninstall:
-	sudo rm /usr/local/lib/libcfun.so 
-	sudo rm /usr/lib/libcfun.so 
+	sudo rm /usr/local/lib/libonlyapppred.so
+	sudo rm /usr/local/lib/libnopred.so
+	sudo rm /usr/local/lib/libcrosslayer.so
+	sudo rm /usr/lib/libonlyapppred.so
+	sudo rm /usr/lib/libnopred.so
+	sudo rm /usr/lib/libcrosslayer.so

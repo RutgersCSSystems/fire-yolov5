@@ -144,6 +144,7 @@ int real_open(const char *pathname, int flags){
 }
 
 
+/*implemented in linux 5.14*/
 void set_crosslayer(){
     syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 }
@@ -152,6 +153,7 @@ void unset_crosslayer(){
     syscall(__NR_start_crosslayer, DISABLE_FILE_STATS, 0);
 }
 
+/*implemented in linux 4.17*/
 void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
@@ -159,13 +161,11 @@ void set_pvt_lru(){
 
 
 void con(){
+    enable_advise = false; //Disable any app/lib advise by default
+
 #ifdef CROSSLAYER
     enable_advise = true; //Enable app_advise if only crosslayer
     set_crosslayer();
-#endif
-
-#ifdef PREDICTOR
-    enable_advise = false; //Disable app_advise if predictor
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -180,9 +180,6 @@ void con(){
 
 
 void dest(){
-#ifdef CROSSLAYER
-    //	unset_crosslayer();
-#endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("application termination...\n");
