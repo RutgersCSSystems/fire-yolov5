@@ -21,6 +21,89 @@ typedef int (*real_close_t)(int);
 typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
 typedef ssize_t (*real_readahead_t)(int, off64_t, size_t);
 
+real_fopen_t fopen_ptr = NULL;
+
+real_pread_t pread_ptr = NULL;
+real_read_t read_ptr = NULL;
+
+real_write_t write_ptr = NULL;
+
+real_fread_t fread_ptr = NULL;
+real_fwrite_t fwrite_ptr = NULL;
+
+/*Advise calls*/
+
+real_posix_fadvise_t posix_fadvise_ptr = NULL;
+real_readahead_t readahead_ptr = NULL;
+
+
+int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
+    if(!posix_fadvise_ptr)
+        posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
+
+    return ((real_posix_fadvise_t)posix_fadvise_ptr)(fd, offset, len, advice);
+}
+
+ssize_t real_readahead(int fd, off_t offset, size_t count){
+    if(!readahead_ptr)
+        readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+
+    return ((real_readahead_t)readahead_ptr)(fd, offset, count);
+}
+
+FILE *real_fopen(const char *filename, const char *mode){
+
+    if(!fopen_ptr)
+        fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
+
+    return ((real_fopen_t)fopen_ptr)(filename, mode);
+}
+
+size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+    if(!fread_ptr)
+        fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+
+    return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
+}
+
+size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+    if(!fwrite_ptr)
+        fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
+
+    return ((real_fwrite_t)fwrite_ptr)(ptr, size, nmemb, stream);
+}
+
+ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
+
+    if(!pread_ptr)
+        pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+
+    return ((real_pread_t)pread_ptr)(fd, data, size, offset);
+}
+
+ssize_t real_write(int fd, const void *data, size_t size) {
+
+    if(!write_ptr)
+        write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+
+    return ((real_write_t)write_ptr)(fd, data, size);
+}
+
+ssize_t real_read(int fd, void *data, size_t size) {
+
+    if(!read_ptr)
+        read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
+
+    return ((real_read_t)read_ptr)(fd, data, size);
+}
+
+int real_open(const char *pathname, int flags){
+    return ((real_open_t)dlsym(RTLD_NEXT, "open"))
+        (pathname, flags);
+}
+
 int real_fclose(FILE *stream){
         return ((real_fclose_t)dlsym(
                     RTLD_NEXT, "fclose"))(stream);
