@@ -27,15 +27,21 @@ FlushDisk()
 
 SETPRELOAD()
 {
-    if [[ "$1" == "1" ]]; then
+    if [[ "$1" == "3" ]]; then ##All three
         echo "setting pred"
         export LD_PRELOAD=/usr/lib/libcrosslayer.so
-    elif [[ "$1" == "0" ]]; then
+    elif [[ "$1" == "0" ]]; then ##None
         echo "setting nopred"
         export LD_PRELOAD=/usr/lib/libnopred.so
-    else
+    elif [[ "$1" == "-1" ]]; then
         echo "only app pred"
         export LD_PRELOAD=/usr/lib/libonlyapppred.so
+    elif [[ "$1" == "1" ]]; then
+        echo "only os pred"
+        export LD_PRELOAD=/usr/lib/libonlyospred.so
+    elif [[ "$1" == "2" ]]; then
+        echo "App+os pred"
+        export LD_PRELOAD=/usr/lib/libos_apppred.so
     fi
 }
 
@@ -58,22 +64,23 @@ CLEAR_PWD()
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS
 
-echo "RUNNING Only App Pred.................."
+echo "RUNNING App+OS Pred.................."
 FlushDisk
-SETPRELOAD -1
+SETPRELOAD 2
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
+exit
 
 #Run write workload twice
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> /dev/null
 
-echo "RUNNING No Pred.................."
+echo "RUNNING Only App Pred.................."
 FlushDisk
-SETPRELOAD 0
+SETPRELOAD -1
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
