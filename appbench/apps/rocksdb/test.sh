@@ -1,6 +1,6 @@
 #!/bin/bash
 DBHOME=$PWD
-THREAD=16
+THREAD=1
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -72,8 +72,6 @@ $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
-exit
-
 #Run write workload twice
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> /dev/null
@@ -81,6 +79,14 @@ exit
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD -1
+$DBHOME/db_bench $PARAMS $READARGS
+#/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
+export LD_PRELOAD=""
+FlushDisk
+
+echo "RUNNING Only OS Pred.................."
+FlushDisk
+SETPRELOAD 1
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
