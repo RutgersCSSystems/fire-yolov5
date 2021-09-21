@@ -20,6 +20,8 @@ typedef int (*real_close_t)(int);
 typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
 typedef ssize_t (*real_readahead_t)(int, off64_t, size_t);
 
+typedef int (*real_clone_t)(int (void*), void *, int, void *, pid_t *, void *, pid_t *);
+
 real_fopen_t fopen_ptr = NULL;
 real_open_t open_ptr = NULL;
 
@@ -31,11 +33,22 @@ real_write_t write_ptr = NULL;
 real_fread_t fread_ptr = NULL;
 real_fwrite_t fwrite_ptr = NULL;
 
+real_clone_t clone_ptr = NULL;
+
 /*Advise calls*/
 
 real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 
+
+int real_clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
+        pid_t *ptid, void *newtls, pid_t *ctid){
+    if(!clone_ptr)
+        clone_ptr = (real_clone_t)dlsym(RTLD_NEXT, "clone");
+
+    return ((real_clone_t)clone_ptr)(fn, child_stack, flags, arg, ptid, newtls, ctid);
+
+}
 
 int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
     if(!posix_fadvise_ptr)

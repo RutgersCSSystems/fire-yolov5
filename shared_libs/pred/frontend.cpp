@@ -127,6 +127,19 @@ void dest(){
 }
 
 
+/*
+int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
+        pid_t *ptid, void *newtls, pid_t *ctid){
+    int ret = 0;
+
+    printf("Clone!\n");
+
+    ret = real_clone(fn, child_stack, flags, arg, ptid, newtls, ctid);
+
+    return ret;
+}
+*/
+
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
 #ifdef CONTROL_PRED
