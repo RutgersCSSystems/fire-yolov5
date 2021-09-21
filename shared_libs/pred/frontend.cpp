@@ -302,8 +302,6 @@ int fclose(FILE *stream){
 
 
 int close(int fd){
-    printf("close syscall\n");
-
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
