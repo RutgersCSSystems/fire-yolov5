@@ -11,16 +11,25 @@ DELAYPRFETCH=-D_DELAY_PREFETCH
 PINCORES=-DPIN_ALL
 CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
 DISABLEPRED=-DCONTROL_PRED ##Disables app prefetching
+DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
 
-all: nopred seq onlyapppred
+all: nopred seq onlyapppred os_apppred onlyospred
 
-#This allows app predictor but switches off lib predictor
+#This allows app predictor but switches off lib and OS predictor
 onlyapppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED)
 
-#This doesnt allow app or lib predictor
+#This allows app predictor but switches off lib and OS predictor
+os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER)
+
+#This doesnt allow app or lib predictor, but OS prefetchers are working 
+onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEPRED)
+
+#This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEPRED)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEPRED) $(DISABLEOSPRED)
 
 #This doesnt limit app predictor and activates lib predictor
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c

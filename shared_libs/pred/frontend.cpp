@@ -82,7 +82,7 @@ void con(){
 #endif
 
 #ifdef CROSSLAYER
-    set_crosslayer();
+    //set_crosslayer();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -145,7 +145,7 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
-    { //prefetch from lib
+    {
         ret = real_posix_fadvise(fd, offset, len, advice);
     }
 
@@ -153,8 +153,34 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 }
 
 
+int open(const char *pathname, int flags, ...){
+    int ret;
+    if(flags & O_CREAT){
+        va_list valist;
+        va_start(valist, flags);
+        mode_t mode = va_arg(valist, mode_t);
+        va_end(valist);
+        ret = real_open(pathname, flags, mode);
+    }
+    else{
+        ret = real_open(pathname, flags, 0);
+    }
+
+    if(ret < 0)
+        goto exit;
+
+#ifdef DISABLE_OS_PREFETCH
+    real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
+#endif
+
+exit:
+    return ret;
+}
+
+
 FILE *fopen(const char *filename, const char *mode){
 
+    printf("Fopening: %s\n", filename);
     FILE *ret;
     ret = real_fopen(filename, mode);
     if(!ret)
@@ -276,6 +302,7 @@ int fclose(FILE *stream){
 
 
 int close(int fd){
+    printf("close syscall\n");
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());

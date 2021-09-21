@@ -1,8 +1,7 @@
 #ifndef _FRONTEND_HPP
 #define _FRONTEND_HPP
 
-typedef int (*real_open_t)(const char *, int);
-typedef int (*real_open1_t)(const char *, int, mode_t);
+typedef int (*real_open_t)(const char *, int, ...);
 typedef int (*real_openat_t)(int, const char *, int);
 typedef int (*real_openat1_t)(int, const char *, int, mode_t);
 typedef int (*real_creat_t)(const char *, mode_t);
@@ -22,6 +21,7 @@ typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
 typedef ssize_t (*real_readahead_t)(int, off64_t, size_t);
 
 real_fopen_t fopen_ptr = NULL;
+real_open_t open_ptr = NULL;
 
 real_pread_t pread_ptr = NULL;
 real_read_t read_ptr = NULL;
@@ -99,9 +99,11 @@ ssize_t real_read(int fd, void *data, size_t size) {
     return ((real_read_t)read_ptr)(fd, data, size);
 }
 
-int real_open(const char *pathname, int flags){
-    return ((real_open_t)dlsym(RTLD_NEXT, "open"))
-        (pathname, flags);
+int real_open(const char *pathname, int flags, mode_t mode){
+    if(!open_ptr)
+        open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
+
+    return ((real_open_t)open_ptr)(pathname, flags, mode);
 }
 
 int real_fclose(FILE *stream){
