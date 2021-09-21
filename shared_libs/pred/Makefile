@@ -12,16 +12,17 @@ PINCORES=-DPIN_ALL
 CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
 DISABLEPRED=-DCONTROL_PRED ##Disables app prefetching
 DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
+DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 
 all: nopred seq onlyapppred os_apppred onlyospred
 
-#This allows app predictor but switches off lib and OS predictor
+#This allows app predictor but switches off lib and OS predictor (Disable any FADV_RANDOM)
 onlyapppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED)
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLE_FADV_RANDOM)
 
 #This doesnt allow app or lib predictor, but OS prefetchers are working 
 onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c

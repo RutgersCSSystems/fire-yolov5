@@ -142,13 +142,20 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
     int ret = 0;
+
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
     {
+#ifdef DISABLE_FADV_RANDOM
+        if(advice == POSIX_FADV_RANDOM)
+            goto exit;
+#endif
+        printf("App trying to advise %d for fd:%d\n", advice, fd);
         ret = real_posix_fadvise(fd, offset, len, advice);
     }
 
+exit:
     return ret;
 }
 
@@ -170,6 +177,7 @@ int open(const char *pathname, int flags, ...){
         goto exit;
 
 #ifdef DISABLE_OS_PREFETCH
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
@@ -179,8 +187,6 @@ exit:
 
 
 FILE *fopen(const char *filename, const char *mode){
-
-    printf("Fopening: %s\n", filename);
     FILE *ret;
     ret = real_fopen(filename, mode);
     if(!ret)
