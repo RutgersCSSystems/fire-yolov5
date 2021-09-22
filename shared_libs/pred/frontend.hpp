@@ -134,4 +134,20 @@ int real_close(int fd){
 bool reg_fd(int fd);
 int reg_file(FILE *stream);
 
+/*
+ * Per-Thread constructors can be made using
+ * constructors for threadlocal objects
+ */
+class thread_cons_dest{
+    public:
+        //Any variables here.
+        bool test_new; //set true at construction
+
+        thread_cons_dest(); //constructor
+        //~thread_cons_dest(); //destructor
+};
+
+void touch_tcd(void); //checks if a new thread was created
+
+
 #endif

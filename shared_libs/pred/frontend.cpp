@@ -21,7 +21,6 @@
 #include <iterator>
 
 #include <sys/sysinfo.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
@@ -55,6 +54,19 @@
 #define PRINT_PVT_LRU_STATS 25
 
 std::atomic<bool> enable_advise; //Enables and disables application advise
+thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
+
+
+/*
+ * Thread local variables are constructed at first touch
+ * so we will touch them the first time they open a file
+ * since for the purposes of this library, we are concerned with
+ * threads that deal with opening a file.
+ */
+void touch_tcd(void){
+    if(tcd.test_new)
+        tcd.test_new = false;
+}
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
@@ -77,12 +89,14 @@ void set_pvt_lru(){
 /*Constructor*/
 void con(){
 
+    printf("New process constructed\n");
+
 #ifdef CONTROL_PRED
     enable_advise = false; //Disable any app/lib advise by default
 #endif
 
 #ifdef CROSSLAYER
-    //set_crosslayer();
+    set_crosslayer();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -127,6 +141,16 @@ void dest(){
 }
 
 
+/*Thread local constructor*/
+thread_cons_dest::thread_cons_dest(void){
+    test_new = true;
+    //printf("Creating a new thread:%d\n", getpid());
+#ifdef CROSSLAYER
+    //set_crosslayer();
+#endif
+}
+
+
 /*
 int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
         pid_t *ptid, void *newtls, pid_t *ctid){
@@ -142,6 +166,7 @@ int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
 
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
+    //printf("%s: called for %d\n", __func__, fd);
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
@@ -156,6 +181,8 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
     int ret = 0;
 
+    //printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
@@ -164,7 +191,7 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
         if(advice == POSIX_FADV_RANDOM)
             goto exit;
 #endif
-        printf("App trying to advise %d for fd:%d\n", advice, fd);
+        //printf("App trying to advise %d for fd:%d\n", advice, fd);
         ret = real_posix_fadvise(fd, offset, len, advice);
     }
 
@@ -174,6 +201,8 @@ exit:
 
 
 int open(const char *pathname, int flags, ...){
+    touch_tcd();
+
     int ret;
     if(flags & O_CREAT){
         va_list valist;
@@ -189,6 +218,8 @@ int open(const char *pathname, int flags, ...){
     if(ret < 0)
         goto exit;
 
+    //printf("Open File %s:%d\n", pathname, ret);
+
 #ifdef DISABLE_OS_PREFETCH
     printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
@@ -200,6 +231,8 @@ exit:
 
 
 FILE *fopen(const char *filename, const char *mode){
+    touch_tcd();
+
     FILE *ret;
     ret = real_fopen(filename, mode);
     if(!ret)
@@ -257,6 +290,8 @@ ssize_t read(int fd, void *data, size_t size){
 
 #if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
+
+    //printf("%s: called for fd:%d\n",__func__, fd);
 
     ssize_t amount_read = real_pread(fd, data, size, offset);
 #ifdef PREDICTOR
