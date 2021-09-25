@@ -13,6 +13,7 @@ WORKLOAD="readseq"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+#READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
 
 PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
@@ -27,21 +28,27 @@ FlushDisk()
 
 SETPRELOAD()
 {
-    if [[ "$1" == "3" ]]; then ##All three
+    if [[ "$1" == "APPLIBOS" ]]; then ##All three
         echo "setting pred"
         export LD_PRELOAD=/usr/lib/libcrosslayer.so
-    elif [[ "$1" == "0" ]]; then ##None
+    elif [[ "$1" == "NOPRED" ]]; then ##None
         echo "setting nopred"
         export LD_PRELOAD=/usr/lib/libnopred.so
-    elif [[ "$1" == "-1" ]]; then
+    elif [[ "$1" == "ONLYAPP" ]]; then
         echo "only app pred"
         export LD_PRELOAD=/usr/lib/libonlyapppred.so
-    elif [[ "$1" == "1" ]]; then
-        echo "only os pred"
+    elif [[ "$1" == "ONLYLIB" ]]; then
+        echo "only Lib pred"
+        export LD_PRELOAD=/usr/lib/libonlylibpred.so
+    elif [[ "$1" == "ONLYOS" ]]; then
+        echo "only OS pred"
         export LD_PRELOAD=/usr/lib/libonlyospred.so
-    elif [[ "$1" == "2" ]]; then
-        echo "App+os pred"
+    elif [[ "$1" == "APPOS" ]]; then
+        echo "App+OS pred"
         export LD_PRELOAD=/usr/lib/libos_apppred.so
+    elif [[ "$1" == "LIBOS" ]]; then
+        echo "Lib+OS pred"
+        export LD_PRELOAD=/usr/lib/libos_libpred.so
     fi
 }
 
@@ -66,7 +73,7 @@ CLEAR_PWD()
 
 echo "RUNNING App+OS Pred.................."
 FlushDisk
-SETPRELOAD 2
+SETPRELOAD "APPOS"
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
@@ -78,7 +85,7 @@ FlushDisk
 
 echo "RUNNING Only App Pred.................."
 FlushDisk
-SETPRELOAD -1
+SETPRELOAD "ONLYAPP"
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
@@ -86,7 +93,7 @@ FlushDisk
 
 echo "RUNNING Only OS Pred.................."
 FlushDisk
-SETPRELOAD 1
+SETPRELOAD "ONLYOS"
 $DBHOME/db_bench $PARAMS $READARGS
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
