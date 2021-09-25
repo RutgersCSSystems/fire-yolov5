@@ -89,7 +89,7 @@ void set_pvt_lru(){
 /*Constructor*/
 void con(){
 
-    printf("New process constructed\n");
+    //printf("New process constructed\n");
 
 #ifdef CONTROL_PRED
     enable_advise = false; //Disable any app/lib advise by default
@@ -144,9 +144,12 @@ void dest(){
 /*Thread local constructor*/
 thread_cons_dest::thread_cons_dest(void){
     test_new = true;
+#ifdef CONTROL_PRED
+    enable_advise = false; //Disable any app/lib advise by default
+#endif
     //printf("Creating a new thread:%d\n", getpid());
 #ifdef CROSSLAYER
-    //set_crosslayer();
+    set_crosslayer();
 #endif
 }
 
