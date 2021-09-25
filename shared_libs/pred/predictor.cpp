@@ -44,7 +44,7 @@ bool handle_open(int fd, const char *filename){
     if(fd<=2 || filename == NULL)
         return false;
 
-    printf("handle_open: fd:%d %s\n", fd, filename);
+    //printf("handle_open: fd:%d %s\n", fd, filename);
 
 #if 0 //def SEQUENTIAL
 	seq_readobj.init_seq_likelyness(fd);

@@ -90,6 +90,9 @@ void set_pvt_lru(){
 void con(){
 
     //printf("New process constructed\n");
+#ifdef PREDICTOR
+	printf("Lib Predictor activated\n");
+#endif
 
 #ifdef CONTROL_PRED
     enable_advise = false; //Disable any app/lib advise by default
@@ -169,11 +172,11 @@ int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
 
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
-    //printf("%s: called for %d\n", __func__, fd);
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
     {
+    	printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
         ret = real_readahead(fd, offset, count);
     }
 
@@ -221,7 +224,13 @@ int open(const char *pathname, int flags, ...){
     if(ret < 0)
         goto exit;
 
-    //printf("Open File %s:%d\n", pathname, ret);
+#ifdef PREDICTOR
+    debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
+
+    if(reg_fd(ret)){
+        handle_open(ret, pathname);
+    }
+#endif
 
 #ifdef DISABLE_OS_PREFETCH
     printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);

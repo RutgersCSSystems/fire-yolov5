@@ -360,13 +360,13 @@ void __seq_prefetch(void *pfetch_info){
     pages_readahead += (bytes_toread >> PAGESHIFT);
 
     /*print number of readahead pages*/
-    printf("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
+    debug_print("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
 
     //do readhead
 
-    //enable_advise = true;
+    enable_advise = true;
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
-    //enable_advise = false;
+    enable_advise = false;
 
     g_bytes_prefetched = bytes_toread;
     dat->prefetch_bytes = bytes_toread;
