@@ -32,8 +32,8 @@ red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB";
 # set key on outside center bottom 
 set key fixed right top vertical Right noreverse noenhanced autotitle nobox
 # y axis label and range -- no details needed for x axis
-set ylabel "Total Wait MicroSec"
-set xlabel "Thread Count"
+set ylabel "Total Wait in Sec"
+set xlabel "Lock Type"
 set yrange [0:80]
 # Actually do the plot; use cols 2-4 from the file; linecolor gives the color, 
 # linewidth 0 removes the outline of the column
