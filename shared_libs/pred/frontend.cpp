@@ -176,7 +176,7 @@ ssize_t readahead(int fd, off_t offset, size_t count){
     if(enable_advise)
 #endif
     {
-    	printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
+    	//printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
         ret = real_readahead(fd, offset, count);
     }
 
