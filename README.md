@@ -27,3 +27,9 @@ export LD_PRELOAD=""
 ## How to disable fadvice ?
 Refer to the README in predictor folder.
 
+##How to use the new linux (5.14.0)
+```
+git clone <NVMREPOlink> -b hpc
+git submodule update 
+```
+This will update the two folders with linux in it.
