@@ -30,6 +30,6 @@ Refer to the README in predictor folder.
 ##How to use the new linux (5.14.0)
 ```
 git clone <NVMREPOlink> -b hpc
-git submodule update 
+git submodule update --init
 ```
 This will update the two folders with linux in it.
