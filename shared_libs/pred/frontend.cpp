@@ -85,6 +85,22 @@ void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
+/*Thread local constructor*/
+thread_cons_dest::thread_cons_dest(void){
+    test_new = true;
+    nr_readaheads = 0UL;
+#ifdef CONTROL_PRED
+    enable_advise = false; //Disable any app/lib advise by default
+#endif
+#ifdef CROSSLAYER
+    set_crosslayer();
+#endif
+}
+ 
+thread_cons_dest::~thread_cons_dest(void){
+    int tid = gettid();
+    printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
+}
 
 /*Constructor*/
 void con(){
@@ -144,18 +160,6 @@ void dest(){
 }
 
 
-/*Thread local constructor*/
-thread_cons_dest::thread_cons_dest(void){
-    test_new = true;
-#ifdef CONTROL_PRED
-    enable_advise = false; //Disable any app/lib advise by default
-#endif
-    //printf("Creating a new thread:%d\n", getpid());
-#ifdef CROSSLAYER
-    set_crosslayer();
-#endif
-}
-
 
 /*
 int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
@@ -176,7 +180,8 @@ ssize_t readahead(int fd, off_t offset, size_t count){
     if(enable_advise)
 #endif
     {
-    	//printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
+    	   //printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
+        tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
     }
 
@@ -237,12 +242,18 @@ int open(const char *pathname, int flags, ...){
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
+#ifdef ENABLE_WILLNEED_OPEN
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
+    real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
+#endif
+
 exit:
     return ret;
 }
 
 
 FILE *fopen(const char *filename, const char *mode){
+    int fd;
     touch_tcd();
 
     FILE *ret;
@@ -253,10 +264,22 @@ FILE *fopen(const char *filename, const char *mode){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
-    int fd = fileno(ret);
+    fd = fileno(ret);
     if(reg_file(ret)){
         handle_open(fd, filename);
     }
+#endif
+
+    fd = fileno(ret);
+
+#ifdef DISABLE_OS_PREFETCH
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+#endif
+
+#ifdef ENABLE_WILLNEED_OPEN
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_WILLNEED, filename, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
     return ret;
@@ -430,3 +453,4 @@ bool reg_fd(int fd){
     return false;
 }
 #endif
+

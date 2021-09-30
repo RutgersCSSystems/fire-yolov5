@@ -143,8 +143,10 @@ class thread_cons_dest{
         //Any variables here.
         bool test_new; //set true at construction
 
+        unsigned long nr_readaheads; //Counts the nr of readaheads done by apps
+
         thread_cons_dest(); //constructor
-        //~thread_cons_dest(); //destructor
+        ~thread_cons_dest(); //destructor
 };
 
 void touch_tcd(void); //checks if a new thread was created
