@@ -10,16 +10,16 @@ DBDIR=$DBHOME/DATA
 
 
 PERF=/users/shaleen/ssd/linux-5.14.0/tools/perf/perf #Path to perf
-VMLINUX=/lib/modules/5.14.0-bcc-locks+/build/vmlinux # will get this with compiled kernel only
+VMLINUX=/boot/vmlinux-5.14.0-bcc-locks+ # will get this with compiled kernel only
 #PERFARGS=" record -e cpu-cycles,instructions --vmlinux=$VMLINUX"
-REPORTARGS=" report --sort=dso"
+#REPORTARGS=" report --sort=dso -m -k $VMLINUX --demangle --demangle-kernel"
+REPORTARGS=" report -k $VMLINUX -g graph"
 PRELOAD_LIB=""
 
-#sudo sysctl -w kernel.perf_event_paranoid=-1
-#sudo sysclt -w kernel.kptr_restrict=0
-sudo sh -c "echo \"kernel.kptr_restrict=0\" >> /etc/sysctl.conf"
-sudo sh -c "echo \"kernel.perf_event_paranoid=-1\" >> /etc/sysctl.conf"
-sudo sysctl -p /etc/sysctl.conf
+#sudo sh -c "echo \"kernel.kptr_restrict=0\" >> /etc/sysctl.conf"
+#sudo sh -c "echo \"kernel.perf_event_paranoid=-1\" >> /etc/sysctl.conf"
+#sudo sysctl -p /etc/sysctl.conf
+
 sudo sysctl -w kernel.kptr_restrict=0
 sudo sysctl -w kernel.perf_event_paranoid=-1
 
@@ -113,8 +113,7 @@ mkdir $LOCKDAT
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD "ONLYAPP"
-PERFARGS="record -e cpu-cycles,instructions --vmlinux=$VMLINUX env LD_PRELOAD=$PRELOAD_LIB"
-echo "$PERFARGS"
+PERFARGS="record -e cpu-cycles,instructions -g --call-graph fp --vmlinux=$VMLINUX env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
