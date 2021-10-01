@@ -1,6 +1,6 @@
 #!/bin/bash
 DBHOME=$PWD
-THREAD=1
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -39,6 +39,7 @@ READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$TH
 APPPREFIX="/usr/bin/time -v"
 
 PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+
 
 FlushDisk()
 {
@@ -113,32 +114,38 @@ mkdir $LOCKDAT
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD "ONLYAPP"
-PERFARGS="record -e cpu-cycles,instructions -g --call-graph fp --vmlinux=$VMLINUX env LD_PRELOAD=$PRELOAD_LIB"
+PERF_OUT="perf_${WORKLOAD}_ONLYAPP_${THREAD}"
+PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
-$PERF $REPORTARGS
+#$PERF $REPORTARGS -i $PERF_OUT
 
-exit 
 
 echo "RUNNING Only OS Pred.................."
 FlushDisk
 SETPRELOAD "ONLYOS"
-$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+PERF_OUT="perf_${WORKLOAD}_ONLYOS_${THREAD}"
+PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
+$PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
 echo "RUNNING APP+OS Pred.................."
 FlushDisk
 SETPRELOAD "APPOS"
-$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+PERF_OUT="perf_${WORKLOAD}_APPOS_${THREAD}"
+PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
+$PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
 echo "RUNNING NO Pred.................."
 FlushDisk
 SETPRELOAD "NOPRED"
-$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+PERF_OUT="perf_${WORKLOAD}_NOPRED_${THREAD}"
+PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
+$PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
