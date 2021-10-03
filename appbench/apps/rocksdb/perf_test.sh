@@ -1,6 +1,6 @@
 #!/bin/bash
 DBHOME=$PWD
-THREAD=16
+THREAD=4
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -24,11 +24,11 @@ sudo sysctl -w kernel.kptr_restrict=0
 sudo sysctl -w kernel.perf_event_paranoid=-1
 
 
-#DEV=/dev/nvme1n1p1
-#BLOCK_SZ=512 #Bytes
-#RA_SIZE=70 #MB
-#NR_RA_BLOCKS=`echo "($RA_SIZE*1024*1024)/$BLOCK_SZ" | bc`
-#sudo blockdev --setra $NR_RA_BLOCKS $DEV
+DEV=/dev/nvme1n1p1
+BLOCK_SZ=512 #Bytes
+RA_SIZE=128 #KB
+NR_RA_BLOCKS=`echo "($RA_SIZE*1024)/$BLOCK_SZ" | bc`
+sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
 WORKLOAD="readseq"
 #WORKLOAD="readrandom"
@@ -114,7 +114,7 @@ mkdir $LOCKDAT
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD "ONLYAPP"
-PERF_OUT="perf_${WORKLOAD}_ONLYAPP_${THREAD}"
+PERF_OUT="perf_${WORKLOAD}_ONLYAPP_${THREAD}_ra-${RA_SIZE}KB"
 PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
@@ -125,7 +125,7 @@ FlushDisk
 echo "RUNNING Only OS Pred.................."
 FlushDisk
 SETPRELOAD "ONLYOS"
-PERF_OUT="perf_${WORKLOAD}_ONLYOS_${THREAD}"
+PERF_OUT="perf_${WORKLOAD}_ONLYOS_${THREAD}_ra-${RA_SIZE}KB"
 PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
@@ -134,7 +134,7 @@ FlushDisk
 echo "RUNNING APP+OS Pred.................."
 FlushDisk
 SETPRELOAD "APPOS"
-PERF_OUT="perf_${WORKLOAD}_APPOS_${THREAD}"
+PERF_OUT="perf_${WORKLOAD}_APPOS_${THREAD}_ra-${RA_SIZE}KB"
 PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
@@ -143,7 +143,7 @@ FlushDisk
 echo "RUNNING NO Pred.................."
 FlushDisk
 SETPRELOAD "NOPRED"
-PERF_OUT="perf_${WORKLOAD}_NOPRED_${THREAD}"
+PERF_OUT="perf_${WORKLOAD}_NOPRED_${THREAD}_ra-${RA_SIZE}KB"
 PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
