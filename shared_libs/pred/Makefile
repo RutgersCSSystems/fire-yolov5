@@ -10,9 +10,9 @@ NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 DELAYPRFETCH=-D_DELAY_PREFETCH
 PINCORES=-DPIN_ALL
 #CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
-DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
-DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
-DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
+DISABLEAPPPRED=#-DCONTROL_PRED ##Disables app prefetching
+DISABLEOSPRED=#-DDISABLE_OS_PREFETCH ##Disables OS prefetching
+DISABLE_FADV_RANDOM=#-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred
 
