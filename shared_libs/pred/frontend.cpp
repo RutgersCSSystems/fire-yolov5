@@ -243,7 +243,7 @@ int open(const char *pathname, int flags, ...){
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
+    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
