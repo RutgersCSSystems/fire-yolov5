@@ -113,7 +113,8 @@ thread_cons_dest::~thread_cons_dest(void){
 void con(){
 
 #ifdef MMAP_SHARED_DAT
-	if(is_root_process()){
+	//if(is_root_process()){
+	if(!prev_ra){
          prev_ra = (struct prev_ra *)mmap(NULL, sizeof(struct prev_ra), PROT_READ | PROT_WRITE,
                  MAP_SHARED | MAP_ANONYMOUS, -1, 0);
          if (prev_ra == MAP_FAILED){
@@ -128,7 +129,6 @@ void con(){
          }
          printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
      }
-     printf("DONE MMAP_SHARED_DAT\n");
 #endif
 
 #ifdef CONTROL_PRED
@@ -187,7 +187,6 @@ ssize_t readahead(int fd, off_t offset, size_t count){
     gettimeofday(&time, NULL);
     long ftime = time.tv_sec*1000000 + time.tv_usec;
 #ifdef MMAP_SHARED_DAT
-    //printf("READAHEAD prev_ra=%d\n", prev_ra->fd);
     pthread_mutex_lock(&prev_ra->lock);
     if(prev_ra->fd == fd && prev_ra->offset == offset){
         pthread_mutex_unlock(&prev_ra->lock);
@@ -204,7 +203,7 @@ ssize_t readahead(int fd, off_t offset, size_t count){
     if(enable_advise)
 #endif
     {
-        printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+       // printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
     	   //printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
         tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
@@ -264,12 +263,12 @@ int open(const char *pathname, int flags, ...){
 #endif
 
 #ifdef DISABLE_OS_PREFETCH
-    //printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    //printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
+    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
@@ -299,12 +298,12 @@ FILE *fopen(const char *filename, const char *mode){
     fd = fileno(ret);
 
 #ifdef DISABLE_OS_PREFETCH
-    //printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
     real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_WILLNEED, filename, fd);
+    printf("WillNEED file::%d %s:%d\n", POSIX_FADV_WILLNEED, filename, fd);
     real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 

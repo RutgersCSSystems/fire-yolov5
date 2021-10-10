@@ -176,6 +176,8 @@ pid_t getgppid(){
 	fscanf(fp, "%*d %*s %*s %d", &gppid);
 	fclose(fp);
 
+     printf("My gppid = %d\n", gppid);
+
 	return gppid;
 }
 
@@ -192,7 +194,6 @@ bool is_root_process(){
 	if(getgppid() == atoi(gppid_env)){
 		return true;
 	}
-     printf("Getgppid != gppid_env\n");
 
 err:
 	return false;
