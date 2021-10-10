@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pthread.h>
 #include <dlfcn.h>
 #include <unistd.h>
@@ -8,6 +9,7 @@
 #include <sched.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <time.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -25,6 +27,8 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
 #include <sys/resource.h>
 
 
@@ -53,8 +57,11 @@
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
 
+/*TODO: Check if this needs to be done using thread_local*/
 std::atomic<bool> enable_advise; //Enables and disables application advise
 thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
+
+struct prev_ra *prev_ra = NULL; //pointer for shared mem
 
 
 /*
@@ -99,15 +106,29 @@ thread_cons_dest::thread_cons_dest(void){
  
 thread_cons_dest::~thread_cons_dest(void){
     int tid = gettid();
-    printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
+    //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
 }
 
 /*Constructor*/
 void con(){
 
-    //printf("New process constructed\n");
-#ifdef PREDICTOR
-	printf("Lib Predictor activated\n");
+#ifdef MMAP_SHARED_DAT
+	if(is_root_process()){
+         prev_ra = (struct prev_ra *)mmap(NULL, sizeof(struct prev_ra), PROT_READ | PROT_WRITE,
+                 MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+         if (prev_ra == MAP_FAILED){
+             printf("prev_ra MMAP failed \n");
+         }
+         prev_ra->fd = 0;
+         printf("Done prev_ra=%d\n", prev_ra->fd);
+	}
+     else{
+         while(!prev_ra){
+             sleep(1);
+         }
+         printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
+     }
+     printf("DONE MMAP_SHARED_DAT\n");
 #endif
 
 #ifdef CONTROL_PRED
@@ -160,31 +181,36 @@ void dest(){
 }
 
 
-
-/*
-int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
-        pid_t *ptid, void *newtls, pid_t *ctid){
-    int ret = 0;
-
-    printf("Clone!\n");
-
-    ret = real_clone(fn, child_stack, flags, arg, ptid, newtls, ctid);
-
-    return ret;
-}
-*/
-
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    long ftime = time.tv_sec*1000000 + time.tv_usec;
+#ifdef MMAP_SHARED_DAT
+    //printf("READAHEAD prev_ra=%d\n", prev_ra->fd);
+    pthread_mutex_lock(&prev_ra->lock);
+    if(prev_ra->fd == fd && prev_ra->offset == offset){
+        pthread_mutex_unlock(&prev_ra->lock);
+        goto done;
+    }
+    else{
+        prev_ra->fd = fd;
+        prev_ra->offset = offset;
+    }
+    pthread_mutex_unlock(&prev_ra->lock);
+#endif 
+
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
     {
+        printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
     	   //printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
         tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
     }
 
+done:
     return ret;
 }
 
@@ -238,12 +264,12 @@ int open(const char *pathname, int flags, ...){
 #endif
 
 #ifdef DISABLE_OS_PREFETCH
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
+    //printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
+    //printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
@@ -273,7 +299,7 @@ FILE *fopen(const char *filename, const char *mode){
     fd = fileno(ret);
 
 #ifdef DISABLE_OS_PREFETCH
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
+    //printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
     real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
@@ -326,7 +352,7 @@ ssize_t read(int fd, void *data, size_t size){
 #if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    //printf("%s: called for fd:%d\n",__func__, fd);
+    //printf("%ld called %s: called for fd:%d\n",gettid(), __func__, fd);
 
     ssize_t amount_read = real_pread(fd, data, size, offset);
 #ifdef PREDICTOR

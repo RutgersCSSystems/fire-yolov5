@@ -14,6 +14,7 @@ DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
 DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
 DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
+ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred
 
@@ -24,14 +25,14 @@ onlylibpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils
 
 #This allows app predictor but switches off lib and OS predictor (Disable any FADV_RANDOM)
 onlyapppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
 
 os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_libpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN)
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
 
 #This doesnt allow app or lib predictor, but OS prefetchers are working 
 onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
@@ -39,7 +40,7 @@ onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLEOSPRED) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLEOSPRED) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
 
 #This doesnt limit app predictor and activates lib predictor
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c

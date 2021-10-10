@@ -152,4 +152,65 @@ class thread_cons_dest{
 void touch_tcd(void); //checks if a new thread was created
 
 
+/*
+ * The following set of commands are to enable single call at construction
+ */
+
+
+/*Returns the Parent PID of this process*/
+pid_t getgppid(){
+	char buf[128];
+
+	pid_t ppid = getppid();
+
+	pid_t gppid;
+
+	FILE *fp;
+
+	sprintf(buf, "/proc/%d/stat", (int)ppid);
+
+	fp = fopen(buf, "r");
+	if(fp == NULL)
+		return -1;
+
+	fscanf(fp, "%*d %*s %*s %d", &gppid);
+	fclose(fp);
+
+	return gppid;
+}
+
+
+/*Checks if this process is the root process*/
+bool is_root_process(){
+	char *gppid_env = getenv("TARGET_GPPID");
+
+	if(gppid_env == NULL){
+		printf("TARGET_GPPID is not set, cannot pick individual\n");
+		goto err;
+	}
+
+	if(getgppid() == atoi(gppid_env)){
+		return true;
+	}
+     printf("Getgppid != gppid_env\n");
+
+err:
+	return false;
+}
+
+
+/*
+ * The next set of functions and structs are for enabling only unique readaheads
+ */
+
+struct prev_ra{
+    int fd;
+    off_t offset;
+    size_t count; /*Will not use this for now*/
+
+    //pthread_spinlock_t lock;
+    pthread_mutex_t lock;
+};
+
+
 #endif
