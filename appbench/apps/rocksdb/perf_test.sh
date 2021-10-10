@@ -9,11 +9,13 @@ NUM=1000000
 DBDIR=$DBHOME/DATA
 
 
-PERF=/users/shaleen/ssd/linux-5.14.0/tools/perf/perf #Path to perf
-VMLINUX=/boot/vmlinux-5.14.0-bcc-locks+ # will get this with compiled kernel only
+PERF=/users/shaleen/ssd/NVM/linux-5.14.0/tools/perf/perf #Path to perf
+#VMLINUX=/boot/vmlinux-5.14.0-bcc-locks+ # will get this with compiled kernel only
+VMLINUX=/boot/vmlinux-5.14.0-nocrosslayer+ # will get this with compiled kernel only
 #PERFARGS=" record -e cpu-cycles,instructions --vmlinux=$VMLINUX"
 #REPORTARGS=" report --sort=dso -m -k $VMLINUX --demangle --demangle-kernel"
-REPORTARGS=" report -k $VMLINUX -g graph"
+REPORTARGS=" lock report -k wait_total " ##For perf lock 
+#REPORTARGS=" report -k $VMLINUX -g graph"
 PRELOAD_LIB=""
 
 #sudo sh -c "echo \"kernel.kptr_restrict=0\" >> /etc/sysctl.conf"
@@ -111,16 +113,19 @@ DISABLE_LOCK_STATS
 LOCKDAT=$PWD/lockdat
 mkdir $LOCKDAT
 
-echo "RUNNING Only App Pred.................."
+echo "RUNNING AppOS Pred.................."
 FlushDisk
-SETPRELOAD "ONLYAPP"
-PERF_OUT="perf_${WORKLOAD}_ONLYAPP_${THREAD}_ra-${RA_SIZE}KB"
-PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
+SETPRELOAD "APPOS"
+PERF_OUT="no_dupra_perflock_${WORKLOAD}_APPOS_${THREAD}_ra-${RA_SIZE}KB"
+#PERFARGS="record -e cpu-cycles,instructions,faults,duration_time -g --call-graph fp --vmlinux=$VMLINUX --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
+PERFARGS="lock record --output=$PERF_OUT env LD_PRELOAD=$PRELOAD_LIB"
 $PERF $PERFARGS $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
-#$PERF $REPORTARGS -i $PERF_OUT
+#$PERF $REPORTARGS -i $PERF_OUT 2> out; cat out | awk '{print $5}' > total_wait.dat
+#paste -sd+ total_wait.dat | bc
 
+exit
 
 echo "RUNNING Only OS Pred.................."
 FlushDisk

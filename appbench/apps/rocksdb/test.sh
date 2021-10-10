@@ -1,6 +1,6 @@
 #!/bin/bash
 DBHOME=$PWD
-THREAD=16
+THREAD=4
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -11,15 +11,15 @@ DBDIR=$DBHOME/DATA
 DEV=/dev/nvme1n1p1
 
 BLOCK_SZ=512 #Bytes
-RA_SIZE=70 #MB
+RA_SIZE=128 #KB
 
-NR_RA_BLOCKS=`echo "($RA_SIZE*1024*1024)/$BLOCK_SZ" | bc`
+NR_RA_BLOCKS=`echo "($RA_SIZE*1024)/$BLOCK_SZ" | bc`
 
 sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
-#WORKLOAD="readseq"
+WORKLOAD="readseq"
 #WORKLOAD="readrandom"
-WORKLOAD="readreverse"
+#WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
@@ -33,6 +33,7 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
+    sudo dmesg --clear
 }
 
 
@@ -72,6 +73,8 @@ SETPRELOAD()
         echo "Lib+OS pred"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
     fi
+
+    ##export TARGET_GPPID=$PPID
 }
 
 BUILD_LIB()
@@ -101,9 +104,10 @@ mkdir $LOCKDAT
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD "ONLYAPP"
+#SETPRELOAD "ONLYOS"
 $DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
 export LD_PRELOAD=""
-FlushDisk
+#FlushDisk
 
 echo "RUNNING Only OS Pred.................."
 FlushDisk
@@ -118,6 +122,8 @@ SETPRELOAD "APPOS"
 $DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
 export LD_PRELOAD=""
 FlushDisk
+
+exit
 
 echo "RUNNING NO Pred.................."
 FlushDisk
