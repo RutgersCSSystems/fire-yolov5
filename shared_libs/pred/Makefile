@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11 
+FLAGS=-fPIC -shared -std=gnu++11
 INCLUDE=-I./include
 
 #DEBUGFLAGS=-DDEBUG
@@ -14,7 +14,7 @@ DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
 DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
 DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
-ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
+#ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred
 

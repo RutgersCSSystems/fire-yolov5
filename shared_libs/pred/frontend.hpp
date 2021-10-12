@@ -16,6 +16,7 @@ typedef size_t (*real_fwrite_t)(const void *, size_t,
 
 typedef int (*real_fclose_t)(FILE *);
 typedef int (*real_close_t)(int);
+typedef uid_t (*real_getuid_t)(void);
 
 typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
 typedef ssize_t (*real_readahead_t)(int, off64_t, size_t);
@@ -130,6 +131,11 @@ int real_close(int fd){
                     RTLD_NEXT, "close"))(fd);
 }
 
+uid_t real_getuid(){
+        return ((real_getuid_t)dlsym(
+                    RTLD_NEXT, "getuid"))();
+}
+
 
 bool reg_fd(int fd);
 int reg_file(FILE *stream);
@@ -142,6 +148,7 @@ class thread_cons_dest{
     public:
         //Any variables here.
         bool test_new; //set true at construction
+        long mytid; //this threads TID
 
         unsigned long nr_readaheads; //Counts the nr of readaheads done by apps
 
@@ -205,12 +212,17 @@ err:
  */
 
 struct prev_ra{
+    std::atomic<long> tid; //TID allowed to do readaheads
+    std::atomic<bool> first; //Is this the first time doing workload RA
+
+#if 0
     int fd;
     off_t offset;
     size_t count; /*Will not use this for now*/
 
     //pthread_spinlock_t lock;
     pthread_mutex_t lock;
+#endif 
 };
 
 

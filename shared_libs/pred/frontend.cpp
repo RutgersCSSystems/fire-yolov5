@@ -40,6 +40,10 @@
 #define __NR_start_trace 333
 #define __NR_start_crosslayer 448
 
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)    __builtin_expect(!!(x), 0)
+
+
 #define CLEAR_COUNT     0
 #define COLLECT_TRACE 1
 #define PRINT_STATS 2
@@ -96,6 +100,7 @@ void set_pvt_lru(){
 thread_cons_dest::thread_cons_dest(void){
     test_new = true;
     nr_readaheads = 0UL;
+    mytid = gettid(); //this TID
 #ifdef CONTROL_PRED
     enable_advise = false; //Disable any app/lib advise by default
 #endif
@@ -105,7 +110,7 @@ thread_cons_dest::thread_cons_dest(void){
 }
  
 thread_cons_dest::~thread_cons_dest(void){
-    int tid = gettid();
+    //int tid = gettid();
     //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
 }
 
@@ -120,14 +125,14 @@ void con(){
          if (prev_ra == MAP_FAILED){
              printf("prev_ra MMAP failed \n");
          }
-         prev_ra->fd = 0;
-         printf("Done prev_ra=%d\n", prev_ra->fd);
+         prev_ra->tid = -1;
+         //printf("Done prev_ra=%d\n", prev_ra->fd);
 	}
      else{
          while(!prev_ra){
              sleep(1);
          }
-         printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
+         //printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
      }
 #endif
 
@@ -183,10 +188,26 @@ void dest(){
 
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
+    /*
     struct timeval time;
     gettimeofday(&time, NULL);
     long ftime = time.tv_sec*1000000 + time.tv_usec;
+
+    printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+    */
+
 #ifdef MMAP_SHARED_DAT
+    if(unlikely(prev_ra->tid == 0)){
+        prev_ra->tid = tcd.mytid;
+        goto perform_ra;
+    }
+    else if(prev_ra->tid == tcd.mytid){
+        goto perform_ra;
+    }
+    else
+        goto done;
+
+#if 0
     pthread_mutex_lock(&prev_ra->lock);
     if(prev_ra->fd == fd && prev_ra->offset == offset){
         pthread_mutex_unlock(&prev_ra->lock);
@@ -197,14 +218,18 @@ ssize_t readahead(int fd, off_t offset, size_t count){
         prev_ra->offset = offset;
     }
     pthread_mutex_unlock(&prev_ra->lock);
+#endif
+
 #endif 
+
+perform_ra:
 
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
     {
        // printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
-    	   //printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
+    	   //printf("%ld called %s for %d: %ld bytes \n", tcd.mytid, __func__, fd, count);
         tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
     }
@@ -351,7 +376,7 @@ ssize_t read(int fd, void *data, size_t size){
 #if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    //printf("%ld called %s: called for fd:%d\n",gettid(), __func__, fd);
+    //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
 
     ssize_t amount_read = real_pread(fd, data, size, offset);
 #ifdef PREDICTOR
@@ -428,6 +453,15 @@ int close(int fd){
     return real_close(fd);
 }
 
+
+uid_t getuid(){
+#ifdef MMAP_SHARED_DAT
+    prev_ra->tid = 0;
+#endif
+    printf("getuid called by %ld\n", gettid());
+
+    return real_getuid();
+}
 
 #ifdef PREDICTOR
 int reg_file(FILE *stream){
