@@ -12,6 +12,10 @@
 namespace ROCKSDB_NAMESPACE {
 class BlockPrefetcher {
  public:
+  
+  uint64_t ra_offset;
+  size_t ra_bytes;
+
   explicit BlockPrefetcher(size_t compaction_readahead_size)
       : compaction_readahead_size_(compaction_readahead_size) {}
   void PrefetchIfNeeded(const BlockBasedTable::Rep* rep,

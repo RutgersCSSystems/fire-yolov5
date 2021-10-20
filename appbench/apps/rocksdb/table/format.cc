@@ -315,6 +315,7 @@ Status ReadFooterFromFile(const IOOptions& opts, RandomAccessFileReader* file,
                      &footer_input, nullptr, &internal_buf);
     } else {
       footer_buf.reserve(Footer::kMaxEncodedLength);
+      fprintf(stderr, "read happening here1\n");
       s = file->Read(opts, read_offset, Footer::kMaxEncodedLength,
                      &footer_input, &footer_buf[0], nullptr);
     }

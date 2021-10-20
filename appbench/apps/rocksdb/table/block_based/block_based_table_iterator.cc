@@ -236,6 +236,20 @@ void BlockBasedTableIterator::InitDataBlock() {
                                        read_options_.readahead_size,
                                        is_for_compaction);
 
+     if(block_prefetcher_.ra_bytes > 0){
+       
+       //ra_offset = block_prefetcher_.ra_offset;
+       //ra_bytes = block_prefetcher_.ra_bytes;
+
+        read_options_.ra_options->ra_bytes = block_prefetcher_.ra_bytes;
+        read_options_.ra_options->ra_offset = block_prefetcher_.ra_offset;
+        //printf("block prefetcher ra_offset = %ld, ra_bytes = %zu\n", read_options_.ra_options->ra_offset, read_options_.ra_options->ra_bytes);
+      }
+      else{
+        read_options_.ra_options->ra_bytes = 0;
+        read_options_.ra_options->ra_offset = 0;
+      }
+
     Status s;
     table_->NewDataBlockIterator<DataBlockIter>(
         read_options_, data_block_handle, &block_iter_, BlockType::kData,

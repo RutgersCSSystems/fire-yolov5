@@ -1513,7 +1513,7 @@ Status BlockBasedTable::MaybeReadBlockAndLoadToCache(
             maybe_compressed, block_type, uncompression_dict,
             rep_->persistent_cache_options,
             GetMemoryAllocator(rep_->table_options),
-            GetMemoryAllocatorForCompressedBlock(rep_->table_options));
+            GetMemoryAllocatorForCompressedBlock(rep_->table_options));   
         s = block_fetcher.ReadBlockContents();
         raw_block_comp_type = block_fetcher.get_compression_type();
         contents = &raw_block_contents;

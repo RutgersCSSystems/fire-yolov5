@@ -1258,8 +1258,17 @@ enum ReadTier {
   kMemtableTier = 0x3     // data in memtable. used for memtable-only iterators.
 };
 
+struct RAOptions {
+  uint64_t ra_offset;
+  size_t ra_bytes;
+};
+
 // Options that control read operations
 struct ReadOptions {
+  // The following is readahead information for
+  // pread+ra system call implemented in kernel
+  struct RAOptions *ra_options;
+
   // If "snapshot" is non-nullptr, read as of the supplied snapshot
   // (which must belong to the DB that is being read and which must
   // not have been released).  If "snapshot" is nullptr, use an implicit
