@@ -582,28 +582,8 @@ IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
   size_t left = n;
   char* ptr = scratch;
   while (left > 0) {
-    // if(fd_ == sst_fd){
-    //   if(g_read_cnt > read_cnt)
-    //   {
-    //     fprintf(stderr, "SST file fd = %d\n", fd_);
-    //     //assert(0);
-    //   }
-    //   else if(fd_ == 32){
-    //     g_read_cnt += 1;
-    //   }
-    //   //assert(0);
-    // }
-    if(opts.ra_bytes > 0)
-    {
-      printf("PosixRandomAccessFile::Read : ra_offset:%lu, ra_bytes:%zu\n", 
-      opts.ra_offset, opts.ra_bytes);
-      //r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), 0, opts.ra_bytes);
-    }
-    else{
-      
-      printf("pread\n");
-    }
-    r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), opts.ra_offset, opts.ra_bytes);
+    //r = pread(fd_, ptr, left, static_cast<off_t>(offset));
     
     if (r <= 0) {
       if (r == -1 && errno == EINTR) {
@@ -781,8 +761,7 @@ IOStatus PosixRandomAccessFile::Prefetch(uint64_t offset, size_t n,
   if (!use_direct_io()) {
     ssize_t r = 0;
 #ifdef OS_LINUX
-    r = readahead(fd_, offset, n);
-    //printf("readahead done offset:%ld, bytes:%zu\n", offset, n);
+    //r = readahead(fd_, offset, n);
 #endif
 #ifdef OS_MACOSX
     radvisory advice;
