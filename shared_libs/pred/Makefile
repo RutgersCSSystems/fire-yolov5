@@ -8,15 +8,16 @@ INCLUDE=-I./include
 #DEBUGFLAGS=-DDEBUG
 NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 DELAYPRFETCH=-D_DELAY_PREFETCH
-PINCORES=-DPIN_ALL
+#PINCORES=-DPIN_ALL
 CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
 DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
 DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
 DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
 #ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
+ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
 
-all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred
+all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats
 
 
 #This allows lib predictor but switches off app and OS predictor (Disable any FADV_RANDOM)
@@ -45,6 +46,9 @@ nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpo
 #This doesnt limit app predictor and activates lib predictor
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) #$(PINCORES)
+
+juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(ENABLE_GLOBAL_STATS)
 
 clean:
 	rm -rf *.o

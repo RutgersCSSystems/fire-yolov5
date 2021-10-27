@@ -57,6 +57,8 @@
 
 #define ENABLE_FILE_STATS 1
 #define DISABLE_FILE_STATS 2
+#define RESET_GLOBAL_STATS 3
+#define PRINT_GLOBAL_STATS 4
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
@@ -87,6 +89,17 @@ void set_crosslayer(){
     syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 }
 
+/*implemented in linux 5.14*/
+void reset_global_stats(){
+    syscall(__NR_start_crosslayer, RESET_GLOBAL_STATS, 0);
+}
+
+/*implemented in linux 5.14*/
+void print_global_stats(){
+    syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
+}
+
+/*implemented in linux 5.14*/
 void unset_crosslayer(){
     syscall(__NR_start_crosslayer, DISABLE_FILE_STATS, 0);
 }
@@ -144,6 +157,10 @@ void con(){
     set_crosslayer();
 #endif
 
+#ifdef ENABLE_GLOBAL_CACHE_STATS
+    reset_global_stats();
+#endif
+
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("init tracing...\n");
 
@@ -182,6 +199,10 @@ void dest(){
 
     syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
     syscall(__NR_start_trace, PRINT_PPROC_PAGESTATS, 0);
+#endif
+
+#ifdef ENABLE_GLOBAL_CACHE_STATS
+    print_global_stats();
 #endif
 }
 
