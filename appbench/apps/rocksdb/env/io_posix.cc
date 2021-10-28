@@ -533,7 +533,9 @@ size_t PosixHelper::GetLogicalBlockSizeOfFd(int fd) {
   (void)fd;
   return kDefaultPageSize;
 }
-
+int sst_fd = -1;
+int read_cnt = 4000;
+int g_read_cnt = 0;
 /*
  * PosixRandomAccessFile
  *
@@ -556,6 +558,10 @@ PosixRandomAccessFile::PosixRandomAccessFile(
       thread_local_io_urings_(thread_local_io_urings)
 #endif
 {
+  if(strstr(fname.c_str(), ".sst") && fd == 32 ){
+    sst_fd = fd;
+  }
+  
   assert(!options.use_direct_reads || !options.use_mmap_reads);
   assert(!options.use_mmap_reads || sizeof(void*) < 8);
 }
@@ -563,7 +569,7 @@ PosixRandomAccessFile::PosixRandomAccessFile(
 PosixRandomAccessFile::~PosixRandomAccessFile() { close(fd_); }
 
 IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
-                                     const IOOptions& /*opts*/, Slice* result,
+                                     const IOOptions& opts, Slice* result,
                                      char* scratch,
                                      IODebugContext* /*dbg*/) const {
   if (use_direct_io()) {
@@ -576,7 +582,9 @@ IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
   size_t left = n;
   char* ptr = scratch;
   while (left > 0) {
-    r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), opts.ra_offset, opts.ra_bytes);
+    //r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+    
     if (r <= 0) {
       if (r == -1 && errno == EINTR) {
         continue;
@@ -753,7 +761,7 @@ IOStatus PosixRandomAccessFile::Prefetch(uint64_t offset, size_t n,
   if (!use_direct_io()) {
     ssize_t r = 0;
 #ifdef OS_LINUX
-    r = readahead(fd_, offset, n);
+    //r = readahead(fd_, offset, n);
 #endif
 #ifdef OS_MACOSX
     radvisory advice;

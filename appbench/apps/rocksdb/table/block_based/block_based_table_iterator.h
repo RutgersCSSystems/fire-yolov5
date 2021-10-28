@@ -20,6 +20,10 @@ class BlockBasedTableIterator : public InternalIteratorBase<Slice> {
   // true
   // @param read_options Must outlive this iterator.
  public:
+  
+  uint64_t ra_offset;
+  size_t ra_bytes;
+
   BlockBasedTableIterator(
       const BlockBasedTable* table, const ReadOptions& read_options,
       const InternalKeyComparator& icomp,
@@ -39,7 +43,10 @@ class BlockBasedTableIterator : public InternalIteratorBase<Slice> {
         allow_unprepared_value_(allow_unprepared_value),
         block_iter_points_to_real_block_(false),
         check_filter_(check_filter),
-        need_upper_bound_check_(need_upper_bound_check) {}
+        need_upper_bound_check_(need_upper_bound_check) {
+          ra_offset = 0;
+          ra_bytes = 0;
+        }
 
   ~BlockBasedTableIterator() {}
 

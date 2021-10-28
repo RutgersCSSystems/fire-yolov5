@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pthread.h>
 #include <dlfcn.h>
 #include <unistd.h>
@@ -8,6 +9,7 @@
 #include <sched.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <time.h>
 
 #include <iostream>
 #include <cstdlib>
@@ -25,6 +27,8 @@
 #include <sys/syscall.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/wait.h>
 #include <sys/resource.h>
 
 
@@ -35,6 +39,10 @@
 
 #define __NR_start_trace 333
 #define __NR_start_crosslayer 448
+
+#define likely(x)      __builtin_expect(!!(x), 1)
+#define unlikely(x)    __builtin_expect(!!(x), 0)
+
 
 #define CLEAR_COUNT     0
 #define COLLECT_TRACE 1
@@ -49,12 +57,17 @@
 
 #define ENABLE_FILE_STATS 1
 #define DISABLE_FILE_STATS 2
+#define RESET_GLOBAL_STATS 3
+#define PRINT_GLOBAL_STATS 4
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
 
+/*TODO: Check if this needs to be done using thread_local*/
 std::atomic<bool> enable_advise; //Enables and disables application advise
 thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
+
+struct prev_ra *prev_ra = NULL; //pointer for shared mem
 
 
 /*
@@ -76,6 +89,17 @@ void set_crosslayer(){
     syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 }
 
+/*implemented in linux 5.14*/
+void reset_global_stats(){
+    syscall(__NR_start_crosslayer, RESET_GLOBAL_STATS, 0);
+}
+
+/*implemented in linux 5.14*/
+void print_global_stats(){
+    syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
+}
+
+/*implemented in linux 5.14*/
 void unset_crosslayer(){
     syscall(__NR_start_crosslayer, DISABLE_FILE_STATS, 0);
 }
@@ -85,13 +109,44 @@ void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
+/*Thread local constructor*/
+thread_cons_dest::thread_cons_dest(void){
+    test_new = true;
+    nr_readaheads = 0UL;
+    mytid = gettid(); //this TID
+#ifdef CONTROL_PRED
+    enable_advise = false; //Disable any app/lib advise by default
+#endif
+#ifdef CROSSLAYER
+    set_crosslayer();
+#endif
+}
+ 
+thread_cons_dest::~thread_cons_dest(void){
+    //int tid = gettid();
+    //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
+}
 
 /*Constructor*/
 void con(){
 
-    //printf("New process constructed\n");
-#ifdef PREDICTOR
-	printf("Lib Predictor activated\n");
+#ifdef MMAP_SHARED_DAT
+	//if(is_root_process()){
+	if(!prev_ra){
+         prev_ra = (struct prev_ra *)mmap(NULL, sizeof(struct prev_ra), PROT_READ | PROT_WRITE,
+                 MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+         if (prev_ra == MAP_FAILED){
+             printf("prev_ra MMAP failed \n");
+         }
+         prev_ra->tid = -1;
+         //printf("Done prev_ra=%d\n", prev_ra->fd);
+	}
+     else{
+         while(!prev_ra){
+             sleep(1);
+         }
+         //printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
+     }
 #endif
 
 #ifdef CONTROL_PRED
@@ -100,6 +155,10 @@ void con(){
 
 #ifdef CROSSLAYER
     set_crosslayer();
+#endif
+
+#ifdef ENABLE_GLOBAL_CACHE_STATS
+    reset_global_stats();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -141,45 +200,62 @@ void dest(){
     syscall(__NR_start_trace, PRINT_PVT_LRU_STATS, 0);
     syscall(__NR_start_trace, PRINT_PPROC_PAGESTATS, 0);
 #endif
-}
 
-
-/*Thread local constructor*/
-thread_cons_dest::thread_cons_dest(void){
-    test_new = true;
-#ifdef CONTROL_PRED
-    enable_advise = false; //Disable any app/lib advise by default
-#endif
-    //printf("Creating a new thread:%d\n", getpid());
-#ifdef CROSSLAYER
-    set_crosslayer();
+#ifdef ENABLE_GLOBAL_CACHE_STATS
+    print_global_stats();
 #endif
 }
 
-
-/*
-int clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
-        pid_t *ptid, void *newtls, pid_t *ctid){
-    int ret = 0;
-
-    printf("Clone!\n");
-
-    ret = real_clone(fn, child_stack, flags, arg, ptid, newtls, ctid);
-
-    return ret;
-}
-*/
 
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
+    /*
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    long ftime = time.tv_sec*1000000 + time.tv_usec;
+
+    printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+    */
+
+#ifdef MMAP_SHARED_DAT
+    if(unlikely(prev_ra->tid == 0)){
+        prev_ra->tid = tcd.mytid;
+        goto perform_ra;
+    }
+    else if(prev_ra->tid == tcd.mytid){
+        goto perform_ra;
+    }
+    else
+        goto done;
+
+#if 0
+    pthread_mutex_lock(&prev_ra->lock);
+    if(prev_ra->fd == fd && prev_ra->offset == offset){
+        pthread_mutex_unlock(&prev_ra->lock);
+        goto done;
+    }
+    else{
+        prev_ra->fd = fd;
+        prev_ra->offset = offset;
+    }
+    pthread_mutex_unlock(&prev_ra->lock);
+#endif
+
+#endif 
+
+perform_ra:
+
 #ifdef CONTROL_PRED
     if(enable_advise)
 #endif
     {
-    	printf("%s: called for %d: %ld bytes \n", __func__, fd, count);
+       // printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+    	   //printf("%ld called %s for %d: %ld bytes \n", tcd.mytid, __func__, fd, count);
+        tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
     }
 
+done:
     return ret;
 }
 
@@ -237,12 +313,18 @@ int open(const char *pathname, int flags, ...){
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
+#ifdef ENABLE_WILLNEED_OPEN
+    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
+    real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
+#endif
+
 exit:
     return ret;
 }
 
 
 FILE *fopen(const char *filename, const char *mode){
+    int fd;
     touch_tcd();
 
     FILE *ret;
@@ -253,10 +335,22 @@ FILE *fopen(const char *filename, const char *mode){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
-    int fd = fileno(ret);
+    fd = fileno(ret);
     if(reg_file(ret)){
         handle_open(fd, filename);
     }
+#endif
+
+    fd = fileno(ret);
+
+#ifdef DISABLE_OS_PREFETCH
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+#endif
+
+#ifdef ENABLE_WILLNEED_OPEN
+    printf("WillNEED file::%d %s:%d\n", POSIX_FADV_WILLNEED, filename, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
     return ret;
@@ -265,19 +359,27 @@ FILE *fopen(const char *filename, const char *mode){
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
+    size_t pfetch_size = 0;
+    size_t amount_read = 0;
+    
     // Perform the actual system call
-    size_t amount_read = real_fread(ptr, size, nmemb, stream);
+#ifndef READ_RA
+    amount_read = real_fread(ptr, size, nmemb, stream);
+#endif
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    int fd = fileno(stream); 
+    int fd = fileno(stream);
     if(reg_file(stream)){ //this is a regular file
-        ////lseek doesnt work with f* commands
-
-        handle_read(fd, ftell(stream), size*nmemb);
+        pfetch_size = handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
+
+#ifdef READ_RA
+    amount_read = fread_ra(ptr, size, nmemb, stream, pfetch_size);
+#endif
+
     return amount_read;
 }
 
@@ -303,7 +405,7 @@ ssize_t read(int fd, void *data, size_t size){
 #if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    //printf("%s: called for fd:%d\n",__func__, fd);
+    //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
 
     ssize_t amount_read = real_pread(fd, data, size, offset);
 #ifdef PREDICTOR
@@ -381,6 +483,15 @@ int close(int fd){
 }
 
 
+uid_t getuid(){
+#ifdef MMAP_SHARED_DAT
+    prev_ra->tid = 0;
+#endif
+    printf("getuid called by %ld\n", gettid());
+
+    return real_getuid();
+}
+
 #ifdef PREDICTOR
 int reg_file(FILE *stream){
     return reg_fd(fileno(stream));
@@ -430,3 +541,4 @@ bool reg_fd(int fd){
     return false;
 }
 #endif
+

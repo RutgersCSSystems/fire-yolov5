@@ -80,6 +80,11 @@ enum class IOType : uint8_t {
 // honored. More hints can be added here in the future to indicate things like
 // storage media (HDD/SSD) to be used, replication level etc.
 struct IOOptions {
+
+  //Readahead stuff
+  uint64_t ra_offset;
+  size_t ra_bytes;
+
   // Timeout for the operation in microseconds
   std::chrono::microseconds timeout;
 

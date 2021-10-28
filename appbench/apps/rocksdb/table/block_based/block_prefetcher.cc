@@ -13,6 +13,10 @@ void BlockPrefetcher::PrefetchIfNeeded(const BlockBasedTable::Rep* rep,
                                        const BlockHandle& handle,
                                        size_t readahead_size,
                                        bool is_for_compaction) {
+
+  ra_offset = 0;
+  ra_bytes = 0;
+
   if (is_for_compaction) {
     rep->CreateFilePrefetchBufferIfNotExists(compaction_readahead_size_,
                                              compaction_readahead_size_,
@@ -88,6 +92,13 @@ void BlockPrefetcher::PrefetchIfNeeded(const BlockBasedTable::Rep* rep,
                                              max_auto_readahead_size,
                                              &prefetch_buffer_, true);
     return;
+  }
+  else{
+    //#ifdef CONFIG_PREADRA
+     ra_offset = handle.offset();
+     ra_bytes = block_size(handle) + readahead_size_;
+     //printf("PrefetchIfNeeded: ra_offset:%lu, ra_bytes:%zu\n", ra_offset, ra_bytes);
+     //#endif
   }
 
   readahead_limit_ = offset + len + readahead_size_;

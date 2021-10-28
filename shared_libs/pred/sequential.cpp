@@ -132,11 +132,14 @@ void sequential::insert_prefetch_pos(int fd, off_t pos) {
     prefetch_fd_map[fd] = pos;
 }
 
+//Checks if it is prudent to prefetch right now based on previous
+//prefetches. no need to prefetch if offset already available in PageCache
 int sequential::prefetch_now_fd(void *pfetch_info, int fd) {
 
     struct pos_bytes curr_access;
     struct msg *dat = (struct msg*)pfetch_info;
-    off_t fd_pos = get_prefetch_pos(fd); 	
+    //struct pos_bytes *dat = (struct pos_bytes*)pfetch_info;
+    off_t fd_pos = get_prefetch_pos(fd);
 
     curr_access = dat->pos;
 
@@ -271,7 +274,10 @@ void sequential::update_stride(int fd) {
 }
 
 
-/*seq_prefetch frontend*/
+/* 
+ * seq_prefetch frontend
+ * Actually goes ahead and does the prefetching
+ */
 size_t seq_prefetch(struct pos_bytes curr_access, long stride){
     
      /*TODO: Make this malloc scalable
@@ -286,7 +292,7 @@ size_t seq_prefetch(struct pos_bytes curr_access, long stride){
     
     ret->pos = curr_access;
     ret->stride = stride;
-
+    
 #ifdef __NO_BG_THREADS
      __seq_prefetch((struct msg*)ret); //Correct
      bytes_fetched = ret->prefetch_bytes;
@@ -298,7 +304,6 @@ size_t seq_prefetch(struct pos_bytes curr_access, long stride){
     bytes_fetched = ret->prefetch_bytes;
 #endif
 
-    //FIXME: Who releases the memory of allocated msg?
     return bytes_fetched;
 }
 
@@ -362,11 +367,12 @@ void __seq_prefetch(void *pfetch_info){
     /*print number of readahead pages*/
     debug_print("nr_pages_readahead %lu bytes_toread %zu\n", pages_readahead, bytes_toread);
 
-    //do readhead
-
+    //do readahead if ndef READ_RA
+#ifndef READ_RA
     enable_advise = true;
     readahead(curr_access.fd, curr_access.pos, bytes_toread);
     enable_advise = false;
+#endif
 
     g_bytes_prefetched = bytes_toread;
     dat->prefetch_bytes = bytes_toread;

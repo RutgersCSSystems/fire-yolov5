@@ -1,12 +1,21 @@
 #!/bin/bash
 DBHOME=$PWD
-THREAD=1
+THREAD=4
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 NUM=1000000
 DBDIR=$DBHOME/DATA
+
+DEV=/dev/nvme1n1p1
+
+BLOCK_SZ=512 #Bytes
+RA_SIZE=128 #KB
+
+NR_RA_BLOCKS=`echo "($RA_SIZE*1024)/$BLOCK_SZ" | bc`
+
+sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
 WORKLOAD="readseq"
 #WORKLOAD="readrandom"
@@ -24,7 +33,21 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
+    sudo dmesg --clear
 }
+
+
+ENABLE_LOCK_STATS()
+{
+	sudo sh -c "echo 0 > /proc/lock_stat"
+	#sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
+}
+
+DISABLE_LOCK_STATS()
+{
+	sudo sh -c "echo 0 > /proc/sys/kernel/lock_stat"
+}
+
 
 SETPRELOAD()
 {
@@ -50,6 +73,8 @@ SETPRELOAD()
         echo "Lib+OS pred"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
     fi
+
+    ##export TARGET_GPPID=$PPID
 }
 
 BUILD_LIB()
@@ -66,35 +91,45 @@ CLEAR_PWD()
     cd ..
 }
 
+DISABLE_LOCK_STATS
 
 #Run write workload twice
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS
 
-echo "RUNNING App+OS Pred.................."
-FlushDisk
-SETPRELOAD "APPOS"
-$DBHOME/db_bench $PARAMS $READARGS
-#/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
-export LD_PRELOAD=""
-FlushDisk
+LOCKDAT=$PWD/lockdat
+mkdir $LOCKDAT
 
-#Run write workload twice
-#CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS &> /dev/null
 
 echo "RUNNING Only App Pred.................."
 FlushDisk
 SETPRELOAD "ONLYAPP"
-$DBHOME/db_bench $PARAMS $READARGS
-#/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
+#SETPRELOAD "ONLYOS"
+$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
 export LD_PRELOAD=""
-FlushDisk
+#FlushDisk
 
 echo "RUNNING Only OS Pred.................."
 FlushDisk
 SETPRELOAD "ONLYOS"
-$DBHOME/db_bench $PARAMS $READARGS
-#/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
+$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
 export LD_PRELOAD=""
 FlushDisk
+
+echo "RUNNING APP+OS Pred.................."
+FlushDisk
+SETPRELOAD "APPOS"
+$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+export LD_PRELOAD=""
+FlushDisk
+
+exit
+
+echo "RUNNING NO Pred.................."
+FlushDisk
+SETPRELOAD "NOPRED"
+$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+export LD_PRELOAD=""
+FlushDisk
+
+#/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS

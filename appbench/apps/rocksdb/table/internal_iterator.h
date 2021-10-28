@@ -28,6 +28,10 @@ struct IterateResult {
   IterBoundCheck bound_check_result = IterBoundCheck::kUnknown;
   // If false, PrepareValue() needs to be called before value().
   bool value_prepared = true;
+  
+  uint64_t ra_offset;
+  size_t ra_bytes;
+
 };
 
 template <class TValue>
