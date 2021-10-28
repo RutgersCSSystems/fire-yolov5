@@ -52,7 +52,7 @@ LDFLAGS += $(EXTRA_LDFLAGS) -L/usr/lib -lgflags
 DEBUG_LEVEL=0 make shared_lib db_bench -j32
 ```
 
-## TODO: MOVE ALL SCRIPTS to run experiments to a separate experiments folders inside ROCKSDB
+## TODO: Move all scripts to run experiments to a separate experiments folders inside ROCKSDB
 
 
 
