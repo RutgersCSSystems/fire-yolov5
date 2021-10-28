@@ -1,6 +1,9 @@
 #ifndef _FRONTEND_HPP
 #define _FRONTEND_HPP
 
+#define __PREAD_RA_SYSCALL 449
+#define __READ_RA_SYSCALL 450
+
 typedef int (*real_open_t)(const char *, int, ...);
 typedef int (*real_openat_t)(int, const char *, int);
 typedef int (*real_openat1_t)(int, const char *, int, mode_t);
@@ -81,6 +84,7 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
 }
 
+
 size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     if(!fwrite_ptr)
@@ -96,6 +100,7 @@ ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
     return ((real_pread_t)pread_ptr)(fd, data, size, offset);
 }
+
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
@@ -137,8 +142,34 @@ uid_t real_getuid(){
 }
 
 
+/*
+ * Does both fread and readahead in one syscall
+ */
+size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_size){
+
+    ssize_t ret;
+    int fd;
+    fd = fileno(stream);
+
+    /*
+     * XXX: Since fread is a library call, I cannot implement fread_ra without changing
+     * glibc. So instead, we convert fread_ra to pread_ra syscall as a hack
+     */
+    ret = syscall(__PREAD_RA_SYSCALL, fd, ptr, nmemb*size, ftell(stream), 0, ra_size);
+    if(ret <=0){
+        printf("%s: Error %s\n", __func__, strerror(errno));
+        return 0;
+    }
+
+    fseek(stream, 0L, SEEK_END);
+
+    return ret/size; //should return nr of items read
+}
+
+
 bool reg_fd(int fd);
 int reg_file(FILE *stream);
+
 
 /*
  * Per-Thread constructors can be made using

@@ -359,19 +359,27 @@ FILE *fopen(const char *filename, const char *mode){
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
+    size_t pfetch_size = 0;
+    size_t amount_read = 0;
+    
     // Perform the actual system call
-    size_t amount_read = real_fread(ptr, size, nmemb, stream);
+#ifndef READ_RA
+    amount_read = real_fread(ptr, size, nmemb, stream);
+#endif
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    int fd = fileno(stream); 
+    int fd = fileno(stream);
     if(reg_file(stream)){ //this is a regular file
-        ////lseek doesnt work with f* commands
-
-        handle_read(fd, ftell(stream), size*nmemb);
+        pfetch_size = handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
+
+#ifdef READ_RA
+    amount_read = fread_ra(ptr, size, nmemb, stream, pfetch_size);
+#endif
+
     return amount_read;
 }
 

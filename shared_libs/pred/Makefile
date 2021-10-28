@@ -16,20 +16,21 @@ DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
 #ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
 ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
+READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats
 
 
 #This allows lib predictor but switches off app and OS predictor (Disable any FADV_RANDOM)
 onlylibpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlylibpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLEAPPPRED) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlylibpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLEAPPPRED) $(ENABLE_WILLNEED_OPEN) $(READ_RA)
 
 #This allows app predictor but switches off lib and OS predictor (Disable any FADV_RANDOM)
 onlyapppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
 
 os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_libpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_libpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(READ_RA)
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
@@ -41,11 +42,11 @@ onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLEOSPRED) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLEOSPRED) $(ENABLE_SHARED_MEM)
 
 #This doesnt limit app predictor and activates lib predictor
 seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) #$(PINCORES)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(READ_RA) #$(PINCORES) 
 
 juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(ENABLE_GLOBAL_STATS)
