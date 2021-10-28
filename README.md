@@ -33,3 +33,21 @@ git clone <NVMREPOlink> -b hpc
 git submodule update --init
 ```
 This will update the two folders with linux in it.
+
+
+### Compiling and Running RocksDB
+
+```
+cd $APPBENCH/apps/RocksDB
+./build_rocksdb.sh
+./run.sh
+```
+
+Change this line in make file and execute compile command
+```
+LDFLAGS += $(EXTRA_LDFLAGS) -L/usr/lib -lgflags
+DEBUG_LEVEL=0 make shared_lib db_bench -j32
+```
+
+
+
