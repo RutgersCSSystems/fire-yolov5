@@ -38,9 +38,8 @@ This will update the two folders with linux in it.
 ### Compiling and Running RocksDB
 
 ```
-cd $APPBENCH/apps/RocksDB
-./build_rocksdb.sh
-./run.sh
+cd $APPBENCH/apps/rocksdb
+./rocksdb_compile.sh
 ```
 
 Change this line in make file and execute compile command
