@@ -1,6 +1,6 @@
 # HPC branch README
-This is the high level README, read the README in their respective folders folder deeper insights 
-
+This is the high level README, read the README in their respective folders folder deeper insights (**This is hard for any uses who does not understand what folder to look at!**)
+ 
 ## How to use the predictor library ?
 ```
  $NVMBASE/shared_libs/pred
