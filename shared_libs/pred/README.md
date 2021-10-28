@@ -109,4 +109,8 @@ export LD_PRELOAD=""
 7. DISABLEOSPRED : Disables OS prefetching
 8. DISABLE_FADV_RANDOM : Disables any FADV_RANDOM from App
 9. PREDICTOR & SEQUENTIAL : Enables library prefetching when used together. 
-10. ENABLE_GLOBAL_CACHE_STATS
+10. ENABLE_GLOBAL_CACHE_STATS : Enables global stats for cache hits/misses in modified linux 5.14
+11. READ_RA : Enables read_ra syscall instead of read and readahead for the read/fread/pread calls intercepted
+
+### Q4. Are there any dependencies for Compile time flags?
+1.  Cannot use READ_RA with BGTHREADS: Do not disable NOBGTHREADS while enabling READ_RA. It wouldn't work.

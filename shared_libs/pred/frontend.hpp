@@ -154,6 +154,10 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
     /*
      * XXX: Since fread is a library call, I cannot implement fread_ra without changing
      * glibc. So instead, we convert fread_ra to pread_ra syscall as a hack
+     *
+     * NOTE: Here the pread_ra syscall assumes that ra_pos = read_pos + read_bytes; ie.
+     * It will only readahead from the end of read request. reads and readaheads in diff
+     * positions is not implemented yet in the modified kernel 5.14. 
      */
     ret = syscall(__PREAD_RA_SYSCALL, fd, ptr, nmemb*size, ftell(stream), 0, ra_size);
     if(ret <=0){

@@ -19,7 +19,10 @@ thread_local sequential seq_writeobj;
 #endif
 thread_local struct pos_bytes acc;
 
-/* Keeps track of all filenames wrt its corresponding fd*/
+/* 
+ * Keeps track of all filenames wrt its corresponding fd
+ * FIXME: Doesnt work for now
+ */
 thread_local std::unordered_map<int, std::string> fd_to_filename;
 
 
@@ -59,14 +62,28 @@ bool handle_open(int fd, const char *filename){
  */
 int g_num_prefetches = 0;
 
-int handle_read(int fd, off_t pos, size_t bytes) {
+size_t handle_read(int fd, off_t pos, size_t bytes) {
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
-    acc.fd = fd;
-    acc.pos = pos;
-    acc.bytes = bytes;
+    long stride;
+    off_t prefetch_fd_pos = 0;
+    size_t prefetch_size = 0;
 
+    acc.fd = fd;
+    acc.bytes = bytes;
+#ifndef READ_RA 
+    /*
+     * handle_read implementation assumes that
+     * pread/fread/read syscall was called before 
+     * meaning pos is one after the read
+     * since read_ra would be done after handle_read
+     * simple hack to keep correctness
+     */
+    acc.pos = pos;
+#else
+    acc.pos = pos + bytes;
+#endif
 
 
 #ifdef SEQUENTIAL
@@ -78,18 +95,15 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&start, NULL);
 #endif
 
-#ifdef _DELAY_PREFETCH
+    /* Prefetch data for next read*/
+#ifdef SEQUENTIAL
+
+#ifdef _DELAY_PREFETCH //should only happen if SEQUENTIAL is enabled
     if(!seq_readobj.prefetch_now_fd((void *)&acc, fd)) {
         //printf("Delay prefetch %d\n", g_num_prefetches);
 	return 0;
     }
 #endif
-
-    /* Prefetch data for next read*/
-#ifdef SEQUENTIAL
-    long stride;
-    off_t prefetch_fd_pos = 0;
-    size_t prefetch_size = 0;
 
     if((stride = seq_readobj.is_strided(fd))){
         //printf("handle_read: strided: %ld\n", stride);
@@ -110,7 +124,7 @@ int handle_read(int fd, off_t pos, size_t bytes) {
     gettimeofday(&stop, NULL);
     total_readahead_time += (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_usec - start.tv_usec);
 #endif
-    return true;
+    return prefetch_size;
 }
 
 

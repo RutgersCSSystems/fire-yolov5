@@ -39,7 +39,7 @@ class sequential{
 #if 1	
 	robin_hood::unordered_node_map<int, struct stride_dat> strides;
 	robin_hood::unordered_node_map<int, std::deque<struct pos_bytes>> current_stream;
-	robin_hood::unordered_node_map<int, off_t> prefetch_fd_map;
+	robin_hood::unordered_node_map<int, off_t> prefetch_fd_map; //stores what has been prefetched for this fd
 	robin_hood::unordered_node_map<int, long> fd_access_map;
 
 #endif
