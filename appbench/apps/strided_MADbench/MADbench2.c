@@ -206,7 +206,7 @@ void initialize(int argc, char** argv)
     error_check("no_pe/no_gang indivisible by w_mod", "command line", (no_pe/no_gang)%w_mod==0);
     error_check("record_size%sizeof(double)!=0", "command line", 
             (record_size)%sizeof(double)==0);
-    error_check("(no_pix*no_pix*sizeof(double))%((1+stride)*record_size)!=0  ", 
+    error_check("(no_pix*no_pix*sizeof(double))%((1+stride)*record_size)!=0 ie. matrix should be divisible (1+stride)*size of read", 
             "command line", (no_pix*no_pix*sizeof(double))%
             ((1+stride)*record_size) == 0);
 
