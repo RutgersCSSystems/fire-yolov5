@@ -56,6 +56,7 @@ RUNAPP()
         $COMMAND &>> $out_base/$outfile
         UNSETPRELOAD
         dmesg >> $out_base/$outfile
+        echo "\n ################################### \n" >> $out_base/$outfile
     fi
 }
 
