@@ -18,10 +18,13 @@ DATE=`date +'%d-%B-%y'`
 
 base=$APPS/strided_MADbench
 
-declare -a workarr=("16384") # size of workload
-declare -a readsize=("4096") # application read size in bytes
-declare -a stride=("2" "5" "7") #jump between two reads = $STRIDE * $READSIZE
+declare -a workarr=("16384") # size of workload (good to keep a power of 2)
+declare -a readsize=("4096") # application read size in bytes (good to keep a power of 2)
+# keep stride = (power of 2) - 1 for correct calculation in madbench
+declare -a stride=("1" "3" "7" "15") #jump between two reads = $STRIDE * $READSIZE
+
 FLUSH=1 ##FLUSHES and clears cache AFTER EACH WRITE
+no_bin=5 ##5,30 Increases the runtime (TODO check why)
 
 ## env variables used by madbench to choose internals
 export IOMODE=SYNC
@@ -42,7 +45,7 @@ RUNAPP()
     workload=$1
     readsize=$2
     stride=$3
-    COMMAND="$APPPREFIX mpiexec.mpich -n $nproc $base/MADbench2_io $workload 30 1 8 64 1 1 $readsize $stride $FLUSH"
+    COMMAND="$APPPREFIX mpiexec.mpich -n $nproc $base/MADbench2_io $workload $no_bin 1 8 64 1 1 $readsize $stride $FLUSH"
 
     outfile="all.out"
 
