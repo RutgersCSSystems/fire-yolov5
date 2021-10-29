@@ -1,15 +1,20 @@
 #!/bin/bash
 
 ##This script will call variation scripts from different apps
+if [ -z "$APPS" ]; then
+    echo "APPS environment variable is undefined."
+    echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
+    exit 1
+fi
 
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("strided_madbench")
+declare -a apparr=("rocksdb")
 declare -a nprocarr=("4")
 
 ##This is used as results location; change the app scripts according to the experiment you want to run
-EXPERIMENT="hitrate" 
+EXPERIMENT="hitrate"
 
 #Here is where we run the application
 RUNAPP()
@@ -23,7 +28,7 @@ RUNAPP()
     fi
 
     if [ "$APP" = "rocksdb" ]; then
-        ##call the rocksdb script
+         $RUN_SCRIPTS/run_db_bench.sh $NPROC $EXPERIMENT $OUTPUT
     fi
 }
 
