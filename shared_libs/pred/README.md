@@ -111,6 +111,8 @@ export LD_PRELOAD=""
 9. PREDICTOR & SEQUENTIAL : Enables library prefetching when used together. 
 10. ENABLE_GLOBAL_CACHE_STATS : Enables global stats for cache hits/misses in modified linux 5.14
 11. READ_RA : Enables read_ra syscall instead of read and readahead for the read/fread/pread calls intercepted
+12. DISABLE_INTERCEPTING : Disables any form of function intercepting from the library. Will only run constructor and destructor
 
 ### Q4. Are there any dependencies for Compile time flags?
-1.  Cannot use READ_RA with BGTHREADS: Do not disable NOBGTHREADS while enabling READ_RA. It wouldn't work.
+1. Cannot use READ_RA with BGTHREADS: Do not disable NOBGTHREADS while enabling READ_RA. It wouldn't work.
+2. Do not DISABLE_INTERCEPTING if you want to run anything other than constructor and destructor. Note: constructors and destructors are not called for threads spawned using clone syscall.

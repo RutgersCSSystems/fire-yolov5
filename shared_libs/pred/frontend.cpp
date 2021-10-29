@@ -206,6 +206,7 @@ void dest(){
 #endif
 }
 
+#ifndef DISABLE_INTERCEPTING
 
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
@@ -402,7 +403,6 @@ ssize_t read(int fd, void *data, size_t size){
 
 
 
-#if 1
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
@@ -417,7 +417,6 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
     return amount_read;
 }
-#endif
 
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){ 
@@ -483,6 +482,7 @@ int close(int fd){
 }
 
 
+
 uid_t getuid(){
 #ifdef MMAP_SHARED_DAT
     prev_ra->tid = 0;
@@ -491,6 +491,8 @@ uid_t getuid(){
 
     return real_getuid();
 }
+
+#endif //DISABLE_INTERCEPTING
 
 #ifdef PREDICTOR
 int reg_file(FILE *stream){
