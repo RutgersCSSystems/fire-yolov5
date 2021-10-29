@@ -7,6 +7,11 @@ if [ -z "$APPS" ]; then
     exit 1
 fi
 
+KB=1024
+MB=`echo "1024*$KB" | bc`
+GB=`echo "1024*$MB" | bc`
+PAGE_SZ=`echo "4*$KB" | bc`
+
 FlushDisk()
 {
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -14,6 +19,18 @@ FlushDisk()
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
     sudo dmesg --clear
+}
+
+SLEEPNOW() {
+    sleep 2
+}
+
+
+REFRESH() {
+    export LD_PRELOAD=""
+    $NVMBASE/scripts/compile-install/clear_cache.sh
+    sudo sh -c "dmesg --clear" ##clear dmesg
+    SLEEPNOW
 }
 
 ENABLE_LOCK_STATS()
@@ -68,17 +85,6 @@ SETPRELOAD()
     ##export TARGET_GPPID=$PPID
 }
 
-SLEEPNOW() {
-    sleep 2
-}
-
-
-REFRESH() {
-    export LD_PRELOAD=""
-    $NVMBASE/scripts/compile-install/clear_cache.sh
-    sudo sh -c "dmesg --clear" ##clear dmesg
-    SLEEPNOW
-}
 
 
 ##Reduces size of ram if needed

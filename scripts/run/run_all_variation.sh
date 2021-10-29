@@ -11,13 +11,12 @@ declare -a nprocarr=("4")
 ##This is used as results location; change the app scripts according to the experiment you want to run
 EXPERIMENT="hitrate" 
 
-
 #Here is where we run the application
 RUNAPP()
 {
     APP=$2
     NPROC=$1
-    OUTPUT=$OUTPUT_FOLDER/$APP/$EXPERIMENT
+    OUTPUT=${OUTPUT_FOLDER}/${APP}/${EXPERIMENT}/NPROC_${NPROC}
 
     if [ "$APP" = "strided_madbench" ]; then
          $RUN_SCRIPTS/run_strided_madbench.sh $NPROC $EXPERIMENT $OUTPUT
@@ -33,9 +32,8 @@ for APP in "${apparr[@]}"
 do
     for NPROC in "${nprocarr[@]}"
     do	
-        $SHARED_LIBS/construct/reset
-        RUNAPP $NPROC $APP
-        $SHARED_LIBS/construct/reset
-        SLEEPNOW
+        REFRESH
+        RUNAPP $NPROC $APP 
+        REFRESH
     done	
 done
