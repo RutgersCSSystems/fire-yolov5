@@ -40,7 +40,7 @@ BUILD_PRED_LIB()
 SETPRELOAD()
 {
     if [[ "$1" == "APPLIBOS" ]]; then ##All three
-        echo "setting pred"
+        echo "enabling all predictors"
         export LD_PRELOAD=/usr/lib/libcrosslayer.so
     elif [[ "$1" == "NOPRED" ]]; then ##None
         echo "setting nopred"
@@ -60,6 +60,9 @@ SETPRELOAD()
     elif [[ "$1" == "LIBOS" ]]; then
         echo "Lib+OS pred"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
+    elif [[ "$1" == "JUSTSTATS" ]]; then
+        echo "preload lib enable just global stats hit/miss rate"
+        export LD_PRELOAD=/usr/lib/libjuststats.so
     fi
 
     ##export TARGET_GPPID=$PPID
