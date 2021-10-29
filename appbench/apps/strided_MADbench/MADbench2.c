@@ -1087,11 +1087,11 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
     if (strcmp(IOMETHOD, "POSIX")==0) {
         /*gets filesize*/
         error_check("fseek", filename, fseeko64(df, 0L, SEEK_END)==0);
-        int file_size = ftell(df);
+        //int file_size = ftell(df);
         //printf("size of file: %d bytes\n", file_size); 
 
         error_check("fseek", filename, fseeko64(df, offset, SEEK_SET)==0); 
-        file_size = ftell(df);
+        //file_size = ftell(df);
         //printf("Initial file offset : %d bytes\n", file_size); 
 
         if (*rw=='r') {
