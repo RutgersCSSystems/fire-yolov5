@@ -17,6 +17,8 @@ export QEMUMEM="40" #In GB
 export KERNEL=$NVMBASE/KERNEL
 
 #BENCHMARKS AND LIBS
+export OUTPUT_FOLDER=$NVMBASE/results
+export OUTPUTDIR=$OUTPUT_FOLDER
 export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
 export APPS=$NVMBASE/appbench/apps
@@ -26,6 +28,7 @@ export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
 export SCRIPTS=$NVMBASE/scripts
+export RUN_SCRIPTS=$SCRIPTS/run
 #export INPUTXML=$SCRIPTS/input.xml
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 
@@ -34,15 +37,13 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 export SHARED_DATA=$APPBENCH/shared_data
 #export SHARED_DATA=/mnt/pmemdir
 
-#export APPPREFIX="numactl --preferred=0"
-export APPPREFIX=""
+export APPPREFIX="/usr/bin/time -v"
 
 #export APPPREFIX="perf record -e instructions,mem-loads,mem-stores --vmlinux=/lib/modules/4.17.0/build/vmlinux -I 1000"
 #export APPPREFIX="perf stat -e dTLB-load-misses,iTLB-load-misses,instructions,L1-dcache-loads,L1-dcache-stores"
 #export APPPREFIX="numactl --membind=1"
 #export APP_PREFIX="numactl --membind=1"
 
-export OUTPUTDIR=$NVMBASE/HPC-OUTPUT
 export TEST_TMPDIR=/mnt/pmemdir
 
 
@@ -57,5 +58,4 @@ export TEST_TMPDIR=/mnt/pmemdir
 
 
 #Commands
-mkdir $OUTPUTDIR
 mkdir $KERNEL
