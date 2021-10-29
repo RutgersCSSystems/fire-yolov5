@@ -29,7 +29,7 @@ SLEEPNOW() {
 REFRESH() {
     export LD_PRELOAD=""
     $NVMBASE/scripts/compile-install/clear_cache.sh
-    sudo sh -c "dmesg --clear" ##clear dmesg
+    #sudo sh -c "dmesg --clear" ##clear dmesg
     SLEEPNOW
 }
 
@@ -85,6 +85,9 @@ SETPRELOAD()
     ##export TARGET_GPPID=$PPID
 }
 
+UNSETPRELOAD(){
+    export LD_PRELOAD=""
+}
 
 
 ##Reduces size of ram if needed
