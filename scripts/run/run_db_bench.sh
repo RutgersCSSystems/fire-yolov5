@@ -23,7 +23,7 @@ WRITE_BUFF_SIZE=67108864
 declare -a value_size_arr=("4096")
 declare -a key_size_arr=("1000")
 declare -a num_arr=("1000000") ## Num of elements in DB
-declare -a workload_arr=("readseq" "readrandom" "readreverse") ##kinds of db_bench workloads
+declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
@@ -100,7 +100,7 @@ do
                 READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$nproc"
                 OUTFOLDER=$out_base/$WORKLOAD
                 CREATE_OUTFOLDER $OUTFOLDER
-                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}"
+                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--$RIGHTNOW"
 
                 REFRESH
                 RUNAPP 
