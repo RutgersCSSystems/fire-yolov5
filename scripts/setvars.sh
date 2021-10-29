@@ -14,7 +14,6 @@ export QEMU_IMG=$NVMBASE
 export QEMU_IMG_FILE=$QEMU_IMG/qemu-image-fresh.img
 export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="40" #In GB
-#export QEMUMEM="24G"
 export KERNEL=$NVMBASE/KERNEL
 
 #BENCHMARKS AND LIBS
@@ -26,8 +25,8 @@ export PREDICT_LIB_DIR=$SHARED_LIBS/pred
 export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
-export SCRIPTS=$NVMBASE/hpc_scripts
-export INPUTXML=$SCRIPTS/input.xml
+export SCRIPTS=$NVMBASE/scripts
+#export INPUTXML=$SCRIPTS/input.xml
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 
 #APP SPECIFIC and APPBENCH
@@ -47,14 +46,13 @@ export OUTPUTDIR=$NVMBASE/HPC-OUTPUT
 export TEST_TMPDIR=/mnt/pmemdir
 
 
-export CODE="/users/$USER/ssd/NVM/appbench/apps/butterflyeffect/code"
-export CSRC=$CODE/cassandra
-export SERVERS=`ifconfig | grep "inet addr" | head -1 | awk '{print $2}' | cut -d ":" -f2`
-export YCSBHOME=$CODE/mapkeeper/ycsb/YCSB
-export DATASRC=""
+#export CODE="/users/$USER/ssd/NVM/appbench/apps/butterflyeffect/code"
+#export CSRC=$CODE/cassandra
+#export SERVERS=`ifconfig | grep "inet addr" | head -1 | awk '{print $2}' | cut -d ":" -f2`
+#export YCSBHOME=$CODE/mapkeeper/ycsb/YCSB
+#export DATASRC=""
 
-
-export ENVPATH=$NVMBASE/scripts/env
+#export ENVPATH=$NVMBASE/scripts/env
 
 
 
