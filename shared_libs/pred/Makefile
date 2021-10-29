@@ -18,6 +18,7 @@ ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file 
 #ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
 ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
 READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
+DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats
 
@@ -50,7 +51,7 @@ seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(READ_RA) #$(PINCORES) 
 
 juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(ENABLE_GLOBAL_STATS)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS)
 
 clean:
 	rm -rf *.o
