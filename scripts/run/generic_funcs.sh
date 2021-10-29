@@ -1,16 +1,13 @@
 #Holds all the generic functions needed to run scripts
 #To use simple call source $RUN_SCRIPTS/generic_funcs.sh in your script
 
-if [ -z "$APPS" ]; then
-    echo "APPS environment variable is undefined."
-    echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
-    exit 1
-fi
-
 KB=1024
 MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 PAGE_SZ=`echo "4*$KB" | bc`
+
+RIGHTNOW=`date +"%H-%M_%m-%d-%y"`
+DATE=`date +'%d-%B-%y'`
 
 FlushDisk()
 {
@@ -18,19 +15,11 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
-    sudo dmesg --clear
+    #sudo dmesg --clear
 }
 
 SLEEPNOW() {
     sleep 2
-}
-
-
-REFRESH() {
-    export LD_PRELOAD=""
-    $NVMBASE/scripts/compile-install/clear_cache.sh
-    #sudo sh -c "dmesg --clear" ##clear dmesg
-    SLEEPNOW
 }
 
 ENABLE_LOCK_STATS()
@@ -87,6 +76,13 @@ SETPRELOAD()
 
 UNSETPRELOAD(){
     export LD_PRELOAD=""
+}
+
+#clears cache and unloads
+REFRESH() {
+    UNSETPRELOAD
+    FlushDisk
+    SLEEPNOW
 }
 
 

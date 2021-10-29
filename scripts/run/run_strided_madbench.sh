@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$APPS" ]; then
+    echo "APPS environment variable is undefined."
+    echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
+    exit 1
+fi
+
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
