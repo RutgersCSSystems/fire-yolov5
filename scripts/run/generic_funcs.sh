@@ -6,7 +6,7 @@ MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 PAGE_SZ=`echo "4*$KB" | bc`
 
-RIGHTNOW=`date +"%H-%M_%m-%d-%y"`
+RIGHTNOW=`date +"%Hhr-%Mmin_%m-%d-%y"`
 DATE=`date +'%d-%B-%y'`
 
 FlushDisk()

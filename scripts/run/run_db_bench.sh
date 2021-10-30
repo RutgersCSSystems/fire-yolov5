@@ -23,7 +23,8 @@ WRITE_BUFF_SIZE=67108864
 declare -a value_size_arr=("4096")
 declare -a key_size_arr=("1000")
 declare -a num_arr=("1000000") ## Num of elements in DB
-declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
+#declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
+declare -a workload_arr=("readrandom") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
@@ -58,6 +59,8 @@ CLEAR_DB()
 WRITELOAD() {
     CLEAR_DB
     $base/db_bench $PARAMS $WRITEARGS
+
+    $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
 }
 
 #Checks if the folder exits, if not, create new
@@ -93,7 +96,6 @@ do
         for KEYSIZE in "${key_size_arr[@]}"
         do
             PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
-            WRITELOAD ##Needs to be called for diff load config
 
             for WORKLOAD in "${workload_arr[@]}"
             do
@@ -102,6 +104,7 @@ do
                 CREATE_OUTFOLDER $OUTFOLDER
                 OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--$RIGHTNOW"
 
+                WRITELOAD ##Needs to be called for diff load config
                 REFRESH
                 RUNAPP 
             done
