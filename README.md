@@ -5,6 +5,7 @@ A small description
 
 
 ### Directory structure
+```
 .
 ├── README.md
 ├── appbench            # application workloads
@@ -13,6 +14,7 @@ A small description
 ├── results             # folder with all results 
 ├── scripts             # all scripts for setup and microbench running
 └── shared_libs/pred    # shared lib predictor src
+```
 
 
 ### Setup Environment
