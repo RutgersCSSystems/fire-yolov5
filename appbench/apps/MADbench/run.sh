@@ -50,7 +50,7 @@ WMOD=16
 #export IOMETHOD=POSIX
 #$SHARED_LIBS/construct/reset
 
-export LD_PRELOAD=/usr/lib/libcrosslayer.so
+#export LD_PRELOAD=/usr/lib/libcrosslayer.so
 $APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
 FlushDisk

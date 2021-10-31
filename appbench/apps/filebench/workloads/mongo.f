@@ -24,7 +24,7 @@
 #
 # ident	"%Z%%M%	%I%	%E% SMI"
 
-set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $dir=/localhome/sudarsun/projects/HPC/NVM/appbench/apps/filebench/DATA
 set $nfiles=200000
 set $dirwidth=20
 set $filesize=64k

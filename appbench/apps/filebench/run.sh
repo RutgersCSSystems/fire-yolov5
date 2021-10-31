@@ -1,23 +1,36 @@
 #!/bin/bash
-set -x
-APPBASE=$APPBENCH/apps/filebench
-APP=$APPBASE/filebench
-DATA=$SHARED_DATA
-SIZE=" --size=4G"
-PARAM=" --directory=$DATA $SIZE"
-OUTPUT=$2
-PREDICT=1
+DBHOME=$PWD
+PREDICT=0
+THREAD=4
+VALUE_SIZE=512
+SYNC=0
+KEYSIZE=100
+WRITE_BUFF_SIZE=67108864
+NUM=10000000
+DBDIR=$DBHOME/DATA
 
-mkdir -p $DATA
+WORKLOADS="readrandom"
+READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
+APPPREFIX="/usr/bin/time -v"
 
-sudo chown -R $USER $SHARED_DATA
+PARAMS="--db=$DBDIR --value_size=4096 --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --threads=$THREAD --num=$NUM"
+
+FlushDisk()
+{
+	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+	sudo sh -c "sync"
+	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+	sudo sh -c "sync"
+}
 
 SETPRELOAD()
 {
 	if [[ "$PREDICT" == "1" ]]; then
-	    export LD_PRELOAD=/usr/lib/libcrosslayer.so
+		echo "setting pred"
+		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
-	    export LD_PRELOAD=/usr/lib/libnopred.so
+		echo "setting nopred"
+		export LD_PRELOAD=/usr/lib/libjuststats.so
 	fi
 }
 
@@ -28,69 +41,34 @@ BUILD_LIB()
 	cd $DBHOME
 }
 
-FlushDisk()
+CLEAR_PWD()
 {
-	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
-	sudo sh -c "sync"
-	sudo sh -c "sync"
-	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
-}
-
-RANDOM_MONGO(){
-	echo "Running Random Write"
-	#export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so $APPPREFIX $APP -f $APPBASE/workloads/mongo.f
-	#LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so 
-	#$APPPREFIX $APP -f workloads/mongo.f
-	#$APPPREFIX $APP -f workloads/videoserver.f
-	#$APPPREFIX $APP -f workloads/oltp.f
-	$APPPREFIX $APP -f workloads/randomrw.f
-	export LD_PRELOAD=""
-}
-
-RANDOM_WRITE(){
-	echo "Running Random Write"
-	#$APPPREFIX $APP $APPBASE/examples/fio-rand-write.job --name=randwrite $PARAM
-	$APPPREFIX $APP $APPBASE/examples/fio-rand-RW.job --name=randwrite $PARAM
+	cd $DBDIR
+	rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
+	cd ..
 }
 
 
-RANDOM_READ(){
-	echo "Running Random Read"
-	#$APPPREFIX $APP $APPBASE/examples/fio-rand-read.job --name=randread $PARAM
-	$APPPREFIX $APP $APPBASE/examples/fio-seq-RW.job --name=randwrite $PARAM
-}
-
-
-SEQ_WRITE(){
-	echo "Running Sequential Write"
-	$APPPREFIX $APP $APPBASE/examples/fio-seq-write.job  --name=seqwrite $PARAM
-}
-
-SEQ_READ(){
-echo "Running Sequential Read"
-$APPPREFIX $APP $APPBASE/examples/fio-seq-read.job --name=seqread $PARAM
-}
-
-
-cd $APPBASE
-FlushDisk
-
-echo "RUNNING CROSSLAYER.................."
+#Run write workload twice
+#CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
+echo "RUNNING Vanilla.................."
 FlushDisk
-FlushDisk
+PREDICT=0
 SETPRELOAD
-RANDOM_MONGO
-#RANDOM_WRITE
-#FlushDisk
-#RANDOM_READ
-#FlushDisk
-#SEQ_WRITE
-#FlushDisk
-#SEQ_READ
-rm $DATA/*
-#rm -rf fio-seq-RW
-#rm -rf fio-rand-RW
-$SHARED_LIBS/construct/reset
-#perf report --sort=dso
+./filebench -f workloads/randomread.f
+FlushDisk
+export LD_PRELOAD=""
+exit
+
+CLEAR_PWD
+$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
+FlushDisk
+echo "RUNNING Crosslayer.................."
+PREDICT=1
+SETPRELOAD
+strace $DBHOME/db_bench $PARAMS $READARGS
+export LD_PRELOAD=""
+FlushDisk

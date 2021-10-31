@@ -18,9 +18,9 @@
 #include "unvme_nvme.h"
 
 #ifdef _POSIX
-#define OUTPUT_DIR "/mnt/pmemdir/output_dir/"
+#define OUTPUT_DIR "output_dir/"
 #else
-#define OUTPUT_DIR "/mnt/ram/output_dir/"
+#define OUTPUT_DIR "output_dir/"
 #endif
 #define FILEPERM 0666
 
