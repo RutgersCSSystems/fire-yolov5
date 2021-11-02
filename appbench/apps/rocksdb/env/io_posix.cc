@@ -568,10 +568,17 @@ PosixRandomAccessFile::PosixRandomAccessFile(
 
 PosixRandomAccessFile::~PosixRandomAccessFile() { close(fd_); }
 
+#ifdef CROSSLAYER_SYSCALLS
 IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
                                      const IOOptions& opts, Slice* result,
                                      char* scratch,
                                      IODebugContext* /*dbg*/) const {
+#else
+IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
+                                     const IOOptions&, Slice* result,
+                                     char* scratch,
+                                     IODebugContext* /*dbg*/) const {
+#endif
   if (use_direct_io()) {
     assert(IsSectorAligned(offset, GetRequiredBufferAlignment()));
     assert(IsSectorAligned(n, GetRequiredBufferAlignment()));
@@ -582,8 +589,13 @@ IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
   size_t left = n;
   char* ptr = scratch;
   while (left > 0) {
+
+#ifndef CROSSLAYER_SYSCALLS
+    r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+#else
     r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), opts.ra_offset, opts.ra_bytes);
-    //r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+#endif
+
     
     if (r <= 0) {
       if (r == -1 && errno == EINTR) {
@@ -761,7 +773,9 @@ IOStatus PosixRandomAccessFile::Prefetch(uint64_t offset, size_t n,
   if (!use_direct_io()) {
     ssize_t r = 0;
 #ifdef OS_LINUX
-    //r = readahead(fd_, offset, n);
+#ifndef CROSSLAYER_SYSCALLS
+    r = readahead(fd_, offset, n);
+#endif
 #endif
 #ifdef OS_MACOSX
     radvisory advice;
