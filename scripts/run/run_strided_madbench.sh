@@ -48,7 +48,8 @@ COMPILE_APP() {
 }
 
 CACHESTATFN()
-{
+{ 
+  mkdir -p $1
   OUTPUTFILE=$1/"CACHESTAT-"$2
   sudo killall cachestat
   sudo killall cachestat
@@ -72,7 +73,7 @@ RUNAPP()
 
         echo "Workload=$workload, readsize=$readsize, stride=$stride, flust=$FLUSH" >> $out_base/$outfile
         
-	CACHESTATFN $cacheoutfile
+	CACHESTATFN  $out_base $cacheoutfile
 
 	#SETPRELOAD "JUSTSTATS"
         mpiexec -n $nproc $base/MADbench2_io $workload $no_bin 1 8 64 1 1 $readsize $stride $FLUSH &>> $out_base/$outfile
