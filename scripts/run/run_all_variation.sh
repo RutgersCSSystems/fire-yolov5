@@ -10,7 +10,8 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("rocksdb")
+#declare -a apparr=("rocksdb")
+declare -a apparr=("graphchi")
 declare -a nprocarr=("4")
 
 ##This is used as results location; change the app scripts according to the experiment you want to run
@@ -25,9 +26,9 @@ RUNAPP()
 
     if [ "$APP" = "strided_madbench" ]; then
          $RUN_SCRIPTS/run_strided_madbench.sh $NPROC $EXPERIMENT $OUTPUT
-    fi
-
-    if [ "$APP" = "rocksdb" ]; then
+    elif [ "$APP" = "graphchi" ]; then
+	 $RUN_SCRIPTS/run_strided_madbench.sh $NPROC $EXPERIMENT $OUTPUT	
+    elif [ "$APP" = "rocksdb" ]; then
          $RUN_SCRIPTS/run_db_bench.sh $NPROC $EXPERIMENT $OUTPUT
     fi
 }

@@ -41,11 +41,8 @@ BUILD_LIB()
 
 
 export GRAPHCHI_ROOT=$APPBENCH/apps/graphchi/graphchi-cpp
-
-#cd $APPBENCH/apps/graphchi 
-FlushDisk
-
-echo "RUNNING CROSSLAYER.................."
+cd $APPBENCH/apps/graphchi 
+#echo "RUNNING CROSSLAYER.................."
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 FlushDisk
 FlushDisk
@@ -53,5 +50,4 @@ rm -rf $SHARED_DATA/$DATA.*
 #SETPRELOAD
 echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1
 export LD_PRELOAD=""
-
 set +x
