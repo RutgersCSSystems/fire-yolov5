@@ -12,7 +12,8 @@ source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
 #declare -a apparr=("rocksdb")
-declare -a apparr=("libgrape")
+#declare -a apparr=("libgrape")
+declare -a apparr=("strided_madbench")
 declare -a nprocarr=("8")
 
 ##This is used as results location; change the app scripts according to the experiment you want to run

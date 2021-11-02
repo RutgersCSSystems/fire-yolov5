@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x 
 
 if [ -z "$APPS" ]; then
     echo "APPS environment variable is undefined."
@@ -46,24 +47,43 @@ COMPILE_APP() {
     popd
 }
 
+CACHESTATFN()
+{
+  OUTPUTFILE=$1/"CACHESTAT-"$2
+  sudo killall cachestat
+  sudo killall cachestat
+  sudo /usr/bin/cachestat &> $OUTPUTFILE &
+}
+
+
 RUNAPP()
 {
     workload=$1
     readsize=$2
     stride=$3
-    COMMAND="$APPPREFIX mpiexec.mpich -n $nproc $base/MADbench2_io $workload $no_bin 1 8 64 1 1 $readsize $stride $FLUSH"
+    COMMAND="$APPPREFIX mpiexec -n $nproc $base/MADbench2_io $workload $no_bin 1 8 64 1 1 $readsize $stride $FLUSH"
 
     outfile="all.out"
 
-    if [ "$experiment" = "hitrate" ]; then
+    cacheoutfile="CACHESTAT-WORKLOAD"$workload"-readsize-"$readsize"-stride-"$stride".out"
+
+    #if [ "$experiment" = "CACHESTAT" ]; then
         sudo dmesg -c 
+
         echo "Workload=$workload, readsize=$readsize, stride=$stride, flust=$FLUSH" >> $out_base/$outfile
-        SETPRELOAD "JUSTSTATS"
-        $COMMAND &>> $out_base/$outfile
-        UNSETPRELOAD
-        dmesg >> $out_base/$outfile
+        
+	CACHESTATFN $cacheoutfile
+
+	#SETPRELOAD "JUSTSTATS"
+        mpiexec -n $nproc $base/MADbench2_io $workload $no_bin 1 8 64 1 1 $readsize $stride $FLUSH &>> $out_base/$outfile
+        #UNSETPRELOAD
+
+	sudo killall cachestat
+	sudo killall cachestat
+        
+	dmesg >> $out_base/$outfile
         echo "\n ################################### \n" >> $out_base/$outfile
-    fi
+    #fi
 }
 
 
