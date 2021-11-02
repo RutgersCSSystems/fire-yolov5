@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,14 +9,18 @@
 
 #pragma once
 #include <vector>
+
+#include "db/flush_scheduler.h"
+#include "db/kv_checksum.h"
+#include "db/trim_history_scheduler.h"
 #include "db/write_thread.h"
-#include "rocksdb/types.h"
-#include "rocksdb/write_batch.h"
 #include "rocksdb/db.h"
 #include "rocksdb/options.h"
+#include "rocksdb/types.h"
+#include "rocksdb/write_batch.h"
 #include "util/autovector.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class MemTable;
 class FlushScheduler;
@@ -59,6 +63,14 @@ class ColumnFamilyMemTablesDefault : public ColumnFamilyMemTables {
   MemTable* mem_;
 };
 
+struct WriteBatch::ProtectionInfo {
+  // `WriteBatch` usually doesn't contain a huge number of keys so protecting
+  // with a fixed, non-configurable eight bytes per key may work well enough.
+  autovector<ProtectionInfoKVOTC64> entries_;
+
+  size_t GetBytesPerKey() const { return 8; }
+};
+
 // WriteBatchInternal provides static methods for manipulating a
 // WriteBatch that we don't want in the public WriteBatch interface.
 class WriteBatchInternal {
@@ -99,7 +111,12 @@ class WriteBatchInternal {
   static Status Merge(WriteBatch* batch, uint32_t column_family_id,
                       const SliceParts& key, const SliceParts& value);
 
-  static Status MarkEndPrepare(WriteBatch* batch, const Slice& xid);
+  static Status PutBlobIndex(WriteBatch* batch, uint32_t column_family_id,
+                             const Slice& key, const Slice& value);
+
+  static Status MarkEndPrepare(WriteBatch* batch, const Slice& xid,
+                               const bool write_after_commit = true,
+                               const bool unprepared_batch = false);
 
   static Status MarkRollback(WriteBatch* batch, const Slice& xid);
 
@@ -108,15 +125,15 @@ class WriteBatchInternal {
   static Status InsertNoop(WriteBatch* batch);
 
   // Return the number of entries in the batch.
-  static int Count(const WriteBatch* batch);
+  static uint32_t Count(const WriteBatch* batch);
 
   // Set the count for the number of entries in the batch.
-  static void SetCount(WriteBatch* batch, int n);
+  static void SetCount(WriteBatch* batch, uint32_t n);
 
-  // Return the seqeunce number for the start of this batch.
+  // Return the sequence number for the start of this batch.
   static SequenceNumber Sequence(const WriteBatch* batch);
 
-  // Store the specified number as the seqeunce number for the start of
+  // Store the specified number as the sequence number for the start of
   // this batch.
   static void SetSequence(WriteBatch* batch, SequenceNumber seq);
 
@@ -133,6 +150,9 @@ class WriteBatchInternal {
   }
 
   static Status SetContents(WriteBatch* batch, const Slice& contents);
+
+  static Status CheckSlicePartsLength(const SliceParts& key,
+                                      const SliceParts& value);
 
   // Inserts batches[i] into memtable, for i in 0..num_batches-1 inclusive.
   //
@@ -151,31 +171,35 @@ class WriteBatchInternal {
   //
   // Under concurrent use, the caller is responsible for making sure that
   // the memtables object itself is thread-local.
-  static Status InsertInto(const autovector<WriteThread::Writer*>& batches,
-                           SequenceNumber sequence,
-                           ColumnFamilyMemTables* memtables,
-                           FlushScheduler* flush_scheduler,
-                           bool ignore_missing_column_families = false,
-                           uint64_t log_number = 0, DB* db = nullptr,
-                           bool concurrent_memtable_writes = false);
+  static Status InsertInto(
+      WriteThread::WriteGroup& write_group, SequenceNumber sequence,
+      ColumnFamilyMemTables* memtables, FlushScheduler* flush_scheduler,
+      TrimHistoryScheduler* trim_history_scheduler,
+      bool ignore_missing_column_families = false, uint64_t log_number = 0,
+      DB* db = nullptr, bool concurrent_memtable_writes = false,
+      bool seq_per_batch = false, bool batch_per_txn = true);
 
   // Convenience form of InsertInto when you have only one batch
-  // last_seq_used returns the last sequnce number used in a MemTable insert
-  static Status InsertInto(const WriteBatch* batch,
+  // next_seq returns the seq after last sequence number used in MemTable insert
+  static Status InsertInto(
+      const WriteBatch* batch, ColumnFamilyMemTables* memtables,
+      FlushScheduler* flush_scheduler,
+      TrimHistoryScheduler* trim_history_scheduler,
+      bool ignore_missing_column_families = false, uint64_t log_number = 0,
+      DB* db = nullptr, bool concurrent_memtable_writes = false,
+      SequenceNumber* next_seq = nullptr, bool* has_valid_writes = nullptr,
+      bool seq_per_batch = false, bool batch_per_txn = true);
+
+  static Status InsertInto(WriteThread::Writer* writer, SequenceNumber sequence,
                            ColumnFamilyMemTables* memtables,
                            FlushScheduler* flush_scheduler,
+                           TrimHistoryScheduler* trim_history_scheduler,
                            bool ignore_missing_column_families = false,
                            uint64_t log_number = 0, DB* db = nullptr,
                            bool concurrent_memtable_writes = false,
-                           SequenceNumber* last_seq_used = nullptr,
-                           bool* has_valid_writes = nullptr);
-
-  static Status InsertInto(WriteThread::Writer* writer,
-                           ColumnFamilyMemTables* memtables,
-                           FlushScheduler* flush_scheduler,
-                           bool ignore_missing_column_families = false,
-                           uint64_t log_number = 0, DB* db = nullptr,
-                           bool concurrent_memtable_writes = false);
+                           bool seq_per_batch = false, size_t batch_cnt = 0,
+                           bool batch_per_txn = true,
+                           bool hint_per_batch = false);
 
   static Status Append(WriteBatch* dst, const WriteBatch* src,
                        const bool WAL_only = false);
@@ -183,6 +207,15 @@ class WriteBatchInternal {
   // Returns the byte size of appending a WriteBatch with ByteSize
   // leftByteSize and a WriteBatch with ByteSize rightByteSize
   static size_t AppendedByteSize(size_t leftByteSize, size_t rightByteSize);
+
+  // Iterate over [begin, end) range of a write batch
+  static Status Iterate(const WriteBatch* wb, WriteBatch::Handler* handler,
+                        size_t begin, size_t end);
+
+  // This write batch includes the latest state that should be persisted. Such
+  // state meant to be used only during recovery.
+  static void SetAsLastestPersistentState(WriteBatch* b);
+  static bool IsLatestPersistentState(const WriteBatch* b);
 };
 
 // LocalSavePoint is similar to a scope guard
@@ -209,6 +242,9 @@ class LocalSavePoint {
     if (batch_->max_bytes_ && batch_->rep_.size() > batch_->max_bytes_) {
       batch_->rep_.resize(savepoint_.size);
       WriteBatchInternal::SetCount(batch_, savepoint_.count);
+      if (batch_->prot_info_ != nullptr) {
+        batch_->prot_info_->entries_.resize(savepoint_.count);
+      }
       batch_->content_flags_.store(savepoint_.content_flags,
                                    std::memory_order_relaxed);
       return Status::MemoryLimit();
@@ -224,4 +260,4 @@ class LocalSavePoint {
 #endif
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

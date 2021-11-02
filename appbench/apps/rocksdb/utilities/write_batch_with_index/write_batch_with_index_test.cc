@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,18 +9,18 @@
 
 #ifndef ROCKSDB_LITE
 
-#include <memory>
+#include "rocksdb/utilities/write_batch_with_index.h"
 #include <map>
+#include <memory>
 #include "db/column_family.h"
 #include "port/stack_trace.h"
-#include "rocksdb/utilities/write_batch_with_index.h"
+#include "test_util/testharness.h"
 #include "util/random.h"
 #include "util/string_util.h"
-#include "util/testharness.h"
 #include "utilities/merge_operators.h"
 #include "utilities/merge_operators/string_append/stringappend.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 namespace {
 class ColumnFamilyHandleImplDummy : public ColumnFamilyHandleImpl {
@@ -45,8 +45,8 @@ struct Entry {
 
 struct TestHandler : public WriteBatch::Handler {
   std::map<uint32_t, std::vector<Entry>> seen;
-  virtual Status PutCF(uint32_t column_family_id, const Slice& key,
-                       const Slice& value) {
+  Status PutCF(uint32_t column_family_id, const Slice& key,
+               const Slice& value) override {
     Entry e;
     e.key = key.ToString();
     e.value = value.ToString();
@@ -54,8 +54,8 @@ struct TestHandler : public WriteBatch::Handler {
     seen[column_family_id].push_back(e);
     return Status::OK();
   }
-  virtual Status MergeCF(uint32_t column_family_id, const Slice& key,
-                         const Slice& value) {
+  Status MergeCF(uint32_t column_family_id, const Slice& key,
+                 const Slice& value) override {
     Entry e;
     e.key = key.ToString();
     e.value = value.ToString();
@@ -63,8 +63,8 @@ struct TestHandler : public WriteBatch::Handler {
     seen[column_family_id].push_back(e);
     return Status::OK();
   }
-  virtual void LogData(const Slice& blob) {}
-  virtual Status DeleteCF(uint32_t column_family_id, const Slice& key) {
+  void LogData(const Slice& /*blob*/) override {}
+  Status DeleteCF(uint32_t column_family_id, const Slice& key) override {
     Entry e;
     e.key = key.ToString();
     e.value = "";
@@ -96,11 +96,11 @@ void TestValueAsSecondaryIndexHelper(std::vector<Entry> entries,
   ColumnFamilyHandleImplDummy index(8, BytewiseComparator());
   for (auto& e : entries) {
     if (e.type == kPutRecord) {
-      batch->Put(&data, e.key, e.value);
-      batch->Put(&index, e.value, e.key);
+      ASSERT_OK(batch->Put(&data, e.key, e.value));
+      ASSERT_OK(batch->Put(&index, e.value, e.key));
     } else if (e.type == kMergeRecord) {
-      batch->Merge(&data, e.key, e.value);
-      batch->Put(&index, e.value, e.key);
+      ASSERT_OK(batch->Merge(&data, e.key, e.value));
+      ASSERT_OK(batch->Put(&index, e.value, e.key));
     } else {
       assert(e.type == kDeleteRecord);
       std::unique_ptr<WBWIIterator> iter(batch->NewIterator(&data));
@@ -109,8 +109,8 @@ void TestValueAsSecondaryIndexHelper(std::vector<Entry> entries,
       auto write_entry = iter->Entry();
       ASSERT_EQ(e.key, write_entry.key.ToString());
       ASSERT_EQ(e.value, write_entry.value.ToString());
-      batch->Delete(&data, e.key);
-      batch->Put(&index, e.value, "");
+      ASSERT_OK(batch->Delete(&data, e.key));
+      ASSERT_OK(batch->Put(&index, e.value, ""));
     }
   }
 
@@ -243,7 +243,7 @@ void TestValueAsSecondaryIndexHelper(std::vector<Entry> entries,
 
   // Verify WriteBatch can be iterated
   TestHandler handler;
-  batch->GetWriteBatch()->Iterate(&handler);
+  ASSERT_OK(batch->GetWriteBatch()->Iterate(&handler));
 
   // Verify data column family
   {
@@ -315,18 +315,18 @@ TEST_F(WriteBatchWithIndexTest, TestComparatorForCF) {
   ColumnFamilyHandleImplDummy cf2(88, BytewiseComparator());
   WriteBatchWithIndex batch(BytewiseComparator(), 20);
 
-  batch.Put(&cf1, "ddd", "");
-  batch.Put(&cf2, "aaa", "");
-  batch.Put(&cf2, "eee", "");
-  batch.Put(&cf1, "ccc", "");
-  batch.Put(&reverse_cf, "a11", "");
-  batch.Put(&cf1, "bbb", "");
+  ASSERT_OK(batch.Put(&cf1, "ddd", ""));
+  ASSERT_OK(batch.Put(&cf2, "aaa", ""));
+  ASSERT_OK(batch.Put(&cf2, "eee", ""));
+  ASSERT_OK(batch.Put(&cf1, "ccc", ""));
+  ASSERT_OK(batch.Put(&reverse_cf, "a11", ""));
+  ASSERT_OK(batch.Put(&cf1, "bbb", ""));
 
   Slice key_slices[] = {"a", "3", "3"};
   Slice value_slice = "";
-  batch.Put(&reverse_cf, SliceParts(key_slices, 3),
-            SliceParts(&value_slice, 1));
-  batch.Put(&reverse_cf, "a22", "");
+  ASSERT_OK(batch.Put(&reverse_cf, SliceParts(key_slices, 3),
+                      SliceParts(&value_slice, 1)));
+  ASSERT_OK(batch.Put(&reverse_cf, "a22", ""));
 
   {
     std::unique_ptr<WBWIIterator> iter(batch.NewIterator(&cf1));
@@ -402,20 +402,20 @@ TEST_F(WriteBatchWithIndexTest, TestOverwriteKey) {
   ColumnFamilyHandleImplDummy cf2(88, BytewiseComparator());
   WriteBatchWithIndex batch(BytewiseComparator(), 20, true);
 
-  batch.Put(&cf1, "ddd", "");
-  batch.Merge(&cf1, "ddd", "");
-  batch.Delete(&cf1, "ddd");
-  batch.Put(&cf2, "aaa", "");
-  batch.Delete(&cf2, "aaa");
-  batch.Put(&cf2, "aaa", "aaa");
-  batch.Put(&cf2, "eee", "eee");
-  batch.Put(&cf1, "ccc", "");
-  batch.Put(&reverse_cf, "a11", "");
-  batch.Delete(&cf1, "ccc");
-  batch.Put(&reverse_cf, "a33", "a33");
-  batch.Put(&reverse_cf, "a11", "a11");
+  ASSERT_OK(batch.Put(&cf1, "ddd", ""));
+  ASSERT_OK(batch.Merge(&cf1, "ddd", ""));
+  ASSERT_OK(batch.Delete(&cf1, "ddd"));
+  ASSERT_OK(batch.Put(&cf2, "aaa", ""));
+  ASSERT_OK(batch.Delete(&cf2, "aaa"));
+  ASSERT_OK(batch.Put(&cf2, "aaa", "aaa"));
+  ASSERT_OK(batch.Put(&cf2, "eee", "eee"));
+  ASSERT_OK(batch.Put(&cf1, "ccc", ""));
+  ASSERT_OK(batch.Put(&reverse_cf, "a11", ""));
+  ASSERT_OK(batch.Delete(&cf1, "ccc"));
+  ASSERT_OK(batch.Put(&reverse_cf, "a33", "a33"));
+  ASSERT_OK(batch.Put(&reverse_cf, "a11", "a11"));
   Slice slices[] = {"a", "3", "3"};
-  batch.Delete(&reverse_cf, SliceParts(slices, 3));
+  ASSERT_OK(batch.Delete(&reverse_cf, SliceParts(slices, 3)));
 
   {
     std::unique_ptr<WBWIIterator> iter(batch.NewIterator(&cf1));
@@ -506,22 +506,24 @@ typedef std::map<std::string, std::string> KVMap;
 class KVIter : public Iterator {
  public:
   explicit KVIter(const KVMap* map) : map_(map), iter_(map_->end()) {}
-  virtual bool Valid() const { return iter_ != map_->end(); }
-  virtual void SeekToFirst() { iter_ = map_->begin(); }
-  virtual void SeekToLast() {
+  bool Valid() const override { return iter_ != map_->end(); }
+  void SeekToFirst() override { iter_ = map_->begin(); }
+  void SeekToLast() override {
     if (map_->empty()) {
       iter_ = map_->end();
     } else {
       iter_ = map_->find(map_->rbegin()->first);
     }
   }
-  virtual void Seek(const Slice& k) { iter_ = map_->lower_bound(k.ToString()); }
-  virtual void SeekForPrev(const Slice& k) {
+  void Seek(const Slice& k) override {
+    iter_ = map_->lower_bound(k.ToString());
+  }
+  void SeekForPrev(const Slice& k) override {
     iter_ = map_->upper_bound(k.ToString());
     Prev();
   }
-  virtual void Next() { ++iter_; }
-  virtual void Prev() {
+  void Next() override { ++iter_; }
+  void Prev() override {
     if (iter_ == map_->begin()) {
       iter_ = map_->end();
       return;
@@ -529,9 +531,9 @@ class KVIter : public Iterator {
     --iter_;
   }
 
-  virtual Slice key() const { return iter_->first; }
-  virtual Slice value() const { return iter_->second; }
-  virtual Status status() const { return Status::OK(); }
+  Slice key() const override { return iter_->first; }
+  Slice value() const override { return iter_->second; }
+  Status status() const override { return Status::OK(); }
 
  private:
   const KVMap* const map_;
@@ -568,10 +570,10 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
     WriteBatchWithIndex batch(BytewiseComparator(), 20, true);
 
     if (rand_seed % 2 == 0) {
-      batch.Put(&cf2, "zoo", "bar");
+      ASSERT_OK(batch.Put(&cf2, "zoo", "bar"));
     }
     if (rand_seed % 4 == 1) {
-      batch.Put(&cf3, "zoo", "bar");
+      ASSERT_OK(batch.Put(&cf3, "zoo", "bar"));
     }
 
     KVMap map;
@@ -587,24 +589,24 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
           break;
         case 1:
           // only delta has it
-          batch.Put(&cf1, key, value);
+          ASSERT_OK(batch.Put(&cf1, key, value));
           map[key] = value;
           merged_map[key] = value;
           break;
         case 2:
           // both has it. Delta should win
-          batch.Put(&cf1, key, value);
+          ASSERT_OK(batch.Put(&cf1, key, value));
           map[key] = "wrong_value";
           merged_map[key] = value;
           break;
         case 3:
           // both has it. Delta is delete
-          batch.Delete(&cf1, key);
+          ASSERT_OK(batch.Delete(&cf1, key));
           map[key] = "wrong_value";
           break;
         case 4:
           // only delta has it. Delta is delete
-          batch.Delete(&cf1, key);
+          ASSERT_OK(batch.Delete(&cf1, key));
           map[key] = "wrong_value";
           break;
         default:
@@ -621,7 +623,7 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
     for (int i = 0; i < 128; i++) {
       // Random walk and make sure iter and result_iter returns the
       // same key and value
-      int type = rnd.Uniform(5);
+      int type = rnd.Uniform(6);
       ASSERT_OK(iter->status());
       switch (type) {
         case 0:
@@ -642,7 +644,15 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
           result_iter->Seek(key);
           break;
         }
-        case 3:
+        case 3: {
+          // SeekForPrev to random key
+          auto key_idx = rnd.Uniform(static_cast<int>(source_strings.size()));
+          auto key = source_strings[key_idx];
+          iter->SeekForPrev(key);
+          result_iter->SeekForPrev(key);
+          break;
+        }
+        case 4:
           // Next
           if (is_valid) {
             iter->Next();
@@ -652,7 +662,7 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
           }
           break;
         default:
-          assert(type == 4);
+          assert(type == 5);
           // Prev
           if (is_valid) {
             iter->Prev();
@@ -665,6 +675,8 @@ TEST_F(WriteBatchWithIndexTest, TestRandomIteraratorWithBase) {
       AssertItersEqual(iter.get(), result_iter.get());
       is_valid = iter->Valid();
     }
+
+    ASSERT_OK(iter->status());
   }
 }
 
@@ -712,8 +724,8 @@ TEST_F(WriteBatchWithIndexTest, TestIteraratorWithBase) {
   }
 
   // Test the case that there is one element in the write batch
-  batch.Put(&cf2, "zoo", "bar");
-  batch.Put(&cf1, "a", "aa");
+  ASSERT_OK(batch.Put(&cf2, "zoo", "bar"));
+  ASSERT_OK(batch.Put(&cf1, "a", "aa"));
   {
     KVMap empty_map;
     std::unique_ptr<Iterator> iter(
@@ -726,10 +738,10 @@ TEST_F(WriteBatchWithIndexTest, TestIteraratorWithBase) {
     ASSERT_TRUE(!iter->Valid());
   }
 
-  batch.Delete(&cf1, "b");
-  batch.Put(&cf1, "c", "cc");
-  batch.Put(&cf1, "d", "dd");
-  batch.Delete(&cf1, "e");
+  ASSERT_OK(batch.Delete(&cf1, "b"));
+  ASSERT_OK(batch.Put(&cf1, "c", "cc"));
+  ASSERT_OK(batch.Put(&cf1, "d", "dd"));
+  ASSERT_OK(batch.Delete(&cf1, "e"));
 
   {
     KVMap map;
@@ -837,8 +849,8 @@ TEST_F(WriteBatchWithIndexTest, TestIteraratorWithBaseReverseCmp) {
   WriteBatchWithIndex batch(BytewiseComparator(), 20, true);
 
   // Test the case that there is one element in the write batch
-  batch.Put(&cf2, "zoo", "bar");
-  batch.Put(&cf1, "a", "aa");
+  ASSERT_OK(batch.Put(&cf2, "zoo", "bar"));
+  ASSERT_OK(batch.Put(&cf1, "a", "aa"));
   {
     KVMap empty_map;
     std::unique_ptr<Iterator> iter(
@@ -851,7 +863,7 @@ TEST_F(WriteBatchWithIndexTest, TestIteraratorWithBaseReverseCmp) {
     ASSERT_TRUE(!iter->Valid());
   }
 
-  batch.Put(&cf1, "c", "cc");
+  ASSERT_OK(batch.Put(&cf1, "c", "cc"));
   {
     KVMap map;
     std::unique_ptr<Iterator> iter(
@@ -884,7 +896,7 @@ TEST_F(WriteBatchWithIndexTest, TestIteraratorWithBaseReverseCmp) {
   }
 
   // default column family
-  batch.Put("a", "b");
+  ASSERT_OK(batch.Put("a", "b"));
   {
     KVMap map;
     map["b"] = "";
@@ -926,14 +938,14 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatch) {
   s = batch.GetFromBatch(options, "b", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  batch.Put("a", "a");
-  batch.Put("b", "b");
-  batch.Put("c", "c");
-  batch.Put("a", "z");
-  batch.Delete("c");
-  batch.Delete("d");
-  batch.Delete("e");
-  batch.Put("e", "e");
+  ASSERT_OK(batch.Put("a", "a"));
+  ASSERT_OK(batch.Put("b", "b"));
+  ASSERT_OK(batch.Put("c", "c"));
+  ASSERT_OK(batch.Put("a", "z"));
+  ASSERT_OK(batch.Delete("c"));
+  ASSERT_OK(batch.Delete("d"));
+  ASSERT_OK(batch.Delete("e"));
+  ASSERT_OK(batch.Put("e", "e"));
 
   s = batch.GetFromBatch(options, "b", &value);
   ASSERT_OK(s);
@@ -956,7 +968,7 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatch) {
   ASSERT_OK(s);
   ASSERT_EQ("e", value);
 
-  batch.Merge("z", "z");
+  ASSERT_OK(batch.Merge("z", "z"));
 
   s = batch.GetFromBatch(options, "z", &value);
   ASSERT_NOK(s);  // No merge operator specified.
@@ -972,9 +984,9 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge) {
   options.merge_operator = MergeOperators::CreateFromStringId("stringappend");
   options.create_if_missing = true;
 
-  std::string dbname = test::TmpDir() + "/write_batch_with_index_test";
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
 
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
   Status s = DB::Open(options, dbname, &db);
   ASSERT_OK(s);
 
@@ -985,18 +997,18 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge) {
   s = batch.GetFromBatch(options, "x", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  batch.Put("x", "X");
+  ASSERT_OK(batch.Put("x", "X"));
   std::string expected = "X";
 
   for (int i = 0; i < 5; i++) {
-    batch.Merge("x", ToString(i));
+    ASSERT_OK(batch.Merge("x", ToString(i)));
     expected = expected + "," + ToString(i);
 
     if (i % 2 == 0) {
-      batch.Put("y", ToString(i / 2));
+      ASSERT_OK(batch.Put("y", ToString(i / 2)));
     }
 
-    batch.Merge("z", "z");
+    ASSERT_OK(batch.Merge("z", "z"));
 
     s = batch.GetFromBatch(column_family, options, "x", &value);
     ASSERT_OK(s);
@@ -1011,7 +1023,7 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge) {
   }
 
   delete db;
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
 }
 
 TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge2) {
@@ -1020,9 +1032,9 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge2) {
   options.merge_operator = MergeOperators::CreateFromStringId("stringappend");
   options.create_if_missing = true;
 
-  std::string dbname = test::TmpDir() + "/write_batch_with_index_test";
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
 
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
   Status s = DB::Open(options, dbname, &db);
   ASSERT_OK(s);
 
@@ -1035,52 +1047,52 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchMerge2) {
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  batch.Put(column_family, "X", "x");
+  ASSERT_OK(batch.Put(column_family, "X", "x"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_OK(s);
   ASSERT_EQ("x", value);
 
-  batch.Put(column_family, "X", "x2");
+  ASSERT_OK(batch.Put(column_family, "X", "x2"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_OK(s);
   ASSERT_EQ("x2", value);
 
-  batch.Merge(column_family, "X", "aaa");
+  ASSERT_OK(batch.Merge(column_family, "X", "aaa"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
-  batch.Merge(column_family, "X", "bbb");
+  ASSERT_OK(batch.Merge(column_family, "X", "bbb"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
-  batch.Put(column_family, "X", "x3");
+  ASSERT_OK(batch.Put(column_family, "X", "x3"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_OK(s);
   ASSERT_EQ("x3", value);
 
-  batch.Merge(column_family, "X", "ccc");
+  ASSERT_OK(batch.Merge(column_family, "X", "ccc"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
-  batch.Delete(column_family, "X");
+  ASSERT_OK(batch.Delete(column_family, "X"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  batch.Merge(column_family, "X", "ddd");
+  ASSERT_OK(batch.Merge(column_family, "X", "ddd"));
   s = batch.GetFromBatch(column_family, options, "X", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
   delete db;
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
 }
 
 TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDB) {
   DB* db;
   Options options;
   options.create_if_missing = true;
-  std::string dbname = test::TmpDir() + "/write_batch_with_index_test";
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
 
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
   Status s = DB::Open(options, dbname, &db);
   ASSERT_OK(s);
 
@@ -1098,8 +1110,8 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDB) {
   s = db->Put(write_options, "c", "c");
   ASSERT_OK(s);
 
-  batch.Put("a", "batch.a");
-  batch.Delete("b");
+  ASSERT_OK(batch.Put("a", "batch.a"));
+  ASSERT_OK(batch.Delete("b"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "a", &value);
   ASSERT_OK(s);
@@ -1115,13 +1127,13 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDB) {
   s = batch.GetFromBatchAndDB(db, read_options, "x", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  db->Delete(write_options, "x");
+  ASSERT_OK(db->Delete(write_options, "x"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "x", &value);
   ASSERT_TRUE(s.IsNotFound());
 
   delete db;
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
 }
 
 TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge) {
@@ -1129,13 +1141,13 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge) {
   Options options;
 
   options.create_if_missing = true;
-  std::string dbname = test::TmpDir() + "/write_batch_with_index_test";
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
 
   options.merge_operator = MergeOperators::CreateFromStringId("stringappend");
 
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
   Status s = DB::Open(options, dbname, &db);
-  assert(s.ok());
+  ASSERT_OK(s);
 
   WriteBatchWithIndex batch;
   ReadOptions read_options;
@@ -1157,11 +1169,11 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge) {
   s = db->Merge(write_options, "d", "d0");
   ASSERT_OK(s);
 
-  batch.Merge("a", "a1");
-  batch.Merge("a", "a2");
-  batch.Merge("b", "b2");
-  batch.Merge("d", "d1");
-  batch.Merge("e", "e0");
+  ASSERT_OK(batch.Merge("a", "a1"));
+  ASSERT_OK(batch.Merge("a", "a2"));
+  ASSERT_OK(batch.Merge("b", "b2"));
+  ASSERT_OK(batch.Merge("d", "d1"));
+  ASSERT_OK(batch.Merge("e", "e0"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "a", &value);
   ASSERT_OK(s);
@@ -1204,7 +1216,7 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge) {
   ASSERT_OK(s);
   ASSERT_EQ("a0,a1,a2", value);
 
-  batch.Delete("a");
+  ASSERT_OK(batch.Delete("a"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "a", &value);
   ASSERT_TRUE(s.IsNotFound());
@@ -1247,7 +1259,7 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge) {
 
   db->ReleaseSnapshot(snapshot);
   delete db;
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
 }
 
 TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge2) {
@@ -1255,13 +1267,13 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge2) {
   Options options;
 
   options.create_if_missing = true;
-  std::string dbname = test::TmpDir() + "/write_batch_with_index_test";
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
 
   options.merge_operator = MergeOperators::CreateFromStringId("stringappend");
 
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
   Status s = DB::Open(options, dbname, &db);
-  assert(s.ok());
+  ASSERT_OK(s);
 
   // Test batch with overwrite_key=true
   WriteBatchWithIndex batch(BytewiseComparator(), 0, true);
@@ -1273,12 +1285,12 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge2) {
   s = batch.GetFromBatchAndDB(db, read_options, "A", &value);
   ASSERT_TRUE(s.IsNotFound());
 
-  batch.Merge("A", "xxx");
+  ASSERT_OK(batch.Merge("A", "xxx"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "A", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
-  batch.Merge("A", "yyy");
+  ASSERT_OK(batch.Merge("A", "yyy"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "A", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
@@ -1289,13 +1301,44 @@ TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge2) {
   s = batch.GetFromBatchAndDB(db, read_options, "A", &value);
   ASSERT_TRUE(s.IsMergeInProgress());
 
-  batch.Delete("A");
+  ASSERT_OK(batch.Delete("A"));
 
   s = batch.GetFromBatchAndDB(db, read_options, "A", &value);
   ASSERT_TRUE(s.IsNotFound());
 
   delete db;
-  DestroyDB(dbname, options);
+  EXPECT_OK(DestroyDB(dbname, options));
+}
+
+TEST_F(WriteBatchWithIndexTest, TestGetFromBatchAndDBMerge3) {
+  DB* db;
+  Options options;
+
+  options.create_if_missing = true;
+  std::string dbname = test::PerThreadDBPath("write_batch_with_index_test");
+
+  options.merge_operator = MergeOperators::CreateFromStringId("stringappend");
+
+  EXPECT_OK(DestroyDB(dbname, options));
+  Status s = DB::Open(options, dbname, &db);
+  ASSERT_OK(s);
+
+  ReadOptions read_options;
+  WriteOptions write_options;
+  FlushOptions flush_options;
+  std::string value;
+
+  WriteBatchWithIndex batch;
+
+  ASSERT_OK(db->Put(write_options, "A", "1"));
+  ASSERT_OK(db->Flush(flush_options, db->DefaultColumnFamily()));
+  ASSERT_OK(batch.Merge("A", "2"));
+
+  ASSERT_OK(batch.GetFromBatchAndDB(db, read_options, "A", &value));
+  ASSERT_EQ(value, "1,2");
+
+  delete db;
+  EXPECT_OK(DestroyDB(dbname, options));
 }
 
 void AssertKey(std::string key, WBWIIterator* iter) {
@@ -1313,7 +1356,7 @@ void AssertValue(std::string value, WBWIIterator* iter) {
 TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingCorrectnessTest) {
   WriteBatchWithIndex batch(BytewiseComparator(), 0, true);
   for (char c = 'a'; c <= 'z'; ++c) {
-    batch.Put(std::string(1, c), std::string(1, c));
+    ASSERT_OK(batch.Put(std::string(1, c), std::string(1, c)));
   }
 
   std::unique_ptr<WBWIIterator> iter(batch.NewIterator());
@@ -1321,14 +1364,14 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingCorrectnessTest) {
   AssertKey("k", iter.get());
   iter->Next();
   AssertKey("l", iter.get());
-  batch.Put("ab", "cc");
+  ASSERT_OK(batch.Put("ab", "cc"));
   iter->Next();
   AssertKey("m", iter.get());
-  batch.Put("mm", "kk");
+  ASSERT_OK(batch.Put("mm", "kk"));
   iter->Next();
   AssertKey("mm", iter.get());
   AssertValue("kk", iter.get());
-  batch.Delete("mm");
+  ASSERT_OK(batch.Delete("mm"));
 
   iter->Next();
   AssertKey("n", iter.get());
@@ -1338,7 +1381,7 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingCorrectnessTest) {
 
   iter->Seek("ab");
   AssertKey("ab", iter.get());
-  batch.Delete("x");
+  ASSERT_OK(batch.Delete("x"));
   iter->Seek("x");
   AssertKey("x", iter.get());
   ASSERT_EQ(kDeleteRecord, iter->Entry().type);
@@ -1360,7 +1403,7 @@ void AssertIterValue(std::string value, Iterator* iter) {
 TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseCorrectnessTest) {
   WriteBatchWithIndex batch(BytewiseComparator(), 0, true);
   for (char c = 'a'; c <= 'z'; ++c) {
-    batch.Put(std::string(1, c), std::string(1, c));
+    ASSERT_OK(batch.Put(std::string(1, c), std::string(1, c)));
   }
 
   KVMap map;
@@ -1375,14 +1418,14 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseCorrectnessTest) {
   AssertIterKey("k", iter.get());
   iter->Next();
   AssertIterKey("l", iter.get());
-  batch.Put("ab", "cc");
+  ASSERT_OK(batch.Put("ab", "cc"));
   iter->Next();
   AssertIterKey("m", iter.get());
-  batch.Put("mm", "kk");
+  ASSERT_OK(batch.Put("mm", "kk"));
   iter->Next();
   AssertIterKey("mm", iter.get());
   AssertIterValue("kk", iter.get());
-  batch.Delete("mm");
+  ASSERT_OK(batch.Delete("mm"));
   iter->Next();
   AssertIterKey("n", iter.get());
   iter->Prev();
@@ -1395,13 +1438,13 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseCorrectnessTest) {
   AssertIterKey("aa", iter.get());
   iter->Prev();
   AssertIterKey("a", iter.get());
-  batch.Delete("aa");
+  ASSERT_OK(batch.Delete("aa"));
   iter->Next();
   AssertIterKey("ab", iter.get());
   iter->Prev();
   AssertIterKey("a", iter.get());
 
-  batch.Delete("x");
+  ASSERT_OK(batch.Delete("x"));
   iter->Seek("x");
   AssertIterKey("y", iter.get());
   iter->Next();
@@ -1410,11 +1453,11 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseCorrectnessTest) {
   iter->Prev();
   AssertIterKey("w", iter.get());
 
-  batch.Delete("e");
+  ASSERT_OK(batch.Delete("e"));
   iter->Seek("e");
   AssertIterKey("ee", iter.get());
   AssertIterValue("ee", iter.get());
-  batch.Put("ee", "xx");
+  ASSERT_OK(batch.Put("ee", "xx"));
   // still the same value
   AssertIterValue("ee", iter.get());
   iter->Next();
@@ -1422,13 +1465,15 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseCorrectnessTest) {
   iter->Prev();
   // new value
   AssertIterValue("xx", iter.get());
+
+  ASSERT_OK(iter->status());
 }
 
 // stress testing mutations with IteratorWithBase
 TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseStressTest) {
   WriteBatchWithIndex batch(BytewiseComparator(), 0, true);
   for (char c = 'a'; c <= 'z'; ++c) {
-    batch.Put(std::string(1, c), std::string(1, c));
+    ASSERT_OK(batch.Put(std::string(1, c), std::string(1, c)));
   }
 
   KVMap map;
@@ -1445,16 +1490,16 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseStressTest) {
     char c = static_cast<char>(rnd.Uniform(26) + 'a');
     switch (random) {
       case 0:
-        batch.Put(std::string(1, c), "xxx");
+        ASSERT_OK(batch.Put(std::string(1, c), "xxx"));
         break;
       case 1:
-        batch.Put(std::string(2, c), "xxx");
+        ASSERT_OK(batch.Put(std::string(2, c), "xxx"));
         break;
       case 2:
-        batch.Delete(std::string(1, c));
+        ASSERT_OK(batch.Delete(std::string(1, c)));
         break;
       case 3:
-        batch.Delete(std::string(2, c));
+        ASSERT_OK(batch.Delete(std::string(2, c)));
         break;
       case 4:
         iter->Seek(std::string(1, c));
@@ -1476,12 +1521,12 @@ TEST_F(WriteBatchWithIndexTest, MutateWhileIteratingBaseStressTest) {
         assert(false);
     }
   }
+  ASSERT_OK(iter->status());
 }
 
-static std::string PrintContents(WriteBatchWithIndex* batch,
-                                 ColumnFamilyHandle* column_family) {
-  std::string result;
-
+static void PrintContents(WriteBatchWithIndex* batch,
+                          ColumnFamilyHandle* column_family,
+                          std::string* result) {
   WBWIIterator* iter;
   if (column_family == nullptr) {
     iter = batch->NewIterator();
@@ -1491,41 +1536,50 @@ static std::string PrintContents(WriteBatchWithIndex* batch,
 
   iter->SeekToFirst();
   while (iter->Valid()) {
+    ASSERT_OK(iter->status());
+
     WriteEntry e = iter->Entry();
 
     if (e.type == kPutRecord) {
-      result.append("PUT(");
-      result.append(e.key.ToString());
-      result.append("):");
-      result.append(e.value.ToString());
+      result->append("PUT(");
+      result->append(e.key.ToString());
+      result->append("):");
+      result->append(e.value.ToString());
     } else if (e.type == kMergeRecord) {
-      result.append("MERGE(");
-      result.append(e.key.ToString());
-      result.append("):");
-      result.append(e.value.ToString());
+      result->append("MERGE(");
+      result->append(e.key.ToString());
+      result->append("):");
+      result->append(e.value.ToString());
     } else if (e.type == kSingleDeleteRecord) {
-      result.append("SINGLE-DEL(");
-      result.append(e.key.ToString());
-      result.append(")");
+      result->append("SINGLE-DEL(");
+      result->append(e.key.ToString());
+      result->append(")");
     } else {
       assert(e.type == kDeleteRecord);
-      result.append("DEL(");
-      result.append(e.key.ToString());
-      result.append(")");
+      result->append("DEL(");
+      result->append(e.key.ToString());
+      result->append(")");
     }
 
-    result.append(",");
+    result->append(",");
     iter->Next();
   }
 
+  ASSERT_OK(iter->status());
+
   delete iter;
+}
+
+static std::string PrintContents(WriteBatchWithIndex* batch,
+                                 ColumnFamilyHandle* column_family) {
+  std::string result;
+  PrintContents(batch, column_family, &result);
   return result;
 }
 
-static std::string PrintContents(WriteBatchWithIndex* batch, KVMap* base_map,
-                                 ColumnFamilyHandle* column_family) {
-  std::string result;
-
+static void PrintContents(WriteBatchWithIndex* batch, KVMap* base_map,
+                          ColumnFamilyHandle* column_family,
+                          std::string* result) {
   Iterator* iter;
   if (column_family == nullptr) {
     iter = batch->NewIteratorWithBase(new KVIter(base_map));
@@ -1535,20 +1589,28 @@ static std::string PrintContents(WriteBatchWithIndex* batch, KVMap* base_map,
 
   iter->SeekToFirst();
   while (iter->Valid()) {
-    assert(iter->status().ok());
+    ASSERT_OK(iter->status());
 
     Slice key = iter->key();
     Slice value = iter->value();
 
-    result.append(key.ToString());
-    result.append(":");
-    result.append(value.ToString());
-    result.append(",");
+    result->append(key.ToString());
+    result->append(":");
+    result->append(value.ToString());
+    result->append(",");
 
     iter->Next();
   }
 
+  ASSERT_OK(iter->status());
+
   delete iter;
+}
+
+static std::string PrintContents(WriteBatchWithIndex* batch, KVMap* base_map,
+                                 ColumnFamilyHandle* column_family) {
+  std::string result;
+  PrintContents(batch, base_map, column_family, &result);
   return result;
 }
 
@@ -1557,34 +1619,34 @@ TEST_F(WriteBatchWithIndexTest, SavePointTest) {
   ColumnFamilyHandleImplDummy cf1(1, BytewiseComparator());
   Status s;
 
-  batch.Put("A", "a");
-  batch.Put("B", "b");
-  batch.Put("A", "aa");
-  batch.Put(&cf1, "A", "a1");
-  batch.Delete(&cf1, "B");
-  batch.Put(&cf1, "C", "c1");
-  batch.Put(&cf1, "E", "e1");
+  ASSERT_OK(batch.Put("A", "a"));
+  ASSERT_OK(batch.Put("B", "b"));
+  ASSERT_OK(batch.Put("A", "aa"));
+  ASSERT_OK(batch.Put(&cf1, "A", "a1"));
+  ASSERT_OK(batch.Delete(&cf1, "B"));
+  ASSERT_OK(batch.Put(&cf1, "C", "c1"));
+  ASSERT_OK(batch.Put(&cf1, "E", "e1"));
 
   batch.SetSavePoint();  // 1
 
-  batch.Put("C", "cc");
-  batch.Put("B", "bb");
-  batch.Delete("A");
-  batch.Put(&cf1, "B", "b1");
-  batch.Delete(&cf1, "A");
-  batch.SingleDelete(&cf1, "E");
+  ASSERT_OK(batch.Put("C", "cc"));
+  ASSERT_OK(batch.Put("B", "bb"));
+  ASSERT_OK(batch.Delete("A"));
+  ASSERT_OK(batch.Put(&cf1, "B", "b1"));
+  ASSERT_OK(batch.Delete(&cf1, "A"));
+  ASSERT_OK(batch.SingleDelete(&cf1, "E"));
   batch.SetSavePoint();  // 2
 
-  batch.Put("A", "aaa");
-  batch.Put("A", "xxx");
-  batch.Delete("B");
-  batch.Put(&cf1, "B", "b2");
-  batch.Delete(&cf1, "C");
+  ASSERT_OK(batch.Put("A", "aaa"));
+  ASSERT_OK(batch.Put("A", "xxx"));
+  ASSERT_OK(batch.Delete("B"));
+  ASSERT_OK(batch.Put(&cf1, "B", "b2"));
+  ASSERT_OK(batch.Delete(&cf1, "C"));
   batch.SetSavePoint();  // 3
   batch.SetSavePoint();  // 4
-  batch.SingleDelete("D");
-  batch.Delete(&cf1, "D");
-  batch.Delete(&cf1, "E");
+  ASSERT_OK(batch.SingleDelete("D"));
+  ASSERT_OK(batch.Delete(&cf1, "D"));
+  ASSERT_OK(batch.Delete(&cf1, "E"));
 
   ASSERT_EQ(
       "PUT(A):a,PUT(A):aa,DEL(A),PUT(A):aaa,PUT(A):xxx,PUT(B):b,PUT(B):bb,DEL("
@@ -1631,7 +1693,7 @@ TEST_F(WriteBatchWithIndexTest, SavePointTest) {
       PrintContents(&batch, &cf1));
 
   batch.SetSavePoint();  // 5
-  batch.Put("X", "x");
+  ASSERT_OK(batch.Put("X", "x"));
 
   ASSERT_EQ("PUT(A):a,PUT(A):aa,DEL(A),PUT(B):b,PUT(B):bb,PUT(C):cc,PUT(X):x,",
             PrintContents(&batch, nullptr));
@@ -1674,7 +1736,7 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteTest) {
   std::string value;
   DBOptions db_options;
 
-  batch.SingleDelete("A");
+  ASSERT_OK(batch.SingleDelete("A"));
 
   s = batch.GetFromBatch(db_options, "A", &value);
   ASSERT_TRUE(s.IsNotFound());
@@ -1684,10 +1746,10 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteTest) {
   ASSERT_EQ("SINGLE-DEL(A),", value);
 
   batch.Clear();
-  batch.Put("A", "a");
-  batch.Put("A", "a2");
-  batch.Put("B", "b");
-  batch.SingleDelete("A");
+  ASSERT_OK(batch.Put("A", "a"));
+  ASSERT_OK(batch.Put("A", "a2"));
+  ASSERT_OK(batch.Put("B", "b"));
+  ASSERT_OK(batch.SingleDelete("A"));
 
   s = batch.GetFromBatch(db_options, "A", &value);
   ASSERT_TRUE(s.IsNotFound());
@@ -1698,11 +1760,11 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteTest) {
   value = PrintContents(&batch, nullptr);
   ASSERT_EQ("PUT(A):a,PUT(A):a2,SINGLE-DEL(A),PUT(B):b,", value);
 
-  batch.Put("C", "c");
-  batch.Put("A", "a3");
-  batch.Delete("B");
-  batch.SingleDelete("B");
-  batch.SingleDelete("C");
+  ASSERT_OK(batch.Put("C", "c"));
+  ASSERT_OK(batch.Put("A", "a3"));
+  ASSERT_OK(batch.Delete("B"));
+  ASSERT_OK(batch.SingleDelete("B"));
+  ASSERT_OK(batch.SingleDelete("C"));
 
   s = batch.GetFromBatch(db_options, "A", &value);
   ASSERT_OK(s);
@@ -1720,12 +1782,12 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteTest) {
       ",PUT(C):c,SINGLE-DEL(C),",
       value);
 
-  batch.Put("B", "b4");
-  batch.Put("C", "c4");
-  batch.Put("D", "d4");
-  batch.SingleDelete("D");
-  batch.SingleDelete("D");
-  batch.Delete("A");
+  ASSERT_OK(batch.Put("B", "b4"));
+  ASSERT_OK(batch.Put("C", "c4"));
+  ASSERT_OK(batch.Put("D", "d4"));
+  ASSERT_OK(batch.SingleDelete("D"));
+  ASSERT_OK(batch.SingleDelete("D"));
+  ASSERT_OK(batch.Delete("A"));
 
   s = batch.GetFromBatch(db_options, "A", &value);
   ASSERT_TRUE(s.IsNotFound());
@@ -1747,15 +1809,15 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteTest) {
 }
 
 TEST_F(WriteBatchWithIndexTest, SingleDeleteDeltaIterTest) {
-  Status s;
   std::string value;
   DBOptions db_options;
   WriteBatchWithIndex batch(BytewiseComparator(), 20, true /* overwrite_key */);
-  batch.Put("A", "a");
-  batch.Put("A", "a2");
-  batch.Put("B", "b");
-  batch.SingleDelete("A");
-  batch.Delete("B");
+
+  ASSERT_OK(batch.Put("A", "a"));
+  ASSERT_OK(batch.Put("A", "a2"));
+  ASSERT_OK(batch.Put("B", "b"));
+  ASSERT_OK(batch.SingleDelete("A"));
+  ASSERT_OK(batch.Delete("B"));
 
   KVMap map;
   value = PrintContents(&batch, &map, nullptr);
@@ -1765,20 +1827,20 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteDeltaIterTest) {
   map["C"] = "cc";
   map["D"] = "dd";
 
-  batch.SingleDelete("B");
-  batch.SingleDelete("C");
-  batch.SingleDelete("Z");
+  ASSERT_OK(batch.SingleDelete("B"));
+  ASSERT_OK(batch.SingleDelete("C"));
+  ASSERT_OK(batch.SingleDelete("Z"));
 
   value = PrintContents(&batch, &map, nullptr);
   ASSERT_EQ("D:dd,", value);
 
-  batch.Put("A", "a3");
-  batch.Put("B", "b3");
-  batch.SingleDelete("A");
-  batch.SingleDelete("A");
-  batch.SingleDelete("D");
-  batch.SingleDelete("D");
-  batch.Delete("D");
+  ASSERT_OK(batch.Put("A", "a3"));
+  ASSERT_OK(batch.Put("B", "b3"));
+  ASSERT_OK(batch.SingleDelete("A"));
+  ASSERT_OK(batch.SingleDelete("A"));
+  ASSERT_OK(batch.SingleDelete("D"));
+  ASSERT_OK(batch.SingleDelete("D"));
+  ASSERT_OK(batch.Delete("D"));
 
   map["E"] = "ee";
 
@@ -1786,10 +1848,10 @@ TEST_F(WriteBatchWithIndexTest, SingleDeleteDeltaIterTest) {
   ASSERT_EQ("B:b3,E:ee,", value);
 }
 
-}  // namespace
+}  // namespace ROCKSDB_NAMESPACE
 
 int main(int argc, char** argv) {
-  rocksdb::port::InstallStackTraceHandler();
+  ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

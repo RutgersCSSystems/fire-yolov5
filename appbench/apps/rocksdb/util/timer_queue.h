@@ -1,7 +1,7 @@
 //  Portions Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Borrowed from
 // http://www.crazygaze.com/blog/2016/03/24/portable-c-timer-queue/
@@ -21,6 +21,7 @@
 // work, even for commercial purposes, all without asking permission.
 
 #pragma once
+
 #include <assert.h>
 #include <chrono>
 #include <condition_variable>
@@ -29,6 +30,9 @@
 #include <thread>
 #include <utility>
 #include <vector>
+
+#include "port/port.h"
+#include "test_util/sync_point.h"
 
 // Allows execution of handlers at a specified time in the future
 // Guarantees:
@@ -45,7 +49,13 @@ class TimerQueue {
  public:
   TimerQueue() : m_th(&TimerQueue::run, this) {}
 
-  ~TimerQueue() {
+  ~TimerQueue() { shutdown(); }
+
+  // This function is not thread-safe.
+  void shutdown() {
+    if (closed_) {
+      return;
+    }
     cancelAll();
     // Abusing the timer queue to trigger the shutdown.
     add(0, [this](bool) {
@@ -53,6 +63,7 @@ class TimerQueue {
       return std::make_pair(false, 0);
     });
     m_th.join();
+    closed_ = true;
   }
 
   // Adds a new timer
@@ -64,6 +75,7 @@ class TimerQueue {
     WorkItem item;
     Clock::time_point tp = Clock::now();
     item.end = tp + std::chrono::milliseconds(milliseconds);
+    TEST_SYNC_POINT_CALLBACK("TimeQueue::Add:item.end", &item.end);
     item.period = milliseconds;
     item.handler = std::move(handler);
 
@@ -213,5 +225,6 @@ class TimerQueue {
    public:
     std::vector<WorkItem>& getContainer() { return this->c; }
   } m_items;
-  std::thread m_th;
+  ROCKSDB_NAMESPACE::port::Thread m_th;
+  bool closed_ = false;
 };

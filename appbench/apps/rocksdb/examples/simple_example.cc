@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #include <cstdio>
 #include <string>
@@ -10,9 +10,13 @@
 #include "rocksdb/slice.h"
 #include "rocksdb/options.h"
 
-using namespace rocksdb;
+using namespace ROCKSDB_NAMESPACE;
 
+#if defined(OS_WIN)
+std::string kDBPath = "C:\\Windows\\TEMP\\rocksdb_simple_example";
+#else
 std::string kDBPath = "/tmp/rocksdb_simple_example";
+#endif
 
 int main() {
   DB* db;
@@ -49,6 +53,33 @@ int main() {
 
   db->Get(ReadOptions(), "key2", &value);
   assert(value == "value");
+
+  {
+    PinnableSlice pinnable_val;
+    db->Get(ReadOptions(), db->DefaultColumnFamily(), "key2", &pinnable_val);
+    assert(pinnable_val == "value");
+  }
+
+  {
+    std::string string_val;
+    // If it cannot pin the value, it copies the value to its internal buffer.
+    // The intenral buffer could be set during construction.
+    PinnableSlice pinnable_val(&string_val);
+    db->Get(ReadOptions(), db->DefaultColumnFamily(), "key2", &pinnable_val);
+    assert(pinnable_val == "value");
+    // If the value is not pinned, the internal buffer must have the value.
+    assert(pinnable_val.IsPinned() || string_val == "value");
+  }
+
+  PinnableSlice pinnable_val;
+  s = db->Get(ReadOptions(), db->DefaultColumnFamily(), "key1", &pinnable_val);
+  assert(s.IsNotFound());
+  // Reset PinnableSlice after each use and before each reuse
+  pinnable_val.Reset();
+  db->Get(ReadOptions(), db->DefaultColumnFamily(), "key2", &pinnable_val);
+  assert(pinnable_val == "value");
+  pinnable_val.Reset();
+  // The Slice pointed by pinnable_val is not valid after this point
 
   delete db;
 

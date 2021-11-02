@@ -1,28 +1,41 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Random;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.rocksdb.test.RemoveEmptyValueCompactionFilterFactory;
 
 public class ColumnFamilyOptionsTest {
 
   @ClassRule
-  public static final RocksMemoryResource rocksMemoryResource =
-      new RocksMemoryResource();
+  public static final RocksNativeLibraryResource ROCKS_NATIVE_LIBRARY_RESOURCE =
+      new RocksNativeLibraryResource();
 
   public static final Random rand = PlatformRandomHelper.
       getPlatformSpecificRandomFactory();
+
+  @Test
+  public void copyConstructor() {
+    ColumnFamilyOptions origOpts = new ColumnFamilyOptions();
+    origOpts.setNumLevels(rand.nextInt(8));
+    origOpts.setTargetFileSizeMultiplier(rand.nextInt(100));
+    origOpts.setLevel0StopWritesTrigger(rand.nextInt(50));
+    ColumnFamilyOptions copyOpts = new ColumnFamilyOptions(origOpts);
+    assertThat(origOpts.numLevels()).isEqualTo(copyOpts.numLevels());
+    assertThat(origOpts.targetFileSizeMultiplier()).isEqualTo(copyOpts.targetFileSizeMultiplier());
+    assertThat(origOpts.level0StopWritesTrigger()).isEqualTo(copyOpts.level0StopWritesTrigger());
+  }
 
   @Test
   public void getColumnFamilyOptionsFromProps() {
@@ -38,6 +51,27 @@ public class ColumnFamilyOptionsTest {
           isEqualTo(properties.get("write_buffer_size"));
       assertThat(String.valueOf(opt.maxWriteBufferNumber())).
           isEqualTo(properties.get("max_write_buffer_number"));
+    }
+  }
+
+  @Test
+  public void getColumnFamilyOptionsFromPropsWithIgnoreIllegalValue() {
+    // setup sample properties
+    final Properties properties = new Properties();
+    properties.put("tomato", "1024");
+    properties.put("burger", "2");
+    properties.put("write_buffer_size", "112");
+    properties.put("max_write_buffer_number", "13");
+
+    try (final ConfigOptions cfgOpts = new ConfigOptions().setIgnoreUnknownOptions(true);
+         final ColumnFamilyOptions opt =
+             ColumnFamilyOptions.getColumnFamilyOptionsFromProps(cfgOpts, properties)) {
+      // setup sample properties
+      assertThat(opt).isNotNull();
+      assertThat(String.valueOf(opt.writeBufferSize()))
+          .isEqualTo(properties.get("write_buffer_size"));
+      assertThat(String.valueOf(opt.maxWriteBufferNumber()))
+          .isEqualTo(properties.get("max_write_buffer_number"));
     }
   }
 
@@ -452,6 +486,23 @@ public class ColumnFamilyOptionsTest {
   }
 
   @Test
+  public void bottommostCompressionOptions() {
+    try (final ColumnFamilyOptions columnFamilyOptions =
+             new ColumnFamilyOptions();
+         final CompressionOptions bottommostCompressionOptions =
+             new CompressionOptions()
+                 .setMaxDictBytes(123)) {
+
+      columnFamilyOptions.setBottommostCompressionOptions(
+          bottommostCompressionOptions);
+      assertThat(columnFamilyOptions.bottommostCompressionOptions())
+          .isEqualTo(bottommostCompressionOptions);
+      assertThat(columnFamilyOptions.bottommostCompressionOptions()
+          .maxDictBytes()).isEqualTo(123);
+    }
+  }
+
+  @Test
   public void compressionOptions() {
     try (final ColumnFamilyOptions columnFamilyOptions
              = new ColumnFamilyOptions();
@@ -530,6 +581,15 @@ public class ColumnFamilyOptionsTest {
   }
 
   @Test
+  public void ttl() {
+    try (final ColumnFamilyOptions options = new ColumnFamilyOptions()) {
+      options.setTtl(1000 * 60);
+      assertThat(options.ttl()).
+          isEqualTo(1000 * 60);
+    }
+  }
+
+  @Test
   public void compactionOptionsUniversal() {
     try (final ColumnFamilyOptions opt = new ColumnFamilyOptions();
         final CompactionOptionsUniversal optUni = new CompactionOptionsUniversal()
@@ -562,6 +622,67 @@ public class ColumnFamilyOptionsTest {
       opt.setForceConsistencyChecks(booleanValue);
       assertThat(opt.forceConsistencyChecks()).
           isEqualTo(booleanValue);
+    }
+  }
+
+  @Test
+  public void compactionFilter() {
+    try(final ColumnFamilyOptions options = new ColumnFamilyOptions();
+        final RemoveEmptyValueCompactionFilter cf = new RemoveEmptyValueCompactionFilter()) {
+      options.setCompactionFilter(cf);
+      assertThat(options.compactionFilter()).isEqualTo(cf);
+    }
+  }
+
+  @Test
+  public void compactionFilterFactory() {
+    try(final ColumnFamilyOptions options = new ColumnFamilyOptions();
+        final RemoveEmptyValueCompactionFilterFactory cff = new RemoveEmptyValueCompactionFilterFactory()) {
+      options.setCompactionFilterFactory(cff);
+      assertThat(options.compactionFilterFactory()).isEqualTo(cff);
+    }
+  }
+
+  @Test
+  public void compactionThreadLimiter() {
+    try (final ColumnFamilyOptions options = new ColumnFamilyOptions();
+         final ConcurrentTaskLimiter compactionThreadLimiter =
+             new ConcurrentTaskLimiterImpl("name", 3)) {
+      options.setCompactionThreadLimiter(compactionThreadLimiter);
+      assertThat(options.compactionThreadLimiter()).isEqualTo(compactionThreadLimiter);
+    }
+  }
+
+  @Test
+  public void oldDefaults() {
+    try (final ColumnFamilyOptions options = new ColumnFamilyOptions()) {
+      options.oldDefaults(4, 6);
+      assertEquals(4 << 20, options.writeBufferSize());
+      assertThat(options.compactionPriority()).isEqualTo(CompactionPriority.ByCompensatedSize);
+      assertThat(options.targetFileSizeBase()).isEqualTo(2 * 1048576);
+      assertThat(options.maxBytesForLevelBase()).isEqualTo(10 * 1048576);
+      assertThat(options.softPendingCompactionBytesLimit()).isEqualTo(0);
+      assertThat(options.hardPendingCompactionBytesLimit()).isEqualTo(0);
+      assertThat(options.level0StopWritesTrigger()).isEqualTo(24);
+    }
+  }
+
+  @Test
+  public void optimizeForSmallDbWithCache() {
+    try (final ColumnFamilyOptions options = new ColumnFamilyOptions();
+         final Cache cache = new LRUCache(1024)) {
+      assertThat(options.optimizeForSmallDb(cache)).isEqualTo(options);
+    }
+  }
+
+  @Test
+  public void cfPaths() throws IOException {
+    try (final ColumnFamilyOptions options = new ColumnFamilyOptions()) {
+      final List<DbPath> paths = Arrays.asList(
+          new DbPath(Paths.get("test1"), 2 << 25), new DbPath(Paths.get("/test2/path"), 2 << 25));
+      assertThat(options.cfPaths()).isEqualTo(Collections.emptyList());
+      assertThat(options.setCfPaths(paths)).isEqualTo(options);
+      assertThat(options.cfPaths()).isEqualTo(paths);
     }
   }
 }

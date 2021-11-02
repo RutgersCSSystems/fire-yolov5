@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 #pragma once
 
@@ -17,6 +17,7 @@
 #include "rocksdb/env.h"
 #include "rocksdb/persistent_cache.h"
 #include "rocksdb/status.h"
+#include "rocksdb/system_clock.h"
 
 // Persistent Cache
 //
@@ -52,7 +53,7 @@
 //               |
 //               V
 //              null
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 // Persistent Cache Config
 //
@@ -86,6 +87,8 @@ struct PersistentCacheConfig {
       const std::shared_ptr<Logger>& _log,
       const uint32_t _write_buffer_size = 1 * 1024 * 1024 /*1MB*/) {
     env = _env;
+    clock = (env != nullptr) ? env->GetSystemClock().get()
+                             : SystemClock::Default().get();
     path = _path;
     log = _log;
     cache_size = _cache_size;
@@ -124,10 +127,10 @@ struct PersistentCacheConfig {
   }
 
   //
-  // Env abstraction to use for systmer level operations
+  // Env abstraction to use for system level operations
   //
   Env* env;
-
+  SystemClock* clock;
   //
   // Path for the block cache where blocks are persisted
   //
@@ -251,20 +254,22 @@ class PersistentCacheTier : public PersistentCache {
   // Print stats to string recursively
   virtual std::string PrintStats();
 
-  virtual PersistentCache::StatsType Stats();
+  virtual PersistentCache::StatsType Stats() override;
 
   // Insert to page cache
   virtual Status Insert(const Slice& page_key, const char* data,
-                        const size_t size) = 0;
+                        const size_t size) override = 0;
 
   // Lookup page cache by page identifier
   virtual Status Lookup(const Slice& page_key, std::unique_ptr<char[]>* data,
-                        size_t* size) = 0;
+                        size_t* size) override = 0;
 
   // Does it store compressed data ?
-  virtual bool IsCompressed() = 0;
+  virtual bool IsCompressed() override = 0;
 
-  virtual std::string GetPrintableOptions() const = 0;
+  virtual std::string GetPrintableOptions() const override = 0;
+
+  virtual uint64_t NewId() override;
 
   // Return a reference to next tier
   virtual Tier& next_tier() { return next_tier_; }
@@ -283,6 +288,7 @@ class PersistentCacheTier : public PersistentCache {
 
  private:
   Tier next_tier_;  // next tier
+  std::atomic<uint64_t> last_id_{1};
 };
 
 // PersistentTieredCache
@@ -331,6 +337,6 @@ class PersistentTieredCache : public PersistentCacheTier {
   std::list<Tier> tiers_;  // list of tiers top-down
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 #endif

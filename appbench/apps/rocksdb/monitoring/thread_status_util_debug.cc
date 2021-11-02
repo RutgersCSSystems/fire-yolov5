@@ -1,15 +1,15 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #include <atomic>
 
 #include "monitoring/thread_status_updater.h"
 #include "monitoring/thread_status_util.h"
-#include "rocksdb/env.h"
+#include "rocksdb/system_clock.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 #ifndef NDEBUG
 // the delay for debugging purpose.
@@ -23,10 +23,10 @@ void ThreadStatusUtil::TEST_SetStateDelay(
 void ThreadStatusUtil::TEST_StateDelay(const ThreadStatus::StateType state) {
   auto delay = states_delay[state].load(std::memory_order_relaxed);
   if (delay > 0) {
-    Env::Default()->SleepForMicroseconds(delay);
+    SystemClock::Default()->SleepForMicroseconds(delay);
   }
 }
 
 #endif  // !NDEBUG
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

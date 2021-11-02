@@ -13,7 +13,7 @@
 #include "rocksdb/merge_operator.h"
 #include "utilities/merge_operators.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 // Constructor: also specify the delimiter character.
 StringAppendTESTOperator::StringAppendTESTOperator(char delim_char)
@@ -68,16 +68,16 @@ bool StringAppendTESTOperator::FullMergeV2(
 }
 
 bool StringAppendTESTOperator::PartialMergeMulti(
-    const Slice& key, const std::deque<Slice>& operand_list,
-    std::string* new_value, Logger* logger) const {
+    const Slice& /*key*/, const std::deque<Slice>& /*operand_list*/,
+    std::string* /*new_value*/, Logger* /*logger*/) const {
   return false;
 }
 
 // A version of PartialMerge that actually performs "partial merging".
 // Use this to simulate the exact behaviour of the StringAppendOperator.
 bool StringAppendTESTOperator::_AssocPartialMergeMulti(
-    const Slice& key, const std::deque<Slice>& operand_list,
-    std::string* new_value, Logger* logger) const {
+    const Slice& /*key*/, const std::deque<Slice>& operand_list,
+    std::string* new_value, Logger* /*logger*/) const {
   // Clear the *new_value for writing
   assert(new_value);
   new_value->clear();
@@ -114,4 +114,4 @@ MergeOperators::CreateStringAppendTESTOperator() {
   return std::make_shared<StringAppendTESTOperator>(',');
 }
 
-} // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

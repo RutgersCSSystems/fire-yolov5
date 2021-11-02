@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,13 +9,13 @@
 
 #include "memtable/skiplist.h"
 #include <set>
+#include "memory/arena.h"
 #include "rocksdb/env.h"
-#include "util/arena.h"
+#include "test_util/testharness.h"
 #include "util/hash.h"
 #include "util/random.h"
-#include "util/testharness.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 typedef uint64_t Key;
 
@@ -363,6 +363,7 @@ static void RunConcurrent(int run) {
       fprintf(stderr, "Run %d of %d\n", i, N);
     }
     TestState state(seed + 1);
+    Env::Default()->SetBackgroundThreads(1);
     Env::Default()->Schedule(ConcurrentReader, &state);
     state.Wait(TestState::RUNNING);
     for (int k = 0; k < kSize; k++) {
@@ -379,7 +380,7 @@ TEST_F(SkipTest, Concurrent3) { RunConcurrent(3); }
 TEST_F(SkipTest, Concurrent4) { RunConcurrent(4); }
 TEST_F(SkipTest, Concurrent5) { RunConcurrent(5); }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

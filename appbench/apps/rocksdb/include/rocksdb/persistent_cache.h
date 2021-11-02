@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -16,7 +16,7 @@
 #include "rocksdb/statistics.h"
 #include "rocksdb/status.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 // PersistentCache
 //
@@ -56,6 +56,12 @@ class PersistentCache {
   virtual StatsType Stats() = 0;
 
   virtual std::string GetPrintableOptions() const = 0;
+
+  // Return a new numeric id.  May be used by multiple clients who are
+  // sharding the same persistent cache to partition the key space.  Typically
+  // the client will allocate a new id at startup and prepend the id to its
+  // cache keys.
+  virtual uint64_t NewId() = 0;
 };
 
 // Factor method to create a new persistent cache
@@ -64,4 +70,4 @@ Status NewPersistentCache(Env* const env, const std::string& path,
                           const std::shared_ptr<Logger>& log,
                           const bool optimized_for_nvm,
                           std::shared_ptr<PersistentCache>* cache);
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

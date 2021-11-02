@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
@@ -25,19 +25,8 @@ public class RocksEnv extends Env {
    */
   RocksEnv(final long handle) {
     super(handle);
-    disOwnNativeHandle();
   }
 
-  /**
-   * <p>The helper function of {@link #dispose()} which all subclasses of
-   * {@link RocksObject} must implement to release their associated C++
-   * resource.</p>
-   *
-   * <p><strong>Note:</strong> this class is used to use the default
-   * RocksEnv with RocksJava. The default env allocation is managed
-   * by C++.</p>
-   */
   @Override
-  protected final void disposeInternal(final long handle) {
-  }
+  protected native final void disposeInternal(final long handle);
 }

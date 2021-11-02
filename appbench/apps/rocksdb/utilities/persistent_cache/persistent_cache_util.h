@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 #pragma once
 
 #include <limits>
@@ -9,7 +9,7 @@
 
 #include "util/mutexlock.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 //
 // Simple synchronized queue implementation with the option of
@@ -48,7 +48,7 @@ class BoundedQueue {
     T t = std::move(q_.front());
     size_ -= t.Size();
     q_.pop_front();
-    return std::move(t);
+    return t;
   }
 
   size_t Size() const {
@@ -64,4 +64,4 @@ class BoundedQueue {
   const size_t max_size_;
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

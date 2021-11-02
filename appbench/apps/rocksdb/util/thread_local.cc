@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -12,7 +12,7 @@
 #include "port/likely.h"
 #include <stdlib.h>
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 struct Entry {
   Entry() : ptr(nullptr) {}
@@ -29,7 +29,7 @@ class StaticMeta;
 // global StaticMeta singleton. So if we instantiated 3 ThreadLocalPtr
 // instances, each thread will have a ThreadData with a vector of size 3:
 //     ---------------------------------------------------
-//     |          | instance 1 | instance 2 | instnace 3 |
+//     |          | instance 1 | instance 2 | instance 3 |
 //     ---------------------------------------------------
 //     | thread 1 |    void*   |    void*   |    void*   | <- ThreadData
 //     ---------------------------------------------------
@@ -38,7 +38,11 @@ class StaticMeta;
 //     | thread 3 |    void*   |    void*   |    void*   | <- ThreadData
 //     ---------------------------------------------------
 struct ThreadData {
-  explicit ThreadData(ThreadLocalPtr::StaticMeta* _inst) : entries(), inst(_inst) {}
+  explicit ThreadData(ThreadLocalPtr::StaticMeta* _inst)
+    : entries(),
+      next(nullptr),
+      prev(nullptr),
+      inst(_inst) {}
   std::vector<Entry> entries;
   ThreadData* next;
   ThreadData* prev;
@@ -174,14 +178,15 @@ namespace wintlscleanup {
 
 // This is set to OnThreadExit in StaticMeta singleton constructor
 UnrefHandler thread_local_inclass_routine = nullptr;
-pthread_key_t thread_local_key = -1;
+pthread_key_t thread_local_key = pthread_key_t (-1);
 
 // Static callback function to call with each thread termination.
 void NTAPI WinOnThreadExit(PVOID module, DWORD reason, PVOID reserved) {
   // We decided to punt on PROCESS_EXIT
   if (DLL_THREAD_DETACH == reason) {
-    if (thread_local_key != pthread_key_t(-1) && thread_local_inclass_routine != nullptr) {
-      void* tls = pthread_getspecific(thread_local_key);
+    if (thread_local_key != pthread_key_t(-1) &&
+        thread_local_inclass_routine != nullptr) {
+      void* tls = TlsGetValue(thread_local_key);
       if (tls != nullptr) {
         thread_local_inclass_routine(tls);
       }
@@ -199,7 +204,7 @@ extern "C" {
 // The linker must not discard thread_callback_on_exit.  (We force a reference
 // to this variable with a linker /include:symbol pragma to ensure that.) If
 // this variable is discarded, the OnThreadExit function will never be called.
-#ifdef _WIN64
+#ifndef _X86_
 
 // .CRT section is merged with .rdata on x64 so it must be constant data.
 #pragma const_seg(".CRT$XLB")
@@ -214,7 +219,7 @@ const PIMAGE_TLS_CALLBACK p_thread_callback_on_exit =
 #pragma comment(linker, "/include:_tls_used")
 #pragma comment(linker, "/include:p_thread_callback_on_exit")
 
-#else  // _WIN64
+#else  // _X86_
 
 #pragma data_seg(".CRT$XLB")
 PIMAGE_TLS_CALLBACK p_thread_callback_on_exit = wintlscleanup::WinOnThreadExit;
@@ -224,7 +229,7 @@ PIMAGE_TLS_CALLBACK p_thread_callback_on_exit = wintlscleanup::WinOnThreadExit;
 #pragma comment(linker, "/INCLUDE:__tls_used")
 #pragma comment(linker, "/INCLUDE:_p_thread_callback_on_exit")
 
-#endif  // _WIN64
+#endif  // _X86_
 
 #else
 // https://github.com/couchbase/gperftools/blob/master/src/windows/port.cc
@@ -300,7 +305,10 @@ void ThreadLocalPtr::StaticMeta::OnThreadExit(void* ptr) {
   delete tls;
 }
 
-ThreadLocalPtr::StaticMeta::StaticMeta() : next_instance_id_(0), head_(this) {
+ThreadLocalPtr::StaticMeta::StaticMeta()
+  : next_instance_id_(0),
+    head_(this),
+    pthread_key_(0) {
   if (pthread_key_create(&pthread_key_, &OnThreadExit) != 0) {
     abort();
   }
@@ -543,4 +551,4 @@ void ThreadLocalPtr::Fold(FoldFunc func, void* res) {
   Instance()->Fold(id_, func, res);
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

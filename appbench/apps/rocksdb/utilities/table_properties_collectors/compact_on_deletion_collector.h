@@ -1,51 +1,18 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #pragma once
 
 #ifndef ROCKSDB_LITE
 #include "rocksdb/utilities/table_properties_collectors.h"
-namespace rocksdb {
-
-// A factory of a table property collector that marks a SST
-// file as need-compaction when it observe at least "D" deletion
-// entries in any "N" consecutive entires.
-class CompactOnDeletionCollectorFactory
-    : public TablePropertiesCollectorFactory {
- public:
-  // A factory of a table property collector that marks a SST
-  // file as need-compaction when it observe at least "D" deletion
-  // entries in any "N" consecutive entires.
-  //
-  // @param sliding_window_size "N"
-  // @param deletion_trigger "D"
-  CompactOnDeletionCollectorFactory(
-      size_t sliding_window_size,
-      size_t deletion_trigger) :
-          sliding_window_size_(sliding_window_size),
-          deletion_trigger_(deletion_trigger) {}
-
-  virtual ~CompactOnDeletionCollectorFactory() {}
-
-  virtual TablePropertiesCollector* CreateTablePropertiesCollector(
-      TablePropertiesCollectorFactory::Context context) override;
-
-  virtual const char* Name() const override {
-    return "CompactOnDeletionCollector";
-  }
-
- private:
-  size_t sliding_window_size_;
-  size_t deletion_trigger_;
-};
+namespace ROCKSDB_NAMESPACE {
 
 class CompactOnDeletionCollector : public TablePropertiesCollector {
  public:
-  CompactOnDeletionCollector(
-      size_t sliding_window_size,
-      size_t deletion_trigger);
+  CompactOnDeletionCollector(size_t sliding_window_size,
+                             size_t deletion_trigger, double deletion_raatio);
 
   // AddUserKey() will be called when a new key/value pair is inserted into the
   // table.
@@ -60,10 +27,7 @@ class CompactOnDeletionCollector : public TablePropertiesCollector {
   // for writing the properties block.
   // @params properties  User will add their collected statistics to
   // `properties`.
-  virtual Status Finish(UserCollectedProperties* properties) override {
-    Reset();
-    return Status::OK();
-  }
+  virtual Status Finish(UserCollectedProperties* /*properties*/) override;
 
   // Return the human-readable properties, where the key is property name and
   // the value is the human-readable form of value.
@@ -96,8 +60,13 @@ class CompactOnDeletionCollector : public TablePropertiesCollector {
   size_t num_keys_in_current_bucket_;
   size_t num_deletions_in_observation_window_;
   size_t deletion_trigger_;
+  const double deletion_ratio_;
+  const bool deletion_ratio_enabled_;
+  size_t total_entries_ = 0;
+  size_t deletion_entries_ = 0;
   // true if the current SST file needs to be compacted.
   bool need_compaction_;
+  bool finished_;
 };
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 #endif  // !ROCKSDB_LITE

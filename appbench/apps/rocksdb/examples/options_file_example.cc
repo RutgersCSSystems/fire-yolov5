@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // This file demonstrates how to use the utility functions defined in
 // rocksdb/utilities/options_util.h to open a rocksdb database without
@@ -18,9 +18,13 @@
 #include "rocksdb/table.h"
 #include "rocksdb/utilities/options_util.h"
 
-using namespace rocksdb;
+using namespace ROCKSDB_NAMESPACE;
 
+#if defined(OS_WIN)
+std::string kDBPath = "C:\\Windows\\TEMP\\rocksdb_options_file_example";
+#else
 std::string kDBPath = "/tmp/rocksdb_options_file_example";
+#endif
 
 namespace {
 // A dummy compaction filter
@@ -79,15 +83,17 @@ int main() {
   // Load the options file.
   DBOptions loaded_db_opt;
   std::vector<ColumnFamilyDescriptor> loaded_cf_descs;
-  s = LoadLatestOptions(kDBPath, Env::Default(), &loaded_db_opt,
+  ConfigOptions config_options;
+  s = LoadLatestOptions(config_options, kDBPath, &loaded_db_opt,
                         &loaded_cf_descs);
   assert(s.ok());
   assert(loaded_db_opt.create_if_missing == db_opt.create_if_missing);
 
   // Initialize pointer options for each column family
   for (size_t i = 0; i < loaded_cf_descs.size(); ++i) {
-    auto* loaded_bbt_opt = reinterpret_cast<BlockBasedTableOptions*>(
-        loaded_cf_descs[0].options.table_factory->GetOptions());
+    auto* loaded_bbt_opt =
+        loaded_cf_descs[0]
+            .options.table_factory->GetOptions<BlockBasedTableOptions>();
     // Expect the same as BlockBasedTableOptions will be loaded form file.
     assert(loaded_bbt_opt->block_size == bbt_opts.block_size);
     // However, block_cache needs to be manually initialized as documented

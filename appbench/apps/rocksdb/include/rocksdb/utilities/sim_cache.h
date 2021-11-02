@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #pragma once
 
@@ -9,11 +9,12 @@
 #include <memory>
 #include <string>
 #include "rocksdb/cache.h"
+#include "rocksdb/env.h"
 #include "rocksdb/slice.h"
 #include "rocksdb/statistics.h"
 #include "rocksdb/status.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class SimCache;
 
@@ -24,7 +25,7 @@ class SimCache;
 // can help users tune their current block cache size, and determine how
 // efficient they are using the memory.
 //
-// Since GetSimCapacity() returns the capacity for simulutation, it differs from
+// Since GetSimCapacity() returns the capacity for simulation, it differs from
 // actual memory usage, which can be estimated as:
 // sim_capacity * entry_size / (entry_size + block_size),
 // where 76 <= entry_size <= 104,
@@ -35,13 +36,17 @@ extern std::shared_ptr<SimCache> NewSimCache(std::shared_ptr<Cache> cache,
                                              size_t sim_capacity,
                                              int num_shard_bits);
 
+extern std::shared_ptr<SimCache> NewSimCache(std::shared_ptr<Cache> sim_cache,
+                                             std::shared_ptr<Cache> cache,
+                                             int num_shard_bits);
+
 class SimCache : public Cache {
  public:
   SimCache() {}
 
-  virtual ~SimCache() {}
+  ~SimCache() override {}
 
-  virtual const char* Name() const override { return "SimCache"; }
+  const char* Name() const override { return "SimCache"; }
 
   // returns the maximum configured capacity of the simcache for simulation
   virtual size_t GetSimCapacity() const = 0;
@@ -55,7 +60,7 @@ class SimCache : public Cache {
   // sets the maximum configured capacity of the simcache. When the new
   // capacity is less than the old capacity and the existing usage is
   // greater than new capacity, the implementation will purge old entries
-  // to fit new capapicty.
+  // to fit new capacity.
   virtual void SetSimCapacity(size_t capacity) = 0;
 
   // returns the lookup times of simcache
@@ -67,9 +72,23 @@ class SimCache : public Cache {
   // String representation of the statistics of the simcache
   virtual std::string ToString() const = 0;
 
+  // Start storing logs of the cache activity (Add/Lookup) into
+  // a file located at activity_log_file, max_logging_size option can be used to
+  // stop logging to the file automatically after reaching a specific size in
+  // bytes, a values of 0 disable this feature
+  virtual Status StartActivityLogging(const std::string& activity_log_file,
+                                      Env* env,
+                                      uint64_t max_logging_size = 0) = 0;
+
+  // Stop cache activity logging if any
+  virtual void StopActivityLogging() = 0;
+
+  // Status of cache logging happening in background
+  virtual Status GetActivityLoggingStatus() = 0;
+
  private:
   SimCache(const SimCache&);
   SimCache& operator=(const SimCache&);
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

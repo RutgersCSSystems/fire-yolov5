@@ -1,22 +1,22 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include <string>
 #include "db/file_indexer.h"
+#include <string>
 #include "db/dbformat.h"
 #include "db/version_edit.h"
 #include "port/stack_trace.h"
 #include "rocksdb/comparator.h"
-#include "util/testharness.h"
-#include "util/testutil.h"
+#include "test_util/testharness.h"
+#include "test_util/testutil.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class IntComparator : public Comparator {
  public:
@@ -36,10 +36,10 @@ class IntComparator : public Comparator {
 
   const char* Name() const override { return "IntComparator"; }
 
-  void FindShortestSeparator(std::string* start,
-                             const Slice& limit) const override {}
+  void FindShortestSeparator(std::string* /*start*/,
+                             const Slice& /*limit*/) const override {}
 
-  void FindShortSuccessor(std::string* key) const override {}
+  void FindShortSuccessor(std::string* /*key*/) const override {}
 };
 
 class FileIndexerTest : public testing::Test {
@@ -47,7 +47,7 @@ class FileIndexerTest : public testing::Test {
   FileIndexerTest()
       : kNumLevels(4), files(new std::vector<FileMetaData*>[kNumLevels]) {}
 
-  ~FileIndexerTest() {
+  ~FileIndexerTest() override {
     ClearFiles();
     delete[] files;
   }
@@ -341,10 +341,10 @@ TEST_F(FileIndexerTest, mixed) {
   ClearFiles();
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 int main(int argc, char** argv) {
-  rocksdb::port::InstallStackTraceHandler();
+  ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

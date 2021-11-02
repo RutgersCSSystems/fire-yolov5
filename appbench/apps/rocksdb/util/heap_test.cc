@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #include <gtest/gtest.h>
 
@@ -16,7 +16,7 @@
 #ifndef GFLAGS
 const int64_t FLAGS_iters = 100000;
 #else
-#include <gflags/gflags.h>
+#include "util/gflags_compat.h"
 DEFINE_int64(iters, 100000, "number of pseudo-random operations in each test");
 #endif  // GFLAGS
 
@@ -25,7 +25,7 @@ DEFINE_int64(iters, 100000, "number of pseudo-random operations in each test");
  * std::priority_queue on a pseudo-random sequence of operations.
  */
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 using HeapTestValue = uint64_t;
 using Params = std::tuple<size_t, HeapTestValue, int64_t>;
@@ -128,12 +128,12 @@ INSTANTIATE_TEST_CASE_P(
   ::testing::Values(Params(1, 3, 0x176a1019ab0b612e))
 );
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
 #ifdef GFLAGS
-  GFLAGS::ParseCommandLineFlags(&argc, &argv, true);
+  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
 #endif  // GFLAGS
   return RUN_ALL_TESTS();
 }

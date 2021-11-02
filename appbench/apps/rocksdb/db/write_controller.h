@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #pragma once
 
@@ -9,10 +9,11 @@
 
 #include <atomic>
 #include <memory>
+#include "rocksdb/rate_limiter.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
-class Env;
+class SystemClock;
 class WriteControllerToken;
 
 // WriteController is controlling write stalls in our write code-path. Write
@@ -21,12 +22,15 @@ class WriteControllerToken;
 // to be called while holding DB mutex
 class WriteController {
  public:
-  explicit WriteController(uint64_t _delayed_write_rate = 1024u * 1024u * 32u)
+  explicit WriteController(uint64_t _delayed_write_rate = 1024u * 1024u * 32u,
+                           int64_t low_pri_rate_bytes_per_sec = 1024 * 1024)
       : total_stopped_(0),
         total_delayed_(0),
         total_compaction_pressure_(0),
-        bytes_left_(0),
-        last_refill_time_(0) {
+        credit_in_bytes_(0),
+        next_refill_time_(0),
+        low_pri_rate_limiter_(
+            NewGenericRateLimiter(low_pri_rate_bytes_per_sec)) {
     set_max_delayed_write_rate(_delayed_write_rate);
   }
   ~WriteController() = default;
@@ -53,7 +57,7 @@ class WriteController {
   // return how many microseconds the caller needs to sleep after the call
   // num_bytes: how many number of bytes to put into the DB.
   // Prerequisite: DB mutex held.
-  uint64_t GetDelay(Env* env, uint64_t num_bytes);
+  uint64_t GetDelay(SystemClock* clock, uint64_t num_bytes);
   void set_delayed_write_rate(uint64_t write_rate) {
     // avoid divide 0
     if (write_rate == 0) {
@@ -78,23 +82,30 @@ class WriteController {
 
   uint64_t max_delayed_write_rate() const { return max_delayed_write_rate_; }
 
+  RateLimiter* low_pri_rate_limiter() { return low_pri_rate_limiter_.get(); }
+
  private:
-  uint64_t NowMicrosMonotonic(Env* env);
+  uint64_t NowMicrosMonotonic(SystemClock* clock);
 
   friend class WriteControllerToken;
   friend class StopWriteToken;
   friend class DelayWriteToken;
   friend class CompactionPressureToken;
 
-  int total_stopped_;
+  std::atomic<int> total_stopped_;
   std::atomic<int> total_delayed_;
-  int total_compaction_pressure_;
-  uint64_t bytes_left_;
-  uint64_t last_refill_time_;
-  // write rate set when initialization or by `DBImpl::SetDBOptions`
+  std::atomic<int> total_compaction_pressure_;
+
+  // Number of bytes allowed to write without delay
+  uint64_t credit_in_bytes_;
+  // Next time that we can add more credit of bytes
+  uint64_t next_refill_time_;
+  // Write rate set when initialization or by `DBImpl::SetDBOptions`
   uint64_t max_delayed_write_rate_;
-  // current write rate
+  // Current write rate (bytes / second)
   uint64_t delayed_write_rate_;
+
+  std::unique_ptr<RateLimiter> low_pri_rate_limiter_;
 };
 
 class WriteControllerToken {
@@ -133,4 +144,4 @@ class CompactionPressureToken : public WriteControllerToken {
   virtual ~CompactionPressureToken();
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

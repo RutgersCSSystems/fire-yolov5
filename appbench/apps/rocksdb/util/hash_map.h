@@ -1,7 +1,7 @@
-//  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.  This
-//  source code is licensed under the BSD-style license found in the LICENSE
-//  file in the root directory of this source tree. An additional grant of
-//  patent rights can be found in the PATENTS file in the same directory.
+//  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 
 #pragma once
@@ -12,7 +12,7 @@
 
 #include "util/autovector.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 // This is similar to std::unordered_map, except that it tries to avoid
 // allocating or deallocating memory as much as possible. With
@@ -36,7 +36,7 @@ class HashMap {
     return it != bucket.end();
   }
 
-  void Insert(K key, V value) {
+  void Insert(K key, const V& value) {
     auto& bucket = table_[key % size];
     bucket.push_back({key, value});
   }
@@ -64,4 +64,4 @@ class HashMap {
   }
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

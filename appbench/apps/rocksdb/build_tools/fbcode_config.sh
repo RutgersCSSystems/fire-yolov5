@@ -1,4 +1,5 @@
 #!/bin/sh
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 #
 # Set environment variables so that we can compile rocksdb using
 # fbcode settings.  It uses the latest g++ and clang compilers and also
@@ -43,11 +44,15 @@ if test -z $PIC_BUILD; then
   LZ4_INCLUDE=" -I $LZ4_BASE/include/"
   LZ4_LIBS=" $LZ4_BASE/lib/liblz4.a"
   CFLAGS+=" -DLZ4"
-
-  ZSTD_INCLUDE=" -I $ZSTD_BASE/include/"
-  ZSTD_LIBS=" $ZSTD_BASE/lib/libzstd.a"
-  CFLAGS+=" -DZSTD"
 fi
+
+ZSTD_INCLUDE=" -I $ZSTD_BASE/include/"
+if test -z $PIC_BUILD; then
+  ZSTD_LIBS=" $ZSTD_BASE/lib/libzstd.a"
+else
+  ZSTD_LIBS=" $ZSTD_BASE/lib/libzstd_pic.a"
+fi
+CFLAGS+=" -DZSTD -DZSTD_STATIC_LINKING_ONLY"
 
 # location of gflags headers and libraries
 GFLAGS_INCLUDE=" -I $GFLAGS_BASE/include/"
@@ -56,7 +61,7 @@ if test -z $PIC_BUILD; then
 else
   GFLAGS_LIBS=" $GFLAGS_BASE/lib/libgflags_pic.a"
 fi
-CFLAGS+=" -DGFLAGS=google"
+CFLAGS+=" -DGFLAGS=gflags"
 
 # location of jemalloc
 JEMALLOC_INCLUDE=" -I $JEMALLOC_BASE/include/"
@@ -81,8 +86,10 @@ else
 fi
 CFLAGS+=" -DTBB"
 
-# use Intel SSE support for checksum calculations
-export USE_SSE=1
+test "$USE_SSE" || USE_SSE=1
+export USE_SSE
+test "$PORTABLE" || PORTABLE=1
+export PORTABLE
 
 BINUTILS="$BINUTILS_BASE/bin"
 AR="$BINUTILS/ar"
@@ -102,6 +109,7 @@ if [ -z "$USE_CLANG" ]; then
   # gcc
   CC="$GCC_BASE/bin/gcc"
   CXX="$GCC_BASE/bin/g++"
+  AR="$GCC_BASE/bin/gcc-ar"
 
   CFLAGS+=" -B$BINUTILS/gold"
   CFLAGS+=" -isystem $GLIBC_INCLUDE"
@@ -112,12 +120,13 @@ else
   CLANG_INCLUDE="$CLANG_LIB/clang/stable/include"
   CC="$CLANG_BIN/clang"
   CXX="$CLANG_BIN/clang++"
+  AR="$CLANG_BIN/llvm-ar"
 
   KERNEL_HEADERS_INCLUDE="$KERNEL_HEADERS_BASE/include"
 
   CFLAGS+=" -B$BINUTILS/gold -nostdinc -nostdlib"
-  CFLAGS+=" -isystem $LIBGCC_BASE/include/c++/4.9.x "
-  CFLAGS+=" -isystem $LIBGCC_BASE/include/c++/4.9.x/x86_64-facebook-linux "
+  CFLAGS+=" -isystem $LIBGCC_BASE/include/c++/5.x "
+  CFLAGS+=" -isystem $LIBGCC_BASE/include/c++/5.x/x86_64-facebook-linux "
   CFLAGS+=" -isystem $GLIBC_INCLUDE"
   CFLAGS+=" -isystem $LIBGCC_INCLUDE"
   CFLAGS+=" -isystem $CLANG_INCLUDE"
@@ -128,13 +137,14 @@ else
 fi
 
 CFLAGS+=" $DEPS_INCLUDE"
-CFLAGS+=" -DROCKSDB_PLATFORM_POSIX -DROCKSDB_LIB_IO_POSIX -DROCKSDB_FALLOCATE_PRESENT -DROCKSDB_MALLOC_USABLE_SIZE"
+CFLAGS+=" -DROCKSDB_PLATFORM_POSIX -DROCKSDB_LIB_IO_POSIX -DROCKSDB_FALLOCATE_PRESENT -DROCKSDB_MALLOC_USABLE_SIZE -DROCKSDB_RANGESYNC_PRESENT -DROCKSDB_SCHED_GETCPU_PRESENT -DROCKSDB_SUPPORT_THREAD_LOCAL -DHAVE_SSE42"
 CXXFLAGS+=" $CFLAGS"
 
 EXEC_LDFLAGS=" $SNAPPY_LIBS $ZLIB_LIBS $BZIP_LIBS $LZ4_LIBS $ZSTD_LIBS $GFLAGS_LIBS $NUMA_LIB $TBB_LIBS"
-EXEC_LDFLAGS+=" -Wl,--dynamic-linker,/usr/local/fbcode/gcc-4.9-glibc-2.20/lib/ld.so"
+EXEC_LDFLAGS+=" -B$BINUTILS/gold"
+EXEC_LDFLAGS+=" -Wl,--dynamic-linker,/usr/local/fbcode/gcc-5-glibc-2.23/lib/ld.so"
 EXEC_LDFLAGS+=" $LIBUNWIND"
-EXEC_LDFLAGS+=" -Wl,-rpath=/usr/local/fbcode/gcc-4.9-glibc-2.20/lib"
+EXEC_LDFLAGS+=" -Wl,-rpath=/usr/local/fbcode/gcc-5-glibc-2.23/lib"
 # required by libtbb
 EXEC_LDFLAGS+=" -ldl"
 
@@ -151,5 +161,7 @@ if test -z $PIC_BUILD; then
 else
   LUA_LIB=" $LUA_PATH/lib/liblua_pic.a"
 fi
+
+USE_FOLLY_DISTRIBUTED_MUTEX=1
 
 export CC CXX AR CFLAGS CXXFLAGS EXEC_LDFLAGS EXEC_LDFLAGS_SHARED VALGRIND_VER JEMALLOC_LIB JEMALLOC_INCLUDE CLANG_ANALYZER CLANG_SCAN_BUILD LUA_PATH LUA_LIB

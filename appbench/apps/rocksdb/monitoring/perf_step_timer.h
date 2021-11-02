@@ -1,37 +1,44 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 #pragma once
 #include "monitoring/perf_level_imp.h"
-#include "rocksdb/env.h"
-#include "util/stop_watch.h"
+#include "monitoring/statistics.h"
+#include "rocksdb/system_clock.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class PerfStepTimer {
  public:
-  explicit PerfStepTimer(uint64_t* metric, bool for_mutex = false)
-      : enabled_(perf_level >= PerfLevel::kEnableTime ||
-                 (!for_mutex && perf_level >= kEnableTimeExceptForMutex)),
-        env_(enabled_ ? Env::Default() : nullptr),
+  explicit PerfStepTimer(
+      uint64_t* metric, SystemClock* clock = nullptr, bool use_cpu_time = false,
+      PerfLevel enable_level = PerfLevel::kEnableTimeExceptForMutex,
+      Statistics* statistics = nullptr, uint32_t ticker_type = 0)
+      : perf_counter_enabled_(perf_level >= enable_level),
+        use_cpu_time_(use_cpu_time),
+        ticker_type_(ticker_type),
+        clock_((perf_counter_enabled_ || statistics != nullptr)
+                   ? (clock ? clock : SystemClock::Default().get())
+                   : nullptr),
         start_(0),
-        metric_(metric) {}
+        metric_(metric),
+        statistics_(statistics) {}
 
   ~PerfStepTimer() {
     Stop();
   }
 
   void Start() {
-    if (enabled_) {
-      start_ = env_->NowNanos();
+    if (perf_counter_enabled_ || statistics_ != nullptr) {
+      start_ = time_now();
     }
   }
 
   void Measure() {
     if (start_) {
-      uint64_t now = env_->NowNanos();
+      uint64_t now = time_now();
       *metric_ += now - start_;
       start_ = now;
     }
@@ -39,16 +46,34 @@ class PerfStepTimer {
 
   void Stop() {
     if (start_) {
-      *metric_ += env_->NowNanos() - start_;
+      uint64_t duration = time_now() - start_;
+      if (perf_counter_enabled_) {
+        *metric_ += duration;
+      }
+
+      if (statistics_ != nullptr) {
+        RecordTick(statistics_, ticker_type_, duration);
+      }
       start_ = 0;
     }
   }
 
  private:
-  const bool enabled_;
-  Env* const env_;
+  uint64_t time_now() {
+    if (!use_cpu_time_) {
+      return clock_->NowNanos();
+    } else {
+      return clock_->CPUNanos();
+    }
+  }
+
+  const bool perf_counter_enabled_;
+  const bool use_cpu_time_;
+  uint32_t ticker_type_;
+  SystemClock* const clock_;
   uint64_t start_;
   uint64_t* metric_;
+  Statistics* statistics_;
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

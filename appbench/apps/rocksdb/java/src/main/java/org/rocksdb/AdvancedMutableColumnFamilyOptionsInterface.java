@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
@@ -11,9 +11,8 @@ package org.rocksdb;
  * Taken from include/rocksdb/advanced_options.h
  * and MutableCFOptions in util/cf_options.h
  */
-public interface AdvancedMutableColumnFamilyOptionsInterface
-    <T extends AdvancedMutableColumnFamilyOptionsInterface> {
-
+public interface AdvancedMutableColumnFamilyOptionsInterface<
+    T extends AdvancedMutableColumnFamilyOptionsInterface<T>> {
   /**
    * The maximum number of write buffers that are built up in memory.
    * The default is 2, so that when 1 write buffer is being flushed to
@@ -111,7 +110,7 @@ public interface AdvancedMutableColumnFamilyOptionsInterface
    * If &le; 0, a proper value is automatically calculated (usually 1/10 of
    * writer_buffer_size).
    *
-   * There are two additional restriction of the The specified size:
+   * There are two additional restriction of the specified size:
    * (1) size should be in the range of [4096, 2 &lt;&lt; 30] and
    * (2) be the multiple of the CPU word (which helps with the memory
    * alignment).
@@ -132,7 +131,7 @@ public interface AdvancedMutableColumnFamilyOptionsInterface
    * If &le; 0, a proper value is automatically calculated (usually 1/10 of
    * writer_buffer_size).
    *
-   * There are two additional restriction of the The specified size:
+   * There are two additional restriction of the specified size:
    * (1) size should be in the range of [4096, 2 &lt;&lt; 30] and
    * (2) be the multiple of the CPU word (which helps with the memory
    * alignment).
@@ -192,7 +191,7 @@ public interface AdvancedMutableColumnFamilyOptionsInterface
    * target_file_size_multiplier is 10, then each file on level-1 will
    * be 2MB, and each file on level 2 will be 20MB,
    * and each file on level-3 will be 200MB.
-   * by default targetFileSizeBase is 2MB.
+   * by default targetFileSizeBase is 64MB.
    *
    * @param targetFileSizeBase the target size of a level-0 file.
    * @return the reference to the current options.
@@ -211,7 +210,7 @@ public interface AdvancedMutableColumnFamilyOptionsInterface
    * target_file_size_multiplier is 10, then each file on level-1 will
    * be 2MB, and each file on level 2 will be 20MB,
    * and each file on level-3 will be 200MB.
-   * by default targetFileSizeBase is 2MB.
+   * by default targetFileSizeBase is 64MB.
    *
    * @return the target size of a level-0 file.
    *
@@ -434,4 +433,32 @@ public interface AdvancedMutableColumnFamilyOptionsInterface
    * @return true if reporting is enabled
    */
   boolean reportBgIoStats();
+
+  /**
+   * Non-bottom-level files older than TTL will go through the compaction
+   * process. This needs {@link MutableDBOptionsInterface#maxOpenFiles()} to be
+   * set to -1.
+   *
+   * Enabled only for level compaction for now.
+   *
+   * Default: 0 (disabled)
+   *
+   * Dynamically changeable through
+   * {@link RocksDB#setOptions(ColumnFamilyHandle, MutableColumnFamilyOptions)}.
+   *
+   * @param ttl the time-to-live.
+   *
+   * @return the reference to the current options.
+   */
+  T setTtl(final long ttl);
+
+  /**
+   * Get the TTL for Non-bottom-level files that will go through the compaction
+   * process.
+   *
+   * See {@link #setTtl(long)}.
+   *
+   * @return the time-to-live.
+   */
+  long ttl();
 }

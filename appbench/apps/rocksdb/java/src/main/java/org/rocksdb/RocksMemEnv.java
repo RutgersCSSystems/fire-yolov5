@@ -1,27 +1,39 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
 /**
- * RocksDB memory environment.
+ * Memory environment.
  */
+//TODO(AR) rename to MemEnv
 public class RocksMemEnv extends Env {
 
   /**
-   * <p>Creates a new RocksDB environment that stores its data
+   * <p>Creates a new environment that stores its data
    * in memory and delegates all non-file-storage tasks to
-   * base_env. The caller must delete the result when it is
+   * {@code baseEnv}.</p>
+   *
+   * <p>The caller must delete the result when it is
    * no longer needed.</p>
    *
-   * <p>{@code *base_env} must remain live while the result is in use.</p>
+   * @param baseEnv the base environment,
+   *     must remain live while the result is in use.
    */
-  public RocksMemEnv() {
-    super(createMemEnv());
+  public RocksMemEnv(final Env baseEnv) {
+    super(createMemEnv(baseEnv.nativeHandle_));
   }
 
-  private static native long createMemEnv();
+  /**
+   * @deprecated Use {@link #RocksMemEnv(Env)}.
+   */
+  @Deprecated
+  public RocksMemEnv() {
+    this(Env.getDefault());
+  }
+
+  private static native long createMemEnv(final long baseEnvHandle);
   @Override protected final native void disposeInternal(final long handle);
 }

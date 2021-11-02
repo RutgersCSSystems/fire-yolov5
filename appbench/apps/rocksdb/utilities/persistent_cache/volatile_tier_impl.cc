@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 #ifndef ROCKSDB_LITE
 
@@ -9,7 +9,7 @@
 
 #include <string>
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 void VolatileCacheTier::DeleteCacheData(VolatileCacheTier::CacheData* data) {
   assert(data);
@@ -106,7 +106,7 @@ Status VolatileCacheTier::Lookup(const Slice& page_key,
   return Status::NotFound("key not found in volatile cache");
 }
 
-bool VolatileCacheTier::Erase(const Slice& key) {
+bool VolatileCacheTier::Erase(const Slice& /*key*/) {
   assert(!"not supported");
   return true;
 }
@@ -122,8 +122,10 @@ bool VolatileCacheTier::Evict() {
 
   // push the evicted object to the next level
   if (next_tier()) {
-    next_tier()->Insert(Slice(edata->key), edata->value.c_str(),
-                        edata->value.size());
+    // TODO: Should the insert error be ignored?
+    Status s = next_tier()->Insert(Slice(edata->key), edata->value.c_str(),
+                                   edata->value.size());
+    s.PermitUncheckedError();
   }
 
   // adjust size and destroy data
@@ -133,6 +135,6 @@ bool VolatileCacheTier::Evict() {
   return true;
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 #endif

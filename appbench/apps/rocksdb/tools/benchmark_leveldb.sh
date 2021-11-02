@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 # REQUIRE: db_bench binary exists in the current directory
 #
 # This should be used with the LevelDB fork listed here to use additional test options.
@@ -151,6 +152,7 @@ echo "===== Benchmark ====="
 
 # Run!!!
 IFS=',' read -a jobs <<< $1
+# shellcheck disable=SC2068
 for job in ${jobs[@]}; do
 
   if [ $job != debug ]; then

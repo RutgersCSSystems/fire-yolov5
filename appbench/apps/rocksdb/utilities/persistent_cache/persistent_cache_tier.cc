@@ -1,22 +1,17 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 #ifndef ROCKSDB_LITE
 
-#ifndef __STDC_FORMAT_MACROS
-#define __STDC_FORMAT_MACROS
-#endif
-
 #include "utilities/persistent_cache/persistent_cache_tier.h"
 
-#include "inttypes.h"
-
-#include <string>
+#include <cinttypes>
 #include <sstream>
+#include <string>
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 std::string PersistentCacheConfig::ToString() const {
   std::string ret;
@@ -75,12 +70,12 @@ Status PersistentCacheTier::Close() {
   return Status::OK();
 }
 
-bool PersistentCacheTier::Reserve(const size_t size) {
+bool PersistentCacheTier::Reserve(const size_t /*size*/) {
   // default implementation is a pass through
   return true;
 }
 
-bool PersistentCacheTier::Erase(const Slice& key) {
+bool PersistentCacheTier::Erase(const Slice& /*key*/) {
   // default implementation is a pass through since not all cache tiers might
   // support erase
   return true;
@@ -102,6 +97,10 @@ PersistentCache::StatsType PersistentCacheTier::Stats() {
     return next_tier_->Stats();
   }
   return PersistentCache::StatsType{};
+}
+
+uint64_t PersistentCacheTier::NewId() {
+  return last_id_.fetch_add(1, std::memory_order_relaxed);
 }
 
 //
@@ -163,6 +162,6 @@ bool PersistentTieredCache::IsCompressed() {
   return tiers_.front()->IsCompressed();
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 #endif

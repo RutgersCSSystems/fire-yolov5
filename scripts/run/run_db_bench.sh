@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 if [ -z "$APPS" ]; then
     echo "APPS environment variable is undefined."
@@ -12,9 +11,6 @@ source $RUN_SCRIPTS/generic_funcs.sh
 
 base=$APPS/rocksdb
 DBDIR=$base/DATA
-mkdir -p $DBDIR
-
-cd $base
 
 nproc=$1 #nr of mpi procs
 experiment=$2 #experiment type
@@ -26,14 +22,14 @@ WRITE_BUFF_SIZE=67108864
 
 declare -a value_size_arr=("4096")
 declare -a key_size_arr=("1000")
-declare -a num_arr=("2000000") ## Num of elements in DB
+declare -a num_arr=("1000000") ## Num of elements in DB
 #declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
 declare -a workload_arr=("readrandom") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 ORI_PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE"
-WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1 --db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE"
+WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 ORI_READARGS="--use_existing_db=1 --mmap_read=0"
 
@@ -42,16 +38,6 @@ PARAMS=""
 READARGS=""
 OUTFOLDER=""
 OUTFILE="" 
-
-
-RUNCACHESTAT()
-{
-	CACHEOUT=$1
-        sudo killall cachestat
-        sudo killall cachestat
-        sudo /usr/bin/cachestat 1 &>  $CACHEOUT &
-}
-
 
 ##TODO:check if the app is already compiled
 COMPILE_APP() {
@@ -73,7 +59,8 @@ CLEAR_DB()
 WRITELOAD() {
     CLEAR_DB
     $base/db_bench $PARAMS $WRITEARGS
-    #$base/db_bench $PARAMS $ORI_READARGS --benchmarks=readrandom --threads=16
+
+    $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
 }
 
 #Checks if the folder exits, if not, create new
@@ -92,7 +79,7 @@ RUNAPP()
 
     if [ "$experiment" = "hitrate" ]; then
         sudo dmesg -c
-        #SETPRELOAD "JUSTSTATS"
+        SETPRELOAD "JUSTSTATS"
         $COMMAND &>> $OUTFILE
         UNSETPRELOAD
         dmesg >> $OUTFILE
@@ -100,7 +87,7 @@ RUNAPP()
 }
 
 
-#COMPILE_APP ##Do this if its not already compiled
+COMPILE_APP ##Do this if its not already compiled
 
 for NUM in "${num_arr[@]}"
 do
@@ -108,26 +95,18 @@ do
     do
         for KEYSIZE in "${key_size_arr[@]}"
         do
-	    CLEAR_DB	
-            PARAMS="--value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
-            WRITELOAD ##Needs to be called for diff load config
+            PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
 
             for WORKLOAD in "${workload_arr[@]}"
             do
-
                 READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$nproc"
-                PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM $READARGS"
-
                 OUTFOLDER=$out_base/$WORKLOAD
                 CREATE_OUTFOLDER $OUTFOLDER
- 
-                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}" #--$RIGHTNOW"
-		CACHEOUTFILE=OUTFILE"-CACHESTAT"
-                REFRESH 
-		RUNCACHESTAT $CACHEOUTFILE
-                RUNAPP
-		sudo killall cachestat
-		exit
+                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--$RIGHTNOW"
+
+                WRITELOAD ##Needs to be called for diff load config
+                REFRESH
+                RUNAPP 
             done
         done
     done

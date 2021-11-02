@@ -1,40 +1,175 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #include "rocksdb/utilities/sim_cache.h"
+
 #include <atomic>
+
+#include "file/writable_file_writer.h"
 #include "monitoring/statistics.h"
 #include "port/port.h"
+#include "rocksdb/env.h"
+#include "rocksdb/file_system.h"
+#include "util/mutexlock.h"
+#include "util/string_util.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 namespace {
+
+class CacheActivityLogger {
+ public:
+  CacheActivityLogger()
+      : activity_logging_enabled_(false), max_logging_size_(0) {}
+
+  ~CacheActivityLogger() {
+    MutexLock l(&mutex_);
+
+    StopLoggingInternal();
+    bg_status_.PermitUncheckedError();
+  }
+
+  Status StartLogging(const std::string& activity_log_file, Env* env,
+                      uint64_t max_logging_size = 0) {
+    assert(activity_log_file != "");
+    assert(env != nullptr);
+
+    Status status;
+    FileOptions file_opts;
+
+    MutexLock l(&mutex_);
+
+    // Stop existing logging if any
+    StopLoggingInternal();
+
+    // Open log file
+    status = WritableFileWriter::Create(env->GetFileSystem(), activity_log_file,
+                                        file_opts, &file_writer_, nullptr);
+    if (!status.ok()) {
+      return status;
+    }
+
+    max_logging_size_ = max_logging_size;
+    activity_logging_enabled_.store(true);
+
+    return status;
+  }
+
+  void StopLogging() {
+    MutexLock l(&mutex_);
+
+    StopLoggingInternal();
+  }
+
+  void ReportLookup(const Slice& key) {
+    if (activity_logging_enabled_.load() == false) {
+      return;
+    }
+
+    std::string log_line = "LOOKUP - " + key.ToString(true) + "\n";
+
+    // line format: "LOOKUP - <KEY>"
+    MutexLock l(&mutex_);
+    Status s = file_writer_->Append(log_line);
+    if (!s.ok() && bg_status_.ok()) {
+      bg_status_ = s;
+    }
+    if (MaxLoggingSizeReached() || !bg_status_.ok()) {
+      // Stop logging if we have reached the max file size or
+      // encountered an error
+      StopLoggingInternal();
+    }
+  }
+
+  void ReportAdd(const Slice& key, size_t size) {
+    if (activity_logging_enabled_.load() == false) {
+      return;
+    }
+
+    std::string log_line = "ADD - ";
+    log_line += key.ToString(true);
+    log_line += " - ";
+    AppendNumberTo(&log_line, size);
+    log_line += "\n";
+
+    // line format: "ADD - <KEY> - <KEY-SIZE>"
+    MutexLock l(&mutex_);
+    Status s = file_writer_->Append(log_line);
+    if (!s.ok() && bg_status_.ok()) {
+      bg_status_ = s;
+    }
+
+    if (MaxLoggingSizeReached() || !bg_status_.ok()) {
+      // Stop logging if we have reached the max file size or
+      // encountered an error
+      StopLoggingInternal();
+    }
+  }
+
+  Status& bg_status() {
+    MutexLock l(&mutex_);
+    return bg_status_;
+  }
+
+ private:
+  bool MaxLoggingSizeReached() {
+    mutex_.AssertHeld();
+
+    return (max_logging_size_ > 0 &&
+            file_writer_->GetFileSize() >= max_logging_size_);
+  }
+
+  void StopLoggingInternal() {
+    mutex_.AssertHeld();
+
+    if (!activity_logging_enabled_) {
+      return;
+    }
+
+    activity_logging_enabled_.store(false);
+    Status s = file_writer_->Close();
+    if (!s.ok() && bg_status_.ok()) {
+      bg_status_ = s;
+    }
+  }
+
+  // Mutex to sync writes to file_writer, and all following
+  // class data members
+  port::Mutex mutex_;
+  // Indicates if logging is currently enabled
+  // atomic to allow reads without mutex
+  std::atomic<bool> activity_logging_enabled_;
+  // When reached, we will stop logging and close the file
+  // Value of 0 means unlimited
+  uint64_t max_logging_size_;
+  std::unique_ptr<WritableFileWriter> file_writer_;
+  Status bg_status_;
+};
+
 // SimCacheImpl definition
 class SimCacheImpl : public SimCache {
  public:
   // capacity for real cache (ShardedLRUCache)
   // test_capacity for key only cache
-  SimCacheImpl(std::shared_ptr<Cache> cache, size_t sim_capacity,
-               int num_shard_bits)
+  SimCacheImpl(std::shared_ptr<Cache> sim_cache, std::shared_ptr<Cache> cache)
       : cache_(cache),
-        key_only_cache_(NewLRUCache(sim_capacity, num_shard_bits)),
+        key_only_cache_(sim_cache),
         miss_times_(0),
-        hit_times_(0) {}
+        hit_times_(0),
+        stats_(nullptr) {}
 
-  virtual ~SimCacheImpl() {}
-  virtual void SetCapacity(size_t capacity) override {
-    cache_->SetCapacity(capacity);
-  }
+  ~SimCacheImpl() override {}
+  void SetCapacity(size_t capacity) override { cache_->SetCapacity(capacity); }
 
-  virtual void SetStrictCapacityLimit(bool strict_capacity_limit) override {
+  void SetStrictCapacityLimit(bool strict_capacity_limit) override {
     cache_->SetStrictCapacityLimit(strict_capacity_limit);
   }
 
-  virtual Status Insert(const Slice& key, void* value, size_t charge,
-                        void (*deleter)(const Slice& key, void* value),
-                        Handle** handle, Priority priority) override {
+  Status Insert(const Slice& key, void* value, size_t charge,
+                void (*deleter)(const Slice& key, void* value), Handle** handle,
+                Priority priority) override {
     // The handle and value passed in are for real cache, so we pass nullptr
     // to key_only_cache_ for both instead. Also, the deleter function pointer
     // will be called by user to perform some external operation which should
@@ -42,16 +177,23 @@ class SimCacheImpl : public SimCache {
     // *Lambda function without capture can be assgined to a function pointer
     Handle* h = key_only_cache_->Lookup(key);
     if (h == nullptr) {
-      key_only_cache_->Insert(key, nullptr, charge,
-                              [](const Slice& k, void* v) {}, nullptr,
-                              priority);
+      // TODO: Check for error here?
+      auto s = key_only_cache_->Insert(
+          key, nullptr, charge, [](const Slice& /*k*/, void* /*v*/) {}, nullptr,
+          priority);
+      s.PermitUncheckedError();
     } else {
       key_only_cache_->Release(h);
+    }
+
+    cache_activity_logger_.ReportAdd(key, charge);
+    if (!cache_) {
+      return Status::OK();
     }
     return cache_->Insert(key, value, charge, deleter, handle, priority);
   }
 
-  virtual Handle* Lookup(const Slice& key, Statistics* stats) override {
+  Handle* Lookup(const Slice& key, Statistics* stats) override {
     Handle* h = key_only_cache_->Lookup(key);
     if (h != nullptr) {
       key_only_cache_->Release(h);
@@ -61,80 +203,87 @@ class SimCacheImpl : public SimCache {
       inc_miss_counter();
       RecordTick(stats, SIM_BLOCK_CACHE_MISS);
     }
+
+    cache_activity_logger_.ReportLookup(key);
+    if (!cache_) {
+      return nullptr;
+    }
     return cache_->Lookup(key, stats);
   }
 
-  virtual bool Ref(Handle* handle) override { return cache_->Ref(handle); }
+  bool Ref(Handle* handle) override { return cache_->Ref(handle); }
 
-  virtual void Release(Handle* handle) override { cache_->Release(handle); }
+  bool Release(Handle* handle, bool force_erase = false) override {
+    return cache_->Release(handle, force_erase);
+  }
 
-  virtual void Erase(const Slice& key) override {
+  void Erase(const Slice& key) override {
     cache_->Erase(key);
     key_only_cache_->Erase(key);
   }
 
-  virtual void* Value(Handle* handle) override { return cache_->Value(handle); }
+  void* Value(Handle* handle) override { return cache_->Value(handle); }
 
-  virtual uint64_t NewId() override { return cache_->NewId(); }
+  uint64_t NewId() override { return cache_->NewId(); }
 
-  virtual size_t GetCapacity() const override { return cache_->GetCapacity(); }
+  size_t GetCapacity() const override { return cache_->GetCapacity(); }
 
-  virtual bool HasStrictCapacityLimit() const override {
+  bool HasStrictCapacityLimit() const override {
     return cache_->HasStrictCapacityLimit();
   }
 
-  virtual size_t GetUsage() const override { return cache_->GetUsage(); }
+  size_t GetUsage() const override { return cache_->GetUsage(); }
 
-  virtual size_t GetUsage(Handle* handle) const override {
+  size_t GetUsage(Handle* handle) const override {
     return cache_->GetUsage(handle);
   }
 
-  virtual size_t GetPinnedUsage() const override {
-    return cache_->GetPinnedUsage();
+  size_t GetCharge(Handle* handle) const override {
+    return cache_->GetCharge(handle);
   }
 
-  virtual void DisownData() override {
+  size_t GetPinnedUsage() const override { return cache_->GetPinnedUsage(); }
+
+  void DisownData() override {
     cache_->DisownData();
     key_only_cache_->DisownData();
   }
 
-  virtual void ApplyToAllCacheEntries(void (*callback)(void*, size_t),
-                                      bool thread_safe) override {
+  void ApplyToAllCacheEntries(void (*callback)(void*, size_t),
+                              bool thread_safe) override {
     // only apply to _cache since key_only_cache doesn't hold value
     cache_->ApplyToAllCacheEntries(callback, thread_safe);
   }
 
-  virtual void EraseUnRefEntries() override {
+  void EraseUnRefEntries() override {
     cache_->EraseUnRefEntries();
     key_only_cache_->EraseUnRefEntries();
   }
 
-  virtual size_t GetSimCapacity() const override {
+  size_t GetSimCapacity() const override {
     return key_only_cache_->GetCapacity();
   }
-  virtual size_t GetSimUsage() const override {
-    return key_only_cache_->GetUsage();
-  }
-  virtual void SetSimCapacity(size_t capacity) override {
+  size_t GetSimUsage() const override { return key_only_cache_->GetUsage(); }
+  void SetSimCapacity(size_t capacity) override {
     key_only_cache_->SetCapacity(capacity);
   }
 
-  virtual uint64_t get_miss_counter() const override {
+  uint64_t get_miss_counter() const override {
     return miss_times_.load(std::memory_order_relaxed);
   }
 
-  virtual uint64_t get_hit_counter() const override {
+  uint64_t get_hit_counter() const override {
     return hit_times_.load(std::memory_order_relaxed);
   }
 
-  virtual void reset_counter() override {
+  void reset_counter() override {
     miss_times_.store(0, std::memory_order_relaxed);
     hit_times_.store(0, std::memory_order_relaxed);
     SetTickerCount(stats_, SIM_BLOCK_CACHE_HIT, 0);
     SetTickerCount(stats_, SIM_BLOCK_CACHE_MISS, 0);
   }
 
-  virtual std::string ToString() const override {
+  std::string ToString() const override {
     std::string res;
     res.append("SimCache MISSes: " + std::to_string(get_miss_counter()) + "\n");
     res.append("SimCache HITs:    " + std::to_string(get_hit_counter()) + "\n");
@@ -146,7 +295,7 @@ class SimCacheImpl : public SimCache {
     return res;
   }
 
-  virtual std::string GetPrintableOptions() const override {
+  std::string GetPrintableOptions() const override {
     std::string ret;
     ret.reserve(20000);
     ret.append("    cache_options:\n");
@@ -156,12 +305,26 @@ class SimCacheImpl : public SimCache {
     return ret;
   }
 
+  Status StartActivityLogging(const std::string& activity_log_file, Env* env,
+                              uint64_t max_logging_size = 0) override {
+    return cache_activity_logger_.StartLogging(activity_log_file, env,
+                                               max_logging_size);
+  }
+
+  void StopActivityLogging() override { cache_activity_logger_.StopLogging(); }
+
+  Status GetActivityLoggingStatus() override {
+    return cache_activity_logger_.bg_status();
+  }
+
  private:
   std::shared_ptr<Cache> cache_;
   std::shared_ptr<Cache> key_only_cache_;
   std::atomic<uint64_t> miss_times_;
   std::atomic<uint64_t> hit_times_;
   Statistics* stats_;
+  CacheActivityLogger cache_activity_logger_;
+
   void inc_miss_counter() {
     miss_times_.fetch_add(1, std::memory_order_relaxed);
   }
@@ -173,10 +336,20 @@ class SimCacheImpl : public SimCache {
 // For instrumentation purpose, use NewSimCache instead
 std::shared_ptr<SimCache> NewSimCache(std::shared_ptr<Cache> cache,
                                       size_t sim_capacity, int num_shard_bits) {
+  LRUCacheOptions co;
+  co.capacity = sim_capacity;
+  co.num_shard_bits = num_shard_bits;
+  co.metadata_charge_policy = kDontChargeCacheMetadata;
+  return NewSimCache(NewLRUCache(co), cache, num_shard_bits);
+}
+
+std::shared_ptr<SimCache> NewSimCache(std::shared_ptr<Cache> sim_cache,
+                                      std::shared_ptr<Cache> cache,
+                                      int num_shard_bits) {
   if (num_shard_bits >= 20) {
     return nullptr;  // the cache cannot be sharded into too many fine pieces
   }
-  return std::make_shared<SimCacheImpl>(cache, sim_capacity, num_shard_bits);
+  return std::make_shared<SimCacheImpl>(sim_cache, cache);
 }
 
-}  // end namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

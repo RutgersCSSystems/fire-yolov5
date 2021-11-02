@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
@@ -14,9 +14,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class EnvOptionsTest {
   @ClassRule
-  public static final RocksMemoryResource rocksMemoryResource = new RocksMemoryResource();
+  public static final RocksNativeLibraryResource ROCKS_NATIVE_LIBRARY_RESOURCE = new RocksNativeLibraryResource();
 
   public static final Random rand = PlatformRandomHelper.getPlatformSpecificRandomFactory();
+
+  @Test
+  public void dbOptionsConstructor() {
+    final long compactionReadaheadSize = 4 * 1024 * 1024;
+    try (final DBOptions dbOptions = new DBOptions()
+        .setCompactionReadaheadSize(compactionReadaheadSize)) {
+      try (final EnvOptions envOptions = new EnvOptions(dbOptions)) {
+        assertThat(envOptions.compactionReadaheadSize())
+            .isEqualTo(compactionReadaheadSize);
+      }
+    }
+  }
 
   @Test
   public void useMmapReads() {

@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #pragma once
 #ifndef ROCKSDB_LITE
@@ -10,7 +10,7 @@
 
 #include "rocksdb/status.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 // TransactionDBMutex and TransactionDBCondVar APIs allows applications to
 // implement custom mutexes and condition variables to be used by a
@@ -61,7 +61,7 @@ class TransactionDBCondVar {
   //
   // Returns OK if notified.
   // Returns TimedOut if timeout is reached.
-  // Returns other status if TransactionDB should otherwis stop waiting and
+  // Returns other status if TransactionDB should otherwise stop waiting and
   //  fail the operation.
   // May return OK spuriously even if not notified.
   virtual Status WaitFor(std::shared_ptr<TransactionDBMutex> mutex,
@@ -87,6 +87,6 @@ class TransactionDBMutexFactory {
   virtual ~TransactionDBMutexFactory() {}
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 
 #endif  // ROCKSDB_LITE

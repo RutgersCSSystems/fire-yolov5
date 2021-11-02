@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 # REQUIRE: benchmark_leveldb.sh exists in the current directory
 # After execution of this script, log files are generated in $output_dir.
 # report.txt provides a high level statistics
@@ -71,7 +72,7 @@ db_dir=${DATA_DIR:-"/tmp/rocksdb/"}
 do_setup=${DO_SETUP:-1}
 save_setup=${SAVE_SETUP:-0}
 
-output_dir="/tmp/output"
+output_dir="${TMPDIR:-/tmp}/output"
 
 ARGS="\
 OUTPUT_DIR=$output_dir \

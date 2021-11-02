@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -10,9 +10,9 @@
 #pragma once
 
 #include "monitoring/histogram.h"
-#include "rocksdb/env.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
+class SystemClock;
 
 class HistogramWindowingImpl : public Histogram
 {
@@ -22,8 +22,8 @@ public:
                          uint64_t micros_per_window,
                          uint64_t min_num_per_window);
 
-  HistogramWindowingImpl(const HistogramImpl&) = delete;
-  HistogramWindowingImpl& operator=(const HistogramImpl&) = delete;
+  HistogramWindowingImpl(const HistogramWindowingImpl&) = delete;
+  HistogramWindowingImpl& operator=(const HistogramWindowingImpl&) = delete;
 
   ~HistogramWindowingImpl();
 
@@ -44,7 +44,13 @@ public:
   virtual double StandardDeviation() const override;
   virtual void Data(HistogramData* const data) const override;
 
-private:
+#ifndef NDEBUG
+  void TEST_UpdateClock(const std::shared_ptr<SystemClock>& clock) {
+    clock_ = clock;
+  }
+#endif  // NDEBUG
+
+ private:
   void TimerTick();
   void SwapHistoryBucket();
   inline uint64_t current_window() const {
@@ -54,7 +60,7 @@ private:
     return last_swap_time_.load(std::memory_order_relaxed);
   }
 
-  Env* env_;
+  std::shared_ptr<SystemClock> clock_;
   std::mutex mutex_;
 
   // Aggregated stats over windows_stats_, all the computation is done
@@ -77,4 +83,4 @@ private:
   uint64_t min_num_per_window_ = 0;
 };
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

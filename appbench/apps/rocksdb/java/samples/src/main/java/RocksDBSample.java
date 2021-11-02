@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 import java.lang.IllegalArgumentException;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ public class RocksDBSample {
          final Filter bloomFilter = new BloomFilter(10);
          final ReadOptions readOptions = new ReadOptions()
              .setFillCache(false);
+         final Statistics stats = new Statistics();
          final RateLimiter rateLimiter = new RateLimiter(10000000,10000, 10)) {
 
       try (final RocksDB db = RocksDB.open(options, db_path_not_found)) {
@@ -41,22 +42,20 @@ public class RocksDBSample {
 
       try {
         options.setCreateIfMissing(true)
-            .createStatistics()
+            .setStatistics(stats)
             .setWriteBufferSize(8 * SizeUnit.KB)
             .setMaxWriteBufferNumber(3)
-            .setMaxBackgroundCompactions(10)
+            .setMaxBackgroundJobs(10)
             .setCompressionType(CompressionType.SNAPPY_COMPRESSION)
             .setCompactionStyle(CompactionStyle.UNIVERSAL);
       } catch (final IllegalArgumentException e) {
         assert (false);
       }
 
-      final Statistics stats = options.statisticsPtr();
-
       assert (options.createIfMissing() == true);
       assert (options.writeBufferSize() == 8 * SizeUnit.KB);
       assert (options.maxWriteBufferNumber() == 3);
-      assert (options.maxBackgroundCompactions() == 10);
+      assert (options.maxBackgroundJobs() == 10);
       assert (options.compressionType() == CompressionType.SNAPPY_COMPRESSION);
       assert (options.compactionStyle() == CompactionStyle.UNIVERSAL);
 
@@ -88,24 +87,17 @@ public class RocksDBSample {
       options.setRateLimiter(rateLimiter);
 
       final BlockBasedTableConfig table_options = new BlockBasedTableConfig();
-      table_options.setBlockCacheSize(64 * SizeUnit.KB)
-          .setFilter(bloomFilter)
-          .setCacheNumShardBits(6)
+      Cache cache = new LRUCache(64 * 1024, 6);
+      table_options.setBlockCache(cache)
+          .setFilterPolicy(bloomFilter)
           .setBlockSizeDeviation(5)
           .setBlockRestartInterval(10)
           .setCacheIndexAndFilterBlocks(true)
-          .setHashIndexAllowCollision(false)
-          .setBlockCacheCompressedSize(64 * SizeUnit.KB)
-          .setBlockCacheCompressedNumShardBits(10);
+          .setBlockCacheCompressed(new LRUCache(64 * 1000, 10));
 
-      assert (table_options.blockCacheSize() == 64 * SizeUnit.KB);
-      assert (table_options.cacheNumShardBits() == 6);
       assert (table_options.blockSizeDeviation() == 5);
       assert (table_options.blockRestartInterval() == 10);
       assert (table_options.cacheIndexAndFilterBlocks() == true);
-      assert (table_options.hashIndexAllowCollision() == false);
-      assert (table_options.blockCacheCompressedSize() == 64 * SizeUnit.KB);
-      assert (table_options.blockCacheCompressedNumShardBits() == 10);
 
       options.setTableFormatConfig(table_options);
       assert (options.tableFactoryName().equals("BlockBasedTable"));
@@ -204,14 +196,14 @@ public class RocksDBSample {
         len = db.get(readOptions, testKey, enoughArray);
         assert (len == testValue.length);
 
-        db.remove(testKey);
+        db.delete(testKey);
         len = db.get(testKey, enoughArray);
         assert (len == RocksDB.NOT_FOUND);
 
         // repeat the test with WriteOptions
         try (final WriteOptions writeOpts = new WriteOptions()) {
           writeOpts.setSync(true);
-          writeOpts.setDisableWAL(true);
+          writeOpts.setDisableWAL(false);
           db.put(writeOpts, testKey, testValue);
           len = db.get(testKey, enoughArray);
           assert (len == testValue.length);
@@ -221,7 +213,9 @@ public class RocksDBSample {
 
         try {
           for (final TickerType statsType : TickerType.values()) {
-            stats.getTickerCount(statsType);
+            if (statsType != TickerType.TICKER_ENUM_MAX) {
+              stats.getTickerCount(statsType);
+            }
           }
           System.out.println("getTickerCount() passed.");
         } catch (final Exception e) {
@@ -231,7 +225,9 @@ public class RocksDBSample {
 
         try {
           for (final HistogramType histogramType : HistogramType.values()) {
-            HistogramData data = stats.getHistogramData(histogramType);
+            if (histogramType != HistogramType.HISTOGRAM_ENUM_MAX) {
+              HistogramData data = stats.getHistogramData(histogramType);
+            }
           }
           System.out.println("getHistogramData() passed.");
         } catch (final Exception e) {
@@ -281,15 +277,15 @@ public class RocksDBSample {
           }
         }
 
-        Map<byte[], byte[]> values = db.multiGet(keys);
+        List<byte[]> values = db.multiGetAsList(keys);
         assert (values.size() == keys.size());
-        for (final byte[] value1 : values.values()) {
+        for (final byte[] value1 : values) {
           assert (value1 != null);
         }
 
-        values = db.multiGet(new ReadOptions(), keys);
+        values = db.multiGetAsList(new ReadOptions(), keys);
         assert (values.size() == keys.size());
-        for (final byte[] value1 : values.values()) {
+        for (final byte[] value1 : values) {
           assert (value1 != null);
         }
       } catch (final RocksDBException e) {

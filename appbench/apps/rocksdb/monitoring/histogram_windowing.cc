@@ -1,22 +1,25 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "monitoring/histogram_windowing.h"
-#include "monitoring/histogram.h"
 
 #include <algorithm>
 
-namespace rocksdb {
+#include "monitoring/histogram.h"
+#include "rocksdb/system_clock.h"
+#include "util/cast_util.h"
+
+namespace ROCKSDB_NAMESPACE {
 
 HistogramWindowingImpl::HistogramWindowingImpl() {
-  env_ = Env::Default();
-  window_stats_.reset(new HistogramStat[num_windows_]);
+  clock_ = SystemClock::Default();
+  window_stats_.reset(new HistogramStat[static_cast<size_t>(num_windows_)]);
   Clear();
 }
 
@@ -27,8 +30,8 @@ HistogramWindowingImpl::HistogramWindowingImpl(
       num_windows_(num_windows),
       micros_per_window_(micros_per_window),
       min_num_per_window_(min_num_per_window) {
-  env_ = Env::Default();
-  window_stats_.reset(new HistogramStat[num_windows_]);
+  clock_ = SystemClock::Default();
+  window_stats_.reset(new HistogramStat[static_cast<size_t>(num_windows_)]);
   Clear();
 }
 
@@ -43,7 +46,7 @@ void HistogramWindowingImpl::Clear() {
     window_stats_[i].Clear();
   }
   current_window_.store(0, std::memory_order_relaxed);
-  last_swap_time_.store(env_->NowMicros(), std::memory_order_relaxed);
+  last_swap_time_.store(clock_->NowMicros(), std::memory_order_relaxed);
 }
 
 bool HistogramWindowingImpl::Empty() const { return stats_.Empty(); }
@@ -59,12 +62,12 @@ void HistogramWindowingImpl::Add(uint64_t value){
   stats_.Add(value);
 
   // Current window update
-  window_stats_[current_window()].Add(value);
+  window_stats_[static_cast<size_t>(current_window())].Add(value);
 }
 
 void HistogramWindowingImpl::Merge(const Histogram& other) {
   if (strcmp(Name(), other.Name()) == 0) {
-    Merge(dynamic_cast<const HistogramWindowingImpl&>(other));
+    Merge(*static_cast_with_check<const HistogramWindowingImpl>(&other));
   }
 }
 
@@ -86,8 +89,11 @@ void HistogramWindowingImpl::Merge(const HistogramWindowingImpl& other) {
         (cur_window + num_windows_ - i) % num_windows_;
     uint64_t other_window_index =
         (other_cur_window + other.num_windows_ - i) % other.num_windows_;
+    size_t windex = static_cast<size_t>(window_index);
+    size_t other_windex = static_cast<size_t>(other_window_index);
 
-    window_stats_[window_index].Merge(other.window_stats_[other_window_index]);
+    window_stats_[windex].Merge(
+      other.window_stats_[other_windex]);
   }
 }
 
@@ -125,9 +131,10 @@ void HistogramWindowingImpl::Data(HistogramData * const data) const {
 }
 
 void HistogramWindowingImpl::TimerTick() {
-  uint64_t curr_time = env_->NowMicros();
+  uint64_t curr_time = clock_->NowMicros();
+  size_t curr_window_ = static_cast<size_t>(current_window());
   if (curr_time - last_swap_time() > micros_per_window_ &&
-      window_stats_[current_window()].num() >= min_num_per_window_) {
+      window_stats_[curr_window_].num() >= min_num_per_window_) {
     SwapHistoryBucket();
   }
 }
@@ -139,14 +146,15 @@ void HistogramWindowingImpl::SwapHistoryBucket() {
   // If mutex is held by Merge() or Clear(), next Add() will take care of the
   // swap, if needed.
   if (mutex_.try_lock()) {
-    last_swap_time_.store(env_->NowMicros(), std::memory_order_relaxed);
+    last_swap_time_.store(clock_->NowMicros(), std::memory_order_relaxed);
 
     uint64_t curr_window = current_window();
     uint64_t next_window = (curr_window == num_windows_ - 1) ?
                                                     0 : curr_window + 1;
 
     // subtract next buckets from totals and swap to next buckets
-    HistogramStat& stats_to_drop = window_stats_[next_window];
+    HistogramStat& stats_to_drop = 
+      window_stats_[static_cast<size_t>(next_window)];
 
     if (!stats_to_drop.Empty()) {
       for (size_t b = 0; b < stats_.num_buckets_; b++){
@@ -191,4 +199,4 @@ void HistogramWindowingImpl::SwapHistoryBucket() {
   }
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

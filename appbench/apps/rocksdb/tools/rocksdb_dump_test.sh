@@ -1,4 +1,6 @@
-TESTDIR=`mktemp -d /tmp/rocksdb-dump-test.XXXXX`
+# shellcheck disable=SC2148
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+TESTDIR=`mktemp -d ${TMPDIR:-/tmp}/rocksdb-dump-test.XXXXX`
 DUMPFILE="tools/sample-dump.dmp"
 
 # Verify that the sample dump file is undumpable and then redumpable.

@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 #include <stdlib.h>
 #include <iostream>
@@ -9,18 +9,18 @@
 #include <string>
 
 #include "db/db_test_util.h"
-#include "util/arena.h"
+#include "memory/arena.h"
+#include "test_util/testharness.h"
 #include "util/random.h"
-#include "util/testharness.h"
 #include "utilities/persistent_cache/hash_table.h"
 #include "utilities/persistent_cache/hash_table_evictable.h"
 
 #ifndef ROCKSDB_LITE
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 struct HashTableTest : public testing::Test {
-  ~HashTableTest() { map_.Clear(&HashTableTest::ClearNode); }
+  ~HashTableTest() override { map_.Clear(&HashTableTest::ClearNode); }
 
   struct Node {
     Node() {}
@@ -43,13 +43,15 @@ struct HashTableTest : public testing::Test {
     }
   };
 
-  static void ClearNode(Node node) {}
+  static void ClearNode(Node /*node*/) {}
 
   HashTable<Node, Hash, Equal> map_;
 };
 
 struct EvictableHashTableTest : public testing::Test {
-  ~EvictableHashTableTest() { map_.Clear(&EvictableHashTableTest::ClearNode); }
+  ~EvictableHashTableTest() override {
+    map_.Clear(&EvictableHashTableTest::ClearNode);
+  }
 
   struct Node : LRUElement<Node> {
     Node() {}
@@ -73,7 +75,7 @@ struct EvictableHashTableTest : public testing::Test {
     }
   };
 
-  static void ClearNode(Node* node) {}
+  static void ClearNode(Node* /*node*/) {}
 
   EvictableHashTable<Node, Hash, Equal> map_;
 };
@@ -89,7 +91,7 @@ TEST_F(HashTableTest, TestInsert) {
   // verify
   for (uint64_t k = 0; k < max_keys; ++k) {
     Node val;
-    port::RWMutex* rlock;
+    port::RWMutex* rlock = nullptr;
     assert(map_.Find(Node(k), &val, &rlock));
     rlock->ReadUnlock();
     assert(val.val_ == std::string(1000, k % 255));
@@ -149,7 +151,7 @@ TEST_F(EvictableHashTableTest, TestEvict) {
   }
 }
 
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE
 #endif
 
 int main(int argc, char** argv) {

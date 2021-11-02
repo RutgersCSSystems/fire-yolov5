@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #ifndef ROCKSDB_LITE
 #ifndef GFLAGS
@@ -12,15 +12,14 @@ int main() {
 }
 #else
 
-#include <cstdio>
 #include <atomic>
-
-#include <gflags/gflags.h>
+#include <cstdio>
 
 #include "db/write_batch_internal.h"
 #include "rocksdb/db.h"
 #include "rocksdb/types.h"
-#include "util/testutil.h"
+#include "test_util/testutil.h"
+#include "util/gflags_compat.h"
 
 // Run a thread to perform Put's.
 // Another thread uses GetUpdatesSince API to keep getting the updates.
@@ -28,74 +27,37 @@ int main() {
 // --num_inserts = the num of inserts the first thread should perform.
 // --wal_ttl = the wal ttl for the run.
 
-using namespace rocksdb;
+DEFINE_uint64(num_inserts, 1000,
+              "the num of inserts the first thread should"
+              " perform.");
+DEFINE_uint64(wal_ttl_seconds, 1000, "the wal ttl for the run(in seconds)");
+DEFINE_uint64(wal_size_limit_MB, 10,
+              "the wal size limit for the run"
+              "(in MB)");
 
-using GFLAGS::ParseCommandLineFlags;
-using GFLAGS::SetUsageMessage;
+using namespace ROCKSDB_NAMESPACE;
+
+using GFLAGS_NAMESPACE::ParseCommandLineFlags;
+using GFLAGS_NAMESPACE::SetUsageMessage;
 
 struct DataPumpThread {
-  size_t no_records;
-  DB* db; // Assumption DB is Open'ed already.
+  DB* db;  // Assumption DB is Open'ed already.
 };
-
-static std::string RandomString(Random* rnd, int len) {
-  std::string r;
-  test::RandomString(rnd, len, &r);
-  return r;
-}
 
 static void DataPumpThreadBody(void* arg) {
   DataPumpThread* t = reinterpret_cast<DataPumpThread*>(arg);
   DB* db = t->db;
   Random rnd(301);
-  size_t i = 0;
-  while(i++ < t->no_records) {
-    if(!db->Put(WriteOptions(), Slice(RandomString(&rnd, 500)),
-                Slice(RandomString(&rnd, 500))).ok()) {
+  uint64_t i = 0;
+  while (i++ < FLAGS_num_inserts) {
+    if (!db->Put(WriteOptions(), Slice(rnd.RandomString(500)),
+                 Slice(rnd.RandomString(500)))
+             .ok()) {
       fprintf(stderr, "Error in put\n");
       exit(1);
     }
   }
 }
-
-struct ReplicationThread {
-  std::atomic<bool> stop;
-  DB* db;
-  volatile size_t no_read;
-};
-
-static void ReplicationThreadBody(void* arg) {
-  ReplicationThread* t = reinterpret_cast<ReplicationThread*>(arg);
-  DB* db = t->db;
-  unique_ptr<TransactionLogIterator> iter;
-  SequenceNumber currentSeqNum = 1;
-  while (!t->stop.load(std::memory_order_acquire)) {
-    iter.reset();
-    Status s;
-    while(!db->GetUpdatesSince(currentSeqNum, &iter).ok()) {
-      if (t->stop.load(std::memory_order_acquire)) {
-        return;
-      }
-    }
-    fprintf(stderr, "Refreshing iterator\n");
-    for(;iter->Valid(); iter->Next(), t->no_read++, currentSeqNum++) {
-      BatchResult res = iter->GetBatch();
-      if (res.sequence != currentSeqNum) {
-        fprintf(stderr,
-                "Missed a seq no. b/w %ld and %ld\n",
-                (long)currentSeqNum,
-                (long)res.sequence);
-        exit(1);
-      }
-    }
-  }
-}
-
-DEFINE_uint64(num_inserts, 1000, "the num of inserts the first thread should"
-              " perform.");
-DEFINE_uint64(wal_ttl_seconds, 1000, "the wal ttl for the run(in seconds)");
-DEFINE_uint64(wal_size_limit_MB, 10, "the wal size limit for the run"
-              "(in MB)");
 
 int main(int argc, const char** argv) {
   SetUsageMessage(
@@ -123,35 +85,45 @@ int main(int argc, const char** argv) {
   }
 
   DataPumpThread dataPump;
-  dataPump.no_records = FLAGS_num_inserts;
   dataPump.db = db;
   env->StartThread(DataPumpThreadBody, &dataPump);
 
-  ReplicationThread replThread;
-  replThread.db = db;
-  replThread.no_read = 0;
-  replThread.stop.store(false, std::memory_order_release);
-
-  env->StartThread(ReplicationThreadBody, &replThread);
-  while(replThread.no_read < FLAGS_num_inserts);
-  replThread.stop.store(true, std::memory_order_release);
-  if (replThread.no_read < dataPump.no_records) {
-    // no. read should be => than inserted.
-    fprintf(stderr,
-            "No. of Record's written and read not same\nRead : %" ROCKSDB_PRIszt
-            " Written : %" ROCKSDB_PRIszt "\n",
-            replThread.no_read, dataPump.no_records);
-    exit(1);
+  std::unique_ptr<TransactionLogIterator> iter;
+  SequenceNumber currentSeqNum = 1;
+  uint64_t num_read = 0;
+  for (;;) {
+    iter.reset();
+    // Continue to probe a bit more after all received
+    size_t probes = 0;
+    while (!db->GetUpdatesSince(currentSeqNum, &iter).ok()) {
+      probes++;
+      if (probes > 100 && num_read >= FLAGS_num_inserts) {
+        if (num_read > FLAGS_num_inserts) {
+          fprintf(stderr, "Too many updates read: %ld expected: %ld\n",
+                  (long)num_read, (long)FLAGS_num_inserts);
+          exit(1);
+        }
+        fprintf(stderr, "Successful!\n");
+        return 0;
+      }
+    }
+    fprintf(stderr, "Refreshing iterator\n");
+    for (; iter->Valid(); iter->Next(), num_read++, currentSeqNum++) {
+      BatchResult res = iter->GetBatch();
+      if (res.sequence != currentSeqNum) {
+        fprintf(stderr, "Missed a seq no. b/w %ld and %ld\n",
+                (long)currentSeqNum, (long)res.sequence);
+        exit(1);
+      }
+    }
   }
-  fprintf(stderr, "Successful!\n");
-  exit(0);
 }
 
 #endif  // GFLAGS
 
 #else  // ROCKSDB_LITE
 #include <stdio.h>
-int main(int argc, char** argv) {
+int main(int /*argc*/, char** /*argv*/) {
   fprintf(stderr, "Not supported in lite mode.\n");
   return 1;
 }

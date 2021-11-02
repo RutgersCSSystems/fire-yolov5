@@ -1,26 +1,24 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 #pragma once
 
-#include <stdint.h>
-
+#include <cstdint>
 #include <memory>
 
 #include "db/log_format.h"
+#include "rocksdb/io_status.h"
 #include "rocksdb/slice.h"
 #include "rocksdb/status.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class WritableFileWriter;
-
-using std::unique_ptr;
 
 namespace log {
 
@@ -49,7 +47,7 @@ namespace log {
  * |CRC (4B) | Size (2B) | Type (1B) | Payload   |
  * +---------+-----------+-----------+--- ... ---+
  *
- * CRC = 32bit hash computed over the payload using CRC
+ * CRC = 32bit hash computed over the record type and payload using CRC
  * Size = Length of the payload data
  * Type = Type of record
  *        (kZeroType, kFullType, kFirstType, kLastType, kMiddleType )
@@ -72,19 +70,30 @@ class Writer {
   // Create a writer that will append data to "*dest".
   // "*dest" must be initially empty.
   // "*dest" must remain live while this Writer is in use.
-  explicit Writer(unique_ptr<WritableFileWriter>&& dest,
-                  uint64_t log_number, bool recycle_log_files);
+  explicit Writer(std::unique_ptr<WritableFileWriter>&& dest,
+                  uint64_t log_number, bool recycle_log_files,
+                  bool manual_flush = false);
+  // No copying allowed
+  Writer(const Writer&) = delete;
+  void operator=(const Writer&) = delete;
+
   ~Writer();
 
-  Status AddRecord(const Slice& slice);
+  IOStatus AddRecord(const Slice& slice);
 
   WritableFileWriter* file() { return dest_.get(); }
   const WritableFileWriter* file() const { return dest_.get(); }
 
   uint64_t get_log_number() const { return log_number_; }
 
+  IOStatus WriteBuffer();
+
+  IOStatus Close();
+
+  bool TEST_BufferIsEmpty();
+
  private:
-  unique_ptr<WritableFileWriter> dest_;
+  std::unique_ptr<WritableFileWriter> dest_;
   size_t block_offset_;       // Current offset in block
   uint64_t log_number_;
   bool recycle_log_files_;
@@ -94,12 +103,12 @@ class Writer {
   // record type stored in the header.
   uint32_t type_crc_[kMaxRecordType + 1];
 
-  Status EmitPhysicalRecord(RecordType type, const char* ptr, size_t length);
+  IOStatus EmitPhysicalRecord(RecordType type, const char* ptr, size_t length);
 
-  // No copying allowed
-  Writer(const Writer&);
-  void operator=(const Writer&);
+  // If true, it does not flush after each write. Instead it relies on the upper
+  // layer to manually does the flush by calling ::WriteBuffer()
+  bool manual_flush_;
 };
 
 }  // namespace log
-}  // namespace rocksdb
+}  // namespace ROCKSDB_NAMESPACE

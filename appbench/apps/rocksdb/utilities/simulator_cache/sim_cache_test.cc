@@ -1,14 +1,14 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #include "rocksdb/utilities/sim_cache.h"
 #include <cstdlib>
 #include "db/db_test_util.h"
 #include "port/stack_trace.h"
 
-namespace rocksdb {
+namespace ROCKSDB_NAMESPACE {
 
 class SimCacheTest : public DBTestBase {
  private:
@@ -21,7 +21,7 @@ class SimCacheTest : public DBTestBase {
   const size_t kNumBlocks = 5;
   const size_t kValueSize = 1000;
 
-  SimCacheTest() : DBTestBase("/sim_cache_test") {}
+  SimCacheTest() : DBTestBase("/sim_cache_test", /*env_do_fsync=*/true) {}
 
   BlockBasedTableOptions GetTableOptions() {
     BlockBasedTableOptions table_options;
@@ -34,12 +34,12 @@ class SimCacheTest : public DBTestBase {
     Options options = CurrentOptions();
     options.create_if_missing = true;
     // options.compression = kNoCompression;
-    options.statistics = rocksdb::CreateDBStatistics();
-    options.table_factory.reset(new BlockBasedTableFactory(table_options));
+    options.statistics = ROCKSDB_NAMESPACE::CreateDBStatistics();
+    options.table_factory.reset(NewBlockBasedTableFactory(table_options));
     return options;
   }
 
-  void InitTable(const Options& options) {
+  void InitTable(const Options& /*options*/) {
     std::string value(kValueSize, 'a');
     for (size_t i = 0; i < kNumBlocks * 2; i++) {
       ASSERT_OK(Put(ToString(i), value.c_str()));
@@ -77,10 +77,14 @@ TEST_F(SimCacheTest, SimCache) {
   auto table_options = GetTableOptions();
   auto options = GetOptions(table_options);
   InitTable(options);
-  std::shared_ptr<SimCache> simCache =
-      NewSimCache(NewLRUCache(0, 0, false), 20000, 0);
+  LRUCacheOptions co;
+  co.capacity = 0;
+  co.num_shard_bits = 0;
+  co.strict_capacity_limit = false;
+  co.metadata_charge_policy = kDontChargeCacheMetadata;
+  std::shared_ptr<SimCache> simCache = NewSimCache(NewLRUCache(co), 20000, 0);
   table_options.block_cache = simCache;
-  options.table_factory.reset(new BlockBasedTableFactory(table_options));
+  options.table_factory.reset(NewBlockBasedTableFactory(table_options));
   Reopen(options);
   RecordCacheCounters(options);
 
@@ -138,10 +142,83 @@ TEST_F(SimCacheTest, SimCache) {
   ASSERT_EQ(6, simCache->get_hit_counter());
 }
 
-}  // namespace rocksdb
+TEST_F(SimCacheTest, SimCacheLogging) {
+  auto table_options = GetTableOptions();
+  auto options = GetOptions(table_options);
+  options.disable_auto_compactions = true;
+  LRUCacheOptions co;
+  co.capacity = 1024 * 1024;
+  co.metadata_charge_policy = kDontChargeCacheMetadata;
+  std::shared_ptr<SimCache> sim_cache = NewSimCache(NewLRUCache(co), 20000, 0);
+  table_options.block_cache = sim_cache;
+  options.table_factory.reset(NewBlockBasedTableFactory(table_options));
+  Reopen(options);
+
+  int num_block_entries = 20;
+  for (int i = 0; i < num_block_entries; i++) {
+    ASSERT_OK(Put(Key(i), "val"));
+    ASSERT_OK(Flush());
+  }
+
+  std::string log_file = test::PerThreadDBPath(env_, "cache_log.txt");
+  ASSERT_OK(sim_cache->StartActivityLogging(log_file, env_));
+  for (int i = 0; i < num_block_entries; i++) {
+    ASSERT_EQ(Get(Key(i)), "val");
+  }
+  for (int i = 0; i < num_block_entries; i++) {
+    ASSERT_EQ(Get(Key(i)), "val");
+  }
+  sim_cache->StopActivityLogging();
+  ASSERT_OK(sim_cache->GetActivityLoggingStatus());
+
+  std::string file_contents = "";
+  ASSERT_OK(ReadFileToString(env_, log_file, &file_contents));
+
+  int lookup_num = 0;
+  int add_num = 0;
+  std::string::size_type pos;
+
+  // count number of lookups
+  pos = 0;
+  while ((pos = file_contents.find("LOOKUP -", pos)) != std::string::npos) {
+    ++lookup_num;
+    pos += 1;
+  }
+
+  // count number of additions
+  pos = 0;
+  while ((pos = file_contents.find("ADD -", pos)) != std::string::npos) {
+    ++add_num;
+    pos += 1;
+  }
+
+  // We asked for every block twice
+  ASSERT_EQ(lookup_num, num_block_entries * 2);
+
+  // We added every block only once, since the cache can hold all blocks
+  ASSERT_EQ(add_num, num_block_entries);
+
+  // Log things again but stop logging automatically after reaching 512 bytes
+  int max_size = 512;
+  ASSERT_OK(sim_cache->StartActivityLogging(log_file, env_, max_size));
+  for (int it = 0; it < 10; it++) {
+    for (int i = 0; i < num_block_entries; i++) {
+      ASSERT_EQ(Get(Key(i)), "val");
+    }
+  }
+  ASSERT_OK(sim_cache->GetActivityLoggingStatus());
+
+  uint64_t fsize = 0;
+  ASSERT_OK(env_->GetFileSize(log_file, &fsize));
+  // error margin of 100 bytes
+  ASSERT_LT(fsize, max_size + 100);
+  ASSERT_GT(fsize, max_size - 100);
+}
+
+}  // namespace ROCKSDB_NAMESPACE
 
 int main(int argc, char** argv) {
-  rocksdb::port::InstallStackTraceHandler();
+  ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

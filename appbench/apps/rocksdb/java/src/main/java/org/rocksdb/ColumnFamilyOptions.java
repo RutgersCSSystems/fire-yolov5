@@ -1,13 +1,12 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * ColumnFamilyOptions to control the behavior of a database.  It will be used
@@ -27,10 +26,53 @@ public class ColumnFamilyOptions extends RocksObject
    * Construct ColumnFamilyOptions.
    *
    * This constructor will create (by allocating a block of memory)
-   * an {@code rocksdb::DBOptions} in the c++ side.
+   * an {@code rocksdb::ColumnFamilyOptions} in the c++ side.
    */
   public ColumnFamilyOptions() {
     super(newColumnFamilyOptions());
+  }
+
+  /**
+   * Copy constructor for ColumnFamilyOptions.
+   *
+   * NOTE: This does a shallow copy, which means comparator, merge_operator, compaction_filter,
+   * compaction_filter_factory and other pointers will be cloned!
+   *
+   * @param other The ColumnFamilyOptions to copy.
+   */
+  public ColumnFamilyOptions(ColumnFamilyOptions other) {
+    super(copyColumnFamilyOptions(other.nativeHandle_));
+    this.memTableConfig_ = other.memTableConfig_;
+    this.tableFormatConfig_ = other.tableFormatConfig_;
+    this.comparator_ = other.comparator_;
+    this.compactionFilter_ = other.compactionFilter_;
+    this.compactionFilterFactory_ = other.compactionFilterFactory_;
+    this.compactionOptionsUniversal_ = other.compactionOptionsUniversal_;
+    this.compactionOptionsFIFO_ = other.compactionOptionsFIFO_;
+    this.bottommostCompressionOptions_ = other.bottommostCompressionOptions_;
+    this.compressionOptions_ = other.compressionOptions_;
+    this.compactionThreadLimiter_ = other.compactionThreadLimiter_;
+  }
+
+  /**
+   * Constructor from Options
+   *
+   * @param options The options.
+   */
+  public ColumnFamilyOptions(final Options options) {
+    super(newColumnFamilyOptionsFromOptions(options.nativeHandle_));
+  }
+
+  /**
+   * <p>Constructor to be used by
+   * {@link #getColumnFamilyOptionsFromProps(java.util.Properties)},
+   * {@link ColumnFamilyDescriptor#getOptions()}
+   * and also called via JNI.</p>
+   *
+   * @param handle native handle to ColumnFamilyOptions instance.
+   */
+  ColumnFamilyOptions(final long handle) {
+    super(handle);
   }
 
   /**
@@ -54,20 +96,40 @@ public class ColumnFamilyOptions extends RocksObject
    */
   public static ColumnFamilyOptions getColumnFamilyOptionsFromProps(
       final Properties properties) {
-    if (properties == null || properties.size() == 0) {
-      throw new IllegalArgumentException(
-          "Properties value must contain at least one value.");
-    }
     ColumnFamilyOptions columnFamilyOptions = null;
-    StringBuilder stringBuilder = new StringBuilder();
-    for (final String name : properties.stringPropertyNames()){
-      stringBuilder.append(name);
-      stringBuilder.append("=");
-      stringBuilder.append(properties.getProperty(name));
-      stringBuilder.append(";");
+    final long handle =
+        getColumnFamilyOptionsFromProps(Options.getOptionStringFromProps(properties));
+    if (handle != 0) {
+      columnFamilyOptions = new ColumnFamilyOptions(handle);
     }
-    long handle = getColumnFamilyOptionsFromProps(
-        stringBuilder.toString());
+    return columnFamilyOptions;
+  }
+
+  /**
+   * <p>Method to get a options instance by using pre-configured
+   * property values. If one or many values are undefined in
+   * the context of RocksDB the method will return a null
+   * value.</p>
+   *
+   * <p><strong>Note</strong>: Property keys can be derived from
+   * getter methods within the options class. Example: the method
+   * {@code writeBufferSize()} has a property key:
+   * {@code write_buffer_size}.</p>
+   *
+   * @param cfgOpts  ConfigOptions controlling how the properties are parsed.
+   * @param properties {@link java.util.Properties} instance.
+   *
+   * @return {@link org.rocksdb.ColumnFamilyOptions instance}
+   *     or null.
+   *
+   * @throws java.lang.IllegalArgumentException if null or empty
+   *     {@link Properties} instance is passed to the method call.
+   */
+  public static ColumnFamilyOptions getColumnFamilyOptionsFromProps(
+      final ConfigOptions cfgOpts, final Properties properties) {
+    ColumnFamilyOptions columnFamilyOptions = null;
+    final long handle = getColumnFamilyOptionsFromProps(
+        cfgOpts.nativeHandle_, Options.getOptionStringFromProps(properties));
     if (handle != 0){
       columnFamilyOptions = new ColumnFamilyOptions(handle);
     }
@@ -75,8 +137,20 @@ public class ColumnFamilyOptions extends RocksObject
   }
 
   @Override
+  public ColumnFamilyOptions oldDefaults(final int majorVersion, final int minorVersion) {
+    oldDefaults(nativeHandle_, majorVersion, minorVersion);
+    return this;
+  }
+
+  @Override
   public ColumnFamilyOptions optimizeForSmallDb() {
     optimizeForSmallDb(nativeHandle_);
+    return this;
+  }
+
+  @Override
+  public ColumnFamilyOptions optimizeForSmallDb(final Cache cache) {
+    optimizeForSmallDb(nativeHandle_, cache.getNativeHandle());
     return this;
   }
 
@@ -128,9 +202,10 @@ public class ColumnFamilyOptions extends RocksObject
 
   @Override
   public ColumnFamilyOptions setComparator(
-      final AbstractComparator<? extends AbstractSlice<?>> comparator) {
+      final AbstractComparator comparator) {
     assert (isOwningHandle());
-    setComparatorHandle(nativeHandle_, comparator.getNativeHandle());
+    setComparatorHandle(nativeHandle_, comparator.nativeHandle_,
+            comparator.getComparatorType().getValue());
     comparator_ = comparator;
     return this;
   }
@@ -153,12 +228,33 @@ public class ColumnFamilyOptions extends RocksObject
     return this;
   }
 
+  @Override
   public ColumnFamilyOptions setCompactionFilter(
         final AbstractCompactionFilter<? extends AbstractSlice<?>>
             compactionFilter) {
     setCompactionFilterHandle(nativeHandle_, compactionFilter.nativeHandle_);
     compactionFilter_ = compactionFilter;
     return this;
+  }
+
+  @Override
+  public AbstractCompactionFilter<? extends AbstractSlice<?>> compactionFilter() {
+    assert (isOwningHandle());
+    return compactionFilter_;
+  }
+
+  @Override
+  public ColumnFamilyOptions setCompactionFilterFactory(final AbstractCompactionFilterFactory<? extends AbstractCompactionFilter<?>> compactionFilterFactory) {
+    assert (isOwningHandle());
+    setCompactionFilterFactoryHandle(nativeHandle_, compactionFilterFactory.nativeHandle_);
+    compactionFilterFactory_ = compactionFilterFactory;
+    return this;
+  }
+
+  @Override
+  public AbstractCompactionFilterFactory<? extends AbstractCompactionFilter<?>> compactionFilterFactory() {
+    assert (isOwningHandle());
+    return compactionFilterFactory_;
   }
 
   @Override
@@ -243,7 +339,7 @@ public class ColumnFamilyOptions extends RocksObject
     final byte[] byteCompressionTypes =
         compressionPerLevel(nativeHandle_);
     final List<CompressionType> compressionLevels = new ArrayList<>();
-    for (final Byte byteCompressionType : byteCompressionTypes) {
+    for (final byte byteCompressionType : byteCompressionTypes) {
       compressionLevels.add(CompressionType.getCompressionType(
           byteCompressionType));
     }
@@ -262,6 +358,20 @@ public class ColumnFamilyOptions extends RocksObject
   public CompressionType bottommostCompressionType() {
     return CompressionType.getCompressionType(
         bottommostCompressionType(nativeHandle_));
+  }
+
+  @Override
+  public ColumnFamilyOptions setBottommostCompressionOptions(
+      final CompressionOptions bottommostCompressionOptions) {
+    setBottommostCompressionOptions(nativeHandle_,
+        bottommostCompressionOptions.nativeHandle_);
+    this.bottommostCompressionOptions_ = bottommostCompressionOptions;
+    return this;
+  }
+
+  @Override
+  public CompressionOptions bottommostCompressionOptions() {
+    return this.bottommostCompressionOptions_;
   }
 
   @Override
@@ -428,7 +538,7 @@ public class ColumnFamilyOptions extends RocksObject
 
   @Override
   public CompactionStyle compactionStyle() {
-    return CompactionStyle.values()[compactionStyle(nativeHandle_)];
+    return CompactionStyle.fromValue(compactionStyle(nativeHandle_));
   }
 
   @Override
@@ -495,6 +605,45 @@ public class ColumnFamilyOptions extends RocksObject
   public String tableFactoryName() {
     assert(isOwningHandle());
     return tableFactoryName(nativeHandle_);
+  }
+
+  @Override
+  public ColumnFamilyOptions setCfPaths(final Collection<DbPath> cfPaths) {
+    assert (isOwningHandle());
+
+    final int len = cfPaths.size();
+    final String paths[] = new String[len];
+    final long targetSizes[] = new long[len];
+
+    int i = 0;
+    for (final DbPath dbPath : cfPaths) {
+      paths[i] = dbPath.path.toString();
+      targetSizes[i] = dbPath.targetSize;
+      i++;
+    }
+    setCfPaths(nativeHandle_, paths, targetSizes);
+    return this;
+  }
+
+  @Override
+  public List<DbPath> cfPaths() {
+    final int len = (int) cfPathsLen(nativeHandle_);
+
+    if (len == 0) {
+      return Collections.emptyList();
+    }
+
+    final String paths[] = new String[len];
+    final long targetSizes[] = new long[len];
+
+    cfPaths(nativeHandle_, paths, targetSizes);
+
+    final List<DbPath> cfPaths = new ArrayList<>();
+    for (int i = 0; i < len; i++) {
+      cfPaths.add(new DbPath(Paths.get(paths[i]), targetSizes[i]));
+    }
+
+    return cfPaths;
   }
 
   @Override
@@ -698,6 +847,17 @@ public class ColumnFamilyOptions extends RocksObject
   }
 
   @Override
+  public ColumnFamilyOptions setTtl(final long ttl) {
+    setTtl(nativeHandle_, ttl);
+    return this;
+  }
+
+  @Override
+  public long ttl() {
+    return ttl(nativeHandle_);
+  }
+
+  @Override
   public ColumnFamilyOptions setCompactionOptionsUniversal(
       final CompactionOptionsUniversal compactionOptionsUniversal) {
     setCompactionOptionsUniversal(nativeHandle_,
@@ -735,23 +895,46 @@ public class ColumnFamilyOptions extends RocksObject
     return forceConsistencyChecks(nativeHandle_);
   }
 
-  /**
-   * <p>Private constructor to be used by
-   * {@link #getColumnFamilyOptionsFromProps(java.util.Properties)}</p>
-   *
-   * @param handle native handle to ColumnFamilyOptions instance.
-   */
-  private ColumnFamilyOptions(final long handle) {
-    super(handle);
+  @Override
+  public ColumnFamilyOptions setSstPartitionerFactory(SstPartitionerFactory sstPartitionerFactory) {
+    setSstPartitionerFactory(nativeHandle_, sstPartitionerFactory.nativeHandle_);
+    this.sstPartitionerFactory_ = sstPartitionerFactory;
+    return this;
+  }
+
+  @Override
+  public ColumnFamilyOptions setCompactionThreadLimiter(
+      final ConcurrentTaskLimiter compactionThreadLimiter) {
+    setCompactionThreadLimiter(nativeHandle_, compactionThreadLimiter.nativeHandle_);
+    this.compactionThreadLimiter_ = compactionThreadLimiter;
+    return this;
+  }
+
+  @Override
+  public ConcurrentTaskLimiter compactionThreadLimiter() {
+    assert (isOwningHandle());
+    return this.compactionThreadLimiter_;
+  }
+
+  @Override
+  public SstPartitionerFactory sstPartitionerFactory() {
+    return sstPartitionerFactory_;
   }
 
   private static native long getColumnFamilyOptionsFromProps(
-      String optString);
+      final long cfgHandle, String optString);
+  private static native long getColumnFamilyOptionsFromProps(final String optString);
 
   private static native long newColumnFamilyOptions();
+  private static native long copyColumnFamilyOptions(final long handle);
+  private static native long newColumnFamilyOptionsFromOptions(
+      final long optionsHandle);
   @Override protected final native void disposeInternal(final long handle);
 
+  private static native void oldDefaults(
+      final long handle, final int majorVersion, final int minorVersion);
   private native void optimizeForSmallDb(final long handle);
+  private static native void optimizeForSmallDb(final long handle, final long cacheHandle);
   private native void optimizeForPointLookup(long handle,
       long blockCacheSizeMb);
   private native void optimizeLevelStyleCompaction(long handle,
@@ -760,11 +943,13 @@ public class ColumnFamilyOptions extends RocksObject
       long memtableMemoryBudget);
   private native void setComparatorHandle(long handle, int builtinComparator);
   private native void setComparatorHandle(long optHandle,
-      long comparatorHandle);
+      long comparatorHandle, byte comparatorType);
   private native void setMergeOperatorName(long handle, String name);
   private native void setMergeOperator(long handle, long mergeOperatorHandle);
   private native void setCompactionFilterHandle(long handle,
       long compactionFilterHandle);
+  private native void setCompactionFilterFactoryHandle(long handle,
+      long compactionFilterFactoryHandle);
   private native void setWriteBufferSize(long handle, long writeBufferSize)
       throws IllegalArgumentException;
   private native long writeBufferSize(long handle);
@@ -782,6 +967,8 @@ public class ColumnFamilyOptions extends RocksObject
   private native void setBottommostCompressionType(long handle,
       byte bottommostCompressionType);
   private native byte bottommostCompressionType(long handle);
+  private native void setBottommostCompressionOptions(final long handle,
+      final long bottommostCompressionOptionsHandle);
   private native void setCompressionOptions(long handle,
       long compressionOptionsHandle);
   private native void useFixedLengthPrefixExtractor(
@@ -836,6 +1023,11 @@ public class ColumnFamilyOptions extends RocksObject
   private native String memTableFactoryName(long handle);
   private native void setTableFactory(long handle, long factoryHandle);
   private native String tableFactoryName(long handle);
+  private static native void setCfPaths(
+      final long handle, final String[] paths, final long[] targetSizes);
+  private static native long cfPathsLen(final long handle);
+  private static native void cfPaths(
+      final long handle, final String[] paths, final long[] targetSizes);
   private native void setInplaceUpdateSupport(
       long handle, boolean inplaceUpdateSupport);
   private native boolean inplaceUpdateSupport(long handle);
@@ -889,6 +1081,8 @@ public class ColumnFamilyOptions extends RocksObject
   private native void setReportBgIoStats(final long handle,
     final boolean reportBgIoStats);
   private native boolean reportBgIoStats(final long handle);
+  private native void setTtl(final long handle, final long ttl);
+  private native long ttl(final long handle);
   private native void setCompactionOptionsUniversal(final long handle,
     final long compactionOptionsUniversalHandle);
   private native void setCompactionOptionsFIFO(final long handle,
@@ -896,14 +1090,22 @@ public class ColumnFamilyOptions extends RocksObject
   private native void setForceConsistencyChecks(final long handle,
     final boolean forceConsistencyChecks);
   private native boolean forceConsistencyChecks(final long handle);
+  private native void setSstPartitionerFactory(long nativeHandle_, long newFactoryHandle);
+  private static native void setCompactionThreadLimiter(
+      final long nativeHandle_, final long compactionThreadLimiterHandle);
 
   // instance variables
+  // NOTE: If you add new member variables, please update the copy constructor above!
   private MemTableConfig memTableConfig_;
   private TableFormatConfig tableFormatConfig_;
-  private AbstractComparator<? extends AbstractSlice<?>> comparator_;
+  private AbstractComparator comparator_;
   private AbstractCompactionFilter<? extends AbstractSlice<?>> compactionFilter_;
+  private AbstractCompactionFilterFactory<? extends AbstractCompactionFilter<?>>
+      compactionFilterFactory_;
   private CompactionOptionsUniversal compactionOptionsUniversal_;
   private CompactionOptionsFIFO compactionOptionsFIFO_;
+  private CompressionOptions bottommostCompressionOptions_;
   private CompressionOptions compressionOptions_;
-
+  private SstPartitionerFactory sstPartitionerFactory_;
+  private ConcurrentTaskLimiter compactionThreadLimiter_;
 }

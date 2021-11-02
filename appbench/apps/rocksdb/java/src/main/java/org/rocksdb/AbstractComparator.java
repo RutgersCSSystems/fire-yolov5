@@ -1,24 +1,43 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-// This source code is licensed under the BSD-style license found in the
-// LICENSE file in the root directory of this source tree. An additional grant
-// of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 package org.rocksdb;
+
+import java.nio.ByteBuffer;
 
 /**
  * Comparators are used by RocksDB to determine
  * the ordering of keys.
  *
- * This class is package private, implementers
- * should extend either of the public abstract classes:
- *   @see org.rocksdb.Comparator
- *   @see org.rocksdb.DirectComparator
+ * Implementations of Comparators in Java should extend this class.
  */
-public abstract class AbstractComparator<T extends AbstractSlice<?>>
-    extends AbstractImmutableNativeReference {
+public abstract class AbstractComparator
+    extends RocksCallbackObject {
 
-  protected AbstractComparator() {
-    super(true);
+  AbstractComparator() {
+    super();
+  }
+
+  protected AbstractComparator(final ComparatorOptions copt) {
+    super(copt.nativeHandle_);
+  }
+
+  @Override
+  protected long initializeNative(final long... nativeParameterHandles) {
+      return createNewComparator(nativeParameterHandles[0]);
+  }
+
+  /**
+   * Get the type of this comparator.
+   *
+   * Used for determining the correct C++ cast in native code.
+   *
+   * @return The type of the comparator.
+   */
+  ComparatorType getComparatorType() {
+    return ComparatorType.JAVA_COMPARATOR;
   }
 
   /**
@@ -37,70 +56,69 @@ public abstract class AbstractComparator<T extends AbstractSlice<?>>
   public abstract String name();
 
   /**
-   * Three-way key comparison
+   * Three-way key comparison. Implementations should provide a
+   * <a href="https://en.wikipedia.org/wiki/Total_order">total order</a>
+   * on keys that might be passed to it.
    *
-   *  @param a Slice access to first key
-   *  @param b Slice access to second key
+   * The implementation may modify the {@code ByteBuffer}s passed in, though
+   * it would be unconventional to modify the "limit" or any of the
+   * underlying bytes. As a callback, RocksJava will ensure that {@code a}
+   * is a different instance from {@code b}.
    *
-   *  @return Should return either:
+   * @param a buffer containing the first key in its "remaining" elements
+   * @param b buffer containing the second key in its "remaining" elements
+   *
+   * @return Should return either:
    *    1) &lt; 0 if "a" &lt; "b"
    *    2) == 0 if "a" == "b"
    *    3) &gt; 0 if "a" &gt; "b"
    */
-  public abstract int compare(final T a, final T b);
+  public abstract int compare(final ByteBuffer a, final ByteBuffer b);
 
   /**
    * <p>Used to reduce the space requirements
    * for internal data structures like index blocks.</p>
    *
-   * <p>If start &lt; limit, you may return a new start which is a
+   * <p>If start &lt; limit, you may modify start which is a
    * shorter string in [start, limit).</p>
    *
-   * <p>Simple comparator implementations may return null if they
-   * wish to use start unchanged. i.e., an implementation of
-   * this method that does nothing is correct.</p>
+   * If you modify start, it is expected that you set the byte buffer so that
+   * a subsequent read of start.remaining() bytes from start.position()
+   * to start.limit() will obtain the new start value.
    *
-   * @param start String
-   * @param limit of type T
+   * <p>Simple comparator implementations may return with start unchanged.
+   * i.e., an implementation of this method that does nothing is correct.</p>
    *
-   * @return a shorter start, or null
+   * @param start the start
+   * @param limit the limit
    */
-  public String findShortestSeparator(final String start, final T limit) {
-      return null;
+  public void findShortestSeparator(final ByteBuffer start,
+      final ByteBuffer limit) {
+    // no-op
   }
 
   /**
    * <p>Used to reduce the space requirements
    * for internal data structures like index blocks.</p>
    *
-   * <p>You may return a new short key (key1) where
+   * <p>You may change key to a shorter key (key1) where
    * key1 &ge; key.</p>
    *
-   * <p>Simple comparator implementations may return null if they
-   * wish to leave the key unchanged. i.e., an implementation of
+   * <p>Simple comparator implementations may return the key unchanged.
+   * i.e., an implementation of
    * this method that does nothing is correct.</p>
    *
-   * @param key String
-   *
-   * @return a shorter key, or null
+   * @param key the key
    */
-  public String findShortSuccessor(final String key) {
-      return null;
+  public void findShortSuccessor(final ByteBuffer key) {
+    // no-op
   }
 
-  /**
-   * Deletes underlying C++ comparator pointer.
-   *
-   * Note that this function should be called only after all
-   * RocksDB instances referencing the comparator are closed.
-   * Otherwise an undefined behavior will occur.
-   */
-  @Override
-  protected void disposeInternal() {
-    disposeInternal(getNativeHandle());
+  public final boolean usingDirectBuffers() {
+    return usingDirectBuffers(nativeHandle_);
   }
 
-  protected abstract long getNativeHandle();
+  private native boolean usingDirectBuffers(final long nativeHandle);
 
-  private native void disposeInternal(final long handle);
+  private native long createNewComparator(final long comparatorOptionsHandle);
 }

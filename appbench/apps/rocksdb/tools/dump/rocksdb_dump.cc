@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under the BSD-style license found in the
-//  LICENSE file in the root directory of this source tree. An additional grant
-//  of patent rights can be found in the PATENTS file in the same directory.
+//  This source code is licensed under both the GPLv2 (found in the
+//  COPYING file in the root directory) and Apache 2.0 License
+//  (found in the LICENSE.Apache file in the root directory).
 
 #if !(defined GFLAGS) || defined(ROCKSDB_LITE)
 
@@ -18,9 +18,9 @@ int main() {
 
 #else
 
-#include <gflags/gflags.h>
 #include "rocksdb/convenience.h"
 #include "rocksdb/db_dump_tool.h"
+#include "util/gflags_compat.h"
 
 DEFINE_string(db_path, "", "Path to the db that will be dumped");
 DEFINE_string(dump_location, "", "Path to where the dump file location");
@@ -30,22 +30,22 @@ DEFINE_string(db_options, "",
               "Options string used to open the database that will be dumped");
 
 int main(int argc, char** argv) {
-  GFLAGS::ParseCommandLineFlags(&argc, &argv, true);
+  GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
 
   if (FLAGS_db_path == "" || FLAGS_dump_location == "") {
     fprintf(stderr, "Please set --db_path and --dump_location\n");
     return 1;
   }
 
-  rocksdb::DumpOptions dump_options;
+  ROCKSDB_NAMESPACE::DumpOptions dump_options;
   dump_options.db_path = FLAGS_db_path;
   dump_options.dump_location = FLAGS_dump_location;
   dump_options.anonymous = FLAGS_anonymous;
 
-  rocksdb::Options db_options;
+  ROCKSDB_NAMESPACE::Options db_options;
   if (FLAGS_db_options != "") {
-    rocksdb::Options parsed_options;
-    rocksdb::Status s = rocksdb::GetOptionsFromString(
+    ROCKSDB_NAMESPACE::Options parsed_options;
+    ROCKSDB_NAMESPACE::Status s = ROCKSDB_NAMESPACE::GetOptionsFromString(
         db_options, FLAGS_db_options, &parsed_options);
     if (!s.ok()) {
       fprintf(stderr, "Cannot parse provided db_options\n");
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
     db_options = parsed_options;
   }
 
-  rocksdb::DbDumpTool tool;
+  ROCKSDB_NAMESPACE::DbDumpTool tool;
   if (!tool.Run(dump_options, db_options)) {
     return 1;
   }
