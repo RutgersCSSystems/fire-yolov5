@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 ##This script will call variation scripts from different apps
 if [ -z "$APPS" ]; then
@@ -15,19 +16,25 @@ declare -a apparr=("graphchi")
 declare -a nprocarr=("4")
 
 ##This is used as results location; change the app scripts according to the experiment you want to run
-EXPERIMENT="hitrate"
+EXPERIMENT="CACHESTAT"
 
 #Here is where we run the application
 RUNAPP()
 {
     APP=$2
     NPROC=$1
-    OUTPUT=${OUTPUT_FOLDER}/${APP}/${EXPERIMENT}/NPROC_${NPROC}
+    OUTPUT=${OUTPUT_FOLDER}/${EXPERIMENT}/${APP}/NPROC_${NPROC}
+    mkdir -p $OUTPUT
+
+
+    if [ "$EXPERIMENT" = "CACHESTAT" ]; then
+	  CACHESTATFN $NPROC $APP
+    fi
 
     if [ "$APP" = "strided_madbench" ]; then
          $RUN_SCRIPTS/run_strided_madbench.sh $NPROC $EXPERIMENT $OUTPUT
     elif [ "$APP" = "graphchi" ]; then
-	 $RUN_SCRIPTS/run_strided_madbench.sh $NPROC $EXPERIMENT $OUTPUT	
+	 $RUN_SCRIPTS/run_graphchi.sh $NPROC $EXPERIMENT $OUTPUT	
     elif [ "$APP" = "rocksdb" ]; then
          $RUN_SCRIPTS/run_db_bench.sh $NPROC $EXPERIMENT $OUTPUT
     fi
