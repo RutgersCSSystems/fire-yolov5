@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 package org.rocksdb;
 
@@ -9,12 +9,12 @@ import java.io.File;
 
 /**
  * <p>BackupableDBOptions to control the behavior of a backupable database.
- * It will be used during the creation of a {@link org.rocksdb.BackupEngine}.
+ * It will be used during the creation of a {@link org.rocksdb.BackupableDB}.
  * </p>
  * <p>Note that dispose() must be called before an Options instance
  * become out-of-scope to release the allocated memory in c++.</p>
  *
- * @see org.rocksdb.BackupEngine
+ * @see org.rocksdb.BackupableDB
  */
 public class BackupableDBOptions extends RocksObject {
 
@@ -375,8 +375,8 @@ public class BackupableDBOptions extends RocksObject {
 
   /**
    * Up to this many background threads will copy files for
-   * {@link BackupEngine#createNewBackup(RocksDB, boolean)} and
-   * {@link BackupEngine#restoreDbFromBackup(int, String, String, RestoreOptions)}
+   * {@link BackupableDB#createNewBackup(boolean)} and
+   * {@link RestoreBackupableDB#restoreDBFromBackup(long, String, String, RestoreOptions)}
    *
    * Default: 1
    *
@@ -392,8 +392,8 @@ public class BackupableDBOptions extends RocksObject {
 
   /**
    * Up to this many background threads will copy files for
-   * {@link BackupEngine#createNewBackup(RocksDB, boolean)} and
-   * {@link BackupEngine#restoreDbFromBackup(int, String, String, RestoreOptions)}
+   * {@link BackupableDB#createNewBackup(boolean)} and
+   * {@link RestoreBackupableDB#restoreDBFromBackup(long, String, String, RestoreOptions)}
    *
    * Default: 1
    *

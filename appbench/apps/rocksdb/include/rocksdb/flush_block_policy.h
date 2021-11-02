@@ -1,14 +1,14 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 #pragma once
 
 #include <string>
 #include "rocksdb/table.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class Slice;
 class BlockBuilder;
@@ -20,9 +20,10 @@ class FlushBlockPolicy {
  public:
   // Keep track of the key/value sequences and return the boolean value to
   // determine if table builder should flush current data block.
-  virtual bool Update(const Slice& key, const Slice& value) = 0;
+  virtual bool Update(const Slice& key,
+                      const Slice& value) = 0;
 
-  virtual ~FlushBlockPolicy() {}
+  virtual ~FlushBlockPolicy() { }
 };
 
 class FlushBlockPolicyFactory {
@@ -40,16 +41,18 @@ class FlushBlockPolicyFactory {
       const BlockBasedTableOptions& table_options,
       const BlockBuilder& data_block_builder) const = 0;
 
-  virtual ~FlushBlockPolicyFactory() {}
+  virtual ~FlushBlockPolicyFactory() { }
 };
 
 class FlushBlockBySizePolicyFactory : public FlushBlockPolicyFactory {
  public:
   FlushBlockBySizePolicyFactory() {}
 
-  const char* Name() const override { return "FlushBlockBySizePolicyFactory"; }
+  virtual const char* Name() const override {
+    return "FlushBlockBySizePolicyFactory";
+  }
 
-  FlushBlockPolicy* NewFlushBlockPolicy(
+  virtual FlushBlockPolicy* NewFlushBlockPolicy(
       const BlockBasedTableOptions& table_options,
       const BlockBuilder& data_block_builder) const override;
 
@@ -58,4 +61,4 @@ class FlushBlockBySizePolicyFactory : public FlushBlockPolicyFactory {
       const BlockBuilder& data_block_builder);
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // rocksdb

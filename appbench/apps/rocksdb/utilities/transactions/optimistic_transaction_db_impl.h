@@ -1,44 +1,25 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #pragma once
 #ifndef ROCKSDB_LITE
-
-#include <mutex>
-#include <vector>
-#include <algorithm>
 
 #include "rocksdb/db.h"
 #include "rocksdb/options.h"
 #include "rocksdb/utilities/optimistic_transaction_db.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class OptimisticTransactionDBImpl : public OptimisticTransactionDB {
  public:
-  explicit OptimisticTransactionDBImpl(
-      DB* db, const OptimisticTransactionDBOptions& occ_options,
-      bool take_ownership = true)
-      : OptimisticTransactionDB(db),
-        db_owner_(take_ownership),
-        validate_policy_(occ_options.validate_policy) {
-    if (validate_policy_ == OccValidationPolicy::kValidateParallel) {
-      uint32_t bucket_size = std::max(16u, occ_options.occ_lock_buckets);
-      bucketed_locks_.reserve(bucket_size);
-      for (size_t i = 0; i < bucket_size; ++i) {
-        bucketed_locks_.emplace_back(
-            std::unique_ptr<std::mutex>(new std::mutex));
-      }
-    }
-  }
+  explicit OptimisticTransactionDBImpl(DB* db, bool take_ownership = true)
+      : OptimisticTransactionDB(db), db_(db), db_owner_(take_ownership) {}
 
   ~OptimisticTransactionDBImpl() {
-    // Prevent this stackable from destroying
-    // base db
     if (!db_owner_) {
-      db_ = nullptr;
+      db_.release();
     }
   }
 
@@ -46,36 +27,11 @@ class OptimisticTransactionDBImpl : public OptimisticTransactionDB {
                                 const OptimisticTransactionOptions& txn_options,
                                 Transaction* old_txn) override;
 
-  // Transactional `DeleteRange()` is not yet supported.
-  virtual Status DeleteRange(const WriteOptions&, ColumnFamilyHandle*,
-                             const Slice&, const Slice&) override {
-    return Status::NotSupported();
-  }
-
-  // Range deletions also must not be snuck into `WriteBatch`es as they are
-  // incompatible with `OptimisticTransactionDB`.
-  virtual Status Write(const WriteOptions& write_opts,
-                       WriteBatch* batch) override {
-    if (batch->HasDeleteRange()) {
-      return Status::NotSupported();
-    }
-    return OptimisticTransactionDB::Write(write_opts, batch);
-  }
-
-  size_t GetLockBucketsSize() const { return bucketed_locks_.size(); }
-
-  OccValidationPolicy GetValidatePolicy() const { return validate_policy_; }
-
-  std::unique_lock<std::mutex> LockBucket(size_t idx);
+  DB* GetBaseDB() override { return db_.get(); }
 
  private:
-  // NOTE: used in validation phase. Each key is hashed into some
-  // bucket. We then take the lock in the hash value order to avoid deadlock.
-  std::vector<std::unique_ptr<std::mutex>> bucketed_locks_;
-
+  std::unique_ptr<DB> db_;
   bool db_owner_;
-
-  const OccValidationPolicy validate_policy_;
 
   void ReinitializeTransaction(Transaction* txn,
                                const WriteOptions& write_options,
@@ -83,5 +39,5 @@ class OptimisticTransactionDBImpl : public OptimisticTransactionDB {
                                    OptimisticTransactionOptions());
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  //  namespace rocksdb
 #endif  // ROCKSDB_LITE

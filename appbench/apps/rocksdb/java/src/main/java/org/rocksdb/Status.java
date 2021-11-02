@@ -1,11 +1,9 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 package org.rocksdb;
-
-import java.util.Objects;
 
 /**
  * Represents the status returned by a function call in RocksDB.
@@ -56,7 +54,6 @@ public class Status {
     return builder.toString();
   }
 
-  // should stay in sync with /include/rocksdb/status.h:Code and /java/rocksjni/portal.h:toJavaStatusCode
   public enum Code {
     Ok(                 (byte)0x0),
     NotFound(           (byte)0x1),
@@ -71,8 +68,7 @@ public class Status {
     Aborted(            (byte)0xA),
     Busy(               (byte)0xB),
     Expired(            (byte)0xC),
-    TryAgain(           (byte)0xD),
-    Undefined(          (byte)0x7F);
+    TryAgain(           (byte)0xD);
 
     private final byte value;
 
@@ -87,30 +83,16 @@ public class Status {
         }
       }
       throw new IllegalArgumentException(
-          "Illegal value provided for Code (" + value + ").");
-    }
-
-    /**
-     * Returns the byte value of the enumerations value.
-     *
-     * @return byte representation
-     */
-    public byte getValue() {
-      return value;
+          "Illegal value provided for Code.");
     }
   }
 
-  // should stay in sync with /include/rocksdb/status.h:SubCode and /java/rocksjni/portal.h:toJavaStatusSubCode
   public enum SubCode {
     None(         (byte)0x0),
     MutexTimeout( (byte)0x1),
     LockTimeout(  (byte)0x2),
     LockLimit(    (byte)0x3),
-    NoSpace(      (byte)0x4),
-    Deadlock(     (byte)0x5),
-    StaleFile(    (byte)0x6),
-    MemoryLimit(  (byte)0x7),
-    Undefined(    (byte)0x7F);
+    MaxSubCode(   (byte)0x7E);
 
     private final byte value;
 
@@ -125,31 +107,7 @@ public class Status {
         }
       }
       throw new IllegalArgumentException(
-          "Illegal value provided for SubCode (" + value + ").");
+          "Illegal value provided for SubCode.");
     }
-
-    /**
-     * Returns the byte value of the enumerations value.
-     *
-     * @return byte representation
-     */
-    public byte getValue() {
-      return value;
-    }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o)
-      return true;
-    if (o == null || getClass() != o.getClass())
-      return false;
-    Status status = (Status) o;
-    return code == status.code && subCode == status.subCode && Objects.equals(state, status.state);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(code, subCode, state);
   }
 }

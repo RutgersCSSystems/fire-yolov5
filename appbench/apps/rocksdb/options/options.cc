@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,7 +9,11 @@
 
 #include "rocksdb/options.h"
 
-#include <cinttypes>
+#ifndef __STDC_FORMAT_MACROS
+#define __STDC_FORMAT_MACROS
+#endif
+
+#include <inttypes.h>
 #include <limits>
 
 #include "monitoring/statistics.h"
@@ -24,14 +28,13 @@
 #include "rocksdb/slice.h"
 #include "rocksdb/slice_transform.h"
 #include "rocksdb/sst_file_manager.h"
-#include "rocksdb/sst_partitioner.h"
 #include "rocksdb/table.h"
 #include "rocksdb/table_properties.h"
 #include "rocksdb/wal_filter.h"
-#include "table/block_based/block_based_table_factory.h"
+#include "table/block_based_table_factory.h"
 #include "util/compression.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 AdvancedColumnFamilyOptions::AdvancedColumnFamilyOptions() {
   assert(memtable_factory.get() != nullptr);
@@ -43,14 +46,11 @@ AdvancedColumnFamilyOptions::AdvancedColumnFamilyOptions(const Options& options)
           options.min_write_buffer_number_to_merge),
       max_write_buffer_number_to_maintain(
           options.max_write_buffer_number_to_maintain),
-      max_write_buffer_size_to_maintain(
-          options.max_write_buffer_size_to_maintain),
       inplace_update_support(options.inplace_update_support),
       inplace_update_num_locks(options.inplace_update_num_locks),
       inplace_callback(options.inplace_callback),
       memtable_prefix_bloom_size_ratio(
           options.memtable_prefix_bloom_size_ratio),
-      memtable_whole_key_filtering(options.memtable_whole_key_filtering),
       memtable_huge_page_size(options.memtable_huge_page_size),
       memtable_insert_with_hint_prefix_extractor(
           options.memtable_insert_with_hint_prefix_extractor),
@@ -85,17 +85,7 @@ AdvancedColumnFamilyOptions::AdvancedColumnFamilyOptions(const Options& options)
       optimize_filters_for_hits(options.optimize_filters_for_hits),
       paranoid_file_checks(options.paranoid_file_checks),
       force_consistency_checks(options.force_consistency_checks),
-      report_bg_io_stats(options.report_bg_io_stats),
-      ttl(options.ttl),
-      periodic_compaction_seconds(options.periodic_compaction_seconds),
-      sample_for_compression(options.sample_for_compression),
-      enable_blob_files(options.enable_blob_files),
-      min_blob_size(options.min_blob_size),
-      blob_file_size(options.blob_file_size),
-      blob_compression_type(options.blob_compression_type),
-      enable_blob_garbage_collection(options.enable_blob_garbage_collection),
-      blob_garbage_collection_age_cutoff(
-          options.blob_garbage_collection_age_cutoff) {
+      report_bg_io_stats(options.report_bg_io_stats) {
   assert(memtable_factory.get() != nullptr);
   if (max_bytes_for_level_multiplier_additional.size() <
       static_cast<unsigned int>(num_levels)) {
@@ -109,11 +99,97 @@ ColumnFamilyOptions::ColumnFamilyOptions()
           std::shared_ptr<TableFactory>(new BlockBasedTableFactory())) {}
 
 ColumnFamilyOptions::ColumnFamilyOptions(const Options& options)
-    : ColumnFamilyOptions(*static_cast<const ColumnFamilyOptions*>(&options)) {}
+    : AdvancedColumnFamilyOptions(options),
+      comparator(options.comparator),
+      merge_operator(options.merge_operator),
+      compaction_filter(options.compaction_filter),
+      compaction_filter_factory(options.compaction_filter_factory),
+      write_buffer_size(options.write_buffer_size),
+      compression(options.compression),
+      bottommost_compression(options.bottommost_compression),
+      compression_opts(options.compression_opts),
+      level0_file_num_compaction_trigger(
+          options.level0_file_num_compaction_trigger),
+      prefix_extractor(options.prefix_extractor),
+      max_bytes_for_level_base(options.max_bytes_for_level_base),
+      disable_auto_compactions(options.disable_auto_compactions),
+      table_factory(options.table_factory) {}
 
 DBOptions::DBOptions() {}
+
 DBOptions::DBOptions(const Options& options)
-    : DBOptions(*static_cast<const DBOptions*>(&options)) {}
+    : create_if_missing(options.create_if_missing),
+      create_missing_column_families(options.create_missing_column_families),
+      error_if_exists(options.error_if_exists),
+      paranoid_checks(options.paranoid_checks),
+      env(options.env),
+      rate_limiter(options.rate_limiter),
+      sst_file_manager(options.sst_file_manager),
+      info_log(options.info_log),
+      info_log_level(options.info_log_level),
+      max_open_files(options.max_open_files),
+      max_file_opening_threads(options.max_file_opening_threads),
+      max_total_wal_size(options.max_total_wal_size),
+      statistics(options.statistics),
+      use_fsync(options.use_fsync),
+      db_paths(options.db_paths),
+      db_log_dir(options.db_log_dir),
+      wal_dir(options.wal_dir),
+      delete_obsolete_files_period_micros(
+          options.delete_obsolete_files_period_micros),
+      base_background_compactions(options.base_background_compactions),
+      max_background_compactions(options.max_background_compactions),
+      max_subcompactions(options.max_subcompactions),
+      max_background_flushes(options.max_background_flushes),
+      max_log_file_size(options.max_log_file_size),
+      log_file_time_to_roll(options.log_file_time_to_roll),
+      keep_log_file_num(options.keep_log_file_num),
+      recycle_log_file_num(options.recycle_log_file_num),
+      max_manifest_file_size(options.max_manifest_file_size),
+      table_cache_numshardbits(options.table_cache_numshardbits),
+      WAL_ttl_seconds(options.WAL_ttl_seconds),
+      WAL_size_limit_MB(options.WAL_size_limit_MB),
+      manifest_preallocation_size(options.manifest_preallocation_size),
+      allow_mmap_reads(options.allow_mmap_reads),
+      allow_mmap_writes(options.allow_mmap_writes),
+      use_direct_reads(options.use_direct_reads),
+      use_direct_io_for_flush_and_compaction(
+          options.use_direct_io_for_flush_and_compaction),
+      allow_fallocate(options.allow_fallocate),
+      is_fd_close_on_exec(options.is_fd_close_on_exec),
+      skip_log_error_on_recovery(options.skip_log_error_on_recovery),
+      stats_dump_period_sec(options.stats_dump_period_sec),
+      advise_random_on_open(options.advise_random_on_open),
+      db_write_buffer_size(options.db_write_buffer_size),
+      write_buffer_manager(options.write_buffer_manager),
+      access_hint_on_compaction_start(options.access_hint_on_compaction_start),
+      new_table_reader_for_compaction_inputs(
+          options.new_table_reader_for_compaction_inputs),
+      compaction_readahead_size(options.compaction_readahead_size),
+      random_access_max_buffer_size(options.random_access_max_buffer_size),
+      writable_file_max_buffer_size(options.writable_file_max_buffer_size),
+      use_adaptive_mutex(options.use_adaptive_mutex),
+      bytes_per_sync(options.bytes_per_sync),
+      wal_bytes_per_sync(options.wal_bytes_per_sync),
+      listeners(options.listeners),
+      enable_thread_tracking(options.enable_thread_tracking),
+      delayed_write_rate(options.delayed_write_rate),
+      allow_concurrent_memtable_write(options.allow_concurrent_memtable_write),
+      enable_write_thread_adaptive_yield(
+          options.enable_write_thread_adaptive_yield),
+      write_thread_max_yield_usec(options.write_thread_max_yield_usec),
+      write_thread_slow_yield_usec(options.write_thread_slow_yield_usec),
+      skip_stats_update_on_db_open(options.skip_stats_update_on_db_open),
+      wal_recovery_mode(options.wal_recovery_mode),
+      row_cache(options.row_cache),
+#ifndef ROCKSDB_LITE
+      wal_filter(options.wal_filter),
+#endif  // ROCKSDB_LITE
+      fail_if_options_file_error(options.fail_if_options_file_error),
+      dump_malloc_stats(options.dump_malloc_stats),
+      avoid_flush_during_recovery(options.avoid_flush_during_recovery),
+      avoid_flush_during_shutdown(options.avoid_flush_during_shutdown) {
+}
 
 void DBOptions::Dump(Logger* log) const {
     ImmutableDBOptions(*this).Dump(log);
@@ -130,15 +206,12 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
   ROCKS_LOG_HEADER(
       log, "       Options.compaction_filter_factory: %s",
       compaction_filter_factory ? compaction_filter_factory->Name() : "None");
-  ROCKS_LOG_HEADER(
-      log, " Options.sst_partitioner_factory: %s",
-      sst_partitioner_factory ? sst_partitioner_factory->Name() : "None");
   ROCKS_LOG_HEADER(log, "        Options.memtable_factory: %s",
                    memtable_factory->Name());
   ROCKS_LOG_HEADER(log, "           Options.table_factory: %s",
                    table_factory->Name());
   ROCKS_LOG_HEADER(log, "           table_factory options: %s",
-                   table_factory->GetPrintableOptions().c_str());
+                   table_factory->GetPrintableTableOptions().c_str());
   ROCKS_LOG_HEADER(log, "       Options.write_buffer_size: %" ROCKSDB_PRIszt,
                    write_buffer_size);
   ROCKS_LOG_HEADER(log, " Options.max_write_buffer_number: %d",
@@ -171,41 +244,6 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
                      min_write_buffer_number_to_merge);
     ROCKS_LOG_HEADER(log, "    Options.max_write_buffer_number_to_maintain: %d",
                      max_write_buffer_number_to_maintain);
-    ROCKS_LOG_HEADER(log,
-                     "    Options.max_write_buffer_size_to_maintain: %" PRIu64,
-                     max_write_buffer_size_to_maintain);
-    ROCKS_LOG_HEADER(
-        log, "           Options.bottommost_compression_opts.window_bits: %d",
-        bottommost_compression_opts.window_bits);
-    ROCKS_LOG_HEADER(
-        log, "                 Options.bottommost_compression_opts.level: %d",
-        bottommost_compression_opts.level);
-    ROCKS_LOG_HEADER(
-        log, "              Options.bottommost_compression_opts.strategy: %d",
-        bottommost_compression_opts.strategy);
-    ROCKS_LOG_HEADER(
-        log,
-        "        Options.bottommost_compression_opts.max_dict_bytes: "
-        "%" PRIu32,
-        bottommost_compression_opts.max_dict_bytes);
-    ROCKS_LOG_HEADER(
-        log,
-        "        Options.bottommost_compression_opts.zstd_max_train_bytes: "
-        "%" PRIu32,
-        bottommost_compression_opts.zstd_max_train_bytes);
-    ROCKS_LOG_HEADER(
-        log,
-        "        Options.bottommost_compression_opts.parallel_threads: "
-        "%" PRIu32,
-        bottommost_compression_opts.parallel_threads);
-    ROCKS_LOG_HEADER(
-        log, "                 Options.bottommost_compression_opts.enabled: %s",
-        bottommost_compression_opts.enabled ? "true" : "false");
-    ROCKS_LOG_HEADER(
-        log,
-        "        Options.bottommost_compression_opts.max_dict_buffer_bytes: "
-        "%" PRIu64,
-        bottommost_compression_opts.max_dict_buffer_bytes);
     ROCKS_LOG_HEADER(log, "           Options.compression_opts.window_bits: %d",
                      compression_opts.window_bits);
     ROCKS_LOG_HEADER(log, "                 Options.compression_opts.level: %d",
@@ -214,23 +252,8 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
                      compression_opts.strategy);
     ROCKS_LOG_HEADER(
         log,
-        "        Options.compression_opts.max_dict_bytes: %" PRIu32,
+        "        Options.compression_opts.max_dict_bytes: %" ROCKSDB_PRIszt,
         compression_opts.max_dict_bytes);
-    ROCKS_LOG_HEADER(log,
-                     "        Options.compression_opts.zstd_max_train_bytes: "
-                     "%" PRIu32,
-                     compression_opts.zstd_max_train_bytes);
-    ROCKS_LOG_HEADER(log,
-                     "        Options.compression_opts.parallel_threads: "
-                     "%" PRIu32,
-                     compression_opts.parallel_threads);
-    ROCKS_LOG_HEADER(log,
-                     "                 Options.compression_opts.enabled: %s",
-                     compression_opts.enabled ? "true" : "false");
-    ROCKS_LOG_HEADER(log,
-                     "        Options.compression_opts.max_dict_buffer_bytes: "
-                     "%" PRIu64,
-                     compression_opts.max_dict_buffer_bytes);
     ROCKS_LOG_HEADER(log, "     Options.level0_file_num_compaction_trigger: %d",
                      level0_file_num_compaction_trigger);
     ROCKS_LOG_HEADER(log, "         Options.level0_slowdown_writes_trigger: %d",
@@ -287,7 +310,7 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
       str_compaction_style = it_compaction_style->second;
     }
     ROCKS_LOG_HEADER(log,
-                     "                       Options.compaction_style: %s",
+                     "                        Options.compaction_style: %s",
                      str_compaction_style.c_str());
 
     const auto& it_compaction_pri =
@@ -300,10 +323,10 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
       str_compaction_pri = it_compaction_pri->second;
     }
     ROCKS_LOG_HEADER(log,
-                     "                         Options.compaction_pri: %s",
+                     "                          Options.compaction_pri: %s",
                      str_compaction_pri.c_str());
     ROCKS_LOG_HEADER(log,
-                     "Options.compaction_options_universal.size_ratio: %u",
+                     " Options.compaction_options_universal.size_ratio: %u",
                      compaction_options_universal.size_ratio);
     ROCKS_LOG_HEADER(log,
                      "Options.compaction_options_universal.min_merge_width: %u",
@@ -320,32 +343,17 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
         log,
         "Options.compaction_options_universal.compression_size_percent: %d",
         compaction_options_universal.compression_size_percent);
-    const auto& it_compaction_stop_style = compaction_stop_style_to_string.find(
-        compaction_options_universal.stop_style);
-    std::string str_compaction_stop_style;
-    if (it_compaction_stop_style == compaction_stop_style_to_string.end()) {
-      assert(false);
-      str_compaction_stop_style =
-          "unknown_" + std::to_string(compaction_options_universal.stop_style);
-    } else {
-      str_compaction_stop_style = it_compaction_stop_style->second;
-    }
-    ROCKS_LOG_HEADER(log,
-                     "Options.compaction_options_universal.stop_style: %s",
-                     str_compaction_stop_style.c_str());
     ROCKS_LOG_HEADER(
         log, "Options.compaction_options_fifo.max_table_files_size: %" PRIu64,
         compaction_options_fifo.max_table_files_size);
-    ROCKS_LOG_HEADER(log,
-                     "Options.compaction_options_fifo.allow_compaction: %d",
-                     compaction_options_fifo.allow_compaction);
-    std::ostringstream collector_info;
+    std::string collector_names;
     for (const auto& collector_factory : table_properties_collector_factories) {
-      collector_info << collector_factory->ToString() << ';';
+      collector_names.append(collector_factory->Name());
+      collector_names.append("; ");
     }
     ROCKS_LOG_HEADER(
         log, "                  Options.table_properties_collectors: %s",
-        collector_info.str().c_str());
+        collector_names.c_str());
     ROCKS_LOG_HEADER(log,
                      "                  Options.inplace_update_support: %d",
                      inplace_update_support);
@@ -357,9 +365,6 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
     ROCKS_LOG_HEADER(
         log, "              Options.memtable_prefix_bloom_size_ratio: %f",
         memtable_prefix_bloom_size_ratio);
-    ROCKS_LOG_HEADER(log,
-                     "              Options.memtable_whole_key_filtering: %d",
-                     memtable_whole_key_filtering);
 
     ROCKS_LOG_HEADER(log, "  Options.memtable_huge_page_size: %" ROCKSDB_PRIszt,
                      memtable_huge_page_size);
@@ -380,25 +385,6 @@ void ColumnFamilyOptions::Dump(Logger* log) const {
                      force_consistency_checks);
     ROCKS_LOG_HEADER(log, "               Options.report_bg_io_stats: %d",
                      report_bg_io_stats);
-    ROCKS_LOG_HEADER(log, "                              Options.ttl: %" PRIu64,
-                     ttl);
-    ROCKS_LOG_HEADER(log,
-                     "         Options.periodic_compaction_seconds: %" PRIu64,
-                     periodic_compaction_seconds);
-    ROCKS_LOG_HEADER(log, "                   Options.enable_blob_files: %s",
-                     enable_blob_files ? "true" : "false");
-    ROCKS_LOG_HEADER(log,
-                     "                       Options.min_blob_size: %" PRIu64,
-                     min_blob_size);
-    ROCKS_LOG_HEADER(log,
-                     "                      Options.blob_file_size: %" PRIu64,
-                     blob_file_size);
-    ROCKS_LOG_HEADER(log, "               Options.blob_compression_type: %s",
-                     CompressionTypeToString(blob_compression_type).c_str());
-    ROCKS_LOG_HEADER(log, "      Options.enable_blob_garbage_collection: %s",
-                     enable_blob_garbage_collection ? "true" : "false");
-    ROCKS_LOG_HEADER(log, "  Options.blob_garbage_collection_age_cutoff: %f",
-                     blob_garbage_collection_age_cutoff);
 }  // ColumnFamilyOptions::Dump
 
 void Options::Dump(Logger* log) const {
@@ -449,6 +435,7 @@ Options::PrepareForBulkLoad()
   // to L1. This is helpful so that all files that are
   // input to the manual compaction are all at L0.
   max_background_compactions = 2;
+  base_background_compactions = 2;
 
   // The compaction would create large files in L1.
   target_file_size_base = 256 * 1024 * 1024;
@@ -456,11 +443,8 @@ Options::PrepareForBulkLoad()
 }
 
 Options* Options::OptimizeForSmallDb() {
-  // 16MB block cache
-  std::shared_ptr<Cache> cache = NewLRUCache(16 << 20);
-
-  ColumnFamilyOptions::OptimizeForSmallDb(&cache);
-  DBOptions::OptimizeForSmallDb(&cache);
+  ColumnFamilyOptions::OptimizeForSmallDb();
+  DBOptions::OptimizeForSmallDb();
   return this;
 }
 
@@ -482,21 +466,16 @@ DBOptions* DBOptions::OldDefaults(int rocksdb_major_version,
   if (rocksdb_major_version < 5 ||
       (rocksdb_major_version == 5 && rocksdb_minor_version < 2)) {
     delayed_write_rate = 2 * 1024U * 1024U;
-  } else if (rocksdb_major_version < 5 ||
-             (rocksdb_major_version == 5 && rocksdb_minor_version < 6)) {
-    delayed_write_rate = 16 * 1024U * 1024U;
   }
+
   max_open_files = 5000;
+  base_background_compactions = -1;
   wal_recovery_mode = WALRecoveryMode::kTolerateCorruptedTailRecords;
   return this;
 }
 
 ColumnFamilyOptions* ColumnFamilyOptions::OldDefaults(
     int rocksdb_major_version, int rocksdb_minor_version) {
-  if (rocksdb_major_version < 5 ||
-      (rocksdb_major_version == 5 && rocksdb_minor_version <= 18)) {
-    compaction_pri = CompactionPri::kByCompensatedSize;
-  }
   if (rocksdb_major_version < 4 ||
       (rocksdb_major_version == 4 && rocksdb_minor_version < 7)) {
     write_buffer_size = 4 << 20;
@@ -510,57 +489,38 @@ ColumnFamilyOptions* ColumnFamilyOptions::OldDefaults(
   } else if (rocksdb_major_version == 5 && rocksdb_minor_version < 2) {
     level0_stop_writes_trigger = 30;
   }
+  compaction_pri = CompactionPri::kByCompensatedSize;
 
   return this;
 }
 
 // Optimization functions
-DBOptions* DBOptions::OptimizeForSmallDb(std::shared_ptr<Cache>* cache) {
+DBOptions* DBOptions::OptimizeForSmallDb() {
   max_file_opening_threads = 1;
   max_open_files = 5000;
-
-  // Cost memtable to block cache too.
-  std::shared_ptr<ROCKSDB_NAMESPACE::WriteBufferManager> wbm =
-      std::make_shared<ROCKSDB_NAMESPACE::WriteBufferManager>(
-          0, (cache != nullptr) ? *cache : std::shared_ptr<Cache>());
-  write_buffer_manager = wbm;
-
   return this;
 }
 
-ColumnFamilyOptions* ColumnFamilyOptions::OptimizeForSmallDb(
-    std::shared_ptr<Cache>* cache) {
+ColumnFamilyOptions* ColumnFamilyOptions::OptimizeForSmallDb() {
   write_buffer_size = 2 << 20;
   target_file_size_base = 2 * 1048576;
   max_bytes_for_level_base = 10 * 1048576;
   soft_pending_compaction_bytes_limit = 256 * 1048576;
   hard_pending_compaction_bytes_limit = 1073741824ul;
-
-  BlockBasedTableOptions table_options;
-  table_options.block_cache =
-      (cache != nullptr) ? *cache : std::shared_ptr<Cache>();
-  table_options.cache_index_and_filter_blocks = true;
-  // Two level iterator to avoid LRU cache imbalance
-  table_options.index_type =
-      BlockBasedTableOptions::IndexType::kTwoLevelIndexSearch;
-  table_factory.reset(new BlockBasedTableFactory(table_options));
-
   return this;
 }
 
 #ifndef ROCKSDB_LITE
 ColumnFamilyOptions* ColumnFamilyOptions::OptimizeForPointLookup(
     uint64_t block_cache_size_mb) {
+  prefix_extractor.reset(NewNoopTransform());
   BlockBasedTableOptions block_based_options;
-  block_based_options.data_block_index_type =
-      BlockBasedTableOptions::kDataBlockBinaryAndHash;
-  block_based_options.data_block_hash_table_util_ratio = 0.75;
+  block_based_options.index_type = BlockBasedTableOptions::kHashSearch;
   block_based_options.filter_policy.reset(NewBloomFilterPolicy(10));
   block_based_options.block_cache =
       NewLRUCache(static_cast<size_t>(block_cache_size_mb * 1024 * 1024));
   table_factory.reset(new BlockBasedTableFactory(block_based_options));
   memtable_prefix_bloom_size_ratio = 0.02;
-  memtable_whole_key_filtering = true;
   return this;
 }
 
@@ -590,10 +550,7 @@ ColumnFamilyOptions* ColumnFamilyOptions::OptimizeLevelStyleCompaction(
     if (i < 2) {
       compression_per_level[i] = kNoCompression;
     } else {
-      compression_per_level[i] =
-          LZ4_Supported()
-              ? kLZ4Compression
-              : (Snappy_Supported() ? kSnappyCompression : kNoCompression);
+      compression_per_level[i] = kSnappyCompression;
     }
   }
   return this;
@@ -614,7 +571,8 @@ ColumnFamilyOptions* ColumnFamilyOptions::OptimizeUniversalStyleCompaction(
 }
 
 DBOptions* DBOptions::IncreaseParallelism(int total_threads) {
-  max_background_jobs = total_threads;
+  max_background_compactions = total_threads - 1;
+  max_background_flushes = 1;
   env->SetBackgroundThreads(total_threads, Env::LOW);
   env->SetBackgroundThreads(1, Env::HIGH);
   return this;
@@ -623,55 +581,35 @@ DBOptions* DBOptions::IncreaseParallelism(int total_threads) {
 #endif  // !ROCKSDB_LITE
 
 ReadOptions::ReadOptions()
-    : snapshot(nullptr),
-      iterate_lower_bound(nullptr),
-      iterate_upper_bound(nullptr),
-      readahead_size(0),
-      max_skippable_internal_keys(0),
-      read_tier(kReadAllTier),
-      verify_checksums(true),
+    : verify_checksums(true),
       fill_cache(true),
+      snapshot(nullptr),
+      iterate_upper_bound(nullptr),
+      read_tier(kReadAllTier),
       tailing(false),
       managed(false),
       total_order_seek(false),
-      auto_prefix_mode(false),
       prefix_same_as_start(false),
       pin_data(false),
       background_purge_on_iterator_cleanup(false),
+      readahead_size(0),
       ignore_range_deletions(false),
-      iter_start_seqnum(0),
-      timestamp(nullptr),
-      iter_start_ts(nullptr),
-      deadline(std::chrono::microseconds::zero()),
-      io_timeout(std::chrono::microseconds::zero()),
-      value_size_soft_limit(std::numeric_limits<uint64_t>::max()) {
-        ra_options = new struct RAOptions;
-      }
+      max_skippable_internal_keys(0) {}
 
 ReadOptions::ReadOptions(bool cksum, bool cache)
-    : snapshot(nullptr),
-      iterate_lower_bound(nullptr),
-      iterate_upper_bound(nullptr),
-      readahead_size(0),
-      max_skippable_internal_keys(0),
-      read_tier(kReadAllTier),
-      verify_checksums(cksum),
+    : verify_checksums(cksum),
       fill_cache(cache),
+      snapshot(nullptr),
+      iterate_upper_bound(nullptr),
+      read_tier(kReadAllTier),
       tailing(false),
       managed(false),
       total_order_seek(false),
-      auto_prefix_mode(false),
       prefix_same_as_start(false),
       pin_data(false),
       background_purge_on_iterator_cleanup(false),
+      readahead_size(0),
       ignore_range_deletions(false),
-      iter_start_seqnum(0),
-      timestamp(nullptr),
-      iter_start_ts(nullptr),
-      deadline(std::chrono::microseconds::zero()),
-      io_timeout(std::chrono::microseconds::zero()),
-      value_size_soft_limit(std::numeric_limits<uint64_t>::max()) {
-        ra_options = new struct RAOptions;
-      }
+      max_skippable_internal_keys(0) {}
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

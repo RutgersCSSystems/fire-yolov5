@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -19,15 +19,14 @@
 #include <vector>
 
 #include "db/db_test_util.h"
-#include "memory/arena.h"
-#include "port/port.h"
 #include "rocksdb/cache.h"
-#include "table/block_based/block_builder.h"
-#include "test_util/testharness.h"
-#include "util/random.h"
+#include "table/block_builder.h"
+#include "port/port.h"
+#include "util/arena.h"
+#include "util/testharness.h"
 #include "utilities/persistent_cache/volatile_tier_impl.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 //
 // Unit tests for testing PersistentCacheTier
@@ -158,7 +157,7 @@ class PersistentCacheTierTest : public testing::Test {
       memset(edata, '0' + (i % 10), sizeof(edata));
       auto k = prefix + PaddedNumber(i, /*count=*/8);
       Slice key(k);
-      std::unique_ptr<char[]> block;
+      unique_ptr<char[]> block;
       size_t block_size;
 
       if (eviction_enabled) {
@@ -183,7 +182,7 @@ class PersistentCacheTierTest : public testing::Test {
     ASSERT_EQ(stats_verify_hits_, max_keys);
     ASSERT_EQ(stats_verify_missed_, 0);
 
-    ASSERT_OK(cache_->Close());
+    cache_->Close();
     cache_.reset();
   }
 
@@ -194,7 +193,7 @@ class PersistentCacheTierTest : public testing::Test {
     ASSERT_LT(stats_verify_hits_, max_keys);
     ASSERT_GT(stats_verify_missed_, 0);
 
-    ASSERT_OK(cache_->Close());
+    cache_->Close();
     cache_.reset();
   }
 
@@ -206,12 +205,12 @@ class PersistentCacheTierTest : public testing::Test {
     ASSERT_GT(stats_verify_hits_, 0);
     ASSERT_GT(stats_verify_missed_, 0);
 
-    ASSERT_OK(cache_->Close());
+    cache_->Close();
     cache_.reset();
   }
 
   const std::string path_;
-  std::shared_ptr<Logger> log_;
+  shared_ptr<Logger> log_;
   std::shared_ptr<PersistentCacheTier> cache_;
   std::atomic<size_t> key_{0};
   size_t max_keys_ = 0;
@@ -234,8 +233,8 @@ class PersistentCacheDBTest : public DBTestBase {
 
   // insert data to table
   void Insert(const Options& options,
-              const BlockBasedTableOptions& /*table_options*/,
-              const int num_iter, std::vector<std::string>* values) {
+              const BlockBasedTableOptions& table_options, const int num_iter,
+              std::vector<std::string>* values) {
     CreateAndReopenWithCF({"pikachu"}, options);
     // default column family doesn't have block cache
     Options no_block_cache_opts;
@@ -256,7 +255,7 @@ class PersistentCacheDBTest : public DBTestBase {
     std::string str;
     for (int i = 0; i < num_iter; i++) {
       if (i % 4 == 0) {  // high compression ratio
-        str = rnd.RandomString(1000);
+        str = RandomString(&rnd, 1000);
       }
       values->push_back(str);
       ASSERT_OK(Put(1, Key(i), (*values)[i]));
@@ -281,6 +280,6 @@ class PersistentCacheDBTest : public DBTestBase {
                const size_t max_keys, const size_t max_usecase);
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 #endif

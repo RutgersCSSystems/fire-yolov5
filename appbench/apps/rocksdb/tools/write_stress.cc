@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 //
 //
 // The goal of this tool is to be a simple stress test with focus on catching:
@@ -56,31 +56,32 @@ int main() {
 }
 #else
 
+#include <gflags/gflags.h>
+
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 #include <atomic>
-#include <cinttypes>
 #include <random>
 #include <set>
 #include <string>
 #include <thread>
 
-#include "file/filename.h"
 #include "port/port.h"
 #include "rocksdb/db.h"
 #include "rocksdb/env.h"
 #include "rocksdb/options.h"
 #include "rocksdb/slice.h"
-#include "rocksdb/system_clock.h"
-#include "util/gflags_compat.h"
+#include "util/filename.h"
 
-using GFLAGS_NAMESPACE::ParseCommandLineFlags;
-using GFLAGS_NAMESPACE::RegisterFlagValidator;
-using GFLAGS_NAMESPACE::SetUsageMessage;
+using GFLAGS::ParseCommandLineFlags;
+using GFLAGS::RegisterFlagValidator;
+using GFLAGS::SetUsageMessage;
 
 DEFINE_int32(key_size, 10, "Key size");
 DEFINE_int32(value_size, 100, "Value size");
 DEFINE_string(db, "", "Use the db with the following name.");
 DEFINE_bool(destroy_db, true,
-            "Destroy the existing DB before running the test");
+            "Destory the existing DB before running the test");
 
 DEFINE_int32(runtime_sec, 10 * 60, "How long are we running for, in seconds");
 DEFINE_int32(seed, 139, "Random seed");
@@ -105,7 +106,7 @@ DEFINE_bool(low_open_files_mode, false,
             "If true, we set max_open_files to 20, so that every file access "
             "needs to reopen it");
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 static const int kPrefixSize = 3;
 
@@ -134,8 +135,8 @@ class WriteStress {
     // compactions
     options.create_if_missing = true;
     options.write_buffer_size = 256 * 1024;              // 256k
-    options.max_bytes_for_level_base = 1 * 1024 * 1024;  // 1MB
-    options.target_file_size_base = 100 * 1024;          // 100k
+    options.max_bytes_for_level_base = 1 * 1024 * 1204;  // 1MB
+    options.target_file_size_base = 100 * 1204;          // 100k
     options.max_write_buffer_number = 16;
     options.max_background_compactions = 16;
     options.max_background_flushes = 16;
@@ -162,7 +163,7 @@ class WriteStress {
       std::uniform_int_distribution<int> char_dist('a', 'z');
       std::string ret;
       for (int i = 0; i < len; ++i) {
-        ret += static_cast<char>(char_dist(r));
+        ret += char_dist(r);
       }
       return ret;
     };
@@ -188,8 +189,8 @@ class WriteStress {
   void IteratorHoldThread() {
     while (!stop_.load(std::memory_order_relaxed)) {
       std::unique_ptr<Iterator> iterator(db_->NewIterator(ReadOptions()));
-      SystemClock::Default()->SleepForMicroseconds(FLAGS_iterator_hold_sec *
-                                                   1000 * 1000LL);
+      Env::Default()->SleepForMicroseconds(FLAGS_iterator_hold_sec * 1000 *
+                                           1000LL);
       for (iterator->SeekToFirst(); iterator->Valid(); iterator->Next()) {
       }
       if (!iterator->status().ok()) {
@@ -205,16 +206,17 @@ class WriteStress {
     std::uniform_real_distribution<double> dist(0, 1);
     std::uniform_int_distribution<int> char_dist('a', 'z');
     while (!stop_.load(std::memory_order_relaxed)) {
-      SystemClock::Default()->SleepForMicroseconds(
-          static_cast<int>(FLAGS_prefix_mutate_period_sec * 1000 * 1000LL));
+      Env::Default()->SleepForMicroseconds(static_cast<int>(
+                                           FLAGS_prefix_mutate_period_sec *
+                                           1000 * 1000LL));
       if (dist(rng) < FLAGS_first_char_mutate_probability) {
-        key_prefix_[0].store(static_cast<char>(char_dist(rng)), std::memory_order_relaxed);
+        key_prefix_[0].store(char_dist(rng), std::memory_order_relaxed);
       }
       if (dist(rng) < FLAGS_second_char_mutate_probability) {
-        key_prefix_[1].store(static_cast<char>(char_dist(rng)), std::memory_order_relaxed);
+        key_prefix_[1].store(char_dist(rng), std::memory_order_relaxed);
       }
       if (dist(rng) < FLAGS_third_char_mutate_probability) {
-        key_prefix_[2].store(static_cast<char>(char_dist(rng)), std::memory_order_relaxed);
+        key_prefix_[2].store(char_dist(rng), std::memory_order_relaxed);
       }
     }
   }
@@ -227,12 +229,11 @@ class WriteStress {
     if (FLAGS_runtime_sec == -1) {
       // infinite runtime, until we get killed
       while (true) {
-        SystemClock::Default()->SleepForMicroseconds(1000 * 1000);
+        Env::Default()->SleepForMicroseconds(1000 * 1000);
       }
     }
 
-    SystemClock::Default()->SleepForMicroseconds(FLAGS_runtime_sec * 1000 *
-                                                 1000);
+    Env::Default()->SleepForMicroseconds(FLAGS_runtime_sec * 1000 * 1000);
 
     stop_.store(true, std::memory_order_relaxed);
     for (auto& t : threads_) {
@@ -293,13 +294,13 @@ class WriteStress {
   std::unique_ptr<DB> db_;
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
   SetUsageMessage(std::string("\nUSAGE:\n") + std::string(argv[0]) +
                   " [OPTIONS]...");
   ParseCommandLineFlags(&argc, &argv, true);
-  ROCKSDB_NAMESPACE::WriteStress write_stress;
+  rocksdb::WriteStress write_stress;
   return write_stress.Run();
 }
 

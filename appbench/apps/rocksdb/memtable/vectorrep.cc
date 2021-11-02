@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 #ifndef ROCKSDB_LITE
 #include "rocksdb/memtablerep.h"
@@ -12,38 +12,40 @@
 #include <algorithm>
 #include <type_traits>
 
+#include "util/arena.h"
 #include "db/memtable.h"
-#include "memory/arena.h"
 #include "memtable/stl_wrappers.h"
 #include "port/port.h"
 #include "util/mutexlock.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 namespace {
 
 using namespace stl_wrappers;
 
 class VectorRep : public MemTableRep {
  public:
-  VectorRep(const KeyComparator& compare, Allocator* allocator, size_t count);
+  VectorRep(const KeyComparator& compare, MemTableAllocator* allocator,
+            size_t count);
 
   // Insert key into the collection. (The caller will pack key and value into a
   // single buffer and pass that in as the parameter to Insert)
   // REQUIRES: nothing that compares equal to key is currently in the
   // collection.
-  void Insert(KeyHandle handle) override;
+  virtual void Insert(KeyHandle handle) override;
 
   // Returns true iff an entry that compares equal to key is in the collection.
-  bool Contains(const char* key) const override;
+  virtual bool Contains(const char* key) const override;
 
-  void MarkReadOnly() override;
+  virtual void MarkReadOnly() override;
 
-  size_t ApproximateMemoryUsage() override;
+  virtual size_t ApproximateMemoryUsage() override;
 
-  void Get(const LookupKey& k, void* callback_args,
-           bool (*callback_func)(void* arg, const char* entry)) override;
+  virtual void Get(const LookupKey& k, void* callback_args,
+                   bool (*callback_func)(void* arg,
+                                         const char* entry)) override;
 
-  ~VectorRep() override {}
+  virtual ~VectorRep() override { }
 
   class Iterator : public MemTableRep::Iterator {
     class VectorRep* vrep_;
@@ -61,40 +63,41 @@ class VectorRep : public MemTableRep {
     // Initialize an iterator over the specified collection.
     // The returned iterator is not valid.
     // explicit Iterator(const MemTableRep* collection);
-    ~Iterator() override{};
+    virtual ~Iterator() override { };
 
     // Returns true iff the iterator is positioned at a valid node.
-    bool Valid() const override;
+    virtual bool Valid() const override;
 
     // Returns the key at the current position.
     // REQUIRES: Valid()
-    const char* key() const override;
+    virtual const char* key() const override;
 
     // Advances to the next position.
     // REQUIRES: Valid()
-    void Next() override;
+    virtual void Next() override;
 
     // Advances to the previous position.
     // REQUIRES: Valid()
-    void Prev() override;
+    virtual void Prev() override;
 
     // Advance to the first entry with a key >= target
-    void Seek(const Slice& user_key, const char* memtable_key) override;
+    virtual void Seek(const Slice& user_key, const char* memtable_key) override;
 
     // Advance to the first entry with a key <= target
-    void SeekForPrev(const Slice& user_key, const char* memtable_key) override;
+    virtual void SeekForPrev(const Slice& user_key,
+                             const char* memtable_key) override;
 
     // Position at the first entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToFirst() override;
+    virtual void SeekToFirst() override;
 
     // Position at the last entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToLast() override;
+    virtual void SeekToLast() override;
   };
 
   // Return an iterator over the keys in this representation.
-  MemTableRep::Iterator* GetIterator(Arena* arena) override;
+  virtual MemTableRep::Iterator* GetIterator(Arena* arena) override;
 
  private:
   friend class Iterator;
@@ -133,15 +136,13 @@ size_t VectorRep::ApproximateMemoryUsage() {
     );
 }
 
-VectorRep::VectorRep(const KeyComparator& compare, Allocator* allocator,
+VectorRep::VectorRep(const KeyComparator& compare, MemTableAllocator* allocator,
                      size_t count)
-    : MemTableRep(allocator),
-      bucket_(new Bucket()),
-      immutable_(false),
-      sorted_(false),
-      compare_(compare) {
-  bucket_.get()->reserve(count);
-}
+  : MemTableRep(allocator),
+    bucket_(new Bucket()),
+    immutable_(false),
+    sorted_(false),
+    compare_(compare) { bucket_.get()->reserve(count); }
 
 VectorRep::Iterator::Iterator(class VectorRep* vrep,
                    std::shared_ptr<std::vector<const char*>> bucket,
@@ -225,8 +226,8 @@ void VectorRep::Iterator::Seek(const Slice& user_key,
 }
 
 // Advance to the first entry with a key <= target
-void VectorRep::Iterator::SeekForPrev(const Slice& /*user_key*/,
-                                      const char* /*memtable_key*/) {
+void VectorRep::Iterator::SeekForPrev(const Slice& user_key,
+                                      const char* memtable_key) {
   assert(false);
 }
 
@@ -293,9 +294,9 @@ MemTableRep::Iterator* VectorRep::GetIterator(Arena* arena) {
 } // anon namespace
 
 MemTableRep* VectorRepFactory::CreateMemTableRep(
-    const MemTableRep::KeyComparator& compare, Allocator* allocator,
-    const SliceTransform*, Logger* /*logger*/) {
+    const MemTableRep::KeyComparator& compare, MemTableAllocator* allocator,
+    const SliceTransform*, Logger* logger) {
   return new VectorRep(compare, allocator, count_);
 }
-}  // namespace ROCKSDB_NAMESPACE
+} // namespace rocksdb
 #endif  // ROCKSDB_LITE

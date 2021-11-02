@@ -1,11 +1,13 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
+
+#define __STDC_FORMAT_MACROS
 
 #ifndef GFLAGS
 #include <cstdio>
@@ -14,6 +16,8 @@ int main() {
   return 1;
 }
 #else
+
+#include <gflags/gflags.h>
 
 #include <atomic>
 #include <iostream>
@@ -24,23 +28,21 @@ int main() {
 
 #include "db/dbformat.h"
 #include "db/memtable.h"
-#include "memory/arena.h"
 #include "port/port.h"
 #include "port/stack_trace.h"
 #include "rocksdb/comparator.h"
 #include "rocksdb/memtablerep.h"
 #include "rocksdb/options.h"
 #include "rocksdb/slice_transform.h"
-#include "rocksdb/system_clock.h"
 #include "rocksdb/write_buffer_manager.h"
-#include "test_util/testutil.h"
-#include "util/gflags_compat.h"
+#include "util/arena.h"
 #include "util/mutexlock.h"
 #include "util/stop_watch.h"
+#include "util/testutil.h"
 
-using GFLAGS_NAMESPACE::ParseCommandLineFlags;
-using GFLAGS_NAMESPACE::RegisterFlagValidator;
-using GFLAGS_NAMESPACE::SetUsageMessage;
+using GFLAGS::ParseCommandLineFlags;
+using GFLAGS::RegisterFlagValidator;
+using GFLAGS::SetUsageMessage;
 
 DEFINE_string(benchmarks, "fillrandom",
               "Comma-separated list of benchmarks to run. Options:\n"
@@ -92,8 +94,17 @@ DEFINE_int32(
     threshold_use_skiplist, 256,
     "threshold_use_skiplist parameter to pass into NewHashLinkListRepFactory");
 
-DEFINE_int64(write_buffer_size, 256,
-             "write_buffer_size parameter to pass into WriteBufferManager");
+DEFINE_int64(
+    write_buffer_size, 256,
+    "write_buffer_size parameter to pass into NewHashCuckooRepFactory");
+
+DEFINE_int64(
+    average_data_size, 64,
+    "average_data_size parameter to pass into NewHashCuckooRepFactory");
+
+DEFINE_int64(
+    hash_function_count, 4,
+    "hash_function_count parameter to pass into NewHashCuckooRepFactory");
 
 DEFINE_int32(
     num_threads, 1,
@@ -121,7 +132,7 @@ DEFINE_int64(seed, 0,
              "Seed base for random number generators. "
              "When 0 it is deterministic.");
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 namespace {
 struct CallbackVerifyArgs {
@@ -142,7 +153,7 @@ class RandomGenerator {
   RandomGenerator() {
     Random rnd(301);
     auto size = (unsigned)std::max(1048576, FLAGS_item_size);
-    data_ = rnd.RandomString(size);
+    test::RandomString(&rnd, size, &data_);
     pos_ = 0;
   }
 
@@ -171,8 +182,9 @@ class KeyGenerator {
       for (uint64_t i = 0; i < num_; ++i) {
         values_[i] = i;
       }
-      RandomShuffle(values_.begin(), values_.end(),
-                    static_cast<uint32_t>(FLAGS_seed));
+      std::shuffle(
+          values_.begin(), values_.end(),
+          std::default_random_engine(static_cast<unsigned int>(FLAGS_seed)));
     }
   }
 
@@ -418,7 +430,7 @@ class Benchmark {
     uint64_t bytes_written = 0;
     uint64_t bytes_read = 0;
     uint64_t read_hits = 0;
-    StopWatchNano timer(SystemClock::Default().get(), true);
+    StopWatchNano timer(Env::Default(), true);
     RunThreads(&threads, &bytes_written, &bytes_read, true, &read_hits);
     auto elapsed_time = static_cast<double>(timer.ElapsedNanos() / 1000);
     std::cout << "Elapsed time: " << static_cast<int>(elapsed_time) << " us"
@@ -453,8 +465,8 @@ class Benchmark {
   MemTableRep* table_;
   KeyGenerator* key_gen_;
   uint64_t* sequence_;
-  uint64_t num_write_ops_per_thread_ = 0;
-  uint64_t num_read_ops_per_thread_ = 0;
+  uint64_t num_write_ops_per_thread_;
+  uint64_t num_read_ops_per_thread_;
   const uint32_t num_threads_;
 };
 
@@ -466,8 +478,8 @@ class FillBenchmark : public Benchmark {
     num_write_ops_per_thread_ = FLAGS_num_operations;
   }
 
-  void RunThreads(std::vector<port::Thread>* /*threads*/, uint64_t* bytes_written,
-                  uint64_t* bytes_read, bool /*write*/,
+  void RunThreads(std::vector<port::Thread>* threads, uint64_t* bytes_written,
+                  uint64_t* bytes_read, bool write,
                   uint64_t* read_hits) override {
     FillBenchmarkThread(table_, key_gen_, bytes_written, bytes_read, sequence_,
                         num_write_ops_per_thread_, read_hits)();
@@ -483,7 +495,7 @@ class ReadBenchmark : public Benchmark {
   }
 
   void RunThreads(std::vector<port::Thread>* threads, uint64_t* bytes_written,
-                  uint64_t* bytes_read, bool /*write*/,
+                  uint64_t* bytes_read, bool write,
                   uint64_t* read_hits) override {
     for (int i = 0; i < FLAGS_num_threads; ++i) {
       threads->emplace_back(
@@ -507,7 +519,7 @@ class SeqReadBenchmark : public Benchmark {
   }
 
   void RunThreads(std::vector<port::Thread>* threads, uint64_t* bytes_written,
-                  uint64_t* bytes_read, bool /*write*/,
+                  uint64_t* bytes_read, bool write,
                   uint64_t* read_hits) override {
     for (int i = 0; i < FLAGS_num_threads; ++i) {
       threads->emplace_back(SeqReadBenchmarkThread(
@@ -534,7 +546,7 @@ class ReadWriteBenchmark : public Benchmark {
   }
 
   void RunThreads(std::vector<port::Thread>* threads, uint64_t* bytes_written,
-                  uint64_t* bytes_read, bool /*write*/,
+                  uint64_t* bytes_read, bool write,
                   uint64_t* read_hits) override {
     std::atomic_int threads_done;
     threads_done.store(0);
@@ -552,7 +564,7 @@ class ReadWriteBenchmark : public Benchmark {
   }
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 void PrintWarnings() {
 #if defined(__GNUC__) && !defined(__OPTIMIZE__)
@@ -566,103 +578,110 @@ void PrintWarnings() {
 }
 
 int main(int argc, char** argv) {
-  ROCKSDB_NAMESPACE::port::InstallStackTraceHandler();
+  rocksdb::port::InstallStackTraceHandler();
   SetUsageMessage(std::string("\nUSAGE:\n") + std::string(argv[0]) +
                   " [OPTIONS]...");
   ParseCommandLineFlags(&argc, &argv, true);
 
   PrintWarnings();
 
-  ROCKSDB_NAMESPACE::Options options;
+  rocksdb::Options options;
 
-  std::unique_ptr<ROCKSDB_NAMESPACE::MemTableRepFactory> factory;
+  std::unique_ptr<rocksdb::MemTableRepFactory> factory;
   if (FLAGS_memtablerep == "skiplist") {
-    factory.reset(new ROCKSDB_NAMESPACE::SkipListFactory);
+    factory.reset(new rocksdb::SkipListFactory);
 #ifndef ROCKSDB_LITE
   } else if (FLAGS_memtablerep == "vector") {
-    factory.reset(new ROCKSDB_NAMESPACE::VectorRepFactory);
+    factory.reset(new rocksdb::VectorRepFactory);
   } else if (FLAGS_memtablerep == "hashskiplist") {
-    factory.reset(ROCKSDB_NAMESPACE::NewHashSkipListRepFactory(
+    factory.reset(rocksdb::NewHashSkipListRepFactory(
         FLAGS_bucket_count, FLAGS_hashskiplist_height,
         FLAGS_hashskiplist_branching_factor));
     options.prefix_extractor.reset(
-        ROCKSDB_NAMESPACE::NewFixedPrefixTransform(FLAGS_prefix_length));
+        rocksdb::NewFixedPrefixTransform(FLAGS_prefix_length));
   } else if (FLAGS_memtablerep == "hashlinklist") {
-    factory.reset(ROCKSDB_NAMESPACE::NewHashLinkListRepFactory(
+    factory.reset(rocksdb::NewHashLinkListRepFactory(
         FLAGS_bucket_count, FLAGS_huge_page_tlb_size,
         FLAGS_bucket_entries_logging_threshold,
         FLAGS_if_log_bucket_dist_when_flash, FLAGS_threshold_use_skiplist));
     options.prefix_extractor.reset(
-        ROCKSDB_NAMESPACE::NewFixedPrefixTransform(FLAGS_prefix_length));
+        rocksdb::NewFixedPrefixTransform(FLAGS_prefix_length));
+  } else if (FLAGS_memtablerep == "cuckoo") {
+    factory.reset(rocksdb::NewHashCuckooRepFactory(
+        FLAGS_write_buffer_size, FLAGS_average_data_size,
+        static_cast<uint32_t>(FLAGS_hash_function_count)));
+    options.prefix_extractor.reset(
+        rocksdb::NewFixedPrefixTransform(FLAGS_prefix_length));
 #endif  // ROCKSDB_LITE
   } else {
     fprintf(stdout, "Unknown memtablerep: %s\n", FLAGS_memtablerep.c_str());
     exit(1);
   }
 
-  ROCKSDB_NAMESPACE::InternalKeyComparator internal_key_comp(
-      ROCKSDB_NAMESPACE::BytewiseComparator());
-  ROCKSDB_NAMESPACE::MemTable::KeyComparator key_comp(internal_key_comp);
-  ROCKSDB_NAMESPACE::Arena arena;
-  ROCKSDB_NAMESPACE::WriteBufferManager wb(FLAGS_write_buffer_size);
+  rocksdb::InternalKeyComparator internal_key_comp(
+      rocksdb::BytewiseComparator());
+  rocksdb::MemTable::KeyComparator key_comp(internal_key_comp);
+  rocksdb::Arena arena;
+  rocksdb::WriteBufferManager wb(FLAGS_write_buffer_size);
+  rocksdb::MemTableAllocator memtable_allocator(&arena, &wb);
   uint64_t sequence;
   auto createMemtableRep = [&] {
     sequence = 0;
-    return factory->CreateMemTableRep(key_comp, &arena,
+    return factory->CreateMemTableRep(key_comp, &memtable_allocator,
                                       options.prefix_extractor.get(),
                                       options.info_log.get());
   };
-  std::unique_ptr<ROCKSDB_NAMESPACE::MemTableRep> memtablerep;
-  ROCKSDB_NAMESPACE::Random64 rng(FLAGS_seed);
+  std::unique_ptr<rocksdb::MemTableRep> memtablerep;
+  rocksdb::Random64 rng(FLAGS_seed);
   const char* benchmarks = FLAGS_benchmarks.c_str();
   while (benchmarks != nullptr) {
-    std::unique_ptr<ROCKSDB_NAMESPACE::KeyGenerator> key_gen;
+    std::unique_ptr<rocksdb::KeyGenerator> key_gen;
     const char* sep = strchr(benchmarks, ',');
-    ROCKSDB_NAMESPACE::Slice name;
+    rocksdb::Slice name;
     if (sep == nullptr) {
       name = benchmarks;
       benchmarks = nullptr;
     } else {
-      name = ROCKSDB_NAMESPACE::Slice(benchmarks, sep - benchmarks);
+      name = rocksdb::Slice(benchmarks, sep - benchmarks);
       benchmarks = sep + 1;
     }
-    std::unique_ptr<ROCKSDB_NAMESPACE::Benchmark> benchmark;
-    if (name == ROCKSDB_NAMESPACE::Slice("fillseq")) {
+    std::unique_ptr<rocksdb::Benchmark> benchmark;
+    if (name == rocksdb::Slice("fillseq")) {
       memtablerep.reset(createMemtableRep());
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::SEQUENTIAL, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::FillBenchmark(
-          memtablerep.get(), key_gen.get(), &sequence));
-    } else if (name == ROCKSDB_NAMESPACE::Slice("fillrandom")) {
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::SEQUENTIAL,
+                                              FLAGS_num_operations));
+      benchmark.reset(new rocksdb::FillBenchmark(memtablerep.get(),
+                                                 key_gen.get(), &sequence));
+    } else if (name == rocksdb::Slice("fillrandom")) {
       memtablerep.reset(createMemtableRep());
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::UNIQUE_RANDOM, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::FillBenchmark(
-          memtablerep.get(), key_gen.get(), &sequence));
-    } else if (name == ROCKSDB_NAMESPACE::Slice("readrandom")) {
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::RANDOM, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::ReadBenchmark(
-          memtablerep.get(), key_gen.get(), &sequence));
-    } else if (name == ROCKSDB_NAMESPACE::Slice("readseq")) {
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::SEQUENTIAL, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::SeqReadBenchmark(memtablerep.get(),
-                                                              &sequence));
-    } else if (name == ROCKSDB_NAMESPACE::Slice("readwrite")) {
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::UNIQUE_RANDOM,
+                                              FLAGS_num_operations));
+      benchmark.reset(new rocksdb::FillBenchmark(memtablerep.get(),
+                                                 key_gen.get(), &sequence));
+    } else if (name == rocksdb::Slice("readrandom")) {
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::RANDOM,
+                                              FLAGS_num_operations));
+      benchmark.reset(new rocksdb::ReadBenchmark(memtablerep.get(),
+                                                 key_gen.get(), &sequence));
+    } else if (name == rocksdb::Slice("readseq")) {
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::SEQUENTIAL,
+                                              FLAGS_num_operations));
+      benchmark.reset(
+          new rocksdb::SeqReadBenchmark(memtablerep.get(), &sequence));
+    } else if (name == rocksdb::Slice("readwrite")) {
       memtablerep.reset(createMemtableRep());
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::RANDOM, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::ReadWriteBenchmark<
-                      ROCKSDB_NAMESPACE::ConcurrentReadBenchmarkThread>(
-          memtablerep.get(), key_gen.get(), &sequence));
-    } else if (name == ROCKSDB_NAMESPACE::Slice("seqreadwrite")) {
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::RANDOM,
+                                              FLAGS_num_operations));
+      benchmark.reset(new rocksdb::ReadWriteBenchmark<
+          rocksdb::ConcurrentReadBenchmarkThread>(memtablerep.get(),
+                                                  key_gen.get(), &sequence));
+    } else if (name == rocksdb::Slice("seqreadwrite")) {
       memtablerep.reset(createMemtableRep());
-      key_gen.reset(new ROCKSDB_NAMESPACE::KeyGenerator(
-          &rng, ROCKSDB_NAMESPACE::RANDOM, FLAGS_num_operations));
-      benchmark.reset(new ROCKSDB_NAMESPACE::ReadWriteBenchmark<
-                      ROCKSDB_NAMESPACE::SeqConcurrentReadBenchmarkThread>(
-          memtablerep.get(), key_gen.get(), &sequence));
+      key_gen.reset(new rocksdb::KeyGenerator(&rng, rocksdb::RANDOM,
+                                              FLAGS_num_operations));
+      benchmark.reset(new rocksdb::ReadWriteBenchmark<
+          rocksdb::SeqConcurrentReadBenchmarkThread>(memtablerep.get(),
+                                                     key_gen.get(), &sequence));
     } else {
       std::cout << "WARNING: skipping unknown benchmark '" << name.ToString()
                 << std::endl;

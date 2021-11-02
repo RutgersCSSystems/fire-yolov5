@@ -1,14 +1,14 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #include "rocksdb/utilities/option_change_migration.h"
 
 #ifndef ROCKSDB_LITE
 #include "rocksdb/db.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 namespace {
 // Return a version of Options `opts` that allow us to open/write into a DB
 // without triggering an automatic compaction or stalling. This is guaranteed
@@ -56,13 +56,11 @@ Status CompactToLevel(const Options& options, const std::string& dbname,
   cro.change_level = true;
   cro.target_level = dest_level;
   if (dest_level == 0) {
-    // cannot use kForceOptimized because the compaction is expected to
-    // generate one output file
     cro.bottommost_level_compaction = BottommostLevelCompaction::kForce;
   }
-  s = db->CompactRange(cro, nullptr, nullptr);
+  db->CompactRange(cro, nullptr, nullptr);
 
-  if (s.ok() && need_reopen) {
+  if (need_reopen) {
     // Need to restart DB to rewrite the manifest file.
     // In order to open a DB with specific num_levels, the manifest file should
     // contain no record that mentiones any level beyond num_levels. Issuing a
@@ -156,13 +154,12 @@ Status OptionChangeMigration(std::string dbname, const Options& old_opts,
         "Do not how to migrate to this compaction style");
   }
 }
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 #else
-namespace ROCKSDB_NAMESPACE {
-Status OptionChangeMigration(std::string /*dbname*/,
-                             const Options& /*old_opts*/,
-                             const Options& /*new_opts*/) {
+namespace rocksdb {
+Status OptionChangeMigration(std::string dbname, const Options& old_opts,
+                             const Options& new_opts) {
   return Status::NotSupported();
 }
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 #endif  // ROCKSDB_LITE

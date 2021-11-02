@@ -1,4 +1,3 @@
-// Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -7,53 +6,39 @@
 #include "utilities/ttl/db_ttl_impl.h"
 
 #include "db/write_batch_internal.h"
-#include "file/filename.h"
 #include "rocksdb/convenience.h"
 #include "rocksdb/env.h"
 #include "rocksdb/iterator.h"
-#include "rocksdb/system_clock.h"
 #include "rocksdb/utilities/db_ttl.h"
 #include "util/coding.h"
+#include "util/filename.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 void DBWithTTLImpl::SanitizeOptions(int32_t ttl, ColumnFamilyOptions* options,
-                                    SystemClock* clock) {
+                                    Env* env) {
   if (options->compaction_filter) {
     options->compaction_filter =
-        new TtlCompactionFilter(ttl, clock, options->compaction_filter);
+        new TtlCompactionFilter(ttl, env, options->compaction_filter);
   } else {
     options->compaction_filter_factory =
         std::shared_ptr<CompactionFilterFactory>(new TtlCompactionFilterFactory(
-            ttl, clock, options->compaction_filter_factory));
+            ttl, env, options->compaction_filter_factory));
   }
 
   if (options->merge_operator) {
     options->merge_operator.reset(
-        new TtlMergeOperator(options->merge_operator, clock));
+        new TtlMergeOperator(options->merge_operator, env));
   }
 }
 
 // Open the db inside DBWithTTLImpl because options needs pointer to its ttl
-DBWithTTLImpl::DBWithTTLImpl(DB* db) : DBWithTTL(db), closed_(false) {}
+DBWithTTLImpl::DBWithTTLImpl(DB* db) : DBWithTTL(db) {}
 
 DBWithTTLImpl::~DBWithTTLImpl() {
-  if (!closed_) {
-    Close().PermitUncheckedError();
-  }
-}
-
-Status DBWithTTLImpl::Close() {
-  Status ret = Status::OK();
-  if (!closed_) {
-    Options default_options = GetOptions();
-    // Need to stop background compaction before getting rid of the filter
-    CancelAllBackgroundWork(db_, /* wait = */ true);
-    ret = db_->Close();
-    delete default_options.compaction_filter;
-    closed_ = true;
-  }
-  return ret;
+  // Need to stop background compaction before getting rid of the filter
+  CancelAllBackgroundWork(db_, /* wait = */ true);
+  delete GetOptions().compaction_filter;
 }
 
 Status UtilityDB::OpenTtlDB(const Options& options, const std::string& dbname,
@@ -92,21 +77,19 @@ Status DBWithTTL::Open(
     const DBOptions& db_options, const std::string& dbname,
     const std::vector<ColumnFamilyDescriptor>& column_families,
     std::vector<ColumnFamilyHandle*>* handles, DBWithTTL** dbptr,
-    const std::vector<int32_t>& ttls, bool read_only) {
+    std::vector<int32_t> ttls, bool read_only) {
+
   if (ttls.size() != column_families.size()) {
     return Status::InvalidArgument(
         "ttls size has to be the same as number of column families");
   }
 
-  SystemClock* clock = (db_options.env == nullptr)
-                           ? SystemClock::Default().get()
-                           : db_options.env->GetSystemClock().get();
-
   std::vector<ColumnFamilyDescriptor> column_families_sanitized =
       column_families;
   for (size_t i = 0; i < column_families_sanitized.size(); ++i) {
     DBWithTTLImpl::SanitizeOptions(
-        ttls[i], &column_families_sanitized[i].options, clock);
+        ttls[i], &column_families_sanitized[i].options,
+        db_options.env == nullptr ? Env::Default() : db_options.env);
   }
   DB* db;
 
@@ -129,8 +112,7 @@ Status DBWithTTLImpl::CreateColumnFamilyWithTtl(
     const ColumnFamilyOptions& options, const std::string& column_family_name,
     ColumnFamilyHandle** handle, int ttl) {
   ColumnFamilyOptions sanitized_options = options;
-  DBWithTTLImpl::SanitizeOptions(ttl, &sanitized_options,
-                                 GetEnv()->GetSystemClock().get());
+  DBWithTTLImpl::SanitizeOptions(ttl, &sanitized_options, GetEnv());
 
   return DBWithTTL::CreateColumnFamily(sanitized_options, column_family_name,
                                        handle);
@@ -145,11 +127,11 @@ Status DBWithTTLImpl::CreateColumnFamily(const ColumnFamilyOptions& options,
 // Appends the current timestamp to the string.
 // Returns false if could not get the current_time, true if append succeeds
 Status DBWithTTLImpl::AppendTS(const Slice& val, std::string* val_with_ts,
-                               SystemClock* clock) {
+                               Env* env) {
   val_with_ts->reserve(kTSLength + val.size());
   char ts_string[kTSLength];
   int64_t curtime;
-  Status st = clock->GetCurrentTime(&curtime);
+  Status st = env->GetCurrentTime(&curtime);
   if (!st.ok()) {
     return st;
   }
@@ -175,13 +157,12 @@ Status DBWithTTLImpl::SanityCheckTimestamp(const Slice& str) {
 }
 
 // Checks if the string is stale or not according to TTl provided
-bool DBWithTTLImpl::IsStale(const Slice& value, int32_t ttl,
-                            SystemClock* clock) {
+bool DBWithTTLImpl::IsStale(const Slice& value, int32_t ttl, Env* env) {
   if (ttl <= 0) {  // Data is fresh if TTL is non-positive
     return false;
   }
   int64_t curtime;
-  if (!clock->GetCurrentTime(&curtime).ok()) {
+  if (!env->GetCurrentTime(&curtime).ok()) {
     return false;  // Treat the data as fresh if could not get current time
   }
   int32_t timestamp_value =
@@ -191,33 +172,32 @@ bool DBWithTTLImpl::IsStale(const Slice& value, int32_t ttl,
 
 // Strips the TS from the end of the slice
 Status DBWithTTLImpl::StripTS(PinnableSlice* pinnable_val) {
+  Status st;
   if (pinnable_val->size() < kTSLength) {
     return Status::Corruption("Bad timestamp in key-value");
   }
   // Erasing characters which hold the TS
   pinnable_val->remove_suffix(kTSLength);
-  return Status::OK();
+  return st;
 }
 
 // Strips the TS from the end of the string
 Status DBWithTTLImpl::StripTS(std::string* str) {
+  Status st;
   if (str->length() < kTSLength) {
     return Status::Corruption("Bad timestamp in key-value");
   }
   // Erasing characters which hold the TS
   str->erase(str->length() - kTSLength, kTSLength);
-  return Status::OK();
+  return st;
 }
 
 Status DBWithTTLImpl::Put(const WriteOptions& options,
                           ColumnFamilyHandle* column_family, const Slice& key,
                           const Slice& val) {
   WriteBatch batch;
-  Status st = batch.Put(column_family, key, val);
-  if (st.ok()) {
-    st = Write(options, &batch);
-  }
-  return st;
+  batch.Put(column_family, key, val);
+  return Write(options, &batch);
 }
 
 Status DBWithTTLImpl::Get(const ReadOptions& options,
@@ -269,50 +249,56 @@ Status DBWithTTLImpl::Merge(const WriteOptions& options,
                             ColumnFamilyHandle* column_family, const Slice& key,
                             const Slice& value) {
   WriteBatch batch;
-  Status st = batch.Merge(column_family, key, value);
-  if (st.ok()) {
-    st = Write(options, &batch);
-  }
-  return st;
+  batch.Merge(column_family, key, value);
+  return Write(options, &batch);
 }
 
 Status DBWithTTLImpl::Write(const WriteOptions& opts, WriteBatch* updates) {
   class Handler : public WriteBatch::Handler {
    public:
-    explicit Handler(SystemClock* clock) : clock_(clock) {}
+    explicit Handler(Env* env) : env_(env) {}
     WriteBatch updates_ttl;
-    Status PutCF(uint32_t column_family_id, const Slice& key,
-                 const Slice& value) override {
+    Status batch_rewrite_status;
+    virtual Status PutCF(uint32_t column_family_id, const Slice& key,
+                         const Slice& value) override {
       std::string value_with_ts;
-      Status st = AppendTS(value, &value_with_ts, clock_);
+      Status st = AppendTS(value, &value_with_ts, env_);
       if (!st.ok()) {
-        return st;
+        batch_rewrite_status = st;
+      } else {
+        WriteBatchInternal::Put(&updates_ttl, column_family_id, key,
+                                value_with_ts);
       }
-      return WriteBatchInternal::Put(&updates_ttl, column_family_id, key,
-                                     value_with_ts);
+      return Status::OK();
     }
-    Status MergeCF(uint32_t column_family_id, const Slice& key,
-                   const Slice& value) override {
+    virtual Status MergeCF(uint32_t column_family_id, const Slice& key,
+                           const Slice& value) override {
       std::string value_with_ts;
-      Status st = AppendTS(value, &value_with_ts, clock_);
+      Status st = AppendTS(value, &value_with_ts, env_);
       if (!st.ok()) {
-        return st;
+        batch_rewrite_status = st;
+      } else {
+        WriteBatchInternal::Merge(&updates_ttl, column_family_id, key,
+                                  value_with_ts);
       }
-      return WriteBatchInternal::Merge(&updates_ttl, column_family_id, key,
-                                       value_with_ts);
+      return Status::OK();
     }
-    Status DeleteCF(uint32_t column_family_id, const Slice& key) override {
-      return WriteBatchInternal::Delete(&updates_ttl, column_family_id, key);
+    virtual Status DeleteCF(uint32_t column_family_id,
+                            const Slice& key) override {
+      WriteBatchInternal::Delete(&updates_ttl, column_family_id, key);
+      return Status::OK();
     }
-    void LogData(const Slice& blob) override { updates_ttl.PutLogData(blob); }
+    virtual void LogData(const Slice& blob) override {
+      updates_ttl.PutLogData(blob);
+    }
 
    private:
-    SystemClock* clock_;
+    Env* env_;
   };
-  Handler handler(GetEnv()->GetSystemClock().get());
-  Status st = updates->Iterate(&handler);
-  if (!st.ok()) {
-    return st;
+  Handler handler(GetEnv());
+  updates->Iterate(&handler);
+  if (!handler.batch_rewrite_status.ok()) {
+    return handler.batch_rewrite_status;
   } else {
     return db_->Write(opts, &(handler.updates_ttl));
   }
@@ -323,16 +309,5 @@ Iterator* DBWithTTLImpl::NewIterator(const ReadOptions& opts,
   return new TtlIterator(db_->NewIterator(opts, column_family));
 }
 
-void DBWithTTLImpl::SetTtl(ColumnFamilyHandle *h, int32_t ttl) {
-  std::shared_ptr<TtlCompactionFilterFactory> filter;
-  Options opts;
-  opts = GetOptions(h);
-  filter = std::static_pointer_cast<TtlCompactionFilterFactory>(
-                                       opts.compaction_filter_factory);
-  if (!filter)
-    return;
-  filter->SetTtl(ttl);
-}
-
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 #endif  // ROCKSDB_LITE

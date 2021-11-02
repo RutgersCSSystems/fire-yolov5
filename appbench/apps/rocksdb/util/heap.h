@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #pragma once
 
@@ -11,7 +11,7 @@
 #include "port/port.h"
 #include "util/autovector.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 // Binary heap implementation optimized for use in multi-way merge sort.
 // Comparison to std::priority_queue:
@@ -72,12 +72,7 @@ class BinaryHeap {
 
   void pop() {
     assert(!empty());
-    if (data_.size() > 1) {
-      // Avoid self-move-assign, because it could cause problems with
-      // classes which are not prepared for this and it trips up the
-      // STL debugger when activated.
-      data_.front() = std::move(data_.back());
-    }
+    data_.front() = std::move(data_.back());
     data_.pop_back();
     if (!empty()) {
       downheap(get_root());
@@ -97,9 +92,9 @@ class BinaryHeap {
     reset_root_cmp_cache();
   }
 
-  bool empty() const { return data_.empty(); }
-
-  size_t size() const { return data_.size(); }
+  bool empty() const {
+    return data_.empty();
+  }
 
   void reset_root_cmp_cache() { root_cmp_cache_ = port::kMaxSizet; }
 
@@ -168,4 +163,4 @@ class BinaryHeap {
   size_t root_cmp_cache_ = port::kMaxSizet;
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

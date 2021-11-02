@@ -1,18 +1,18 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
 #include "rocksdb/iterator.h"
-#include "memory/arena.h"
 #include "table/internal_iterator.h"
 #include "table/iterator_wrapper.h"
+#include "util/arena.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 Cleanable::Cleanable() {
   cleanup_.function = nullptr;
@@ -20,19 +20,6 @@ Cleanable::Cleanable() {
 }
 
 Cleanable::~Cleanable() { DoCleanup(); }
-
-Cleanable::Cleanable(Cleanable&& other) {
-  *this = std::move(other);
-}
-
-Cleanable& Cleanable::operator=(Cleanable&& other) {
-  if (this != &other) {
-    cleanup_ = other.cleanup_;
-    other.cleanup_.function = nullptr;
-    other.cleanup_.next = nullptr;
-  }
-  return *this;
-}
 
 // If the entire linked list was on heap we could have simply add attach one
 // link list to another. However the head is an embeded object to avoid the cost
@@ -103,20 +90,20 @@ Status Iterator::GetProperty(std::string prop_name, std::string* prop) {
     *prop = "0";
     return Status::OK();
   }
-  return Status::InvalidArgument("Unidentified property.");
+  return Status::InvalidArgument("Undentified property.");
 }
 
 namespace {
 class EmptyIterator : public Iterator {
  public:
   explicit EmptyIterator(const Status& s) : status_(s) { }
-  bool Valid() const override { return false; }
-  void Seek(const Slice& /*target*/) override {}
-  void SeekForPrev(const Slice& /*target*/) override {}
-  void SeekToFirst() override {}
-  void SeekToLast() override {}
-  void Next() override { assert(false); }
-  void Prev() override { assert(false); }
+  virtual bool Valid() const override { return false; }
+  virtual void Seek(const Slice& target) override {}
+  virtual void SeekForPrev(const Slice& target) override {}
+  virtual void SeekToFirst() override {}
+  virtual void SeekToLast() override {}
+  virtual void Next() override { assert(false); }
+  virtual void Prev() override { assert(false); }
   Slice key() const override {
     assert(false);
     return Slice();
@@ -125,86 +112,69 @@ class EmptyIterator : public Iterator {
     assert(false);
     return Slice();
   }
-  Status status() const override { return status_; }
+  virtual Status status() const override { return status_; }
 
  private:
   Status status_;
 };
 
-template <class TValue = Slice>
-class EmptyInternalIterator : public InternalIteratorBase<TValue> {
+class EmptyInternalIterator : public InternalIterator {
  public:
   explicit EmptyInternalIterator(const Status& s) : status_(s) {}
-  bool Valid() const override { return false; }
-  void Seek(const Slice& /*target*/) override {}
-  void SeekForPrev(const Slice& /*target*/) override {}
-  void SeekToFirst() override {}
-  void SeekToLast() override {}
-  void Next() override { assert(false); }
-  void Prev() override { assert(false); }
+  virtual bool Valid() const override { return false; }
+  virtual void Seek(const Slice& target) override {}
+  virtual void SeekForPrev(const Slice& target) override {}
+  virtual void SeekToFirst() override {}
+  virtual void SeekToLast() override {}
+  virtual void Next() override { assert(false); }
+  virtual void Prev() override { assert(false); }
   Slice key() const override {
     assert(false);
     return Slice();
   }
-  TValue value() const override {
+  Slice value() const override {
     assert(false);
-    return TValue();
+    return Slice();
   }
-  Status status() const override { return status_; }
+  virtual Status status() const override { return status_; }
 
  private:
   Status status_;
 };
 }  // namespace
 
-Iterator* NewEmptyIterator() { return new EmptyIterator(Status::OK()); }
+Iterator* NewEmptyIterator() {
+  return new EmptyIterator(Status::OK());
+}
 
 Iterator* NewErrorIterator(const Status& status) {
   return new EmptyIterator(status);
 }
 
-template <class TValue>
-InternalIteratorBase<TValue>* NewErrorInternalIterator(const Status& status) {
-  return new EmptyInternalIterator<TValue>(status);
+InternalIterator* NewEmptyInternalIterator() {
+  return new EmptyInternalIterator(Status::OK());
 }
-template InternalIteratorBase<IndexValue>* NewErrorInternalIterator(
-    const Status& status);
-template InternalIteratorBase<Slice>* NewErrorInternalIterator(
-    const Status& status);
 
-template <class TValue>
-InternalIteratorBase<TValue>* NewErrorInternalIterator(const Status& status,
-                                                       Arena* arena) {
+InternalIterator* NewEmptyInternalIterator(Arena* arena) {
   if (arena == nullptr) {
-    return NewErrorInternalIterator<TValue>(status);
+    return NewEmptyInternalIterator();
   } else {
-    auto mem = arena->AllocateAligned(sizeof(EmptyInternalIterator<TValue>));
-    return new (mem) EmptyInternalIterator<TValue>(status);
+    auto mem = arena->AllocateAligned(sizeof(EmptyIterator));
+    return new (mem) EmptyInternalIterator(Status::OK());
   }
 }
-template InternalIteratorBase<IndexValue>* NewErrorInternalIterator(
-    const Status& status, Arena* arena);
-template InternalIteratorBase<Slice>* NewErrorInternalIterator(
-    const Status& status, Arena* arena);
 
-template <class TValue>
-InternalIteratorBase<TValue>* NewEmptyInternalIterator() {
-  return new EmptyInternalIterator<TValue>(Status::OK());
+InternalIterator* NewErrorInternalIterator(const Status& status) {
+  return new EmptyInternalIterator(status);
 }
-template InternalIteratorBase<IndexValue>* NewEmptyInternalIterator();
-template InternalIteratorBase<Slice>* NewEmptyInternalIterator();
 
-template <class TValue>
-InternalIteratorBase<TValue>* NewEmptyInternalIterator(Arena* arena) {
+InternalIterator* NewErrorInternalIterator(const Status& status, Arena* arena) {
   if (arena == nullptr) {
-    return NewEmptyInternalIterator<TValue>();
+    return NewErrorInternalIterator(status);
   } else {
-    auto mem = arena->AllocateAligned(sizeof(EmptyInternalIterator<TValue>));
-    return new (mem) EmptyInternalIterator<TValue>(Status::OK());
+    auto mem = arena->AllocateAligned(sizeof(EmptyIterator));
+    return new (mem) EmptyInternalIterator(status);
   }
 }
-template InternalIteratorBase<IndexValue>* NewEmptyInternalIterator(
-    Arena* arena);
-template InternalIteratorBase<Slice>* NewEmptyInternalIterator(Arena* arena);
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
+#!/bin/bash
 # REQUIRE: db_bench binary exists in the current directory
 
 if [ $# -ne 1 ]; then
@@ -21,7 +20,6 @@ fi
 K=1024
 M=$((1024 * K))
 G=$((1024 * M))
-T=$((1024 * G))
 
 if [ -z $DB_DIR ]; then
   echo "DB_DIR is not defined"
@@ -46,16 +44,16 @@ if [ ! -z $DB_BENCH_NO_SYNC ]; then
   syncval="0";
 fi
 
-num_threads=${NUM_THREADS:-64}
+num_threads=${NUM_THREADS:-16}
 mb_written_per_sec=${MB_WRITE_PER_SEC:-0}
 # Only for tests that do range scans
 num_nexts_per_seek=${NUM_NEXTS_PER_SEEK:-10}
-cache_size=${CACHE_SIZE:-$((17179869184))}
+cache_size=${CACHE_SIZE:-$((1 * G))}
 compression_max_dict_bytes=${COMPRESSION_MAX_DICT_BYTES:-0}
-compression_type=${COMPRESSION_TYPE:-zstd}
+compression_type=${COMPRESSION_TYPE:-snappy}
 duration=${DURATION:-0}
 
-num_keys=${NUM_KEYS:-8000000000}
+num_keys=${NUM_KEYS:-$((1 * G))}
 key_size=${KEY_SIZE:-20}
 value_size=${VALUE_SIZE:-400}
 block_size=${BLOCK_SIZE:-8192}
@@ -101,6 +99,7 @@ const_params="
 
 l0_config="
   --level0_file_num_compaction_trigger=4 \
+  --level0_slowdown_writes_trigger=12 \
   --level0_stop_writes_trigger=20"
 
 if [ $duration -gt 0 ]; then
@@ -116,14 +115,11 @@ params_w="$const_params \
 params_bulkload="$const_params \
                  --max_background_compactions=16 \
                  --max_write_buffer_number=8 \
-                 --allow_concurrent_memtable_write=false \
                  --max_background_flushes=7 \
                  --level0_file_num_compaction_trigger=$((10 * M)) \
                  --level0_slowdown_writes_trigger=$((10 * M)) \
                  --level0_stop_writes_trigger=$((10 * M))"
 
-params_fillseq="$params_w \
-		--allow_concurrent_memtable_write=false"
 #
 # Tune values for level and universal compaction.
 # For universal compaction, these level0_* options mean total sorted of runs in
@@ -157,8 +153,8 @@ function summarize_result {
   stall_pct=$( grep "^Cumulative stall" $test_out| tail -1  | awk '{  print $5 }' )
   ops_sec=$( grep ^${bench_name} $test_out | awk '{ print $5 }' )
   mb_sec=$( grep ^${bench_name} $test_out | awk '{ print $7 }' )
-  lo_wgb=$( grep "^  L0" $test_out | tail -1 | awk '{ print $9 }' )
-  sum_wgb=$( grep "^ Sum" $test_out | tail -1 | awk '{ print $9 }' )
+  lo_wgb=$( grep "^  L0" $test_out | tail -1 | awk '{ print $8 }' )
+  sum_wgb=$( grep "^ Sum" $test_out | tail -1 | awk '{ print $8 }' )
   sum_size=$( grep "^ Sum" $test_out | tail -1 | awk '{ printf "%.1f", $3 / 1024.0 }' )
   wamp=$( echo "scale=1; $sum_wgb / $lo_wgb" | bc )
   wmb_ps=$( echo "scale=1; ( $sum_wgb * 1024.0 ) / $uptime" | bc )
@@ -183,7 +179,6 @@ function run_bulkload {
        $params_bulkload \
        --threads=1 \
        --memtablerep=vector \
-       --allow_concurrent_memtable_write=false \
        --disable_wal=1 \
        --seed=$( date +%s ) \
        2>&1 | tee -a $output_dir/benchmark_bulkload_fillrandom.log"
@@ -236,7 +231,6 @@ function run_manual_compaction_worker {
        --compaction_style=$2 \
        --subcompactions=$3 \
        --memtablerep=vector \
-       --allow_concurrent_memtable_write=false \
        --disable_wal=1 \
        --max_background_compactions=$4 \
        --seed=$( date +%s ) \
@@ -317,11 +311,10 @@ function run_fillseq {
   cmd="./db_bench --benchmarks=fillseq \
        --use_existing_db=0 \
        --sync=0 \
-       $params_fillseq \
+       $params_w \
        --min_level_to_compress=0 \
        --threads=1 \
        --memtablerep=vector \
-       --allow_concurrent_memtable_write=false \
        --disable_wal=$1 \
        --seed=$( date +%s ) \
        2>&1 | tee -a $log_file_name"
@@ -456,7 +449,6 @@ echo "===== Benchmark ====="
 
 # Run!!!
 IFS=',' read -a jobs <<< $1
-# shellcheck disable=SC2068
 for job in ${jobs[@]}; do
 
   if [ $job != debug ]; then
@@ -471,12 +463,6 @@ for job in ${jobs[@]}; do
   elif [ $job = fillseq_enable_wal ]; then
     run_fillseq 0
   elif [ $job = overwrite ]; then
-    syncval="0"
-    params_w="$params_w \
-	--writes=125000000 \
-	--subcompactions=4 \
-	--soft_pending_compaction_bytes_limit=$((1 * T)) \
-	--hard_pending_compaction_bytes_limit=$((4 * T)) "
     run_change overwrite
   elif [ $job = updaterandom ]; then
     run_change updaterandom

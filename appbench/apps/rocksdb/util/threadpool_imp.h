@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -14,7 +14,8 @@
 #include <memory>
 #include <functional>
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
+
 
 class ThreadPoolImpl : public ThreadPool {
  public:
@@ -27,7 +28,7 @@ class ThreadPoolImpl : public ThreadPool {
   // Implement ThreadPool interfaces
 
   // Wait for all threads to finish.
-  // Discards all the jobs that did not
+  // Discards all the the jobs that did not
   // start executing and waits for those running
   // to complete
   void JoinAllThreads() override;
@@ -35,8 +36,6 @@ class ThreadPoolImpl : public ThreadPool {
   // Set the number of background threads that will be executing the
   // scheduled jobs.
   void SetBackgroundThreads(int num) override;
-  int GetBackgroundThreads() override;
-
   // Get the number of jobs scheduled in the ThreadPool queue.
   unsigned int GetQueueLen() const override;
 
@@ -45,13 +44,9 @@ class ThreadPoolImpl : public ThreadPool {
   // start yet
   void WaitForJobsAndJoinAllThreads() override;
 
-  // Make threads to run at a lower kernel IO priority
+  // Make threads to run at a lower kernel priority
   // Currently only has effect on Linux
   void LowerIOPriority();
-
-  // Make threads to run at a lower kernel CPU priority
-  // Currently only has effect on Linux
-  void LowerCPUPriority(CpuPriority pri);
 
   // Ensure there is at aleast num threads in the pool
   // but do not kill threads if there are more
@@ -109,4 +104,4 @@ class ThreadPoolImpl : public ThreadPool {
    std::unique_ptr<Impl>   impl_;
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

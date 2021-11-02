@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -10,15 +10,14 @@
 // This file is a portable substitute for sys/time.h which does not exist on
 // Windows
 
-#pragma once
+#ifndef STORAGE_LEVELDB_PORT_SYS_TIME_H_
+#define STORAGE_LEVELDB_PORT_SYS_TIME_H_
 
 #if defined(OS_WIN) && defined(_MSC_VER)
 
 #include <time.h>
 
-#include "rocksdb/rocksdb_namespace.h"
-
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 namespace port {
 
@@ -39,9 +38,11 @@ inline struct tm* localtime_r(const time_t* timep, struct tm* result) {
 using port::timeval;
 using port::gettimeofday;
 using port::localtime_r;
-}  // namespace ROCKSDB_NAMESPACE
+}
 
 #else
 #include <time.h>
 #include <sys/time.h>
 #endif
+
+#endif  // STORAGE_LEVELDB_PORT_SYS_TIME_H_

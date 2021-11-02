@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -12,7 +12,7 @@
 
 #include "rocksdb/db.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class SnapshotList;
 
@@ -21,10 +21,6 @@ class SnapshotList;
 class SnapshotImpl : public Snapshot {
  public:
   SequenceNumber number_;  // const after creation
-  // It indicates the smallest uncommitted data at the time the snapshot was
-  // taken. This is currently used by WritePrepared transactions to limit the
-  // scope of queries to IsInSnapshot.
-  SequenceNumber min_uncommitted_ = kMinUnCommittedSeq;
 
   virtual SequenceNumber GetSequenceNumber() const override { return number_; }
 
@@ -49,22 +45,15 @@ class SnapshotList {
     list_.prev_ = &list_;
     list_.next_ = &list_;
     list_.number_ = 0xFFFFFFFFL;      // placeholder marker, for debugging
-    // Set all the variables to make UBSAN happy.
-    list_.list_ = nullptr;
-    list_.unix_time_ = 0;
-    list_.is_write_conflict_boundary_ = false;
     count_ = 0;
   }
-
-  // No copy-construct.
-  SnapshotList(const SnapshotList&) = delete;
 
   bool empty() const { return list_.next_ == &list_; }
   SnapshotImpl* oldest() const { assert(!empty()); return list_.next_; }
   SnapshotImpl* newest() const { assert(!empty()); return list_.prev_; }
 
-  SnapshotImpl* New(SnapshotImpl* s, SequenceNumber seq, uint64_t unix_time,
-                    bool is_write_conflict_boundary) {
+  const SnapshotImpl* New(SnapshotImpl* s, SequenceNumber seq,
+                          uint64_t unix_time, bool is_write_conflict_boundary) {
     s->number_ = seq;
     s->unix_time_ = unix_time;
     s->is_write_conflict_boundary_ = is_write_conflict_boundary;
@@ -85,39 +74,21 @@ class SnapshotList {
     count_--;
   }
 
-  // retrieve all snapshot numbers up until max_seq. They are sorted in
-  // ascending order (with no duplicates).
+  // retrieve all snapshot numbers. They are sorted in ascending order.
   std::vector<SequenceNumber> GetAll(
-      SequenceNumber* oldest_write_conflict_snapshot = nullptr,
-      const SequenceNumber& max_seq = kMaxSequenceNumber) const {
+      SequenceNumber* oldest_write_conflict_snapshot = nullptr) {
     std::vector<SequenceNumber> ret;
-    GetAll(&ret, oldest_write_conflict_snapshot, max_seq);
-    return ret;
-  }
-
-  void GetAll(std::vector<SequenceNumber>* snap_vector,
-              SequenceNumber* oldest_write_conflict_snapshot = nullptr,
-              const SequenceNumber& max_seq = kMaxSequenceNumber) const {
-    std::vector<SequenceNumber>& ret = *snap_vector;
-    // So far we have no use case that would pass a non-empty vector
-    assert(ret.size() == 0);
 
     if (oldest_write_conflict_snapshot != nullptr) {
       *oldest_write_conflict_snapshot = kMaxSequenceNumber;
     }
 
     if (empty()) {
-      return;
+      return ret;
     }
-    const SnapshotImpl* s = &list_;
+    SnapshotImpl* s = &list_;
     while (s->next_ != &list_) {
-      if (s->next_->number_ > max_seq) {
-        break;
-      }
-      // Avoid duplicates
-      if (ret.empty() || ret.back() != s->next_->number_) {
-        ret.push_back(s->next_->number_);
-      }
+      ret.push_back(s->next_->number_);
 
       if (oldest_write_conflict_snapshot != nullptr &&
           *oldest_write_conflict_snapshot == kMaxSequenceNumber &&
@@ -129,7 +100,7 @@ class SnapshotList {
 
       s = s->next_;
     }
-    return;
+    return ret;
   }
 
   // get the sequence number of the most recent snapshot
@@ -148,14 +119,6 @@ class SnapshotList {
     }
   }
 
-  int64_t GetOldestSnapshotSequence() const {
-    if (empty()) {
-      return 0;
-    } else {
-      return oldest()->GetSequenceNumber();
-    }
-  }
-
   uint64_t count() const { return count_; }
 
  private:
@@ -164,4 +127,4 @@ class SnapshotList {
   uint64_t count_;
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

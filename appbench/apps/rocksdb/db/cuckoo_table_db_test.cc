@@ -1,22 +1,21 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #ifndef ROCKSDB_LITE
 
-#include "db/db_impl/db_impl.h"
+#include "db/db_impl.h"
 #include "rocksdb/db.h"
 #include "rocksdb/env.h"
-#include "table/cuckoo/cuckoo_table_factory.h"
-#include "table/cuckoo/cuckoo_table_reader.h"
+#include "table/cuckoo_table_factory.h"
+#include "table/cuckoo_table_reader.h"
 #include "table/meta_blocks.h"
-#include "test_util/testharness.h"
-#include "test_util/testutil.h"
-#include "util/cast_util.h"
 #include "util/string_util.h"
+#include "util/testharness.h"
+#include "util/testutil.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class CuckooTableDBTest : public testing::Test {
  private:
@@ -26,13 +25,13 @@ class CuckooTableDBTest : public testing::Test {
 
  public:
   CuckooTableDBTest() : env_(Env::Default()) {
-    dbname_ = test::PerThreadDBPath("cuckoo_table_db_test");
+    dbname_ = test::TmpDir() + "/cuckoo_table_db_test";
     EXPECT_OK(DestroyDB(dbname_, Options()));
     db_ = nullptr;
     Reopen();
   }
 
-  ~CuckooTableDBTest() override {
+  ~CuckooTableDBTest() {
     delete db_;
     EXPECT_OK(DestroyDB(dbname_, Options()));
   }
@@ -47,7 +46,9 @@ class CuckooTableDBTest : public testing::Test {
     return options;
   }
 
-  DBImpl* dbfull() { return static_cast_with_check<DBImpl>(db_); }
+  DBImpl* dbfull() {
+    return reinterpret_cast<DBImpl*>(db_);
+  }
 
   // The following util methods are copied from plain_table_db_test.
   void Reopen(Options* options = nullptr) {
@@ -61,15 +62,6 @@ class CuckooTableDBTest : public testing::Test {
       opts.create_if_missing = true;
     }
     ASSERT_OK(DB::Open(opts, dbname_, &db_));
-  }
-
-  void DestroyAndReopen(Options* options) {
-    assert(options);
-    ASSERT_OK(db_->Close());
-    delete db_;
-    db_ = nullptr;
-    ASSERT_OK(DestroyDB(dbname_, *options));
-    Reopen(options);
   }
 
   Status Put(const Slice& k, const Slice& v) {
@@ -129,10 +121,10 @@ TEST_F(CuckooTableDBTest, Flush) {
   ASSERT_OK(Put("key1", "v1"));
   ASSERT_OK(Put("key2", "v2"));
   ASSERT_OK(Put("key3", "v3"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   TablePropertiesCollection ptc;
-  ASSERT_OK(reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc));
+  reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc);
   ASSERT_EQ(1U, ptc.size());
   ASSERT_EQ(3U, ptc.begin()->second->num_entries);
   ASSERT_EQ("1", FilesPerLevel());
@@ -146,9 +138,9 @@ TEST_F(CuckooTableDBTest, Flush) {
   ASSERT_OK(Put("key4", "v4"));
   ASSERT_OK(Put("key5", "v5"));
   ASSERT_OK(Put("key6", "v6"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
-  ASSERT_OK(reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc));
+  reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc);
   ASSERT_EQ(2U, ptc.size());
   auto row = ptc.begin();
   ASSERT_EQ(3U, row->second->num_entries);
@@ -164,8 +156,8 @@ TEST_F(CuckooTableDBTest, Flush) {
   ASSERT_OK(Delete("key6"));
   ASSERT_OK(Delete("key5"));
   ASSERT_OK(Delete("key4"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
-  ASSERT_OK(reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc));
+  dbfull()->TEST_FlushMemTable();
+  reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc);
   ASSERT_EQ(3U, ptc.size());
   row = ptc.begin();
   ASSERT_EQ(3U, row->second->num_entries);
@@ -186,10 +178,10 @@ TEST_F(CuckooTableDBTest, FlushWithDuplicateKeys) {
   ASSERT_OK(Put("key1", "v1"));
   ASSERT_OK(Put("key2", "v2"));
   ASSERT_OK(Put("key1", "v3"));  // Duplicate
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   TablePropertiesCollection ptc;
-  ASSERT_OK(reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc));
+  reinterpret_cast<DB*>(dbfull())->GetPropertiesOfAllTables(&ptc);
   ASSERT_EQ(1U, ptc.size());
   ASSERT_EQ(2U, ptc.begin()->second->num_entries);
   ASSERT_EQ("1", FilesPerLevel());
@@ -214,12 +206,12 @@ static std::string Uint64Key(uint64_t i) {
 TEST_F(CuckooTableDBTest, Uint64Comparator) {
   Options options = CurrentOptions();
   options.comparator = test::Uint64Comparator();
-  DestroyAndReopen(&options);
+  Reopen(&options);
 
   ASSERT_OK(Put(Uint64Key(1), "v1"));
   ASSERT_OK(Put(Uint64Key(2), "v2"));
   ASSERT_OK(Put(Uint64Key(3), "v3"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   ASSERT_EQ("v1", Get(Uint64Key(1)));
   ASSERT_EQ("v2", Get(Uint64Key(2)));
@@ -228,10 +220,10 @@ TEST_F(CuckooTableDBTest, Uint64Comparator) {
 
   // Add more keys.
   ASSERT_OK(Delete(Uint64Key(2)));  // Delete.
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
   ASSERT_OK(Put(Uint64Key(3), "v0"));  // Update.
   ASSERT_OK(Put(Uint64Key(4), "v4"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
   ASSERT_EQ("v1", Get(Uint64Key(1)));
   ASSERT_EQ("NOT_FOUND", Get(Uint64Key(2)));
   ASSERT_EQ("v0", Get(Uint64Key(3)));
@@ -249,16 +241,16 @@ TEST_F(CuckooTableDBTest, CompactionIntoMultipleFiles) {
 
   // Write 28 values, each 10016 B ~ 10KB
   for (int idx = 0; idx < 28; ++idx) {
-    ASSERT_OK(Put(Key(idx), std::string(10000, 'a' + char(idx))));
+    ASSERT_OK(Put(Key(idx), std::string(10000, 'a' + idx)));
   }
-  ASSERT_OK(dbfull()->TEST_WaitForFlushMemTable());
+  dbfull()->TEST_WaitForFlushMemTable();
   ASSERT_EQ("1", FilesPerLevel());
 
-  ASSERT_OK(dbfull()->TEST_CompactRange(0, nullptr, nullptr, nullptr,
-                                        true /* disallow trivial move */));
+  dbfull()->TEST_CompactRange(0, nullptr, nullptr, nullptr,
+                              true /* disallow trivial move */);
   ASSERT_EQ("0,2", FilesPerLevel());
   for (int idx = 0; idx < 28; ++idx) {
-    ASSERT_EQ(std::string(10000, 'a' + char(idx)), Get(Key(idx)));
+    ASSERT_EQ(std::string(10000, 'a' + idx), Get(Key(idx)));
   }
 }
 
@@ -274,27 +266,24 @@ TEST_F(CuckooTableDBTest, SameKeyInsertedInTwoDifferentFilesAndCompacted) {
   for (int idx = 0; idx < 11; ++idx) {
     ASSERT_OK(Put(Key(idx), std::string(10000, 'a')));
   }
-  ASSERT_OK(dbfull()->TEST_WaitForFlushMemTable());
+  dbfull()->TEST_WaitForFlushMemTable();
   ASSERT_EQ("1", FilesPerLevel());
 
   // Generate one more file in level-0, and should trigger level-0 compaction
   for (int idx = 0; idx < 11; ++idx) {
-    ASSERT_OK(Put(Key(idx), std::string(10000, 'a' + char(idx))));
+    ASSERT_OK(Put(Key(idx), std::string(10000, 'a' + idx)));
   }
-  ASSERT_OK(dbfull()->TEST_WaitForFlushMemTable());
-  ASSERT_OK(dbfull()->TEST_CompactRange(0, nullptr, nullptr));
+  dbfull()->TEST_WaitForFlushMemTable();
+  dbfull()->TEST_CompactRange(0, nullptr, nullptr);
 
   ASSERT_EQ("0,1", FilesPerLevel());
   for (int idx = 0; idx < 11; ++idx) {
-    ASSERT_EQ(std::string(10000, 'a' + char(idx)), Get(Key(idx)));
+    ASSERT_EQ(std::string(10000, 'a' + idx), Get(Key(idx)));
   }
 }
 
 TEST_F(CuckooTableDBTest, AdaptiveTable) {
   Options options = CurrentOptions();
-
-  // Ensure options compatible with PlainTable
-  options.prefix_extractor.reset(NewCappedPrefixTransform(8));
 
   // Write some keys using cuckoo table.
   options.table_factory.reset(NewCuckooTableFactory());
@@ -303,32 +292,24 @@ TEST_F(CuckooTableDBTest, AdaptiveTable) {
   ASSERT_OK(Put("key1", "v1"));
   ASSERT_OK(Put("key2", "v2"));
   ASSERT_OK(Put("key3", "v3"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   // Write some keys using plain table.
-  std::shared_ptr<TableFactory> block_based_factory(
-      NewBlockBasedTableFactory());
-  std::shared_ptr<TableFactory> plain_table_factory(
-      NewPlainTableFactory());
-  std::shared_ptr<TableFactory> cuckoo_table_factory(
-      NewCuckooTableFactory());
   options.create_if_missing = false;
-  options.table_factory.reset(NewAdaptiveTableFactory(
-    plain_table_factory, block_based_factory, plain_table_factory,
-    cuckoo_table_factory));
+  options.table_factory.reset(NewPlainTableFactory());
   Reopen(&options);
   ASSERT_OK(Put("key4", "v4"));
   ASSERT_OK(Put("key1", "v5"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   // Write some keys using block based table.
-  options.table_factory.reset(NewAdaptiveTableFactory(
-    block_based_factory, block_based_factory, plain_table_factory,
-    cuckoo_table_factory));
+  std::shared_ptr<TableFactory> block_based_factory(
+      NewBlockBasedTableFactory());
+  options.table_factory.reset(NewAdaptiveTableFactory(block_based_factory));
   Reopen(&options);
   ASSERT_OK(Put("key5", "v6"));
   ASSERT_OK(Put("key2", "v7"));
-  ASSERT_OK(dbfull()->TEST_FlushMemTable());
+  dbfull()->TEST_FlushMemTable();
 
   ASSERT_EQ("v5", Get("key1"));
   ASSERT_EQ("v7", Get("key2"));
@@ -336,22 +317,17 @@ TEST_F(CuckooTableDBTest, AdaptiveTable) {
   ASSERT_EQ("v4", Get("key4"));
   ASSERT_EQ("v6", Get("key5"));
 }
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
-  if (ROCKSDB_NAMESPACE::port::kLittleEndian) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-  } else {
-    fprintf(stderr, "SKIPPED as Cuckoo table doesn't support Big Endian\n");
-    return 0;
-  }
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }
 
 #else
 #include <stdio.h>
 
-int main(int /*argc*/, char** /*argv*/) {
+int main(int argc, char** argv) {
   fprintf(stderr, "SKIPPED as Cuckoo table is not supported in ROCKSDB_LITE\n");
   return 0;
 }

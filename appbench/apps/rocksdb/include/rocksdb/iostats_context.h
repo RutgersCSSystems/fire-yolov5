@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 #pragma once
 
 #include <stdint.h>
@@ -12,7 +12,7 @@
 // A thread local context for gathering io-stats efficiently and transparently.
 // Use SetPerfLevel(PerfLevel::kEnableTime) to enable time stats.
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 struct IOStatsContext {
   // reset all io-stats counter to zero
@@ -44,21 +44,14 @@ struct IOStatsContext {
   uint64_t prepare_write_nanos;
   // time spent in Logger::Logv().
   uint64_t logger_nanos;
-  // CPU time spent in write() and pwrite()
-  uint64_t cpu_write_nanos;
-  // CPU time spent in read() and pread()
-  uint64_t cpu_read_nanos;
 };
 
-// If RocksDB is compiled with -DNIOSTATS_CONTEXT, then a pointer to a global,
-// non-thread-local IOStatsContext object will be returned. Attempts to update
-// this object will be ignored, and reading from it will also be no-op.
-// Otherwise,
-// a) if thread-local is supported on the platform, then a pointer to
-//    a thread-local IOStatsContext object will be returned.
-// b) if thread-local is NOT supported, then compilation will fail.
-//
-// This function never returns nullptr.
-IOStatsContext* get_iostats_context();
+#ifndef IOS_CROSS_COMPILE
+# ifdef _MSC_VER
+extern __declspec(thread) IOStatsContext iostats_context;
+# else
+extern __thread IOStatsContext iostats_context;
+# endif
+#endif  // IOS_CROSS_COMPILE
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

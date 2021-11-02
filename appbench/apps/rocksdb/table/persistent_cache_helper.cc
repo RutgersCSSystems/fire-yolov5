@@ -1,13 +1,13 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #include "table/persistent_cache_helper.h"
-#include "table/block_based/block_based_table_reader.h"
+#include "table/block_based_table_reader.h"
 #include "table/format.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 void PersistentCacheHelper::InsertRawPage(
     const PersistentCacheOptions& cache_options, const BlockHandle& handle,
@@ -21,8 +21,7 @@ void PersistentCacheHelper::InsertRawPage(
                                           cache_options.key_prefix.size(),
                                           handle, cache_key);
   // insert content to cache
-  cache_options.persistent_cache->Insert(key, data, size)
-      .PermitUncheckedError();
+  cache_options.persistent_cache->Insert(key, data, size);
 }
 
 void PersistentCacheHelper::InsertUncompressedPage(
@@ -30,9 +29,12 @@ void PersistentCacheHelper::InsertUncompressedPage(
     const BlockContents& contents) {
   assert(cache_options.persistent_cache);
   assert(!cache_options.persistent_cache->IsCompressed());
-  // Precondition:
-  // (1) content is cacheable
-  // (2) content is not compressed
+  if (!contents.cachable || contents.compression_type != kNoCompression) {
+    // We shouldn't cache this. Either
+    // (1) content is not cacheable
+    // (2) content is compressed
+    return;
+  }
 
   // construct the page key
   char cache_key[BlockBasedTable::kMaxCacheKeyPrefixSize + kMaxVarint64Length];
@@ -40,18 +42,13 @@ void PersistentCacheHelper::InsertUncompressedPage(
                                           cache_options.key_prefix.size(),
                                           handle, cache_key);
   // insert block contents to page cache
-  cache_options.persistent_cache
-      ->Insert(key, contents.data.data(), contents.data.size())
-      .PermitUncheckedError();
-  ;
+  cache_options.persistent_cache->Insert(key, contents.data.data(),
+                                         contents.data.size());
 }
 
 Status PersistentCacheHelper::LookupRawPage(
     const PersistentCacheOptions& cache_options, const BlockHandle& handle,
     std::unique_ptr<char[]>* raw_data, const size_t raw_data_size) {
-#ifdef NDEBUG
-  (void)raw_data_size;
-#endif
   assert(cache_options.persistent_cache);
   assert(cache_options.persistent_cache->IsCompressed());
 
@@ -109,8 +106,9 @@ Status PersistentCacheHelper::LookupUncompressedPage(
   // update stats
   RecordTick(cache_options.statistics, PERSISTENT_CACHE_HIT);
   // construct result and return
-  *contents = BlockContents(std::move(data), size);
+  *contents =
+      BlockContents(std::move(data), size, false /*cacheable*/, kNoCompression);
   return Status::OK();
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

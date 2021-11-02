@@ -1,19 +1,20 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
-#include "file/filename.h"
+#include "util/filename.h"
 
 #include "db/dbformat.h"
 #include "port/port.h"
-#include "test_util/testharness.h"
+#include "util/logging.h"
+#include "util/testharness.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class FileNameTest : public testing::Test {};
 
@@ -34,23 +35,23 @@ TEST_F(FileNameTest, Parse) {
     FileType type;
     char mode;
   } cases[] = {
-      {"100.log", 100, kWalFile, kAllMode},
-      {"0.log", 0, kWalFile, kAllMode},
-      {"0.sst", 0, kTableFile, kAllMode},
-      {"CURRENT", 0, kCurrentFile, kAllMode},
-      {"LOCK", 0, kDBLockFile, kAllMode},
-      {"MANIFEST-2", 2, kDescriptorFile, kAllMode},
-      {"MANIFEST-7", 7, kDescriptorFile, kAllMode},
-      {"METADB-2", 2, kMetaDatabase, kAllMode},
-      {"METADB-7", 7, kMetaDatabase, kAllMode},
-      {"LOG", 0, kInfoLogFile, kDefautInfoLogDir},
-      {"LOG.old", 0, kInfoLogFile, kDefautInfoLogDir},
-      {"LOG.old.6688", 6688, kInfoLogFile, kDefautInfoLogDir},
-      {"rocksdb_dir_LOG", 0, kInfoLogFile, kDifferentInfoLogDir},
-      {"rocksdb_dir_LOG.old", 0, kInfoLogFile, kDifferentInfoLogDir},
-      {"rocksdb_dir_LOG.old.6688", 6688, kInfoLogFile, kDifferentInfoLogDir},
-      {"18446744073709551615.log", 18446744073709551615ull, kWalFile, kAllMode},
-  };
+        {"100.log", 100, kLogFile, kAllMode},
+        {"0.log", 0, kLogFile, kAllMode},
+        {"0.sst", 0, kTableFile, kAllMode},
+        {"CURRENT", 0, kCurrentFile, kAllMode},
+        {"LOCK", 0, kDBLockFile, kAllMode},
+        {"MANIFEST-2", 2, kDescriptorFile, kAllMode},
+        {"MANIFEST-7", 7, kDescriptorFile, kAllMode},
+        {"METADB-2", 2, kMetaDatabase, kAllMode},
+        {"METADB-7", 7, kMetaDatabase, kAllMode},
+        {"LOG", 0, kInfoLogFile, kDefautInfoLogDir},
+        {"LOG.old", 0, kInfoLogFile, kDefautInfoLogDir},
+        {"LOG.old.6688", 6688, kInfoLogFile, kDefautInfoLogDir},
+        {"rocksdb_dir_LOG", 0, kInfoLogFile, kDifferentInfoLogDir},
+        {"rocksdb_dir_LOG.old", 0, kInfoLogFile, kDifferentInfoLogDir},
+        {"rocksdb_dir_LOG.old.6688", 6688, kInfoLogFile, kDifferentInfoLogDir},
+        {"18446744073709551615.log", 18446744073709551615ull, kLogFile,
+         kAllMode}, };
   for (char mode : {kDifferentInfoLogDir, kDefautInfoLogDir, kNoCheckLogDir}) {
     for (unsigned int i = 0; i < sizeof(cases) / sizeof(cases[0]); i++) {
       InfoLogPrefix info_log_prefix(mode != kDefautInfoLogDir, "/rocksdb/dir");
@@ -107,7 +108,7 @@ TEST_F(FileNameTest, Parse) {
 TEST_F(FileNameTest, InfoLogFileName) {
   std::string dbname = ("/data/rocksdb");
   std::string db_absolute_path;
-  ASSERT_OK(Env::Default()->GetAbsolutePath(dbname, &db_absolute_path));
+  Env::Default()->GetAbsolutePath(dbname, &db_absolute_path);
 
   ASSERT_EQ("/data/rocksdb/LOG", InfoLogFileName(dbname, db_absolute_path, ""));
   ASSERT_EQ("/data/rocksdb/LOG.old.666",
@@ -141,7 +142,7 @@ TEST_F(FileNameTest, Construction) {
   ASSERT_EQ("foo/", std::string(fname.data(), 4));
   ASSERT_TRUE(ParseFileName(fname.c_str() + 4, &number, &type));
   ASSERT_EQ(192U, number);
-  ASSERT_EQ(kWalFile, type);
+  ASSERT_EQ(kLogFile, type);
 
   fname = TableFileName({DbPath("bar", 0)}, 200, 0);
   std::string fname1 =
@@ -171,7 +172,7 @@ TEST_F(FileNameTest, Construction) {
   ASSERT_EQ(kMetaDatabase, type);
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

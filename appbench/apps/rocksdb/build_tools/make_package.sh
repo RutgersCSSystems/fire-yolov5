@@ -1,6 +1,4 @@
-# shellcheck disable=SC1113
 #/usr/bin/env bash
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 
 set -e
 
@@ -30,14 +28,12 @@ function package() {
     if dpkg --get-selections | grep --quiet $1; then
       log "$1 is already installed. skipping."
     else
-      # shellcheck disable=SC2068
       apt-get install $@ -y
     fi
   elif [[ $OS = "centos" ]]; then
     if rpm -qa | grep --quiet $1; then
       log "$1 is already installed. skipping."
     else
-      # shellcheck disable=SC2068
       yum install $@ -y
     fi
   fi
@@ -56,7 +52,6 @@ function gem_install() {
   if gem list | grep --quiet $1; then
     log "$1 is already installed. skipping."
   else
-    # shellcheck disable=SC2068
     gem install $@
   fi
 }
@@ -103,27 +98,19 @@ function main() {
   gem_install fpm
 
   make static_lib
-  LIBDIR=/usr/lib
-  if [[ $FPM_OUTPUT = "rpm" ]]; then
-      LIBDIR=$(rpm --eval '%_libdir')
-  fi
-
-  rm -rf package
-  make install DESTDIR=package PREFIX=/usr LIBDIR=$LIBDIR
-
+  make install INSTALL_PATH=package
   fpm \
     -s dir \
     -t $FPM_OUTPUT \
-    -C package \
     -n rocksdb \
     -v $1 \
+    --prefix /usr \
     --url http://rocksdb.org/ \
     -m rocksdb@fb.com \
     --license BSD \
     --vendor Facebook \
     --description "RocksDB is an embeddable persistent key-value store for fast storage." \
-    usr
+    package
 }
 
-# shellcheck disable=SC2068
 main $@

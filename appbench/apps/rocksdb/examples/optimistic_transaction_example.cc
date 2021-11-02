@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 #ifndef ROCKSDB_LITE
 
@@ -11,13 +11,9 @@
 #include "rocksdb/utilities/transaction.h"
 #include "rocksdb/utilities/optimistic_transaction_db.h"
 
-using namespace ROCKSDB_NAMESPACE;
+using namespace rocksdb;
 
-#if defined(OS_WIN)
-std::string kDBPath = "C:\\Windows\\TEMP\\rocksdb_transaction_example";
-#else
 std::string kDBPath = "/tmp/rocksdb_transaction_example";
-#endif
 
 int main() {
   // open DB
@@ -50,33 +46,20 @@ int main() {
   assert(s.IsNotFound());
 
   // Write a key in this transaction
-  s = txn->Put("abc", "xyz");
-  assert(s.ok());
+  txn->Put("abc", "def");
 
   // Read a key OUTSIDE this transaction. Does not affect txn.
   s = db->Get(read_options, "abc", &value);
-  assert(s.IsNotFound());
 
   // Write a key OUTSIDE of this transaction.
   // Does not affect txn since this is an unrelated key.  If we wrote key 'abc'
   // here, the transaction would fail to commit.
   s = db->Put(write_options, "xyz", "zzz");
-  assert(s.ok());
-  s = db->Put(write_options, "abc", "def");
-  assert(s.ok());
 
   // Commit transaction
   s = txn->Commit();
-  assert(s.IsBusy());
+  assert(s.ok());
   delete txn;
-
-  s = db->Get(read_options, "xyz", &value);
-  assert(s.ok());
-  assert(value == "zzz");
-
-  s = db->Get(read_options, "abc", &value);
-  assert(s.ok());
-  assert(value == "def");
 
   ////////////////////////////////////////////////////////
   //
@@ -92,13 +75,11 @@ int main() {
   const Snapshot* snapshot = txn->GetSnapshot();
 
   // Write a key OUTSIDE of transaction
-  s = db->Put(write_options, "abc", "xyz");
-  assert(s.ok());
+  db->Put(write_options, "abc", "xyz");
 
   // Read a key using the snapshot
   read_options.snapshot = snapshot;
   s = txn->GetForUpdate(read_options, "abc", &value);
-  assert(s.ok());
   assert(value == "def");
 
   // Attempt to commit transaction
@@ -112,10 +93,6 @@ int main() {
   // Clear snapshot from read options since it is no longer valid
   read_options.snapshot = nullptr;
   snapshot = nullptr;
-
-  s = db->Get(read_options, "abc", &value);
-  assert(s.ok());
-  assert(value == "xyz");
 
   ////////////////////////////////////////////////////////
   //
@@ -135,18 +112,10 @@ int main() {
   // Do some reads and writes to key "x"
   read_options.snapshot = db->GetSnapshot();
   s = txn->Get(read_options, "x", &value);
-  assert(s.IsNotFound());
-  s = txn->Put("x", "x");
-  assert(s.ok());
-
-  // The transaction hasn't committed, so the write is not visible
-  // outside of txn.
-  s = db->Get(read_options, "x", &value);
-  assert(s.IsNotFound());
+  txn->Put("x", "x");
 
   // Do a write outside of the transaction to key "y"
-  s = db->Put(write_options, "y", "z");
-  assert(s.ok());
+  s = db->Put(write_options, "y", "y");
 
   // Set a new snapshot in the transaction
   txn->SetSnapshot();
@@ -154,8 +123,6 @@ int main() {
 
   // Do some reads and writes to key "y"
   s = txn->GetForUpdate(read_options, "y", &value);
-  assert(s.ok());
-  assert(value == "z");
   txn->Put("y", "y");
 
   // Commit.  Since the snapshot was advanced, the write done outside of the
@@ -165,15 +132,6 @@ int main() {
   delete txn;
   // Clear snapshot from read options since it is no longer valid
   read_options.snapshot = nullptr;
-
-  // txn is committed, read the latest values.
-  s = db->Get(read_options, "x", &value);
-  assert(s.ok());
-  assert(value == "x");
-
-  s = db->Get(read_options, "y", &value);
-  assert(s.ok());
-  assert(value == "y");
 
   // Cleanup
   delete txn_db;

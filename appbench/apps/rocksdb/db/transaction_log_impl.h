@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 #pragma once
 
 #ifndef ROCKSDB_LITE
@@ -9,15 +9,15 @@
 
 #include "db/log_reader.h"
 #include "db/version_set.h"
-#include "file/filename.h"
 #include "options/db_options.h"
 #include "port/port.h"
 #include "rocksdb/env.h"
 #include "rocksdb/options.h"
 #include "rocksdb/transaction_log.h"
 #include "rocksdb/types.h"
+#include "util/filename.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class LogFileImpl : public LogFile {
  public:
@@ -62,8 +62,7 @@ class TransactionLogIteratorImpl : public TransactionLogIterator {
       const std::string& dir, const ImmutableDBOptions* options,
       const TransactionLogIterator::ReadOptions& read_options,
       const EnvOptions& soptions, const SequenceNumber seqNum,
-      std::unique_ptr<VectorLogPtr> files, VersionSet const* const versions,
-      const bool seq_per_batch, const std::shared_ptr<IOTracer>& io_tracer);
+      std::unique_ptr<VectorLogPtr> files, VersionSet const* const versions);
 
   virtual bool Valid() override;
 
@@ -78,17 +77,16 @@ class TransactionLogIteratorImpl : public TransactionLogIterator {
   const ImmutableDBOptions* options_;
   const TransactionLogIterator::ReadOptions read_options_;
   const EnvOptions& soptions_;
-  SequenceNumber starting_sequence_number_;
+  SequenceNumber startingSequenceNumber_;
   std::unique_ptr<VectorLogPtr> files_;
   bool started_;
-  bool is_valid_;  // not valid when it starts of.
-  Status current_status_;
-  size_t current_file_index_;
-  std::unique_ptr<WriteBatch> current_batch_;
-  std::unique_ptr<log::Reader> current_log_reader_;
-  std::string scratch_;
-  Status OpenLogFile(const LogFile* log_file,
-                     std::unique_ptr<SequentialFileReader>* file);
+  bool isValid_;  // not valid when it starts of.
+  Status currentStatus_;
+  size_t currentFileIndex_;
+  std::unique_ptr<WriteBatch> currentBatch_;
+  unique_ptr<log::Reader> currentLogReader_;
+  Status OpenLogFile(const LogFile* logFile,
+                     unique_ptr<SequentialFileReader>* file);
 
   struct LogReporter : public log::Reader::Reporter {
     Env* env;
@@ -100,29 +98,27 @@ class TransactionLogIteratorImpl : public TransactionLogIterator {
     virtual void Info(const char* s) { ROCKS_LOG_INFO(info_log, "%s", s); }
   } reporter_;
 
-  SequenceNumber
-      current_batch_seq_;  // sequence number at start of current batch
-  SequenceNumber current_last_seq_;  // last sequence in the current batch
+  SequenceNumber currentBatchSeq_; // sequence number at start of current batch
+  SequenceNumber currentLastSeq_; // last sequence in the current batch
   // Used only to get latest seq. num
   // TODO(icanadi) can this be just a callback?
   VersionSet const* const versions_;
-  const bool seq_per_batch_;
+
   // Reads from transaction log only if the writebatch record has been written
-  bool RestrictedRead(Slice* record);
+  bool RestrictedRead(Slice* record, std::string* scratch);
   // Seeks to startingSequenceNumber reading from startFileIndex in files_.
   // If strict is set,then must get a batch starting with startingSequenceNumber
-  void SeekToStartSequence(uint64_t start_file_index = 0, bool strict = false);
+  void SeekToStartSequence(uint64_t startFileIndex = 0, bool strict = false);
   // Implementation of Next. SeekToStartSequence calls it internally with
   // internal=true to let it find next entry even if it has to jump gaps because
   // the iterator may start off from the first available entry but promises to
   // be continuous after that
   void NextImpl(bool internal = false);
   // Check if batch is expected, else return false
-  bool IsBatchExpected(const WriteBatch* batch, SequenceNumber expected_seq);
+  bool IsBatchExpected(const WriteBatch* batch, SequenceNumber expectedSeq);
   // Update current batch if a continuous batch is found, else return false
   void UpdateCurrentWriteBatch(const Slice& record);
   Status OpenLogReader(const LogFile* file);
-  std::shared_ptr<IOTracer> io_tracer_;
 };
-}  // namespace ROCKSDB_NAMESPACE
+}  //  namespace rocksdb
 #endif  // ROCKSDB_LITE

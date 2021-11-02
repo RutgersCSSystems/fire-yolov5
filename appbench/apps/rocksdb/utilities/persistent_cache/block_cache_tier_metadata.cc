@@ -1,14 +1,14 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 #ifndef ROCKSDB_LITE
 
 #include "utilities/persistent_cache/block_cache_tier_metadata.h"
 
 #include <functional>
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 bool BlockCacheTierMetadata::Insert(BlockCacheFile* file) {
   return cache_file_index_.Insert(file);
@@ -63,8 +63,7 @@ bool BlockCacheTierMetadata::Lookup(const Slice& key, LBA* lba) {
 BlockInfo* BlockCacheTierMetadata::Remove(const Slice& key) {
   BlockInfo lookup_key(key);
   BlockInfo* binfo = nullptr;
-  bool ok __attribute__((__unused__));
-  ok = block_index_.Erase(&lookup_key, &binfo);
+  bool ok __attribute__((__unused__)) = block_index_.Erase(&lookup_key, &binfo);
   assert(ok);
   return binfo;
 }
@@ -81,6 +80,6 @@ void BlockCacheTierMetadata::RemoveAllKeys(BlockCacheFile* f) {
   f->block_infos().clear();
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 #endif

@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -14,9 +14,9 @@
 #include "rocksdb/filter_policy.h"
 #include "rocksdb/statistics.h"
 #include "rocksdb/table.h"
-#include "test_util/testharness.h"
+#include "util/testharness.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class SliceTransformTest : public testing::Test {};
 
@@ -24,7 +24,7 @@ TEST_F(SliceTransformTest, CapPrefixTransform) {
   std::string s;
   s = "abcdefge";
 
-  std::unique_ptr<const SliceTransform> transform;
+  unique_ptr<const SliceTransform> transform;
 
   transform.reset(NewCappedPrefixTransform(6));
   ASSERT_EQ(transform->Transform(s).ToString(), "abcdef");
@@ -53,11 +53,11 @@ class SliceTransformDBTest : public testing::Test {
 
  public:
   SliceTransformDBTest() : env_(Env::Default()), db_(nullptr) {
-    dbname_ = test::PerThreadDBPath("slice_transform_db_test");
+    dbname_ = test::TmpDir() + "/slice_transform_db_test";
     EXPECT_OK(DestroyDB(dbname_, last_options_));
   }
 
-  ~SliceTransformDBTest() override {
+  ~SliceTransformDBTest() {
     delete db_;
     EXPECT_OK(DestroyDB(dbname_, last_options_));
   }
@@ -98,7 +98,7 @@ uint64_t TestGetTickerCount(const Options& options, Tickers ticker_type) {
 
 TEST_F(SliceTransformDBTest, CapPrefix) {
   last_options_.prefix_extractor.reset(NewCappedPrefixTransform(8));
-  last_options_.statistics = ROCKSDB_NAMESPACE::CreateDBStatistics();
+  last_options_.statistics = rocksdb::CreateDBStatistics();
   BlockBasedTableOptions bbto;
   bbto.filter_policy.reset(NewBloomFilterPolicy(10, false));
   bbto.whole_key_filtering = false;
@@ -115,7 +115,7 @@ TEST_F(SliceTransformDBTest, CapPrefix) {
   ASSERT_OK(db()->Put(wo, "foo3", "bar3"));
   ASSERT_OK(db()->Flush(fo));
 
-  std::unique_ptr<Iterator> iter(db()->NewIterator(ro));
+  unique_ptr<Iterator> iter(db()->NewIterator(ro));
 
   iter->Seek("foo");
   ASSERT_OK(iter->status());
@@ -145,7 +145,7 @@ TEST_F(SliceTransformDBTest, CapPrefix) {
   ASSERT_EQ(TestGetTickerCount(last_options_, BLOOM_FILTER_PREFIX_USEFUL), 3U);
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

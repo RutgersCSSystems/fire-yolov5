@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,36 +9,30 @@
 
 #include "util/threadpool_imp.h"
 
+#include "monitoring/thread_status_util.h"
+#include "port/port.h"
+
 #ifndef OS_WIN
 #  include <unistd.h>
 #endif
 
 #ifdef OS_LINUX
 #  include <sys/syscall.h>
-#  include <sys/resource.h>
 #endif
-
-#include <stdlib.h>
 
 #include <algorithm>
 #include <atomic>
 #include <condition_variable>
-#include <deque>
 #include <mutex>
-#include <sstream>
+#include <stdlib.h>
 #include <thread>
 #include <vector>
 
-#include "monitoring/thread_status_util.h"
-#include "port/port.h"
-#include "test_util/sync_point.h"
-#include "util/string_util.h"
-
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 void ThreadPoolImpl::PthreadCall(const char* label, int result) {
   if (result != 0) {
-    fprintf(stderr, "pthread %s: %s\n", label, errnoStr(result).c_str());
+    fprintf(stderr, "pthread %s: %s\n", label, strerror(result));
     abort();
   }
 }
@@ -51,15 +45,12 @@ struct ThreadPoolImpl::Impl {
   void JoinThreads(bool wait_for_jobs_to_complete);
 
   void SetBackgroundThreadsInternal(int num, bool allow_reduce);
-  int GetBackgroundThreads();
 
   unsigned int GetQueueLen() const {
     return queue_len_.load(std::memory_order_relaxed);
   }
 
   void LowerIOPriority();
-
-  void LowerCPUPriority(CpuPriority pri);
 
   void WakeUpAllThreads() {
     bgsignal_.notify_all();
@@ -101,23 +92,23 @@ struct ThreadPoolImpl::Impl {
   void SetThreadPriority(Env::Priority priority) { priority_ = priority; }
 
 private:
- static void BGThreadWrapper(void* arg);
 
- bool low_io_priority_;
- CpuPriority cpu_priority_;
- Env::Priority priority_;
- Env* env_;
+  static void* BGThreadWrapper(void* arg);
 
- int total_threads_limit_;
- std::atomic_uint queue_len_;  // Queue length. Used for stats reporting
- bool exit_all_threads_;
- bool wait_for_jobs_to_complete_;
+  bool low_io_priority_;
+  Env::Priority priority_;
+  Env*         env_;
 
- // Entry per Schedule()/Submit() call
- struct BGItem {
-   void* tag = nullptr;
-   std::function<void()> function;
-   std::function<void()> unschedFunction;
+  int total_threads_limit_;
+  std::atomic_uint queue_len_;  // Queue length. Used for stats reporting
+  bool exit_all_threads_;
+  bool wait_for_jobs_to_complete_;
+
+  // Entry per Schedule()/Submit() call
+  struct BGItem {
+    void* tag = nullptr;
+    std::function<void()> function;
+    std::function<void()> unschedFunction;
   };
 
   using BGQueue = std::deque<BGItem>;
@@ -128,19 +119,22 @@ private:
   std::vector<port::Thread> bgthreads_;
 };
 
-inline ThreadPoolImpl::Impl::Impl()
-    : low_io_priority_(false),
-      cpu_priority_(CpuPriority::kNormal),
+
+inline
+ThreadPoolImpl::Impl::Impl()
+    : 
+      low_io_priority_(false),
       priority_(Env::LOW),
       env_(nullptr),
-      total_threads_limit_(0),
+      total_threads_limit_(1),
       queue_len_(),
       exit_all_threads_(false),
       wait_for_jobs_to_complete_(false),
       queue_(),
       mu_(),
       bgsignal_(),
-      bgthreads_() {}
+      bgthreads_() {
+}
 
 inline
 ThreadPoolImpl::Impl::~Impl() { assert(bgthreads_.size() == 0U); }
@@ -152,9 +146,6 @@ void ThreadPoolImpl::Impl::JoinThreads(bool wait_for_jobs_to_complete) {
 
   wait_for_jobs_to_complete_ = wait_for_jobs_to_complete;
   exit_all_threads_ = true;
-  // prevent threads from being recreated right after they're joined, in case
-  // the user is concurrently submitting jobs.
-  total_threads_limit_ = 0;
 
   lock.unlock();
 
@@ -176,17 +167,11 @@ void ThreadPoolImpl::Impl::LowerIOPriority() {
   low_io_priority_ = true;
 }
 
-inline void ThreadPoolImpl::Impl::LowerCPUPriority(CpuPriority pri) {
-  std::lock_guard<std::mutex> lock(mu_);
-  cpu_priority_ = pri;
-}
 
 void ThreadPoolImpl::Impl::BGThread(size_t thread_id) {
   bool low_io_priority = false;
-  CpuPriority current_cpu_priority = CpuPriority::kNormal;
-
   while (true) {
-    // Wait until there is an item that is ready to run
+// Wait until there is an item that is ready to run
     std::unique_lock<std::mutex> lock(mu_);
     // Stop waiting if the thread needs to do work or needs to terminate.
     while (!exit_all_threads_ && !IsLastExcessiveThread(thread_id) &&
@@ -196,7 +181,7 @@ void ThreadPoolImpl::Impl::BGThread(size_t thread_id) {
 
     if (exit_all_threads_) {  // mechanism to let BG threads exit safely
 
-      if (!wait_for_jobs_to_complete_ ||
+      if(!wait_for_jobs_to_complete_ ||
           queue_.empty()) {
         break;
        }
@@ -224,18 +209,7 @@ void ThreadPoolImpl::Impl::BGThread(size_t thread_id) {
                      std::memory_order_relaxed);
 
     bool decrease_io_priority = (low_io_priority != low_io_priority_);
-    CpuPriority cpu_priority = cpu_priority_;
     lock.unlock();
-
-    if (cpu_priority < current_cpu_priority) {
-      TEST_SYNC_POINT_CALLBACK("ThreadPoolImpl::BGThread::BeforeSetCpuPriority",
-                               &current_cpu_priority);
-      // 0 means current thread.
-      port::SetCpuPriority(0, cpu_priority);
-      current_cpu_priority = cpu_priority;
-      TEST_SYNC_POINT_CALLBACK("ThreadPoolImpl::BGThread::AfterSetCpuPriority",
-                               &current_cpu_priority);
-    }
 
 #ifdef OS_LINUX
     if (decrease_io_priority) {
@@ -259,10 +233,6 @@ void ThreadPoolImpl::Impl::BGThread(size_t thread_id) {
 #else
     (void)decrease_io_priority;  // avoid 'unused variable' error
 #endif
-
-    TEST_SYNC_POINT_CALLBACK("ThreadPoolImpl::Impl::BGThread:BeforeRun",
-                             &priority_);
-
     func();
   }
 }
@@ -275,59 +245,38 @@ struct BGThreadMetadata {
       : thread_pool_(thread_pool), thread_id_(thread_id) {}
 };
 
-void ThreadPoolImpl::Impl::BGThreadWrapper(void* arg) {
+void* ThreadPoolImpl::Impl::BGThreadWrapper(void* arg) {
   BGThreadMetadata* meta = reinterpret_cast<BGThreadMetadata*>(arg);
   size_t thread_id = meta->thread_id_;
   ThreadPoolImpl::Impl* tp = meta->thread_pool_;
 #ifdef ROCKSDB_USING_THREAD_STATUS
-  // initialize it because compiler isn't good enough to see we don't use it
-  // uninitialized
-  ThreadStatus::ThreadType thread_type = ThreadStatus::NUM_THREAD_TYPES;
-  switch (tp->GetThreadPriority()) {
-    case Env::Priority::HIGH:
-      thread_type = ThreadStatus::HIGH_PRIORITY;
-      break;
-    case Env::Priority::LOW:
-      thread_type = ThreadStatus::LOW_PRIORITY;
-      break;
-    case Env::Priority::BOTTOM:
-      thread_type = ThreadStatus::BOTTOM_PRIORITY;
-      break;
-    case Env::Priority::USER:
-      thread_type = ThreadStatus::USER;
-      break;
-    case Env::Priority::TOTAL:
-      assert(false);
-      return;
-  }
-  assert(thread_type != ThreadStatus::NUM_THREAD_TYPES);
-  ThreadStatusUtil::RegisterThread(tp->GetHostEnv(), thread_type);
+  // for thread-status
+  ThreadStatusUtil::RegisterThread(
+      tp->GetHostEnv(), (tp->GetThreadPriority() == Env::Priority::HIGH
+                             ? ThreadStatus::HIGH_PRIORITY
+                             : ThreadStatus::LOW_PRIORITY));
 #endif
   delete meta;
   tp->BGThread(thread_id);
 #ifdef ROCKSDB_USING_THREAD_STATUS
   ThreadStatusUtil::UnregisterThread();
 #endif
-  return;
+  return nullptr;
 }
 
 void ThreadPoolImpl::Impl::SetBackgroundThreadsInternal(int num,
   bool allow_reduce) {
-  std::lock_guard<std::mutex> lock(mu_);
+  std::unique_lock<std::mutex> lock(mu_);
   if (exit_all_threads_) {
+    lock.unlock();
     return;
   }
   if (num > total_threads_limit_ ||
       (num < total_threads_limit_ && allow_reduce)) {
-    total_threads_limit_ = std::max(0, num);
+    total_threads_limit_ = std::max(1, num);
     WakeUpAllThreads();
     StartBGThreads();
   }
-}
-
-int ThreadPoolImpl::Impl::GetBackgroundThreads() {
-  std::unique_lock<std::mutex> lock(mu_);
-  return total_threads_limit_;
 }
 
 void ThreadPoolImpl::Impl::StartBGThreads() {
@@ -341,14 +290,11 @@ void ThreadPoolImpl::Impl::StartBGThreads() {
 #if defined(_GNU_SOURCE) && defined(__GLIBC_PREREQ)
 #if __GLIBC_PREREQ(2, 12)
     auto th_handle = p_t.native_handle();
-    std::string thread_priority = Env::PriorityToString(GetThreadPriority());
-    std::ostringstream thread_name_stream;
-    thread_name_stream << "rocksdb:";
-    for (char c : thread_priority) {
-      thread_name_stream << static_cast<char>(tolower(c));
-    }
-    thread_name_stream << bgthreads_.size();
-    pthread_setname_np(th_handle, thread_name_stream.str().c_str());
+    char name_buf[16];
+    snprintf(name_buf, sizeof name_buf, "rocksdb:bg%" ROCKSDB_PRIszt,
+             bgthreads_.size());
+    name_buf[sizeof name_buf - 1] = '\0';
+    pthread_setname_np(th_handle, name_buf);
 #endif
 #endif
     bgthreads_.push_back(std::move(p_t));
@@ -420,7 +366,7 @@ int ThreadPoolImpl::Impl::UnSchedule(void* arg) {
   return count;
 }
 
-ThreadPoolImpl::ThreadPoolImpl() :
+ThreadPoolImpl::ThreadPoolImpl() : 
   impl_(new Impl()) {
 }
 
@@ -436,10 +382,6 @@ void ThreadPoolImpl::SetBackgroundThreads(int num) {
   impl_->SetBackgroundThreadsInternal(num, true);
 }
 
-int ThreadPoolImpl::GetBackgroundThreads() {
-  return impl_->GetBackgroundThreads();
-}
-
 unsigned int ThreadPoolImpl::GetQueueLen() const {
   return impl_->GetQueueLen();
 }
@@ -450,10 +392,6 @@ void ThreadPoolImpl::WaitForJobsAndJoinAllThreads() {
 
 void ThreadPoolImpl::LowerIOPriority() {
   impl_->LowerIOPriority();
-}
-
-void ThreadPoolImpl::LowerCPUPriority(CpuPriority pri) {
-  impl_->LowerCPUPriority(pri);
 }
 
 void ThreadPoolImpl::IncBackgroundThreadsIfNeeded(int num) {
@@ -472,12 +410,16 @@ void ThreadPoolImpl::SubmitJob(std::function<void()>&& job) {
 
 void ThreadPoolImpl::Schedule(void(*function)(void* arg1), void* arg,
   void* tag, void(*unschedFunction)(void* arg)) {
-  if (unschedFunction == nullptr) {
-    impl_->Submit(std::bind(function, arg), std::function<void()>(), tag);
-  } else {
-    impl_->Submit(std::bind(function, arg), std::bind(unschedFunction, arg),
-                  tag);
+
+  std::function<void()> fn = [arg, function] { function(arg); };
+
+  std::function<void()> unfn;
+  if (unschedFunction != nullptr) {
+    auto uf = [arg, unschedFunction] { unschedFunction(arg); };
+    unfn = std::move(uf);
   }
+
+  impl_->Submit(std::move(fn), std::move(unfn), tag);
 }
 
 int ThreadPoolImpl::UnSchedule(void* arg) {
@@ -505,4 +447,4 @@ ThreadPool* NewThreadPool(int num_threads) {
   return thread_pool;
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

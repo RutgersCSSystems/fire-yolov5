@@ -1,86 +1,35 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
-#pragma once
+#ifndef STORAGE_ROCKSDB_INCLUDE_PERF_CONTEXT_H
+#define STORAGE_ROCKSDB_INCLUDE_PERF_CONTEXT_H
 
 #include <stdint.h>
-#include <map>
 #include <string>
 
 #include "rocksdb/perf_level.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 // A thread local context for gathering performance counter efficiently
 // and transparently.
 // Use SetPerfLevel(PerfLevel::kEnableTime) to enable time stats.
 
-// Break down performance counters by level and store per-level perf context in
-// PerfContextByLevel
-struct PerfContextByLevel {
-  // # of times bloom filter has avoided file reads, i.e., negatives.
-  uint64_t bloom_filter_useful = 0;
-  // # of times bloom FullFilter has not avoided the reads.
-  uint64_t bloom_filter_full_positive = 0;
-  // # of times bloom FullFilter has not avoided the reads and data actually
-  // exist.
-  uint64_t bloom_filter_full_true_positive = 0;
-
-  // total number of user key returned (only include keys that are found, does
-  // not include keys that are deleted or merged without a final put
-  uint64_t user_key_return_count = 0;
-
-  // total nanos spent on reading data from SST files
-  uint64_t get_from_table_nanos = 0;
-
-  uint64_t block_cache_hit_count = 0;   // total number of block cache hits
-  uint64_t block_cache_miss_count = 0;  // total number of block cache misses
-
-  void Reset();  // reset all performance counters to zero
-};
-
 struct PerfContext {
-  ~PerfContext();
 
-  PerfContext() {}
-
-  PerfContext(const PerfContext&);
-  PerfContext& operator=(const PerfContext&);
-  PerfContext(PerfContext&&) noexcept;
-
-  void Reset();  // reset all performance counters to zero
+  void Reset(); // reset all performance counters to zero
 
   std::string ToString(bool exclude_zero_counters = false) const;
 
-  // enable per level perf context and allocate storage for PerfContextByLevel
-  void EnablePerLevelPerfContext();
-
-  // temporarily disable per level perf context by setting the flag to false
-  void DisablePerLevelPerfContext();
-
-  // free the space for PerfContextByLevel, also disable per level perf context
-  void ClearPerLevelPerfContext();
-
-  uint64_t user_key_comparison_count;  // total number of user key comparisons
-  uint64_t block_cache_hit_count;      // total number of block cache hits
-  uint64_t block_read_count;           // total number of block reads (with IO)
-  uint64_t block_read_byte;            // total number of bytes from block reads
-  uint64_t block_read_time;            // total nanos spent on block reads
-  uint64_t block_cache_index_hit_count;   // total number of index block hits
-  uint64_t index_block_read_count;        // total number of index block reads
-  uint64_t block_cache_filter_hit_count;  // total number of filter block hits
-  uint64_t filter_block_read_count;       // total number of filter block reads
-  uint64_t compression_dict_block_read_count;  // total number of compression
-                                               // dictionary block reads
-  uint64_t block_checksum_time;    // total nanos spent on block checksum
+  uint64_t user_key_comparison_count; // total number of user key comparisons
+  uint64_t block_cache_hit_count;     // total number of block cache hits
+  uint64_t block_read_count;          // total number of block reads (with IO)
+  uint64_t block_read_byte;           // total number of bytes from block reads
+  uint64_t block_read_time;           // total nanos spent on block reads
+  uint64_t block_checksum_time;       // total nanos spent on block checksum
   uint64_t block_decompress_time;  // total nanos spent on block decompression
-
-  uint64_t get_read_bytes;       // bytes for vals returned by Get
-  uint64_t multiget_read_bytes;  // bytes for vals returned by MultiGet
-  uint64_t iter_read_bytes;      // bytes for keys/vals decoded by iterator
-
   // total number of internal keys skipped over during iteration.
   // There are several reasons for it:
   // 1. when calling Next(), the iterator is in the position of the previous
@@ -115,9 +64,9 @@ struct PerfContext {
   //
   uint64_t internal_merge_count;
 
-  uint64_t get_snapshot_time;        // total nanos spent on getting snapshot
-  uint64_t get_from_memtable_time;   // total nanos spent on querying memtables
-  uint64_t get_from_memtable_count;  // number of mem tables queried
+  uint64_t get_snapshot_time;       // total nanos spent on getting snapshot
+  uint64_t get_from_memtable_time;  // total nanos spent on querying memtables
+  uint64_t get_from_memtable_count;    // number of mem tables queried
   // total nanos spent after Get() finds a key
   uint64_t get_post_process_time;
   uint64_t get_from_output_files_time;  // total nanos reading from output files
@@ -141,27 +90,16 @@ struct PerfContext {
   // total nanos spent on iterating internal entries to find the next user entry
   uint64_t find_next_user_entry_time;
 
-  // This group of stats provide a breakdown of time spent by Write().
-  // May be inaccurate when 2PC, two_write_queues or enable_pipelined_write
-  // are enabled.
-  //
   // total nanos spent on writing to WAL
   uint64_t write_wal_time;
   // total nanos spent on writing to mem tables
   uint64_t write_memtable_time;
-  // total nanos spent on delaying or throttling write
+  // total nanos spent on delaying write
   uint64_t write_delay_time;
-  // total nanos spent on switching memtable/wal and scheduling
-  // flushes/compactions.
-  uint64_t write_scheduling_flushes_compactions_time;
-  // total nanos spent on writing a record, excluding the above four things
+  // total nanos spent on writing a record, excluding the above three times
   uint64_t write_pre_and_post_process_time;
 
-  // time spent waiting for other threads of the batch group
-  uint64_t write_thread_wait_nanos;
-
-  // time spent on acquiring DB mutex.
-  uint64_t db_mutex_lock_nanos;
+  uint64_t db_mutex_lock_nanos;      // time spent on acquiring DB mutex.
   // Time spent on waiting with a condition variable created with DB mutex.
   uint64_t db_condition_wait_nanos;
   // Time spent on merge operator.
@@ -188,11 +126,6 @@ struct PerfContext {
   // total number of SST table bloom misses
   uint64_t bloom_sst_miss_count;
 
-  // Time spent waiting on key locks in transaction lock manager.
-  uint64_t key_lock_wait_time;
-  // number of times acquiring a lock was blocked by another transaction.
-  uint64_t key_lock_wait_count;
-
   // Total time spent in Env filesystem operations. These are only populated
   // when TimedEnv is used.
   uint64_t env_new_sequential_file_nanos;
@@ -215,30 +148,16 @@ struct PerfContext {
   uint64_t env_lock_file_nanos;
   uint64_t env_unlock_file_nanos;
   uint64_t env_new_logger_nanos;
-
-  uint64_t get_cpu_nanos;
-  uint64_t iter_next_cpu_nanos;
-  uint64_t iter_prev_cpu_nanos;
-  uint64_t iter_seek_cpu_nanos;
-
-  // Time spent in encrypting data. Populated when EncryptedEnv is used.
-  uint64_t encrypt_data_nanos;
-  // Time spent in decrypting data. Populated when EncryptedEnv is used.
-  uint64_t decrypt_data_nanos;
-
-  std::map<uint32_t, PerfContextByLevel>* level_to_perf_context = nullptr;
-  bool per_level_perf_context_enabled = false;
 };
 
-// If RocksDB is compiled with -DNPERF_CONTEXT, then a pointer to a global,
-// non-thread-local PerfContext object will be returned. Attempts to update
-// this object will be ignored, and reading from it will also be no-op.
-// Otherwise,
-// a) if thread-local is supported on the platform, then a pointer to
-//    a thread-local PerfContext object will be returned.
-// b) if thread-local is NOT supported, then compilation will fail.
-//
-// This function never returns nullptr.
-PerfContext* get_perf_context();
+#if defined(NPERF_CONTEXT) || defined(IOS_CROSS_COMPILE)
+extern PerfContext perf_context;
+#elif defined(_MSC_VER)
+extern __declspec(thread) PerfContext perf_context;
+#else
+extern __thread PerfContext perf_context;
+#endif
 
-}  // namespace ROCKSDB_NAMESPACE
+}
+
+#endif

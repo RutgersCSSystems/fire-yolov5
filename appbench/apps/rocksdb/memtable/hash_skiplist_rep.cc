@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 
 #ifndef ROCKSDB_LITE
@@ -9,39 +9,40 @@
 
 #include <atomic>
 
-#include "db/memtable.h"
-#include "memory/arena.h"
-#include "memtable/skiplist.h"
-#include "port/port.h"
 #include "rocksdb/memtablerep.h"
+#include "util/arena.h"
 #include "rocksdb/slice.h"
 #include "rocksdb/slice_transform.h"
+#include "port/port.h"
 #include "util/murmurhash.h"
+#include "db/memtable.h"
+#include "memtable/skiplist.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 namespace {
 
 class HashSkipListRep : public MemTableRep {
  public:
   HashSkipListRep(const MemTableRep::KeyComparator& compare,
-                  Allocator* allocator, const SliceTransform* transform,
+                  MemTableAllocator* allocator, const SliceTransform* transform,
                   size_t bucket_size, int32_t skiplist_height,
                   int32_t skiplist_branching_factor);
 
-  void Insert(KeyHandle handle) override;
+  virtual void Insert(KeyHandle handle) override;
 
-  bool Contains(const char* key) const override;
+  virtual bool Contains(const char* key) const override;
 
-  size_t ApproximateMemoryUsage() override;
+  virtual size_t ApproximateMemoryUsage() override;
 
-  void Get(const LookupKey& k, void* callback_args,
-           bool (*callback_func)(void* arg, const char* entry)) override;
+  virtual void Get(const LookupKey& k, void* callback_args,
+                   bool (*callback_func)(void* arg,
+                                         const char* entry)) override;
 
-  ~HashSkipListRep() override;
+  virtual ~HashSkipListRep();
 
-  MemTableRep::Iterator* GetIterator(Arena* arena = nullptr) override;
+  virtual MemTableRep::Iterator* GetIterator(Arena* arena = nullptr) override;
 
-  MemTableRep::Iterator* GetDynamicPrefixIterator(
+  virtual MemTableRep::Iterator* GetDynamicPrefixIterator(
       Arena* arena = nullptr) override;
 
  private:
@@ -62,7 +63,7 @@ class HashSkipListRep : public MemTableRep {
 
   const MemTableRep::KeyComparator& compare_;
   // immutable after construction
-  Allocator* const allocator_;
+  MemTableAllocator* const allocator_;
 
   inline size_t GetHash(const Slice& slice) const {
     return MurmurHash(slice.data(), static_cast<int>(slice.size()), 0) %
@@ -84,7 +85,7 @@ class HashSkipListRep : public MemTableRep {
                       Arena* arena = nullptr)
         : list_(list), iter_(list), own_list_(own_list), arena_(arena) {}
 
-    ~Iterator() override {
+    virtual ~Iterator() {
       // if we own the list, we should also delete it
       if (own_list_) {
         assert(list_ != nullptr);
@@ -93,31 +94,34 @@ class HashSkipListRep : public MemTableRep {
     }
 
     // Returns true iff the iterator is positioned at a valid node.
-    bool Valid() const override { return list_ != nullptr && iter_.Valid(); }
+    virtual bool Valid() const override {
+      return list_ != nullptr && iter_.Valid();
+    }
 
     // Returns the key at the current position.
     // REQUIRES: Valid()
-    const char* key() const override {
+    virtual const char* key() const override {
       assert(Valid());
       return iter_.key();
     }
 
     // Advances to the next position.
     // REQUIRES: Valid()
-    void Next() override {
+    virtual void Next() override {
       assert(Valid());
       iter_.Next();
     }
 
     // Advances to the previous position.
     // REQUIRES: Valid()
-    void Prev() override {
+    virtual void Prev() override {
       assert(Valid());
       iter_.Prev();
     }
 
     // Advance to the first entry with a key >= target
-    void Seek(const Slice& internal_key, const char* memtable_key) override {
+    virtual void Seek(const Slice& internal_key,
+                      const char* memtable_key) override {
       if (list_ != nullptr) {
         const char* encoded_key =
             (memtable_key != nullptr) ?
@@ -127,15 +131,15 @@ class HashSkipListRep : public MemTableRep {
     }
 
     // Retreat to the last entry with a key <= target
-    void SeekForPrev(const Slice& /*internal_key*/,
-                     const char* /*memtable_key*/) override {
+    virtual void SeekForPrev(const Slice& internal_key,
+                             const char* memtable_key) override {
       // not supported
       assert(false);
     }
 
     // Position at the first entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToFirst() override {
+    virtual void SeekToFirst() override {
       if (list_ != nullptr) {
         iter_.SeekToFirst();
       }
@@ -143,12 +147,11 @@ class HashSkipListRep : public MemTableRep {
 
     // Position at the last entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToLast() override {
+    virtual void SeekToLast() override {
       if (list_ != nullptr) {
         iter_.SeekToLast();
       }
     }
-
    protected:
     void Reset(Bucket* list) {
       if (own_list_) {
@@ -165,7 +168,7 @@ class HashSkipListRep : public MemTableRep {
     Bucket* list_;
     Bucket::Iterator iter_;
     // here we track if we own list_. If we own it, we are also
-    // responsible for it's cleaning. This is a poor man's std::shared_ptr
+    // responsible for it's cleaning. This is a poor man's shared_ptr
     bool own_list_;
     std::unique_ptr<Arena> arena_;
     std::string tmp_;       // For passing to EncodeKey
@@ -178,7 +181,7 @@ class HashSkipListRep : public MemTableRep {
         memtable_rep_(memtable_rep) {}
 
     // Advance to the first entry with a key >= target
-    void Seek(const Slice& k, const char* memtable_key) override {
+    virtual void Seek(const Slice& k, const char* memtable_key) override {
       auto transformed = memtable_rep_.transform_->Transform(ExtractUserKey(k));
       Reset(memtable_rep_.GetBucket(transformed));
       HashSkipListRep::Iterator::Seek(k, memtable_key);
@@ -186,7 +189,7 @@ class HashSkipListRep : public MemTableRep {
 
     // Position at the first entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToFirst() override {
+    virtual void SeekToFirst() override {
       // Prefix iterator does not support total order.
       // We simply set the iterator to invalid state
       Reset(nullptr);
@@ -194,12 +197,11 @@ class HashSkipListRep : public MemTableRep {
 
     // Position at the last entry in collection.
     // Final state of iterator is Valid() iff collection is not empty.
-    void SeekToLast() override {
+    virtual void SeekToLast() override {
       // Prefix iterator does not support total order.
       // We simply set the iterator to invalid state
       Reset(nullptr);
     }
-
    private:
     // the underlying memtable
     const HashSkipListRep& memtable_rep_;
@@ -210,26 +212,26 @@ class HashSkipListRep : public MemTableRep {
     // instantiating an empty bucket over which to iterate.
    public:
     EmptyIterator() { }
-    bool Valid() const override { return false; }
-    const char* key() const override {
+    virtual bool Valid() const override { return false; }
+    virtual const char* key() const override {
       assert(false);
       return nullptr;
     }
-    void Next() override {}
-    void Prev() override {}
-    void Seek(const Slice& /*internal_key*/,
-              const char* /*memtable_key*/) override {}
-    void SeekForPrev(const Slice& /*internal_key*/,
-                     const char* /*memtable_key*/) override {}
-    void SeekToFirst() override {}
-    void SeekToLast() override {}
+    virtual void Next() override {}
+    virtual void Prev() override {}
+    virtual void Seek(const Slice& internal_key,
+                      const char* memtable_key) override {}
+    virtual void SeekForPrev(const Slice& internal_key,
+                             const char* memtable_key) override {}
+    virtual void SeekToFirst() override {}
+    virtual void SeekToLast() override {}
 
    private:
   };
 };
 
 HashSkipListRep::HashSkipListRep(const MemTableRep::KeyComparator& compare,
-                                 Allocator* allocator,
+                                 MemTableAllocator* allocator,
                                  const SliceTransform* transform,
                                  size_t bucket_size, int32_t skiplist_height,
                                  int32_t skiplist_branching_factor)
@@ -332,8 +334,8 @@ MemTableRep::Iterator* HashSkipListRep::GetDynamicPrefixIterator(Arena* arena) {
 } // anon namespace
 
 MemTableRep* HashSkipListRepFactory::CreateMemTableRep(
-    const MemTableRep::KeyComparator& compare, Allocator* allocator,
-    const SliceTransform* transform, Logger* /*logger*/) {
+    const MemTableRep::KeyComparator& compare, MemTableAllocator* allocator,
+    const SliceTransform* transform, Logger* logger) {
   return new HashSkipListRep(compare, allocator, transform, bucket_count_,
                              skiplist_height_, skiplist_branching_factor_);
 }
@@ -345,5 +347,5 @@ MemTableRepFactory* NewHashSkipListRepFactory(
       skiplist_branching_factor);
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+} // namespace rocksdb
 #endif  // ROCKSDB_LITE

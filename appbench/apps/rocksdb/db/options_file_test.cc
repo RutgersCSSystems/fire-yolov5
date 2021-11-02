@@ -1,21 +1,21 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #ifndef ROCKSDB_LITE
 #include <string>
 
-#include "db/db_impl/db_impl.h"
+#include "db/db_impl.h"
 #include "db/db_test_util.h"
 #include "rocksdb/options.h"
 #include "rocksdb/table.h"
-#include "test_util/testharness.h"
+#include "util/testharness.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 class OptionsFileTest : public testing::Test {
  public:
-  OptionsFileTest() : dbname_(test::PerThreadDBPath("options_file_test")) {}
+  OptionsFileTest() : dbname_(test::TmpDir() + "/options_file_test") {}
 
   std::string dbname_;
 };
@@ -25,7 +25,7 @@ void UpdateOptionsFiles(DB* db,
                         std::unordered_set<std::string>* filename_history,
                         int* options_files_count) {
   std::vector<std::string> filenames;
-  EXPECT_OK(db->GetEnv()->GetChildren(db->GetName(), &filenames));
+  db->GetEnv()->GetChildren(db->GetName(), &filenames);
   uint64_t number;
   FileType type;
   *options_files_count = 0;
@@ -42,7 +42,7 @@ void VerifyOptionsFileName(
     DB* db, const std::unordered_set<std::string>& past_filenames) {
   std::vector<std::string> filenames;
   std::unordered_set<std::string> current_filenames;
-  EXPECT_OK(db->GetEnv()->GetChildren(db->GetName(), &filenames));
+  db->GetEnv()->GetChildren(db->GetName(), &filenames);
   uint64_t number;
   FileType type;
   for (auto filename : filenames) {
@@ -65,7 +65,7 @@ TEST_F(OptionsFileTest, NumberOfOptionsFiles) {
   const int kReopenCount = 20;
   Options opt;
   opt.create_if_missing = true;
-  ASSERT_OK(DestroyDB(dbname_, opt));
+  DestroyDB(dbname_, opt);
   std::unordered_set<std::string> filename_history;
   DB* db;
   for (int i = 0; i < kReopenCount; ++i) {
@@ -98,7 +98,7 @@ TEST_F(OptionsFileTest, OptionsFileName) {
   ASSERT_EQ(type, kTempFile);
   ASSERT_EQ(number, kTempOptionsFileNum);
 }
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
 #if !(defined NDEBUG) || !defined(OS_WIN)
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 
 #include <cstdio>
 
-int main(int /*argc*/, char** /*argv*/) {
+int main(int argc, char** argv) {
   printf("Skipped as Options file is not supported in RocksDBLite.\n");
   return 0;
 }

@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -10,9 +10,7 @@
 
 #include <cstddef>
 
-#include "rocksdb/rocksdb_namespace.h"
-
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class Slice;
 class Status;
@@ -22,7 +20,7 @@ struct SliceParts;
 
 // Abstract base class that defines the basic interface for a write batch.
 // See WriteBatch for a basic implementation and WrithBatchWithIndex for an
-// indexed implementation.
+// indexed implemenation.
 class WriteBatchBase {
  public:
   virtual ~WriteBatchBase() {}
@@ -33,7 +31,7 @@ class WriteBatchBase {
   virtual Status Put(const Slice& key, const Slice& value) = 0;
 
   // Variant of Put() that gathers output like writev(2).  The key and value
-  // that will be written to the database are concatenations of arrays of
+  // that will be written to the database are concatentations of arrays of
   // slices.
   virtual Status Put(ColumnFamilyHandle* column_family, const SliceParts& key,
                      const SliceParts& value);
@@ -71,7 +69,7 @@ class WriteBatchBase {
                               const SliceParts& key);
   virtual Status SingleDelete(const SliceParts& key);
 
-  // If the database contains mappings in the range ["begin_key", "end_key"),
+  // If the database contains mappings in the range ["begin_key", "end_key"],
   // erase them. Else do nothing.
   virtual Status DeleteRange(ColumnFamilyHandle* column_family,
                              const Slice& begin_key, const Slice& end_key) = 0;
@@ -89,7 +87,7 @@ class WriteBatchBase {
   // it will not be persisted to the SST files. When iterating over this
   // WriteBatch, WriteBatch::Handler::LogData will be called with the contents
   // of the blob as it is encountered. Blobs, puts, deletes, and merges will be
-  // encountered in the same order in which they were inserted. The blob will
+  // encountered in the same order in thich they were inserted. The blob will
   // NOT consume sequence number(s) and will NOT increase the count of the batch
   //
   // Example application: add timestamps to the transaction log for use in
@@ -114,14 +112,8 @@ class WriteBatchBase {
   // Clear().
   virtual Status RollbackToSavePoint() = 0;
 
-  // Pop the most recent save point.
-  // If there is no previous call to SetSavePoint(), Status::NotFound()
-  // will be returned.
-  // Otherwise returns Status::OK().
-  virtual Status PopSavePoint() = 0;
-
   // Sets the maximum size of the write batch in bytes. 0 means no limit.
   virtual void SetMaxBytes(size_t max_bytes) = 0;
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

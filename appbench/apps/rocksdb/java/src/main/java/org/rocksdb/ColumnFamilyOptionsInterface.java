@@ -1,22 +1,13 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 package org.rocksdb;
 
-import java.util.Collection;
-import java.util.List;
-
-public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInterface<T>>
-    extends AdvancedColumnFamilyOptionsInterface<T> {
-  /**
-   * The function recovers options to a previous version. Only 4.6 or later
-   * versions are supported.
-   *
-   * @return the instance of the current object.
-   */
-  T oldDefaults(int majorVersion, int minorVersion);
+public interface ColumnFamilyOptionsInterface
+    <T extends ColumnFamilyOptionsInterface>
+        extends AdvancedColumnFamilyOptionsInterface<T> {
 
   /**
    * Use this if your DB is very small (like under 1GB) and you don't want to
@@ -25,16 +16,6 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
    * @return the instance of the current object.
    */
   T optimizeForSmallDb();
-
-  /**
-   * Some functions that make it easier to optimize RocksDB
-   * Use this if your DB is very small (like under 1GB) and you don't want to
-   * spend lots of memory for memtables.
-   * An optional cache object is passed in to be used as the block cache
-   *
-   * @return the instance of the current object.
-   */
-  T optimizeForSmallDb(Cache cache);
 
   /**
    * Use this if you don't need to keep the data sorted, i.e. you'll never use
@@ -142,7 +123,7 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
    * @return the instance of the current object.
    */
   T setComparator(
-      AbstractComparator comparator);
+      AbstractComparator<? extends AbstractSlice<?>> comparator);
 
   /**
    * <p>Set the merge operator to be used for merging two merge operands
@@ -169,60 +150,6 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
    * @return the instance of the current object.
    */
   T setMergeOperator(MergeOperator mergeOperator);
-
-  /**
-   * A single CompactionFilter instance to call into during compaction.
-   * Allows an application to modify/delete a key-value during background
-   * compaction.
-   *
-   * If the client requires a new compaction filter to be used for different
-   * compaction runs, it can specify call
-   * {@link #setCompactionFilterFactory(AbstractCompactionFilterFactory)}
-   * instead.
-   *
-   * The client should specify only set one of the two.
-   * {@link #setCompactionFilter(AbstractCompactionFilter)} takes precedence
-   * over {@link #setCompactionFilterFactory(AbstractCompactionFilterFactory)}
-   * if the client specifies both.
-   *
-   * If multithreaded compaction is being used, the supplied CompactionFilter
-   * instance may be used from different threads concurrently and so should be thread-safe.
-   *
-   * @param compactionFilter {@link AbstractCompactionFilter} instance.
-   * @return the instance of the current object.
-   */
-  T setCompactionFilter(
-          final AbstractCompactionFilter<? extends AbstractSlice<?>> compactionFilter);
-
-  /**
-   * Accessor for the CompactionFilter instance in use.
-   *
-   * @return  Reference to the CompactionFilter, or null if one hasn't been set.
-   */
-  AbstractCompactionFilter<? extends AbstractSlice<?>> compactionFilter();
-
-  /**
-   * This is a factory that provides {@link AbstractCompactionFilter} objects
-   * which allow an application to modify/delete a key-value during background
-   * compaction.
-   *
-   * A new filter will be created on each compaction run.  If multithreaded
-   * compaction is being used, each created CompactionFilter will only be used
-   * from a single thread and so does not need to be thread-safe.
-   *
-   * @param compactionFilterFactory {@link AbstractCompactionFilterFactory} instance.
-   * @return the instance of the current object.
-   */
-  T setCompactionFilterFactory(
-          final AbstractCompactionFilterFactory<? extends AbstractCompactionFilter<?>>
-                  compactionFilterFactory);
-
-  /**
-   * Accessor for the CompactionFilterFactory instance in use.
-   *
-   * @return  Reference to the CompactionFilterFactory, or null if one hasn't been set.
-   */
-  AbstractCompactionFilterFactory<? extends AbstractCompactionFilter<?>> compactionFilterFactory();
 
   /**
    * This prefix-extractor uses the first n bytes of a key as its prefix.
@@ -393,30 +320,6 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
   String tableFactoryName();
 
   /**
-   * A list of paths where SST files for this column family
-   * can be put into, with its target size. Similar to db_paths,
-   * newer data is placed into paths specified earlier in the
-   * vector while older data gradually moves to paths specified
-   * later in the vector.
-   * Note that, if a path is supplied to multiple column
-   * families, it would have files and total size from all
-   * the column families combined. User should provision for the
-   * total size(from all the column families) in such cases.
-   *
-   * If left empty, db_paths will be used.
-   * Default: empty
-   *
-   * @param paths collection of paths for SST files.
-   * @return the reference of the current options.
-   */
-  T setCfPaths(final Collection<DbPath> paths);
-
-  /**
-   * @return collection of paths for SST files.
-   */
-  List<DbPath> cfPaths();
-
-  /**
    * Compression algorithm that will be used for the bottommost level that
    * contain files. If level-compaction is used, this option will only affect
    * levels after base level.
@@ -442,28 +345,6 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
    */
   CompressionType bottommostCompressionType();
 
-  /**
-   * Set the options for compression algorithms used by
-   * {@link #bottommostCompressionType()} if it is enabled.
-   *
-   * To enable it, please see the definition of
-   * {@link CompressionOptions}.
-   *
-   * @param compressionOptions the bottom most compression options.
-   *
-   * @return the reference of the current options.
-   */
-  T setBottommostCompressionOptions(
-      final CompressionOptions compressionOptions);
-
-  /**
-   * Get the bottom most compression options.
-   *
-   * See {@link #setBottommostCompressionOptions(CompressionOptions)}.
-   *
-   * @return the bottom most compression options.
-   */
-  CompressionOptions bottommostCompressionOptions();
 
   /**
    * Set the different options for compression algorithms
@@ -481,46 +362,6 @@ public interface ColumnFamilyOptionsInterface<T extends ColumnFamilyOptionsInter
    * @return The compression options
    */
   CompressionOptions compressionOptions();
-
-  /**
-   * If non-nullptr, use the specified factory for a function to determine the
-   * partitioning of sst files. This helps compaction to split the files
-   * on interesting boundaries (key prefixes) to make propagation of sst
-   * files less write amplifying (covering the whole key space).
-   *
-   * Default: nullptr
-   *
-   * @param factory The factory reference
-   * @return the reference of the current options.
-   */
-  @Experimental("Caution: this option is experimental")
-  T setSstPartitionerFactory(SstPartitionerFactory factory);
-
-  /**
-   * Get SST partitioner factory
-   *
-   * @return SST partitioner factory
-   */
-  @Experimental("Caution: this option is experimental")
-  SstPartitionerFactory sstPartitionerFactory();
-
-  /**
-   * Compaction concurrent thread limiter for the column family.
-   * If non-nullptr, use given concurrent thread limiter to control
-   * the max outstanding compaction tasks. Limiter can be shared with
-   * multiple column families across db instances.
-   *
-   * @param concurrentTaskLimiter The compaction thread limiter.
-   * @return the reference of the current options.
-   */
-  T setCompactionThreadLimiter(ConcurrentTaskLimiter concurrentTaskLimiter);
-
-  /**
-   * Get compaction thread limiter
-   *
-   * @return Compaction thread limiter
-   */
-  ConcurrentTaskLimiter compactionThreadLimiter();
 
   /**
    * Default memtable memory budget used with the following methods:

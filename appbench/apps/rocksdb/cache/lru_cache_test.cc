@@ -1,45 +1,32 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #include "cache/lru_cache.h"
 
 #include <string>
 #include <vector>
-#include "port/port.h"
-#include "test_util/testharness.h"
+#include "util/testharness.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class LRUCacheTest : public testing::Test {
  public:
   LRUCacheTest() {}
-  ~LRUCacheTest() override { DeleteCache(); }
+  ~LRUCacheTest() {}
 
-  void DeleteCache() {
-    if (cache_ != nullptr) {
-      cache_->~LRUCacheShard();
-      port::cacheline_aligned_free(cache_);
-      cache_ = nullptr;
-    }
-  }
-
-  void NewCache(size_t capacity, double high_pri_pool_ratio = 0.0,
-                bool use_adaptive_mutex = kDefaultToAdaptiveMutex) {
-    DeleteCache();
-    cache_ = reinterpret_cast<LRUCacheShard*>(
-        port::cacheline_aligned_alloc(sizeof(LRUCacheShard)));
-    new (cache_) LRUCacheShard(capacity, false /*strict_capacity_limit*/,
-                               high_pri_pool_ratio, use_adaptive_mutex,
-                               kDontChargeCacheMetadata);
+  void NewCache(size_t capacity, double high_pri_pool_ratio = 0.0) {
+    cache_.reset(new LRUCacheShard());
+    cache_->SetCapacity(capacity);
+    cache_->SetStrictCapacityLimit(false);
+    cache_->SetHighPriorityPoolRatio(high_pri_pool_ratio);
   }
 
   void Insert(const std::string& key,
               Cache::Priority priority = Cache::Priority::LOW) {
-    EXPECT_OK(cache_->Insert(key, 0 /*hash*/, nullptr /*value*/, 1 /*charge*/,
-                             nullptr /*deleter*/, nullptr /*handle*/,
-                             priority));
+    cache_->Insert(key, 0 /*hash*/, nullptr /*value*/, 1 /*charge*/,
+                   nullptr /*deleter*/, nullptr /*handle*/, priority);
   }
 
   void Insert(char key, Cache::Priority priority = Cache::Priority::LOW) {
@@ -89,7 +76,7 @@ class LRUCacheTest : public testing::Test {
   }
 
  private:
-  LRUCacheShard* cache_ = nullptr;
+  std::unique_ptr<LRUCacheShard> cache_;
 };
 
 TEST_F(LRUCacheTest, BasicLRU) {
@@ -118,30 +105,7 @@ TEST_F(LRUCacheTest, BasicLRU) {
   ValidateLRUList({"e", "z", "d", "u", "v"});
 }
 
-TEST_F(LRUCacheTest, MidpointInsertion) {
-  // Allocate 2 cache entries to high-pri pool.
-  NewCache(5, 0.45);
-
-  Insert("a", Cache::Priority::LOW);
-  Insert("b", Cache::Priority::LOW);
-  Insert("c", Cache::Priority::LOW);
-  Insert("x", Cache::Priority::HIGH);
-  Insert("y", Cache::Priority::HIGH);
-  ValidateLRUList({"a", "b", "c", "x", "y"}, 2);
-
-  // Low-pri entries inserted to the tail of low-pri list (the midpoint).
-  // After lookup, it will move to the tail of the full list.
-  Insert("d", Cache::Priority::LOW);
-  ValidateLRUList({"b", "c", "d", "x", "y"}, 2);
-  ASSERT_TRUE(Lookup("d"));
-  ValidateLRUList({"b", "c", "x", "y", "d"}, 2);
-
-  // High-pri entries will be inserted to the tail of full list.
-  Insert("z", Cache::Priority::HIGH);
-  ValidateLRUList({"c", "x", "y", "d", "z"}, 2);
-}
-
-TEST_F(LRUCacheTest, EntriesWithPriority) {
+TEST_F(LRUCacheTest, MidPointInsertion) {
   // Allocate 2 cache entries to high-pri pool.
   NewCache(5, 0.45);
 
@@ -167,15 +131,15 @@ TEST_F(LRUCacheTest, EntriesWithPriority) {
   Insert("a", Cache::Priority::LOW);
   ValidateLRUList({"v", "X", "a", "Y", "Z"}, 2);
 
-  // Low-pri entries will be inserted to head of high-pri pool after lookup.
+  // Low-pri entries will be inserted to head of low-pri pool after lookup.
   ASSERT_TRUE(Lookup("v"));
-  ValidateLRUList({"X", "a", "Y", "Z", "v"}, 2);
+  ValidateLRUList({"X", "a", "v", "Y", "Z"}, 2);
 
   // High-pri entries will be inserted to the head of the list after lookup.
   ASSERT_TRUE(Lookup("X"));
-  ValidateLRUList({"a", "Y", "Z", "v", "X"}, 2);
+  ValidateLRUList({"a", "v", "Y", "Z", "X"}, 2);
   ASSERT_TRUE(Lookup("Z"));
-  ValidateLRUList({"a", "Y", "v", "X", "Z"}, 2);
+  ValidateLRUList({"a", "v", "Y", "X", "Z"}, 2);
 
   Erase("Y");
   ValidateLRUList({"a", "v", "X", "Z"}, 2);
@@ -188,10 +152,10 @@ TEST_F(LRUCacheTest, EntriesWithPriority) {
   Insert("g", Cache::Priority::LOW);
   ValidateLRUList({"d", "e", "f", "g", "Z"}, 1);
   ASSERT_TRUE(Lookup("d"));
-  ValidateLRUList({"e", "f", "g", "Z", "d"}, 2);
+  ValidateLRUList({"e", "f", "g", "d", "Z"}, 1);
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

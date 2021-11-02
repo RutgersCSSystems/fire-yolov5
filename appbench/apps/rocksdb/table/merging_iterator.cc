@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -10,9 +10,7 @@
 #include "table/merging_iterator.h"
 #include <string>
 #include <vector>
-#include "db/dbformat.h"
 #include "db/pinned_iterators_manager.h"
-#include "memory/arena.h"
 #include "monitoring/perf_context_imp.h"
 #include "rocksdb/comparator.h"
 #include "rocksdb/iterator.h"
@@ -20,12 +18,13 @@
 #include "table/internal_iterator.h"
 #include "table/iter_heap.h"
 #include "table/iterator_wrapper.h"
-#include "test_util/sync_point.h"
+#include "util/arena.h"
 #include "util/autovector.h"
 #include "util/heap.h"
 #include "util/stop_watch.h"
+#include "util/sync_point.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 // Without anonymous namespace here, we fail the warning -Wmissing-prototypes
 namespace {
 typedef BinaryHeap<IteratorWrapper*, MaxIteratorComparator> MergerMaxIterHeap;
@@ -36,9 +35,8 @@ const size_t kNumIterReserve = 4;
 
 class MergingIterator : public InternalIterator {
  public:
-  MergingIterator(const InternalKeyComparator* comparator,
-                  InternalIterator** children, int n, bool is_arena_mode,
-                  bool prefix_seek_mode)
+  MergingIterator(const Comparator* comparator, InternalIterator** children,
+                  int n, bool is_arena_mode, bool prefix_seek_mode)
       : is_arena_mode_(is_arena_mode),
         comparator_(comparator),
         current_(nullptr),
@@ -51,15 +49,11 @@ class MergingIterator : public InternalIterator {
       children_[i].Set(children[i]);
     }
     for (auto& child : children_) {
-      AddToMinHeapOrCheckStatus(&child);
+      if (child.Valid()) {
+        minHeap_.push(&child);
+      }
     }
     current_ = CurrentForward();
-  }
-
-  void considerStatus(Status s) {
-    if (!s.ok() && status_.ok()) {
-      status_ = s;
-    }
   }
 
   virtual void AddIterator(InternalIterator* iter) {
@@ -69,61 +63,57 @@ class MergingIterator : public InternalIterator {
       iter->SetPinnedItersMgr(pinned_iters_mgr_);
     }
     auto new_wrapper = children_.back();
-    AddToMinHeapOrCheckStatus(&new_wrapper);
     if (new_wrapper.Valid()) {
+      minHeap_.push(&new_wrapper);
       current_ = CurrentForward();
     }
   }
 
-  ~MergingIterator() override {
+  virtual ~MergingIterator() {
     for (auto& child : children_) {
       child.DeleteIter(is_arena_mode_);
     }
-    status_.PermitUncheckedError();
   }
 
-  bool Valid() const override { return current_ != nullptr && status_.ok(); }
+  virtual bool Valid() const override { return (current_ != nullptr); }
 
-  Status status() const override { return status_; }
-
-  void SeekToFirst() override {
+  virtual void SeekToFirst() override {
     ClearHeaps();
-    status_ = Status::OK();
     for (auto& child : children_) {
       child.SeekToFirst();
-      AddToMinHeapOrCheckStatus(&child);
+      if (child.Valid()) {
+        minHeap_.push(&child);
+      }
     }
     direction_ = kForward;
     current_ = CurrentForward();
   }
 
-  void SeekToLast() override {
+  virtual void SeekToLast() override {
     ClearHeaps();
     InitMaxHeap();
-    status_ = Status::OK();
     for (auto& child : children_) {
       child.SeekToLast();
-      AddToMaxHeapOrCheckStatus(&child);
+      if (child.Valid()) {
+        maxHeap_->push(&child);
+      }
     }
     direction_ = kReverse;
     current_ = CurrentReverse();
   }
 
-  void Seek(const Slice& target) override {
+  virtual void Seek(const Slice& target) override {
     ClearHeaps();
-    status_ = Status::OK();
     for (auto& child : children_) {
       {
         PERF_TIMER_GUARD(seek_child_seek_time);
         child.Seek(target);
       }
-
       PERF_COUNTER_ADD(seek_child_seek_count, 1);
-      {
-        // Strictly, we timed slightly more than min heap operation,
-        // but these operations are very cheap.
+
+      if (child.Valid()) {
         PERF_TIMER_GUARD(seek_min_heap_time);
-        AddToMinHeapOrCheckStatus(&child);
+        minHeap_.push(&child);
       }
     }
     direction_ = kForward;
@@ -133,10 +123,9 @@ class MergingIterator : public InternalIterator {
     }
   }
 
-  void SeekForPrev(const Slice& target) override {
+  virtual void SeekForPrev(const Slice& target) override {
     ClearHeaps();
     InitMaxHeap();
-    status_ = Status::OK();
 
     for (auto& child : children_) {
       {
@@ -145,9 +134,9 @@ class MergingIterator : public InternalIterator {
       }
       PERF_COUNTER_ADD(seek_child_seek_count, 1);
 
-      {
+      if (child.Valid()) {
         PERF_TIMER_GUARD(seek_max_heap_time);
-        AddToMaxHeapOrCheckStatus(&child);
+        maxHeap_->push(&child);
       }
     }
     direction_ = kReverse;
@@ -157,7 +146,7 @@ class MergingIterator : public InternalIterator {
     }
   }
 
-  void Next() override {
+  virtual void Next() override {
     assert(Valid());
 
     // Ensure that all children are positioned after key().
@@ -165,9 +154,24 @@ class MergingIterator : public InternalIterator {
     // true for all of the non-current children since current_ is
     // the smallest child and key() == current_->key().
     if (direction_ != kForward) {
-      SwitchToForward();
+      // Otherwise, advance the non-current children.  We advance current_
+      // just after the if-block.
+      ClearHeaps();
+      for (auto& child : children_) {
+        if (&child != current_) {
+          child.Seek(key());
+          if (child.Valid() && comparator_->Equal(key(), child.key())) {
+            child.Next();
+          }
+        }
+        if (child.Valid()) {
+          minHeap_.push(&child);
+        }
+      }
+      direction_ = kForward;
       // The loop advanced all non-current children to be > key() so current_
       // should still be strictly the smallest key.
+      assert(current_ == CurrentForward());
     }
 
     // For the heap modifications below to be correct, current_ must be the
@@ -180,28 +184,15 @@ class MergingIterator : public InternalIterator {
       // current is still valid after the Next() call above.  Call
       // replace_top() to restore the heap property.  When the same child
       // iterator yields a sequence of keys, this is cheap.
-      assert(current_->status().ok());
       minHeap_.replace_top(current_);
     } else {
       // current stopped being valid, remove it from the heap.
-      considerStatus(current_->status());
       minHeap_.pop();
     }
     current_ = CurrentForward();
   }
 
-  bool NextAndGetResult(IterateResult* result) override {
-    Next();
-    bool is_valid = Valid();
-    if (is_valid) {
-      result->key = key();
-      result->bound_check_result = UpperBoundCheckResult();
-      result->value_prepared = current_->IsValuePrepared();
-    }
-    return is_valid;
-  }
-
-  void Prev() override {
+  virtual void Prev() override {
     assert(Valid());
     // Ensure that all children are positioned before key().
     // If we are moving in the reverse direction, it is already
@@ -210,7 +201,44 @@ class MergingIterator : public InternalIterator {
     if (direction_ != kReverse) {
       // Otherwise, retreat the non-current children.  We retreat current_
       // just after the if-block.
-      SwitchToBackward();
+      ClearHeaps();
+      InitMaxHeap();
+      for (auto& child : children_) {
+        if (&child != current_) {
+          if (!prefix_seek_mode_) {
+            child.Seek(key());
+            if (child.Valid()) {
+              // Child is at first entry >= key().  Step back one to be < key()
+              TEST_SYNC_POINT_CALLBACK("MergeIterator::Prev:BeforePrev",
+                                       &child);
+              child.Prev();
+            } else {
+              // Child has no entries >= key().  Position at last entry.
+              TEST_SYNC_POINT("MergeIterator::Prev:BeforeSeekToLast");
+              child.SeekToLast();
+            }
+          } else {
+            child.SeekForPrev(key());
+            if (child.Valid() && comparator_->Equal(key(), child.key())) {
+              child.Prev();
+            }
+          }
+        }
+        if (child.Valid()) {
+          maxHeap_->push(&child);
+        }
+      }
+      direction_ = kReverse;
+      if (!prefix_seek_mode_) {
+        // Note that we don't do assert(current_ == CurrentReverse()) here
+        // because it is possible to have some keys larger than the seek-key
+        // inserted between Seek() and SeekToLast(), which makes current_ not
+        // equal to CurrentReverse().
+        current_ = CurrentReverse();
+      }
+      // The loop advanced all non-current children to be < key() so current_
+      // should still be strictly the smallest key.
+      assert(current_ == CurrentReverse());
     }
 
     // For the heap modifications below to be correct, current_ must be the
@@ -222,65 +250,50 @@ class MergingIterator : public InternalIterator {
       // current is still valid after the Prev() call above.  Call
       // replace_top() to restore the heap property.  When the same child
       // iterator yields a sequence of keys, this is cheap.
-      assert(current_->status().ok());
       maxHeap_->replace_top(current_);
     } else {
       // current stopped being valid, remove it from the heap.
-      considerStatus(current_->status());
       maxHeap_->pop();
     }
     current_ = CurrentReverse();
   }
 
-  Slice key() const override {
+  virtual Slice key() const override {
     assert(Valid());
     return current_->key();
   }
 
-  Slice value() const override {
+  virtual Slice value() const override {
     assert(Valid());
     return current_->value();
   }
 
-  bool PrepareValue() override {
-    assert(Valid());
-    if (current_->PrepareValue()) {
-      return true;
+  virtual Status status() const override {
+    Status s;
+    for (auto& child : children_) {
+      s = child.status();
+      if (!s.ok()) {
+        break;
+      }
     }
-
-    considerStatus(current_->status());
-    assert(!status_.ok());
-    return false;
+    return s;
   }
 
-  // Here we simply relay MayBeOutOfLowerBound/MayBeOutOfUpperBound result
-  // from current child iterator. Potentially as long as one of child iterator
-  // report out of bound is not possible, we know current key is within bound.
-
-  bool MayBeOutOfLowerBound() override {
-    assert(Valid());
-    return current_->MayBeOutOfLowerBound();
-  }
-
-  IterBoundCheck UpperBoundCheckResult() override {
-    assert(Valid());
-    return current_->UpperBoundCheckResult();
-  }
-
-  void SetPinnedItersMgr(PinnedIteratorsManager* pinned_iters_mgr) override {
+  virtual void SetPinnedItersMgr(
+      PinnedIteratorsManager* pinned_iters_mgr) override {
     pinned_iters_mgr_ = pinned_iters_mgr;
     for (auto& child : children_) {
       child.SetPinnedItersMgr(pinned_iters_mgr);
     }
   }
 
-  bool IsKeyPinned() const override {
+  virtual bool IsKeyPinned() const override {
     assert(Valid());
     return pinned_iters_mgr_ && pinned_iters_mgr_->PinningEnabled() &&
            current_->IsKeyPinned();
   }
 
-  bool IsValuePinned() const override {
+  virtual bool IsValuePinned() const override {
     assert(Valid());
     return pinned_iters_mgr_ && pinned_iters_mgr_->PinningEnabled() &&
            current_->IsValuePinned();
@@ -294,15 +307,13 @@ class MergingIterator : public InternalIterator {
   void InitMaxHeap();
 
   bool is_arena_mode_;
-  const InternalKeyComparator* comparator_;
+  const Comparator* comparator_;
   autovector<IteratorWrapper, kNumIterReserve> children_;
 
   // Cached pointer to child iterator with the current key, or nullptr if no
   // child iterators are valid.  This is the top of minHeap_ or maxHeap_
   // depending on the direction.
   IteratorWrapper* current_;
-  // If any of the children have non-ok status, this is one of them.
-  Status status_;
   // Which direction is the iterator moving?
   enum Direction {
     kForward,
@@ -317,20 +328,6 @@ class MergingIterator : public InternalIterator {
   std::unique_ptr<MergerMaxIterHeap> maxHeap_;
   PinnedIteratorsManager* pinned_iters_mgr_;
 
-  // In forward direction, process a child that is not in the min heap.
-  // If valid, add to the min heap. Otherwise, check status.
-  void AddToMinHeapOrCheckStatus(IteratorWrapper*);
-
-  // In backward direction, process a child that is not in the max heap.
-  // If valid, add to the min heap. Otherwise, check status.
-  void AddToMaxHeapOrCheckStatus(IteratorWrapper*);
-
-  void SwitchToForward();
-
-  // Switch the direction from forward to backward without changing the
-  // position. Iterator should still be valid.
-  void SwitchToBackward();
-
   IteratorWrapper* CurrentForward() const {
     assert(direction_ == kForward);
     return !minHeap_.empty() ? minHeap_.top() : nullptr;
@@ -342,68 +339,6 @@ class MergingIterator : public InternalIterator {
     return !maxHeap_->empty() ? maxHeap_->top() : nullptr;
   }
 };
-
-void MergingIterator::AddToMinHeapOrCheckStatus(IteratorWrapper* child) {
-  if (child->Valid()) {
-    assert(child->status().ok());
-    minHeap_.push(child);
-  } else {
-    considerStatus(child->status());
-  }
-}
-
-void MergingIterator::AddToMaxHeapOrCheckStatus(IteratorWrapper* child) {
-  if (child->Valid()) {
-    assert(child->status().ok());
-    maxHeap_->push(child);
-  } else {
-    considerStatus(child->status());
-  }
-}
-
-void MergingIterator::SwitchToForward() {
-  // Otherwise, advance the non-current children.  We advance current_
-  // just after the if-block.
-  ClearHeaps();
-  Slice target = key();
-  for (auto& child : children_) {
-    if (&child != current_) {
-      child.Seek(target);
-      if (child.Valid() && comparator_->Equal(target, child.key())) {
-        assert(child.status().ok());
-        child.Next();
-      }
-    }
-    AddToMinHeapOrCheckStatus(&child);
-  }
-  direction_ = kForward;
-}
-
-void MergingIterator::SwitchToBackward() {
-  ClearHeaps();
-  InitMaxHeap();
-  Slice target = key();
-  for (auto& child : children_) {
-    if (&child != current_) {
-      child.SeekForPrev(target);
-      TEST_SYNC_POINT_CALLBACK("MergeIterator::Prev:BeforePrev", &child);
-      if (child.Valid() && comparator_->Equal(target, child.key())) {
-        assert(child.status().ok());
-        child.Prev();
-      }
-    }
-    AddToMaxHeapOrCheckStatus(&child);
-  }
-  direction_ = kReverse;
-  if (!prefix_seek_mode_) {
-    // Note that we don't do assert(current_ == CurrentReverse()) here
-    // because it is possible to have some keys larger than the seek-key
-    // inserted between Seek() and SeekToLast(), which makes current_ not
-    // equal to CurrentReverse().
-    current_ = CurrentReverse();
-  }
-  assert(current_ == CurrentReverse());
-}
 
 void MergingIterator::ClearHeaps() {
   minHeap_.clear();
@@ -418,12 +353,12 @@ void MergingIterator::InitMaxHeap() {
   }
 }
 
-InternalIterator* NewMergingIterator(const InternalKeyComparator* cmp,
+InternalIterator* NewMergingIterator(const Comparator* cmp,
                                      InternalIterator** list, int n,
                                      Arena* arena, bool prefix_seek_mode) {
   assert(n >= 0);
   if (n == 0) {
-    return NewEmptyInternalIterator<Slice>(arena);
+    return NewEmptyInternalIterator(arena);
   } else if (n == 1) {
     return list[0];
   } else {
@@ -436,28 +371,18 @@ InternalIterator* NewMergingIterator(const InternalKeyComparator* cmp,
   }
 }
 
-MergeIteratorBuilder::MergeIteratorBuilder(
-    const InternalKeyComparator* comparator, Arena* a, bool prefix_seek_mode)
+MergeIteratorBuilder::MergeIteratorBuilder(const Comparator* comparator,
+                                           Arena* a, bool prefix_seek_mode)
     : first_iter(nullptr), use_merging_iter(false), arena(a) {
   auto mem = arena->AllocateAligned(sizeof(MergingIterator));
   merge_iter =
       new (mem) MergingIterator(comparator, nullptr, 0, true, prefix_seek_mode);
 }
 
-MergeIteratorBuilder::~MergeIteratorBuilder() {
-  if (first_iter != nullptr) {
-    first_iter->~InternalIterator();
-  }
-  if (merge_iter != nullptr) {
-    merge_iter->~MergingIterator();
-  }
-}
-
 void MergeIteratorBuilder::AddIterator(InternalIterator* iter) {
   if (!use_merging_iter && first_iter != nullptr) {
     merge_iter->AddIterator(first_iter);
     use_merging_iter = true;
-    first_iter = nullptr;
   }
   if (use_merging_iter) {
     merge_iter->AddIterator(iter);
@@ -467,15 +392,13 @@ void MergeIteratorBuilder::AddIterator(InternalIterator* iter) {
 }
 
 InternalIterator* MergeIteratorBuilder::Finish() {
-  InternalIterator* ret = nullptr;
   if (!use_merging_iter) {
-    ret = first_iter;
-    first_iter = nullptr;
+    return first_iter;
   } else {
-    ret = merge_iter;
+    auto ret = merge_iter;
     merge_iter = nullptr;
+    return ret;
   }
-  return ret;
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb

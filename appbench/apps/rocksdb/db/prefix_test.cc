@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 
 #ifndef ROCKSDB_LITE
 
@@ -17,7 +17,8 @@ int main() {
 #include <iostream>
 #include <vector>
 
-#include "db/db_impl/db_impl.h"
+#include <gflags/gflags.h>
+#include "db/db_impl.h"
 #include "monitoring/histogram.h"
 #include "rocksdb/comparator.h"
 #include "rocksdb/db.h"
@@ -25,18 +26,14 @@ int main() {
 #include "rocksdb/memtablerep.h"
 #include "rocksdb/perf_context.h"
 #include "rocksdb/slice_transform.h"
-#include "rocksdb/system_clock.h"
 #include "rocksdb/table.h"
-#include "test_util/testharness.h"
-#include "util/cast_util.h"
-#include "util/coding.h"
-#include "util/gflags_compat.h"
 #include "util/random.h"
 #include "util/stop_watch.h"
 #include "util/string_util.h"
+#include "util/testharness.h"
 #include "utilities/merge_operators.h"
 
-using GFLAGS_NAMESPACE::ParseCommandLineFlags;
+using GFLAGS::ParseCommandLineFlags;
 
 DEFINE_bool(trigger_deadlock, false,
             "issue delete in range scan to trigger PrefixHashMap deadlock");
@@ -55,10 +52,9 @@ DEFINE_int32(value_size, 40, "");
 DEFINE_bool(enable_print, false, "Print options generated to console.");
 
 // Path to the database on file system
-const std::string kDbName =
-    ROCKSDB_NAMESPACE::test::PerThreadDBPath("prefix_test");
+const std::string kDbName = rocksdb::test::TmpDir() + "/prefix_test";
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 struct TestKey {
   uint64_t prefix;
@@ -69,16 +65,12 @@ struct TestKey {
 };
 
 // return a slice backed by test_key
-inline Slice TestKeyToSlice(std::string &s, const TestKey& test_key) {
-  s.clear();
-  PutFixed64(&s, test_key.prefix);
-  PutFixed64(&s, test_key.sorted);
-  return Slice(s.c_str(), s.size());
+inline Slice TestKeyToSlice(const TestKey& test_key) {
+  return Slice((const char*)&test_key, sizeof(test_key));
 }
 
-inline const TestKey SliceToTestKey(const Slice& slice) {
-  return TestKey(DecodeFixed64(slice.data()),
-    DecodeFixed64(slice.data() + 8));
+inline const TestKey* SliceToTestKey(const Slice& slice) {
+  return (const TestKey*)slice.data();
 }
 
 class TestKeyComparator : public Comparator {
@@ -86,11 +78,9 @@ class TestKeyComparator : public Comparator {
 
   // Compare needs to be aware of the possibility of a and/or b is
   // prefix only
-  int Compare(const Slice& a, const Slice& b) const override {
-    const TestKey kkey_a = SliceToTestKey(a);
-    const TestKey kkey_b = SliceToTestKey(b);
-    const TestKey *key_a = &kkey_a;
-    const TestKey *key_b = &kkey_b;
+  virtual int Compare(const Slice& a, const Slice& b) const override {
+    const TestKey* key_a = SliceToTestKey(a);
+    const TestKey* key_b = SliceToTestKey(b);
     if (key_a->prefix != key_b->prefix) {
       if (key_a->prefix < key_b->prefix) return -1;
       if (key_a->prefix > key_b->prefix) return 1;
@@ -121,51 +111,47 @@ class TestKeyComparator : public Comparator {
   }
 
   bool operator()(const TestKey& a, const TestKey& b) const {
-    std::string sa, sb;
-    return Compare(TestKeyToSlice(sa, a), TestKeyToSlice(sb, b)) < 0;
+    return Compare(TestKeyToSlice(a), TestKeyToSlice(b)) < 0;
   }
 
-  const char* Name() const override { return "TestKeyComparator"; }
+  virtual const char* Name() const override {
+    return "TestKeyComparator";
+  }
 
-  void FindShortestSeparator(std::string* /*start*/,
-                             const Slice& /*limit*/) const override {}
+  virtual void FindShortestSeparator(std::string* start,
+                                     const Slice& limit) const override {}
 
-  void FindShortSuccessor(std::string* /*key*/) const override {}
+  virtual void FindShortSuccessor(std::string* key) const override {}
 };
 
 namespace {
 void PutKey(DB* db, WriteOptions write_options, uint64_t prefix,
             uint64_t suffix, const Slice& value) {
   TestKey test_key(prefix, suffix);
-  std::string s;
-  Slice key = TestKeyToSlice(s, test_key);
+  Slice key = TestKeyToSlice(test_key);
   ASSERT_OK(db->Put(write_options, key, value));
 }
 
 void PutKey(DB* db, WriteOptions write_options, const TestKey& test_key,
             const Slice& value) {
-  std::string s;
-  Slice key = TestKeyToSlice(s, test_key);
+  Slice key = TestKeyToSlice(test_key);
   ASSERT_OK(db->Put(write_options, key, value));
 }
 
 void MergeKey(DB* db, WriteOptions write_options, const TestKey& test_key,
               const Slice& value) {
-  std::string s;
-  Slice key = TestKeyToSlice(s, test_key);
+  Slice key = TestKeyToSlice(test_key);
   ASSERT_OK(db->Merge(write_options, key, value));
 }
 
 void DeleteKey(DB* db, WriteOptions write_options, const TestKey& test_key) {
-  std::string s;
-  Slice key = TestKeyToSlice(s, test_key);
+  Slice key = TestKeyToSlice(test_key);
   ASSERT_OK(db->Delete(write_options, key));
 }
 
 void SeekIterator(Iterator* iter, uint64_t prefix, uint64_t suffix) {
   TestKey test_key(prefix, suffix);
-  std::string s;
-  Slice key = TestKeyToSlice(s, test_key);
+  Slice key = TestKeyToSlice(test_key);
   iter->Seek(key);
 }
 
@@ -174,8 +160,7 @@ const std::string kNotFoundResult = "NOT_FOUND";
 std::string Get(DB* db, const ReadOptions& read_options, uint64_t prefix,
                 uint64_t suffix) {
   TestKey test_key(prefix, suffix);
-  std::string s2;
-  Slice key = TestKeyToSlice(s2, test_key);
+  Slice key = TestKeyToSlice(test_key);
 
   std::string result;
   Status s = db->Get(read_options, key, &result);
@@ -196,23 +181,23 @@ class SamePrefixTransform : public SliceTransform {
   explicit SamePrefixTransform(const Slice& prefix)
       : prefix_(prefix), name_("rocksdb.SamePrefix." + prefix.ToString()) {}
 
-  const char* Name() const override { return name_.c_str(); }
+  virtual const char* Name() const override { return name_.c_str(); }
 
-  Slice Transform(const Slice& src) const override {
+  virtual Slice Transform(const Slice& src) const override {
     assert(InDomain(src));
     return prefix_;
   }
 
-  bool InDomain(const Slice& src) const override {
+  virtual bool InDomain(const Slice& src) const override {
     if (src.size() >= prefix_.size()) {
       return Slice(src.data(), prefix_.size()) == prefix_;
     }
     return false;
   }
 
-  bool InRange(const Slice& dst) const override { return dst == prefix_; }
-
-  bool FullLengthEnabled(size_t* /*len*/) const override { return false; }
+  virtual bool InRange(const Slice& dst) const override {
+    return dst == prefix_;
+  }
 };
 
 }  // namespace
@@ -280,8 +265,9 @@ class PrefixTest : public testing::Test {
   PrefixTest() : option_config_(kBegin) {
     options.comparator = new TestKeyComparator();
   }
-  ~PrefixTest() override { delete options.comparator; }
-
+  ~PrefixTest() {
+    delete options.comparator;
+  }
  protected:
   enum OptionConfig {
     kBegin,
@@ -312,7 +298,7 @@ TEST(SamePrefixTest, InDomainTest) {
     ASSERT_OK(db->Put(write_options, "HHKB pro2", "Mar 24, 2006"));
     ASSERT_OK(db->Put(write_options, "HHKB pro2 Type-S", "June 29, 2011"));
     ASSERT_OK(db->Put(write_options, "Realforce 87u", "idk"));
-    ASSERT_OK(db->Flush(FlushOptions()));
+    db->Flush(FlushOptions());
     std::string result;
     auto db_iter = db->NewIterator(ReadOptions());
 
@@ -332,7 +318,7 @@ TEST(SamePrefixTest, InDomainTest) {
     ASSERT_OK(db->Put(write_options, "pikachu", "1"));
     ASSERT_OK(db->Put(write_options, "Meowth", "1"));
     ASSERT_OK(db->Put(write_options, "Mewtwo", "idk"));
-    ASSERT_OK(db->Flush(FlushOptions()));
+    db->Flush(FlushOptions());
     std::string result;
     auto db_iter = db->NewIterator(ReadOptions());
 
@@ -352,7 +338,7 @@ TEST_F(PrefixTest, TestResult) {
       std::cout << "*** Mem table: " << options.memtable_factory->Name()
                 << " number of buckets: " << num_buckets
                 << std::endl;
-      ASSERT_OK(DestroyDB(kDbName, Options()));
+      DestroyDB(kDbName, Options());
       auto db = OpenDb();
       WriteOptions write_options;
       ReadOptions read_options;
@@ -372,11 +358,9 @@ TEST_F(PrefixTest, TestResult) {
       ASSERT_TRUE(v16 == iter->value());
       iter->Next();
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
 
       SeekIterator(iter.get(), 2, 0);
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
 
       ASSERT_EQ(v16.ToString(), Get(db.get(), read_options, 1, 6));
       ASSERT_EQ(kNotFoundResult, Get(db.get(), read_options, 1, 5));
@@ -400,11 +384,9 @@ TEST_F(PrefixTest, TestResult) {
       ASSERT_TRUE(v17 == iter->value());
       iter->Next();
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
 
       SeekIterator(iter.get(), 2, 0);
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
 
       // 3. Insert an entry for the same prefix as the head of the bucket.
       Slice v15("v15");
@@ -529,7 +511,7 @@ TEST_F(PrefixTest, PrefixValid) {
     while (NextOptions(num_buckets)) {
       std::cout << "*** Mem table: " << options.memtable_factory->Name()
                 << " number of buckets: " << num_buckets << std::endl;
-      ASSERT_OK(DestroyDB(kDbName, Options()));
+      DestroyDB(kDbName, Options());
       auto db = OpenDb();
       WriteOptions write_options;
       ReadOptions read_options;
@@ -544,11 +526,9 @@ TEST_F(PrefixTest, PrefixValid) {
       PutKey(db.get(), write_options, 12345, 8, v18);
       PutKey(db.get(), write_options, 12345, 9, v19);
       PutKey(db.get(), write_options, 12346, 8, v16);
-      ASSERT_OK(db->Flush(FlushOptions()));
-      TestKey test_key(12346, 8);
-      std::string s;
-      ASSERT_OK(db->Delete(write_options, TestKeyToSlice(s, test_key)));
-      ASSERT_OK(db->Flush(FlushOptions()));
+      db->Flush(FlushOptions());
+      db->Delete(write_options, TestKeyToSlice(TestKey(12346, 8)));
+      db->Flush(FlushOptions());
       read_options.prefix_same_as_start = true;
       std::unique_ptr<Iterator> iter(db->NewIterator(read_options));
       SeekIterator(iter.get(), 12345, 6);
@@ -573,7 +553,6 @@ TEST_F(PrefixTest, PrefixValid) {
       // Verify seeking past the prefix won't return a result.
       SeekIterator(iter.get(), 12345, 10);
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
     }
   }
 }
@@ -582,7 +561,7 @@ TEST_F(PrefixTest, DynamicPrefixIterator) {
   while (NextOptions(FLAGS_bucket_count)) {
     std::cout << "*** Mem table: " << options.memtable_factory->Name()
         << std::endl;
-    ASSERT_OK(DestroyDB(kDbName, Options()));
+    DestroyDB(kDbName, Options());
     auto db = OpenDb();
     WriteOptions write_options;
     ReadOptions read_options;
@@ -593,25 +572,25 @@ TEST_F(PrefixTest, DynamicPrefixIterator) {
     }
 
     if (FLAGS_random_prefix) {
-      RandomShuffle(prefixes.begin(), prefixes.end());
+      std::random_shuffle(prefixes.begin(), prefixes.end());
     }
 
     HistogramImpl hist_put_time;
     HistogramImpl hist_put_comparison;
+
     // insert x random prefix, each with y continuous element.
     for (auto prefix : prefixes) {
        for (uint64_t sorted = 0; sorted < FLAGS_items_per_prefix; sorted++) {
         TestKey test_key(prefix, sorted);
 
-        std::string s;
-        Slice key = TestKeyToSlice(s, test_key);
+        Slice key = TestKeyToSlice(test_key);
         std::string value(FLAGS_value_size, 0);
 
-        get_perf_context()->Reset();
-        StopWatchNano timer(SystemClock::Default().get(), true);
+        perf_context.Reset();
+        StopWatchNano timer(Env::Default(), true);
         ASSERT_OK(db->Put(write_options, key, value));
         hist_put_time.Add(timer.ElapsedNanos());
-        hist_put_comparison.Add(get_perf_context()->user_key_comparison_count);
+        hist_put_comparison.Add(perf_context.user_key_comparison_count);
       }
     }
 
@@ -626,12 +605,11 @@ TEST_F(PrefixTest, DynamicPrefixIterator) {
 
     for (auto prefix : prefixes) {
       TestKey test_key(prefix, FLAGS_items_per_prefix / 2);
-      std::string s;
-      Slice key = TestKeyToSlice(s, test_key);
+      Slice key = TestKeyToSlice(test_key);
       std::string value = "v" + ToString(0);
 
-      get_perf_context()->Reset();
-      StopWatchNano timer(SystemClock::Default().get(), true);
+      perf_context.Reset();
+      StopWatchNano timer(Env::Default(), true);
       auto key_prefix = options.prefix_extractor->Transform(key);
       uint64_t total_keys = 0;
       for (iter->Seek(key);
@@ -644,7 +622,7 @@ TEST_F(PrefixTest, DynamicPrefixIterator) {
         total_keys++;
       }
       hist_seek_time.Add(timer.ElapsedNanos());
-      hist_seek_comparison.Add(get_perf_context()->user_key_comparison_count);
+      hist_seek_comparison.Add(perf_context.user_key_comparison_count);
       ASSERT_EQ(total_keys, FLAGS_items_per_prefix - FLAGS_items_per_prefix/2);
     }
 
@@ -661,16 +639,14 @@ TEST_F(PrefixTest, DynamicPrefixIterator) {
          prefix < FLAGS_total_prefixes + 10000;
          prefix++) {
       TestKey test_key(prefix, 0);
-      std::string s;
-      Slice key = TestKeyToSlice(s, test_key);
+      Slice key = TestKeyToSlice(test_key);
 
-      get_perf_context()->Reset();
-      StopWatchNano timer(SystemClock::Default().get(), true);
+      perf_context.Reset();
+      StopWatchNano timer(Env::Default(), true);
       iter->Seek(key);
       hist_no_seek_time.Add(timer.ElapsedNanos());
-      hist_no_seek_comparison.Add(get_perf_context()->user_key_comparison_count);
+      hist_no_seek_comparison.Add(perf_context.user_key_comparison_count);
       ASSERT_TRUE(!iter->Valid());
-      ASSERT_OK(iter->status());
     }
 
     std::cout << "non-existing Seek key comparison: \n"
@@ -689,7 +665,7 @@ TEST_F(PrefixTest, PrefixSeekModePrev) {
   for (size_t m = 1; m < 100; m++) {
     std::cout << "[" + std::to_string(m) + "]" + "*** Mem table: "
               << options.memtable_factory->Name() << std::endl;
-    ASSERT_OK(DestroyDB(kDbName, Options()));
+    DestroyDB(kDbName, Options());
     auto db = OpenDb();
     WriteOptions write_options;
     ReadOptions read_options;
@@ -714,7 +690,7 @@ TEST_F(PrefixTest, PrefixSeekModePrev) {
         }
       }
       if (i < 2) {
-        ASSERT_OK(db->Flush(FlushOptions()));
+        db->Flush(FlushOptions());
       }
     }
 
@@ -749,8 +725,8 @@ TEST_F(PrefixTest, PrefixSeekModePrev) {
       ASSERT_TRUE(iter->Valid());
       if (FLAGS_enable_print) {
         std::cout << "round " << prefix
-                  << " iter: " << SliceToTestKey(iter->key()).prefix
-                  << SliceToTestKey(iter->key()).sorted
+                  << " iter: " << SliceToTestKey(iter->key())->prefix
+                  << SliceToTestKey(iter->key())->sorted
                   << " | map: " << it->first.prefix << it->first.sorted << " | "
                   << iter->value().ToString() << " " << it->second << std::endl;
       }
@@ -759,7 +735,7 @@ TEST_F(PrefixTest, PrefixSeekModePrev) {
       for (size_t k = 0; k < 9; k++) {
         if (rnd.OneIn(2) || it == whole_map.begin()) {
           iter->Next();
-          ++it;
+          it++;
           if (FLAGS_enable_print) {
             std::cout << "Next >> ";
           }
@@ -771,17 +747,16 @@ TEST_F(PrefixTest, PrefixSeekModePrev) {
           }
         }
         if (!iter->Valid() ||
-            SliceToTestKey(iter->key()).prefix != stored_prefix) {
+            SliceToTestKey(iter->key())->prefix != stored_prefix) {
           break;
         }
-        ASSERT_OK(iter->status());
-        stored_prefix = SliceToTestKey(iter->key()).prefix;
+        stored_prefix = SliceToTestKey(iter->key())->prefix;
         ASSERT_TRUE(iter->Valid());
         ASSERT_NE(it, whole_map.end());
         ASSERT_EQ(iter->value(), it->second);
         if (FLAGS_enable_print) {
-          std::cout << "iter: " << SliceToTestKey(iter->key()).prefix
-                    << SliceToTestKey(iter->key()).sorted
+          std::cout << "iter: " << SliceToTestKey(iter->key())->prefix
+                    << SliceToTestKey(iter->key())->sorted
                     << " | map: " << it->first.prefix << it->first.sorted
                     << " | " << iter->value().ToString() << " " << it->second
                     << std::endl;
@@ -806,7 +781,7 @@ TEST_F(PrefixTest, PrefixSeekModePrev2) {
   options.memtable_factory.reset(new SkipListFactory);
   options.write_buffer_size = 1024 * 1024;
   std::string v13("v13");
-  ASSERT_OK(DestroyDB(kDbName, Options()));
+  DestroyDB(kDbName, Options());
   auto db = OpenDb();
   WriteOptions write_options;
   ReadOptions read_options;
@@ -814,20 +789,17 @@ TEST_F(PrefixTest, PrefixSeekModePrev2) {
   PutKey(db.get(), write_options, TestKey(1, 4), "v14");
   PutKey(db.get(), write_options, TestKey(3, 3), "v33");
   PutKey(db.get(), write_options, TestKey(3, 4), "v34");
-  ASSERT_OK(db->Flush(FlushOptions()));
-  ASSERT_OK(
-      static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+  db->Flush(FlushOptions());
+  reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
   PutKey(db.get(), write_options, TestKey(1, 1), "v11");
   PutKey(db.get(), write_options, TestKey(1, 3), "v13");
   PutKey(db.get(), write_options, TestKey(2, 1), "v21");
   PutKey(db.get(), write_options, TestKey(2, 2), "v22");
-  ASSERT_OK(db->Flush(FlushOptions()));
-  ASSERT_OK(
-      static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+  db->Flush(FlushOptions());
+  reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
   std::unique_ptr<Iterator> iter(db->NewIterator(read_options));
   SeekIterator(iter.get(), 1, 5);
   iter->Prev();
-  ASSERT_TRUE(iter->Valid());
   ASSERT_EQ(iter->value(), v13);
 }
 
@@ -838,33 +810,30 @@ TEST_F(PrefixTest, PrefixSeekModePrev3) {
   options.write_buffer_size = 1024 * 1024;
   std::string v14("v14");
   TestKey upper_bound_key = TestKey(1, 5);
-  std::string s;
-  Slice upper_bound = TestKeyToSlice(s, upper_bound_key);
+  Slice upper_bound = TestKeyToSlice(upper_bound_key);
 
   {
-    ASSERT_OK(DestroyDB(kDbName, Options()));
+    DestroyDB(kDbName, Options());
     auto db = OpenDb();
     WriteOptions write_options;
     ReadOptions read_options;
     read_options.iterate_upper_bound = &upper_bound;
     PutKey(db.get(), write_options, TestKey(1, 2), "v12");
     PutKey(db.get(), write_options, TestKey(1, 4), "v14");
-    ASSERT_OK(db->Flush(FlushOptions()));
-    ASSERT_OK(
-        static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+    db->Flush(FlushOptions());
+    reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
     PutKey(db.get(), write_options, TestKey(1, 1), "v11");
     PutKey(db.get(), write_options, TestKey(1, 3), "v13");
     PutKey(db.get(), write_options, TestKey(2, 1), "v21");
     PutKey(db.get(), write_options, TestKey(2, 2), "v22");
-    ASSERT_OK(db->Flush(FlushOptions()));
-    ASSERT_OK(
-        static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+    db->Flush(FlushOptions());
+    reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
     std::unique_ptr<Iterator> iter(db->NewIterator(read_options));
     iter->SeekToLast();
     ASSERT_EQ(iter->value(), v14);
   }
   {
-    ASSERT_OK(DestroyDB(kDbName, Options()));
+    DestroyDB(kDbName, Options());
     auto db = OpenDb();
     WriteOptions write_options;
     ReadOptions read_options;
@@ -873,25 +842,25 @@ TEST_F(PrefixTest, PrefixSeekModePrev3) {
     PutKey(db.get(), write_options, TestKey(1, 4), "v14");
     PutKey(db.get(), write_options, TestKey(3, 3), "v33");
     PutKey(db.get(), write_options, TestKey(3, 4), "v34");
-    ASSERT_OK(db->Flush(FlushOptions()));
-    ASSERT_OK(
-        static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+    db->Flush(FlushOptions());
+    reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
     PutKey(db.get(), write_options, TestKey(1, 1), "v11");
     PutKey(db.get(), write_options, TestKey(1, 3), "v13");
-    ASSERT_OK(db->Flush(FlushOptions()));
-    ASSERT_OK(
-        static_cast_with_check<DBImpl>(db.get())->TEST_WaitForFlushMemTable());
+    db->Flush(FlushOptions());
+    reinterpret_cast<DBImpl*>(db.get())->TEST_WaitForFlushMemTable();
     std::unique_ptr<Iterator> iter(db->NewIterator(read_options));
     iter->SeekToLast();
     ASSERT_EQ(iter->value(), v14);
   }
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // end namespace rocksdb
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   ParseCommandLineFlags(&argc, &argv, true);
+  std::cout << kDbName << "\n";
+
   return RUN_ALL_TESTS();
 }
 
@@ -900,7 +869,7 @@ int main(int argc, char** argv) {
 #else
 #include <stdio.h>
 
-int main(int /*argc*/, char** /*argv*/) {
+int main(int argc, char** argv) {
   fprintf(stderr,
           "SKIPPED as HashSkipList and HashLinkList are not supported in "
           "ROCKSDB_LITE\n");

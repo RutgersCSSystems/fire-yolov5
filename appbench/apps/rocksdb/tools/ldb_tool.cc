@@ -1,19 +1,19 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 #ifndef ROCKSDB_LITE
 #include "rocksdb/ldb_tool.h"
 #include "rocksdb/utilities/ldb_cmd.h"
 #include "tools/ldb_cmd_impl.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 LDBOptions::LDBOptions() {}
 
 void LDBCommandRunner::PrintHelp(const LDBOptions& ldb_options,
-                                 const char* /*exec_name*/, bool to_stderr) {
+                                 const char* exec_name) {
   std::string ret;
 
   ret.append(ldb_options.print_help_header);
@@ -21,9 +21,6 @@ void LDBCommandRunner::PrintHelp(const LDBOptions& ldb_options,
   ret.append("commands MUST specify --" + LDBCommand::ARG_DB +
              "=<full_path_to_db_directory> when necessary\n");
   ret.append("\n");
-  ret.append("commands can optionally specify --" + LDBCommand::ARG_ENV_URI +
-             "=<uri_of_environment> or --" + LDBCommand::ARG_FS_URI +
-             "=<uri_of_filesystem> if necessary\n\n");
   ret.append(
       "The following optional parameters control if keys/values are "
       "input/output as hex or as plain strings:\n");
@@ -45,12 +42,6 @@ void LDBCommandRunner::PrintHelp(const LDBOptions& ldb_options,
   ret.append("  --" + LDBCommand::ARG_TTL +
              " with 'put','get','scan','dump','query','batchput'"
              " : DB supports ttl and value is internally timestamp-suffixed\n");
-  ret.append("  --" + LDBCommand::ARG_TRY_LOAD_OPTIONS +
-             " : Try to load option file from DB.\n");
-  ret.append("  --" + LDBCommand::ARG_DISABLE_CONSISTENCY_CHECKS +
-             " : Set options.force_consistency_checks = false.\n");
-  ret.append("  --" + LDBCommand::ARG_IGNORE_UNKNOWN_OPTIONS +
-             " : Ignore unknown options when loading option file.\n");
   ret.append("  --" + LDBCommand::ARG_BLOOM_BITS + "=<int,e.g.:14>\n");
   ret.append("  --" + LDBCommand::ARG_FIX_PREFIX_LEN + "=<int,e.g.:14>\n");
   ret.append("  --" + LDBCommand::ARG_COMPRESSION_TYPE +
@@ -76,7 +67,6 @@ void LDBCommandRunner::PrintHelp(const LDBOptions& ldb_options,
   DBQuerierCommand::Help(ret);
   ApproxSizeCommand::Help(ret);
   CheckConsistencyCommand::Help(ret);
-  ListFileRangeDeletesCommand::Help(ret);
 
   ret.append("\n\n");
   ret.append("Admin Commands:\n");
@@ -87,74 +77,51 @@ void LDBCommandRunner::PrintHelp(const LDBOptions& ldb_options,
   DBDumperCommand::Help(ret);
   DBLoaderCommand::Help(ret);
   ManifestDumpCommand::Help(ret);
-  FileChecksumDumpCommand::Help(ret);
-  GetPropertyCommand::Help(ret);
   ListColumnFamiliesCommand::Help(ret);
-  CreateColumnFamilyCommand::Help(ret);
-  DropColumnFamilyCommand::Help(ret);
   DBFileDumperCommand::Help(ret);
   InternalDumpCommand::Help(ret);
   RepairCommand::Help(ret);
   BackupCommand::Help(ret);
   RestoreCommand::Help(ret);
   CheckPointCommand::Help(ret);
-  WriteExternalSstFilesCommand::Help(ret);
-  IngestExternalSstFilesCommand::Help(ret);
-  UnsafeRemoveSstFileCommand::Help(ret);
 
-  fprintf(to_stderr ? stderr : stdout, "%s\n", ret.c_str());
+  fprintf(stderr, "%s\n", ret.c_str());
 }
 
-int LDBCommandRunner::RunCommand(
-    int argc, char const* const* argv, Options options,
-    const LDBOptions& ldb_options,
+void LDBCommandRunner::RunCommand(
+    int argc, char** argv, Options options, const LDBOptions& ldb_options,
     const std::vector<ColumnFamilyDescriptor>* column_families) {
   if (argc <= 2) {
-    if (argc <= 1) {
-      PrintHelp(ldb_options, argv[0], /*to_stderr*/ true);
-      return 1;
-    } else if (std::string(argv[1]) == "--version") {
-      printf("ldb from RocksDB %d.%d.%d\n", ROCKSDB_MAJOR, ROCKSDB_MINOR,
-             ROCKSDB_PATCH);
-      return 0;
-    } else if (std::string(argv[1]) == "--help") {
-      PrintHelp(ldb_options, argv[0], /*to_stderr*/ false);
-      return 0;
-    } else {
-      PrintHelp(ldb_options, argv[0], /*to_stderr*/ true);
-      return 1;
-    }
+    PrintHelp(ldb_options, argv[0]);
+    exit(1);
   }
 
   LDBCommand* cmdObj = LDBCommand::InitFromCmdLineArgs(
       argc, argv, options, ldb_options, column_families);
   if (cmdObj == nullptr) {
     fprintf(stderr, "Unknown command\n");
-    PrintHelp(ldb_options, argv[0], /*to_stderr*/ true);
-    return 1;
+    PrintHelp(ldb_options, argv[0]);
+    exit(1);
   }
 
   if (!cmdObj->ValidateCmdLineOptions()) {
-    return 1;
+    exit(1);
   }
 
   cmdObj->Run();
   LDBCommandExecuteResult ret = cmdObj->GetExecuteState();
-  if (!ret.ToString().empty()) {
-    fprintf(stderr, "%s\n", ret.ToString().c_str());
-  }
+  fprintf(stderr, "%s\n", ret.ToString().c_str());
   delete cmdObj;
 
-  return ret.IsFailed() ? 1 : 0;
+  exit(ret.IsFailed());
 }
 
 void LDBTool::Run(int argc, char** argv, Options options,
                   const LDBOptions& ldb_options,
                   const std::vector<ColumnFamilyDescriptor>* column_families) {
-  int error_code = LDBCommandRunner::RunCommand(argc, argv, options,
-                                                ldb_options, column_families);
-  exit(error_code);
+  LDBCommandRunner::RunCommand(argc, argv, options, ldb_options,
+                               column_families);
 }
-}  // namespace ROCKSDB_NAMESPACE
+} // namespace rocksdb
 
 #endif  // ROCKSDB_LITE

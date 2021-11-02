@@ -1,4 +1,3 @@
-// Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 package org.rocksdb;
 
 /**
@@ -33,13 +32,13 @@ public enum InfoLogLevel {
    *
    * @param value byte representation of InfoLogLevel.
    *
-   * @return {@link org.rocksdb.InfoLogLevel} instance.
+   * @return {@link org.rocksdb.InfoLogLevel} instance or null.
    * @throws java.lang.IllegalArgumentException if an invalid
    *     value is provided.
    */
   public static InfoLogLevel getInfoLogLevel(final byte value) {
     for (final InfoLogLevel infoLogLevel : InfoLogLevel.values()) {
-      if (infoLogLevel.getValue() == value) {
+      if (infoLogLevel.getValue() == value){
         return infoLogLevel;
       }
     }

@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -22,17 +22,17 @@
 // non-const method, all threads accessing the same WriteBatch must use
 // external synchronization.
 
-#pragma once
+#ifndef STORAGE_ROCKSDB_INCLUDE_WRITE_BATCH_H_
+#define STORAGE_ROCKSDB_INCLUDE_WRITE_BATCH_H_
 
-#include <stdint.h>
 #include <atomic>
-#include <memory>
+#include <stack>
 #include <string>
-#include <vector>
+#include <stdint.h>
 #include "rocksdb/status.h"
 #include "rocksdb/write_batch_base.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class Slice;
 class ColumnFamilyHandle;
@@ -61,13 +61,7 @@ struct SavePoint {
 class WriteBatch : public WriteBatchBase {
  public:
   explicit WriteBatch(size_t reserved_bytes = 0, size_t max_bytes = 0);
-  explicit WriteBatch(size_t reserved_bytes, size_t max_bytes, size_t ts_sz);
-  // `protection_bytes_per_key` is the number of bytes used to store
-  // protection information for each key entry. Currently supported values are
-  // zero (disabled) and eight.
-  explicit WriteBatch(size_t reserved_bytes, size_t max_bytes, size_t ts_sz,
-                      size_t protection_bytes_per_key);
-  ~WriteBatch() override;
+  ~WriteBatch();
 
   using WriteBatchBase::Put;
   // Store the mapping "key->value" in the database.
@@ -78,7 +72,7 @@ class WriteBatch : public WriteBatchBase {
   }
 
   // Variant of Put() that gathers output like writev(2).  The key and value
-  // that will be written to the database are concatenations of arrays of
+  // that will be written to the database are concatentations of arrays of
   // slices.
   Status Put(ColumnFamilyHandle* column_family, const SliceParts& key,
              const SliceParts& value) override;
@@ -150,7 +144,7 @@ class WriteBatch : public WriteBatchBase {
   // it will not be persisted to the SST files. When iterating over this
   // WriteBatch, WriteBatch::Handler::LogData will be called with the contents
   // of the blob as it is encountered. Blobs, puts, deletes, and merges will be
-  // encountered in the same order in which they were inserted. The blob will
+  // encountered in the same order in thich they were inserted. The blob will
   // NOT consume sequence number(s) and will NOT increase the count of the batch
   //
   // Example application: add timestamps to the transaction log for use in
@@ -171,12 +165,6 @@ class WriteBatch : public WriteBatchBase {
   // will be returned.
   // Otherwise returns Status::OK().
   Status RollbackToSavePoint() override;
-
-  // Pop the most recent save point.
-  // If there is no previous call to SetSavePoint(), Status::NotFound()
-  // will be returned.
-  // Otherwise returns Status::OK().
-  Status PopSavePoint() override;
 
   // Support for iterating over the contents of a batch.
   class Handler {
@@ -223,9 +211,8 @@ class WriteBatch : public WriteBatchBase {
     }
     virtual void SingleDelete(const Slice& /*key*/) {}
 
-    virtual Status DeleteRangeCF(uint32_t /*column_family_id*/,
-                                 const Slice& /*begin_key*/,
-                                 const Slice& /*end_key*/) {
+    virtual Status DeleteRangeCF(uint32_t column_family_id,
+                                 const Slice& begin_key, const Slice& end_key) {
       return Status::InvalidArgument("DeleteRangeCF not implemented");
     }
 
@@ -240,33 +227,23 @@ class WriteBatch : public WriteBatchBase {
     }
     virtual void Merge(const Slice& /*key*/, const Slice& /*value*/) {}
 
-    virtual Status PutBlobIndexCF(uint32_t /*column_family_id*/,
-                                  const Slice& /*key*/,
-                                  const Slice& /*value*/) {
-      return Status::InvalidArgument("PutBlobIndexCF not implemented");
-    }
-
     // The default implementation of LogData does nothing.
     virtual void LogData(const Slice& blob);
 
-    virtual Status MarkBeginPrepare(bool = false) {
+    virtual Status MarkBeginPrepare() {
       return Status::InvalidArgument("MarkBeginPrepare() handler not defined.");
     }
 
-    virtual Status MarkEndPrepare(const Slice& /*xid*/) {
+    virtual Status MarkEndPrepare(const Slice& xid) {
       return Status::InvalidArgument("MarkEndPrepare() handler not defined.");
     }
 
-    virtual Status MarkNoop(bool /*empty_batch*/) {
-      return Status::InvalidArgument("MarkNoop() handler not defined.");
-    }
-
-    virtual Status MarkRollback(const Slice& /*xid*/) {
+    virtual Status MarkRollback(const Slice& xid) {
       return Status::InvalidArgument(
           "MarkRollbackPrepare() handler not defined.");
     }
 
-    virtual Status MarkCommit(const Slice& /*xid*/) {
+    virtual Status MarkCommit(const Slice& xid) {
       return Status::InvalidArgument("MarkCommit() handler not defined.");
     }
 
@@ -274,11 +251,6 @@ class WriteBatch : public WriteBatchBase {
     // iteration is halted. Otherwise, it continues iterating. The default
     // implementation always returns true.
     virtual bool Continue();
-
-   protected:
-    friend class WriteBatchInternal;
-    virtual bool WriteAfterCommit() const { return true; }
-    virtual bool WriteBeforePrepare() const { return false; }
   };
   Status Iterate(Handler* handler) const;
 
@@ -289,7 +261,7 @@ class WriteBatch : public WriteBatchBase {
   size_t GetDataSize() const { return rep_.size(); }
 
   // Returns the number of updates in the batch
-  uint32_t Count() const;
+  int Count() const;
 
   // Returns true if PutCF will be called during Iterate
   bool HasPut() const;
@@ -312,27 +284,20 @@ class WriteBatch : public WriteBatchBase {
   // Returns true if MarkEndPrepare will be called during Iterate
   bool HasEndPrepare() const;
 
-  // Returns true if MarkCommit will be called during Iterate
+  // Returns trie if MarkCommit will be called during Iterate
   bool HasCommit() const;
 
-  // Returns true if MarkRollback will be called during Iterate
+  // Returns trie if MarkRollback will be called during Iterate
   bool HasRollback() const;
-
-  // Assign timestamp to write batch
-  Status AssignTimestamp(const Slice& ts);
-
-  // Assign timestamps to write batch
-  Status AssignTimestamps(const std::vector<Slice>& ts_list);
 
   using WriteBatchBase::GetWriteBatch;
   WriteBatch* GetWriteBatch() override { return this; }
 
   // Constructor with a serialized string object
   explicit WriteBatch(const std::string& rep);
-  explicit WriteBatch(std::string&& rep);
 
   WriteBatch(const WriteBatch& src);
-  WriteBatch(WriteBatch&& src) noexcept;
+  WriteBatch(WriteBatch&& src);
   WriteBatch& operator=(const WriteBatch& src);
   WriteBatch& operator=(WriteBatch&& src);
 
@@ -343,17 +308,10 @@ class WriteBatch : public WriteBatchBase {
 
   void SetMaxBytes(size_t max_bytes) override { max_bytes_ = max_bytes; }
 
-  struct ProtectionInfo;
-  size_t GetProtectionBytesPerKey() const;
-
  private:
   friend class WriteBatchInternal;
   friend class LocalSavePoint;
-  // TODO(myabandeh): this is needed for a hack to collapse the write batch and
-  // remove duplicate keys. Remove it when the hack is replaced with a proper
-  // solution.
-  friend class WriteBatchWithIndex;
-  std::unique_ptr<SavePoints> save_points_;
+  SavePoints* save_points_;
 
   // When sending a WriteBatch through WriteImpl we might want to
   // specify that only the first x records of the batch be written to
@@ -369,17 +327,12 @@ class WriteBatch : public WriteBatchBase {
   // Maximum size of rep_.
   size_t max_bytes_;
 
-  // Is the content of the batch the application's latest state that meant only
-  // to be used for recovery? Refer to
-  // TransactionOptions::use_only_the_last_commit_time_batch_for_recovery for
-  // more details.
-  bool is_latest_persistent_state_ = false;
-
-  std::unique_ptr<ProtectionInfo> prot_info_;
-
  protected:
   std::string rep_;  // See comment in write_batch.cc for the format of rep_
-  const size_t timestamp_size_;
+
+  // Intentionally copyable
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
+
+#endif  // STORAGE_ROCKSDB_INCLUDE_WRITE_BATCH_H_

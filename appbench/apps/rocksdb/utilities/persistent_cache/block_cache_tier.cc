@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 #ifndef ROCKSDB_LITE
 
 #include "utilities/persistent_cache/block_cache_tier.h"
@@ -10,13 +10,13 @@
 #include <utility>
 #include <vector>
 
-#include "logging/logging.h"
 #include "port/port.h"
-#include "test_util/sync_point.h"
+#include "util/logging.h"
 #include "util/stop_watch.h"
+#include "util/sync_point.h"
 #include "utilities/persistent_cache/block_cache_tier_file.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 //
 // BlockCacheImpl
@@ -136,7 +136,7 @@ Status BlockCacheTier::Close() {
 template<class T>
 void Add(std::map<std::string, double>* stats, const std::string& key,
          const T& t) {
-  stats->insert({key, static_cast<double>(t)});
+  stats->insert({key, static_cast<const double>(t)});
 }
 
 PersistentCache::StatsType BlockCacheTier::Stats() {
@@ -163,7 +163,7 @@ PersistentCache::StatsType BlockCacheTier::Stats() {
       stats_.read_hit_latency_.Average());
   Add(&stats, "persistentcache.blockcachetier.read_miss_latency",
       stats_.read_miss_latency_.Average());
-  Add(&stats, "persistentcache.blockcachetier.write_latency",
+  Add(&stats, "persistenetcache.blockcachetier.write_latency",
       stats_.write_latency_.Average());
 
   auto out = PersistentCacheTier::Stats();
@@ -222,7 +222,7 @@ Status BlockCacheTier::InsertImpl(const Slice& key, const Slice& data) {
   assert(data.size());
   assert(cache_file_);
 
-  StopWatchNano timer(opt_.clock, /*auto_start=*/true);
+  StopWatchNano timer(opt_.env, /*auto_start=*/ true);
 
   WriteLock _(&lock_);
 
@@ -263,9 +263,9 @@ Status BlockCacheTier::InsertImpl(const Slice& key, const Slice& data) {
   return Status::OK();
 }
 
-Status BlockCacheTier::Lookup(const Slice& key, std::unique_ptr<char[]>* val,
+Status BlockCacheTier::Lookup(const Slice& key, unique_ptr<char[]>* val,
                               size_t* size) {
-  StopWatchNano timer(opt_.clock, /*auto_start=*/true);
+  StopWatchNano timer(opt_.env, /*auto_start=*/ true);
 
   LBA lba;
   bool status;
@@ -287,7 +287,7 @@ Status BlockCacheTier::Lookup(const Slice& key, std::unique_ptr<char[]>* val,
 
   assert(file->refs_);
 
-  std::unique_ptr<char[]> scratch(new char[lba.size_]);
+  unique_ptr<char[]> scratch(new char[lba.size_]);
   Slice blk_key;
   Slice blk_val;
 
@@ -369,7 +369,7 @@ bool BlockCacheTier::Reserve(const size_t size) {
 
   const double retain_fac = (100 - kEvictPct) / static_cast<double>(100);
   while (size + size_ > opt_.cache_size * retain_fac) {
-    std::unique_ptr<BlockCacheFile> f(metadata_.Evict());
+    unique_ptr<BlockCacheFile> f(metadata_.Evict());
     if (!f) {
       // nothing is evictable
       return false;
@@ -420,6 +420,6 @@ Status NewPersistentCache(Env* const env, const std::string& path,
   return s;
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 #endif  // ifndef ROCKSDB_LITE

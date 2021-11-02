@@ -1,7 +1,7 @@
 //  Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 //
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -9,24 +9,11 @@
 
 #include "util/coding.h"
 
-#include "test_util/testharness.h"
+#include "util/testharness.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
 class Coding { };
-TEST(Coding, Fixed16) {
-  std::string s;
-  for (uint16_t v = 0; v < 0xFFFF; v++) {
-    PutFixed16(&s, v);
-  }
-
-  const char* p = s.data();
-  for (uint16_t v = 0; v < 0xFFFF; v++) {
-    uint16_t actual = DecodeFixed16(p);
-    ASSERT_EQ(v, actual);
-    p += sizeof(uint16_t);
-  }
-}
 
 TEST(Coding, Fixed32) {
   std::string s;
@@ -161,7 +148,7 @@ TEST(Coding, Varint32Truncation) {
   std::string s;
   PutVarint32(&s, large_value);
   uint32_t result;
-  for (unsigned int len = 0; len + 1 < s.size(); len++) {
+  for (unsigned int len = 0; len < s.size() - 1; len++) {
     ASSERT_TRUE(GetVarint32Ptr(s.data(), s.data() + len, &result) == nullptr);
   }
   ASSERT_TRUE(
@@ -181,7 +168,7 @@ TEST(Coding, Varint64Truncation) {
   std::string s;
   PutVarint64(&s, large_value);
   uint64_t result;
-  for (unsigned int len = 0; len + 1 < s.size(); len++) {
+  for (unsigned int len = 0; len < s.size() - 1; len++) {
     ASSERT_TRUE(GetVarint64Ptr(s.data(), s.data() + len, &result) == nullptr);
   }
   ASSERT_TRUE(
@@ -209,7 +196,7 @@ TEST(Coding, Strings) {
   ASSERT_EQ("", input.ToString());
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

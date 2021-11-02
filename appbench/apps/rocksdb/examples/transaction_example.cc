@@ -1,7 +1,7 @@
 // Copyright (c) 2011-present, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 
 #ifndef ROCKSDB_LITE
 
@@ -11,13 +11,9 @@
 #include "rocksdb/utilities/transaction.h"
 #include "rocksdb/utilities/transaction_db.h"
 
-using namespace ROCKSDB_NAMESPACE;
+using namespace rocksdb;
 
-#if defined(OS_WIN)
-std::string kDBPath = "C:\\Windows\\TEMP\\rocksdb_transaction_example";
-#else
 std::string kDBPath = "/tmp/rocksdb_transaction_example";
-#endif
 
 int main() {
   // open DB
@@ -54,32 +50,16 @@ int main() {
 
   // Read a key OUTSIDE this transaction. Does not affect txn.
   s = txn_db->Get(read_options, "abc", &value);
-  assert(s.IsNotFound());
 
   // Write a key OUTSIDE of this transaction.
-  // Does not affect txn since this is an unrelated key.
+  // Does not affect txn since this is an unrelated key.  If we wrote key 'abc'
+  // here, the transaction would fail to commit.
   s = txn_db->Put(write_options, "xyz", "zzz");
-  assert(s.ok());
-
-  // Write a key OUTSIDE of this transaction.
-  // Fail because the key conflicts with the key written in txn.
-  s = txn_db->Put(write_options, "abc", "def");
-  assert(s.subcode() == Status::kLockTimeout);
-
-  // Value for key "xyz" has been committed, can be read in txn.
-  s = txn->Get(read_options, "xyz", &value);
-  assert(s.ok());
-  assert(value == "zzz");
 
   // Commit transaction
   s = txn->Commit();
   assert(s.ok());
   delete txn;
-
-  // Value is committed, can be read now.
-  s = txn_db->Get(read_options, "abc", &value);
-  assert(s.ok());
-  assert(value == "def");
 
   ////////////////////////////////////////////////////////
   //
@@ -98,25 +78,14 @@ int main() {
   s = txn_db->Put(write_options, "abc", "xyz");
   assert(s.ok());
 
-  // Read the latest committed value.
-  s = txn->Get(read_options, "abc", &value);
-  assert(s.ok());
-  assert(value == "xyz");
-
-  // Read the snapshotted value.
-  read_options.snapshot = snapshot;
-  s = txn->Get(read_options, "abc", &value);
-  assert(s.ok());
-  assert(value == "def");
-
   // Attempt to read a key using the snapshot.  This will fail since
   // the previous write outside this txn conflicts with this read.
+  read_options.snapshot = snapshot;
   s = txn->GetForUpdate(read_options, "abc", &value);
   assert(s.IsBusy());
 
   txn->Rollback();
 
-  // Snapshot will be released upon deleting the transaction.
   delete txn;
   // Clear snapshot from read options since it is no longer valid
   read_options.snapshot = nullptr;
@@ -140,13 +109,10 @@ int main() {
   // Do some reads and writes to key "x"
   read_options.snapshot = txn_db->GetSnapshot();
   s = txn->Get(read_options, "x", &value);
-  assert(s.IsNotFound());
-  s = txn->Put("x", "x");
-  assert(s.ok());
+  txn->Put("x", "x");
 
   // Do a write outside of the transaction to key "y"
-  s = txn_db->Put(write_options, "y", "y1");
-  assert(s.ok());
+  s = txn_db->Put(write_options, "y", "y");
 
   // Set a new snapshot in the transaction
   txn->SetSnapshot();
@@ -157,10 +123,7 @@ int main() {
   // Since the snapshot was advanced, the write done outside of the
   // transaction does not conflict.
   s = txn->GetForUpdate(read_options, "y", &value);
-  assert(s.ok());
-  assert(value == "y1");
-  s = txn->Put("y", "y2");
-  assert(s.ok());
+  txn->Put("y", "y");
 
   // Decide we want to revert the last write from this transaction.
   txn->RollbackToSavePoint();
@@ -171,15 +134,6 @@ int main() {
   delete txn;
   // Clear snapshot from read options since it is no longer valid
   read_options.snapshot = nullptr;
-
-  // db state is at the save point.
-  s = txn_db->Get(read_options, "x", &value);
-  assert(s.ok());
-  assert(value == "x");
-
-  s = txn_db->Get(read_options, "y", &value);
-  assert(s.ok());
-  assert(value == "y1");
 
   // Cleanup
   delete txn_db;

@@ -1,8 +1,7 @@
-// Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 // Copyright (c) 2015, Red Hat, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+// This source code is licensed under the BSD-style license found in the
+// LICENSE file in the root directory of this source tree. An additional grant
+// of patent rights can be found in the PATENTS file in the same directory.
 // Copyright (c) 2011 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
@@ -11,17 +10,17 @@
 
 #include "rocksdb/utilities/env_mirror.h"
 
-namespace ROCKSDB_NAMESPACE {
+namespace rocksdb {
 
-// An implementation of Env that mirrors all work over two backend
+// An implementaiton of Env that mirrors all work over two backend
 // Env's.  This is useful for debugging purposes.
 class SequentialFileMirror : public SequentialFile {
  public:
-  std::unique_ptr<SequentialFile> a_, b_;
+  unique_ptr<SequentialFile> a_, b_;
   std::string fname;
   explicit SequentialFileMirror(std::string f) : fname(f) {}
 
-  Status Read(size_t n, Slice* result, char* scratch) override {
+  Status Read(size_t n, Slice* result, char* scratch) {
     Slice aslice;
     Status as = a_->Read(n, &aslice, scratch);
     if (as == Status::OK()) {
@@ -45,13 +44,13 @@ class SequentialFileMirror : public SequentialFile {
     return as;
   }
 
-  Status Skip(uint64_t n) override {
+  Status Skip(uint64_t n) {
     Status as = a_->Skip(n);
     Status bs = b_->Skip(n);
     assert(as == bs);
     return as;
   }
-  Status InvalidateCache(size_t offset, size_t length) override {
+  Status InvalidateCache(size_t offset, size_t length) {
     Status as = a_->InvalidateCache(offset, length);
     Status bs = b_->InvalidateCache(offset, length);
     assert(as == bs);
@@ -61,12 +60,11 @@ class SequentialFileMirror : public SequentialFile {
 
 class RandomAccessFileMirror : public RandomAccessFile {
  public:
-  std::unique_ptr<RandomAccessFile> a_, b_;
+  unique_ptr<RandomAccessFile> a_, b_;
   std::string fname;
   explicit RandomAccessFileMirror(std::string f) : fname(f) {}
 
-  Status Read(uint64_t offset, size_t n, Slice* result,
-              char* scratch) const override {
+  Status Read(uint64_t offset, size_t n, Slice* result, char* scratch) const {
     Status as = a_->Read(offset, n, result, scratch);
     if (as == Status::OK()) {
       char* bscratch = new char[n];
@@ -88,7 +86,12 @@ class RandomAccessFileMirror : public RandomAccessFile {
     return as;
   }
 
-  size_t GetUniqueId(char* id, size_t max_size) const override {
+  bool ShouldForwardRawRequest() const {
+    // NOTE: not verified
+    return a_->ShouldForwardRawRequest();
+  }
+
+  size_t GetUniqueId(char* id, size_t max_size) const {
     // NOTE: not verified
     return a_->GetUniqueId(id, max_size);
   }
@@ -96,10 +99,9 @@ class RandomAccessFileMirror : public RandomAccessFile {
 
 class WritableFileMirror : public WritableFile {
  public:
-  std::unique_ptr<WritableFile> a_, b_;
+  unique_ptr<WritableFile> a_, b_;
   std::string fname;
-  explicit WritableFileMirror(std::string f, const EnvOptions& options)
-      : WritableFile(options), fname(f) {}
+  explicit WritableFileMirror(std::string f) : fname(f) {}
 
   Status Append(const Slice& data) override {
     Status as = a_->Append(data);
@@ -107,20 +109,11 @@ class WritableFileMirror : public WritableFile {
     assert(as == bs);
     return as;
   }
-  Status Append(const Slice& data,
-                const DataVerificationInfo& /* verification_info */) override {
-    return Append(data);
-  }
   Status PositionedAppend(const Slice& data, uint64_t offset) override {
     Status as = a_->PositionedAppend(data, offset);
     Status bs = b_->PositionedAppend(data, offset);
     assert(as == bs);
     return as;
-  }
-  Status PositionedAppend(
-      const Slice& data, uint64_t offset,
-      const DataVerificationInfo& /* verification_info */) override {
-    return PositionedAppend(data, offset);
   }
   Status Truncate(uint64_t size) override {
     Status as = a_->Truncate(size);
@@ -202,7 +195,7 @@ class WritableFileMirror : public WritableFile {
 };
 
 Status EnvMirror::NewSequentialFile(const std::string& f,
-                                    std::unique_ptr<SequentialFile>* r,
+                                    unique_ptr<SequentialFile>* r,
                                     const EnvOptions& options) {
   if (f.find("/proc/") == 0) {
     return a_->NewSequentialFile(f, r, options);
@@ -219,7 +212,7 @@ Status EnvMirror::NewSequentialFile(const std::string& f,
 }
 
 Status EnvMirror::NewRandomAccessFile(const std::string& f,
-                                      std::unique_ptr<RandomAccessFile>* r,
+                                      unique_ptr<RandomAccessFile>* r,
                                       const EnvOptions& options) {
   if (f.find("/proc/") == 0) {
     return a_->NewRandomAccessFile(f, r, options);
@@ -236,10 +229,10 @@ Status EnvMirror::NewRandomAccessFile(const std::string& f,
 }
 
 Status EnvMirror::NewWritableFile(const std::string& f,
-                                  std::unique_ptr<WritableFile>* r,
+                                  unique_ptr<WritableFile>* r,
                                   const EnvOptions& options) {
   if (f.find("/proc/") == 0) return a_->NewWritableFile(f, r, options);
-  WritableFileMirror* mf = new WritableFileMirror(f, options);
+  WritableFileMirror* mf = new WritableFileMirror(f);
   Status as = a_->NewWritableFile(f, &mf->a_, options);
   Status bs = b_->NewWritableFile(f, &mf->b_, options);
   assert(as == bs);
@@ -252,11 +245,11 @@ Status EnvMirror::NewWritableFile(const std::string& f,
 
 Status EnvMirror::ReuseWritableFile(const std::string& fname,
                                     const std::string& old_fname,
-                                    std::unique_ptr<WritableFile>* r,
+                                    unique_ptr<WritableFile>* r,
                                     const EnvOptions& options) {
   if (fname.find("/proc/") == 0)
     return a_->ReuseWritableFile(fname, old_fname, r, options);
-  WritableFileMirror* mf = new WritableFileMirror(fname, options);
+  WritableFileMirror* mf = new WritableFileMirror(fname);
   Status as = a_->ReuseWritableFile(fname, old_fname, &mf->a_, options);
   Status bs = b_->ReuseWritableFile(fname, old_fname, &mf->b_, options);
   assert(as == bs);
@@ -267,5 +260,5 @@ Status EnvMirror::ReuseWritableFile(const std::string& fname,
   return as;
 }
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 #endif

@@ -1,6 +1,4 @@
-# shellcheck disable=SC2148
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
-TMP_DIR="${TMPDIR:-/tmp}/rocksdb-sanity-test"
+TMP_DIR="/tmp/rocksdb-sanity-test"
 
 if [ "$#" -lt 2 ]; then
   echo "usage: ./auto_sanity_test.sh [new_commit] [old_commit]"

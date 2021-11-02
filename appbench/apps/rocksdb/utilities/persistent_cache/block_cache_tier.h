@@ -1,7 +1,7 @@
 //  Copyright (c) 2013, Facebook, Inc.  All rights reserved.
-//  This source code is licensed under both the GPLv2 (found in the
-//  COPYING file in the root directory) and Apache 2.0 License
-//  (found in the LICENSE.Apache file in the root directory).
+//  This source code is licensed under the BSD-style license found in the
+//  LICENSE file in the root directory of this source tree. An additional grant
+//  of patent rights can be found in the PATENTS file in the same directory.
 #pragma once
 
 #ifndef ROCKSDB_LITE
@@ -10,7 +10,6 @@
 #include <unistd.h>
 #endif // ! OS_WIN
 
-#include <atomic>
 #include <list>
 #include <memory>
 #include <set>
@@ -19,22 +18,23 @@
 #include <string>
 #include <thread>
 
-#include "memory/arena.h"
-#include "memtable/skiplist.h"
-#include "monitoring/histogram.h"
-#include "port/port.h"
 #include "rocksdb/cache.h"
 #include "rocksdb/comparator.h"
 #include "rocksdb/persistent_cache.h"
-#include "rocksdb/system_clock.h"
-#include "util/coding.h"
-#include "util/crc32c.h"
-#include "util/mutexlock.h"
+
 #include "utilities/persistent_cache/block_cache_tier_file.h"
 #include "utilities/persistent_cache/block_cache_tier_metadata.h"
 #include "utilities/persistent_cache/persistent_cache_util.h"
 
-namespace ROCKSDB_NAMESPACE {
+#include "memtable/skiplist.h"
+#include "monitoring/histogram.h"
+#include "port/port.h"
+#include "util/arena.h"
+#include "util/coding.h"
+#include "util/crc32c.h"
+#include "util/mutexlock.h"
+
+namespace rocksdb {
 
 //
 // Block cache tier implementation
@@ -43,16 +43,16 @@ class BlockCacheTier : public PersistentCacheTier {
  public:
   explicit BlockCacheTier(const PersistentCacheConfig& opt)
       : opt_(opt),
-        insert_ops_(static_cast<size_t>(opt_.max_write_pipeline_backlog_size)),
+        insert_ops_(opt_.max_write_pipeline_backlog_size),
         buffer_allocator_(opt.write_buffer_size, opt.write_buffer_count()),
-        writer_(this, opt_.writer_qdepth, static_cast<size_t>(opt_.writer_dispatch_size)) {
-    Info(opt_.log, "Initializing allocator. size=%d B count=%" ROCKSDB_PRIszt,
+        writer_(this, opt_.writer_qdepth, opt_.writer_dispatch_size) {
+    Info(opt_.log, "Initializing allocator. size=%d B count=%d",
          opt_.write_buffer_size, opt_.write_buffer_count());
   }
 
   virtual ~BlockCacheTier() {
     // Close is re-entrant so we can call close even if it is already closed
-    Close().PermitUncheckedError();
+    Close();
     assert(!insert_th_.joinable());
   }
 
@@ -73,7 +73,7 @@ class BlockCacheTier : public PersistentCacheTier {
   void TEST_Flush() override {
     while (insert_ops_.Size()) {
       /* sleep override */
-      SystemClock::Default()->SleepForMicroseconds(1000000);
+      Env::Default()->SleepForMicroseconds(1000000);
     }
   }
 
@@ -91,7 +91,7 @@ class BlockCacheTier : public PersistentCacheTier {
     ~InsertOp() {}
 
     InsertOp() = delete;
-    InsertOp(InsertOp&& /*rhs*/) = default;
+    InsertOp(InsertOp&& rhs) = default;
     InsertOp& operator=(InsertOp&& rhs) = default;
 
     // used for estimating size by bounded queue
@@ -99,7 +99,7 @@ class BlockCacheTier : public PersistentCacheTier {
 
     std::string key_;
     std::string data_;
-    bool signal_ = false;  // signal to request processing thread to exit
+    const bool signal_ = false;  // signal to request processing thread to exit
   };
 
   // entry point for insert thread
@@ -121,10 +121,10 @@ class BlockCacheTier : public PersistentCacheTier {
     HistogramImpl read_hit_latency_;
     HistogramImpl read_miss_latency_;
     HistogramImpl write_latency_;
-    std::atomic<uint64_t> cache_hits_{0};
-    std::atomic<uint64_t> cache_misses_{0};
-    std::atomic<uint64_t> cache_errors_{0};
-    std::atomic<uint64_t> insert_dropped_{0};
+    uint64_t cache_hits_ = 0;
+    uint64_t cache_misses_ = 0;
+    uint64_t cache_errors_ = 0;
+    uint64_t insert_dropped_ = 0;
 
     double CacheHitPct() const {
       const auto lookups = cache_hits_ + cache_misses_;
@@ -140,7 +140,7 @@ class BlockCacheTier : public PersistentCacheTier {
   port::RWMutex lock_;                          // Synchronization
   const PersistentCacheConfig opt_;             // BlockCache options
   BoundedQueue<InsertOp> insert_ops_;           // Ops waiting for insert
-  ROCKSDB_NAMESPACE::port::Thread insert_th_;   // Insert thread
+  rocksdb::port::Thread insert_th_;                       // Insert thread
   uint32_t writer_cache_id_ = 0;                // Current cache file identifier
   WriteableCacheFile* cache_file_ = nullptr;    // Current cache file reference
   CacheWriteBufferAllocator buffer_allocator_;  // Buffer provider
@@ -150,6 +150,6 @@ class BlockCacheTier : public PersistentCacheTier {
   Statistics stats_;                                 // Statistics
 };
 
-}  // namespace ROCKSDB_NAMESPACE
+}  // namespace rocksdb
 
 #endif
