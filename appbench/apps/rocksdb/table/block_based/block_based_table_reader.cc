@@ -743,6 +743,15 @@ Status BlockBasedTable::PrefetchTail(
   TEST_SYNC_POINT_CALLBACK("BlockBasedTable::Open::TailPrefetchLen",
                            &tail_prefetch_size);
 
+  //adding readahead call info to ro.ra_options
+  ro.ra_options->ra_offset = prefetch_off;
+  ro.ra_options->ra_bytes = prefetch_len;
+
+  // printf("%s: Readahead being called: offset:%ld, len:%ld\n", 
+  //   __func__, prefetch_off, prefetch_len);
+
+
+
   // Try file system prefetch
   if (!file->use_direct_io() && !force_direct_prefetch) {
     if (!file->Prefetch(prefetch_off, prefetch_len).IsNotSupported()) {
