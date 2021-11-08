@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 if [ -z "$APPS" ]; then
     echo "APPS environment variable is undefined."
@@ -21,10 +22,10 @@ SYNC=0 ##Call sync when writing
 WRITE_BUFF_SIZE=67108864
 
 declare -a value_size_arr=("4096")
-declare -a key_size_arr=("1000")
-declare -a num_arr=("1000000") ## Num of elements in DB
+declare -a key_size_arr=("100")
+declare -a num_arr=("2000000") ## Num of elements in DB
 #declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
-declare -a workload_arr=("readrandom") ##kinds of db_bench workloads
+declare -a workload_arr=("readrandom" "readseq" "readreverse" "overwrite") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
@@ -56,6 +57,14 @@ CLEAR_DB()
 }
 
 
+
+
+UNSETPRELOAD() {
+	export LD_PRELOAD=""
+}
+
+
+
 WRITELOAD() {
     CLEAR_DB
     $base/db_bench $PARAMS $WRITEARGS
@@ -73,21 +82,72 @@ CREATE_OUTFOLDER() {
 }
 
 
+SETPRELOAD_ROCKSDB()
+{
+        if [[ "$PREDICT" == "LIBONLY" ]]; then
+                #uses read_ra but disables OS prediction
+                echo "setting LIBONLY pred"
+                cp $base/build_tools/build_detect_platform_cross $base/build_tools/build_detect_platform
+                $base/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libonlylibpred.so
+        elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+                #uses read_ra
+                echo "setting CROSSLAYER pred"
+                cp $base/build_tools/build_detect_platform_cross $base/build_tools/build_detect_platform
+                $base/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libos_libpred.so
+        elif [[ "$PREDICT" == "OSONLY" ]]; then
+                #does not use read_ra and disables all application read-ahead
+                echo "setting OS pred"
+                cp $base/build_tools/build_detect_platform_orig $base/build_tools/build_detect_platform
+                $base/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libonlyospred.so
+        else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
+                echo "setting VANILLA"
+                cp $base/build_tools/build_detect_platform_orig $base/build_tools/build_detect_platform
+                $base/compile.sh &> compile.out
+                export LD_PRELOAD=""
+        fi
+}
+
+
 RUNAPP()
 {
     COMMAND="$APPPREFIX $base/db_bench $PARAMS $READARGS"
 
-    if [ "$experiment" = "hitrate" ]; then
+    if [ "$experiment" = "CACHESTAT" ]; then
         sudo dmesg -c
-        SETPRELOAD "JUSTSTATS"
-        $COMMAND &>> $OUTFILE
+
+
+	echo "RUNNING VANILLA"
+
+	TYPE="VANILLA"
+        SETPRELOAD_ROCKSDB $TYPE
+        $COMMAND &>> $OUTFILE$TYPE
         UNSETPRELOAD
+	FlushDisk
+	FlushDisk
+
+	TYPE="OSONLY"
+        SETPRELOAD_ROCKSDB $TYPE
+        $COMMAND &>> $OUTFILE$TYPE
+        UNSETPRELOAD
+	FlushDisk
+	FlushDisk
+
+	TYPE="CROSSLAYER"
+        SETPRELOAD_ROCKSDB $TYPE
+        $COMMAND &>> $OUTFILE$TYPE
+        UNSETPRELOAD
+	FlushDisk
+	FlushDisk
+
         dmesg >> $OUTFILE
     fi
 }
 
 
-COMPILE_APP ##Do this if its not already compiled
+#COMPILE_APP ##Do this if its not already compiled
 
 for NUM in "${num_arr[@]}"
 do
@@ -102,7 +162,7 @@ do
                 READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$nproc"
                 OUTFOLDER=$out_base/$WORKLOAD
                 CREATE_OUTFOLDER $OUTFOLDER
-                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--$RIGHTNOW"
+                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--"
 
                 WRITELOAD ##Needs to be called for diff load config
                 REFRESH

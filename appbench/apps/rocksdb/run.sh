@@ -89,13 +89,13 @@ $DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 export LD_PRELOAD=""
 
-echo "RUNNING LIBONLY.................."
-FlushDisk
-PREDICT="LIBONLY"
-SETPRELOAD
-$DBHOME/db_bench $PARAMS $READARGS
-FlushDisk
-export LD_PRELOAD=""
+#echo "RUNNING LIBONLY.................."
+#FlushDisk
+#PREDICT="LIBONLY"
+#SETPRELOAD
+#$DBHOME/db_bench $PARAMS $READARGS
+#FlushDisk
+#export LD_PRELOAD=""
 
 echo "RUNNING CROSSLAYER.................."
 FlushDisk
