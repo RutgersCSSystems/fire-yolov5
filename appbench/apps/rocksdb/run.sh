@@ -27,13 +27,26 @@ FlushDisk()
 
 SETPRELOAD()
 {
-	if [[ "$PREDICT" == "1" ]]; then
+	if [[ "$PREDICT" == "LIBONLY" ]]; then
 		echo "setting pred"
-		#export LD_PRELOAD=/usr/lib/libcrosslayer.so
+
+		cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
+		$DBHOME/compile.sh
 		export LD_PRELOAD=/usr/lib/libonlylibpred.so
-	else
-		echo "setting nopred"
-		#export LD_PRELOAD=/usr/lib/libjuststats.so
+
+	elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+		echo "setting pred"
+
+		cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
+		$DBHOME/compile.sh
+		export LD_PRELOAD=/usr/lib/libonlylibpred.so
+
+	elif [[ "$PREDICT" == "OSONLY" ]]; then
+		echo "setting OS pred"
+
+		cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
+		$DBHOME/compile.sh
+
 		export LD_PRELOAD=/usr/lib/libonlyospred.so
 	fi
 }
