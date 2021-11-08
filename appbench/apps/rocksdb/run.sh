@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 DBHOME=$PWD
 PREDICT=0
 THREAD=4
@@ -6,7 +7,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=100
 WRITE_BUFF_SIZE=67108864
-NUM=10000000
+NUM=1000000
 DBDIR=$DBHOME/DATA
 
 WORKLOADS="readrandom"
@@ -28,10 +29,12 @@ SETPRELOAD()
 {
 	if [[ "$PREDICT" == "1" ]]; then
 		echo "setting pred"
-		export LD_PRELOAD=/usr/lib/libcrosslayer.so
+		#export LD_PRELOAD=/usr/lib/libcrosslayer.so
+		export LD_PRELOAD=/usr/lib/libonlylibpred.so
 	else
 		echo "setting nopred"
-		export LD_PRELOAD=/usr/lib/libjuststats.so
+		#export LD_PRELOAD=/usr/lib/libjuststats.so
+		export LD_PRELOAD=/usr/lib/libonlyospred.so
 	fi
 }
 
@@ -51,14 +54,23 @@ CLEAR_PWD()
 
 
 #Run write workload twice
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+#CLEAR_PWD
+#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
+FlushDisk
+echo "RUNNING Crosslayer.................."
+PREDICT=1
+SETPRELOAD
+$DBHOME/db_bench $PARAMS $READARGS
+export LD_PRELOAD=""
+FlushDisk
+exit
 
 echo "RUNNING Vanilla.................."
 FlushDisk
 PREDICT=0
 SETPRELOAD
-nocache $DBHOME/db_bench $PARAMS $READARGS
+$DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 export LD_PRELOAD=""
 exit
@@ -66,10 +78,4 @@ exit
 CLEAR_PWD
 $DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
-FlushDisk
-echo "RUNNING Crosslayer.................."
-PREDICT=1
-SETPRELOAD
-strace $DBHOME/db_bench $PARAMS $READARGS
-export LD_PRELOAD=""
-FlushDisk
+

@@ -21,7 +21,7 @@ grep -r "error:" compile.out &>> errors.out
 sudo make install &>> compile.out
 grep -r "error:" compile.out &>> errors.out
 
- y="5.14.0"
+ y="5.14.0+"
    if [[ x$ == x ]];
   then
       echo You have to say a version!
