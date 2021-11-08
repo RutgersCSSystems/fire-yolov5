@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 DBHOME=$PWD
-PREDICT=0
+PREDICT="OSONLY"
 THREAD=4
 VALUE_SIZE=4096
 SYNC=0
@@ -27,27 +27,30 @@ FlushDisk()
 
 SETPRELOAD()
 {
-	if [[ "$PREDICT" == "LIBONLY" ]]; then
-		echo "setting pred"
-
-		cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
-		$DBHOME/compile.sh
-		export LD_PRELOAD=/usr/lib/libonlylibpred.so
-
-	elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
-		echo "setting pred"
-
+	if [[ "$PREDICT" == "LIBONLY" ]]; then 	
+		#uses read_ra but disables OS prediction
+		echo "setting LIBONLY pred"
 		cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
-		$DBHOME/compile.sh
+		$DBHOME/compile.sh &> compile.out
 		export LD_PRELOAD=/usr/lib/libonlylibpred.so
+	elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+		#uses read_ra
+		echo "setting CROSSLAYER pred"
+		cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
+		$DBHOME/compile.sh &> compile.out
+		export LD_PRELOAD=/usr/lib/libos_libpred.so
 
-	elif [[ "$PREDICT" == "OSONLY" ]]; then
+	elif [[ "$PREDICT" == "OSONLY" ]]; then 	
+		#does not use read_ra and disables all application read-ahead
 		echo "setting OS pred"
-
 		cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
-		$DBHOME/compile.sh
-
+		$DBHOME/compile.sh &> compile.out
 		export LD_PRELOAD=/usr/lib/libonlyospred.so
+	else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
+		echo "setting VANILLA"
+		cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
+		$DBHOME/compile.sh &> compile.out
+		export LD_PRELOAD=""
 	fi
 }
 
@@ -71,24 +74,37 @@ CLEAR_PWD()
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
 FlushDisk
-echo "RUNNING Crosslayer.................."
-PREDICT=1
+echo "RUNNING OSONLY.................."
+PREDICT="OSONLY"
 SETPRELOAD
 $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
-exit
 
 echo "RUNNING Vanilla.................."
 FlushDisk
-PREDICT=0
+PREDICT="VANILLA"
 SETPRELOAD
 $DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 export LD_PRELOAD=""
-exit
 
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+echo "RUNNING LIBONLY.................."
+FlushDisk
+PREDICT="LIBONLY"
+SETPRELOAD
+$DBHOME/db_bench $PARAMS $READARGS
+FlushDisk
+export LD_PRELOAD=""
+
+echo "RUNNING CROSSLAYER.................."
+FlushDisk
+PREDICT="CROSSLAYER"
+SETPRELOAD
+$DBHOME/db_bench $PARAMS $READARGS
+FlushDisk
+export LD_PRELOAD=""
+
+exit
 
 

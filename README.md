@@ -181,6 +181,38 @@ cp build_tools/build_detect_platform_orig build_tools/build_detect_platform
 ./compile.sh
 ```
 
+### Alternatively, to run all for RocksDB
+```
+./run.sh 
+```
 
+The script uses the following options
+```
+       if [[ "$PREDICT" == "LIBONLY" ]]; then
+                #uses read_ra but disables OS prediction
+                echo "setting LIBONLY pred"
+                cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
+                $DBHOME/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libonlylibpred.so
+        elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+                #uses read_ra
+                echo "setting CROSSLAYER pred"
+                cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
+                $DBHOME/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libos_libpred.so
+
+        elif [[ "$PREDICT" == "OSONLY" ]]; then
+                #does not use read_ra and disables all application read-ahead
+                echo "setting OS pred"
+                cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
+                $DBHOME/compile.sh &> compile.out
+                export LD_PRELOAD=/usr/lib/libonlyospred.so
+        else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
+                echo "setting VANILLA"
+                cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
+                $DBHOME/compile.sh &> compile.out
+                export LD_PRELOAD=""
+        fi
+```
 
 
