@@ -2,4 +2,4 @@
 set -x
 git pull
 git commit -am "$1"
-git push origin hpc-sudarsun
+git push origin hpc
