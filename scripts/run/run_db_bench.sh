@@ -25,7 +25,7 @@ declare -a value_size_arr=("4096")
 declare -a key_size_arr=("100")
 declare -a num_arr=("2000000") ## Num of elements in DB
 #declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "overwrite") ##kinds of db_bench workloads
+declare -a workload_arr=("readseq" "readreverse") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
