@@ -36,11 +36,11 @@ os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_FADV_RANDOM) $(ENABLE_SHARED_MEM)
 
 #This doesnt allow app or lib predictor, but OS prefetchers are working 
 onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEAPPPRED) $(ENABLE_WILLNEED_OPEN)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM)
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
