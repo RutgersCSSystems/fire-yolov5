@@ -137,6 +137,11 @@ cd NVM
 ./scripts/qemu/qemu_create.sh ## has to be done only once
 ```
 
+#### Installing all the required libraries in the QEMU
+```
+scripts/compile-install/set_appbench.sh 
+```
+
 #### Run Qemu
 To run qemu, first compile the kernel for qemu; then
 
