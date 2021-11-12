@@ -52,6 +52,7 @@ SETPRELOAD()
 		$DBHOME/compile.sh &> compile.out
 		export LD_PRELOAD=""
 	fi
+
 }
 
 BUILD_LIB()
