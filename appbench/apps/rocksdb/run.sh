@@ -73,6 +73,15 @@ CLEAR_PWD()
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
+echo "RUNNING CROSSLAYER.................."
+FlushDisk
+PREDICT="CROSSLAYER"
+SETPRELOAD
+$DBHOME/db_bench $PARAMS $READARGS
+FlushDisk
+export LD_PRELOAD=""
+
+
 FlushDisk
 echo "RUNNING OSONLY.................."
 PREDICT="OSONLY"
@@ -97,13 +106,6 @@ export LD_PRELOAD=""
 #FlushDisk
 #export LD_PRELOAD=""
 
-echo "RUNNING CROSSLAYER.................."
-FlushDisk
-PREDICT="CROSSLAYER"
-SETPRELOAD
-$DBHOME/db_bench $PARAMS $READARGS
-FlushDisk
-export LD_PRELOAD=""
 
 exit
 
