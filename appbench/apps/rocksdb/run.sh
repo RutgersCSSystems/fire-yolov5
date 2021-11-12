@@ -2,15 +2,15 @@
 set -x
 DBHOME=$PWD
 PREDICT="OSONLY"
-THREAD=4
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=100
 WRITE_BUFF_SIZE=67108864
-NUM=1000000
+NUM=100000
 DBDIR=$DBHOME/DATA
 
-WORKLOADS="readrandom"
+WORKLOADS="readreverse"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
 APPPREFIX="/usr/bin/time -v"
@@ -52,6 +52,7 @@ SETPRELOAD()
 		$DBHOME/compile.sh &> compile.out
 		export LD_PRELOAD=""
 	fi
+
 }
 
 BUILD_LIB()
@@ -80,7 +81,7 @@ SETPRELOAD
 $DBHOME/db_bench $PARAMS $READARGS
 FlushDisk
 export LD_PRELOAD=""
-
+exit
 
 FlushDisk
 echo "RUNNING OSONLY.................."
