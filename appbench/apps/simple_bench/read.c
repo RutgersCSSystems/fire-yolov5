@@ -11,7 +11,7 @@
 #define __NR_start_crosslayer 448
 
 #define NR_PAGES_READ 10
-#define NR_PAGES_RA 2
+#define NR_PAGES_RA 20
 #define PG_SZ 4096
 
 #define ENABLE_FILE_STATS 1
@@ -20,15 +20,15 @@
 #define PRINT_GLOBAL_STATS 4
 
 void set_crosslayer(){
-    syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
+	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 }
 
 void reset_global_stats(){
-    syscall(__NR_start_crosslayer, RESET_GLOBAL_STATS, 0);
+	syscall(__NR_start_crosslayer, RESET_GLOBAL_STATS, 0);
 }
 
 void print_global_stats(){
-    syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
+	syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
 }
 
 int main() {
@@ -37,6 +37,8 @@ int main() {
 	//reset_global_stats();
 
 	int fd;
+
+	long nr_read = 0; //controls the readaheads
 
 	long size = (10L * 1024L * 1024L * 1024L); //10GB
 
@@ -62,8 +64,17 @@ int main() {
 #ifdef ONLYOS //No PRediction from app
 		readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
 #elif READRA //Read+Ra from App
-		readnow = syscall(449, fd, ((char *)buffer), 
-				PG_SZ*NR_PAGES_READ, chunk, 0, NR_PAGES_RA*PG_SZ);
+		if(nr_read >= NR_PAGES_RA){
+			readnow = syscall(449, fd, ((char *)buffer), 
+					PG_SZ*NR_PAGES_READ, chunk, 0, NR_PAGES_RA*PG_SZ);
+			nr_read = 0;
+		}
+		else
+		{
+			readnow = syscall(449, fd, ((char *)buffer), 
+					PG_SZ*NR_PAGES_READ, chunk, 0, 0);
+		}
+		nr_read += NR_PAGES_READ;
 #elif APP_NATIVE_RA //Read and Readahead from App
 		readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
 #endif
@@ -74,9 +85,12 @@ int main() {
 			close (fd);
 			return 0;
 		}
-		chunk += readnow;
+		chunk += readnow; //offset
+		nr_read += NR_PAGES_READ;
 #ifdef APP_NATIVE_RA
-		readahead(fd, chunk, PG_SZ*NR_PAGES_RA);
+		if(nr_read >= NR_PAGES_RA){
+			readahead(fd, chunk, PG_SZ*NR_PAGES_RA);
+		}
 #endif
 	}
 
