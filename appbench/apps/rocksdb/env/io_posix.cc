@@ -591,13 +591,13 @@ IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
   while (left > 0) {
 
 #ifdef CROSSLAYER_SYSCALLS
-    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), static_cast<off_t>(offset), 65536);	
+    //r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), 0, 65536);	
     if(!opts.ra_bytes) {
-	//    r = pread(fd_, ptr, left, static_cast<off_t>(offset));
-    } /*else {
-	    fprintf(stderr,"Asking to prefetch %zu bytes \n", opts.ra_bytes);
-	    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), opts.ra_offset, opts.ra_bytes);
-    }*/
+	    r = pread(fd_, ptr, left, static_cast<off_t>(offset));
+    } else {
+	    //fprintf(stderr,"Asking to prefetch %zu bytes \n", opts.ra_bytes);
+	    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), 0, 655360);
+    }
 #else
     r = pread(fd_, ptr, left, static_cast<off_t>(offset));
 #endif
