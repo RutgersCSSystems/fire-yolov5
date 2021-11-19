@@ -21,11 +21,11 @@ out_base=$3 #base output folder
 SYNC=0 ##Call sync when writing 
 WRITE_BUFF_SIZE=67108864
 
-declare -a value_size_arr=("4096")
+declare -a value_size_arr=("256" "512" "1024" "4096")
 declare -a key_size_arr=("100")
-declare -a num_arr=("2000000") ## Num of elements in DB
+declare -a num_arr=("1000000" "2000000") ## Num of elements in DB
 #declare -a workload_arr=("readseq" "readrandom" "readreverse" "multireadrandom" "readwhilewriting" "readwhilemerging" "readwhilescanning" "readrandomwriterandom" "updaterandom" "xorupdaterandom" "approximatesizerandom" "randomwithverify") ##kinds of db_bench workloads
-declare -a workload_arr=("readseq" "readreverse") ##kinds of db_bench workloads
+declare -a workload_arr=("readseq" "readreverse" "overwrite") ##kinds of db_bench workloads
 
 
 #PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
@@ -39,6 +39,7 @@ PARAMS=""
 READARGS=""
 OUTFOLDER=""
 OUTFILE="" 
+OUTFILENAME=""
 
 ##TODO:check if the app is already compiled
 COMPILE_APP() {
@@ -56,9 +57,6 @@ CLEAR_DB()
     popd
 }
 
-
-
-
 UNSETPRELOAD() {
 	export LD_PRELOAD=""
 }
@@ -67,9 +65,9 @@ UNSETPRELOAD() {
 
 WRITELOAD() {
     CLEAR_DB
-    $base/db_bench $PARAMS $WRITEARGS
+    $base/db_bench $PARAMS $WRITEARGS &> /dev/null
 
-    $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
+    $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> /dev/null
 }
 
 #Checks if the folder exits, if not, create new
@@ -116,7 +114,7 @@ RUNAPP()
     COMMAND="$APPPREFIX $base/db_bench $PARAMS $READARGS"
 
     if [ "$experiment" = "CACHESTAT" ]; then
-        sudo dmesg -c
+        sudo dmesg -g
 
 
 	echo "RUNNING VANILLA"
@@ -143,6 +141,15 @@ RUNAPP()
 	FlushDisk
 
         dmesg >> $OUTFILE
+
+    elif [ "$experiment" = "READ_RA_CHAR" ]; then
+        
+        $COMMAND >> $OUTFILE
+
+        pushd $OUTFOLDER
+        cat $OUTFILE | grep -E "^readahead|^pread" | awk -F"," '{print $2}' | sort | uniq | sed '/^[[:space:]]*$/d' > uniq_fds_$OUTFILENAME
+        /users/shaleen/ssd/NVM/appbench/apps/rocksdb/read_ra_analysis/datacrunch.py $OUTFILENAME uniq_fds_$OUTFILENAME &
+        popd
     fi
 }
 
@@ -156,15 +163,16 @@ do
         for KEYSIZE in "${key_size_arr[@]}"
         do
             PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
+            WRITELOAD ##Needs to be called for diff load config
 
             for WORKLOAD in "${workload_arr[@]}"
             do
                 READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$nproc"
                 OUTFOLDER=$out_base/$WORKLOAD
                 CREATE_OUTFOLDER $OUTFOLDER
-                OUTFILE=$OUTFOLDER/"valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}--"
+                OUTFILENAME="valuesize-${VALUESIZE}_keysize-${KEYSIZE}_num-${NUM}"
+                OUTFILE=$OUTFOLDER/$OUTFILENAME
 
-                WRITELOAD ##Needs to be called for diff load config
                 REFRESH
                 RUNAPP 
             done

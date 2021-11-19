@@ -14,10 +14,10 @@ source $RUN_SCRIPTS/generic_funcs.sh
 declare -a apparr=("rocksdb")
 #declare -a apparr=("libgrape")
 #declare -a apparr=("strided_madbench")
-declare -a nprocarr=("8" "4")
+declare -a nprocarr=("1" "2" "4" "8")
 
 ##This is used as results location; change the app scripts according to the experiment you want to run
-EXPERIMENT="CACHESTAT"
+EXPERIMENT="READ_RA_CHAR"
 
 #Here is where we run the application
 RUNAPP()
@@ -43,6 +43,7 @@ for APP in "${apparr[@]}"
 do
     for NPROC in "${nprocarr[@]}"
     do	
+        echo "NPROC = ", $NPROC
         REFRESH
         RUNAPP $NPROC $APP 
         REFRESH
