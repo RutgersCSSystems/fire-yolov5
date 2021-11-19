@@ -19,6 +19,8 @@
 #define RESET_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
 
+#define FILESIZE (10L * 1024L * 1024L * 1024L)
+
 void set_crosslayer(){
 	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 }
@@ -40,7 +42,7 @@ int main() {
 
 	long nr_read = 0; //controls the readaheads
 
-	long size = (10L * 1024L * 1024L * 1024L); //10GB
+	long size = FILESIZE; //10GB
 
 	long buff_sz = (PG_SZ * NR_PAGES_READ);
 
