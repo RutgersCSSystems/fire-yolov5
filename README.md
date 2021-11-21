@@ -89,7 +89,7 @@ Now to get the appropriate branch
 ```
 cd ssd
 git clone git@github.com:sudarsunkannan/NVM.git -b hpc
-git submodule update --init ## This get the linux kernel
+cd NVM; git submodule update --init ## This get the linux kernel
 ```
 
 You now have the repo. Before running things, run
