@@ -21,7 +21,7 @@ WORKLOAD="readseq"
 #WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
 
@@ -72,6 +72,9 @@ SETPRELOAD()
     elif [[ "$1" == "LIBOS" ]]; then
         echo "Lib+OS pred"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
+    elif [[ "$1" == "ONLYINTERCEPT" ]]; then
+        echo "Only Intercepting"
+        export LD_PRELOAD=/usr/lib/libonlyintercept.so
     fi
 
     ##export TARGET_GPPID=$PPID
@@ -101,20 +104,22 @@ LOCKDAT=$PWD/lockdat
 mkdir $LOCKDAT
 
 
-echo "RUNNING Only App Pred.................."
-FlushDisk
-SETPRELOAD "ONLYAPP"
+echo "RUNNING Vanilla................."
+#FlushDisk
+#SETPRELOAD "APPOS"
 #SETPRELOAD "ONLYOS"
-$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+$DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 #FlushDisk
+exit
 
-echo "RUNNING Only OS Pred.................."
+echo "RUNNING Only Intercept.................."
 FlushDisk
-SETPRELOAD "ONLYOS"
-$DBHOME/db_bench $PARAMS $READARGS |& grep "$WORKLOAD"
+SETPRELOAD "ONLYINTERCEPT"
+$DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
+exit
 
 echo "RUNNING APP+OS Pred.................."
 FlushDisk
