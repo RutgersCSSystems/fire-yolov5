@@ -342,7 +342,9 @@ FILE *fopen(const char *filename, const char *mode){
     }
 #endif
 
+#if defined(DISABLE_OS_PREFETCH) || defined(ENABLE_WILNEED_OPEN)
     fd = fileno(ret);
+#endif
 
 #ifdef DISABLE_OS_PREFETCH
     printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);

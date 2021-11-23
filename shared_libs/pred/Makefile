@@ -20,7 +20,7 @@ ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache
 READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
 DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
 
-all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats
+all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept
 
 
 #This allows lib predictor but switches off app and OS predictor (Disable any FADV_RANDOM)
@@ -36,11 +36,11 @@ os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_FADV_RANDOM) $(ENABLE_SHARED_MEM)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_apppred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_FADV_RANDOM) $(ENABLE_SHARED_MEM) $(ENABLE_GLOBAL_STATS)
 
 #This doesnt allow app or lib predictor, but OS prefetchers are working 
 onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_GLOBAL_STATS)
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
@@ -52,6 +52,9 @@ seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.
 
 juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS)
+
+onlyintercept: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DEBUGFLAGS)
 
 clean:
 	rm -rf *.o

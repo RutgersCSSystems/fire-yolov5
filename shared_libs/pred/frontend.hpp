@@ -37,6 +37,9 @@ real_write_t write_ptr = NULL;
 real_fread_t fread_ptr = NULL;
 real_fwrite_t fwrite_ptr = NULL;
 
+real_fclose_t fclose_ptr = NULL;
+real_close_t close_ptr = NULL;
+
 real_clone_t clone_ptr = NULL;
 
 /*Advise calls*/
@@ -126,14 +129,16 @@ int real_open(const char *pathname, int flags, mode_t mode){
 }
 
 int real_fclose(FILE *stream){
-        return ((real_fclose_t)dlsym(
-                    RTLD_NEXT, "fclose"))(stream);
+    if(!fclose_ptr)
+        fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
+        return ((real_fclose_t)fclose_ptr)(stream);
 }
 
 
 int real_close(int fd){
-        return ((real_close_t)dlsym(
-                    RTLD_NEXT, "close"))(fd);
+    if(!close_ptr)
+        close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
+        return ((real_close_t)close_ptr)(fd);
 }
 
 uid_t real_getuid(){
