@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
@@ -60,11 +61,23 @@ int main() {
 
 	off_t chunk = 0;
 	lseek64(fd, 0, SEEK_SET);
+	bool prefetch = true;
 
 	while ( chunk < size ){
 		size_t readnow;
 #ifdef ONLYOS //No PRediction from app
-		readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
+		if(prefetch){
+			//readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
+			readnow = syscall(449, fd, ((char *)buffer), 
+					PG_SZ*NR_PAGES_READ, chunk, 0, FILESIZE);
+			prefetch = false;
+			printf("exiting after reading all");
+			return 0;
+		}
+		else
+			readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
+
+		
 #elif READRA //Read+Ra from App
 		if(nr_read >= NR_PAGES_RA){
 			readnow = syscall(449, fd, ((char *)buffer), 
