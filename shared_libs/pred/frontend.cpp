@@ -69,6 +69,11 @@ thread_local thread_cons_dest tcd; //Enables thread local constructor and destru
 
 struct prev_ra *prev_ra = NULL; //pointer for shared mem
 
+#ifdef FETCH_WHOLE_FILE
+    std::unordered_map<int, bool> in_cache; //false - this fd is not in cache completely
+    char fake_buffer[10];
+#endif
+
 
 /*
  * Thread local variables are constructed at first touch
@@ -319,6 +324,14 @@ int open(const char *pathname, int flags, ...){
     real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
+#ifdef FETCH_WHOLE_FILE
+    if(in_cache[ret] == false){
+	in_cache[ret] = true;
+        syscall(__PREAD_RA_SYSCALL, ret, &fake_buffer, 5, 0, 0, INT_MAX);
+	//printf("%s: fetch whole %d\n", __func__, ret);
+    }
+#endif
+
 exit:
     return ret;
 }
@@ -408,8 +421,10 @@ ssize_t read(int fd, void *data, size_t size){
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
+    ssize_t amount_read;
 
-    ssize_t amount_read = real_pread(fd, data, size, offset);
+    amount_read = real_pread(fd, data, size, offset);
+
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
