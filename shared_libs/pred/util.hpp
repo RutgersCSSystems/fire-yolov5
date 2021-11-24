@@ -6,7 +6,7 @@
 #define PAGESIZE 4096 //Page size
 #define PAGESHIFT 12 //2^12 is 4096 bytes
 #define NR_FREE_PAGES 5 //Number of pages to be released at once
-#define DEFAULT_TIMES_PREFETCH 1 //prefetch window is x*readsize
+#define DEFAULT_TIMES_PREFETCH 10 //prefetch window is x*readsize
 #define DEFAULT_FUTURE_PREFETCH 1 //prefetch the very next stride
 
 #define ENV_PREFETCH "TIMESPREFETCH" //How big should be the prefetch window
