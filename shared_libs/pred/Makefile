@@ -19,6 +19,7 @@ ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file 
 ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
 READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
 DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
+FETCH_WHOLE_FILE=-DFETCH_WHOLE_FILE ##Fetches whole file when it is opened (modified linux only)
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept
 
@@ -32,7 +33,7 @@ onlyapppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyapppred.so $^ $(LIBS) $(DEBUGFLAGS) $(CROSSLAYER) $(DISABLEOSPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(ENABLE_SHARED_MEM)
 
 os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_libpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_WILLNEED_OPEN) $(READ_RA)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_libpred.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA)
 
 #This allows app predictor but switches off lib and OS predictor
 os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
@@ -40,7 +41,7 @@ os_apppred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 
 #This doesnt allow app or lib predictor, but OS prefetchers are working 
 onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(ENABLE_GLOBAL_STATS)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyospred.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM)
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
@@ -54,7 +55,7 @@ juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/t
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS)
 
 onlyintercept: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DEBUGFLAGS)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DEBUGFLAGS) $(FETCH_WHOLE_FILE) $(DISABLE_FADV_RANDOM) $(DISABLEAPPPRED)
 
 clean:
 	rm -rf *.o
