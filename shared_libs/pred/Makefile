@@ -20,6 +20,7 @@ ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache
 READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
 DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
 FETCH_WHOLE_FILE=-DFETCH_WHOLE_FILE ##Fetches whole file when it is opened (modified linux only)
+CACHE_LIMITING=-DENABLE_CACHE_LIMITING ##Enable Cache accounting and limiting (modified linux only)
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept
 
@@ -52,10 +53,11 @@ seq: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcrosslayer.so $^ $(LIBS) $(DEBUGFLAGS) -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) $(READ_RA) #$(PINCORES) 
 
 juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS) $(CACHE_LIMITING)
 
 onlyintercept: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DEBUGFLAGS) $(FETCH_WHOLE_FILE) $(DISABLE_FADV_RANDOM) $(DISABLEAPPPRED)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DISABLE_FADV_RANDOM) $(CACHE_LIMITING) $(FETCH_WHOLE_FILE)
+
 
 clean:
 	rm -rf *.o

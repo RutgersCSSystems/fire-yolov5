@@ -59,6 +59,9 @@
 #define DISABLE_FILE_STATS 2
 #define RESET_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
+#define CACHE_USAGE_CONS 5
+#define CACHE_USAGE_DEST 6
+#define CACHE_USAGE_RET 7
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
@@ -114,6 +117,28 @@ void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
+
+/*enable cache accounting for calling threads/procs 
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void set_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_CONS, 0);
+}
+
+/*disable cache accounting for calling threads/procs 
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void unset_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_DEST, 0);
+}
+
+/*gets cache accounting value
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+long get_cache_usage(){
+    return syscall(__NR_start_crosslayer, CACHE_USAGE_RET, 0);
+}
+
 /*Thread local constructor*/
 thread_cons_dest::thread_cons_dest(void){
     test_new = true;
@@ -125,11 +150,20 @@ thread_cons_dest::thread_cons_dest(void){
 #ifdef CROSSLAYER
     set_crosslayer();
 #endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    set_cache_limit();
+#endif
 }
  
 thread_cons_dest::~thread_cons_dest(void){
     //int tid = gettid();
     //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
+
+#ifdef ENABLE_CACHE_LIMITING
+    //call CACHE_USAGE_DEST
+    unset_cache_limit();
+#endif
 }
 
 /*Constructor*/
@@ -164,6 +198,10 @@ void con(){
 
 #ifdef ENABLE_GLOBAL_CACHE_STATS
     reset_global_stats();
+#endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    set_cache_limit();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -208,6 +246,11 @@ void dest(){
 
 #ifdef ENABLE_GLOBAL_CACHE_STATS
     print_global_stats();
+#endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    printf("cache usage = %ld\n", get_cache_usage());
+    unset_cache_limit();
 #endif
 }
 
@@ -291,49 +334,54 @@ exit:
 int open(const char *pathname, int flags, ...){
     touch_tcd();
 
-    int ret;
+    int fd;
     if(flags & O_CREAT){
         va_list valist;
         va_start(valist, flags);
         mode_t mode = va_arg(valist, mode_t);
         va_end(valist);
-        ret = real_open(pathname, flags, mode);
+        fd = real_open(pathname, flags, mode);
     }
     else{
-        ret = real_open(pathname, flags, 0);
+        fd = real_open(pathname, flags, 0);
     }
 
-    if(ret < 0)
+    if(fd < 0)
         goto exit;
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
 
-    if(reg_fd(ret)){
-        handle_open(ret, pathname);
+    if(reg_fd(fd)){
+        handle_open(fd, pathname);
     }
 #endif
 
 #ifdef DISABLE_OS_PREFETCH
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
-    real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
-    real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
+    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
 #ifdef FETCH_WHOLE_FILE
-    if(in_cache[ret] == false){
-	in_cache[ret] = true;
-        syscall(__PREAD_RA_SYSCALL, ret, &fake_buffer, 5, 0, 0, INT_MAX);
-	//printf("%s: fetch whole %d\n", __func__, ret);
+    if(in_cache[fd] == false){
+	in_cache[fd] = true;
+
+	struct read_ra_req ra_req;
+	ra_req.ra_pos = 0;
+	ra_req.ra_count = INT_MAX;
+
+        syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
+	printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
     }
 #endif
 
 exit:
-    return ret;
+    return fd;
 }
 
 
