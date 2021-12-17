@@ -113,6 +113,8 @@ export LD_PRELOAD=""
 10. ENABLE_GLOBAL_CACHE_STATS : Enables global stats for cache hits/misses in modified linux 5.14
 11. READ_RA : Enables read_ra syscall instead of read and readahead for the read/fread/pread calls intercepted
 12. DISABLE_INTERCEPTING : Disables any form of function intercepting from the library. Will only run constructor and destructor
+13. FETCH_WHOLE_FILE=Fetches whole file when it is opened (modified linux only)
+14. ENABLE_CACHE_LIMITING ##Enable global Cache accounting and limiting (modified linux only) look at CONFIG_CACHE_LIMITING in the kernel. Do not use it with DISABLE_INTERCEPTING. Per thread constructor/destructors are not invoked without Intercepting.look at touch_tcd(void); function
 
 ### Q4. Are there any dependencies for Compile time flags?
 1. Cannot use READ_RA with BGTHREADS: Do not disable NOBGTHREADS while enabling READ_RA. It wouldn't work.

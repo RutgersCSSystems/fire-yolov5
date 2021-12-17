@@ -59,6 +59,9 @@
 #define DISABLE_FILE_STATS 2
 #define RESET_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
+#define CACHE_USAGE_CONS 5
+#define CACHE_USAGE_DEST 6
+#define CACHE_USAGE_RET 7
 
 #define ENABLE_PVT_LRU 24
 #define PRINT_PVT_LRU_STATS 25
@@ -114,6 +117,28 @@ void set_pvt_lru(){
     syscall(__NR_start_trace, ENABLE_PVT_LRU, 0);
 }
 
+
+/*enable cache accounting for calling threads/procs 
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void set_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_CONS, 0);
+}
+
+/*disable cache accounting for calling threads/procs 
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void unset_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_DEST, 0);
+}
+
+/*gets cache accounting value
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+long get_cache_usage(){
+    return syscall(__NR_start_crosslayer, CACHE_USAGE_RET, 0);
+}
+
 /*Thread local constructor*/
 thread_cons_dest::thread_cons_dest(void){
     test_new = true;
@@ -125,11 +150,20 @@ thread_cons_dest::thread_cons_dest(void){
 #ifdef CROSSLAYER
     set_crosslayer();
 #endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    set_cache_limit();
+#endif
 }
  
 thread_cons_dest::~thread_cons_dest(void){
     //int tid = gettid();
     //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
+
+#ifdef ENABLE_CACHE_LIMITING
+    //call CACHE_USAGE_DEST
+    unset_cache_limit();
+#endif
 }
 
 /*Constructor*/
@@ -164,6 +198,10 @@ void con(){
 
 #ifdef ENABLE_GLOBAL_CACHE_STATS
     reset_global_stats();
+#endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    set_cache_limit();
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -208,6 +246,11 @@ void dest(){
 
 #ifdef ENABLE_GLOBAL_CACHE_STATS
     print_global_stats();
+#endif
+
+#ifdef ENABLE_CACHE_LIMITING
+    printf("cache usage = %ld\n", get_cache_usage());
+    unset_cache_limit();
 #endif
 }
 
