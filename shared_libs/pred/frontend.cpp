@@ -334,49 +334,54 @@ exit:
 int open(const char *pathname, int flags, ...){
     touch_tcd();
 
-    int ret;
+    int fd;
     if(flags & O_CREAT){
         va_list valist;
         va_start(valist, flags);
         mode_t mode = va_arg(valist, mode_t);
         va_end(valist);
-        ret = real_open(pathname, flags, mode);
+        fd = real_open(pathname, flags, mode);
     }
     else{
-        ret = real_open(pathname, flags, 0);
+        fd = real_open(pathname, flags, 0);
     }
 
-    if(ret < 0)
+    if(fd < 0)
         goto exit;
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
 
-    if(reg_fd(ret)){
-        handle_open(ret, pathname);
+    if(reg_fd(fd)){
+        handle_open(fd, pathname);
     }
 #endif
 
 #ifdef DISABLE_OS_PREFETCH
-    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, ret);
-    real_posix_fadvise(ret, 0, 0, POSIX_FADV_RANDOM);
+    printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, pathname, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
 #ifdef ENABLE_WILLNEED_OPEN
-    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, ret);
-    real_posix_fadvise(ret, 0, 0, POSIX_FADV_WILLNEED);
+    printf("WillNEED advise on Open:%d %s:%d\n", POSIX_FADV_WILLNEED, pathname, fd);
+    real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
 #ifdef FETCH_WHOLE_FILE
-    if(in_cache[ret] == false){
-	in_cache[ret] = true;
-        syscall(__PREAD_RA_SYSCALL, ret, &fake_buffer, 5, 0, 0, INT_MAX);
-	//printf("%s: fetch whole %d\n", __func__, ret);
+    if(in_cache[fd] == false){
+	in_cache[fd] = true;
+
+	struct read_ra_req ra_req;
+	ra_req.ra_pos = 0;
+	ra_req.ra_count = INT_MAX;
+
+        syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
+	printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
     }
 #endif
 
 exit:
-    return ret;
+    return fd;
 }
 
 

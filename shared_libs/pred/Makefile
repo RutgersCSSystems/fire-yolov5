@@ -56,7 +56,7 @@ juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/t
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libjuststats.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_INTERCEPTING) $(ENABLE_GLOBAL_STATS) $(CACHE_LIMITING)
 
 onlyintercept: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DEBUGFLAGS) $(DISABLE_FADV_RANDOM) $(CACHE_LIMITING)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) $(DISABLE_FADV_RANDOM) $(CACHE_LIMITING) $(FETCH_WHOLE_FILE)
 
 
 clean:
