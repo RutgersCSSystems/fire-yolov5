@@ -70,6 +70,14 @@
 std::atomic<bool> enable_advise; //Enables and disables application advise
 thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
 
+
+#ifdef ENABLE_CACHE_LIMITING 
+/*all of these variables are shared across all threads*/
+std::atomic<long> cache_limit; //cache limit set by ENV_CACHE_LIMIT
+std::atomic<long> current_cache_usage; //current cache usage in bytes
+#endif
+
+
 struct prev_ra *prev_ra = NULL; //pointer for shared mem
 
 #ifdef FETCH_WHOLE_FILE
@@ -151,8 +159,12 @@ thread_cons_dest::thread_cons_dest(void){
     set_crosslayer();
 #endif
 
+
 #ifdef ENABLE_CACHE_LIMITING
     set_cache_limit();
+
+    /*Testing*/
+    printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
 #endif
 }
  
@@ -202,6 +214,12 @@ void con(){
 
 #ifdef ENABLE_CACHE_LIMITING
     set_cache_limit();
+
+    char *cache_lim = getenv(ENV_CACHE_LIMIT);
+    if(!cache_lim)
+	cache_limit = LONG_MIN;
+    else
+	cache_limit = atol(cache_lim);
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS

@@ -11,6 +11,7 @@
 
 #define ENV_PREFETCH "TIMESPREFETCH" //How big should be the prefetch window
 #define ENV_FUTURE "FUTUREPREFETCH" //How far in the future do I want to prefetch
+#define ENV_CACHE_LIMIT "APPCACHELIMIT" //cache limit for the application in Bytes
 #define MEMINFO "/proc/meminfo"
 
 #ifdef DEBUG
