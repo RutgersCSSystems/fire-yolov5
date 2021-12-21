@@ -222,7 +222,17 @@ void con(){
         cache_limit = atol(cache_lim);
     }
 
-    to_prefetch_whole = true;
+    /* Even if multiple processes enable to_prefetch_whole
+     *  at different points in the application run by 
+     *  the virtue of process spawning/forking,
+     *  if the cache usage is under limit, no harm done
+     *  if the cache usage is over limit,
+     *  prefetch_whole will be set false immediately
+     *
+     *  This may be a problem for files that are very large, but otherwise
+     *  it should be an acceptable approximate solution for now.
+     */
+    to_prefetch_whole = true; //initialize
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -410,10 +420,14 @@ int open(const char *pathname, int flags, ...){
             /* update the cache limiting variables
              * based on the current cache usage returned by pread_ra
              */
-            if(cache_limit <= ra_req.total_cache_usage)
+            if(cache_limit <= ra_req.total_cache_usage){
                 to_prefetch_whole = false;
-            else
+                printf("fd:%d Disabled whole prefetching: %ld Bytes cache usage\n",
+                        fd, ra_req.total_cache_usage);
+            }
+            else{
                 to_prefetch_whole = true;
+            }
 
             printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
 #endif
@@ -528,10 +542,28 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef READ_RA
     struct read_ra_req ra_req;
     ra_req.ra_pos = 0;
-    ra_req.ra_count = pfetch_size;
+    ra_req.ra_count = 0;
+
+#ifdef ENABLE_CACHE_LIMITING
+    /*To read_ra only if whole prefetching is
+     * disabled. ie. cache is full so incremental
+     * to be done*/
+    if(!to_prefetch_whole)
+#endif
+    {
+        ra_req.ra_count = pfetch_size;
+    }
 
     //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
     amount_read = pread_ra(fd, data, size, offset, &ra_req);
+    
+    /*XXX:
+     * may need to update the to_prefetch_whole variable
+     * based on the current cache usage.
+     * Since applications dont remove cache themselves, and OS only does it under
+     * cache pressure, this value is unlikely to change back to true
+     * so we can leave it be for now
+     */
 
 #endif
 
