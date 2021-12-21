@@ -129,14 +129,14 @@ void set_pvt_lru(){
 /*enable cache accounting for calling threads/procs 
  * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
  */
-void set_cache_limit(){
+void enable_cache_limit(){
     syscall(__NR_start_crosslayer, CACHE_USAGE_CONS, 0);
 }
 
 /*disable cache accounting for calling threads/procs 
  * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
  */
-void unset_cache_limit(){
+void disable_cache_limit(){
     syscall(__NR_start_crosslayer, CACHE_USAGE_DEST, 0);
 }
 
@@ -161,7 +161,7 @@ thread_cons_dest::thread_cons_dest(void){
 
 
 #ifdef ENABLE_CACHE_LIMITING
-    set_cache_limit();
+    enable_cache_limit();
 
     /*Testing*/
     printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
@@ -174,7 +174,7 @@ thread_cons_dest::~thread_cons_dest(void){
 
 #ifdef ENABLE_CACHE_LIMITING
     //call CACHE_USAGE_DEST
-    unset_cache_limit();
+    disable_cache_limit();
 #endif
 }
 
@@ -213,7 +213,7 @@ void con(){
 #endif
 
 #ifdef ENABLE_CACHE_LIMITING
-    set_cache_limit();
+    enable_cache_limit();
 
     char *cache_lim = getenv(ENV_CACHE_LIMIT);
     if(!cache_lim){
@@ -233,6 +233,7 @@ void con(){
      *  it should be an acceptable approximate solution for now.
      */
     to_prefetch_whole = true; //initialize
+    printf("%s:%ld to_prefetch_whole set true\n", __func__, gettid());
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -281,7 +282,7 @@ void dest(){
 
 #ifdef ENABLE_CACHE_LIMITING
     printf("cache usage = %ld\n", get_cache_usage());
-    unset_cache_limit();
+    disable_cache_limit();
 #endif
 }
 
@@ -400,7 +401,7 @@ int open(const char *pathname, int flags, ...){
 
 
 #ifdef ENABLE_CACHE_LIMITING
-    if(to_prefetch_whole)
+    if(to_prefetch_whole == true)
 #endif
     {
 #ifdef FETCH_WHOLE_FILE
@@ -422,10 +423,11 @@ int open(const char *pathname, int flags, ...){
              */
             if(cache_limit <= ra_req.total_cache_usage){
                 to_prefetch_whole = false;
-                printf("fd:%d Disabled whole prefetching: %ld Bytes cache usage\n",
-                        fd, ra_req.total_cache_usage);
+                printf("TID: %ld, fd:%d Disabled whole prefetching, usage:%ld, limit:%ld\n",
+                        gettid(), fd, ra_req.total_cache_usage, cache_limit.load());
             }
             else{
+                printf("%s:%ld to_prefetch_whole set true\n", __func__, gettid());
                 to_prefetch_whole = true;
             }
 
@@ -551,7 +553,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     if(!to_prefetch_whole)
 #endif
     {
-        printf("%s: doing serial prefetch \n", __func__);
+        //printf("%s: doing serial prefetch \n", __func__);
         ra_req.ra_count = pfetch_size;
     }
 
