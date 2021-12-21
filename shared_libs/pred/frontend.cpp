@@ -74,15 +74,15 @@ thread_local thread_cons_dest tcd; //Enables thread local constructor and destru
 #ifdef ENABLE_CACHE_LIMITING 
 /*all of these variables are shared across all threads*/
 std::atomic<long> cache_limit; //cache limit set by ENV_CACHE_LIMIT
-std::atomic<bool> to_prefetch_whole; //current cache usage in bytes
+std::atomic<bool> to_prefetch_whole; //should I prefetch the whole file at open?
 #endif
 
 
 struct prev_ra *prev_ra = NULL; //pointer for shared mem
 
 #ifdef FETCH_WHOLE_FILE
-    std::unordered_map<int, bool> in_cache; //false - this fd is not in cache completely
-    char fake_buffer[10];
+std::unordered_map<int, bool> in_cache; //false - this fd is not in cache completely
+char fake_buffer[10];
 #endif
 
 
@@ -167,7 +167,7 @@ thread_cons_dest::thread_cons_dest(void){
     printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
 #endif
 }
- 
+
 thread_cons_dest::~thread_cons_dest(void){
     //int tid = gettid();
     //printf("NR_READAHEADS from %d is %lu\n", tid, nr_readaheads);
@@ -182,22 +182,22 @@ thread_cons_dest::~thread_cons_dest(void){
 void con(){
 
 #ifdef MMAP_SHARED_DAT
-	//if(is_root_process()){
-	if(!prev_ra){
-         prev_ra = (struct prev_ra *)mmap(NULL, sizeof(struct prev_ra), PROT_READ | PROT_WRITE,
-                 MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-         if (prev_ra == MAP_FAILED){
-             printf("prev_ra MMAP failed \n");
-         }
-         prev_ra->tid = -1;
-         //printf("Done prev_ra=%d\n", prev_ra->fd);
-	}
-     else{
-         while(!prev_ra){
-             sleep(1);
-         }
-         //printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
-     }
+    //if(is_root_process()){
+    if(!prev_ra){
+        prev_ra = (struct prev_ra *)mmap(NULL, sizeof(struct prev_ra), PROT_READ | PROT_WRITE,
+                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        if (prev_ra == MAP_FAILED){
+            printf("prev_ra MMAP failed \n");
+        }
+        prev_ra->tid = -1;
+        //printf("Done prev_ra=%d\n", prev_ra->fd);
+    }
+    else{
+        while(!prev_ra){
+            sleep(1);
+        }
+        //printf("Done sleeping prev_ra=%d\n", prev_ra->fd);
+    }
 #endif
 
 #ifdef CONTROL_PRED
@@ -216,10 +216,13 @@ void con(){
     set_cache_limit();
 
     char *cache_lim = getenv(ENV_CACHE_LIMIT);
-    if(!cache_lim)
-	cache_limit = LONG_MIN;
-    else
-	cache_limit = atol(cache_lim);
+    if(!cache_lim){
+        cache_limit = LONG_MIN;
+    }else{
+        cache_limit = atol(cache_lim);
+    }
+
+    to_prefetch_whole = true;
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -277,12 +280,12 @@ void dest(){
 ssize_t readahead(int fd, off_t offset, size_t count){
     ssize_t ret = 0;
     /*
-    struct timeval time;
-    gettimeofday(&time, NULL);
-    long ftime = time.tv_sec*1000000 + time.tv_usec;
+       struct timeval time;
+       gettimeofday(&time, NULL);
+       long ftime = time.tv_sec*1000000 + time.tv_usec;
 
-    printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
-    */
+       printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+       */
 
 #ifdef MMAP_SHARED_DAT
     if(unlikely(prev_ra->tid == 0)){
@@ -316,8 +319,8 @@ perform_ra:
     if(enable_advise)
 #endif
     {
-       // printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
-    	   //printf("%ld called %s for %d: %ld bytes \n", tcd.mytid, __func__, fd, count);
+        // printf("%ld microsec: %ld called %s: called for fd:%d - offset: %ld to %ld bytes\n", ftime, gettid(), __func__, fd, offset, count);
+        //printf("%ld called %s for %d: %ld bytes \n", tcd.mytid, __func__, fd, count);
         tcd.nr_readaheads += 1;
         ret = real_readahead(fd, offset, count);
     }
@@ -385,20 +388,38 @@ int open(const char *pathname, int flags, ...){
     real_posix_fadvise(fd, 0, 0, POSIX_FADV_WILLNEED);
 #endif
 
-#ifdef FETCH_WHOLE_FILE
-    if(in_cache[fd] == false){
-	in_cache[fd] = true;
 
-	struct read_ra_req ra_req;
-	ra_req.ra_pos = 0;
-	ra_req.ra_count = INT_MAX;
-
-     //syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
-     pread_ra(fd, &fake_buffer, 5, 0, &ra_req);
-
-	printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
-    }
+#ifdef ENABLE_CACHE_LIMITING
+    if(to_prefetch_whole)
 #endif
+    {
+#ifdef FETCH_WHOLE_FILE
+        if(in_cache[fd] == false){
+            struct read_ra_req ra_req;
+            ra_req.total_cache_usage = 0; 
+
+            in_cache[fd] = true;
+
+            ra_req.ra_pos = 0;
+            ra_req.ra_count = INT_MAX;
+
+            //syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
+            pread_ra(fd, &fake_buffer, 5, 0, &ra_req);
+
+#ifdef ENABLE_CACHE_LIMITING
+            /* update the cache limiting variables
+             * based on the current cache usage returned by pread_ra
+             */
+            if(cache_limit <= ra_req.total_cache_usage)
+                to_prefetch_whole = false;
+            else
+                to_prefetch_whole = true;
+
+            printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
+#endif
+        }
+#endif
+    }
 
 exit:
     return fd;
@@ -445,7 +466,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
-    
+
     // Perform the actual system call
 #ifndef READ_RA
     amount_read = real_fread(ptr, size, nmemb, stream);
@@ -503,7 +524,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
         pfetch_size = handle_read(fd, offset, size);
     }
 #endif
-    
+
 #ifdef READ_RA
     struct read_ra_req ra_req;
     ra_req.ra_pos = 0;
