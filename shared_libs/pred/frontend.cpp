@@ -74,7 +74,7 @@ thread_local thread_cons_dest tcd; //Enables thread local constructor and destru
 #ifdef ENABLE_CACHE_LIMITING 
 /*all of these variables are shared across all threads*/
 std::atomic<long> cache_limit; //cache limit set by ENV_CACHE_LIMIT
-std::atomic<long> current_cache_usage; //current cache usage in bytes
+std::atomic<bool> to_prefetch_whole; //current cache usage in bytes
 #endif
 
 
@@ -393,7 +393,9 @@ int open(const char *pathname, int flags, ...){
 	ra_req.ra_pos = 0;
 	ra_req.ra_count = INT_MAX;
 
-        syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
+     //syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
+     pread_ra(fd, &fake_buffer, 5, 0, &ra_req);
+
 	printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
     }
 #endif
@@ -488,16 +490,30 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
     ssize_t amount_read;
+    size_t pfetch_size = 0;
 
+#ifndef READ_RA
     amount_read = real_pread(fd, data, size, offset);
+#endif
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
     if(reg_fd(fd)){
-        handle_read(fd, offset, size);
+        pfetch_size = handle_read(fd, offset, size);
     }
 #endif
+    
+#ifdef READ_RA
+    struct read_ra_req ra_req;
+    ra_req.ra_pos = 0;
+    ra_req.ra_count = pfetch_size;
+
+    //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
+    amount_read = pread_ra(fd, data, size, offset, &ra_req);
+
+#endif
+
     return amount_read;
 }
 

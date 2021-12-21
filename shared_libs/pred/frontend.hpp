@@ -4,6 +4,36 @@
 #define __PREAD_RA_SYSCALL 449
 #define __READ_RA_SYSCALL 450
 
+/*
+ * pread_ra read_ra_req struct
+ * this struct is used to send and receive info from kernel about
+ * the current readahead with the typical read
+ */
+struct read_ra_req{
+
+	/*These are to be filled while sending the pread_ra req
+	 * position for readahead and nr_bytes for readahead
+	 */
+	loff_t ra_pos;
+	size_t ra_count;
+
+	/* these are values returned by the OS
+	 * for the above given readahead request 
+	 * 1. how many pages were already present
+	 * 2. For how many pages, bio was submitted
+	 */
+	unsigned long nr_present;
+	unsigned long bio_req_nr;
+
+	/* this is used to return the number of cache usage in bytes
+	 * used by this application.
+	 * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
+	 * to get a non-zero value
+	 */
+	long total_cache_usage;
+};
+
+/*The following are the intercepted function definitions*/
 typedef int (*real_open_t)(const char *, int, ...);
 typedef int (*real_openat_t)(int, const char *, int);
 typedef int (*real_openat1_t)(int, const char *, int, mode_t);
@@ -87,7 +117,6 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
 }
 
-
 size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     if(!fwrite_ptr)
@@ -103,7 +132,6 @@ ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
     return ((real_pread_t)pread_ptr)(fd, data, size, offset);
 }
-
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
@@ -134,7 +162,6 @@ int real_fclose(FILE *stream){
         return ((real_fclose_t)fclose_ptr)(stream);
 }
 
-
 int real_close(int fd){
     if(!close_ptr)
         close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
@@ -147,6 +174,12 @@ uid_t real_getuid(){
 }
 
 
+ssize_t pread_ra(int fd, void *data, size_t size, off_t offset, 
+        struct read_ra_req *ra_req)
+{
+    return syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, ra_req);
+}
+
 /*
  * Does both fread and readahead in one syscall
  */
@@ -156,6 +189,10 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
     int fd;
     fd = fileno(stream);
 
+    struct read_ra_req ra_req;
+    ra_req.ra_pos = 0;
+    ra_req.ra_count = ra_size;
+
     /*
      * XXX: Since fread is a library call, I cannot implement fread_ra without changing
      * glibc. So instead, we convert fread_ra to pread_ra syscall as a hack
@@ -164,7 +201,7 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
      * It will only readahead from the end of read request. reads and readaheads in diff
      * positions is not implemented yet in the modified kernel 5.14. 
      */
-    ret = syscall(__PREAD_RA_SYSCALL, fd, ptr, nmemb*size, ftell(stream), 0, ra_size);
+    ret = pread_ra(fd, ptr, nmemb*size, ftell(stream), &ra_req);
     if(ret <=0){
         printf("%s: Error %s\n", __func__, strerror(errno));
         return 0;
@@ -174,6 +211,7 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
 
     return ret/size; //should return nr of items read
 }
+
 
 
 bool reg_fd(int fd);
@@ -197,36 +235,6 @@ class thread_cons_dest{
 };
 
 void touch_tcd(void); //checks if a new thread was created
-
-
-/*
- * pread_ra read_ra_req struct
- * this struct is used to send and receive info from kernel about
- * the current readahead with the typical read
- */
-struct read_ra_req{
-
-	/*These are to be filled while sending the pread_ra req
-	 * position for readahead and nr_bytes for readahead
-	 */
-	loff_t ra_pos;
-	size_t ra_count;
-
-	/* these are values returned by the OS
-	 * for the above given readahead request 
-	 * 1. how many pages were already present
-	 * 2. For how many pages, bio was submitted
-	 */
-	unsigned long nr_present;
-	unsigned long bio_req_nr;
-
-	/* this is used to return the number of cache usage in bytes
-	 * used by this application.
-	 * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
-	 * to get a non-zero value
-	 */
-	long total_cache_usage;
-};
 
 
 /*
