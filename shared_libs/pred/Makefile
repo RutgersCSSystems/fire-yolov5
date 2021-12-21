@@ -56,7 +56,8 @@ onlyospred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/
 cache_lim_os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libcache_lim_os_libpred.so $^ $(LIBS) $(DEBUGFLAGS) \
 	    -DPREDICTOR -DSEQUENTIAL $(NOBGTHREADS) $(DELAYPRFETCH) $(CROSSLAYER) \
-	    $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA)
+	    $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA) $(FETCH_WHOLE_FILE) \
+	    $(CACHE_LIMITING)
 
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
