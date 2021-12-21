@@ -551,6 +551,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     if(!to_prefetch_whole)
 #endif
     {
+        printf("%s: doing serial prefetch \n", __func__);
         ra_req.ra_count = pfetch_size;
     }
 
@@ -634,7 +635,6 @@ int close(int fd){
 }
 
 
-
 uid_t getuid(){
 #ifdef MMAP_SHARED_DAT
     prev_ra->tid = 0;
@@ -645,54 +645,4 @@ uid_t getuid(){
 }
 
 #endif //DISABLE_INTERCEPTING
-
-#ifdef PREDICTOR
-int reg_file(FILE *stream){
-    return reg_fd(fileno(stream));
-}
-
-//returns true if fd is regular file
-bool reg_fd(int fd){
-    if(fd<=2)
-        return false;
-
-    struct stat st;
-
-    if(fstat(fd, &st) == 0){
-        switch (st.st_mode & S_IFMT) {
-            case S_IFBLK:
-                debug_print("fd:%d block device\n", fd);
-                break;
-            case S_IFCHR:
-                debug_print("fd:%d character device\n", fd);
-                break;
-            case S_IFDIR:
-                debug_print("fd:%d directory\n", fd);
-                break;
-            case S_IFIFO:
-                debug_print("fd:%d FIFO/pipe\n", fd);
-                break;
-            case S_IFLNK:
-                debug_print("fd:%d symlink\n", fd);
-                break;
-            case S_IFREG:
-                debug_print("fd:%d regular file\n", fd); 
-                return true;            
-                break;
-            case S_IFSOCK:
-                debug_print("fd:%d socket\n", fd);
-                break;
-            default:
-                debug_print("fd:%d unknown?\n", fd);
-        }
-        /*
-           if(S_ISREG(st.st_mode)){
-           return true;
-           }
-           */
-    }
-    //return true;
-    return false;
-}
-#endif
 
