@@ -74,11 +74,11 @@ thread_local thread_cons_dest tcd; //Enables thread local constructor and destru
 #ifdef ENABLE_CACHE_LIMITING 
 /*all of these variables are shared across all threads*/
 std::atomic<long> cache_limit; //cache limit set by ENV_CACHE_LIMIT
-std::atomic<bool> to_prefetch_whole; //should I prefetch the whole file at open?
 #endif
 
+struct shared_dat *shared_data; //all shared data across procs/threads
 
-struct prev_ra *prev_ra = NULL; //pointer for shared mem
+struct prev_ra *prev_ra = NULL; //pointer for shared mem TODO:Recheck need
 
 #ifdef FETCH_WHOLE_FILE
 std::unordered_map<int, bool> in_cache; //false - this fd is not in cache completely
@@ -164,7 +164,9 @@ thread_cons_dest::thread_cons_dest(void){
     enable_cache_limit();
 
     /*Testing*/
-    printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
+    //printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
+    printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
+            gettid(), shared_data->to_prefetch_whole.load());
 #endif
 }
 
@@ -232,8 +234,18 @@ void con(){
      *  This may be a problem for files that are very large, but otherwise
      *  it should be an acceptable approximate solution for now.
      */
-    to_prefetch_whole = true; //initialize
-    printf("%s:%ld to_prefetch_whole set true\n", __func__, gettid());
+    //to_prefetch_whole = true; //initialize
+    if(!shared_data){
+        shared_data = (struct shared_dat*)mmap(NULL, 
+                sizeof(struct shared_dat), PROT_READ | PROT_WRITE, 
+                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        if (shared_data == MAP_FAILED){
+            printf("shared_data MMAP failed \n");
+        }
+        shared_data->to_prefetch_whole = true;
+    }
+    printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
+            gettid(), shared_data->to_prefetch_whole.load());
 #endif
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
@@ -401,7 +413,7 @@ int open(const char *pathname, int flags, ...){
 
 
 #ifdef ENABLE_CACHE_LIMITING
-    if(to_prefetch_whole == true)
+    if(shared_data->to_prefetch_whole)
 #endif
     {
 #ifdef FETCH_WHOLE_FILE
@@ -422,13 +434,13 @@ int open(const char *pathname, int flags, ...){
              * based on the current cache usage returned by pread_ra
              */
             if(cache_limit <= ra_req.total_cache_usage){
-                to_prefetch_whole = false;
+                shared_data->to_prefetch_whole = false;
                 printf("TID: %ld, fd:%d Disabled whole prefetching, usage:%ld, limit:%ld\n",
                         gettid(), fd, ra_req.total_cache_usage, cache_limit.load());
             }
             else{
                 printf("%s:%ld to_prefetch_whole set true\n", __func__, gettid());
-                to_prefetch_whole = true;
+                shared_data->to_prefetch_whole = true;
             }
 
             printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
@@ -550,7 +562,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     /*To read_ra only if whole prefetching is
      * disabled. ie. cache is full so incremental
      * to be done*/
-    if(!to_prefetch_whole)
+    if(!shared_data->to_prefetch_whole)
 #endif
     {
         //printf("%s: doing serial prefetch \n", __func__);

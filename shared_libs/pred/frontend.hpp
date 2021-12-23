@@ -303,6 +303,18 @@ struct prev_ra{
 #endif 
 };
 
+
+/* This struct keeps all the data 
+ * to be shared across all the 
+ * processes and threads of the app
+ */
+struct shared_dat{
+    char a; //just there. no use
+#ifdef ENABLE_CACHE_LIMITING 
+    std::atomic<bool> to_prefetch_whole; //should I prefetch the whole file at open?
+#endif
+};
+
 #ifdef PREDICTOR
 int reg_file(FILE *stream){
     return reg_fd(fileno(stream));
