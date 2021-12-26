@@ -19,8 +19,40 @@
 #define DISABLE_FILE_STATS 2
 #define RESET_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
+#define CACHE_USAGE_CONS 5
+#define CACHE_USAGE_DEST 6
+#define CACHE_USAGE_RET 7
 
 #define FILESIZE (10L * 1024L * 1024L * 1024L)
+
+/*
+ * pread_ra read_ra_req struct
+ * this struct is used to send and receive info from kernel about
+ * the current readahead with the typical read
+ */
+struct read_ra_req{
+
+	/*These are to be filled while sending the pread_ra req
+	 * position for readahead and nr_bytes for readahead
+	 */
+	loff_t ra_pos;
+	size_t ra_count;
+
+	/* these are values returned by the OS
+	 * for the above given readahead request 
+	 * 1. how many pages were already present
+	 * 2. For how many pages, bio was submitted
+	 */
+	unsigned long nr_present;
+	unsigned long bio_req_nr;
+
+	/* this is used to return the number of cache usage in bytes
+	 * used by this application.
+	 * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
+	 * to get a non-zero value
+	 */
+	long total_cache;
+};
 
 void set_crosslayer(){
 	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
@@ -34,10 +66,27 @@ void print_global_stats(){
 	syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
 }
 
+/*enable cache accounting for calling threads/procs
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void enable_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_CONS, 0);
+}
+
+/*disable cache accounting for calling threads/procs
+ * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ */
+void disable_cache_limit(){
+    syscall(__NR_start_crosslayer, CACHE_USAGE_DEST, 0);
+}
+
+
 int main() {
 
 	//set_crosslayer();
 	//reset_global_stats();
+	//
+	enable_cache_limit();
 
 	int fd;
 
@@ -63,13 +112,17 @@ int main() {
 	lseek64(fd, 0, SEEK_SET);
 	bool prefetch = true;
 
+        struct read_ra_req ra_req;
+
 	while ( chunk < size ){
 		size_t readnow;
 #ifdef ONLYOS //No PRediction from app
 		if(prefetch){
 			//readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
+			ra_req.ra_pos = 0;
+			ra_req.ra_count = FILESIZE;
 			readnow = syscall(449, fd, ((char *)buffer), 
-					PG_SZ*NR_PAGES_READ, chunk, 0, FILESIZE);
+					PG_SZ*NR_PAGES_READ, chunk, &ra_req);
 			prefetch = false;
 			printf("exiting after reading all");
 			return 0;
@@ -80,14 +133,19 @@ int main() {
 		
 #elif READRA //Read+Ra from App
 		if(nr_read >= NR_PAGES_RA){
+			ra_req.ra_pos = 0;
+			ra_req.ra_count = NR_PAGES_RA*PG_SZ;
 			readnow = syscall(449, fd, ((char *)buffer), 
-					PG_SZ*NR_PAGES_READ, chunk, 0, NR_PAGES_RA*PG_SZ);
+					PG_SZ*NR_PAGES_READ, chunk, &ra_req);
+			printf("total_cache = %ld\n", ra_req.total_cache);
 			nr_read = 0;
 		}
 		else
 		{
+			ra_req.ra_pos = 0;
+			ra_req.ra_count = 0;
 			readnow = syscall(449, fd, ((char *)buffer), 
-					PG_SZ*NR_PAGES_READ, chunk, 0, 0);
+					PG_SZ*NR_PAGES_READ, chunk, &ra_req);
 		}
 		nr_read += NR_PAGES_READ;
 #elif APP_NATIVE_RA //Read and Readahead from App
