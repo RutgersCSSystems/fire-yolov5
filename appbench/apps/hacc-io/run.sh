@@ -3,13 +3,14 @@ set -x
 DBHOME=$PWD
 PREDICT="OSONLY"
 THREAD=16
-VALUE_SIZE=4096
 SYNC=0
-KEYSIZE=100
-NUM=1000000000
+NUM=800000000
 DBDIR=$DBHOME/checkpoint
+
+APPNAME="hacc-io"
+
 APPREAD="./hacc_io_read"
-APPGEN="./hacc_io"
+APPGEN="./hacc_io_write"
 
 PARAMS="$NUM $DBDIR"
 
@@ -52,11 +53,16 @@ BUILD_LIB()
 	cd $DBHOME
 }
 
-CLEAR_PWD()
+CLEANUP()
 {
-	cd $DBDIR
-	rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
-	cd ..
+	rm -rf $DBDIR/*
+	sudo killall cachestat
+	sudo killall cachestat
+}
+
+RUNCACHESTAT()
+{
+	sudo $HOME/ssd/perf-tools/bin/cachestat &> "CACHESTAT-"$APPNAME.out &
 }
 
 
@@ -67,10 +73,12 @@ $APPGEN $PARAMS
 echo "RUNNING CROSSLAYER.................."
 FlushDisk
 PREDICT="CROSSLAYER"
-SETPRELOAD
 FlushDisk
+SETPRELOAD
+RUNCACHESTAT
 $APPREAD $PARAMS
 export LD_PRELOAD=""
+CLEANUP
 exit
 
 FlushDisk
