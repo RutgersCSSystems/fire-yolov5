@@ -1,4 +1,4 @@
-cscope 15 $HOME/ssd/NVM-sudarsun/NVM/appbench/apps/filebench               0000763436
+cscope 15 $HOME/ssd/NVM-sudarsun/NVM/appbench/apps/filebench               0000763434
 	@aslr.c
 
 19 
@@ -23905,8 +23905,8 @@ off64_t
 fžeoff£t
 )
 
-186  (
-	`´—d64
+188  (
+	`´—d
 (
 fd
 ->
@@ -23919,11 +23919,11 @@ iosize
 fžeoff£t
 ));
 
-187 
+189 
 	}
 }
 
-193 
+195 
 	$fb_lfs_»ad
 (
 fb_fdesc_t
@@ -23939,13 +23939,13 @@ fbšt_t
 iosize
 )
 
-195 
+197 
 	`årštf
 (
 ¡d”r
 , "Calling fb_lfs_read \n");
 
-196  (
+198  (
 	`»ad
 (
 fd
@@ -23957,19 +23957,19 @@ iobuf
 iosize
 ));
 
-197 
+199 
 	}
 }
 
-199 #ifdeà
+201 #ifdeà
 HAVE_AIO
 
 
-217 
+219 
 aiÞi¡_t
  *
 
-218 
+220 
 	$aio_®loÿ‹
 (
 æowÝ_t
@@ -23977,13 +23977,13 @@ aiÞi¡_t
 æowÝ
 )
 
-220 
+222 
 aiÞi¡_t
  *
 aiÞi¡
 ;
 
-222 ià((
+224 ià((
 aiÞi¡
  = 
 	`m®loc
@@ -23993,23 +23993,23 @@ aiÞi¡_t
 NULL
 ) {
 
-223 
+225 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "malloc‡iolist failed");
 
-224 
+226 
 	`fžeb’ch_shutdown
 (1);
 
-227 
+229 
 	`bz”o
 (
 aiÞi¡
 , (*aiolist));
 
-230 ià(
+232 ià(
 æowÝ
 ->
 fo_th»ad
@@ -24019,7 +24019,7 @@ tf_aiÞi¡
 NULL
 ) {
 
-231 
+233 
 æowÝ
 ->
 fo_th»ad
@@ -24027,14 +24027,6 @@ fo_th»ad
 tf_aiÞi¡
  = 
 aiÞi¡
-;
-
-232 
-aiÞi¡
-->
-®_Ãxt
- = 
-NULL
 ;
 
 234 
@@ -24042,6 +24034,14 @@ aiÞi¡
 ->
 ®_Ãxt
  = 
+NULL
+;
+
+236 
+aiÞi¡
+->
+®_Ãxt
+ = 
 æowÝ
 ->
 fo_th»ad
@@ -24049,7 +24049,7 @@ fo_th»ad
 tf_aiÞi¡
 ;
 
-235 
+237 
 æowÝ
 ->
 fo_th»ad
@@ -24059,15 +24059,15 @@ tf_aiÞi¡
 aiÞi¡
 ;
 
-237  (
+239  (
 aiÞi¡
 );
 
-238 
+240 
 	}
 }
 
-247 
+249 
 	$aio_d—Îoÿ‹
 (
 æowÝ_t
@@ -24079,7 +24079,7 @@ aiocb64
 aiocb
 )
 
-249 
+251 
 aiÞi¡_t
  *
 aiÞi¡
@@ -24091,7 +24091,7 @@ fo_th»ad
 tf_aiÞi¡
 ;
 
-250 
+252 
 aiÞi¡_t
  *
 ´evious
@@ -24099,7 +24099,7 @@ aiÞi¡_t
 NULL
 ;
 
-251 
+253 
 aiÞi¡_t
  *
 m©ch
@@ -24107,27 +24107,27 @@ m©ch
 NULL
 ;
 
-253 ià(
+255 ià(
 aiocb
  =ð
 NULL
 ) {
 
-254 
+256 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "null‡iocb deallocate");
 
-255  (
+257  (
 FILEBENCH_OK
 );
 
-258 
+260 
 aiÞi¡
 ) {
 
-259 ià(
+261 ià(
 aiocb
  =ð&(
 aiÞi¡
@@ -24135,39 +24135,39 @@ aiÞi¡
 ®_aiocb
 )) {
 
-260 
+262 
 m©ch
  = 
 aiÞi¡
 ;
 
-263 
+265 
 ´evious
  = 
 aiÞi¡
 ;
 
-264 
+266 
 aiÞi¡
  =‡iÞi¡->
 ®_Ãxt
 ;
 
-267 ià(
+269 ià(
 m©ch
  =ð
 NULL
 )
 
-268  (
+270  (
 FILEBENCH_ERROR
 );
 
-271 ià(
+273 ià(
 ´evious
 )
 
-272 
+274 
 ´evious
 ->
 ®_Ãxt
@@ -24175,7 +24175,7 @@ FILEBENCH_ERROR
 m©ch
 ->al_next;
 
-274 
+276 
 æowÝ
 ->
 fo_th»ad
@@ -24187,15 +24187,15 @@ m©ch
 ®_Ãxt
 ;
 
-276  (
+278  (
 FILEBENCH_OK
 );
 
-277 
+279 
 	}
 }
 
-291 
+293 
 	$fb_lfsæow_aiowr™e
 (
 th»adæow_t
@@ -24207,35 +24207,35 @@ th»adæow
 æowÝ
 )
 
-293 
+295 
 ÿddr_t
  
 iobuf
 ;
 
-294 
+296 
 fbšt_t
  
 wss
 ;
 
-295 
+297 
 fbšt_t
  
 iosize
 ;
 
-296 
+298 
 fb_fdesc_t
  *
 fdesc
 ;
 
-297 
+299 
 »t
 ;
 
-299 
+301 
 iosize
  = 
 	`avd_g‘_št
@@ -24245,7 +24245,7 @@ iosize
 fo_iosize
 );
 
-301 ià((
+303 ià((
 »t
  = 
 	`æowÝlib_io£tup
@@ -24259,7 +24259,7 @@ wss
 iobuf
 ,
 
-302 &
+304 &
 fdesc
 , 
 iosize
@@ -24267,11 +24267,11 @@ iosize
 FILEBENCH_OK
 )
 
-303  (
+305  (
 »t
 );
 
-305 ià(
+307 ià(
 	`avd_g‘_boÞ
 (
 æowÝ
@@ -24279,47 +24279,47 @@ FILEBENCH_OK
 fo_¿ndom
 )) {
 
-306 
+308 
 ušt64_t
  
 fžeoff£t
 ;
 
-307 
+309 
 aiocb64
  *
 aiocb
 ;
 
-308 
+310 
 aiÞi¡_t
  *
 aiÞi¡
 ;
 
-310 ià(
+312 ià(
 wss
  < 
 iosize
 ) {
 
-311 
+313 
 	`fžeb’ch_log
 (
 LOG_ERROR
 ,
 
-313 
+315 
 æowÝ
 ->
 fo_Çme
 );
 
-314  (
+316  (
 FILEBENCH_ERROR
 );
 
-317 
+319 
 	`fb_¿ndom64
 (&
 fžeoff£t
@@ -24331,7 +24331,7 @@ iosize
 NULL
 );
 
-319 
+321 
 aiÞi¡
  = 
 	`aio_®loÿ‹
@@ -24339,7 +24339,7 @@ aiÞi¡
 æowÝ
 );
 
-320 
+322 
 aiÞi¡
 ->
 ®_ty³
@@ -24347,7 +24347,7 @@ aiÞi¡
 AL_WRITE
 ;
 
-321 
+323 
 aiocb
  = &
 aiÞi¡
@@ -24355,7 +24355,7 @@ aiÞi¡
 ®_aiocb
 ;
 
-323 
+325 
 aiocb
 ->
 aio_fždes
@@ -24365,7 +24365,7 @@ fdesc
 fd_num
 ;
 
-324 
+326 
 aiocb
 ->
 aio_buf
@@ -24373,7 +24373,7 @@ aio_buf
 iobuf
 ;
 
-325 
+327 
 aiocb
 ->
 aio_nby‹s
@@ -24383,7 +24383,7 @@ size_t
 iosize
 ;
 
-326 
+328 
 aiocb
 ->
 aio_off£t
@@ -24393,19 +24393,19 @@ off64_t
 fžeoff£t
 ;
 
-327 
+329 
 aiocb
 ->
 aio_»q´io
  = 0;
 
-329 
+331 
 	`fžeb’ch_log
 (
 LOG_DEBUG_IMPL
 ,
 
-331 
+333 
 fdesc
 ->
 fd_num
@@ -24415,13 +24415,13 @@ u_lÚglÚg_t
 iosize
 ,
 
-332 (
+334 (
 u_lÚglÚg_t
 )
 fžeoff£t
 );
 
-334 
+336 
 	`æowÝ_begšÝ
 (
 th»adæow
@@ -24429,29 +24429,29 @@ th»adæow
 æowÝ
 );
 
-335 ià(
+337 ià(
 	`aio_wr™e64
 (
 aiocb
 ) < 0) {
 
-336 
+338 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "aiowrite failed: %s",
 
-337 
+339 
 	`¡»¼Ü
 (
 ”ºo
 ));
 
-338 
+340 
 	`fžeb’ch_shutdown
 (1);
 
-340 
+342 
 	`æowÝ_’dÝ
 (
 th»adæow
@@ -24461,25 +24461,25 @@ th»adæow
 iosize
 );
 
-342  (
+344  (
 FILEBENCH_ERROR
 );
 
-345  (
+347  (
 FILEBENCH_OK
 );
 
-346 
+348 
 	}
 }
 
-350 
+352 
 	#MAXREAP
  4096
 
 	)
 
-361 
+363 
 	$fb_lfsæow_aiowa™
 (
 th»adæow_t
@@ -24491,13 +24491,13 @@ th»adæow
 æowÝ
 )
 
-363 
+365 
 aiocb64
  **
 wÜkli¡
 ;
 
-364 
+366 
 aiÞi¡_t
  *
 aio
@@ -24509,19 +24509,19 @@ fo_th»ad
 tf_aiÞi¡
 ;
 
-365 
+367 
 uncom¶‘ed
  = 0;
 
-366 #ifdeà
+368 #ifdeà
 HAVE_AIOWAITN
 
 
-367 
+369 
 i
 ;
 
-370 
+372 
 wÜkli¡
  = 
 	`ÿÎoc
@@ -24531,85 +24531,85 @@ MAXREAP
 aiocb64
  *));
 
-373 
+375 
 aio
 ) {
 
-374 
+376 
 uncom¶‘ed
 ++;
 
-375 
+377 
 aio
  =‡io->
 ®_Ãxt
 ;
 
-379 
+381 
 ušt_t
  
 ncom¶‘ed
  = 0;
 
-380 
+382 
 ušt_t
  
 todo
 ;
 
-381 
+383 
 š´og»ss
 ;
 
-382 #ifdeà
+384 #ifdeà
 HAVE_AIOWAITN
 
 
-383 
+385 
 time¥ec
  
 timeout
 ;
 
-386 
+388 
 timeout
 .
 tv_£c
  = 1;
 
-387 
+389 
 timeout
 .
 tv_n£c
  = 0;
 
-390 ià(
+392 ià(
 uncom¶‘ed
  > 
 MAXREAP
 )
 
-391 
+393 
 todo
  = 
 MAXREAP
 ;
 
-393 
+395 
 todo
  = 
 uncom¶‘ed
  / 2;
 
-395 ià(
+397 ià(
 todo
  == 0)
 
-396 
+398 
 todo
  = 1;
 
-398 
+400 
 	`æowÝ_begšÝ
 (
 th»adæow
@@ -24617,11 +24617,11 @@ th»adæow
 æowÝ
 );
 
-400 #ifdeà
+402 #ifdeà
 HAVE_AIOWAITN
 
 
-401 ià(((
+403 ià(((
 	`aio_wa™n64
 ((
 aiocb64
@@ -24629,7 +24629,7 @@ aiocb64
 wÜkli¡
 ,
 
-402 
+404 
 MAXREAP
 , &
 todo
@@ -24637,19 +24637,19 @@ todo
 timeout
 )) == -1) &&
 
-403 
+405 
 ”ºo
  && (”ºØ!ð
 ETIME
 )) {
 
-404 
+406 
 	`fžeb’ch_log
 (
 LOG_ERROR
 ,
 
-407 
+409 
 	`¡»¼Ü
 (
 ”ºo
@@ -24659,23 +24659,23 @@ uncom¶‘ed
 todo
 );
 
-410 
+412 
 ncom¶‘ed
  = 
 todo
 ;
 
-412 
+414 
 š´og»ss
  = 0;
 
-413 
+415 
 i
  = 0; i < 
 ncom¶‘ed
 ; i++) {
 
-414 ià((
+416 ià((
 	`aio_»tuº64
 (
 wÜkli¡
@@ -24683,17 +24683,17 @@ wÜkli¡
 i
 ]) == -1) &&
 
-415 (
+417 (
 ”ºo
  =ð
 EINPROGRESS
 )) {
 
-416 
+418 
 š´og»ss
 ++;
 
-419 ià(
+421 ià(
 	`aio_d—Îoÿ‹
 (
 æowÝ
@@ -24703,17 +24703,17 @@ wÜkli¡
 i
 ])
 
-420 =ð
+422 =ð
 FILEBENCH_ERROR
 ) {
 
-421 
+423 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "Could‚ot„emove "
 
-423 
+425 
 	`æowÝ_’dÝ
 (
 th»adæow
@@ -24721,29 +24721,29 @@ th»adæow
 æowÝ
 , 0);
 
-424  (
+426  (
 FILEBENCH_ERROR
 );
 
-428 
+430 
 uncom¶‘ed
  -ð
 ncom¶‘ed
 ;
 
-429 
+431 
 uncom¶‘ed
  +ð
 š´og»ss
 ;
 
-433 
+435 
 ncom¶‘ed
  = 0, 
 š´og»ss
  = 0,
 
-434 
+436 
 aio
  = 
 æowÝ
@@ -24753,7 +24753,7 @@ fo_th»ad
 tf_aiÞi¡
 ;
 
-435 
+437 
 ncom¶‘ed
  < 
 todo
@@ -24765,7 +24765,7 @@ NULL
 ®_Ãxt
 ) {
 
-436 
+438 
 »suÉ
  = 
 	`aio_”rÜ64
@@ -24775,17 +24775,17 @@ aio
 ®_aiocb
 );
 
-438 ià(
+440 ià(
 »suÉ
  =ð
 EINPROGRESS
 ) {
 
-439 
+441 
 š´og»ss
 ++;
 
-443 ià((
+445 ià((
 	`aio_»tuº64
 (&
 aio
@@ -24795,23 +24795,23 @@ aio
 »suÉ
 ) {
 
-444 
+446 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "aio failed: %s",
 
-445 
+447 
 	`¡»¼Ü
 (
 »suÉ
 ));
 
-449 
+451 
 ncom¶‘ed
 ++;
 
-451 ià(
+453 ià(
 	`aio_d—Îoÿ‹
 (
 æowÝ
@@ -24821,13 +24821,13 @@ aio
 ®_aiocb
 ) < 0) {
 
-452 
+454 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "Could‚ot„emove "
 
-454 
+456 
 	`æowÝ_’dÝ
 (
 th»adæow
@@ -24835,23 +24835,23 @@ th»adæow
 æowÝ
 , 0);
 
-455  (
+457  (
 FILEBENCH_ERROR
 );
 
-459 
+461 
 uncom¶‘ed
  -ð
 ncom¶‘ed
 ;
 
-462 
+464 
 	`fžeb’ch_log
 (
 LOG_DEBUG_SCRIPT
 ,
 
-464 
+466 
 ncom¶‘ed
 , 
 uncom¶‘ed
@@ -24859,13 +24859,13 @@ uncom¶‘ed
 š´og»ss
 );
 
-466 } 
+468 } 
 uncom¶‘ed
  > 
 MAXREAP
 );
 
-468 
+470 
 	`æowÝ_’dÝ
 (
 th»adæow
@@ -24873,21 +24873,21 @@ th»adæow
 æowÝ
 , 0);
 
-470 
+472 
 	`ä“
 (
 wÜkli¡
 );
 
-472  (
+474  (
 FILEBENCH_OK
 );
 
-473 
+475 
 	}
 }
 
-484 
+486 
 	$fb_lfs_Ý’
 (
 fb_fdesc_t
@@ -24901,7 +24901,7 @@ fd
 ³rms
 )
 
-486 ià((
+488 ià((
 fd
 ->
 fd_num
@@ -24915,39 +24915,39 @@ fd_num
 ³rms
 )) < 0)
 
-487  (
+489  (
 FILEBENCH_ERROR
 );
 
-489  (
+491  (
 FILEBENCH_OK
 );
 
-490 
+492 
 	}
 }
 
-496 
+498 
 	$fb_lfs_uÆšk
 (*
 ·th
 )
 
-498  (
+500  (
 	`uÆšk
 (
 ·th
 ));
 
-499 
+501 
 	}
 }
 
-504 
+506 
 ssize_t
 
 
-505 
+507 
 	$fb_lfs_»adlšk
 (cÚ¡ *
 ·th
@@ -24959,7 +24959,7 @@ size_t
 buf_size
 )
 
-507  (
+509  (
 	`»adlšk
 (
 ·th
@@ -24969,11 +24969,11 @@ buf
 buf_size
 ));
 
-508 
+510 
 	}
 }
 
-514 
+516 
 	$fb_lfs_fsync
 (
 fb_fdesc_t
@@ -24981,7 +24981,7 @@ fb_fdesc_t
 fd
 )
 
-516  (
+518  (
 	`fsync
 (
 fd
@@ -24989,11 +24989,11 @@ fd
 fd_num
 ));
 
-517 
+519 
 	}
 }
 
-523 
+525 
 	$fb_lfs_l£ek
 (
 fb_fdesc_t
@@ -25007,7 +25007,7 @@ off£t
 wh’û
 )
 
-525  (
+527  (
 	`l£ek64
 (
 fd
@@ -25019,11 +25019,11 @@ off£t
 wh’û
 ));
 
-526 
+528 
 	}
 }
 
-532 
+534 
 	$fb_lfs_»Çme
 (cÚ¡ *
 Þd
@@ -25031,7 +25031,7 @@ wh’û
 Ãw
 )
 
-534  (
+536  (
 	`»Çme
 (
 Þd
@@ -25039,11 +25039,11 @@ wh’û
 Ãw
 ));
 
-535 
+537 
 	}
 }
 
-542 
+544 
 	$fb_lfs_þo£
 (
 fb_fdesc_t
@@ -25051,7 +25051,7 @@ fb_fdesc_t
 fd
 )
 
-544  (
+546  (
 	`þo£
 (
 fd
@@ -25059,11 +25059,11 @@ fd
 fd_num
 ));
 
-545 
+547 
 	}
 }
 
-551 
+553 
 	$fb_lfs_mkdœ
 (*
 ·th
@@ -25071,7 +25071,7 @@ fd_num
 ³rm
 )
 
-553  (
+555  (
 	`mkdœ
 (
 ·th
@@ -25079,39 +25079,39 @@ fd_num
 ³rm
 ));
 
-554 
+556 
 	}
 }
 
-560 
+562 
 	$fb_lfs_rmdœ
 (*
 ·th
 )
 
-562  (
+564  (
 	`rmdœ
 (
 ·th
 ));
 
-563 
+565 
 	}
 }
 
-570 
+572 
 	$fb_lfs_»cur_rm
 (*
 ·th
 )
 
-572 
+574 
 cmd
 [
 MAXPATHLEN
 ];
 
-574 (è
+576 (è
 	`¢´štf
 (
 cmd
@@ -25119,41 +25119,41 @@ cmd
 ·th
 );
 
-577 ià(
+579 ià(
 	`sy¡em
 (
 cmd
 ));
 
-579 
+581 
 	}
 }
 
-585 
+587 
 DIR
  *
 
-586 
+588 
 	$fb_lfs_Ý’dœ
 (*
 ·th
 )
 
-588  (
+590  (
 	`Ý’dœ
 (
 ·th
 ));
 
-589 
+591 
 	}
 }
 
-595 
+597 
 dœ’t
  *
 
-596 
+598 
 	$fb_lfs_»addœ
 (
 DIR
@@ -25161,17 +25161,17 @@ DIR
 dœp
 )
 
-598  (
+600  (
 	`»addœ
 (
 dœp
 ));
 
-599 
+601 
 	}
 }
 
-605 
+607 
 	$fb_lfs_þo£dœ
 (
 DIR
@@ -25179,17 +25179,17 @@ DIR
 dœp
 )
 
-607  (
+609  (
 	`þo£dœ
 (
 dœp
 ));
 
-608 
+610 
 	}
 }
 
-614 
+616 
 	$fb_lfs_f¡©
 (
 fb_fdesc_t
@@ -25201,7 +25201,7 @@ fd
 ¡©buå
 )
 
-616  (
+618  (
 	`f¡©64
 (
 fd
@@ -25211,11 +25211,11 @@ fd_num
 ¡©buå
 ));
 
-617 
+619 
 	}
 }
 
-623 
+625 
 	$fb_lfs_¡©
 (*
 ·th
@@ -25225,7 +25225,7 @@ fd_num
 ¡©buå
 )
 
-625  (
+627  (
 	`¡©64
 (
 ·th
@@ -25233,11 +25233,11 @@ fd_num
 ¡©buå
 ));
 
-626 
+628 
 	}
 }
 
-632 
+634 
 	$fb_lfs_pwr™e
 (
 fb_fdesc_t
@@ -25257,7 +25257,7 @@ off64_t
 off£t
 )
 
-634  (
+636  (
 	`pwr™e64
 (
 fd
@@ -25271,11 +25271,11 @@ iosize
 off£t
 ));
 
-635 
+637 
 	}
 }
 
-641 
+643 
 	$fb_lfs_wr™e
 (
 fb_fdesc_t
@@ -25291,7 +25291,7 @@ fbšt_t
 iosize
 )
 
-643  (
+645  (
 	`wr™e
 (
 fd
@@ -25303,11 +25303,11 @@ iobuf
 iosize
 ));
 
-644 
+646 
 	}
 }
 
-650 
+652 
 	$fb_lfs_Œunÿ‹
 (
 fb_fdesc_t
@@ -25319,11 +25319,11 @@ off64_t
 f£_size
 )
 
-652 #ifdeà
+654 #ifdeà
 HAVE_FTRUNCATE64
 
 
-653  (
+655  (
 	`árunÿ‹64
 (
 fd
@@ -25333,13 +25333,13 @@ fd_num
 f£_size
 ));
 
-655 
+657 
 	`fžeb’ch_log
 (
 LOG_ERROR
 , "Converting off64_to off_t in ftruncate,"
 
-657  (
+659  (
 	`árunÿ‹
 (
 fd
@@ -25351,11 +25351,11 @@ off_t
 f£_size
 ));
 
-659 
+661 
 	}
 }
 
-665 
+667 
 	$fb_lfs_lšk
 (cÚ¡ *
 exi¡šg
@@ -25363,7 +25363,7 @@ exi¡šg
 Ãw
 )
 
-667  (
+669  (
 	`lšk
 (
 exi¡šg
@@ -25371,11 +25371,11 @@ exi¡šg
 Ãw
 ));
 
-668 
+670 
 	}
 }
 
-674 
+676 
 	$fb_lfs_symlšk
 (cÚ¡ *
 exi¡šg
@@ -25383,7 +25383,7 @@ exi¡šg
 Ãw
 )
 
-676  (
+678  (
 	`symlšk
 (
 exi¡šg
@@ -25391,11 +25391,11 @@ exi¡šg
 Ãw
 ));
 
-677 
+679 
 	}
 }
 
-683 
+685 
 	$fb_lfs_acûss
 (cÚ¡ *
 ·th
@@ -25403,7 +25403,7 @@ exi¡šg
 amode
 )
 
-685  (
+687  (
 	`acûss
 (
 ·th
@@ -25411,7 +25411,7 @@ amode
 amode
 ));
 
-686 
+688 
 	}
 }
 

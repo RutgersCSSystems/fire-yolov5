@@ -30,7 +30,8 @@ SETPRELOAD()
 		export LD_PRELOAD=/usr/lib/libos_apppred.so
 	else
 		echo "setting nopred"
-		export LD_PRELOAD=/usr/lib/libjuststats.so
+		#export LD_PRELOAD=/usr/lib/libjuststats.so
+		export LD_PRELOAD=""
 	fi
 }
 
@@ -53,22 +54,18 @@ CLEAR_PWD()
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
-echo "RUNNING Vanilla.................."
+echo "RUNNING Crosslayer.................."
 FlushDisk
 PREDICT=1
 SETPRELOAD
 ./filebench -f workloads/randomread.f
 FlushDisk
 export LD_PRELOAD=""
-exit
 
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
-
+echo "RUNNING Vanilla.................."
 FlushDisk
-echo "RUNNING Crosslayer.................."
-PREDICT=1
+PREDICT=0
 SETPRELOAD
-strace $DBHOME/db_bench $PARAMS $READARGS
+./filebench -f workloads/randomread.f
 export LD_PRELOAD=""
 FlushDisk
