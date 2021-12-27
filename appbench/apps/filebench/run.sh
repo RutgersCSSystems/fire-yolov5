@@ -27,7 +27,7 @@ SETPRELOAD()
 {
 	if [[ "$PREDICT" == "1" ]]; then
 		echo "setting pred"
-		export LD_PRELOAD=/usr/lib/libcrosslayer.so
+		export LD_PRELOAD=/usr/lib/libos_apppred.so
 	else
 		echo "setting nopred"
 		export LD_PRELOAD=/usr/lib/libjuststats.so
@@ -55,7 +55,7 @@ CLEAR_PWD()
 
 echo "RUNNING Vanilla.................."
 FlushDisk
-PREDICT=0
+PREDICT=1
 SETPRELOAD
 ./filebench -f workloads/randomread.f
 FlushDisk

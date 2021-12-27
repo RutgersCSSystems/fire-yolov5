@@ -183,7 +183,9 @@ fb_lfs_freemem(fb_fdesc_t *fd, off64_t size)
 static int
 fb_lfs_pread(fb_fdesc_t *fd, caddr_t iobuf, fbint_t iosize, off64_t fileoffset)
 {
-	return (pread64(fd->fd_num, iobuf, iosize, fileoffset));
+	//fprintf(stderr, "Calling fb_lfs_read \n");
+	//return (pread64(fd->fd_num, iobuf, iosize, fileoffset));
+	return (pread(fd->fd_num, iobuf, iosize, fileoffset));
 }
 
 /*
@@ -192,6 +194,7 @@ fb_lfs_pread(fb_fdesc_t *fd, caddr_t iobuf, fbint_t iosize, off64_t fileoffset)
 static int
 fb_lfs_read(fb_fdesc_t *fd, caddr_t iobuf, fbint_t iosize)
 {
+	fprintf(stderr, "Calling fb_lfs_read \n");
 	return (read(fd->fd_num, iobuf, iosize));
 }
 

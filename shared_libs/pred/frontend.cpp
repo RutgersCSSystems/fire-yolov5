@@ -183,6 +183,9 @@ thread_cons_dest::~thread_cons_dest(void){
 /*Constructor*/
 void con(){
 
+    fprintf(stderr, "CONSTRUCTOR GETTING CALLED \n");
+
+
 #ifdef MMAP_SHARED_DAT
     //if(is_root_process()){
     if(!prev_ra){
@@ -495,6 +498,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     size_t pfetch_size = 0;
     size_t amount_read = 0;
 
+
+    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+
     // Perform the actual system call
 #ifndef READ_RA
     amount_read = real_fread(ptr, size, nmemb, stream);
@@ -521,6 +527,8 @@ ssize_t read(int fd, void *data, size_t size){
 
     ssize_t amount_read = real_read(fd, data, size);
 
+    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
@@ -537,7 +545,8 @@ ssize_t read(int fd, void *data, size_t size){
 
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
+    printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
+
     ssize_t amount_read;
     size_t pfetch_size = 0;
 

@@ -72,6 +72,9 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 
     acc.fd = fd;
     acc.bytes = bytes;
+
+    fprintf(stderr, "handle_read \n");	
+
 #ifndef READ_RA 
     /*
      * handle_read implementation assumes that
