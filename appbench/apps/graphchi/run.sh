@@ -46,7 +46,7 @@ cd $APPBENCH/apps/graphchi
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 FlushDisk
 FlushDisk
-rm -rf $SHARED_DATA/$DATA.*
+rm -rf $DATA.*
 #SETPRELOAD
 echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1
 export LD_PRELOAD=""
