@@ -23,14 +23,14 @@
 # Use is subject to license terms.
 #
 
-set $dir=/users/skannan/ssd/NVM/appbench/shared_data
+set $dir=DATA/
 set $nfiles=10000
 set $meandirwidth=20
-set $filesize=cvar(type=cvar-gamma,parameters=mean:131072;gamma:1.5)
+set $filesize=cvar(type=cvar-gamma,parameters=mean:13107200;gamma:1.5)
 set $nthreads=10
-set $iosize=1m
+set $iosize=8k
 set $meanappendsize=16k
-set $runtime=60
+set $runtime=20
 
 define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=80
 

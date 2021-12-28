@@ -4,16 +4,14 @@ PREDICT=0
 THREAD=4
 VALUE_SIZE=512
 SYNC=0
-KEYSIZE=100
 WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOADS="workloads/webserver.f"
-READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
+WORKLOAD="fileserver.f"
+#WORKLOAD="randomread.f"
+DATAPATH="workloads/$WORKLOAD"
 APPPREFIX="/usr/bin/time -v"
-
-PARAMS="--db=$DBDIR --value_size=4096 --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --threads=$THREAD --num=$NUM"
 
 FlushDisk()
 {
@@ -25,15 +23,24 @@ FlushDisk()
 
 SETPRELOAD()
 {
-	if [[ "$PREDICT" == "1" ]]; then
-		echo "setting pred"
-		export LD_PRELOAD=/usr/lib/libcrosslayer.so
-	else
-		echo "setting nopred"
-		#export LD_PRELOAD=/usr/lib/libjuststats.so
-		export LD_PRELOAD=""
-	fi
+        if [[ "$PREDICT" == "LIBONLY" ]]; then
+                #uses read_ra but disables OS prediction
+                echo "setting LIBONLY pred"
+                export LD_PRELOAD=/usr/lib/libonlylibpred.so
+        elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+                #uses read_ra
+                echo "setting CROSSLAYER pred"
+                export LD_PRELOAD=/usr/lib/libos_libpred.so
+        elif [[ "$PREDICT" == "OSONLY" ]]; then
+                #does not use read_ra and disables all application read-ahead
+                echo "setting OS pred"
+                export LD_PRELOAD=/usr/lib/libonlyospred.so
+        else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
+                echo "setting VANILLA"
+                export LD_PRELOAD=""
+        fi
 }
+
 
 BUILD_LIB()
 {
@@ -44,34 +51,38 @@ BUILD_LIB()
 
 CLEAR_PWD()
 {
-	cd $DBDIR
-	rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
-	cd ..
+	rm -rf $DBDIR/*
 }
 
+RUN()
+{
+	./filebench -f $DATAPATH #&> $PREDICT"-FILEBENCH-"$WORKLOAD".out"
+}
 
 #Run write workload twice
 #CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
+
+
 
 echo "RUNNING Crosslayer.................."
 FlushDisk
-PREDICT=1
+PREDICT="CROSSLAYER"
 SETPRELOAD
-./filebench -f $WORKLOADS
+RUN
+FlushDisk
+export LD_PRELOAD=""
+
+
+
+PREDICT="VANILLA"
+echo "RUNNING $PREDICT.................."
+FlushDisk
+SETPRELOAD
+RUN
 FlushDisk
 export LD_PRELOAD=""
 exit
 
-
-
-echo "RUNNING Vanilla.................."
-FlushDisk
-PREDICT=0
-SETPRELOAD
-./filebench -f $WORKLOADS
-export LD_PRELOAD=""
-FlushDisk
-exit
 
 

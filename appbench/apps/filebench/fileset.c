@@ -383,6 +383,9 @@ fileset_alloc_file(filesetentry_t *entry)
 	    "Pre-allocated file %s size %llu",
 	    path, (u_longlong_t)entry->fse_size);
 
+	//system("sudo sync"); 
+	//system("./clearcache.sh");
+
 	return (FILEBENCH_OK);
 }
 
@@ -1041,6 +1044,8 @@ fileset_create(fileset_t *fileset)
 
 		(void) FB_MKDIR(path, 0755);
 
+		system("sudo ./clearcache.sh");
+
 		if (fileset_create_subdirs(fileset, path) == FILEBENCH_ERROR)
 			return (FILEBENCH_ERROR);
 	}
@@ -1159,6 +1164,8 @@ fileset_create(fileset_t *fileset)
 	    (u_longlong_t)fileset->fs_constentries,
 	    fileset_name,
 	    (u_longlong_t)(((gethrtime() - start) / 1000000000) + 1));
+
+	fprintf(stderr, "FINISHED PREALLOCATION \n");
 
 	return (FILEBENCH_OK);
 }
@@ -1825,6 +1832,9 @@ fileset_createsets()
 
 	filebench_log(LOG_INFO,
 	    "Population and pre-allocation of filesets completed");
+
+	system("sudo ./clearcache.sh");
+	fprintf(stderr, "FINISHED PREALLOCATION \n");
 
 	if (filebench_shm->shm_fsparalloc_count < 0)
 		return (FILEBENCH_ERROR);
