@@ -497,9 +497,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
-
-
     fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+    amount_read = real_fread(ptr, size, nmemb, stream);
+    return amount_read;
 
     // Perform the actual system call
 #ifndef READ_RA
@@ -527,8 +527,6 @@ ssize_t read(int fd, void *data, size_t size){
 
     ssize_t amount_read = real_read(fd, data, size);
 
-    //fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
-
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
@@ -542,14 +540,14 @@ ssize_t read(int fd, void *data, size_t size){
 }
 
 
-
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-    //printf("%ld called %s: called for fd:%d\n", gettid(), __func__, fd);
     ssize_t amount_read;
     size_t pfetch_size = 0;
 
+    //amount_read = real_pread(fd, data, size, offset);
 #ifndef READ_RA
+    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
     amount_read = real_pread(fd, data, size, offset);
 #endif
 
@@ -562,9 +560,12 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
 
 #ifdef READ_RA
+    fprintf(stderr, "%s: doing serial prefetch \n", __func__);
     struct read_ra_req ra_req;
     ra_req.ra_pos = 0;
     ra_req.ra_count = 0;
+
+    fprintf(stderr, "%s: doing serial prefetch \n", __func__);
 
 #ifdef ENABLE_CACHE_LIMITING
     /*To read_ra only if whole prefetching is
@@ -578,6 +579,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     }
 
     //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
+    printf("%s: doing serial prefetch for size %zu \n", __func__, ra_req.ra_count);
     amount_read = pread_ra(fd, data, size, offset, &ra_req);
     
     /*XXX:

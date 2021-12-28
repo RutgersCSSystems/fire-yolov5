@@ -9,7 +9,7 @@ WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOADS="readrandom"
+WORKLOADS="workloads/webserver.f"
 READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
 APPPREFIX="/usr/bin/time -v"
 
@@ -27,7 +27,7 @@ SETPRELOAD()
 {
 	if [[ "$PREDICT" == "1" ]]; then
 		echo "setting pred"
-		export LD_PRELOAD=/usr/lib/libos_apppred.so
+		export LD_PRELOAD=/usr/lib/libcrosslayer.so
 	else
 		echo "setting nopred"
 		#export LD_PRELOAD=/usr/lib/libjuststats.so
@@ -58,14 +58,20 @@ echo "RUNNING Crosslayer.................."
 FlushDisk
 PREDICT=1
 SETPRELOAD
-./filebench -f workloads/randomread.f
+./filebench -f $WORKLOADS
 FlushDisk
 export LD_PRELOAD=""
+exit
+
+
 
 echo "RUNNING Vanilla.................."
 FlushDisk
 PREDICT=0
 SETPRELOAD
-./filebench -f workloads/randomread.f
+./filebench -f $WORKLOADS
 export LD_PRELOAD=""
 FlushDisk
+exit
+
+

@@ -63,6 +63,8 @@ bool handle_open(int fd, const char *filename){
 int g_num_prefetches = 0;
 
 size_t handle_read(int fd, off_t pos, size_t bytes) {
+
+
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
@@ -72,8 +74,6 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 
     acc.fd = fd;
     acc.bytes = bytes;
-
-    fprintf(stderr, "handle_read \n");	
 
 #ifndef READ_RA 
     /*
@@ -87,7 +87,6 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 #else
     acc.pos = pos + bytes;
 #endif
-
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
@@ -120,7 +119,6 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 			fd, acc.pos, prefetch_fd_pos, prefetch_size);
     	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
     }
-
 #endif
 
 #ifdef STATS
@@ -154,7 +152,6 @@ int handle_close(int fd){
     seq_readobj.remove(fd);
     seq_writeobj.remove(fd);
 #endif
-
     return true;
 }
 
