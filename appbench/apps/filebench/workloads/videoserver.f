@@ -33,7 +33,7 @@
 # 10 seconds. Thus the write bandwidth will be set as $filesize/$repintval.
 #
 
-set $dir=/users/Krish194/ssd/NVM-sudarsun/NVM/appbench/apps/filebench/DATA
+set $dir=DATA/
 set $eventrate=96
 set $filesize=1g
 set $nthreads=16

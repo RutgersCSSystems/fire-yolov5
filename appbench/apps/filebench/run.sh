@@ -8,7 +8,7 @@ WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOAD="webserver.f"
+WORKLOAD="videoserver.f"
 #WORKLOAD="randomread.f"
 DATAPATH="workloads/$WORKLOAD"
 APPPREFIX="/usr/bin/time -v"
