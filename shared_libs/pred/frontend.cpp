@@ -531,8 +531,8 @@ ssize_t read(int fd, void *data, size_t size){
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
     if(reg_fd(fd)){
-        printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
-			 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
+        //printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
+	//		 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -548,7 +548,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     //amount_read = real_pread(fd, data, size, offset);
 #ifndef READ_RA
-    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+    //fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
     amount_read = real_pread(fd, data, size, offset);
 #endif
 
@@ -578,8 +578,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     }
 
     //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
-    printf("%s: doing serial prefetch for size %zu offset %d  \n", 
-		    __func__, ra_req.ra_count, offset);
+    //printf("%s: doing serial prefetch for size %zu offset %d  \n", 
+	//	    __func__, ra_req.ra_count, offset);
     amount_read = pread_ra(fd, data, size, offset, &ra_req);
     
     /*XXX:

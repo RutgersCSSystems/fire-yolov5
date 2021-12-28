@@ -24,10 +24,10 @@
 #
 
 set $dir=DATA/
-set $nfiles=1000000
+set $nfiles=10000
 set $meandirwidth=10
-set $filesize=cvar(type=cvar-gamma,parameters=mean:16384;gamma:1.5)
-set $nthreads=50
+set $filesize=cvar(type=cvar-gamma,parameters=mean:1638400;gamma:1.5)
+set $nthreads=20
 set $iosize=1m
 set $meanappendsize=16k
 
