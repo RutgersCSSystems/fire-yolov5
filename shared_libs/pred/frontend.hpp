@@ -30,7 +30,10 @@ struct read_ra_req{
 	 * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
 	 * to get a non-zero value
 	 */
-	long total_cache_usage;
+	long total_cache_usage; //total cache usage in bytes (OS return)
+    	bool full_file_ra; //populated by app true if pread_ra is being done to get full file
+    	long cache_limit; //populated by the app, desired cache_limit
+
 };
 
 /*The following are the intercepted function definitions*/
@@ -261,7 +264,7 @@ pid_t getgppid(){
 	fscanf(fp, "%*d %*s %*s %d", &gppid);
 	fclose(fp);
 
-     printf("My gppid = %d\n", gppid);
+     //printf("My gppid = %d\n", gppid);
 
 	return gppid;
 }
@@ -312,6 +315,10 @@ struct shared_dat{
     char a; //just there. no use
 #ifdef ENABLE_CACHE_LIMITING 
     std::atomic<bool> to_prefetch_whole; //should I prefetch the whole file at open?
+#endif
+
+#ifdef ONLY_SINGLE_PREFETCH_WHOLE
+    std::atomic<int> first_tid;
 #endif
 };
 

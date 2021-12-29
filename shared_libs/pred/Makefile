@@ -22,7 +22,7 @@ DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting 
 FETCH_WHOLE_FILE=-DFETCH_WHOLE_FILE ##Fetches whole file when it is opened (modified linux only)
 CACHE_LIMITING=-DENABLE_CACHE_LIMITING ##Enable Cache accounting and limiting (modified linux only)
 
-all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept cache_lim_os_libpred
+all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept cache_lim_os_libpred os_fetch_at_open
 
 
 #This allows lib predictor but switches off app and OS predictor (Disable any FADV_RANDOM)
@@ -59,6 +59,13 @@ cache_lim_os_libpred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.
 	    $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA) $(FETCH_WHOLE_FILE) \
 	    $(CACHE_LIMITING)
 
+#prefetch all file at open
+os_fetch_at_open: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_fetch_at_open.so $^ $(LIBS) $(DEBUGFLAGS) \
+	    $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA) $(FETCH_WHOLE_FILE)
+	$(CXX) $(INCLUDE) $(FLAGS) -g -o libos_fetch_at_open_single.so $^ $(LIBS) $(DEBUGFLAGS) \
+	    $(DISABLEAPPPRED) $(DISABLE_FADV_RANDOM) $(READ_RA) $(FETCH_WHOLE_FILE) -DONLY_SINGLE_PREFETCH_WHOLE 
+
 #This doesnt allow App or lib or OS predictor 
 nopred: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libnopred.so $^ $(LIBS) $(DEBUGFLAGS) \
@@ -76,7 +83,7 @@ juststats: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/t
 
 onlyintercept: frontend.cpp sequential.cpp util.cpp predictor.cpp worker.cpp utils/thpool.c
 	$(CXX) $(INCLUDE) $(FLAGS) -g -o libonlyintercept.so $^ $(LIBS) \
-	    $(DISABLE_FADV_RANDOM) $(CACHE_LIMITING) $(FETCH_WHOLE_FILE)
+	    $(DISABLE_FADV_RANDOM)
 
 
 clean:
