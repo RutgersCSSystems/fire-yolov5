@@ -33,7 +33,7 @@ SETPRELOAD()
         elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
                 #uses read_ra
                 echo "setting CROSSLAYER pred"
-                export LD_PRELOAD=/usr/lib/libos_libpred.so
+                export LD_PRELOAD=/usr/lib/libcrosslayer.so
         elif [[ "$PREDICT" == "OSONLY" ]]; then
                 #does not use read_ra and disables all application read-ahead
                 echo "setting OS pred"
@@ -86,15 +86,17 @@ RUN()
 #CLEAR_PWD
 
 FlushDisk
+PREDICT="CROSSLAYER"
+echo "RUNNING $PREDICT.................."
+RUN
+exit
+
+FlushDisk
 PREDICT="OSONLY"
 echo "RUNNING $PREDICT.................."
 RUN
 
 
-FlushDisk
-PREDICT="CROSSLAYER"
-echo "RUNNING $PREDICT.................."
-RUN
 
 
 PREDICT="VANILLA"

@@ -1,0 +1,60 @@
+CONSTRUCTOR GETTING CALLED 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+fread: TID:3995
+0.003: Video Server Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.004: passivevids populated: 12 files, avg. dir. width = 20, avg. dir. depth = 0.8, 0 leafdirs, 12288.000MB total size
+0.004: Removing passivevids tree (if exists)
+CONSTRUCTOR GETTING CALLED 
+CONSTRUCTOR GETTING CALLED 
+0.009: Pre-allocating directories in passivevids tree
+CONSTRUCTOR GETTING CALLED 
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+1.913: Pre-allocating files in passivevids tree
+FINISHED PREALLOCATION 
+1.913: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
+1.913: Removing activevids tree (if exists)
+CONSTRUCTOR GETTING CALLED 
+CONSTRUCTOR GETTING CALLED 
+1.917: Pre-allocating directories in activevids tree
+CONSTRUCTOR GETTING CALLED 
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+6.085: Pre-allocating files in activevids tree
+FINISHED PREALLOCATION 
+6.805: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+6.809: Population and pre-allocation of filesets completed
+CONSTRUCTOR GETTING CALLED 
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+FINISHED PREALLOCATION 
+9.546: Starting 1 vidreaders instances
+9.546: Starting 1 vidwriter instances
+CONSTRUCTOR GETTING CALLED 
+CONSTRUCTOR GETTING CALLED 
+10.551: Running...
+30.555: Run took 20 seconds...
+30.555: Per-Operation Breakdown
+serverlimit          9599ops      480ops/s   0.0mb/s   32.264ms/op [0.029ms - 1334.369ms]
+vidreader            9647ops      482ops/s 120.4mb/s    0.092ms/op [0.017ms - 0.742ms]
+replaceinterval      1ops        0ops/s   0.0mb/s 10000.223ms/op [10000.223ms - 10000.223ms]
+wrtclose             2ops        0ops/s   0.0mb/s    0.025ms/op [0.008ms - 0.041ms]
+newvid               2ops        0ops/s 102.4mb/s  511.803ms/op [508.766ms - 514.840ms]
+wrtopen              2ops        0ops/s   0.0mb/s    0.031ms/op [0.021ms - 0.041ms]
+vidremover           2ops        0ops/s   0.0mb/s    0.883ms/op [0.837ms - 0.930ms]
+30.555: IO Summary:  9655 ops 482.662 ops/s 482/0 rd/wr 222.7mb/s 0.199ms/op
+30.555: Shutting down processes
