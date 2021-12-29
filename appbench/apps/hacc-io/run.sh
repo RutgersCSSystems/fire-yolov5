@@ -4,13 +4,13 @@ DBHOME=$PWD
 PREDICT="OSONLY"
 THREAD=16
 SYNC=0
-NUM=800000000
+NUM=200000000
 DBDIR=$DBHOME/checkpoint
 
 APPNAME="hacc-io"
 
-APPREAD="./hacc_io_read"
-APPGEN="./hacc_io_write"
+APPREAD="mpiexec -n $THREAD ./hacc_io_read"
+APPGEN="mpiexec -n $THREAD ./hacc_io_write"
 
 PARAMS="$NUM $DBDIR"
 
@@ -62,40 +62,53 @@ CLEANUP()
 
 RUNCACHESTAT()
 {
-	sudo $HOME/ssd/perf-tools/bin/cachestat &> "CACHESTAT-"$APPNAME.out &
+	sudo $HOME/ssd/perf-tools/bin/cachestat &> "CACHESTAT-"$APPNAME"-"$PREDICT".out" &
 }
 
+RUNAPP() 
+{
+	RUNCACHESTAT
+	$APPREAD $PARAMS &> $APPNAME"-"$PREDICT".out"
+	export LD_PRELOAD=""
+	CLEANUP
+
+}
 
 #Run write workload twice
 #CLEAR_PWD
 $APPGEN $PARAMS
+
+
+echo "RUNNING BASICS.............."
+FlushDisk
+#PREDICT="CROSSLAYER"
+PREDICT="BASICS"
+FlushDisk
+#SETPRELOAD
+RUNAPP
+FlushDisk
+exit
 
 echo "RUNNING CROSSLAYER.................."
 FlushDisk
 PREDICT="CROSSLAYER"
 FlushDisk
 SETPRELOAD
-RUNCACHESTAT
-$APPREAD $PARAMS
-export LD_PRELOAD=""
-CLEANUP
-exit
+RUNAPP
 
 FlushDisk
+
 echo "RUNNING OSONLY.................."
 PREDICT="OSONLY"
 SETPRELOAD
-$APPREAD $PARAMS
-export LD_PRELOAD=""
-FlushDisk
+RUNAPP
 
+FlushDisk
 echo "RUNNING Vanilla.................."
 FlushDisk
 PREDICT="VANILLA"
 SETPRELOAD
-$APPREAD $PARAMS
-FlushDisk
-export LD_PRELOAD=""
+RUNAPP
 exit
 
 

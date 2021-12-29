@@ -294,8 +294,9 @@ size_t seq_prefetch(struct pos_bytes curr_access, long stride){
     ret->stride = stride;
     
 #ifdef __NO_BG_THREADS
-     __seq_prefetch((struct msg*)ret); //Correct
-     bytes_fetched = ret->prefetch_bytes;
+    __seq_prefetch((struct msg*)ret); //Correct
+    bytes_fetched = ret->prefetch_bytes;
+    fprintf(stderr, "bytes_fetched %zu \n", bytes_fetched);
     free(ret);
     ret = NULL;
 #else

@@ -40,7 +40,7 @@
 #include "fb_cvar.h"
 
 filebench_shm_t *filebench_shm = NULL;
-char shmpath[128] = "/localhome/sudarsun/projects/HPC/NVM/appbench/shared_data/filebench-shm-XXXXXX";
+char shmpath[128] = "DATA/filebench-shm-XXXXXX";
 
 /*
  * Interprocess Communication mechanisms. If multiple processes

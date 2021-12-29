@@ -193,6 +193,8 @@ thread_cons_dest::~thread_cons_dest(void){
 /*Constructor*/
 void con(){
 
+    fprintf(stderr, "CONSTRUCTOR GETTING CALLED \n");
+
     /*Initialize the */
     if(!shared_data){
         shared_data = (struct shared_dat*)mmap(NULL, 
@@ -206,6 +208,7 @@ void con(){
 #ifdef ONLY_SINGLE_PREFETCH_WHOLE
     shared_data->first_tid.store(0);
 #endif
+
 
 #ifdef MMAP_SHARED_DAT
     //if(is_root_process()){
@@ -502,6 +505,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
+    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+    amount_read = real_fread(ptr, size, nmemb, stream);
+    return amount_read;
 
     // Perform the actual system call
 #ifndef READ_RA
@@ -535,7 +541,8 @@ ssize_t read(int fd, void *data, size_t size){
 
     //if(reg_fd(fd)){
     if(is_reg[fd]){
-        //printf("fd: %d lseek: %ld bytes: %lu\n", fd, lseek(fd, 0, SEEK_CUR), size );
+        //printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
+	//	 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -549,7 +556,9 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     ssize_t amount_read;
     size_t pfetch_size = 0;
 
+    //amount_read = real_pread(fd, data, size, offset);
 #ifndef READ_RA
+    //fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
     amount_read = real_pread(fd, data, size, offset);
 #endif
 
@@ -574,12 +583,16 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     struct read_ra_req ra_req;
     ra_req.ra_pos = 0;
     ra_req.ra_count = 0;
+    //fprintf(stderr, "%s: doing serial prefetch \n", __func__);
 
     ra_req.ra_count = pfetch_size;
     ra_req.full_file_ra = false;
     ra_req.cache_limit = -1; //disables cache limiting in kernel
 
+    //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
     amount_read = pread_ra(fd, data, size, offset, &ra_req);
+    //printf("%s: doing serial prefetch for size %zu offset %d  \n", 
+	//	    __func__, ra_req.ra_count, offset);
 #endif
 
     return amount_read;

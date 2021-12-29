@@ -59,10 +59,12 @@ bool handle_open(int fd, const char *filename){
 /* Every User read will call this fn:
  * 1. accounts for access pattern and
  * 2. takes appropriate readahead/DONT NEED action
- */
+*/
 int g_num_prefetches = 0;
 
 size_t handle_read(int fd, off_t pos, size_t bytes) {
+
+
     if(pos <0 || bytes <=0 || fd <=2) //Santization check
         return false;
 
@@ -72,6 +74,7 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 
     acc.fd = fd;
     acc.bytes = bytes;
+
 #ifndef READ_RA 
     /*
      * handle_read implementation assumes that
@@ -84,7 +87,6 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 #else
     acc.pos = pos + bytes;
 #endif
-
 
 #ifdef SEQUENTIAL
     seq_readobj.insert(acc);
@@ -107,7 +109,7 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 
     if((stride = seq_readobj.is_strided(fd))){
         //printf("handle_read: strided: %ld\n", stride);
-        prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
+        //prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
 	g_num_prefetches++;
     }
 
@@ -117,7 +119,6 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 			fd, acc.pos, prefetch_fd_pos, prefetch_size);
     	seq_readobj.insert_prefetch_pos(fd, prefetch_fd_pos);
     }
-
 #endif
 
 #ifdef STATS
@@ -151,7 +152,6 @@ int handle_close(int fd){
     seq_readobj.remove(fd);
     seq_writeobj.remove(fd);
 #endif
-
     return true;
 }
 

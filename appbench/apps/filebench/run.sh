@@ -4,16 +4,17 @@ PREDICT=0
 THREAD=4
 VALUE_SIZE=512
 SYNC=0
-KEYSIZE=100
 WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOADS="readrandom"
-READARGS="--benchmarks=$WORKLOADS --use_existing_db=1 --mmap_read=0"
+WORKLOAD="mongo.f"
+#WORKLOAD="randomread.f"
+DATAPATH="workloads/$WORKLOAD"
 APPPREFIX="/usr/bin/time -v"
 
-PARAMS="--db=$DBDIR --value_size=4096 --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=100 --write_buffer_size=67108864 --threads=$THREAD --num=$NUM"
+APPNAME="filebench-"$WORKLOAD
+
 
 FlushDisk()
 {
@@ -25,14 +26,24 @@ FlushDisk()
 
 SETPRELOAD()
 {
-	if [[ "$PREDICT" == "1" ]]; then
-		echo "setting pred"
-		export LD_PRELOAD=/usr/lib/libcrosslayer.so
-	else
-		echo "setting nopred"
-		export LD_PRELOAD=/usr/lib/libjuststats.so
-	fi
+        if [[ "$PREDICT" == "LIBONLY" ]]; then
+                #uses read_ra but disables OS prediction
+                echo "setting LIBONLY pred"
+                export LD_PRELOAD=/usr/lib/libonlylibpred.so
+        elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
+                #uses read_ra
+                echo "setting CROSSLAYER pred"
+                export LD_PRELOAD=/usr/lib/libcrosslayer.so
+        elif [[ "$PREDICT" == "OSONLY" ]]; then
+                #does not use read_ra and disables all application read-ahead
+                echo "setting OS pred"
+                export LD_PRELOAD=/usr/lib/libonlyospred.so
+        else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
+                echo "setting VANILLA"
+                export LD_PRELOAD=""
+        fi
 }
+
 
 BUILD_LIB()
 {
@@ -43,32 +54,56 @@ BUILD_LIB()
 
 CLEAR_PWD()
 {
-	cd $DBDIR
-	rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
-	cd ..
+	rm -rf $DBDIR/*
+}
+
+CLEANUP()
+{
+        rm -rf $DBDIR/*
+        sudo killall cachestat
+        sudo killall cachestat
 }
 
 
+RUNCACHESTAT()
+{
+        sudo $HOME/ssd/perf-tools/bin/cachestat &> "CACHESTAT-"$APPNAME"-"$PREDICT".out" &
+}
+
+RUN()
+{
+	RUNCACHESTAT
+	SETPRELOAD
+
+	./filebench -f $DATAPATH &> $APPNAME"-"$PREDICT".out"
+
+	FlushDisk
+	export LD_PRELOAD=""
+	CLEANUP
+}
+
 #Run write workload twice
 #CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
 
-echo "RUNNING Vanilla.................."
 FlushDisk
-PREDICT=0
-SETPRELOAD
-./filebench -f workloads/randomread.f
-FlushDisk
-export LD_PRELOAD=""
+PREDICT="CROSSLAYER"
+echo "RUNNING $PREDICT.................."
+RUN
 exit
 
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+FlushDisk
+PREDICT="OSONLY"
+echo "RUNNING $PREDICT.................."
+RUN
 
+
+
+
+PREDICT="VANILLA"
+echo "RUNNING $PREDICT.................."
 FlushDisk
-echo "RUNNING Crosslayer.................."
-PREDICT=1
-SETPRELOAD
-strace $DBHOME/db_bench $PARAMS $READARGS
-export LD_PRELOAD=""
-FlushDisk
+RUN
+exit
+
+
+
