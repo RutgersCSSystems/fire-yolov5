@@ -8,10 +8,13 @@ WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOAD="videoserver.f"
+WORKLOAD="mongo.f"
 #WORKLOAD="randomread.f"
 DATAPATH="workloads/$WORKLOAD"
 APPPREFIX="/usr/bin/time -v"
+
+APPNAME="filebench-"$WORKLOAD
+
 
 FlushDisk()
 {
@@ -54,34 +57,50 @@ CLEAR_PWD()
 	rm -rf $DBDIR/*
 }
 
+CLEANUP()
+{
+        rm -rf $DBDIR/*
+        sudo killall cachestat
+        sudo killall cachestat
+}
+
+
+RUNCACHESTAT()
+{
+        sudo $HOME/ssd/perf-tools/bin/cachestat &> "CACHESTAT-"$APPNAME"-"$PREDICT".out" &
+}
+
 RUN()
 {
-	./filebench -f $DATAPATH #&> $PREDICT"-FILEBENCH-"$WORKLOAD".out"
+	RUNCACHESTAT
+	SETPRELOAD
+
+	./filebench -f $DATAPATH &> $APPNAME"-"$PREDICT".out"
+
+	FlushDisk
+	export LD_PRELOAD=""
+	CLEANUP
 }
 
 #Run write workload twice
 #CLEAR_PWD
 
+FlushDisk
+PREDICT="OSONLY"
+echo "RUNNING $PREDICT.................."
+RUN
 
 
-
-echo "RUNNING Crosslayer.................."
 FlushDisk
 PREDICT="CROSSLAYER"
-SETPRELOAD
+echo "RUNNING $PREDICT.................."
 RUN
-FlushDisk
-export LD_PRELOAD=""
-
 
 
 PREDICT="VANILLA"
 echo "RUNNING $PREDICT.................."
 FlushDisk
-SETPRELOAD
 RUN
-FlushDisk
-export LD_PRELOAD=""
 exit
 
 

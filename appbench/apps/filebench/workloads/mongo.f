@@ -47,9 +47,9 @@ define process name=filereader,instances=1
     flowop openfile name=openfile2,filesetname=postset,fd=1
     flowop readwholefile name=readfile1,fd=1,iosize=$readiosize
     flowop closefile name=closefile2,fd=1
-    flowop deletefile name=deletefile1,filesetname=postsetdel
+    #flowop deletefile name=deletefile1,filesetname=postsetdel
   }
 }
 
 echo  "Mongo-like Version 2.3 personality successfully loaded"
-run 60
+run 20

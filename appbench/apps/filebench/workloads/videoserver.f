@@ -34,7 +34,7 @@
 #
 
 set $dir=DATA/
-set $eventrate=96
+set $eventrate=120
 set $filesize=1g
 set $nthreads=16
 set $numactivevids=4
@@ -60,7 +60,7 @@ define process name=vidwriter,instances=1
     flowop createfile name=wrtopen,filesetname=$passvidsname,fd=1
     flowop writewholefile name=newvid,iosize=$writeiosize,fd=1,srcfd=1
     flowop closefile name=wrtclose, fd=1
-    flowop delay name=replaceinterval, value=$repintval
+    #flowop delay name=replaceinterval, value=$repintval
   }
 }
 
@@ -69,9 +69,9 @@ define process name=vidreaders,instances=1
   thread name=vidreaders,memsize=10m,instances=$nthreads
   {
     flowop read name=vidreader,filesetname=$actvidsname,iosize=$readiosize
-    flowop bwlimit name=serverlimit, target=vidreader
+    #flowop bwlimit name=serverlimit, target=vidreader
   }
 }
 
 echo  "Video Server Version 3.0 personality successfully loaded"
-run 20
+run 40

@@ -59,7 +59,7 @@ bool handle_open(int fd, const char *filename){
 /* Every User read will call this fn:
  * 1. accounts for access pattern and
  * 2. takes appropriate readahead/DONT NEED action
- */
+*/
 int g_num_prefetches = 0;
 
 size_t handle_read(int fd, off_t pos, size_t bytes) {
@@ -109,7 +109,7 @@ size_t handle_read(int fd, off_t pos, size_t bytes) {
 
     if((stride = seq_readobj.is_strided(fd))){
         //printf("handle_read: strided: %ld\n", stride);
-        prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
+        //prefetch_size = seq_prefetch(acc, stride); //prefetch in program path
 	g_num_prefetches++;
     }
 
