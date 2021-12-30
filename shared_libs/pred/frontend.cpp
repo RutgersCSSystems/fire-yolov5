@@ -197,7 +197,7 @@ void con(){
      * Please dont use fprintf*/
     printf("CONSTRUCTOR GETTING CALLED \n");
 
-    /*Initialize the*/
+    /*Initialize the shared data structure*/
     if(!shared_data){
         shared_data = (struct shared_dat*)mmap(NULL, 
                 sizeof(struct shared_dat), PROT_READ | PROT_WRITE, 
@@ -207,13 +207,9 @@ void con(){
         }
     }
 
-    printf("after shared_data\n");
-
 #ifdef ONLY_SINGLE_PREFETCH_WHOLE
     shared_data->first_tid.store(0);
 #endif
-
-    printf("after tid store 0\n");
 
 
 #ifdef MMAP_SHARED_DAT
@@ -272,8 +268,6 @@ void con(){
     printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
             gettid(), shared_data->to_prefetch_whole.load());
 #endif
-
-    printf("after ENABLE_CACHE_LIMITING\n");
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("init tracing...\n");
