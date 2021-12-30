@@ -193,9 +193,11 @@ thread_cons_dest::~thread_cons_dest(void){
 /*Constructor*/
 void con(){
 
-    fprintf(stderr, "CONSTRUCTOR GETTING CALLED \n");
+    /*using fprintf here gives SIGFPE for some reason
+     * Please dont use fprintf*/
+    printf("CONSTRUCTOR GETTING CALLED \n");
 
-    /*Initialize the */
+    /*Initialize the*/
     if(!shared_data){
         shared_data = (struct shared_dat*)mmap(NULL, 
                 sizeof(struct shared_dat), PROT_READ | PROT_WRITE, 
@@ -205,9 +207,13 @@ void con(){
         }
     }
 
+    printf("after shared_data\n");
+
 #ifdef ONLY_SINGLE_PREFETCH_WHOLE
     shared_data->first_tid.store(0);
 #endif
+
+    printf("after tid store 0\n");
 
 
 #ifdef MMAP_SHARED_DAT
@@ -266,6 +272,8 @@ void con(){
     printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
             gettid(), shared_data->to_prefetch_whole.load());
 #endif
+
+    printf("after ENABLE_CACHE_LIMITING\n");
 
 #if defined PREDICTOR && !defined __NO_BG_THREADS
     debug_print("init tracing...\n");
@@ -505,7 +513,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
-    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+    printf("%s: TID:%ld\n", __func__, gettid());
     amount_read = real_fread(ptr, size, nmemb, stream);
     return amount_read;
 
