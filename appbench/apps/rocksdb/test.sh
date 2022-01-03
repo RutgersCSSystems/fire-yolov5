@@ -15,6 +15,10 @@ RA_SIZE=128 #KB
 
 NR_RA_BLOCKS=`echo "($RA_SIZE*1024)/$BLOCK_SZ" | bc`
 
+KB=1024
+MB=`echo "1024*$KB" | bc`
+GB=`echo "1024*$MB" | bc`
+
 sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
 WORKLOAD="readseq"
@@ -75,6 +79,15 @@ SETPRELOAD()
     elif [[ "$1" == "ONLYINTERCEPT" ]]; then
         echo "Only Intercepting"
         export LD_PRELOAD=/usr/lib/libonlyintercept.so
+    elif [[ "$1" == "CACHELIMIT" ]]; then
+        echo "OS and LIB pred with Cache Limit"
+        export LD_PRELOAD=/usr/lib/libcache_lim_os_libpred.so
+    elif [[ "$1" == "FETCHALL" ]]; then
+        echo "OS and LIB pred without Cache Limit"
+        export LD_PRELOAD=/usr/lib/libos_fetch_at_open.so
+    elif [[ "$1" == "FETCHALLSINGLE" ]]; then
+        echo "OS and LIB pred without Cache Limit"
+        export LD_PRELOAD=/usr/lib/libos_fetch_at_open_single.so
     fi
 
     ##export TARGET_GPPID=$PPID
@@ -99,23 +112,26 @@ DISABLE_LOCK_STATS
 #Run write workload twice
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS
+#exit
 
 LOCKDAT=$PWD/lockdat
 mkdir $LOCKDAT
 
 
+
 echo "RUNNING Vanilla................."
-#FlushDisk
-#SETPRELOAD "APPOS"
+FlushDisk
+#export APPCACHELIMIT=`echo "10*$GB" | bc`
+#SETPRELOAD "CACHELIMIT"
+SETPRELOAD "FETCHALL"
 #SETPRELOAD "ONLYOS"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
-#FlushDisk
-exit
+FlushDisk
 
 echo "RUNNING Only Intercept.................."
 FlushDisk
-SETPRELOAD "ONLYINTERCEPT"
+SETPRELOAD "FETCHALLSINGLE"
 $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk

@@ -69,7 +69,7 @@
 /*TODO: Check if this needs to be done using thread_local*/
 std::atomic<bool> enable_advise; //Enables and disables application advise
 thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
-
+std::unordered_map<int, bool> is_reg; //false - this fd is not a regular file
 
 #ifdef ENABLE_CACHE_LIMITING 
 /*all of these variables are shared across all threads*/
@@ -152,9 +152,17 @@ thread_cons_dest::thread_cons_dest(void){
     test_new = true;
     nr_readaheads = 0UL;
     mytid = gettid(); //this TID
+
+#ifdef ONLY_SINGLE_PREFETCH_WHOLE
+    if(shared_data->first_tid.load() == 0){
+        shared_data->first_tid.store(mytid);
+    }
+#endif
+
 #ifdef CONTROL_PRED
     enable_advise = false; //Disable any app/lib advise by default
 #endif
+
 #ifdef CROSSLAYER
     set_crosslayer();
 #endif
@@ -165,8 +173,10 @@ thread_cons_dest::thread_cons_dest(void){
 
     /*Testing*/
     //printf("TID:%ld cache limit = %ld\n", mytid, cache_limit.load());
-    printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
-            gettid(), shared_data->to_prefetch_whole.load());
+    /*
+       printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
+       gettid(), shared_data->to_prefetch_whole.load());
+       */
 #endif
 }
 
@@ -183,7 +193,23 @@ thread_cons_dest::~thread_cons_dest(void){
 /*Constructor*/
 void con(){
 
-    fprintf(stderr, "CONSTRUCTOR GETTING CALLED \n");
+    /*using fprintf here gives SIGFPE for some reason
+     * Please dont use fprintf*/
+    printf("CONSTRUCTOR GETTING CALLED \n");
+
+    /*Initialize the shared data structure*/
+    if(!shared_data){
+        shared_data = (struct shared_dat*)mmap(NULL, 
+                sizeof(struct shared_dat), PROT_READ | PROT_WRITE, 
+                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        if (shared_data == MAP_FAILED){
+            printf("shared_data MMAP failed \n");
+        }
+    }
+
+#ifdef ONLY_SINGLE_PREFETCH_WHOLE
+    shared_data->first_tid.store(0);
+#endif
 
 
 #ifdef MMAP_SHARED_DAT
@@ -238,15 +264,7 @@ void con(){
      *  it should be an acceptable approximate solution for now.
      */
     //to_prefetch_whole = true; //initialize
-    if(!shared_data){
-        shared_data = (struct shared_dat*)mmap(NULL, 
-                sizeof(struct shared_dat), PROT_READ | PROT_WRITE, 
-                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-        if (shared_data == MAP_FAILED){
-            printf("shared_data MMAP failed \n");
-        }
-        shared_data->to_prefetch_whole = true;
-    }
+    shared_data->to_prefetch_whole.store(true);
     printf("%s:%ld to_prefetch_whole set %d\n", __func__, 
             gettid(), shared_data->to_prefetch_whole.load());
 #endif
@@ -400,7 +418,11 @@ int open(const char *pathname, int flags, ...){
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
 
     if(reg_fd(fd)){
+        is_reg[fd] = true;
         handle_open(fd, pathname);
+    }
+    else{
+        is_reg[fd] = false;
     }
 #endif
 
@@ -415,42 +437,30 @@ int open(const char *pathname, int flags, ...){
 #endif
 
 
-#ifdef ENABLE_CACHE_LIMITING
-    if(shared_data->to_prefetch_whole)
-#endif
-    {
 #ifdef FETCH_WHOLE_FILE
-        if(in_cache[fd] == false){
-            struct read_ra_req ra_req;
-            ra_req.total_cache_usage = 0; 
+    if(in_cache[fd] == false){
+        struct read_ra_req ra_req;
+        ra_req.total_cache_usage = 0; 
 
-            in_cache[fd] = true;
+        in_cache[fd] = true;
 
-            ra_req.ra_pos = 0;
-            ra_req.ra_count = INT_MAX;
-
-            //syscall(__PREAD_RA_SYSCALL, fd, &fake_buffer, 5, 0, &ra_req);
-            pread_ra(fd, &fake_buffer, 5, 0, &ra_req);
-
+        ra_req.ra_pos = 0;
+        ra_req.ra_count = INT_MAX;
+        ra_req.full_file_ra = true;
 #ifdef ENABLE_CACHE_LIMITING
-            /* update the cache limiting variables
-             * based on the current cache usage returned by pread_ra
-             */
-            if(cache_limit <= ra_req.total_cache_usage){
-                shared_data->to_prefetch_whole = false;
-                printf("TID: %ld, fd:%d Disabled whole prefetching, usage:%ld, limit:%ld\n",
-                        gettid(), fd, ra_req.total_cache_usage, cache_limit.load());
-            }
-            else{
-                printf("%s:%ld to_prefetch_whole set true\n", __func__, gettid());
-                shared_data->to_prefetch_whole = true;
-            }
+        ra_req.cache_limit = cache_limit.load();
+#else
+        ra_req.cache_limit = -1; //disables cache limit in kernel
+#endif
 
-            printf("fd:%d, total_cache_usage:%ld\n", fd, ra_req.total_cache_usage);
+#ifdef ONLY_SINGLE_PREFETCH_WHOLE
+        if(shared_data->first_tid.load() == gettid())
 #endif
+        {
+            pread_ra(fd, &fake_buffer, 5, 0, &ra_req);
         }
-#endif
     }
+#endif
 
 exit:
     return fd;
@@ -466,17 +476,17 @@ FILE *fopen(const char *filename, const char *mode){
     if(!ret)
         return ret;
 
+    fd = fileno(ret);
+
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
-    fd = fileno(ret);
     if(reg_file(ret)){
+        is_reg[fd] = true;
         handle_open(fd, filename);
+    }else{
+        is_reg[fd] = false;
     }
-#endif
-
-#if defined(DISABLE_OS_PREFETCH) || defined(ENABLE_WILNEED_OPEN)
-    fd = fileno(ret);
 #endif
 
 #ifdef DISABLE_OS_PREFETCH
@@ -497,7 +507,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
-    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+    printf("%s: TID:%ld\n", __func__, gettid());
     amount_read = real_fread(ptr, size, nmemb, stream);
     return amount_read;
 
@@ -510,7 +520,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
     int fd = fileno(stream);
-    if(reg_file(stream)){ //this is a regular file
+    //if(reg_file(stream)){ //this is a regular file
+    if(is_reg[fd] == true){
         pfetch_size = handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -530,9 +541,10 @@ ssize_t read(int fd, void *data, size_t size){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if(reg_fd(fd)){
+    //if(reg_fd(fd)){
+    if(is_reg[fd]){
         //printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
-	//		 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
+	//	 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -555,8 +567,17 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if(reg_fd(fd)){
-        pfetch_size = handle_read(fd, offset, size);
+    //if(reg_fd(fd))
+    if(is_reg[fd])
+    {
+        /*
+         * It  has been observed that handle_read
+         * is adding significant overheads in pread
+         * Hence for now, it has been hard coded
+         * to readahead 1 page in addition to
+         */
+        //pfetch_size = handle_read(fd, offset, size);
+        pfetch_size = 4096;
     }
 #endif
 
@@ -566,30 +587,14 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
     ra_req.ra_count = 0;
     //fprintf(stderr, "%s: doing serial prefetch \n", __func__);
 
-#ifdef ENABLE_CACHE_LIMITING
-    /*To read_ra only if whole prefetching is
-     * disabled. ie. cache is full so incremental
-     * to be done*/
-    if(!shared_data->to_prefetch_whole)
-#endif
-    {
-        //printf("%s: doing serial prefetch \n", __func__);
-        ra_req.ra_count = pfetch_size;
-    }
+    ra_req.ra_count = pfetch_size;
+    ra_req.full_file_ra = false;
+    ra_req.cache_limit = -1; //disables cache limiting in kernel
 
     //amount_read = syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, &ra_req);
+    amount_read = pread_ra(fd, data, size, offset, &ra_req);
     //printf("%s: doing serial prefetch for size %zu offset %d  \n", 
 	//	    __func__, ra_req.ra_count, offset);
-    amount_read = pread_ra(fd, data, size, offset, &ra_req);
-    
-    /*XXX:
-     * may need to update the to_prefetch_whole variable
-     * based on the current cache usage.
-     * Since applications dont remove cache themselves, and OS only does it under
-     * cache pressure, this value is unlikely to change back to true
-     * so we can leave it be for now
-     */
-
 #endif
 
     return amount_read;
@@ -607,7 +612,8 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
     /*XXX: handle after read_write will probably
      * change the ftell position in file*/
     int fd = fileno(stream);
-    if(reg_fd(fd)){
+    //if(reg_fd(fd)){
+    if(is_reg[fd]){
         handle_write(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -625,7 +631,8 @@ ssize_t write(int fd, const void *data, size_t size){
 
     /*XXX: handle after read_write will probably
      * change the lseek position in file*/
-    if(reg_fd(fd)){
+    //if(reg_fd(fd)){
+    if(is_reg[fd]){
         handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -633,14 +640,17 @@ ssize_t write(int fd, const void *data, size_t size){
 }
 
 int fclose(FILE *stream){
-#ifdef PREDICTOR
     int fd = fileno(stream);
+#ifdef PREDICTOR
     debug_print("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 
-    if(reg_file(stream)){
+    //if(reg_file(stream)){
+    if(is_reg[fd]){
         handle_close(fd);
     }
 #endif
+    is_reg[fd] = false;
+
     return real_fclose(stream);
 }
 
@@ -649,11 +659,13 @@ int close(int fd){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if(reg_fd(fd)){
+    if(is_reg[fd]){
         //remove from the predictor data
         handle_close(fd);
     }
 #endif
+
+    is_reg[fd] = false;
 
     return real_close(fd);
 }
@@ -669,4 +681,3 @@ uid_t getuid(){
 }
 
 #endif //DISABLE_INTERCEPTING
-
