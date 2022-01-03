@@ -24,7 +24,7 @@
 # Exercises the indexed attribute of the fileset_pick() function. 
 # 
 
-set $dir=/tmp
+set $dir=DATA/
 set $cached=false
 set $meandirwidth=20
 set $nthreads=5
@@ -72,3 +72,4 @@ define process name=netclient,instances=1
 }
 
 echo  "NetworkServer Version 1.1 personality successfully loaded"
+run 20

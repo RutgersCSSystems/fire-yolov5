@@ -29,7 +29,7 @@
 # $nshadows - number of shadow processes
 # $ndbwriters - number of database writers
 
-set $dir=/tmp
+set $dir=DATA/
 set $eventrate=0
 set $iosize=2k
 set $nshadows=200
@@ -78,7 +78,7 @@ define process name=dbwr,instances=$ndbwriters
 {
   thread name=dbwr,memsize=$memperthread,useism
   {
-	flowop aiowrite name=dbaiowrite-aux.df,filename=aux.df,
+        flowop aiowrite name=dbaiowrite-aux.df,filename=aux.df,
                 iosize=$iosize,workingset=10g,random,dsync,directio,iters=10
         flowop aiowrite name=dbaiowrite-control_001,filename=control_001,
                 iosize=$iosize,workingset=10g,random,dsync,directio,iters=10
@@ -136,9 +136,9 @@ define process name=dbwr,instances=$ndbwriters
                 iosize=$iosize,workingset=10g,random,dsync,directio,iters=10
         flowop aiowrite name=dbaiowrite-ware_0_0,filename=ware_0_0,
                 iosize=$iosize,workingset=10g,random,dsync,directio,iters=10
-	flowop hog name=dbwr-hog,value=10000
-	flowop semblock name=dbwr-block,value=100,highwater=10000
-	flowop aiowait name=dbwr-aiowait
+        flowop hog name=dbwr-hog,value=10000
+        flowop semblock name=dbwr-block,value=100,highwater=10000
+        flowop aiowait name=dbwr-aiowait
   }
 }
 
@@ -247,9 +247,9 @@ define process name=shadow,instances=$nshadows
         flowop read name=shadowread-log_1_1,filename=log_1_1,
                 iosize=$iosize,workingset=10g,random,dsync,directio
         flowop hog name=shadowhog,value=$usermode
-	flowop sempost name=shadow-post-lg,value=1,target=lg-block,blocking
-	flowop sempost name=shadow-post-dbwr,value=1,target=dbwr-block,blocking
-	flowop eventlimit name=random-rate
+        flowop sempost name=shadow-post-lg,value=1,target=lg-block,blocking
+        flowop sempost name=shadow-post-dbwr,value=1,target=dbwr-block,blocking
+        flowop eventlimit name=random-rate
   }
 }
 

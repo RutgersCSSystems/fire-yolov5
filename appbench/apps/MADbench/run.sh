@@ -1,12 +1,8 @@
 #!/bin/bash
 
 PCAnonRatio=1.5
-#DBGRATIO=1
-#DRATIO=100
-#BASE_MEM=2758459392
 #APPPREFIX="numactl --membind=0"
 APPPREFIX=""
-
 CAPACITY=$1
 
 FlushDisk()
@@ -41,16 +37,18 @@ echo "going to sleep"
 
 export FILETYPE=SHARED
 WORKLOAD=2000
-NPROC=16
+NPROC=8
 GANG=80
 RMOD=16
 WMOD=16
+FLUSHAFTERWRITES=1
 
 #export IOMODE=SYNC
 #export IOMETHOD=POSIX
 #$SHARED_LIBS/construct/reset
 
-#export LD_PRELOAD=/usr/lib/libcrosslayer.so
-$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  #&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
+export LD_PRELOAD=/usr/lib/libcrosslayer.so
+$APPPREFIX /usr/bin/time -v mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  $FLUSHAFTERWRITES 
+#&> "MEMSIZE-$WORKLOAD-"$NPROC"threads-"$CAPACITY"M.out"
 export LD_PRELOAD=""
 FlushDisk

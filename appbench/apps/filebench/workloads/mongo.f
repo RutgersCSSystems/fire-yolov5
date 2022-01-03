@@ -25,10 +25,10 @@
 # ident	"%Z%%M%	%I%	%E% SMI"
 
 set $dir=DATA/
-set $nfiles=200000
+set $nfiles=2000000
 set $dirwidth=20
 set $filesize=64k
-set $nthreads=8
+set $nthreads=16
 set $meaniosize=16k
 set $readiosize=1m
 

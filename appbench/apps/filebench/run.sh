@@ -8,7 +8,8 @@ WRITE_BUFF_SIZE=67108864
 NUM=10000000
 DBDIR=$DBHOME/DATA
 
-WORKLOAD="mongo.f"
+#WORKLOAD="mongo.f"
+WORKLOAD="randomread.f"
 #WORKLOAD="randomread.f"
 DATAPATH="workloads/$WORKLOAD"
 APPPREFIX="/usr/bin/time -v"
@@ -91,12 +92,6 @@ echo "RUNNING $PREDICT.................."
 RUN
 exit
 
-FlushDisk
-PREDICT="OSONLY"
-echo "RUNNING $PREDICT.................."
-RUN
-
-
 
 
 PREDICT="VANILLA"
@@ -104,6 +99,19 @@ echo "RUNNING $PREDICT.................."
 FlushDisk
 RUN
 exit
+
+
+
+
+
+
+FlushDisk
+PREDICT="OSONLY"
+echo "RUNNING $PREDICT.................."
+RUN
+
+
+
 
 
 

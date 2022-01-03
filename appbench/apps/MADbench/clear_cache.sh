@@ -10,4 +10,4 @@ FlushDisk()
 }
 
 FlushDisk
-numactl --hardware
+#numactl --hardware

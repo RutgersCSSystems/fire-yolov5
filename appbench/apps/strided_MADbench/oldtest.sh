@@ -1,5 +1,3 @@
-rm -rf /users/shaleen/ssd/NVM/appbench/apps/strided_MADbench/files/
-/users/shaleen/ssd/NVM/scripts/compile-install/clear_cache.sh
 sudo sh -c "dmesg --clear"
 
 export IOMODE=SYNC
