@@ -28,6 +28,7 @@ export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
 export SCRIPTS=$NVMBASE/scripts
+export UTILS=$NVMBASE/utils
 export RUN_SCRIPTS=$SCRIPTS/run
 #export INPUTXML=$SCRIPTS/input.xml
 export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts

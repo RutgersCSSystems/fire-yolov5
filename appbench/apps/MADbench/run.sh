@@ -31,6 +31,9 @@ SETUPEXTRAM() {
         ./mount_ext4ramdisk.sh $ALLOCSZ 1
 }
 
+
+
+
 #SETUPEXTRAM
 echo "going to sleep"
 #IOMETHOD = POSIX  IOMODE = SYNC  FILETYPE = UNIQUE  REMAP = CUSTOM
