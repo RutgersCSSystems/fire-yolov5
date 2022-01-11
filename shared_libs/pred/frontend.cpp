@@ -126,8 +126,13 @@ void set_pvt_lru(){
 }
 
 
-/*enable cache accounting for calling threads/procs 
+/*enable cache accounting for the calling threads/procs
  * implemented in linux 5.14 (CONFIG_CACHE_LIMITING)
+ *
+ * It doesnt need any arguments since it just sets
+ * task_struct variable do_cache_acct for that process.
+ * This is called for both processes (cons)
+ * and for threads (thread_cons_dest::thread_cons_dest(void))
  */
 void enable_cache_limit(){
     syscall(__NR_start_crosslayer, CACHE_USAGE_CONS, 0);
