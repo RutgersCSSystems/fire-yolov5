@@ -10,7 +10,7 @@ echo "Using $NPROC cores for setup"
 
 #All downloads and code installation will happen here.
 #Feel free to change
-CLOUDLABDIR=$DISK/cloudlab
+CLOUDLABDIR=$DISK/ssd/cloudlab
 
 LEVELDBHOME=$CLOUDLABDIR/leveldb-nvm
 YCSBHOME=$CLOUDLABDIR/leveldb-nvm/mapkeeper/ycsb/YCSB
