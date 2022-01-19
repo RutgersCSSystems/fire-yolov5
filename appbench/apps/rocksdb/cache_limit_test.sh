@@ -21,9 +21,9 @@ GB=`echo "1024*$MB" | bc`
 
 sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
-WORKLOAD="readseq"
+#WORKLOAD="readseq"
 #WORKLOAD="readrandom"
-#WORKLOAD="readreverse"
+WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
@@ -37,19 +37,20 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
-#    sudo dmesg --clear
+    #    sudo dmesg --clear
+    sleep 1
 }
 
 
 ENABLE_LOCK_STATS()
 {
-	sudo sh -c "echo 0 > /proc/lock_stat"
-	#sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
+    sudo sh -c "echo 0 > /proc/lock_stat"
+    #sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
 }
 
 DISABLE_LOCK_STATS()
 {
-	sudo sh -c "echo 0 > /proc/sys/kernel/lock_stat"
+    sudo sh -c "echo 0 > /proc/sys/kernel/lock_stat"
 }
 
 
@@ -82,6 +83,9 @@ SETPRELOAD()
     elif [[ "$1" == "CACHELIMIT" ]]; then
         echo "OS and LIB pred with Cache Limit"
         export LD_PRELOAD=/usr/lib/libcache_lim_os_libpred.so
+    elif [[ "$1" == "CACHELIMITOS" ]]; then
+        echo "OS pred with Cache Limit"
+        export LD_PRELOAD=/usr/lib/libcache_lim_ospred.so
     elif [[ "$1" == "FETCHALL" ]]; then
         echo "OS and LIB pred without Cache Limit"
         export LD_PRELOAD=/usr/lib/libos_fetch_at_open.so
@@ -107,22 +111,35 @@ CLEAR_PWD()
     cd ..
 }
 
-DISABLE_LOCK_STATS
+#DISABLE_LOCK_STATS
 
-#Run write workload twice
 #CLEAR_PWD
 #$DBHOME/db_bench $PARAMS $WRITEARGS
-#exit
 
-LOCKDAT=$PWD/lockdat
-mkdir $LOCKDAT
+
+FlushDisk
+SETPRELOAD "ONLYOS"
+$DBHOME/db_bench $PARAMS $READARGS | grep "$WORKLOAD"
+export LD_PRELOAD=""
+FlushDisk
+echo "######################################################"
 
 for CACHELIM in $(seq 100 500 2500)
 do
-	FlushDisk
-	echo "Cache lim = $CACHELIM GB"
-	export APPCACHELIMIT=`echo "$CACHELIM*$GB" | bc`
-	SETPRELOAD "CACHELIMIT"
-	$DBHOME/db_bench $PARAMS $READARGS 
-	export LD_PRELOAD=""
+    #Run write workload twice
+    FlushDisk
+    echo "Cache lim = $CACHELIM GB"
+    export APPCACHELIMIT=`echo "$CACHELIM*$GB" | bc`
+    SETPRELOAD "CACHELIMITOS"
+    $DBHOME/db_bench $PARAMS $READARGS | grep "$WORKLOAD"
+    export LD_PRELOAD=""
+    FlushDisk
+    echo "######################################################"
 done
+
+FlushDisk
+SETPRELOAD "FETCHALL"
+$DBHOME/db_bench $PARAMS $READARGS | grep "$WORKLOAD"
+export LD_PRELOAD=""
+FlushDisk
+echo "######################################################"
