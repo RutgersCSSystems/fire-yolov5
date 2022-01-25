@@ -22,8 +22,13 @@
 #define CACHE_USAGE_CONS 5
 #define CACHE_USAGE_DEST 6
 #define CACHE_USAGE_RET 7
+#define WALK_PAGECACHE 9
 
+#ifdef FILESZ
+#define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
+#else
 #define FILESIZE (10L * 1024L * 1024L * 1024L)
+#endif
 
 /*
  * pread_ra read_ra_req struct
@@ -80,6 +85,14 @@ void disable_cache_limit(){
     syscall(__NR_start_crosslayer, CACHE_USAGE_DEST, 0);
 }
 
+/*
+ * walks the page cache for this particular fd
+ * and returns the number of pages allocated and
+ * populated
+ */
+void check_page_cache(int fd){
+    syscall(__NR_start_crosslayer, WALK_PAGECACHE, fd);
+}
 
 int main() {
 
@@ -103,6 +116,8 @@ int main() {
 		exit (0);;
 	}
 
+	check_page_cache(fd);
+
 #ifdef ONLYAPP
 	//Disable OS pred
 	posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
@@ -110,7 +125,7 @@ int main() {
 
 	off_t chunk = 0;
 	lseek64(fd, 0, SEEK_SET);
-	bool prefetch = true;
+	bool prefetch = false;
 
         struct read_ra_req ra_req;
 
@@ -124,8 +139,6 @@ int main() {
 			readnow = syscall(449, fd, ((char *)buffer), 
 					PG_SZ*NR_PAGES_READ, chunk, &ra_req);
 			prefetch = false;
-			printf("exiting after reading all");
-			return 0;
 		}
 		else
 			readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
@@ -148,7 +161,8 @@ int main() {
 					PG_SZ*NR_PAGES_READ, chunk, &ra_req);
 		}
 		nr_read += NR_PAGES_READ;
-#elif APP_NATIVE_RA //Read and Readahead from App
+//#elif APP_NATIVE_RA //Read and Readahead from App
+#else
 		readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
 #endif
 
