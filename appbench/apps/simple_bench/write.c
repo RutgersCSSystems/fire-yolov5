@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef FILESZ
+#define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
+#else
 #define FILESIZE (10L * 1024L * 1024L * 1024L)
+#endif
 
 int main() {
 	long i;
