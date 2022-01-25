@@ -15,7 +15,14 @@ KB=1024
 MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 
+
+#./write
+
+FlushDisk
+
+export APPCACHELIMIT=`echo "2*$GB" | bc`
 export LD_PRELOAD=/usr/lib/libcache_lim_ospred.so
 
-export APPCACHELIMIT=`echo "10*$GB" | bc`
+./read_onlyos
 
+export LD_PRELOAD=""

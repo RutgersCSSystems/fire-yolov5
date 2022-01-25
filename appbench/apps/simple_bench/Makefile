@@ -1,4 +1,4 @@
-SIZE=20
+SIZE=50
 
 all:
 	gcc read.c -DFILESZ=$(SIZE) -DONLYOS -o read_onlyos
