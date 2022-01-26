@@ -6,6 +6,8 @@ IMAGE_CREATE() {
 	sudo apt-get update
 	sudo apt-get install -y qemu kernel-package debootstrap
 
+     export SHELL=/bin/bash
+
 	#Please do not change beyond this
 	#Now create a disk for your virtual machine 
 	#for 20GB
