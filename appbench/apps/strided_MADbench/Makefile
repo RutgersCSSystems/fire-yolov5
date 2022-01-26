@@ -1,5 +1,5 @@
 CC=mpicc.mpich
-LIBS=-L/usr/local/lib -lm
+LIBS=-L/usr/local/lib -lm -lmpi
 
 FLAGS=-D SYSTEM -D COLUMBIA -D IO
 #FLAGS=-D SYSTEM -D COLUMBIA -D IO -D COMPUTE ##This enables compute -> makes compute time >> system time
