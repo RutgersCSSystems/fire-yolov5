@@ -1,6 +1,6 @@
 MPICC=mpicc
 LIBS=-lmpi
-SIZE=50
+SIZE=60 ##Test file size in GBs
 
 all:
 	gcc read.c -DFILESZ=$(SIZE) -DONLYOS -o read_onlyos
@@ -19,3 +19,6 @@ mpi:
 	$(MPICC) read.c -DFILESZ=$(SIZE) -DAPP_NATIVE_RA -DONLYAPP -o mpi_read_onlyapp_nativera $(LIBS)
 	$(MPICC) read.c -DFILESZ=$(SIZE) -DREADRA -DONLYAPP -o mpi_read_onlyapp_readra $(LIBS)
 	$(MPICC) write.c -DFILESZ=$(SIZE) -o mpi_write $(LIBS)
+
+test:
+	gcc test_readahead.c 
