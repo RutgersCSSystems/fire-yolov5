@@ -128,6 +128,7 @@ int main(int argc, char **argv)
     pthread_create(&thread_id, NULL, prefetcher_th, &req);
 #endif
 
+#ifndef DONT_READ_FILE
     gettimeofday(&start, NULL);
     while ( chunk < size ){
         size_t readnow;
@@ -145,6 +146,7 @@ int main(int argc, char **argv)
         nr_read += NR_PAGES_READ;
     }
     gettimeofday(&end, NULL);
+#endif
     
     
 #ifdef AIO_PREFETCH
