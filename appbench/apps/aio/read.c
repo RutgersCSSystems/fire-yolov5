@@ -1,101 +1,137 @@
-/*
- * assertion:
- *
- * aio_lio_opcode shall be ignored.
- *
- * method:
- *
- *      - write data to a file
- *      - fill in an aiocb with an LIO_WRITE aio_lio_opcode
- *      - call aio_read with this aiocb
- *      - check data is effectively read (ignoring aio_lio_opcode)
+/*/
+ * This program will have two threads.
+ * Master Thread is going to read the file Sequentially using pread syscall.
+ * Slave Thread is going to prefetch the contents using aio_read syscall.
+ * We will switch off OS prefetching to understand if AIO is reducing wait times.
  */
-
+#define _LARGEFILE64_SOURCE
+#define _GNU_SOURCE
 #include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <string.h>
-#include <errno.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <aio.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <signal.h>
+#include <math.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
-#define TNAME "aio_read/5-1.c"
+#define NR_PAGES_READ 10
+#define NR_PAGES_RA 20
+#define PG_SZ 4096
 
-int main() {
-	char tmpfname[256];
-#define BUF_SIZE 111
-	unsigned char buf[BUF_SIZE];
-	unsigned char check[BUF_SIZE];
-	int fd;
-	struct aiocb aiocb;
-	int i;
+#ifdef FILESZ
+#define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
+#else
+#define FILESIZE (10L * 1024L * 1024L * 1024L)
+#endif
 
-	snprintf(tmpfname, sizeof(tmpfname), "pts_aio_read_5_1_%d", getpid());
-	unlink(tmpfname);
-	fd = open(tmpfname, O_CREAT | O_RDWR | O_EXCL, S_IRUSR | S_IWUSR);
-	if (fd == -1) {
-		printf(TNAME " Error at open(): %s\n", strerror(errno));
-		exit(1);
-	}
 
-	unlink(tmpfname);
+struct thread_args{
+    int fd;
+};
 
-	for (i = 0; i < BUF_SIZE; i++)
-		buf[i] = i;
+void *prefetcher_th(void *arg){
 
-	if (write(fd, buf, BUF_SIZE) != BUF_SIZE) {
-		printf(TNAME " Error at write(): %s\n",
-				strerror(errno));
-		exit(1);
-	}
+    struct thread_args *a = (struct thread_args*)arg;
+    printf("Printing from thread %s, %d\n", __func__, a->fd);
 
-	memset(check, 0xaa, BUF_SIZE);
-	memset(&aiocb, 0, sizeof(struct aiocb));
-	aiocb.aio_fildes = fd;
-	aiocb.aio_buf = check;
-	aiocb.aio_nbytes = BUF_SIZE;
-	aiocb.aio_lio_opcode = LIO_WRITE;
+    char *buffer = (char*) malloc(buff_sz*sizeof(char));
+    off_t chunk = 0;
+    long nr_read = 0; //controls the readaheads
+    size_t readnow;
 
-	if (aio_read(&aiocb) == -1) {
-		printf(TNAME " Error at aio_read(): %s\n",
-				strerror(errno));
-		exit(2);
-	}
+    struct aiocb cb;
+    memset(&cb, 0, sizeof(struct aiocb));
 
-	int err;
-	int ret;
+    cb.aio_filedes = a->fd;
+    cb.aio_offset
 
-	/* Wait until end of transaction */
-	while ((err = aio_error (&aiocb)) == EINPROGRESS);
+    while (chunk < size){
 
-	err = aio_error(&aiocb);
-	ret = aio_return(&aiocb);
+        readnow = pread(fd, ((char *)buffer), 
+                PG_SZ*NR_PAGES_READ, chunk);
 
-	if (err != 0) {
-		printf(TNAME " Error at aio_error() : %s\n", strerror (err));
-		close(fd);
-		exit(2);
-	}
+        if (readnow < 0 ){
+            printf("\nRead Unsuccessful\n");
+            free (buffer);
+            close (fd);
+            return 0;
+        }
+        chunk += readnow; //offset
+        nr_read += NR_PAGES_READ;
+    }
+    gettimeofday(&end, NULL);
 
-	if (ret != BUF_SIZE) {
-		printf(TNAME " Error at aio_return()\n");
-		close(fd);
-		exit(2);
-	}
 
-	/* check it */
 
-	for (i = 0; i < BUF_SIZE; i++) {
-		if (buf[i] != check[i])
-		{
-			printf(TNAME " read values are corrupted\n");
-			exit(2);
-		}
-	}
+    return NULL;
+}
 
-	close(fd);
-	printf ("Test PASSED\n");
-	return 0;
+//returns microsecond time difference
+unsigned long usec_diff(struct timeval *a, struct timeval *b)
+{
+    unsigned long usec;
+
+    usec = (b->tv_sec - a->tv_sec)*1000000;
+    usec += b->tv_usec - a->tv_usec;
+    return usec;
+}
+
+int main(int argc, char **argv)
+{
+    long size = FILESIZE;
+    long buff_sz = (PG_SZ * NR_PAGES_READ);
+
+    struct timeval start, end;
+
+    char *buffer = (char*) malloc(buff_sz*sizeof(char));
+    off_t chunk = 0;
+    long nr_read = 0; //controls the readaheads
+
+    int fd = open("bigfakefile.txt", O_RDWR);
+    if (fd == -1){
+        printf("\nFile Open Unsuccessful\n");
+        exit (0);
+    }
+
+    pthread_t thread_id;
+    struct thread_args req;
+    req.fd = fd;
+    pthread_create(&thread_id, NULL, prefetcher_th, &req);
+
+    gettimeofday(&start, NULL);
+    while ( chunk < size ){
+        size_t readnow;
+
+        readnow = pread(fd, ((char *)buffer), 
+                PG_SZ*NR_PAGES_READ, chunk);
+
+        if (readnow < 0 ){
+            printf("\nRead Unsuccessful\n");
+            free (buffer);
+            close (fd);
+            return 0;
+        }
+        chunk += readnow; //offset
+        nr_read += NR_PAGES_READ;
+    }
+    gettimeofday(&end, NULL);
+    
+    
+    pthread_join(thread_id, NULL);
+
+    unsigned long usec = usec_diff(&start, &end);
+    printf("Reading done in %ld microsecs\n", usec);
+    return 0;
 }
