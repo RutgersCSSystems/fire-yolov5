@@ -38,7 +38,9 @@
 
 
 struct thread_args{
-    int fd;
+    int fd; //fd of opened file
+    long size; //filesize
+    long buff_sz; //size of each read
 };
 
 void *prefetcher_th(void *arg){
@@ -46,35 +48,42 @@ void *prefetcher_th(void *arg){
     struct thread_args *a = (struct thread_args*)arg;
     printf("Printing from thread %s, %d\n", __func__, a->fd);
 
-    char *buffer = (char*) malloc(buff_sz*sizeof(char));
+    char *buffer = (char*) malloc(a->buff_sz);
     off_t chunk = 0;
     long nr_read = 0; //controls the readaheads
     size_t readnow;
 
     struct aiocb cb;
-    memset(&cb, 0, sizeof(struct aiocb));
 
-    cb.aio_filedes = a->fd;
-    cb.aio_offset
+    //Start from next offset, read sequentially
+    chunk += PG_SZ*NR_PAGES_READ;
 
-    while (chunk < size){
+    while (chunk < a->size){
+        memset(&cb, 0, sizeof(struct aiocb));
 
-        readnow = pread(fd, ((char *)buffer), 
-                PG_SZ*NR_PAGES_READ, chunk);
+        cb.aio_fildes = a->fd;
+        cb.aio_offset = chunk;
+        cb.aio_nbytes = a->buff_sz;
+        cb.aio_buf = buffer;
+
+        aio_read(&cb);
+
+        while(aio_error(&cb) == EINPROGRESS){
+            sleep(1);
+        }
+
+        readnow = aio_return(&cb);
 
         if (readnow < 0 ){
             printf("\nRead Unsuccessful\n");
-            free (buffer);
-            close (fd);
-            return 0;
+            goto ret;
         }
         chunk += readnow; //offset
         nr_read += NR_PAGES_READ;
     }
-    gettimeofday(&end, NULL);
 
-
-
+ret:
+    free (buffer);
     return NULL;
 }
 
@@ -95,7 +104,7 @@ int main(int argc, char **argv)
 
     struct timeval start, end;
 
-    char *buffer = (char*) malloc(buff_sz*sizeof(char));
+    char *buffer = (char*) malloc(buff_sz);
     off_t chunk = 0;
     long nr_read = 0; //controls the readaheads
 
@@ -105,10 +114,19 @@ int main(int argc, char **argv)
         exit (0);
     }
 
+#ifdef ONLYAPP
+	//Disables OS pred
+	posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+#endif
+
     pthread_t thread_id;
     struct thread_args req;
     req.fd = fd;
+    req.size = size;
+    req.buff_sz = buff_sz;
+#ifdef AIO_PREFETCH
     pthread_create(&thread_id, NULL, prefetcher_th, &req);
+#endif
 
     gettimeofday(&start, NULL);
     while ( chunk < size ){
@@ -129,7 +147,9 @@ int main(int argc, char **argv)
     gettimeofday(&end, NULL);
     
     
+#ifdef AIO_PREFETCH
     pthread_join(thread_id, NULL);
+#endif
 
     unsigned long usec = usec_diff(&start, &end);
     printf("Reading done in %ld microsecs\n", usec);
