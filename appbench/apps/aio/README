@@ -11,4 +11,4 @@ slave thread prefetches the file asynchronously using aio. OS internal prefetchi
 
 read_os_aiopfetch - Same as above with both aio and OS prefetching enabled.
 
-
+dont_read_os_aiopfetch - Doesnt use master thread for anything. Uses slave thread to just read the whole file using aio.
