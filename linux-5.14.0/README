@@ -1,0 +1,27 @@
+Linux kernel
+============
+
+There are several guides for kernel developers and users. These guides can
+be rendered in a number of formats, like HTML and PDF. Please read
+Documentation/admin-guide/README.rst first.
+
+In order to build the documentation, use ``make htmldocs`` or
+``make pdfdocs``.  The formatted documentation can also be read online at:
+
+
+To install
+1. cp oldnix.config .config ##old or new based on which you want to install
+2. sudo make prepare -j`nproc`
+3. sudo make -j40
+4. sudo fakeroot make-kpkg -j40 --initrd kernel-image kernel-headers
+5. sudo dpkg -i ../*.deb ##fill the name accordingly
+
+
+To get global cache stats:
+1. add CONFIG_ENABLE_CROSSLAYER=y in .config. make prepare
+2. Take a look at examples/global_cache_stats.c on how to use it
+
+
+Read_ra:
+1. pread_ra : Syscall nr 449
+2. read_ra  : Syscall nr 450
