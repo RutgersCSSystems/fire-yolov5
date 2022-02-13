@@ -233,9 +233,6 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
         unsigned long nr_pg_in_cache, unsigned long nr_misses, struct file *filp) 
 {
 
-   	
-
-
     /*
      * Update global counters
      */
@@ -683,9 +680,13 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
             break;
 #endif
         default:
+	    /* Enable per-process cross-layer flag */
+	    current->is_crosslayer = true;
             printk("Flag value undefined %d\n", flag);
-            return -123;
-            break;
+	    /* 
+	     * BUG FIX: We cannot return and break!!!
+	     */
+            return -1;
     }
 #endif
     return 0;
