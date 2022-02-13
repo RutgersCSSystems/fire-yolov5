@@ -2592,49 +2592,50 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
 	pgoff_t last_index;
 	struct page *page;
 	int err = 0;
-     unsigned long nr_misses = 0;
-     pgoff_t curr_pagevec_space = pagevec_space(pvec);
-     pgoff_t orig_last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
+	unsigned long nr_misses = 0;
+	pgoff_t curr_pagevec_space = pagevec_space(pvec);
+	pgoff_t orig_last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
 
 
 	if(iocb->ki_do_ra){
          /*Assuming that RA is going to be in addition to the read*/
          last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count + iocb->ki_ra_count, PAGE_SIZE);
-     }
-     else{
+	}
+	else{
 	   last_index = orig_last_index;
-     }
+	}
 
-     //printk("%s: index=%ld, last_index=%ld\n", __func__, index, last_index);
-     printk_once("sizeof(struct pagevec)=%ld \n", sizeof(struct pagevec));
+     	//printk("%s: index=%ld, last_index=%ld\n", __func__, index, last_index);
+     	printk_once("sizeof(struct pagevec)=%ld \n", sizeof(struct pagevec));
 
 retry:
 
 	if (fatal_signal_pending(current))
 		return -EINTR;
 
-     page = NULL; 
+     	page = NULL; 
 
 #ifdef CONFIG_ENABLE_CROSSLAYER
-     nr_misses = filemap_check_pagecache(mapping, index, orig_last_index);
-#endif 
+        nr_misses = filemap_check_pagecache(mapping, index, orig_last_index);
+#endif
 
-     page = filemap_get_read_batch(mapping, index, last_index, pvec, false);
-     //page = filemap_get_read_batch(mapping, index, last_index, pvec, iocb->ki_do_ra);
+     	page = filemap_get_read_batch(mapping, index, last_index, pvec, false);
+	//page = filemap_get_read_batch(mapping, index, last_index, pvec, iocb->ki_do_ra);
 
 #ifdef CONFIG_ENABLE_CROSSLAYER
-     //update the number of pg cache hits
-     if(read_stats){
-         unsigned long nr_pg_reads = min_t(pgoff_t, curr_pagevec_space, (orig_last_index - index + 1));
-         unsigned long nr_pg_in_cache = min_t (pgoff_t, nr_pg_reads, pagevec_count(pvec));
+     	//update the number of pg cache hits
+     	if(read_stats){
 
-         //update ret value to user space
-         if(iocb->ra_req){
-            iocb->ra_req->nr_present += nr_pg_in_cache;
-         }
+        	unsigned long nr_pg_reads = min_t(pgoff_t, curr_pagevec_space, (orig_last_index - index + 1));
+         	unsigned long nr_pg_in_cache = min_t (pgoff_t, nr_pg_reads, pagevec_count(pvec));
 
-         update_read_cache_stats(current, nr_pg_reads, nr_pg_in_cache, nr_misses);
-     }
+		 //update ret value to user space
+		 if(iocb->ra_req){
+		    iocb->ra_req->nr_present += nr_pg_in_cache;
+		 }
+
+	         update_read_cache_stats(current, nr_pg_reads, nr_pg_in_cache, nr_misses, filp);
+     	}
 #endif
 
 	if (!pagevec_count(pvec)) { //No pages found in PageCache

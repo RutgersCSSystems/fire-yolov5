@@ -1001,6 +1001,11 @@ struct task_struct {
 	/* Open file information: */
 	struct files_struct		*files;
 
+#ifdef CONFIG_ENABLE_CROSSLAYER
+	int is_crosslayer;
+#endif
+
+
 #ifdef CONFIG_IO_URING
 	struct io_uring_task		*io_uring;
 #endif
@@ -1416,6 +1421,7 @@ struct task_struct {
 
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
+
 
 	/*
 	 * WARNING: on x86, 'thread_struct' contains a variable-sized

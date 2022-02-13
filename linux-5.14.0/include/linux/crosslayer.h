@@ -77,7 +77,7 @@ void init_file_pfetch_state(struct file_pfetch_state *pfetch_state);
 void add_nr_read_fault(struct task_struct *task);
 
 void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads,
-        unsigned long nr_pg_in_cache, unsigned long nr_misses);
+        unsigned long nr_pg_in_cache, unsigned long nr_misses, struct file *filp);
 
 void update_ra_final_nr_pages(struct task_struct *task, struct inode *inode, 
         struct readahead_control *ractl, unsigned long nr_pages);

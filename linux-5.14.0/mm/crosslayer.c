@@ -15,7 +15,6 @@
 #include <linux/capability.h>
 #include <linux/init.h>
 #include <linux/file.h>
-#include <linux/fs.h>
 #include <linux/personality.h>
 #include <linux/security.h>
 #include <linux/hugetlb.h>
@@ -57,6 +56,8 @@
 #include <linux/migrate.h>
 //#include <sys/time.h>
 #include <linux/time64.h>
+#include <linux/fs.h>
+
 
 #include "internal.h"
 
@@ -162,9 +163,13 @@ EXPORT_SYMBOL(cache_usage_ret);
 
 
 void init_file_pfetch_state(struct file_pfetch_state *pfetch_state){
+
     spin_lock_init(&pfetch_state->spinlock);
 
     spin_lock(&pfetch_state->spinlock);
+
+    //disable cross layer flag for this process
+    current->is_crosslayer = 0;
 
     pfetch_state->enable_f_stats = 0;
     pfetch_state->is_app_readahead = 0;
@@ -225,7 +230,8 @@ EXPORT_SYMBOL(add_nr_read_fault);
 
 
 void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads,
-        unsigned long nr_pg_in_cache, unsigned long nr_misses){
+        unsigned long nr_pg_in_cache, unsigned long nr_misses, struct file *filp) 
+{
 
     /*
      * Update global counters
@@ -235,6 +241,15 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
     global_counts._nr_pages_read += nr_pg_reads;
     global_counts._nr_pages_hit += nr_pg_in_cache;
     global_counts._nr_pages_miss += nr_misses;
+
+
+    if(filp && current->is_crosslayer) {
+        filp->nr_cache_miss +=  nr_misses;
+	filp->nr_cache_hits +=  nr_pg_in_cache;
+	printk(KERN_ALERT "FILE %s, misses %lu, hits %lu \n",
+			filp->f_path.dentry->d_iname, filp->nr_cache_miss, filp->nr_cache_hits);
+    }
+
 
     //prints global stats after 1000 msecs
     if(jiffies_to_msecs(jiffies - global_counts.last_jiffies) >= 1000){
@@ -616,8 +631,11 @@ void init_global_pfetch_state(void){
 SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
 #ifdef CONFIG_ENABLE_CROSSLAYER
     switch(flag){
+
         case ENABLE_FILE_STATS:
             current->pfetch_state.enable_f_stats = true;
+	    /* Enable per-process cross-layer flag */
+	    current->is_crosslayer = true;
             printk("Enabled file stats for %s:%d\n", current->comm, current->pid);
             break;
         case DISABLE_FILE_STATS:
