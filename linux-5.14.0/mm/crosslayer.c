@@ -233,6 +233,9 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
         unsigned long nr_pg_in_cache, unsigned long nr_misses, struct file *filp) 
 {
 
+   	
+
+
     /*
      * Update global counters
      */
@@ -259,7 +262,12 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
         global_counts.nr_pages_hit += global_counts._nr_pages_hit;
         global_counts.nr_pages_miss += global_counts._nr_pages_miss;
 
-        print_inter_global_stats();
+	 /* 
+	  * BUG FIX: Doesn't make sense to simply print stats without 
+	  * checking which process it is 
+	  */
+	if(current->is_crosslayer)
+		print_inter_global_stats();
 
         global_counts._nr_pages_read = 0;
         global_counts._nr_pages_hit = 0;
