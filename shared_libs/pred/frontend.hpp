@@ -329,6 +329,7 @@ int reg_file(FILE *stream){
 
 //returns true if fd is regular file
 bool reg_fd(int fd){
+
     if(fd<=2)
         return false;
 

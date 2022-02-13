@@ -486,6 +486,15 @@ FILE *fopen(const char *filename, const char *mode){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
+    is_reg[fd] = true;
+
+
+    fprintf(stderr, "%s: TID:%ld open:%s FD %d\n", __func__, gettid(), filename, fd);
+
+
+    if(!fd)
+	    return ret;
+
     if(reg_file(ret)){
         is_reg[fd] = true;
         handle_open(fd, filename);
@@ -493,6 +502,9 @@ FILE *fopen(const char *filename, const char *mode){
         is_reg[fd] = false;
     }
 #endif
+
+    fprintf(stderr, "AFTER %s: TID:%ld open:%s FD %d\n", __func__, gettid(), filename, fd);
+
 
 #ifdef DISABLE_OS_PREFETCH
     printf("disabling OS prefetch:%d %s:%d\n", POSIX_FADV_RANDOM, filename, fd);

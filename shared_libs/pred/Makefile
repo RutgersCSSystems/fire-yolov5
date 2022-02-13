@@ -10,17 +10,17 @@ NOBGTHREADS=-D__NO_BG_THREADS ##disables worker
 DELAYPRFETCH=-D_DELAY_PREFETCH
 
 #PINCORES=-DPIN_ALL
-CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
-DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
-DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
-DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
-ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
+#CROSSLAYER=-DCROSSLAYER ##Enables file stats in custom linux 5.14
+#DISABLEAPPPRED=-DCONTROL_PRED ##Disables app prefetching
+#DISABLEOSPRED=-DDISABLE_OS_PREFETCH ##Disables OS prefetching
+#DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
+#ENABLE_WILLNEED_OPEN=-DENABLE_WILLNEED_OPEN ##Enables FADV_WILLNEED when a file is opened
 #ENABLE_SHARED_MEM=-DMMAP_SHARED_DAT ##Enables sending only unique readaheads
-ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
-READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
-DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
-FETCH_WHOLE_FILE=-DFETCH_WHOLE_FILE ##Fetches whole file when it is opened (modified linux only)
-CACHE_LIMITING=-DENABLE_CACHE_LIMITING ##Enable Cache accounting and limiting (modified linux only)
+#ENABLE_GLOBAL_STATS=-DENABLE_GLOBAL_CACHE_STATS ##Enables global stats for cache hits/misses etc in custom linux 5.14
+#READ_RA=-DREAD_RA ##Enables read_ra syscall instead of read and readahead for all the read calls intercepted
+#DISABLE_INTERCEPTING=-DDISABLE_INTERCEPTING ##Disables any form of intercepting from the library
+#FETCH_WHOLE_FILE=-DFETCH_WHOLE_FILE ##Fetches whole file when it is opened (modified linux only)
+#CACHE_LIMITING=-DENABLE_CACHE_LIMITING ##Enable Cache accounting and limiting (modified linux only)
 
 all: nopred seq onlyapppred os_apppred onlyospred onlylibpred os_libpred juststats onlyintercept cache_lim_os_libpred cache_lim_ospred os_fetch_at_open
 
