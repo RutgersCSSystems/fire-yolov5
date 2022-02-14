@@ -52,15 +52,20 @@ void unmap_page_range(struct mmu_gather *tlb,
 void do_page_cache_ra(struct readahead_control *, unsigned long nr_to_read,
 		unsigned long lookahead_size);
 void force_page_cache_ra(struct readahead_control *, unsigned long nr);
+
+
 static inline void force_page_cache_readahead(struct address_space *mapping,
 		struct file *file, pgoff_t index, unsigned long nr_to_read)
 {
-	DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
+     DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
+
 #ifdef CONFIG_ENABLE_CROSSLAYER
      ractl.pfetch_state.is_app_readahead = true;
      update_ra_orig_nr_pages(current, file->f_inode, &ractl, nr_to_read); 
 #endif
-	force_page_cache_ra(&ractl, nr_to_read);
+    
+     force_page_cache_ra(&ractl, nr_to_read);
+
 #ifdef CONFIG_ENABLE_CROSSLAYER
     print_ractl_stats(&ractl);
 #endif

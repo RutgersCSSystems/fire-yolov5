@@ -162,7 +162,10 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	inode->dirtied_when = 0;
 
 #ifdef CONFIG_ENABLE_CROSSLAYER
-    init_file_pfetch_state(&inode->pfetch_state);
+	/* Initialize the pfetch_state structure that maintains 
+	 * per inode prefetch information
+	 */
+        init_file_pfetch_state(&inode->pfetch_state);
 #endif
 
 #ifdef CONFIG_CGROUP_WRITEBACK
@@ -188,6 +191,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 		__set_bit(AS_THP_SUPPORT, &mapping->flags);
 	mapping->wb_err = 0;
 	atomic_set(&mapping->i_mmap_writable, 0);
+
 #ifdef CONFIG_READ_ONLY_THP_FOR_FS
 	atomic_set(&mapping->nr_thps, 0);
 #endif
