@@ -69,7 +69,8 @@
 /*TODO: Check if this needs to be done using thread_local*/
 std::atomic<bool> enable_advise; //Enables and disables application advise
 thread_local thread_cons_dest tcd; //Enables thread local constructor and destructor
-std::unordered_map<int, bool> is_reg; //false - this fd is not a regular file
+std::unordered_map<int, bool> *is_reg; //false - this fd is not a regular file
+static int is_fdmap_init;
 
 #ifdef ENABLE_CACHE_LIMITING 
 /*all of these variables are shared across all threads*/
@@ -99,6 +100,15 @@ void touch_tcd(void){
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
+
+bool check_fd_reg(int fd)
+{
+    std::unordered_map<int,bool>::const_iterator it = is_reg->find(fd);
+    if (it != is_reg->end() )
+            return false;
+    else
+            return true;
+}
 
 /*implemented in linux 5.14*/
 void set_crosslayer(){
@@ -420,14 +430,19 @@ int open(const char *pathname, int flags, ...){
         goto exit;
 
 #ifdef PREDICTOR
+    if(!is_fdmap_init){
+        is_reg = new std::unordered_map<int, bool>;
+        is_fdmap_init = 1;
+    }
+
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
 
     if(reg_fd(fd)){
-        is_reg[fd] = true;
+        is_reg->insert({fd, true});
         handle_open(fd, pathname);
     }
     else{
-        is_reg[fd] = false;
+        is_reg->insert({fd, false});
     }
 #endif
 
@@ -486,20 +501,16 @@ FILE *fopen(const char *filename, const char *mode){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
-    is_reg[fd] = true;
-
-
-    fprintf(stderr, "%s: TID:%ld open:%s FD %d\n", __func__, gettid(), filename, fd);
-
-
-    if(!fd)
-	    return ret;
+    if(!is_fdmap_init){
+        is_reg = new std::unordered_map<int, bool>;
+        is_fdmap_init = 1;
+    }
 
     if(reg_file(ret)){
-        is_reg[fd] = true;
+        is_reg->insert({fd, true});
         handle_open(fd, filename);
     }else{
-        is_reg[fd] = false;
+        is_reg->insert({fd, false});
     }
 #endif
 
@@ -538,7 +549,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     int fd = fileno(stream);
     //if(reg_file(stream)){ //this is a regular file
-    if(is_reg[fd] == true){
+    if (check_fd_reg(fd) == true) {
         pfetch_size = handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -558,8 +569,7 @@ ssize_t read(int fd, void *data, size_t size){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    //if(reg_fd(fd)){
-    if(is_reg[fd]){
+     if (check_fd_reg(fd) == true) {
         //printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
 	//	 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
@@ -584,9 +594,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    //if(reg_fd(fd))
-    if(is_reg[fd])
-    {
+    if (check_fd_reg(fd) == true) { 	   
         /*
          * It  has been observed that handle_read
          * is adding significant overheads in pread
@@ -629,8 +637,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
     /*XXX: handle after read_write will probably
      * change the ftell position in file*/
     int fd = fileno(stream);
-    //if(reg_fd(fd)){
-    if(is_reg[fd]){
+    if (check_fd_reg(fd) == true) {
         handle_write(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -649,7 +656,7 @@ ssize_t write(int fd, const void *data, size_t size){
     /*XXX: handle after read_write will probably
      * change the lseek position in file*/
     //if(reg_fd(fd)){
-    if(is_reg[fd]){
+    if (check_fd_reg(fd) == true) {
         handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -661,13 +668,11 @@ int fclose(FILE *stream){
 #ifdef PREDICTOR
     debug_print("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 
-    //if(reg_file(stream)){
-    if(is_reg[fd]){
+    if (check_fd_reg(fd) == true) {
         handle_close(fd);
+        is_reg->insert({fd, false});
     }
 #endif
-    is_reg[fd] = false;
-
     return real_fclose(stream);
 }
 
@@ -676,14 +681,11 @@ int close(int fd){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if(is_reg[fd]){
-        //remove from the predictor data
+    if (check_fd_reg(fd) == true) {
         handle_close(fd);
+        is_reg->insert({fd, false});
     }
 #endif
-
-    is_reg[fd] = false;
-
     return real_close(fd);
 }
 
