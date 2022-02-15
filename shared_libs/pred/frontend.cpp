@@ -82,7 +82,7 @@ struct shared_dat *shared_data; //all shared data across procs/threads
 struct prev_ra *prev_ra = NULL; //pointer for shared mem TODO:Recheck need
 
 #ifdef FETCH_WHOLE_FILE
-std::unordered_map<int, bool> in_cache; //false - this fd is not in cache completely
+std::unordered_map<int, bool> *in_cache; //false - this fd is not in cache completely
 char fake_buffer[10];
 #endif
 
@@ -101,10 +101,27 @@ void touch_tcd(void){
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
-bool check_fd_reg(int fd)
+
+/*initialize fd maps 
+ * Assumes the maps are global 
+*/
+void init_fdmaps(void)
 {
-    std::unordered_map<int,bool>::const_iterator it = is_reg->find(fd);
-    if (it != is_reg->end() )
+    if(!is_fdmap_init){
+        is_reg = new std::unordered_map<int, bool>;
+#ifdef FETCH_WHOLE_FILE
+	in_cache = new std::unordered_map<int, bool>;
+#endif
+        is_fdmap_init = 1;
+    }
+}
+
+
+/* check if an fd is registered or cached*/
+bool check_fd_reg(int fd, std::unordered_map<int, bool> *map)
+{
+    std::unordered_map<int,bool>::const_iterator it = map->find(fd);
+    if (it != map->end() )
             return false;
     else
             return true;
@@ -430,10 +447,8 @@ int open(const char *pathname, int flags, ...){
         goto exit;
 
 #ifdef PREDICTOR
-    if(!is_fdmap_init){
-        is_reg = new std::unordered_map<int, bool>;
-        is_fdmap_init = 1;
-    }
+    /* initialize if already not*/
+    init_fdmaps();
 
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), pathname);
 
@@ -458,11 +473,13 @@ int open(const char *pathname, int flags, ...){
 
 
 #ifdef FETCH_WHOLE_FILE
-    if(in_cache[fd] == false){
+    if(check_fd_reg(fd, in_cache) == false) 
+    {
         struct read_ra_req ra_req;
         ra_req.total_cache_usage = 0; 
 
-        in_cache[fd] = true;
+	/* insert if we absent */
+	in_cache->insert({fd, true});
 
         ra_req.ra_pos = 0;
         ra_req.ra_count = INT_MAX;
@@ -501,10 +518,8 @@ FILE *fopen(const char *filename, const char *mode){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld open:%s\n", __func__, gettid(), filename);
 
-    if(!is_fdmap_init){
-        is_reg = new std::unordered_map<int, bool>;
-        is_fdmap_init = 1;
-    }
+    /* initialize if already not*/
+    init_fdmaps();
 
     if(reg_file(ret)){
         is_reg->insert({fd, true});
@@ -549,7 +564,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     int fd = fileno(stream);
     //if(reg_file(stream)){ //this is a regular file
-    if (check_fd_reg(fd) == true) {
+    if (check_fd_reg(fd, is_reg) == true) {
         pfetch_size = handle_read(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -569,7 +584,7 @@ ssize_t read(int fd, void *data, size_t size){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-     if (check_fd_reg(fd) == true) {
+     if (check_fd_reg(fd, is_reg) == true) {
         //printf("TID:%ld fd: %d lseek: %ld bytes: %lu\n", 
 	//	 gettid(), fd, lseek(fd, 0, SEEK_CUR), size );
         handle_read(fd, lseek(fd, 0, SEEK_CUR), size);
@@ -594,7 +609,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if (check_fd_reg(fd) == true) { 	   
+    if (check_fd_reg(fd, is_reg) == true) { 	   
         /*
          * It  has been observed that handle_read
          * is adding significant overheads in pread
@@ -637,7 +652,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
     /*XXX: handle after read_write will probably
      * change the ftell position in file*/
     int fd = fileno(stream);
-    if (check_fd_reg(fd) == true) {
+    if (check_fd_reg(fd, is_reg) == true) {
         handle_write(fd, ftell(stream), size*nmemb);
     }
 #endif
@@ -656,7 +671,7 @@ ssize_t write(int fd, const void *data, size_t size){
     /*XXX: handle after read_write will probably
      * change the lseek position in file*/
     //if(reg_fd(fd)){
-    if (check_fd_reg(fd) == true) {
+    if (check_fd_reg(fd, is_reg) == true) {
         handle_write(fd, lseek(fd, 0, SEEK_CUR), size);
     }
 #endif
@@ -668,7 +683,7 @@ int fclose(FILE *stream){
 #ifdef PREDICTOR
     debug_print("%s PID:%d fd:%d\n", __func__, getpid(), fd);
 
-    if (check_fd_reg(fd) == true) {
+    if (check_fd_reg(fd, is_reg) == true) {
         handle_close(fd);
         is_reg->insert({fd, false});
     }
@@ -681,7 +696,7 @@ int close(int fd){
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
 
-    if (check_fd_reg(fd) == true) {
+    if (check_fd_reg(fd, is_reg) == true) {
         handle_close(fd);
         is_reg->insert({fd, false});
     }
