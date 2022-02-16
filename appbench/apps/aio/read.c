@@ -27,7 +27,7 @@
 #include <sys/mman.h>
 
 #define NR_PAGES_READ 10
-#define NR_PAGES_RA 20
+#define NR_PAGES_RA 40
 #define PG_SZ 4096
 
 #ifdef FILESZ
@@ -50,13 +50,12 @@ void *prefetcher_th(void *arg){
 
     char *buffer = (char*) malloc(a->buff_sz);
     off_t chunk = 0;
-    long nr_read = 0; //controls the readaheads
     size_t readnow;
 
     struct aiocb cb;
 
     //Start from next offset, read sequentially
-    chunk += PG_SZ*NR_PAGES_READ;
+    //chunk += PG_SZ*NR_PAGES_READ;
 
     while (chunk < a->size){
         memset(&cb, 0, sizeof(struct aiocb));
@@ -66,20 +65,24 @@ void *prefetcher_th(void *arg){
         cb.aio_nbytes = a->buff_sz;
         cb.aio_buf = buffer;
 
+
+        printf("AIO reading %ld bytes at %ld offset\n", cb.aio_nbytes, chunk);
         aio_read(&cb);
 
+        /*
         while(aio_error(&cb) == EINPROGRESS){
             sleep(1);
         }
+        */
 
-        readnow = aio_return(&cb);
+        //readnow = aio_return(&cb);
+        printf("Read now = %ld\n", readnow);
 
         if (readnow < 0 ){
             printf("\nRead Unsuccessful\n");
             goto ret;
         }
-        chunk += readnow; //offset
-        nr_read += NR_PAGES_READ;
+        chunk += cb.aio_nbytes; //offset
     }
 
 ret:
@@ -123,7 +126,7 @@ int main(int argc, char **argv)
     struct thread_args req;
     req.fd = fd;
     req.size = size;
-    req.buff_sz = buff_sz;
+    req.buff_sz = 2UL*1024*1024*1024;
 #ifdef AIO_PREFETCH
     pthread_create(&thread_id, NULL, prefetcher_th, &req);
 #endif
@@ -132,6 +135,8 @@ int main(int argc, char **argv)
     gettimeofday(&start, NULL);
     while ( chunk < size ){
         size_t readnow;
+
+        //printf("MASTER: reading at offset %ld\n", chunk);
 
         readnow = pread(fd, ((char *)buffer), 
                 PG_SZ*NR_PAGES_READ, chunk);
@@ -150,7 +155,8 @@ int main(int argc, char **argv)
     
     
 #ifdef AIO_PREFETCH
-    pthread_join(thread_id, NULL);
+    pthread_cancel(thread_id);
+    //pthread_join(thread_id, NULL);
 #endif
 
     unsigned long usec = usec_diff(&start, &end);

@@ -1,5 +1,5 @@
 LIBS=-lrt -lpthread
-SIZE=5 ##Test file size in GBs
+SIZE=10 ##Test file size in GBs
 
 all:
 	gcc read.c -DFILESZ=$(SIZE) -o read_onlyospfetch $(LIBS)
