@@ -370,17 +370,18 @@ void update_async_pages(struct task_struct *task, struct inode *inode,
     if(task->pfetch_state.enable_f_stats){
         inode->pfetch_state.enable_f_stats = true;
         ractl->pfetch_state.enable_f_stats = true;
-        //if(!ractl->pfetch_state.is_app_readahead){
-        ractl->pfetch_state.async_pages += nr_pages;
 
-        spin_lock(&inode->pfetch_state.spinlock);
-        inode->pfetch_state.async_pages += nr_pages;
-        spin_unlock(&inode->pfetch_state.spinlock);
+        if(!ractl->pfetch_state.is_app_readahead){
+            ractl->pfetch_state.async_pages += nr_pages;
 
-        spin_lock(&task->pfetch_state.spinlock);
-        task->pfetch_state.async_pages += nr_pages;
-        spin_unlock(&task->pfetch_state.spinlock);
-        //}
+            spin_lock(&inode->pfetch_state.spinlock);
+            inode->pfetch_state.async_pages += nr_pages;
+            spin_unlock(&inode->pfetch_state.spinlock);
+
+            spin_lock(&task->pfetch_state.spinlock);
+            task->pfetch_state.async_pages += nr_pages;
+            spin_unlock(&task->pfetch_state.spinlock);
+        }
     }
 
 err:
@@ -401,17 +402,18 @@ void update_final_async_pages(struct task_struct *task, struct inode *inode,
     if(task->pfetch_state.enable_f_stats){
         inode->pfetch_state.enable_f_stats = true;
         ractl->pfetch_state.enable_f_stats = true;
-        //if(!ractl->pfetch_state.is_app_readahead){
-        ractl->pfetch_state.final_async_pages += nr_pages;
 
-        spin_lock(&inode->pfetch_state.spinlock);
-        inode->pfetch_state.final_async_pages += nr_pages;
-        spin_unlock(&inode->pfetch_state.spinlock);
+        if(!ractl->pfetch_state.is_app_readahead){
+            ractl->pfetch_state.final_async_pages += nr_pages;
 
-        spin_lock(&task->pfetch_state.spinlock);
-        task->pfetch_state.final_async_pages += nr_pages;
-        spin_unlock(&task->pfetch_state.spinlock);
-        //}
+            spin_lock(&inode->pfetch_state.spinlock);
+            inode->pfetch_state.final_async_pages += nr_pages;
+            spin_unlock(&inode->pfetch_state.spinlock);
+
+            spin_lock(&task->pfetch_state.spinlock);
+            task->pfetch_state.final_async_pages += nr_pages;
+            spin_unlock(&task->pfetch_state.spinlock);
+        }
     }
 
 err:
