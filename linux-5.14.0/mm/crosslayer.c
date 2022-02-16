@@ -358,6 +358,13 @@ err:
 EXPORT_SYMBOL(update_ra_orig_nr_pages);
 
 
+/*
+ * updates the number of pages being fetched asynchronously for a given task
+ * Assumes that readahead functions are fetching pages asynchronously.
+ *
+ * XXX: Our recent sensitivity study has shown that readaheads are not async,
+ * so this metric is not completely correct
+ */
 void update_async_pages(struct task_struct *task, struct inode *inode, 
         struct readahead_control *ractl, unsigned long nr_pages)
 {
