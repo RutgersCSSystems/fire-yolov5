@@ -13,7 +13,8 @@ cd $KERN_SRC
 #sudo make x86_64_defconfig
 #sudo make kvmconfig 
 #make oldconfig
-make menuconfig
+#make menuconfig
+sudo make prepare
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 #sudo make prepare ##Uses the modified .config file to compile kernel
 
@@ -27,4 +28,3 @@ cp .config $KERNEL/config-$VER
 #update-initramfs -c -k $y
 grep -r "error:" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 cat $KERN_SRC/errors.out
-
