@@ -139,7 +139,6 @@ int main(int argc, char **argv)
 	    thpool_add_work(thpool, prefetcher_th, (struct thread_args*)req);
     }
     printf("nr of threads working right now %d\n", thpool_num_threads_working(thpool));
-    sleep(1);
 #endif
 
 #ifndef DONT_READ_FILE

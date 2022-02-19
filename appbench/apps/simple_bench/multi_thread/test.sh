@@ -22,11 +22,13 @@ DISABLE_LOCK_STATS()
 
 
 filesize=20 ##test file size in GB
-PFETCH_SIZE=1280 #5MB
+PFETCH_SIZE=40 #5MB
+NR_THREADS=1
 #size of prefetch for each request
 #declare -a prefetch_sizes=("5242880")
 #declare -a prefetch_sizes=("10" "40" "128" "256" "1280" "25600" "131072" "262144" "2621440" "5242880")
 declare -a nr_threads=("1" "2" "4" "8" "16")
+declare -a filesizes=("50" "60")
 
 
 #rm -rf bigfakefile.txt
@@ -34,17 +36,23 @@ declare -a nr_threads=("1" "2" "4" "8" "16")
 make SIZE=$filesize
 #./bin/write
 
-for NR_THREADS in "${nr_threads[@]}"
+
+#for NR_THREADS in "${nr_threads[@]}"
+for filesize in "${filesizes[@]}"
 do
 	echo "#################################"
-	echo "$NR_THREADS used to prefetch"
+	echo "$filesize GB file"
 	
 	make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=$NR_THREADS
 
+	./bin/write
+
 	FlushDisk
 
-	ENABLE_LOCK_STATS
-	./bin/read_os_smallpfetch
-	DISABLE_LOCK_STATS
-	cat /proc/lock_stat | awk '{print $6}' | grep -Eo '[0-9\.]+' | awk '{ sum += $1 } END { print sum }'
+	#ENABLE_LOCK_STATS
+	#./bin/read_os_smallpfetch
+	./bin/read_noprefetch
+	#dont_read_os_pfetch  read_noprefetch  read_onlyospfetch  read_onlypfetch  read_os_fullpfetch  read_os_smallpfetch  write
+	#DISABLE_LOCK_STATS
+	#cat /proc/lock_stat | awk '{print $6}' | grep -Eo '[0-9\.]+' | awk '{ sum += $1 } END { print sum }'
 done
