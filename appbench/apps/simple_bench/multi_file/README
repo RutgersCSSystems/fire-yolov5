@@ -1,0 +1,10 @@
+It has been observed (using lock_stat) that when multiple worker threads try to readahead
+from a single shared file to improve prefetching performance, it increases the total
+read time from the main thread primarily due to locking contention on xarray etc.
+
+
+This simple benchmark will test this hypothesis.
+
+it will do so by dividing the big shared file into small private files(=NR_WORKERS)
+main thread would read from a given file based on the offset.
+
