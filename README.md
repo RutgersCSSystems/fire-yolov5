@@ -88,14 +88,14 @@ Now to get the appropriate branch
 
 ```
 cd ssd
-git clone git@github.com:sudarsunkannan/NVM.git -b hpc
-cd NVM; git submodule update --init ## This get the linux kernel
+git clone git@github.com:RutgersCSSystems/prefetching.git
+cd prefetching
 ```
 
 You now have the repo. Before running things, run
 
 ```
-cd NVM
+cd prefetching
 source ./scripts/setvars.sh ## This sets appropriate env variables
 ```
 
@@ -103,18 +103,12 @@ source ./scripts/setvars.sh ## This sets appropriate env variables
 
 ### Compile Kernel
 
-If you check the linux-5.14.0 folder and it seems empty simply run
-
-```
-git submodule update --init
-```
-
 #### To compile deb for baremetal
 
 Before running the following commands, make sure you dont have other deb files in the NVM folder.
 
 ```
-cd NVM/linux-5.14.0
+cd prefetching/linux-5.14.0
 ./compile_deb.sh ## This will produce and install deb for this linux kernel
 sudo reboot ## this will reboot the node with the new linux 
 ```
@@ -122,10 +116,10 @@ sudo reboot ## this will reboot the node with the new linux
 #### To compile for qemu
 
 ```
-cd NVM/linux-5.14.0
+cd prefetching/linux-5.14.0
 sudo cp oldnix.config .config
 sudo make prepare
-cd NVM
+cd prefetching
 ./scripts/compile-install/compile_kern_kvm.sh
 ```
 
