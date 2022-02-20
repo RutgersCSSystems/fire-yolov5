@@ -16,11 +16,6 @@
 
 using namespace std;
 
-#ifdef FILESZ
-#define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
-#else
-#define FILESIZE (10L * 1024L * 1024L * 1024L)
-#endif
 
 int main() {
         double i;
@@ -35,7 +30,6 @@ int main() {
                 file_name(str1, i, filename);
                 fp=fopen(filename,"w");
                 filp_list.push_back(fp);
-                printf("new filename=%s\n", filename);
         }
 
         for(i=0; i<FILESIZE; i++) {
