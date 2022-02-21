@@ -8,14 +8,18 @@ BIN_DIR=./bin
 
 FLAGS=-DFILESZ=$(SIZE) -DNR_RA_PAGES=$(NR_RA_PG) -DNR_BG_THREADS=$(NR_BG_THREADS)
 
-all: read.cpp utils/thpool.c
+all: read write
+
+read: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) -o $(BIN_DIR)/read_onlyospfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DNR_RA_PAGES=$(NR_RA_PG) -o $(BIN_DIR)/read_noprefetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DONLYAPP -DPREFETCH -o $(BIN_DIR)/read_onlypfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DPREFETCH -o $(BIN_DIR)/read_os_smallpfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DPREFETCH -DFULL_RA -o $(BIN_DIR)/read_os_fullpfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DPREFETCH -DDONT_READ_FILE -o $(BIN_DIR)/dont_read_os_pfetch $(LIBS)
-	$(CXX) write.cpp $(FLAGS) -o $(BIN_DIR)/write
+
+write: write.cpp utils/thpool.c
+	$(CXX) $^ $(FLAGS) -o $(BIN_DIR)/write $(LIBS)
 
 clean:
 	rm bigfakefile*
