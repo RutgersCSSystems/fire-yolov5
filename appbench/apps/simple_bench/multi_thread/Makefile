@@ -8,7 +8,7 @@ FLAGS=-DFILESZ=$(SIZE) -DNR_RA_PAGES=$(NR_RA_PG) -DNR_BG_THREADS=$(NR_BG_THREADS
 
 all: read.c utils/thpool.c
 	gcc $^ $(FLAGS) -o $(BIN_DIR)/read_onlyospfetch $(LIBS)
-	gcc $^ $(FLAGS) -DNR_RA_PAGES=$(NR_RA_PG) -o $(BIN_DIR)/read_noprefetch $(LIBS)
+	gcc $^ $(FLAGS) -DONLYAPP -DNR_RA_PAGES=$(NR_RA_PG) -o $(BIN_DIR)/read_noprefetch $(LIBS)
 	gcc $^ $(FLAGS) -DONLYAPP -DPREFETCH -o $(BIN_DIR)/read_onlypfetch $(LIBS)
 	gcc $^ $(FLAGS) -DPREFETCH -o $(BIN_DIR)/read_os_smallpfetch $(LIBS)
 	gcc $^ $(FLAGS) -DPREFETCH -DFULL_RA -o $(BIN_DIR)/read_os_fullpfetch $(LIBS)
