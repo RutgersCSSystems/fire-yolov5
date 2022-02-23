@@ -21,8 +21,8 @@ DISABLE_LOCK_STATS()
 }
 
 
-filesize=40 ##test file size in GB
-PFETCH_SIZE=1280 #5MB
+filesize=20 ##test file size in GB
+PFETCH_SIZE=20 #5MB
 NR_THREADS=1
 #size of prefetch for each request
 #declare -a prefetch_sizes=("5242880")
