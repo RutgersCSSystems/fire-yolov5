@@ -12,7 +12,7 @@ all: read write
 
 read: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) -o $(BIN_DIR)/read_onlyospfetch $(LIBS)
-	$(CXX) $^ $(FLAGS) -DNR_RA_PAGES=$(NR_RA_PG) -o $(BIN_DIR)/read_noprefetch $(LIBS)
+	$(CXX) $^ $(FLAGS) -DONLYAPP -DNR_RA_PAGES=$(NR_RA_PG) -o $(BIN_DIR)/read_noprefetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DONLYAPP -DPREFETCH -o $(BIN_DIR)/read_onlypfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DPREFETCH -o $(BIN_DIR)/read_os_smallpfetch $(LIBS)
 	$(CXX) $^ $(FLAGS) -DPREFETCH -DFULL_RA -o $(BIN_DIR)/read_os_fullpfetch $(LIBS)
