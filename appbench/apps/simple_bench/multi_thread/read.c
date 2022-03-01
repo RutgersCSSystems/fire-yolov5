@@ -74,12 +74,25 @@ void prefetcher_th(void *arg){
     off_t chunk = 0;
     size_t readnow;
 
+#ifndef PREFETCH_READAHEAD
+    char *buffer = (char*) malloc(a->buff_sz);
+#endif
+
     while (chunk < a->size){
 	    //printf("TID:%ld, chunk=%ld, buff_size=%ld\n", tid, (chunk+a->offset), a->buff_sz);
+#ifdef PREFETCH_READAHEAD
         if(readahead(a->fd, (chunk+a->offset), a->buff_sz) > 0){
             printf("error while readahead \n");
 	    return;
         }
+#elif PREFETCH_READ
+        readnow = read(a->fd, ((char *)buffer), a->buff_sz);
+        if (readnow < 0 ){
+            printf("\nRead in prefetcher %ld Unsuccessful\n", tid);
+            free (buffer);
+            return;
+        }
+#endif
         chunk += a->buff_sz;
     }
 }
