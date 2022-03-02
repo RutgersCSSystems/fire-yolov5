@@ -7,10 +7,8 @@ export CONCURRENCYLEVEL=$PROC
 
 touch REPORTING-BUGS
 sudo make clean -j
-sudo cp oldnix.config .config
+sudo cp original.config .config
 sudo make prepare
-#sudo make menuconfig
-#fakeroot make-kpkg clean
 sudo make -j$PROC
 sudo fakeroot make-kpkg -j$PROC --initrd kernel-image kernel-headers
 sudo dpkg -i ../*image*.deb ../*header*.deb
