@@ -60,6 +60,12 @@ void prefetcher_th(void *arg){
 
 #ifdef PREFETCH_READ
         char *buffer = (char*) malloc(a->buff_sz);
+#elif PREFETCH_PREAD_RA
+	int READ_PG = 1; //nr of pages to read
+     char *buffer = (char*) malloc(PG_SZ*READ_PG);
+
+	struct read_ra_req ra_req;
+	memset(&ra_req, 0, sizeof(struct read_ra_req));
 #endif
 
         while (chunk < a->size){
@@ -76,6 +82,11 @@ void prefetcher_th(void *arg){
                         free (buffer);
                         return;
                 }
+#elif PREFETCH_PREAD_RA
+		ra_req.ra_pos = 0; //Will ra start where the read is happening
+		ra_req.ra_count = a->buff_sz - PG_SZ;
+		readnow = syscall(449, a->fd, ((char *)buffer),
+				PG_SZ*READ_PG, (chunk+a->offset), &ra_req);
 #endif
                 chunk += a->buff_sz;
         }
@@ -108,19 +119,6 @@ int main(int argc, char **argv)
         posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
-        /*
-           pthread_t thread_id;
-           struct thread_args req;
-           req.fd = fd;
-           req.size = size;
-#ifdef FULL_RA
-req.buff_sz = size;
-#else
-req.buff_sz = PG_SZ * NR_PAGES_RA;
-#endif
-req.offset = 0;
-*/
-
 #ifdef PREFETCH
         //pthread_create(&thread_id, NULL, prefetcher_th, &req);
         threadpool thpool;
@@ -136,7 +134,11 @@ req.offset = 0;
                 req->fd = fd;
                 req->size = FILESIZE/NR_BG_THREADS;
                 req->offset = i*req->size;
-                req->buff_sz = PG_SZ * NR_PAGES_RA;
+#ifdef FULL_RA
+                req->buff_sz = req->size;//Size of each prefetch
+#else
+                req->buff_sz = PG_SZ * NR_PAGES_RA; //Size of each prefetch
+#endif
                 thpool_add_work(thpool, prefetcher_th, (struct thread_args*)req);
         }
         printf("nr of threads working right now %d\n", thpool_num_threads_working(thpool));
@@ -165,13 +167,16 @@ req.offset = 0;
 #endif
 
 
-#ifdef PREFETCH
+#if defined(PREFETCH) && defined(DONT_READ_FILE)
+        thpool_wait(thpool);
         //forced_thpool_destroy(thpool);
         //pthread_cancel(thread_id);
         //pthread_join(thread_id, NULL);
 #endif
 
+#ifndef DONT_READ_FILE
         unsigned long usec = usec_diff(&start, &end);
         printf("Reading done in %ld microsecs\n", usec);
+#endif
         return 0;
 }
