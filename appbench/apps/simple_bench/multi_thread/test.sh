@@ -29,7 +29,8 @@ NR_THREADS=1
 #declare -a prefetch_sizes=("10" "40" "128" "256" "1280" "25600" "131072" "262144" "2621440" "5242880")
 #declare -a nr_threads=("1" "2" "4" "8" "16")
 declare -a nr_threads=("1" "2" "4" "8" "16")
-declare -a filesizes=("10" "20" "30" "40" "50" "60")
+#declare -a filesizes=("10" "20" "30" "40" "50" "60")
+declare -a filesizes=("60")
 
 
 #rm -rf bigfakefile*
@@ -42,31 +43,50 @@ declare -a filesizes=("10" "20" "30" "40" "50" "60")
 for filesize in "${filesizes[@]}"
 do
 	echo "#################################"
-	echo "$NR_THREADS to prefetch"
+	echo "$filesize GB to prefetch"
 	
 	make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=$NR_THREADS
 
-        rm -rf bigfakefile*
+     rm -rf bigfakefile*
 	./bin/write
 
 	FlushDisk
 
 	#ENABLE_LOCK_STATS
-	echo "@@@@@@@@@Read No Prefetch"
-	./bin/read_noprefetch
-
+	echo "@@@@@@@@@Read NO Prefetch"
+	./bin/read_nopfetch
 	FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch 1BG"
-	./bin/read_os_smallpfetch
+	echo "@@@@@@@@@Read OS Prefetch"
+	./bin/read_onlyospfetch
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch READAHEAD noOS"
+	./bin/read_noos_smallpfetch
+	FlushDisk
+
+	echo "@@@@@@@@@Read full prefetch READAHEAD noOS"
+	./bin/read_noos_fullpfetch
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch READ noOS"
+	./bin/read_noos_smallpfetch_read
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch PREAD_RA noOS"
+	./bin/read_noos_smallpfetch_preadra
+	FlushDisk
+
+	echo "@@@@@@@@@Seq prefetch PREAD_RA noOS"
+	./bin/preadra_noos_seq
+     FlushDisk
 	
-	make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=16
-	FlushDisk
+	#echo "@@@@@@@@@Read small prefetch READ 16BG"
+	#make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=16 > /dev/null
+	#FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch 16BG"
-	./bin/read_os_smallpfetch
+     #./bin/read_os_smallpfetch_read
 	#/usr/bin/time -v ./bin/read_os_smallpfetch
-	#dont_read_os_pfetch  read_noprefetch  read_onlyospfetch  read_onlypfetch  read_os_fullpfetch  read_os_smallpfetch  write
 	#DISABLE_LOCK_STATS
 	#cat /proc/lock_stat | awk '{print $6}' | grep -Eo '[0-9\.]+' | awk '{ sum += $1 } END { print sum }'
 done

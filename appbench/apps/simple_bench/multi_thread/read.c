@@ -114,12 +114,14 @@ int main(int argc, char **argv)
                 exit (0);
         }
 
+        struct read_ra_req ra_req;
+
 #ifdef ONLYAPP
         //Disables OS pred
         posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
 
-#ifdef PREFETCH
+#ifdef CONCURRENT_PREFETCH
         //pthread_create(&thread_id, NULL, prefetcher_th, &req);
         threadpool thpool;
         thpool = thpool_init(NR_BG_THREADS); //spawns a set of bg threads
@@ -151,8 +153,15 @@ int main(int argc, char **argv)
 
                 //printf("MASTER: reading at offset %ld\n", chunk);
 
+#ifdef PREAD_RA
+		      ra_req.ra_count = NR_PAGES_RA;
+		      ra_req.ra_pos = 0;
+		      readnow = syscall(449, fd, ((char *)buffer), 
+				        PG_SZ*NR_PAGES_READ, chunk, &ra_req);
+#else
                 readnow = pread(fd, ((char *)buffer), 
                                 PG_SZ*NR_PAGES_READ, chunk);
+#endif
 
                 if (readnow < 0 ){
                         printf("\nRead Unsuccessful\n");
@@ -167,7 +176,7 @@ int main(int argc, char **argv)
 #endif
 
 
-#if defined(PREFETCH) && defined(DONT_READ_FILE)
+#if defined(CONCURRENT_PREFETCH) && defined(DONT_READ_FILE)
         thpool_wait(thpool);
         //forced_thpool_destroy(thpool);
         //pthread_cancel(thread_id);
