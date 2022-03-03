@@ -13,6 +13,28 @@
 #define FILENAMEMAX 1024
 
 /*
+ * User request for readaheads with read
+ * see pread_ra SYSCALL in fs/read_write.c
+ */
+struct read_ra_req {
+    loff_t ra_pos;
+    size_t ra_count;
+
+    /*The following are return values from the OS
+     * Reset at recieving them
+     */
+    unsigned long nr_present; //nr pages present in cache
+    unsigned long bio_req_nr;//nr pages requested bio for
+
+//#ifdef CONFIG_CACHE_LIMITING
+    long total_cache_usage; //total cache usage in bytes (OS return)
+    bool full_file_ra; //populated by app true if pread_ra is being done to get full file
+    long cache_limit; //populated by the app, desired cache_limit
+//#endif
+};
+
+
+/*
  * Given the mpi rank and the initial string, this
  * function returns the filename per mpi rank
  */
