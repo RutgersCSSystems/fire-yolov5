@@ -1001,9 +1001,12 @@ struct task_struct {
 	/* Open file information: */
 	struct files_struct		*files;
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+//#ifdef CONFIG_ENABLE_CROSSLAYER
+/*XXX: Commented the config since it interferes with compile
+ * when it is not enabled.
+ */
 	int is_crosslayer;
-#endif
+//#endif
 
 
 #ifdef CONFIG_IO_URING
