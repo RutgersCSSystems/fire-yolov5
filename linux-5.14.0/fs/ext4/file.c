@@ -117,7 +117,7 @@ static ssize_t ext4_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
 	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
 		return -EIO;
 
-	if (!iov_iter_count(to))
+	if (!iov_iter_count(to) && (!iocb->ki_do_ra || !iocb->ki_ra_count))
 		return 0; /* skip atime */
 
 #ifdef CONFIG_FS_DAX
