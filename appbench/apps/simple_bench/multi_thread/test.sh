@@ -29,8 +29,8 @@ NR_THREADS=1
 #declare -a prefetch_sizes=("10" "40" "128" "256" "1280" "25600" "131072" "262144" "2621440" "5242880")
 #declare -a nr_threads=("1" "2" "4" "8" "16")
 declare -a nr_threads=("1" "2" "4" "8" "16")
-#declare -a filesizes=("10" "20" "30" "40" "50" "60")
-declare -a filesizes=("60")
+declare -a filesizes=("10" "20" "30" "40" "50" "60")
+#declare -a filesizes=("60")
 
 
 #rm -rf bigfakefile*
@@ -47,10 +47,32 @@ do
 	
 	make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=$NR_THREADS
 
-     rm -rf bigfakefile*
+     	rm -rf bigfakefile*
 	./bin/write
 
 	FlushDisk
+
+     	echo "@@@@@@@@@Read OS Prefetch"
+	./bin/read_onlyospfetch
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch READAHEAD OS"
+	./bin/read_os_smallpfetch
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch READ OS"
+	./bin/read_os_smallpfetch_read
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch PREAD_RA OS 0"
+	./bin/read_os_smallpfetch_preadra_0
+	FlushDisk
+
+	echo "@@@@@@@@@Read small prefetch PREAD_RA OS 1"
+	./bin/read_os_smallpfetch_preadra_1
+	FlushDisk
+
+     continue
 
 	#ENABLE_LOCK_STATS
 	echo "@@@@@@@@@Read NO Prefetch"
@@ -80,6 +102,8 @@ do
 	echo "@@@@@@@@@Seq prefetch PREAD_RA noOS"
 	./bin/preadra_noos_seq
      FlushDisk
+
+
 	
 	#echo "@@@@@@@@@Read small prefetch READ 16BG"
 	#make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=16 > /dev/null

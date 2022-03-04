@@ -11,8 +11,10 @@ ONLYAPP_PREFETCH=-DONLYAPP $(APP_PREFETCH)
 all: write read_os read_noos test
 
 read_os: read.c utils/thpool.c
+	gcc $^ $(FLAGS) $(APP_PREFETCH) -DPREFETCH_READAHEAD -o $(BIN_DIR)/read_os_smallpfetch $(LIBS)
 	gcc $^ $(FLAGS) $(APP_PREFETCH) -DPREFETCH_READ -o $(BIN_DIR)/read_os_smallpfetch_read $(LIBS)
-	gcc $^ $(FLAGS) $(APP_PREFETCH) -DPREFETCH_PREAD_RA -o $(BIN_DIR)/read_os_smallpfetch_preadra $(LIBS)
+	gcc $^ $(FLAGS) $(APP_PREFETCH) -DPREFETCH_PREAD_RA -DREAD_PG_PREAD_RA=1 -o $(BIN_DIR)/read_os_smallpfetch_preadra_1 $(LIBS)
+	gcc $^ $(FLAGS) $(APP_PREFETCH) -DPREFETCH_PREAD_RA -DREAD_PG_PREAD_RA=0 -o $(BIN_DIR)/read_os_smallpfetch_preadra_0 $(LIBS)
 	gcc $^ $(FLAGS) $(APP_PREFETCH) -DFULL_RA -DPREFETCH_READAHEAD -o $(BIN_DIR)/read_os_fullpfetch $(LIBS)
 	gcc $^ $(FLAGS) $(APP_PREFETCH) -DDONT_READ_FILE -DPREFETCH_READAHEAD -o $(BIN_DIR)/dont_read_os_pfetch $(LIBS)
 	gcc $^ $(FLAGS) -DPREAD_RA -o $(BIN_DIR)/preadra_os_seq $(LIBS)
