@@ -1,6 +1,6 @@
 MPICC=mpicc
 LIBS=-lmpi
-SIZE=60 ##Test file size in GBs
+SIZE=5 ##Test file size in GBs
 
 all:
 	gcc read.c -DFILESZ=$(SIZE) -DONLYOS -o read_onlyos
