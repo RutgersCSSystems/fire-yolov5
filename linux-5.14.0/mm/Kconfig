@@ -916,4 +916,7 @@ config UNLIMITED_MAX_SECTORS
 config CACHE_LIMITING
     bool "Accounts total cache being used for a subset of tasks"
 
+config PREAD_RA_SIMPLE
+        bool "Make pread_ra to be pread and readahead calls"
+
 endmenu
