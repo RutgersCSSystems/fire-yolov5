@@ -11,7 +11,7 @@
 
 #define __NR_start_crosslayer 448
 
-#define NR_PAGES_READ 10
+#define NR_PAGES_READ 0
 #define NR_PAGES_RA 20
 #define PG_SZ 4096
 
@@ -23,7 +23,7 @@
 #define CACHE_USAGE_DEST 6
 #define CACHE_USAGE_RET 7
 
-#define FILESIZE (50L * 1024L * 1024L * 1024L)
+#define FILESIZE (5L * 1024L * 1024L * 1024L)
 
 /*
  * pread_ra read_ra_req struct
@@ -96,10 +96,11 @@ int main() {
 #ifdef PREAD
 		readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);
 #else
-		ra_req.ra_count = 0;
 		ra_req.ra_pos = 0;
+		ra_req.ra_count = PG_SZ*NR_PAGES_RA;
 		readnow = syscall(449, fd, ((char *)buffer), 
 				PG_SZ*NR_PAGES_READ, chunk, &ra_req);
+		//printf("sycall return=%ld\n", readnow);
 #endif
 
 		if (readnow < 0 ){
@@ -108,7 +109,8 @@ int main() {
 			close (fd);
 			return 0;
 		}
-		chunk += readnow; //offset
+		chunk += PG_SZ*NR_PAGES_RA;
+		//chunk += readnow; //offset
 	}
 
 	return 0;
