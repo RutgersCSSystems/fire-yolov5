@@ -34,3 +34,4 @@ Modifications Made to MADBench:
 2. I have converted all busy_work to NOP; this removes unnecessary CPU usage which
 increases runtime. (#ifdef COMPUTE)
 3. I have removed second time writing to file in calc_W. (#ifdef W_WRITE)
+4. Write file if it doesnt exist else only read

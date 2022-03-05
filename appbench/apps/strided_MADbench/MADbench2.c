@@ -14,6 +14,9 @@
 #include <fcntl.h>
 #include <math.h>
 #include <time.h>
+#include <sys/types.h>
+#include <stdbool.h>
+
 #include "mpi.h"
 #include "MADbench2.h"
 
@@ -54,6 +57,7 @@ typedef struct {
 /* Functions */
 /*************/
 
+bool file_exists(char* );
 void initialize(int, char **);
 void define_gang(int, GANG *, MATRIX *, VECTOR *);
 
@@ -91,6 +95,7 @@ char *IOMETHOD, *IOMODE, *FILETYPE, *REMAP;
 off_t record_size; //bytes to read at once
 int stride; // set stride of file access to # * record_size
 int flushit = 0; // true if flushit
+bool fileexists = false; // if true, no writes would happen, only reads
 double BWEXP = -1.0;
 
 int no_pe, my_pe;
@@ -140,6 +145,16 @@ int main(int argc, char** argv)
     printf("calc_C done \n");
 
     finalize();
+}
+
+
+bool file_exists(char* filename){
+    struct stat buffer;
+    int exist = stat(filename, &buffer);
+    if(exist == 0)
+        return true;
+    else
+        return false;
 }
 
 /**********************************************************************************************************************************/
@@ -310,10 +325,16 @@ void initialize(int argc, char** argv)
             PMPI_Barrier(MPI_COMM_WORLD);
         }
 
-        if (strcmp(FILETYPE, "UNIQUE")==0) sprintf(filename, "files/data_%d", my_pe);
-        else sprintf(filename, "files/data");
+        if (strcmp(FILETYPE, "UNIQUE")==0){
+            sprintf(filename, "files/data_%d", my_pe);
+        }
+        else {
+            sprintf(filename, "files/data");
+        }
+        fileexists = file_exists(filename);
+        printf("%s: exists=%d\n", filename, fileexists);
 
-        if (strcmp(IOMETHOD,  "POSIX")==0) error_check("fopen64", filename, (df=fopen64(filename, "w+"))!=NULL);
+        if (strcmp(IOMETHOD,  "POSIX")==0) error_check("fopen64", filename, (df=fopen64(filename, "a+"))!=NULL);
         else if (strcmp(IOMETHOD, "MPI")==0) {
 #ifdef IBM
             MPI_Info_create(&mpi_info);
@@ -1151,9 +1172,10 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
 			*/
 			         int fd = fileno(df);
 
-                        printf("MAD: fread: fd:%d\n", fd);
+                        //printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
+                        printf("fread nr_doubles =  %d, vs %d\n", a, nr_doubles);
                         error_check("fread", filename, a==nr_doubles);
                         /*
                         printf("fread out: %d\n", a);
@@ -1180,7 +1202,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
         } 
         else {
 		  int fd = fileno(df);
-            if (strcmp(IOMODE, "SYNC")==0) {
+            if (strcmp(IOMODE, "SYNC")==0 && !fileexists) {
 		 error_check("fwrite", filename, fwrite(data, sizeof(double), 
                             matrix.my_no_elm, df)==matrix.my_no_elm);
                printf("\nWrite the data to file %d, %ld bytes\n", fd, matrix.my_no_elm*sizeof(double));
