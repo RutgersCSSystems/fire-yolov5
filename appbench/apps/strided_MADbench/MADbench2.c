@@ -135,7 +135,9 @@ int main(int argc, char** argv)
     calc_W(); PMPI_Barrier(MPI_COMM_WORLD);
     printf("calc_W done\n");
 
+    printf("calc_C\n");
     calc_dC(); PMPI_Barrier(MPI_COMM_WORLD);
+    printf("calc_C done \n");
 
     finalize();
 }
@@ -622,7 +624,6 @@ void calc_W()
     z = Vspace + pp_matrix2.my_no_row;
 
     /* Initialize data vector & calculate z = D^{-1} d */
-
     for (n=0; n<p_vector2.my_no_row; n++) d[n] = 1.0;
     pdsymv(&lo, &no_pix, &d1, invD2, &i1, &i1, pp_matrix2.desc, d, &i1, &i1, p_vector2.desc, &i1, &d0, z, &i1, &i1, p_vector2.desc, &i1);
 #endif
@@ -673,22 +674,20 @@ void calc_W()
             }
         }
 
-#ifdef COMPUTE
         /* Solve */
 
         if (b>0 && b<=no_bin) pdgemm(&no, &no, &no_pix, &no_pix, &no_pix, &d1, invD2, &i1, &i1, pp_matrix2.desc, dSdCb, &i1, &i1, pp_matrix2.desc, &d0, Wb, &i1, &i1, pp_matrix2.desc);
-#endif
-
         /* Resynchronize writing */
 
         if (b>no_gang) if (strcmp(IOMODE, "ASYNC")==0) io_resync("w");
 
         /* Write W */
-
+#ifdef W_WRITE
         if (b>0 && b<=no_bin) {
             memcpy(wbuffer, Wb, pp_matrix2.my_no_elm*sizeof(double));
             io_distmatrix(wbuffer, gang2, pp_matrix2, (b-no_gang)/no_gang, "w");
         }
+#endif
 
     }
 
@@ -1150,8 +1149,9 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
 			if(nanosleep(&tim , &tim2) < 0)
 				printf("Nanosleep not working\n");
 			*/
+			         int fd = fileno(df);
 
-                        //printf("MAD: fread: fd:%d\n", fd);
+                        printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
                         error_check("fread", filename, a==nr_doubles);
@@ -1179,16 +1179,16 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
             }
         } 
         else {
+		  int fd = fileno(df);
             if (strcmp(IOMODE, "SYNC")==0) {
 		 error_check("fwrite", filename, fwrite(data, sizeof(double), 
                             matrix.my_no_elm, df)==matrix.my_no_elm);
-                //printf("\nWrite the data to file:%ld bytes\n", matrix.my_no_elm*sizeof(double));
+               printf("\nWrite the data to file %d, %ld bytes\n", fd, matrix.my_no_elm*sizeof(double));
 
 		if(flushit)
 		{
 			//printf("***********WAITING************\n");
 			fflush(df);
-			int fd = fileno(df);
 			posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 		}
             }
@@ -1290,6 +1290,9 @@ void report_time()
 
 int busy_work(int *nptr, int scaling_exponent, GANG gang)
 {
+#ifndef COMPUTE
+    return 0;
+#endif
     long long int n, nmax;
     int m;
     double dcount, sexp, *a, b=1.2, c=3.4;

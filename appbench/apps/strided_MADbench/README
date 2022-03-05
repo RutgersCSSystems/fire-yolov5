@@ -25,3 +25,12 @@ IOMODE    = SYNC | ASYNC
 FILETYPE  = UNIQUE | SHARED
 REMAP     = CUSTOM | SCALAPACK
 BWEXP     = Any number
+
+https://crd.lbl.gov/divisions/scidata/c3/c3-research/madbench2/
+
+
+Modifications Made to MADBench:
+1. I have made reading strided in this version.
+2. I have converted all busy_work to NOP; this removes unnecessary CPU usage which
+increases runtime. (#ifdef COMPUTE)
+3. I have removed second time writing to file in calc_W. (#ifdef W_WRITE)
