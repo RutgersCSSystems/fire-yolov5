@@ -856,8 +856,17 @@ ssize_t ksys_pread64_ra(unsigned int fd, char __user *buf, size_t count,
 SYSCALL_DEFINE5(pread_ra, unsigned int, fd, char __user *, buf,
 			size_t, count, loff_t, pos, struct read_ra_req __user *, ra_user)
 {
-    ssize_t ret = -EBADF;
-    struct read_ra_req ra;
+        ssize_t ret = -EBADF;
+        struct read_ra_req ra;
+        if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
+	        printk("%s: unable to copy from user, doing vanilla pread\n", __func__);
+	        goto normal_pread;
+        }
+#ifdef CONFIG_PREAD_RA_SIMPLE
+	ret = ksys_pread64(fd, buf, count, pos);
+        ksys_readahead(fd, pos+ra.ra_pos, ra.ra_count);
+        return ret;
+#else
 
     if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	printk("%s: unable to copy from user, doing vanilla pread\n", __func__);
@@ -912,9 +921,11 @@ SYSCALL_DEFINE5(pread_ra, unsigned int, fd, char __user *, buf,
     }
 
     return ret;
+#endif
 
 normal_pread:
     return ksys_pread64(fd, buf, count, pos);
+
 }
 
 ssize_t ksys_pwrite64(unsigned int fd, const char __user *buf,

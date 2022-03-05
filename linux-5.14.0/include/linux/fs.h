@@ -969,14 +969,14 @@ struct file {
 	errseq_t		f_wb_err;
 	errseq_t		f_sb_err; /* for syncfs */
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+//#ifdef CONFIG_ENABLE_CROSSLAYER
      /*bool enable_read_stats;
      unsigned long nr_reads;
      unsigned long nr_disk_reads;
      struct file_pfetch_state pfetch_state;*/
      unsigned long nr_cache_miss;
      unsigned long nr_cache_hits;
-#endif
+//#endif
 
 } __randomize_layout
   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */

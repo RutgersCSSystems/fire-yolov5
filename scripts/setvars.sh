@@ -7,6 +7,7 @@ export OS_RELEASE_NAME="bionic"
 export PARA="-j`nproc`"
 export VER="5.14.0"
 export KERN_SRC=$NVMBASE/linux-$VER
+export SHELL=/bin/bash
 
 #QEMU
 export QEMU_IMG=$NVMBASE

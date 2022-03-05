@@ -2712,8 +2712,9 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
 
 	if (unlikely(iocb->ki_pos >= inode->i_sb->s_maxbytes))
 		return 0;
-	if (unlikely(!iov_iter_count(iter)))
+	if (unlikely(!iov_iter_count(iter) && (!iocb->ki_do_ra || !iocb->ki_ra_count)))
 		return 0;
+
 
 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
 	pagevec_init(&pvec);
@@ -2737,7 +2738,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
           if(pagevec_space(&pvec))
             read_stats = false;
 
-		if (error < 0)
+		if (error < 0 || !iov_iter_count(iter))
 			break;
 
 		/*
@@ -2841,7 +2842,7 @@ generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
 	size_t count = iov_iter_count(iter);
 	ssize_t retval = 0;
 
-	if (!count)
+	if (!count && (!iocb->ki_do_ra || !iocb->ki_ra_count))
 		return 0; /* skip atime */
 
 	if (iocb->ki_flags & IOCB_DIRECT) {

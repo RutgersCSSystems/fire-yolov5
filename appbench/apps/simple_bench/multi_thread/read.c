@@ -38,6 +38,14 @@
 #define NR_PAGES_RA 40
 #endif
 
+/*
+ * Number of pages to read with pread_ra
+ * when prefetching using PREFETCH_PREAD_RA
+ */
+#ifndef READ_PG_PREAD_RA
+#define READ_PG_PREAD_RA 0
+#endif
+
 #ifndef NR_BG_THREADS //Nr of BG readahead threads
 #define NR_BG_THREADS 1
 #endif
@@ -61,8 +69,8 @@ void prefetcher_th(void *arg){
 #ifdef PREFETCH_READ
         char *buffer = (char*) malloc(a->buff_sz);
 #elif PREFETCH_PREAD_RA
-	int READ_PG = 1; //nr of pages to read
-     char *buffer = (char*) malloc(PG_SZ*READ_PG);
+	int READ_PG = READ_PG_PREAD_RA; //nr of pages to read while doing pread_ra
+     	char *buffer = (char*) malloc(PG_SZ*READ_PG);
 
 	struct read_ra_req ra_req;
 	memset(&ra_req, 0, sizeof(struct read_ra_req));
@@ -84,7 +92,7 @@ void prefetcher_th(void *arg){
                 }
 #elif PREFETCH_PREAD_RA
 		ra_req.ra_pos = 0; //Will ra start where the read is happening
-		ra_req.ra_count = a->buff_sz - PG_SZ;
+		ra_req.ra_count = a->buff_sz ;
 		readnow = syscall(449, a->fd, ((char *)buffer),
 				PG_SZ*READ_PG, (chunk+a->offset), &ra_req);
 #endif
