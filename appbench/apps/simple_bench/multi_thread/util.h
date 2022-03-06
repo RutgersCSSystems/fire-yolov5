@@ -62,5 +62,16 @@ unsigned long usec_diff(struct timeval *a, struct timeval *b)
     return usec;
 }
 
+//returns microsecond time difference
+unsigned long sec_diff(struct timeval *a, struct timeval *b)
+{
+    unsigned long usec;
+
+    usec = (b->tv_sec - a->tv_sec)*1000000;
+    usec += b->tv_usec - a->tv_usec;
+    return usec/1000000;
+}
+
+
 
 #endif

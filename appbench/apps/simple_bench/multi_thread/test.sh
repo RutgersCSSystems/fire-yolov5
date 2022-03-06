@@ -27,10 +27,12 @@ NR_THREADS=1
 #size of prefetch for each request
 #declare -a prefetch_sizes=("5242880")
 #declare -a prefetch_sizes=("10" "40" "128" "256" "1280" "25600" "131072" "262144" "2621440" "5242880")
+
 #declare -a nr_threads=("1" "2" "4" "8" "16")
-declare -a nr_threads=("1" "2" "4" "8" "16")
-declare -a filesizes=("10" "20" "30" "40" "50" "60")
-#declare -a filesizes=("60")
+declare -a nr_threads=("16")
+
+#declare -a filesizes=("10" "20" "30" "40" "50" "60")
+declare -a filesizes=("40")
 
 
 #rm -rf bigfakefile*
@@ -38,79 +40,85 @@ declare -a filesizes=("10" "20" "30" "40" "50" "60")
 #make SIZE=$filesize
 #./bin/write
 
+CLEAN_AND_WRITE()
+{
+    rm -rf bigfakefile*
+    ./bin/write
 
-#for NR_THREADS in "${nr_threads[@]}"
-for filesize in "${filesizes[@]}"
+}
+
+
+for NR_THREADS in "${nr_threads[@]}"
+
 do
-	echo "#################################"
-	echo "$filesize GB to prefetch"
-	
-	make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=$NR_THREADS
+	for filesize in "${filesizes[@]}"
+	do
+		echo "#################################"
+		echo "$filesize GB to prefetch"
+		
+		make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=$NR_THREADS
 
-     	rm -rf bigfakefile*
-	./bin/write
+		#CLEAN_AND_WRITE
+		FlushDisk
+		#echo "@@@@@@@@@Read OS Prefetch"
+		#./bin/read_onlyospfetch
+		#FlushDisk
 
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch READAHEAD OS"
+		./bin/read_os_smallpfetch
+		FlushDisk
 
-     	echo "@@@@@@@@@Read OS Prefetch"
-	./bin/read_onlyospfetch
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch READ OS"
+		./bin/read_os_smallpfetch_read
+		FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch READAHEAD OS"
-	./bin/read_os_smallpfetch
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch PREAD_RA OS 0"
+		./bin/read_os_smallpfetch_preadra_0
+		FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch READ OS"
-	./bin/read_os_smallpfetch_read
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch PREAD_RA OS 1"
+		./bin/read_os_smallpfetch_preadra_1
+		FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch PREAD_RA OS 0"
-	./bin/read_os_smallpfetch_preadra_0
-	FlushDisk
+	       continue
 
-	echo "@@@@@@@@@Read small prefetch PREAD_RA OS 1"
-	./bin/read_os_smallpfetch_preadra_1
-	FlushDisk
+		#ENABLE_LOCK_STATS
+		echo "@@@@@@@@@Read NO Prefetch"
+		./bin/read_nopfetch
+		FlushDisk
 
-     continue
+		echo "@@@@@@@@@Read OS Prefetch"
+		./bin/read_onlyospfetch
+		FlushDisk
 
-	#ENABLE_LOCK_STATS
-	echo "@@@@@@@@@Read NO Prefetch"
-	./bin/read_nopfetch
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch READAHEAD noOS"
+		./bin/read_noos_smallpfetch
+		FlushDisk
 
-	echo "@@@@@@@@@Read OS Prefetch"
-	./bin/read_onlyospfetch
-	FlushDisk
+		echo "@@@@@@@@@Read full prefetch READAHEAD noOS"
+		./bin/read_noos_fullpfetch
+		FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch READAHEAD noOS"
-	./bin/read_noos_smallpfetch
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch READ noOS"
+		./bin/read_noos_smallpfetch_read
+		FlushDisk
 
-	echo "@@@@@@@@@Read full prefetch READAHEAD noOS"
-	./bin/read_noos_fullpfetch
-	FlushDisk
+		echo "@@@@@@@@@Read small prefetch PREAD_RA noOS"
+		./bin/read_noos_smallpfetch_preadra
+		FlushDisk
 
-	echo "@@@@@@@@@Read small prefetch READ noOS"
-	./bin/read_noos_smallpfetch_read
-	FlushDisk
+		echo "@@@@@@@@@Seq prefetch PREAD_RA noOS"
+		./bin/preadra_noos_seq
 
-	echo "@@@@@@@@@Read small prefetch PREAD_RA noOS"
-	./bin/read_noos_smallpfetch_preadra
-	FlushDisk
+	        FlushDisk
 
-	echo "@@@@@@@@@Seq prefetch PREAD_RA noOS"
-	./bin/preadra_noos_seq
-     FlushDisk
+		#echo "@@@@@@@@@Read small prefetch READ 16BG"
+		#make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=16 > /dev/null
+		#FlushDisk
 
-
-	
-	#echo "@@@@@@@@@Read small prefetch READ 16BG"
-	#make SIZE=$filesize NR_RA_PG=$PFETCH_SIZE NR_BG_THREADS=16 > /dev/null
-	#FlushDisk
-
-     #./bin/read_os_smallpfetch_read
-	#/usr/bin/time -v ./bin/read_os_smallpfetch
-	#DISABLE_LOCK_STATS
-	#cat /proc/lock_stat | awk '{print $6}' | grep -Eo '[0-9\.]+' | awk '{ sum += $1 } END { print sum }'
+	        #./bin/read_os_smallpfetch_read
+		#/usr/bin/time -v ./bin/read_os_smallpfetch
+		#DISABLE_LOCK_STATS
+		#cat /proc/lock_stat | awk '{print $6}' | grep -Eo '[0-9\.]+' | awk '{ sum += $1 } END { print sum }'
+	done
 done
