@@ -37,7 +37,6 @@ CLEAN_AND_WRITE(){
 for NO_MAT in "${no_mat[@]}"
 do
     echo "##################### $NO_MAT"
-    continue
     CLEAN_AND_WRITE
 
     echo "@@@MADbench with no prefetcher"
