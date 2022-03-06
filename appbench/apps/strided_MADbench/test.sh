@@ -15,8 +15,7 @@ STRIDE=7 # set stride to $STRIDE * RECORD_SIZE
 NPROC=4 ##Num MPI procs
 FLUSH=1 ##flush writes
 
-#declare -a no_mat=("5" "10" "15" "20" "25")
-declare -a no_mat=("15")
+declare -a no_mat=("5" "10" "15" "20" "25")
 
 FlushDisk()
 {
@@ -37,6 +36,8 @@ CLEAN_AND_WRITE(){
 
 for NO_MAT in "${no_mat[@]}"
 do
+    echo "##################### $NO_MAT"
+    continue
     CLEAN_AND_WRITE
 
     echo "@@@MADbench with no prefetcher"
