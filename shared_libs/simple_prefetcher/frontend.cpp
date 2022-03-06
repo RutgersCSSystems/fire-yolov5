@@ -53,7 +53,7 @@ void dest(){
 void *prefetcher_th(void *arg) {
         long tid = gettid();
         struct thread_args *a = (struct thread_args*)arg;
-        printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
+        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
         off_t curr_pos = 0;
@@ -106,7 +106,7 @@ int open(const char *pathname, int flags, ...){
     if(fd < 0)
         goto exit;
 
-    printf("Opening file %s\n", pathname);
+    debug_printf("Opening file %s\n", pathname);
 
     spawn_prefetcher(fd);
 
@@ -123,7 +123,7 @@ FILE *fopen(const char *filename, const char *mode){
     if(!ret)
         return ret;
 
-    printf("FOpening file\n");
+    debug_printf("FOpening file\n");
 
     fd = fileno(ret);
     spawn_prefetcher(fd);

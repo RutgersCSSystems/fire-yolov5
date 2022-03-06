@@ -8,10 +8,10 @@
 #define unlikely(x)    __builtin_expect(!!(x), 0)
 
 #ifdef DEBUG
-#define debug_print(...) printf(__VA_ARGS__ )
+#define debug_printf(...) printf(__VA_ARGS__ )
 //#define debug_print(...) fprintf( stderr, __VA_ARGS__ )
 #else
-#define debug_print(...) do{ }while(0)
+#define debug_printf(...) do{ }while(0)
 #endif
 
 #define gettid() syscall(SYS_gettid)
