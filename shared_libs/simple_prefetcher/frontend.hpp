@@ -217,8 +217,9 @@ err:
 }
 
 
-//returns true if fd is regular file
-bool reg_fd(int fd){
+//returns filesize if fd is regular file
+//else 0
+off_t reg_fd(int fd){
 
     if(fd<=2)
         return false;
@@ -244,7 +245,8 @@ bool reg_fd(int fd){
                 break;
             case S_IFREG:
                 debug_print("fd:%d regular file\n", fd); 
-                return true;            
+                return st.st_size;
+                //return true;            
                 break;
             case S_IFSOCK:
                 debug_print("fd:%d socket\n", fd);
@@ -260,5 +262,11 @@ bool reg_fd(int fd){
     }
     //return true;
     return false;
+}
+
+//returns filesize if FILE is regular file
+//else 0
+off_t reg_file(FILE *stream){
+    return reg_fd(fileno(stream));
 }
 #endif

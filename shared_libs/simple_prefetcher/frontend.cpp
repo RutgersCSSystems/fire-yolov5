@@ -31,7 +31,6 @@
 #include <sys/wait.h>
 #include <sys/resource.h>
 
-
 #include "util.hpp"
 #include "frontend.hpp"
 
@@ -45,6 +44,49 @@ void con(){
 
 void dest(){
     printf("DESTRUCTOR GETTING CALLED \n");
+}
+
+
+/*
+ * function run by the prefetcher pthread
+ */
+void *prefetcher_th(void *arg) {
+        long tid = gettid();
+        struct thread_args *a = (struct thread_args*)arg;
+        printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
+                        tid, a->offset, a->file_size, a->fd, a->prefetch_size);
+
+        off_t curr_pos = 0;
+        size_t readnow;
+
+        while (curr_pos < a->file_size){
+#ifdef PREFETCH_READAHEAD
+                if(readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
+                        printf("error while readahead: TID:%ld \n", tid);
+                        goto exit;
+                }
+#endif
+                curr_pos += a->prefetch_size;
+        }
+exit:
+        free(arg);
+}
+
+
+void inline spawn_prefetcher(int fd){
+#ifndef NO_PREFETCH
+    pthread_t thread;
+    off_t filesize = reg_fd(fd);
+
+    if(filesize){
+        struct thread_args *arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+        arg->fd = fd;
+        arg->offset = 0;
+        arg->file_size = filesize;
+        arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+        pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
+    }
+#endif
 }
 
 
@@ -64,8 +106,9 @@ int open(const char *pathname, int flags, ...){
     if(fd < 0)
         goto exit;
 
+    printf("Opening file %s\n", pathname);
 
-    printf("Opening file\n");
+    spawn_prefetcher(fd);
 
 exit:
     return fd;
@@ -80,9 +123,11 @@ FILE *fopen(const char *filename, const char *mode){
     if(!ret)
         return ret;
 
-    fd = fileno(ret);
-
     printf("FOpening file\n");
+
+    fd = fileno(ret);
+    spawn_prefetcher(fd);
 
     return ret;
 }
+

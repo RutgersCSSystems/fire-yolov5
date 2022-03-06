@@ -1,7 +1,7 @@
 #ifndef _UTIL_HPP
 #define _UTIL_HPP
 
-#define PAGESIZE 4096 //Page size
+#define PAGESIZE 4096L //Page size
 #define __PREAD_RA_SYSCALL 449
 
 #define likely(x)      __builtin_expect(!!(x), 1)
@@ -15,6 +15,15 @@
 #endif
 
 #define gettid() syscall(SYS_gettid)
+
+//NR of pages to prefetch in each cycle
+#ifndef NR_RA_PAGES
+#define NR_RA_PAGES 40
+#endif
+
+#ifndef NR_PREADRA_READ
+#define NR_PREADRA_READ 1
+#endif
 
 /*
  * pread_ra read_ra_req struct
