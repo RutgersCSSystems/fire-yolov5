@@ -1175,7 +1175,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
                         //printf("MAD: fread: fd:%d\n", fd);
                         int a = fread(data+data_offt, sizeof(double), 
                                 nr_doubles, df);
-                        printf("fread nr_doubles =  %d, vs %d\n", a, nr_doubles);
+                        //printf("fread nr_doubles =  %d, vs %d\n", a, nr_doubles);
                         error_check("fread", filename, a==nr_doubles);
                         /*
                         printf("fread out: %d\n", a);
@@ -1205,7 +1205,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
             if (strcmp(IOMODE, "SYNC")==0 && !fileexists) {
 		 error_check("fwrite", filename, fwrite(data, sizeof(double), 
                             matrix.my_no_elm, df)==matrix.my_no_elm);
-               printf("\nWrite the data to file %d, %ld bytes\n", fd, matrix.my_no_elm*sizeof(double));
+               //printf("\nWrite the data to file %d, %ld bytes\n", fd, matrix.my_no_elm*sizeof(double));
 
 		if(flushit)
 		{
