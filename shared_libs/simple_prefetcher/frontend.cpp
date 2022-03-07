@@ -171,3 +171,24 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 exit:
     return amount_read;
 }
+
+
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+    debug_printf("%s: TID:%ld\n", __func__, gettid());
+    size_t pfetch_size = 0;
+    size_t amount_read = 0;
+
+    amount_read = real_fread(ptr, size, nmemb, stream);
+    return amount_read;
+
+
+#ifdef SEQ_PREFETCH
+    amount_read = fread_ra(ptr, size, nmemb, stream, NR_RA_PAGES*PAGESIZE);
+#else
+    amount_read = real_fread(ptr, size, nmemb, stream);
+#endif
+
+exit:
+    return amount_read;
+}
