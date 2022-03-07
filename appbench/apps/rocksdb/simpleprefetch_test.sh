@@ -73,6 +73,9 @@ SETPRELOAD()
     elif [[ "$1" == "SIMPLEBGFULLPREFETCH" ]]; then
         printf "Simple BG FULL prefetcher\n"
         export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
+    elif [[ "$1" == "SIMPLEPREADRA" ]]; then
+        printf "Simple Seq prefetch using pread_ra\n"
+        export LD_PRELOAD=/usr/lib/libsimplepreadra.so
     fi
 
     ##export TARGET_GPPID=$PPID
@@ -123,6 +126,12 @@ do
 
     printf "\nRUNNING SIMPLE PREFETCHER .................\n"
     SETPRELOAD "SIMPLEBGPREFETCH"
+    $DBHOME/db_bench $PARAMS $READARGS
+    LD_PRELOAD=""
+    FlushDisk
+
+    printf "\nRUNNING PREAD_RA .................\n"
+    SETPRELOAD "SIMPLEPREADRA"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
     FlushDisk
