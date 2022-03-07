@@ -38,7 +38,7 @@ for NO_MAT in "${no_mat[@]}"
 do
     echo "##################### $NO_MAT"
     CLEAN_AND_WRITE
-    df -h $PWD/files
+    du -h $PWD/files
 
     echo "@@@MADbench with no prefetcher"
     export LD_PRELOAD="/usr/lib/libsimplenoprefetcher.so"
@@ -48,6 +48,18 @@ do
 
     echo "@@@MADbench with simple prefetcher"
     export LD_PRELOAD="/usr/lib/libsimpleprefetcher.so"
+    /usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+    export LD_PRELOAD=
+    FlushDisk
+
+    echo "@@@MADbench with PREAD_RA"
+    export LD_PRELOAD="/usr/lib/libsimplepreadra.so"
+    /usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 $RECORD $STRIDE $FLUSH
+    export LD_PRELOAD=
+    FlushDisk
+
+    echo "@@@MADbench with FULL simple prefetcher"
+    export LD_PRELOAD="/usr/lib/libsmpl_fullprefetcher.so"
     /usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 $RECORD $STRIDE $FLUSH
     export LD_PRELOAD=
     FlushDisk
