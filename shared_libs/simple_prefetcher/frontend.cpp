@@ -83,7 +83,11 @@ void inline spawn_prefetcher(int fd){
         arg->fd = fd;
         arg->offset = 0;
         arg->file_size = filesize;
+#ifdef FULL_PREFETCH
+        arg->prefetch_size = filesize;
+#else
         arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+#endif
         pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
     }
 #endif
@@ -130,4 +134,20 @@ FILE *fopen(const char *filename, const char *mode){
 
     return ret;
 }
+
+
+int posix_fadvise(int fd, off_t offset, off_t len, int advice){
+    int ret = 0;
+
+    debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+
+#ifdef DISABLE_FADV_RANDOM
+        if(advice == POSIX_FADV_RANDOM)
+            goto exit;
+#endif
+        ret = real_posix_fadvise(fd, offset, len, advice);
+exit:
+    return ret;
+}
+
 
