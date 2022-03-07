@@ -36,7 +36,7 @@ struct read_ra_req{
 	 * position for readahead and nr_bytes for readahead
 	 */
 	loff_t ra_pos;
-	size_t ra_count;
+	size_t ra_count; //in bytes
 
 	/* these are values returned by the OS
 	 * for the above given readahead request 

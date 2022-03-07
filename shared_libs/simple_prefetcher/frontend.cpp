@@ -59,22 +59,22 @@ void *prefetcher_th(void *arg) {
         off_t curr_pos = 0;
         size_t readnow;
 
-        while (curr_pos < a->file_size){
 #ifdef PREFETCH_READAHEAD
+        while (curr_pos < a->file_size){
                 if(readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
                         printf("error while readahead: TID:%ld \n", tid);
                         goto exit;
                 }
-#endif
                 curr_pos += a->prefetch_size;
         }
+#endif
 exit:
         free(arg);
 }
 
 
 void inline spawn_prefetcher(int fd){
-#ifndef NO_PREFETCH
+#ifdef CONCURRENT_PREFETCH
     pthread_t thread;
     off_t filesize = reg_fd(fd);
 
@@ -151,3 +151,23 @@ exit:
 }
 
 
+ssize_t pread(int fd, void *data, size_t size, off_t offset){
+
+    ssize_t amount_read;
+
+#ifdef SEQ_PREFETCH
+    struct read_ra_req ra_req;
+    ra_req.ra_pos = 0;
+    ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
+
+    ra_req.full_file_ra = false;
+    ra_req.cache_limit = -1; //disables cache limiting in kernel
+
+    amount_read = pread_ra(fd, data, size, offset, &ra_req);
+#else
+    amount_read = real_pread(fd, data, size, offset);
+#endif
+
+exit:
+    return amount_read;
+}
