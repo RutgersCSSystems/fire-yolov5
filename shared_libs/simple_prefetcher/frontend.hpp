@@ -229,30 +229,30 @@ off_t reg_fd(int fd){
     if(fstat(fd, &st) == 0){
         switch (st.st_mode & S_IFMT) {
             case S_IFBLK:
-                debug_print("fd:%d block device\n", fd);
+                debug_printf("fd:%d block device\n", fd);
                 break;
             case S_IFCHR:
-                debug_print("fd:%d character device\n", fd);
+                debug_printf("fd:%d character device\n", fd);
                 break;
             case S_IFDIR:
-                debug_print("fd:%d directory\n", fd);
+                debug_printf("fd:%d directory\n", fd);
                 break;
             case S_IFIFO:
-                debug_print("fd:%d FIFO/pipe\n", fd);
+                debug_printf("fd:%d FIFO/pipe\n", fd);
                 break;
             case S_IFLNK:
-                debug_print("fd:%d symlink\n", fd);
+                debug_printf("fd:%d symlink\n", fd);
                 break;
             case S_IFREG:
-                debug_print("fd:%d regular file\n", fd); 
+                debug_printf("fd:%d regular file\n", fd); 
                 return st.st_size;
                 //return true;            
                 break;
             case S_IFSOCK:
-                debug_print("fd:%d socket\n", fd);
+                debug_printf("fd:%d socket\n", fd);
                 break;
             default:
-                debug_print("fd:%d unknown?\n", fd);
+                debug_printf("fd:%d unknown?\n", fd);
         }
         /*
            if(S_ISREG(st.st_mode)){

@@ -38,6 +38,7 @@ for NO_MAT in "${no_mat[@]}"
 do
     echo "##################### $NO_MAT"
     CLEAN_AND_WRITE
+    df -h $PWD/files
 
     echo "@@@MADbench with no prefetcher"
     export LD_PRELOAD="/usr/lib/libsimplenoprefetcher.so"
