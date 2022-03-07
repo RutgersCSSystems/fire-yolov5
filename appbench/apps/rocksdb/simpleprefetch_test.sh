@@ -32,46 +32,46 @@ FlushDisk()
 SETPRELOAD()
 {
     if [[ "$1" == "APPLIBOS" ]]; then ##All three
-        echo "setting pred"
+        printf "setting pred\n"
         export LD_PRELOAD=/usr/lib/libcrosslayer.so
     elif [[ "$1" == "NOPRED" ]]; then ##None
-        echo "setting nopred"
+        printf "setting nopred\n"
         export LD_PRELOAD=/usr/lib/libnopred.so
     elif [[ "$1" == "ONLYAPP" ]]; then
-        echo "only app pred"
+        printf "only app pred\n"
         export LD_PRELOAD=/usr/lib/libonlyapppred.so
     elif [[ "$1" == "ONLYLIB" ]]; then
-        echo "only Lib pred"
+        printf "only Lib pred\n"
         export LD_PRELOAD=/usr/lib/libonlylibpred.so
     elif [[ "$1" == "ONLYOS" ]]; then
-        echo "only OS pred"
+        printf "only OS pred\n"
         export LD_PRELOAD=/usr/lib/libonlyospred.so
     elif [[ "$1" == "APPOS" ]]; then
-        echo "App+OS pred"
+        printf "App+OS pred\n"
         export LD_PRELOAD=/usr/lib/libos_apppred.so
     elif [[ "$1" == "LIBOS" ]]; then
-        echo "Lib+OS pred"
+        printf "Lib+OS pred\n"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
     elif [[ "$1" == "ONLYINTERCEPT" ]]; then
-        echo "Only Intercepting"
+        printf "Only Intercepting\n"
         export LD_PRELOAD=/usr/lib/libonlyintercept.so
     elif [[ "$1" == "CACHELIMIT" ]]; then
-        echo "OS and LIB pred with Cache Limit"
+        printf "OS and LIB pred with Cache Limit\n"
         export LD_PRELOAD=/usr/lib/libcache_lim_os_libpred.so
     elif [[ "$1" == "FETCHALL" ]]; then
-        echo "OS and LIB pred without Cache Limit"
+        printf "OS and LIB pred without Cache Limit\n"
         export LD_PRELOAD=/usr/lib/libos_fetch_at_open.so
     elif [[ "$1" == "FETCHALLSINGLE" ]]; then
-        echo "OS and LIB pred without Cache Limit"
+        printf "OS and LIB pred without Cache Limit\n"
         export LD_PRELOAD=/usr/lib/libos_fetch_at_open_single.so
     elif [[ "$1" == "SIMPLEBGPREFETCH" ]]; then
-        echo "Simple BG prefetcher"
+        printf "Simple BG prefetcher\n"
         export LD_PRELOAD=/usr/lib/libsimpleprefetcher.so
     elif [[ "$1" == "SIMPLENOPREFETCH" ]]; then
-        echo "Simple NO prefetcher"
+        printf "Simple NO prefetcher\n"
         export LD_PRELOAD=/usr/lib/libsimplenoprefetcher.so
     elif [[ "$1" == "SIMPLEBGFULLPREFETCH" ]]; then
-        echo "Simple BG FULL prefetcher"
+        printf "Simple BG FULL prefetcher\n"
         export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
     fi
 
@@ -88,7 +88,7 @@ CLEAR_PWD()
 
 CLEAN_AND_WRITE()
 {
-    echo "in ${FUNCNAME[0]}"
+    printf "in ${FUNCNAME[0]}\n"
 
     export LD_PRELOAD=""
     CLEAR_PWD
@@ -110,24 +110,24 @@ do
     CLEAN_AND_WRITE
     FlushDisk
 
-    echo "\nRUNNING Vanilla................."
+    printf "\nRUNNING Vanilla.................\n"
     LD_PRELOAD=""
     $DBHOME/db_bench $PARAMS $READARGS
     FlushDisk
 
-    echo "\nRUNNING Disable FADV_RANDOM ................."
+    printf "\nRUNNING Disable FADV_RANDOM .................\n"
     SETPRELOAD "SIMPLENOPREFETCH"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
     FlushDisk
 
-    echo "\nRUNNING SIMPLE PREFETCHER ................."
+    printf "\nRUNNING SIMPLE PREFETCHER .................\n"
     SETPRELOAD "SIMPLEBGPREFETCH"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
     FlushDisk
 
-    echo "\nRUNNING SIMPLE FULL PREFETCHER ................."
+    printf "\nRUNNING SIMPLE FULL PREFETCHER .................\n"
     SETPRELOAD "SIMPLEBGFULLPREFETCH"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
