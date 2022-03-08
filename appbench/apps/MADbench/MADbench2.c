@@ -13,6 +13,9 @@
 #include <sys/stat.h>
 #include <math.h>
 #include <fcntl.h>
+#include <time.h>
+#include <sys/types.h>
+#include <stdbool.h>
 #include "mpi.h"
 #include "MADbench2.h"
 
@@ -53,6 +56,7 @@ typedef struct {
 /* Functions */
 /*************/
 
+bool file_exists(char *);
 void initialize(int, char **);
 void define_gang(int, GANG *, MATRIX *, VECTOR *);
 
@@ -89,6 +93,7 @@ int no_pix, no_bin, no_gang, sblocksize, fblocksize, r_mod, w_mod;
 char *IOMETHOD, *IOMODE, *FILETYPE, *REMAP;
 double BWEXP = -1.0;
 int flushit = 0; //true if flushit
+bool fileexists = false;
 
 int no_pe, my_pe;
 GANG gang1, gang2;
@@ -133,6 +138,17 @@ int main(int argc, char** argv)
   finalize();
 }
   
+
+bool file_exists(char* filename){
+    struct stat buffer;
+    int exist = stat(filename, &buffer);
+    if(exist == 0)
+        return true;
+    else
+        return false;
+}
+
+/**********************************************************************************************************************************/
 /**********************************************************************************************************************************/
 
 void initialize(int argc, char** argv)
@@ -293,7 +309,9 @@ void initialize(int argc, char** argv)
     if (strcmp(FILETYPE, "UNIQUE")==0) sprintf(filename, "files/data_%d", my_pe);
     else sprintf(filename, "files/data");
 
-    if (strcmp(IOMETHOD,  "POSIX")==0) error_check("fopen64", filename, (df=fopen64(filename, "w+"))!=NULL);
+    fileexists = file_exists(filename);
+
+    if (strcmp(IOMETHOD,  "POSIX")==0) error_check("fopen64", filename, (df=fopen64(filename, "a+"))!=NULL);
     else if (strcmp(IOMETHOD, "MPI")==0) {
 #ifdef IBM
       MPI_Info_create(&mpi_info);
@@ -656,11 +674,9 @@ void calc_W()
       }
     }
 
-#ifdef COMPUTE
     /* Solve */
 
     if (b>0 && b<=no_bin) pdgemm(&no, &no, &no_pix, &no_pix, &no_pix, &d1, invD2, &i1, &i1, pp_matrix2.desc, dSdCb, &i1, &i1, pp_matrix2.desc, &d0, Wb, &i1, &i1, pp_matrix2.desc);
-#endif
 
     /* Resynchronize writing */
 
@@ -668,10 +684,12 @@ void calc_W()
 
     /* Write W */
 
+#ifdef W_WRITE
     if (b>0 && b<=no_bin) {
       memcpy(wbuffer, Wb, pp_matrix2.my_no_elm*sizeof(double));
       io_distmatrix(wbuffer, gang2, pp_matrix2, (b-no_gang)/no_gang, "w");
     }
+#endif
 
   }
 
@@ -1067,14 +1085,23 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
   if (strcmp(IOMETHOD, "POSIX")==0) {
     error_check("fseek", filename, fseeko64(df, offset, SEEK_SET)==0); 
     if (*rw=='r') {
-      if (strcmp(IOMODE, "SYNC")==0) error_check("fread", filename, fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
+      if (strcmp(IOMODE, "SYNC")==0) 
+      {
+          printf("MAD: fread\n");
+          error_check("fread", filename, 
+                  fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
+      }
     } else {
-      if (strcmp(IOMODE, "SYNC")==0) error_check("fwrite", filename, fwrite(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
+      if (strcmp(IOMODE, "SYNC")==0 && !fileexists){ 
+          printf("MAD: write\n");
+          error_check("fwrite", filename, 
+                  fwrite(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
       if(flushit)
       {
 	      fflush(df);
 	      int fd = fileno(df);
 	      posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+      }
       }
     }
   } 
@@ -1172,6 +1199,9 @@ void report_time()
 
 int busy_work(int *nptr, int scaling_exponent, GANG gang)
 {
+#ifndef COMPUTE
+    return 0;
+#endif
   long long int n, nmax;
   int m;
   double dcount, sexp, *a, b=1.2, c=3.4;
