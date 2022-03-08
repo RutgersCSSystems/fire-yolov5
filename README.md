@@ -45,40 +45,15 @@ nvme0n1     259:1    0  1.5T  0 disk
 ├─nvme0n1p2 259:3    0    3G  0 part 
 ├─nvme0n1p3 259:4    0    3G  0 part [SWAP]
 └─nvme0n1p4 259:5    0  1.4T  0 part 
-nvme1n1     259:7    0  1.5T  0 disk 
-```
-
-To partition the device use the following commands
-
-```
-sudo fdisk /dev/nvme1n1
-```
-
-You will see the following output. Choose the following options to complete partition setup
-```
-Command (m for help): n
-Partition type
-   p   primary (0 primary, 0 extended, 4 free)
-   e   extended (container for logical partitions)
-Select (default p):
-....
-Last sector, +sectors or +size{K,M,G,T,P} (2048-937703087, default 937703087):
-....
-Created a new partition 1 of type 'Linux' and of size 1.5 TiB.
-
-Command (m for help): w
-The partition table has been altered.
-Calling ioctl() to re-read partition table.
-Syncing disks.
-.....
+nvme1n1     259:7    0  1.5T  0 disk  ##This partition fails the node sometimes
 ```
 
 Now you would have to setup a filesystem and mount it 
 
 ```
-sudo mkfs.ext4 /dev/nvme1n1p1
+sudo mkfs.ext4 /dev/nvme0n1p4
 
-mkdir ~/ssd; sudo mount /dev/nvme1n1p1 ~/ssd
+mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
 
 cd ~/ssd; sudo chown $USER .
 ```
