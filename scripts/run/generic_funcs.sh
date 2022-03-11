@@ -6,6 +6,8 @@ MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 PAGE_SZ=`echo "4*$KB" | bc`
 
+NR_REPEATS=5
+
 RIGHTNOW=`date +"%Hhr-%Mmin_%m-%d-%y"`
 DATE=`date +'%d-%B-%y'`
 
@@ -15,7 +17,7 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
-    #sudo dmesg --clear
+    sleep 5
 }
 
 SLEEPNOW() {
@@ -42,33 +44,63 @@ BUILD_PRED_LIB()
     popd
 }
 
-#Preloads the appropriate library
+
 SETPRELOAD()
 {
-    if [[ "$1" == "APPLIBOS" ]]; then ##All three
-        echo "enabling all predictors"
+    if [[ "$1" == "VANILLA" ]]; then ##No library involvement
+        printf "Running Vanilla\n"
+        export LD_PRELOAD=""
+    elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
+        printf "Only OS prefetching enabled\n"
+        export LD_PRELOAD=/usr/lib/libsimplenoprefetcher.so
+    elif [[ "$1" == "CFNMB" ]]; then
+        printf "Cross_FileRA_NoPred_MaxMem_BG\n"
+        export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
+    elif [[ "$1" == "APPLIBOS" ]]; then ##All three
+        printf "setting pred\n"
         export LD_PRELOAD=/usr/lib/libcrosslayer.so
     elif [[ "$1" == "NOPRED" ]]; then ##None
-        echo "setting nopred"
+        printf "setting nopred\n"
         export LD_PRELOAD=/usr/lib/libnopred.so
     elif [[ "$1" == "ONLYAPP" ]]; then
-        echo "only app pred"
+        printf "only app pred\n"
         export LD_PRELOAD=/usr/lib/libonlyapppred.so
     elif [[ "$1" == "ONLYLIB" ]]; then
-        echo "only Lib pred"
+        printf "only Lib pred\n"
         export LD_PRELOAD=/usr/lib/libonlylibpred.so
     elif [[ "$1" == "ONLYOS" ]]; then
-        echo "only OS pred"
+        printf "only OS pred\n"
         export LD_PRELOAD=/usr/lib/libonlyospred.so
     elif [[ "$1" == "APPOS" ]]; then
-        echo "App+OS pred"
+        printf "App+OS pred\n"
         export LD_PRELOAD=/usr/lib/libos_apppred.so
     elif [[ "$1" == "LIBOS" ]]; then
-        echo "Lib+OS pred"
+        printf "Lib+OS pred\n"
         export LD_PRELOAD=/usr/lib/libos_libpred.so
-    elif [[ "$1" == "JUSTSTATS" ]]; then
-        echo "preload lib enable just global stats hit/miss rate"
-        export LD_PRELOAD=/usr/lib/libjuststats.so
+    elif [[ "$1" == "ONLYINTERCEPT" ]]; then
+        printf "Only Intercepting\n"
+        export LD_PRELOAD=/usr/lib/libonlyintercept.so
+    elif [[ "$1" == "CACHELIMIT" ]]; then
+        printf "OS and LIB pred with Cache Limit\n"
+        export LD_PRELOAD=/usr/lib/libcache_lim_os_libpred.so
+    elif [[ "$1" == "FETCHALL" ]]; then
+        printf "OS and LIB pred without Cache Limit\n"
+        export LD_PRELOAD=/usr/lib/libos_fetch_at_open.so
+    elif [[ "$1" == "FETCHALLSINGLE" ]]; then
+        printf "OS and LIB pred without Cache Limit\n"
+        export LD_PRELOAD=/usr/lib/libos_fetch_at_open_single.so
+    elif [[ "$1" == "SIMPLEBGPREFETCH" ]]; then
+        printf "Simple BG prefetcher\n"
+        export LD_PRELOAD=/usr/lib/libsimpleprefetcher.so
+    elif [[ "$1" == "SIMPLENOPREFETCH" ]]; then
+        printf "Simple NO prefetcher\n"
+        export LD_PRELOAD=/usr/lib/libsimplenoprefetcher.so
+    elif [[ "$1" == "SIMPLEBGFULLPREFETCH" ]]; then
+        printf "Simple BG FULL prefetcher\n"
+        export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
+    elif [[ "$1" == "SIMPLEPREADRA" ]]; then
+        printf "Simple Seq prefetch using pread_ra\n"
+        export LD_PRELOAD=/usr/lib/libsimplepreadra.so
     fi
 
     ##export TARGET_GPPID=$PPID
@@ -82,7 +114,26 @@ UNSETPRELOAD(){
 REFRESH() {
     UNSETPRELOAD
     FlushDisk
-    SLEEPNOW
+}
+
+#Checks if the folder exits, if not, create new
+CREATE_OUTFOLDER() {
+        if [[ ! -e $1 ]]; then
+                mkdir -p $1
+        else
+                echo "$1 already exists"
+        fi
+}
+
+
+#returns the min out of list of numbers
+min_number() {
+	printf "%s\n" "$@" | sort -g | head -n1
+}
+
+#returns the max out of list of numbers
+max_number() {
+	printf "%s\n" "$@" | sort -gr | head -n1
 }
 
 
