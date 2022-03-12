@@ -2,6 +2,10 @@
 #define _UTIL_HPP
 
 #define PAGESIZE 4096L //Page size
+#define KB 1024L
+#define MB 1024L * KB
+#define GB 1024L * MB
+
 #define __PREAD_RA_SYSCALL 449
 
 #define likely(x)      __builtin_expect(!!(x), 1)
@@ -21,8 +25,24 @@
 #define NR_RA_PAGES 40
 #endif
 
+/* 
+ * Nr of pages to read while
+ * doing readahead using pread_ra
+ */
 #ifndef NR_PREADRA_READ
 #define NR_PREADRA_READ 1
+#endif
+
+
+//Nr of worker threads
+#ifndef NR_WORKERS
+#define NR_WORKERS 2
+#endif
+
+// Files smaller than this should
+// not be considered for prefetching
+#ifndef MIN_FILE_SZ
+#define MIN_FILE_SZ 1 * MB
 #endif
 
 /*
@@ -57,6 +77,7 @@ struct read_ra_req{
 
 };
 
+//Used to send data to pthread or worker thread
 struct thread_args{
     int fd; //opened file fd
     long offset; //where to start

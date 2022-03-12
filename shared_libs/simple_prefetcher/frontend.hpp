@@ -1,6 +1,8 @@
 #ifndef _FRONTEND_HPP
 #define _FRONTEND_HPP
 
+#include "utils/thpool.h"
+
 #define __PREAD_RA_SYSCALL 449
 #define __READ_RA_SYSCALL 450
 
@@ -302,4 +304,5 @@ off_t reg_fd(int fd){
 off_t reg_file(FILE *stream){
     return reg_fd(fileno(stream));
 }
+
 #endif
