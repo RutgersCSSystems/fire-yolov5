@@ -99,9 +99,9 @@ CLEAN_AND_WRITE()
     FlushDisk
 
     ##Condition the DB to get Stable results
-    $DBHOME/db_bench $1 $READARGS 
+    $DBHOME/db_bench $PARAMS $READARGS 
     FlushDisk
-    $DBHOME/db_bench $1 $READARGS 
+    $DBHOME/db_bench $PARAMS $READARGS 
     FlushDisk
 }
 
@@ -113,16 +113,18 @@ do
     CLEAN_AND_WRITE
     FlushDisk
 
-    printf "\nRUNNING Vanilla.................\n"
-    LD_PRELOAD=""
-    $DBHOME/db_bench $PARAMS $READARGS
-    FlushDisk
+    #printf "\nRUNNING Vanilla.................\n"
+    #LD_PRELOAD=""
+    #$DBHOME/db_bench $PARAMS $READARGS
+    #FlushDisk
 
     printf "\nRUNNING Disable FADV_RANDOM .................\n"
     SETPRELOAD "SIMPLENOPREFETCH"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
     FlushDisk
+
+    exit
 
     printf "\nRUNNING SIMPLE PREFETCHER .................\n"
     SETPRELOAD "SIMPLEBGPREFETCH"
