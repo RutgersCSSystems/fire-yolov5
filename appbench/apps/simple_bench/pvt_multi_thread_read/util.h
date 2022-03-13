@@ -1,6 +1,8 @@
 #ifndef _UTIL_HPP
 #define _UTIL_HPP
 
+#define PG_SZ 4096L
+
 #ifndef NR_THREADS //Nr of BG readahead threads
 #define NR_THREADS 1
 #endif
@@ -9,6 +11,11 @@
 #define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
 #else
 #define FILESIZE (10L * 1024L * 1024L * 1024L)
+#endif
+
+//Number of pages to read in one pread syscall
+#ifndef NR_PAGES_READ
+#define NR_PAGES_READ 10
 #endif
 
 #define gettid() syscall(SYS_gettid)
