@@ -13,7 +13,8 @@ FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREAD
 all: read write
 
 read: read.cpp utils/thpool.c
-	$(CXX) $^ $(FLAGS) $(DEBUG) -o $(BIN_DIR)/read $(LIBS)
+	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_rand $(LIBS)
 
 write: write.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -o $(BIN_DIR)/write $(LIBS)

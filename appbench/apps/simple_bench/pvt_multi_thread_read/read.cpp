@@ -38,13 +38,14 @@ struct thread_args{
         long size; //bytes to fetch from this thread
         long nr_read_pg; //nr of pages to read each req
         size_t offset; //Offset of file where RA to start from
-        int read_time; //Return value, time taken to read the file
+        unsigned long read_time; //Return value, time taken to read the file in microsec
 };
+
 
 //Given an array, it shuffles it
 //using Fisher–Yates shuffle (also known as Knuth's Shuffle)
 //To be used for Random Reads
-void shuffle(int array[], size_t n) {
+void shuffle(long int array[], size_t n) {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     int usec = tv.tv_usec;
@@ -62,50 +63,61 @@ void shuffle(int array[], size_t n) {
 }
 
 
-
 //Will be reading one pvt file per thread
 void reader_th(void *arg){
 
-        struct timeval start, end;
         struct thread_args *a = (struct thread_args*)arg;
 
+        struct timeval start, end;
+        size_t buff_sz = (PG_SZ * a->nr_read_pg);
+        char *buffer = (char*) malloc(buff_sz);
+
+        size_t readnow, bytes_read;
+
+
 #ifdef DEBUG
+        //Report about the thread
         long tid = gettid();
         printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
 #endif
 
-        a->read_time = 123; //XXX: Sort this out
-
-        //size_t buff_sz = (PG_SZ * a->nr_read_pg);
-        //char *buffer = (char*) malloc(buff_sz);
-
-        //gettimeofday(&start, NULL);
-
-        //gettimeofday(&end, NULL);
-
-#if 0
 #ifdef READ_SEQUENTIAL
+        gettimeofday(&start, NULL);
+        bytes_read = 0UL;
+        while(bytes_read < a->size){
+                readnow = pread(a->fd, ((char *)buffer),
+                                        buff_sz, bytes_read);
+                if(readnow < 0){
+                        printf("\nRead Unsuccessful\n");
+                        free(buffer);
+                        goto exit;
+                }
+                bytes_read += readnow;
+        }
+        gettimeofday(&end, NULL);
 
 #elif READ_RANDOM
 
-#endif
+        size_t nr_file_portions = a->size/buff_sz;
+        long *read_sequence = (long*)malloc(sizeof(long)*nr_file_portions);
 
-        off_t chunk = 0;
-        size_t readnow;
-
-        while (chunk < a->size){
-#ifdef DEBUG
-                printf("TID:%ld, chunk=%ld, read_pg=%ld\n", tid, (chunk+a->offset), a->nr_read_pg);
-#endif
-                if(readahead(a->fd, (chunk+a->offset), (a->nr_read_pg*PG_SZ)) > 0){
-                        printf("error while readahead \n");
-                        return;
-                }
-                chunk += a->
+        for(long i=0; i<nr_file_portions; i++){
+                read_sequence[i] = i;
         }
-#endif 
+        shuffle(read_sequence, nr_file_portions);
 
+        gettimeofday(&start, NULL);
+
+        for(long i=0; i<nr_file_portions; i++){
+                readnow = pread(a->fd, ((char *)buffer),
+                                        buff_sz, read_sequence[i]*buff_sz);
+        }
+
+        gettimeofday(&end, NULL);
+#endif
+
+        a->read_time = usec_diff(&start, &end);
 exit:
         return;
 }
@@ -165,51 +177,25 @@ int main(int argc, char **argv)
                 req[i].size = FILESIZE/NR_THREADS;
                 req[i].offset = 0;
                 req[i].nr_read_pg = NR_PAGES_READ;
-                req[i].ret = 0;
+                req[i].read_time = 0UL;
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
         }
 
-
-#if 0
-        ////////////////////////////////////////
-
-        char *buffer = (char*) malloc(buff_sz);
-        off_t local_offset = 0; //
-        off_t global_offset = 0; //aggregate file size read till now
-        size_t readnow;
-        int newfd;
-
-        while ( global_offset < size ){
-
-                newfd = fd_list[floor((global_offset*NR_THREADS)/FILESIZE)];
-                if(fd != newfd){
-                        fd = newfd;
-                        local_offset = 0UL;
-                }
-
-                readnow = pread(fd, ((char *)buffer),
-                                PG_SZ*NR_PAGES_READ, local_offset);
-
-                if (readnow < 0 ){
-                        printf("\nRead Unsuccessful\n");
-                        free(buffer);
-                        return 0;
-                }
-                local_offset += readnow; //offset
-                global_offset += readnow; //offset
-        }
-#endif
-
-
         thpool_wait(thpool);
 
+        //Print the Throughput
+        long size_mb = FILESIZE/(1024L*1024L);
+        float max_time = 0.f; //in sec
+        float time;
         for(int i=0; i<NR_THREADS; i++){
-                //Calculate the Bandwidth based on time taken to read from each thread
-                printf("ret = %d\n", req[0].ret);
+                time = req[i].read_time/1000000.f;
+                if(max_time < time)
+                        max_time = time;
         }
-
-        unsigned long usec = usec_diff(&start, &end);
-        //Get Throughput
-        printf("Reading done in %ld microsecs\n", usec);
+#ifdef READ_SEQUENTIAL
+        printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#elif READ_RANDOM
+        printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#endif
         return 0;
 }
