@@ -12,7 +12,7 @@ WORKLOAD="readseq"
 #WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
+READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
 
@@ -33,6 +33,7 @@ SETPRELOAD()
 {
     if [[ "$1" == "VANILLA" ]]; then ##All three
         printf "setting Vanilla\n"
+        #export LD_PRELOAD=/usr/lib/lib_Vanilla.so
         export LD_PRELOAD=/usr/lib/lib_Vanilla.so
     elif [[ "$1" == "OSONLY" ]]; then ##None
         printf "setting OSonly\n"
@@ -89,31 +90,31 @@ for NUM in "${num_arr[@]}"
 do
     PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 
-    #CLEAN_AND_WRITE
+    CLEAN_AND_WRITE
     FlushDisk
 
     printf "\nRUNNING Vanilla.................\n"
     SETPRELOAD "VANILLA"
     $DBHOME/db_bench $PARAMS $READARGS
-    LD_PRELOAD=""
+    export LD_PRELOAD=""
     FlushDisk
 
     printf "\nRUNNING OSONLY...............\n"
     SETPRELOAD "OSONLY"
     $DBHOME/db_bench $PARAMS $READARGS
-    LD_PRELOAD=""
+    export LD_PRELOAD=""
     FlushDisk
 
     printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
     SETPRELOAD "CFPMB"
     $DBHOME/db_bench $PARAMS $READARGS
-    LD_PRELOAD=""
+    export LD_PRELOAD=""
     FlushDisk
 
     printf "\nRUNNING CROSS_FILERA_NOPRED_MAXMEM_BG................\n"
     SETPRELOAD "CFNMB"
     $DBHOME/db_bench $PARAMS $READARGS
-    LD_PRELOAD=""
+    export LD_PRELOAD=""
     FlushDisk
 
 
