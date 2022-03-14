@@ -5,7 +5,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=1000000
+NUM=500000
 DBDIR=$DBHOME/DATA
 
 WORKLOAD="readseq"
@@ -40,6 +40,9 @@ SETPRELOAD()
     elif [[ "$1" == "CFNMB" ]]; then
         printf "only app CFNMB\n"
         export LD_PRELOAD=/usr/lib/lib_CFNMB.so
+    elif [[ "$1" == "CFPMB" ]]; then
+        printf "only app CFPMB\n"
+        export LD_PRELOAD=/usr/lib/lib_CFPMB.so
     elif [[ "$1" == "SIMPLEBGPREFETCH" ]]; then
         printf "Simple BG prefetcher\n"
         export LD_PRELOAD=/usr/lib/libsimpleprefetcher.so
@@ -89,23 +92,30 @@ do
     #CLEAN_AND_WRITE
     FlushDisk
 
-    #printf "\nRUNNING Vanilla.................\n"
-    #SETPRELOAD "VANILLA"
-    #$DBHOME/db_bench $PARAMS $READARGS
-    #FlushDisk
+    printf "\nRUNNING Vanilla.................\n"
+    SETPRELOAD "VANILLA"
+    $DBHOME/db_bench $PARAMS $READARGS
+    LD_PRELOAD=""
+    FlushDisk
 
+    printf "\nRUNNING OSONLY...............\n"
+    SETPRELOAD "OSONLY"
+    $DBHOME/db_bench $PARAMS $READARGS
+    LD_PRELOAD=""
+    FlushDisk
 
-    #printf "\nRUNNING OSONLY...............\n"
-    #SETPRELOAD "OSONLY"
-    #$DBHOME/db_bench $PARAMS $READARGS
-    #LD_PRELOAD=""
-    #FlushDisk
+    printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
+    SETPRELOAD "CFPMB"
+    $DBHOME/db_bench $PARAMS $READARGS
+    LD_PRELOAD=""
+    FlushDisk
 
     printf "\nRUNNING CROSS_FILERA_NOPRED_MAXMEM_BG................\n"
     SETPRELOAD "CFNMB"
     $DBHOME/db_bench $PARAMS $READARGS
     LD_PRELOAD=""
     FlushDisk
+
 
     exit 
 
