@@ -4,3 +4,9 @@ This prefetcher will, for each opened regular file, start a pthread which does R
 Compiled Libraries:
 libsimpleprefetcher.so: starts a pthread for each regular file opened. Does Readahead on them
 libsimplenoprefetcher.so: Doest start pthread. Just does shim [test overheads]
+
+
+
+
+TODO:
+1. change unsigned int to unsigned long in bitarray implementation

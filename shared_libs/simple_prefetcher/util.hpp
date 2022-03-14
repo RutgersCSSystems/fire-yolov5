@@ -49,8 +49,8 @@
 // Number of pages which constitute
 // a portion of file to consider while prefetching
 // Will be used to define the bitvector
-#ifndef PORTION_SIZE
-#define PORTION_SIZE 32
+#ifndef PORTION_PAGES
+#define PORTION_PAGES 32
 #endif
 
 /*

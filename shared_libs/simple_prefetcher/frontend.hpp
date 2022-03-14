@@ -182,15 +182,91 @@ err:
 
 class file_predictor{
         public:
-                bool init;
-                bit_array_t *var;
+                int fd;
+                size_t filesize;
+
+                /*
+                 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
+                 * Each such portions is represented with a bit in access_history
+                 * Accesses to an area represented by a set bit increases sequentiality
+                 * else increases Non sequentiality
+                 */
+                bit_array_t *access_history;
+                size_t nr_portions;
+                size_t portion_sz;
+
+                /*
+                 * This variable summarizes if the file is reasonably
+                 * sequential/strided for prefetching to happen.
+                 */
+                long sequentiality;
+                
+                /*
+                 * Returns true if readahead has been issued 
+                 * for this file
+                 */
+                bool already_prefetched;
+
+                /*Constructor*/
+                file_predictor(int this_fd, size_t size){
+                        fd = this_fd;
+                        filesize = size;
+
+                        portion_sz = PAGESIZE * PORTION_PAGES;
+                        nr_portions = size/portion_sz;
+
+                        //Imperfect division of filesize with portion_sz
+                        //add one bit to accomodate for the last portion in file
+                        if(size % portion_sz){
+                                nr_portions += 1;
+                        }
+
+                        access_history = BitArrayCreate(nr_portions);
+                        BitArrayClearAll(access_history);
+
+                        //Assume any opened file is probably not sequential
+                        sequentiality = POSSNSEQ;
+                        already_prefetched = false;
+                }
+
+
+                /*
+                 * If offset being accessed is from an Unset file portion, set it,
+                 * 1. Set that file portion in access_history
+                 * 2. reduce the sequentiality
+                 *
+                 * else increase the sequentiality
+                 *
+                 * XXX: Doesnt check reads that go across portion boundaries yet
+                 * XXX: Doesnt limit the sequentiality number, may overflow for large files
+                 */
+                void predictor_update(off_t offset){
+
+                        size_t portion_num = offset/portion_sz;
+                        if(portion_num > nr_portions){
+                                printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
+                                goto exit;
+                        }
+
+                        if(BitArrayTestBit(access_history, portion_num)){
+                                sequentiality += 1;
+                        }
+                        else{
+                                BitArraySetBit(access_history, portion_num);
+                                sequentiality -= 1;
+                        }
+exit:
+                        return;
+                }
+
+                //Returns the current Sequentiality value
+                long is_sequential(){
+                        return sequentiality;
+                }
+
+
+
 };
-
-
-
-
-
-
 
 
 #endif

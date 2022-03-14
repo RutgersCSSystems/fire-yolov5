@@ -40,6 +40,9 @@
 threadpool workerpool = NULL;
 #endif
 
+//Maps fd to its file_predictor
+robin_hood::unordered_node_map<int, file_predictor*> fd_to_file_pred;
+
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
@@ -96,11 +99,33 @@ exit:
 }
 
 
-void inline spawn_prefetcher(int fd){
+/*
+ * Spawns or enqueues a request for file prefetching
+ */
+#ifdef PREDICTOR
+void inline prefetch_file(int fd, file_predictor *fp)
+#else
+void inline prefetch_file(int fd)
+#endif
+{
 
         struct thread_args *arg = NULL;
+        off_t filesize;
 
-        off_t filesize = reg_fd(fd);
+/*
+ * When PREDICTOR is enabled, file sanity checks are not required
+ * This is because the file has already been screened for 
+ * 1. Filesize
+ * 2. Type (regular file etc.)
+ * 3. Sequentiality
+ * This was done at record_open
+ */
+#ifdef PREDICTOR
+        filesize = fp->filesize;
+#else
+        filesize = reg_fd(fd);
+#endif
+
         if(filesize > MIN_FILE_SZ){
                 arg = (struct thread_args *)malloc(sizeof(struct thread_args));
                 arg->fd = fd;
@@ -135,6 +160,39 @@ exit:
 }
 
 
+/*
+ * Initialize a file_predictor object if
+ * the file is > Min_FILE_SZ
+ */
+void inline record_open(int fd){
+        off_t filesize = reg_fd(fd);
+
+        if(filesize > MIN_FILE_SZ){
+
+                file_predictor *fp = new file_predictor(fd, filesize);
+
+                debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
+                                __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
+                
+                fd_to_file_pred[fd] = fp;
+        }
+        else{
+                debug_printf("%s: fd=%d is smaller than %ld bytes\n", __func__, fd, MIN_FILE_SZ);
+                goto exit;
+        }
+
+exit:
+        return;
+}
+
+
+
+
+//////////////////////////////////////////////////////////
+//Intercepted Functions
+//////////////////////////////////////////////////////////
+
+
 int open(const char *pathname, int flags, ...){
         int fd;
         if(flags & O_CREAT){
@@ -156,10 +214,11 @@ int open(const char *pathname, int flags, ...){
 
 #ifdef PREDICTOR
         // Predict, then prefetch if needed
+        record_open(fd);
 
-#else
+#elif BLIND_PREFETCH
         // Prefetch without predicting
-        spawn_prefetcher(fd);
+        prefetch_file(fd);
 #endif
 
 exit:
@@ -178,11 +237,14 @@ FILE *fopen(const char *filename, const char *mode){
         debug_printf("FOpening file\n");
 
         fd = fileno(ret);
-#ifdef PREDICTOR
 
-#else
+#ifdef PREDICTOR
+        // Predict, then prefetch if needed
+        record_open(fd);
+
+#elif BLIND_PREFETCH
         // Prefetch without predicting
-        spawn_prefetcher(fd);
+        prefetch_file(fd);
 #endif
 
         return ret;
@@ -207,6 +269,19 @@ exit:
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
         ssize_t amount_read;
+
+#ifdef PREDICTOR
+        file_predictor *fp = fd_to_file_pred[fd];
+        if(fp){
+                //Check if this offset in a set bit
+                fp->predictor_update(offset);
+
+                if((fp->is_sequential() >= LIKELYSEQ) && !fp->already_prefetched){
+                        prefetch_file(fd, fp);
+                        fp->already_prefetched = true;
+                }
+        }
+#endif
 
 #ifdef SEQ_PREFETCH
         struct read_ra_req ra_req;
