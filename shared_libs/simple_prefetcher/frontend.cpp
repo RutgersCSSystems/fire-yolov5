@@ -273,10 +273,9 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef PREDICTOR
         file_predictor *fp = fd_to_file_pred[fd];
         if(fp){
-                //Check if this offset in a set bit
                 fp->predictor_update(offset);
-
                 if((fp->is_sequential() >= LIKELYSEQ) && !fp->already_prefetched){
+                //if(!fp->already_prefetched){
                         prefetch_file(fd, fp);
                         fp->already_prefetched = true;
                 }
