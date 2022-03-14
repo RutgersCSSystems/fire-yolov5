@@ -45,6 +45,14 @@
 #define MIN_FILE_SZ 1 * MB
 #endif
 
+
+// Number of pages which constitute
+// a portion of file to consider while prefetching
+// Will be used to define the bitvector
+#ifndef PORTION_SIZE
+#define PORTION_SIZE 32
+#endif
+
 /*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about

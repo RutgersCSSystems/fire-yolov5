@@ -33,6 +33,8 @@
 
 #include "util.hpp"
 #include "frontend.hpp"
+//#include "predictor.hpp"
+#include "utils/robin_hood.h"
 
 #ifdef THPOOL_PREFETCH
 threadpool workerpool = NULL;
@@ -151,7 +153,14 @@ int open(const char *pathname, int flags, ...){
 
         debug_printf("Opening file %s\n", pathname);
 
+
+#ifdef PREDICTOR
+        // Predict, then prefetch if needed
+
+#else
+        // Prefetch without predicting
         spawn_prefetcher(fd);
+#endif
 
 exit:
         return fd;
@@ -169,7 +178,12 @@ FILE *fopen(const char *filename, const char *mode){
         debug_printf("FOpening file\n");
 
         fd = fileno(ret);
+#ifdef PREDICTOR
+
+#else
+        // Prefetch without predicting
         spawn_prefetcher(fd);
+#endif
 
         return ret;
 }

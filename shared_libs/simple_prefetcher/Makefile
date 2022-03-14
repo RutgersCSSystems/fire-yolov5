@@ -2,11 +2,13 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11 -g
+FLAGS=-fPIC -shared -std=gnu++11 -O2 -Wno-unused-result
 INCLUDE=
 
 NR_RA_PG=40
 NR_WORKERS=2
+
+SOURCES = frontend.cpp utils/thpool.c utils/bitarray.c
 
 #DEBUG=-DDEBUG
 VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PG) -DNR_WORKERS=$(NR_WORKERS)
@@ -25,28 +27,31 @@ THPOOL_FILE_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DFULL_PREFETCH
 #all: Vanilla Cross_FileRA_NoPred_MaxMem_BG
 all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG
 
-simplepreadra: frontend.cpp
-	$(CXX) $(INCLUDE) $(FLAGS) -o libsimplepreadra.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(SEQ_PREAD_RA)
+#simplepreadra: frontend.cpp
+#	$(CXX) $(INCLUDE) $(FLAGS) -o libsimplepreadra.so $^ $(LIBS) $(DEBUG) \
+#	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(SEQ_PREAD_RA)
 
-simpleprefetcher: frontend.cpp
-	$(CXX) $(INCLUDE) $(FLAGS) -o libsimpleprefetcher.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_RA)
+#simpleprefetcher: frontend.cpp
+#	$(CXX) $(INCLUDE) $(FLAGS) -o libsimpleprefetcher.so $^ $(LIBS) $(DEBUG) \
+#	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_RA)
 
-simplefullprefetcher: frontend.cpp worker.cpp utils/thpool.c
-	$(CXX) $(INCLUDE) $(FLAGS) -o libsmpl_fullprefetcher.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_FILE_RA)
+#simplefullprefetcher: frontend.cpp worker.cpp utils/thpool.c
+#	$(CXX) $(INCLUDE) $(FLAGS) -o libsmpl_fullprefetcher.so $^ $(LIBS) $(DEBUG) \
+	#$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_FILE_RA)
 
-Cross_FileRA_NoPred_MaxMem_BG: frontend.cpp utils/thpool.c
+Cross_FileRA_Pred_MaxMem_BG: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFPMB.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FILE_RA) -DPREDICTOR
+
+Cross_FileRA_NoPred_MaxMem_BG: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFNMB.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FILE_RA)
-	    #$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FILE_RA)
 
-OSonly: frontend.cpp utils/thpool.c
+OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) 
 
-Vanilla: frontend.cpp utils/thpool.c
+Vanilla: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS)
 
