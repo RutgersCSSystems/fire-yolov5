@@ -321,3 +321,29 @@ exit:
         return amount_read;
 }
 */
+
+
+void handle_file_close(int fd){
+#ifdef PREDICTOR
+        file_predictor *fp = fd_to_file_pred[fd];
+	if(fp){
+		delete(fp);
+	}
+#endif
+exit:
+	return;
+}
+
+
+int fclose(FILE *stream){
+    int fd = fileno(stream);
+    handle_file_close(fd);
+    return real_fclose(stream);
+}
+
+
+int close(int fd){
+    handle_file_close(fd);
+    return real_close(fd);
+}
+

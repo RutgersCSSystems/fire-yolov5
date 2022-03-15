@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11 -O2 -Wno-unused-result
+FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result
 INCLUDE=
 
 NR_RA_PG=40
@@ -23,11 +23,12 @@ SEQ_FULL_PREAD_RA=-DSEQ_PREFETCH -DFULL_PREFETCH ##Not implmented yet
 DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
 THPOOL_FILE_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DFULL_PREFETCH -DBLIND_PREFETCH
 PREDICTOR_THPOOL_FILE_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DFULL_PREFETCH -DPREDICTOR
+PREDICTOR_THPOOL_BLOCK_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DPREDICTOR
 
 
 #all: simpleprefetcher simplefullprefetcher simplenoprefetcher simplepreadra
 #all: Vanilla Cross_FileRA_NoPred_MaxMem_BG
-all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG
+all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cross_BlockRA_Pred_MaxMem_BG
 
 #simplepreadra: frontend.cpp
 #	$(CXX) $(INCLUDE) $(FLAGS) -o libsimplepreadra.so $^ $(LIBS) $(DEBUG) \
@@ -44,6 +45,10 @@ all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG
 Cross_FileRA_Pred_MaxMem_BG: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFPMB.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_FILE_RA)
+
+Cross_BlockRA_Pred_MaxMem_BG: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBPMB.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA)
 
 Cross_FileRA_NoPred_MaxMem_BG: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFNMB.so $^ $(LIBS) $(DEBUG) \

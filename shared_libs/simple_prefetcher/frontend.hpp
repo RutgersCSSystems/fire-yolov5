@@ -229,6 +229,10 @@ class file_predictor{
                         already_prefetched = false;
                 }
 
+		/*Destructor*/
+		~file_predictor(){
+			BitArrayDestroy(access_history);
+		}
 
                 /*
                  * If offset being accessed is from an Unset file portion, set it,
