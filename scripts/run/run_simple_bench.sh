@@ -62,8 +62,9 @@ TOUCH_OUTFILE(){
 
 
 RUNAPP() {
+        printf "in ${FUNCNAME[0]}\n"
         COMMAND="$APPPREFIX $base/bin/$WORKLOAD"
-        #echo $COMMAND
+        echo $COMMAND
         min_bw=100000000
         max_bw=0
         avg_bw=0
@@ -76,13 +77,15 @@ RUNAPP() {
                 $COMMAND &> ~/tmp
                 UNSETPRELOAD
                 popd
+                echo "Done running the app"
                 #########################
                 #update raw data for reference
                 echo $COMMAND >> ${OUTFILE}_raw
                 cat ~/tmp >> ${OUTFILE}_raw
                 #########################
-                this_bw=`cat ~/tmp | grep "bandwidth" | head -1 | awk '{print $4}'`
-                echo $this_bw
+                #cat ~/tmp
+                this_bw=`cat ~/tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
+                echo "This bandwidth =" $this_bw
                 ##########################
                 min_bw=$(min_number $this_bw $min_bw)
                 max_bw=$(max_number $this_bw $max_bw)
