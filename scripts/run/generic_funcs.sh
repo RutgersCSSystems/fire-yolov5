@@ -10,6 +10,7 @@ NR_REPEATS=5
 
 RIGHTNOW=`date +"%Hhr-%Mmin_%m-%d-%y"`
 DATE=`date +'%d-%B-%y'`
+APPPREFIX="/usr/bin/time -v"
 
 FlushDisk()
 {
@@ -52,57 +53,17 @@ SETPRELOAD()
         export LD_PRELOAD=""
     elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
         printf "Only OS prefetching enabled\n"
-        export LD_PRELOAD=/usr/lib/libsimplenoprefetcher.so
+        export LD_PRELOAD=/usr/lib/lib_OSonly.so
     elif [[ "$1" == "CFNMB" ]]; then
         printf "Cross_FileRA_NoPred_MaxMem_BG\n"
-        export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
-    elif [[ "$1" == "APPLIBOS" ]]; then ##All three
-        printf "setting pred\n"
-        export LD_PRELOAD=/usr/lib/libcrosslayer.so
-    elif [[ "$1" == "NOPRED" ]]; then ##None
-        printf "setting nopred\n"
-        export LD_PRELOAD=/usr/lib/libnopred.so
-    elif [[ "$1" == "ONLYAPP" ]]; then
-        printf "only app pred\n"
-        export LD_PRELOAD=/usr/lib/libonlyapppred.so
-    elif [[ "$1" == "ONLYLIB" ]]; then
-        printf "only Lib pred\n"
-        export LD_PRELOAD=/usr/lib/libonlylibpred.so
-    elif [[ "$1" == "ONLYOS" ]]; then
-        printf "only OS pred\n"
-        export LD_PRELOAD=/usr/lib/libonlyospred.so
-    elif [[ "$1" == "APPOS" ]]; then
-        printf "App+OS pred\n"
-        export LD_PRELOAD=/usr/lib/libos_apppred.so
-    elif [[ "$1" == "LIBOS" ]]; then
-        printf "Lib+OS pred\n"
-        export LD_PRELOAD=/usr/lib/libos_libpred.so
-    elif [[ "$1" == "ONLYINTERCEPT" ]]; then
-        printf "Only Intercepting\n"
-        export LD_PRELOAD=/usr/lib/libonlyintercept.so
-    elif [[ "$1" == "CACHELIMIT" ]]; then
-        printf "OS and LIB pred with Cache Limit\n"
-        export LD_PRELOAD=/usr/lib/libcache_lim_os_libpred.so
-    elif [[ "$1" == "FETCHALL" ]]; then
-        printf "OS and LIB pred without Cache Limit\n"
-        export LD_PRELOAD=/usr/lib/libos_fetch_at_open.so
-    elif [[ "$1" == "FETCHALLSINGLE" ]]; then
-        printf "OS and LIB pred without Cache Limit\n"
-        export LD_PRELOAD=/usr/lib/libos_fetch_at_open_single.so
-    elif [[ "$1" == "SIMPLEBGPREFETCH" ]]; then
-        printf "Simple BG prefetcher\n"
-        export LD_PRELOAD=/usr/lib/libsimpleprefetcher.so
-    elif [[ "$1" == "SIMPLENOPREFETCH" ]]; then
-        printf "Simple NO prefetcher\n"
-        export LD_PRELOAD=/usr/lib/libsimplenoprefetcher.so
-    elif [[ "$1" == "SIMPLEBGFULLPREFETCH" ]]; then
-        printf "Simple BG FULL prefetcher\n"
-        export LD_PRELOAD=/usr/lib/libsmpl_fullprefetcher.so
-    elif [[ "$1" == "SIMPLEPREADRA" ]]; then
-        printf "Simple Seq prefetch using pread_ra\n"
-        export LD_PRELOAD=/usr/lib/libsimplepreadra.so
+        export LD_PRELOAD=/usr/lib/lib_CFNMB.so
+    elif [[ "$1" == "CFPMB" ]]; then
+        printf "Cross_FileRA_Pred_MaxMem_BG\n"
+        export LD_PRELOAD=/usr/lib/lib_CFPMB.so
+    elif [[ "$1" == "CBPMB" ]]; then
+        printf "Cross_BlockRA_Pred_MaxMem_BG\n"
+        export LD_PRELOAD=/usr/lib/lib_CBPMB.so
     fi
-
     ##export TARGET_GPPID=$PPID
 }
 

@@ -77,7 +77,7 @@ TOUCH_OUTFILE(){
 #COMPILE_APP
 
 RUNAPP() {
-        COMMAND="$APPPREFEIX $base/db_bench $PARAMS $READARGS"
+        COMMAND="$APPPREFIX $base/db_bench $PARAMS $READARGS"
         #echo $COMMAND
         min_bw=100000000
         max_bw=0
