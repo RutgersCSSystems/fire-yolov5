@@ -14,9 +14,9 @@ source $RUN_SCRIPTS/generic_funcs.sh
 declare -a apparr=("rocksdb")
 #declare -a apparr=("libgrape")
 #declare -a apparr=("strided_madbench")
-#declare -a experiment=("Vanilla" "OSONLY" "CFNMB" "CFPMB" "CFPBB" "CBPBB")
 #experiment names should be same as preloadlib names in SETPRELOAD
-declare -a experiment=("VANILLA" "OSONLY" "CFNMB")
+#declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CFPMB" "CBPMB")
+declare -a experiment=("OSONLY" "CFNMB" "CFPMB" "CBPMB")
 #C - Cross
 #F - FileRA, B - BlockRS
 #N - NoPred, P - Pred
@@ -28,7 +28,7 @@ RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf_new/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then
@@ -37,6 +37,8 @@ RUNAPP()
                 $RUN_SCRIPTS/run_graphchi.sh $EXPERIMENT $OUTPUT	
         elif [ "$APP" = "rocksdb" ]; then
                 $RUN_SCRIPTS/run_dbbench.sh $EXPERIMENT $OUTPUT
+        elif [ "$APP" = "simple_bench" ]; then
+                $RUN_SCRIPTS/run_simple_bench.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "libgrape" ]; then
                 $RUN_SCRIPTS/run_libgrape.sh $EXPERIMENT $OUTPUT
         fi
