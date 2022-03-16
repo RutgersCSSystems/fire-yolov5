@@ -78,6 +78,7 @@ TOUCH_OUTFILE(){
 
 RUNAPP() {
         COMMAND="$APPPREFIX $base/db_bench $PARAMS $READARGS"
+        echo "Running: $COMMAND"
         #echo $COMMAND
         min_bw=100000000
         max_bw=0
@@ -95,7 +96,7 @@ RUNAPP() {
                 cat tmp >> ${OUTFILE}_raw
                 #########################
                 this_bw=`cat tmp | grep "$WORKLOAD" | head -1| awk '{print $7}'`
-                echo $this_bw
+                echo "this bandwidth = "$this_bw
                 ##########################
                 min_bw=$(min_number $this_bw $min_bw)
                 max_bw=$(max_number $this_bw $max_bw)
@@ -115,7 +116,7 @@ do
                 for KEYSIZE in "${key_size_arr[@]}"
                 do
                         PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
-                        CLEAN_AND_WRITE
+                        #CLEAN_AND_WRITE
 
                         for WORKLOAD in "${workload_arr[@]}"
                         do
