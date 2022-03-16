@@ -91,7 +91,7 @@ RUNAPP() {
                 REFRESH
         done
         avg_bw=`echo "scale=2; $avg_bw/$NR_REPEATS" | bc -l`
-        echo -n "$NPROC,$min_bw,$avg_bw,$max_bw" >> ${OUTFILE}
+        printf "$NPROC,$min_bw,$avg_bw,$max_bw\n" >> ${OUTFILE}
 }
 
 
@@ -120,4 +120,3 @@ do
                 done
         done
 done
-
