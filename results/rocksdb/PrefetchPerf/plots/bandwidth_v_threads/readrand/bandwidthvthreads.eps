@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: bandwidthvthreads.eps
-%%Creator: gnuplot 5.2 patchlevel 2
-%%CreationDate: Wed Mar 16 09:15:45 2022
+%%Creator: gnuplot 5.4 patchlevel 2
+%%CreationDate: Wed Mar 16 18:38:29 2022
 %%DocumentFonts: (atend)
 %%BoundingBox: 50 50 410 302
 %%EndComments
@@ -48,7 +48,7 @@ gnudict begin
   } if
 } def
 %
-% Gnuplot Prolog Version 5.1 (Oct 2015)
+% Gnuplot Prolog Version 5.2 (Dec 2017)
 %
 %/SuppressPDFMark true def
 %
@@ -305,7 +305,7 @@ gnudict begin
   ColR ColG ColB setrgbcolor} def
 /BoxColFill {gsave Rec PolyFill} def
 /PolyFill {gsave Density fill grestore grestore} def
-/h {rlineto rlineto rlineto gsave closepath fill grestore} bind def
+/h {rlineto rlineto rlineto closepath gsave fill grestore stroke} bind def
 %
 % PostScript Level 1 Pattern Fill routine for rectangles
 % Usage: x y w h s a XX PatternFill
@@ -438,10 +438,10 @@ systemdict /pdfmark known not {
 SDict begin [
   /Title (bandwidthvthreads.eps)
   /Subject (gnuplot plot)
-  /Creator (gnuplot 5.2 patchlevel 2)
+  /Creator (gnuplot 5.4 patchlevel 2)
 %  /Producer (gnuplot)
 %  /Keywords ()
-  /CreationDate (Wed Mar 16 09:15:45 2022)
+  /CreationDate (Wed Mar 16 18:38:29 2022)
   /DOCINFO pdfmark
 end
 } ifelse
@@ -463,7 +463,7 @@ end
                TBx1 TBxmargin sub TBy2 TBymargin add L
 	       TBx2 TBxmargin add TBy2 TBymargin add L
 	       TBx2 TBxmargin add TBy1 TBymargin sub L closepath } def
-/DrawTextBox { PopTextBox stroke /Boxing false def} def
+/DrawTextBox { PL PopTextBox stroke /Boxing false def} def
 /FillTextBox { gsave PopTextBox fill grestore /Boxing false def} def
 0 0 0 0 InitTextBox
 /TBxmargin 20 def
@@ -483,12 +483,6 @@ doclip
 newpath
 (Helvetica) findfont 180 scalefont setfont
 BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 7200.00 5040.00 BoxColFill} if
-/Helvetica findfont 180 scalefont setfont
-/vshift -60 def
-/Helvetica findfont 180 scalefont setfont
-/Helvetica findfont 180 scalefont setfont
-/Helvetica findfont 180 scalefont setfont
-/Helvetica findfont 180 scalefont setfont
 1.000 UL
 LTb
 LCb setrgbcolor
@@ -604,8 +598,8 @@ LCb setrgbcolor
 LTa
 LCa setrgbcolor
 990 3939 M
-4310 0 V
-1467 0 R
+1934 0 V
+3843 0 R
 108 0 V
 stroke
 1.000 UL
@@ -687,7 +681,7 @@ Z stroke
 LTb
 LCb setrgbcolor
 LCb setrgbcolor
-162 2537 M
+171 2537 M
 currentpoint gsave translate -270 rotate 0 0 M
 (Throughput \(MB/sec\)) Cshow
 grestore
@@ -696,20 +690,19 @@ LCb setrgbcolor
 3932 126 M
 (App Threads) Cshow
 LTb
-LCb setrgbcolor
-3932 4769 M
-(RocksDB-readrand Prefetching Characterization) Cshow
 % Begin plot #1
 1.000 UL
 LTb
-0.58 0.00 0.83 C /Helvetica findfont 180 scalefont setfont
+0.58 0.00 0.83 C
 LCb setrgbcolor
 6056 4346 M
-(Vanilla) Rshow
+(App Only) Rshow
 1.000 UL
 LTb
-0.58 0.00 0.83 C 6164 4301 495 90 80 -45 1 PatternFill
-0.00 0.62 0.45 C 6164 4301 N
+0.58 0.00 0.83 C
+6164 4301 495 90 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+6164 4301 N
 495 0 V
 0 90 V
 -495 0 V
@@ -717,8 +710,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 1570 576 148 99 80 -45 1 PatternFill
-0.00 0.62 0.45 C 1570 576 N
+0.58 0.00 0.83 C
+1570 576 148 99 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+1570 576 N
 0 98 V
 147 0 V
 0 -98 V
@@ -726,8 +721,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 2551 576 148 237 80 -45 1 PatternFill
-0.00 0.62 0.45 C 2551 576 N
+0.58 0.00 0.83 C
+2551 576 148 237 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+2551 576 N
 0 236 V
 147 0 V
 0 -236 V
@@ -735,8 +732,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 3532 576 148 555 80 -45 1 PatternFill
-0.00 0.62 0.45 C 3532 576 N
+0.58 0.00 0.83 C
+3532 576 148 555 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+3532 576 N
 0 554 V
 147 0 V
 0 -554 V
@@ -744,8 +743,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 4513 576 148 1237 80 -45 1 PatternFill
-0.00 0.62 0.45 C 4513 576 N
+0.58 0.00 0.83 C
+4513 576 148 1237 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+4513 576 N
 0 1236 V
 147 0 V
 0 -1236 V
@@ -753,8 +754,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 5494 576 148 2606 80 -45 1 PatternFill
-0.00 0.62 0.45 C 5494 576 N
+0.58 0.00 0.83 C
+5494 576 148 2606 80 -45 1 PatternFill
+0.00 0.62 0.45 C
+5494 576 N
 0 2605 V
 147 0 V
 0 -2605 V
@@ -762,8 +765,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.58 0.00 0.83 C 1.000 UL
-0.00 0.62 0.45 C 1.000 UL
+0.58 0.00 0.83 C
+1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
 [] 0 setdash
 LCb setrgbcolor
 1644 674 M
@@ -819,18 +824,24 @@ stroke
 62 0 V
 stroke
 LTb
-0.58 0.00 0.83 C % End plot #1
+0.58 0.00 0.83 C
+1.000 UL
+LTb
+0.58 0.00 0.83 C
+% End plot #1
 % Begin plot #2
 1.000 UL
 LTb
-0.00 0.62 0.45 C /Helvetica findfont 180 scalefont setfont
+0.00 0.62 0.45 C
 LCb setrgbcolor
 6056 4166 M
 (OS_Only) Rshow
 1.000 UL
 LTb
-0.00 0.62 0.45 C 6164 4121 495 90 40 45 2 PatternFill
-0.00 0.62 0.45 C 6164 4121 N
+0.00 0.62 0.45 C
+6164 4121 495 90 40 45 2 PatternFill
+0.00 0.62 0.45 C
+6164 4121 N
 495 0 V
 0 90 V
 -495 0 V
@@ -838,8 +849,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 1734 576 148 167 40 45 2 PatternFill
-0.00 0.62 0.45 C 1734 576 N
+0.00 0.62 0.45 C
+1734 576 148 167 40 45 2 PatternFill
+0.00 0.62 0.45 C
+1734 576 N
 0 166 V
 147 0 V
 0 -166 V
@@ -847,8 +860,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 2715 576 148 344 40 45 2 PatternFill
-0.00 0.62 0.45 C 2715 576 N
+0.00 0.62 0.45 C
+2715 576 148 344 40 45 2 PatternFill
+0.00 0.62 0.45 C
+2715 576 N
 0 343 V
 147 0 V
 0 -343 V
@@ -856,8 +871,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 3695 576 149 692 40 45 2 PatternFill
-0.00 0.62 0.45 C 3695 576 N
+0.00 0.62 0.45 C
+3695 576 149 692 40 45 2 PatternFill
+0.00 0.62 0.45 C
+3695 576 N
 0 691 V
 148 0 V
 0 -691 V
@@ -865,8 +882,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 4676 576 148 1403 40 45 2 PatternFill
-0.00 0.62 0.45 C 4676 576 N
+0.00 0.62 0.45 C
+4676 576 148 1403 40 45 2 PatternFill
+0.00 0.62 0.45 C
+4676 576 N
 0 1402 V
 147 0 V
 0 -1402 V
@@ -874,8 +893,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 5657 576 148 2791 40 45 2 PatternFill
-0.00 0.62 0.45 C 5657 576 N
+0.00 0.62 0.45 C
+5657 576 148 2791 40 45 2 PatternFill
+0.00 0.62 0.45 C
+5657 576 N
 0 2790 V
 147 0 V
 0 -2790 V
@@ -883,8 +904,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.00 0.62 0.45 C 1.000 UL
-0.00 0.62 0.45 C 1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
 [] 0 setdash
 LCb setrgbcolor
 1807 742 M
@@ -940,18 +963,24 @@ stroke
 62 0 V
 stroke
 LTb
-0.00 0.62 0.45 C % End plot #2
+0.00 0.62 0.45 C
+1.000 UL
+LTb
+0.00 0.62 0.45 C
+% End plot #2
 % Begin plot #3
 1.000 UL
 LTb
-0.34 0.71 0.91 C /Helvetica findfont 180 scalefont setfont
+0.34 0.71 0.91 C
 LCb setrgbcolor
 6056 3986 M
-(CFNMB) Rshow
+(Cross_FileRA_NoPred_MaxMem_BG) Rshow
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 6164 3941 495 90 BoxColFill
-0.00 0.62 0.45 C 6164 3941 N
+0.34 0.71 0.91 C
+1 6164 3941 495 90 BoxColFill
+0.00 0.62 0.45 C
+6164 3941 N
 495 0 V
 0 90 V
 -495 0 V
@@ -959,8 +988,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 1897 576 148 428 BoxColFill
-0.00 0.62 0.45 C 1897 576 N
+0.34 0.71 0.91 C
+1 1897 576 148 428 BoxColFill
+0.00 0.62 0.45 C
+1897 576 N
 0 427 V
 147 0 V
 0 -427 V
@@ -968,8 +999,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 2878 576 148 555 BoxColFill
-0.00 0.62 0.45 C 2878 576 N
+0.34 0.71 0.91 C
+1 2878 576 148 555 BoxColFill
+0.00 0.62 0.45 C
+2878 576 N
 0 554 V
 147 0 V
 0 -554 V
@@ -977,8 +1010,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 3859 576 148 884 BoxColFill
-0.00 0.62 0.45 C 3859 576 N
+0.34 0.71 0.91 C
+1 3859 576 148 884 BoxColFill
+0.00 0.62 0.45 C
+3859 576 N
 0 883 V
 147 0 V
 0 -883 V
@@ -986,8 +1021,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 4840 576 148 1594 BoxColFill
-0.00 0.62 0.45 C 4840 576 N
+0.34 0.71 0.91 C
+1 4840 576 148 1594 BoxColFill
+0.00 0.62 0.45 C
+4840 576 N
 0 1593 V
 147 0 V
 0 -1593 V
@@ -995,8 +1032,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1 5821 576 148 2987 BoxColFill
-0.00 0.62 0.45 C 5821 576 N
+0.34 0.71 0.91 C
+1 5821 576 148 2987 BoxColFill
+0.00 0.62 0.45 C
+5821 576 N
 0 2986 V
 147 0 V
 0 -2986 V
@@ -1004,8 +1043,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.34 0.71 0.91 C 1.000 UL
-0.00 0.62 0.45 C 1.000 UL
+0.34 0.71 0.91 C
+1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
 [] 0 setdash
 LCb setrgbcolor
 1971 1002 M
@@ -1062,18 +1103,24 @@ stroke
 62 0 V
 stroke
 LTb
-0.34 0.71 0.91 C % End plot #3
+0.34 0.71 0.91 C
+1.000 UL
+LTb
+0.34 0.71 0.91 C
+% End plot #3
 % Begin plot #4
 1.000 UL
 LTb
-0.90 0.62 0.00 C /Helvetica findfont 180 scalefont setfont
+0.90 0.62 0.00 C
 LCb setrgbcolor
 6056 3806 M
-(CFPMB) Rshow
+(Cross_FileRA_Pred_MaxMem_BG) Rshow
 1.000 UL
 LTb
-0.90 0.62 0.00 C 6164 3761 495 90 80 45 0 PatternFill
-0.00 0.62 0.45 C 6164 3761 N
+0.90 0.62 0.00 C
+6164 3761 495 90 80 45 0 PatternFill
+0.00 0.62 0.45 C
+6164 3761 N
 495 0 V
 0 90 V
 -495 0 V
@@ -1081,8 +1128,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 2061 576 148 334 80 45 0 PatternFill
-0.00 0.62 0.45 C 2061 576 N
+0.90 0.62 0.00 C
+2061 576 148 334 80 45 0 PatternFill
+0.00 0.62 0.45 C
+2061 576 N
 0 333 V
 147 0 V
 0 -333 V
@@ -1090,8 +1139,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 3042 576 148 486 80 45 0 PatternFill
-0.00 0.62 0.45 C 3042 576 N
+0.90 0.62 0.00 C
+3042 576 148 486 80 45 0 PatternFill
+0.00 0.62 0.45 C
+3042 576 N
 0 485 V
 147 0 V
 0 -485 V
@@ -1099,8 +1150,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 4022 576 149 816 80 45 0 PatternFill
-0.00 0.62 0.45 C 4022 576 N
+0.90 0.62 0.00 C
+4022 576 149 816 80 45 0 PatternFill
+0.00 0.62 0.45 C
+4022 576 N
 0 815 V
 148 0 V
 0 -815 V
@@ -1108,8 +1161,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 5003 576 148 1495 80 45 0 PatternFill
-0.00 0.62 0.45 C 5003 576 N
+0.90 0.62 0.00 C
+5003 576 148 1495 80 45 0 PatternFill
+0.00 0.62 0.45 C
+5003 576 N
 0 1494 V
 147 0 V
 0 -1494 V
@@ -1117,8 +1172,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 5984 576 148 2812 80 45 0 PatternFill
-0.00 0.62 0.45 C 5984 576 N
+0.90 0.62 0.00 C
+5984 576 148 2812 80 45 0 PatternFill
+0.00 0.62 0.45 C
+5984 576 N
 0 2811 V
 147 0 V
 0 -2811 V
@@ -1126,8 +1183,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.90 0.62 0.00 C 1.000 UL
-0.00 0.62 0.45 C 1.000 UL
+0.90 0.62 0.00 C
+1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
 [] 0 setdash
 LCb setrgbcolor
 2134 907 M
@@ -1184,18 +1243,24 @@ stroke
 62 0 V
 stroke
 LTb
-0.90 0.62 0.00 C % End plot #4
+0.90 0.62 0.00 C
+1.000 UL
+LTb
+0.90 0.62 0.00 C
+% End plot #4
 % Begin plot #5
 1.000 UL
 LTb
-0.94 0.89 0.26 C /Helvetica findfont 180 scalefont setfont
+0.94 0.89 0.26 C
 LCb setrgbcolor
 6056 3626 M
-(CBPMB) Rshow
+(Cross_BlockRA_Pred_MaxMem_BG) Rshow
 1.000 UL
 LTb
-0.94 0.89 0.26 C 6164 3581 495 90 80 -45 0 PatternFill
-0.00 0.62 0.45 C 6164 3581 N
+0.94 0.89 0.26 C
+6164 3581 495 90 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+6164 3581 N
 495 0 V
 0 90 V
 -495 0 V
@@ -1203,8 +1268,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 2224 576 148 333 80 -45 0 PatternFill
-0.00 0.62 0.45 C 2224 576 N
+0.94 0.89 0.26 C
+2224 576 148 333 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+2224 576 N
 0 332 V
 147 0 V
 0 -332 V
@@ -1212,8 +1279,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 3205 576 148 484 80 -45 0 PatternFill
-0.00 0.62 0.45 C 3205 576 N
+0.94 0.89 0.26 C
+3205 576 148 484 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+3205 576 N
 0 483 V
 147 0 V
 0 -483 V
@@ -1221,8 +1290,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 4186 576 148 816 80 -45 0 PatternFill
-0.00 0.62 0.45 C 4186 576 N
+0.94 0.89 0.26 C
+4186 576 148 816 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+4186 576 N
 0 815 V
 147 0 V
 0 -815 V
@@ -1230,8 +1301,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 5167 576 148 1490 80 -45 0 PatternFill
-0.00 0.62 0.45 C 5167 576 N
+0.94 0.89 0.26 C
+5167 576 148 1490 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+5167 576 N
 0 1489 V
 147 0 V
 0 -1489 V
@@ -1239,8 +1312,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 6148 576 148 2796 80 -45 0 PatternFill
-0.00 0.62 0.45 C 6148 576 N
+0.94 0.89 0.26 C
+6148 576 148 2796 80 -45 0 PatternFill
+0.00 0.62 0.45 C
+6148 576 N
 0 2795 V
 147 0 V
 0 -2795 V
@@ -1248,8 +1323,10 @@ LTb
 Z stroke
 1.000 UL
 LTb
-0.94 0.89 0.26 C 1.000 UL
-0.00 0.62 0.45 C 1.000 UL
+0.94 0.89 0.26 C
+1.000 UL
+0.00 0.62 0.45 C
+1.000 UL
 [] 0 setdash
 LCb setrgbcolor
 2298 907 M
@@ -1306,7 +1383,11 @@ stroke
 62 0 V
 stroke
 LTb
-0.94 0.89 0.26 C % End plot #5
+0.94 0.89 0.26 C
+1.000 UL
+LTb
+0.94 0.89 0.26 C
+% End plot #5
 2.000 UL
 LTb
 LCb setrgbcolor
@@ -1323,6 +1404,10 @@ Z stroke
 1.000 UL
 LTb
 LCb setrgbcolor
+LCb setrgbcolor
+3932 4769 M
+(RocksDB-readrand Prefetching Characterization) Cshow
+LTb
 stroke
 grestore
 end
