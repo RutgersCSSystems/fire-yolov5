@@ -86,7 +86,7 @@ RUNAPP() {
 
         for a in $(seq 1 $NR_REPEATS)
         do
-                #SETPRELOAD $experiment ##set preload lib based on experiment
+                SETPRELOAD $experiment ##set preload lib based on experiment
                 $COMMAND &> tmp
                 UNSETPRELOAD
                 #########################
