@@ -41,8 +41,8 @@ threadpool workerpool = NULL;
 #endif
 
 //Maps fd to its file_predictor
-robin_hood::unordered_node_map<int, file_predictor*> fd_to_file_pred;
-
+//robin_hood::unordered_node_map<int, file_predictor*> fd_to_file_pred;
+std::unordered_map<int, file_predictor*> fd_to_file_pred;
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
@@ -346,4 +346,3 @@ int close(int fd){
     handle_file_close(fd);
     return real_close(fd);
 }
-
