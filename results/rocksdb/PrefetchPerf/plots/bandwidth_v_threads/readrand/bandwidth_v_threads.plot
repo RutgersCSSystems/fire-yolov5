@@ -33,11 +33,11 @@ set yrange [0:7000]
 # Actually do the plot; use cols 2-4 from the file; linecolor gives the color, 
 # linewidth 0 removes the outline of the column
 
-plot 'vanilla_readrand.csv' u "VANILLA-avg":"VANILLA-min":"VANILLA-max":xtic(1) title "Vanilla", \
+plot 'vanilla_readrand.csv' u "VANILLA-avg":"VANILLA-min":"VANILLA-max":xtic(1) title "App Only", \
      'osonly_readrand.csv' u "OSONLY-avg":"OSONLY-min":"OSONLY-max" title "OS_Only", \
-     'cfnmb_readrand.csv' u "CFNMB-avg":"CFNMB-min":"CFNMB-max" title "CFNMB", \
-     'cfpmb_readrand.csv' u "CFPMB-avg":"CFPMB-min":"CFPMB-max" title "CFPMB", \
-     'cbpmb_readrand.csv' u "CBPMB-avg":"CBPMB-min":"CBPMB-max" title "CBPMB"
+     'cfnmb_readrand.csv' u "CFNMB-avg":"CFNMB-min":"CFNMB-max" title "Cross_FileRA_NoPred_MaxMem_BG", \
+     'cfpmb_readrand.csv' u "CFPMB-avg":"CFPMB-min":"CFPMB-max" title "Cross_FileRA_Pred_MaxMem_BG", \
+     'cbpmb_readrand.csv' u "CBPMB-avg":"CBPMB-min":"CBPMB-max" title "Cross_BlockRA_Pred_MaxMem_BG"
 
 # if we want to output in more formats, we can add more set term lines and more output names
 # and replot; but graphs will not be identical since the drivers and file types have
