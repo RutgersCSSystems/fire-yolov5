@@ -63,7 +63,7 @@ TOUCH_OUTFILE(){
 
 RUNAPP() {
         printf "in ${FUNCNAME[0]}\n"
-        COMMAND="$APPPREFIX $base/bin/$WORKLOAD"
+        COMMAND="$base/bin/$WORKLOAD"
         echo $COMMAND
         min_bw=100000000
         max_bw=0
