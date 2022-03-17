@@ -53,6 +53,18 @@
 #define PORTION_PAGES 32
 #endif
 
+
+/*
+ * Number of adjacent bits in the bitarray
+ * to check to determine sequentiality
+ * Note: Adjacent check will test bits at both ends
+ * of the request
+ * Note: Each bit in the bitarray represents PORTION_PAGES pages
+ */
+#ifndef NR_ADJACENT_CHECK
+#define NR_ADJACENT_CHECK 1
+#endif
+
 /*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
