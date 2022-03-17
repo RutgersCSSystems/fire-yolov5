@@ -241,24 +241,63 @@ class file_predictor{
                  *
                  * else increase the sequentiality
                  *
-                 * XXX: Doesnt check reads that go across portion boundaries yet
                  * XXX: Doesnt limit the sequentiality number, may overflow for large files
                  */
-                void predictor_update(off_t offset){
+                void predictor_update(off_t offset, size_t size){
 
-                        size_t portion_num = offset/portion_sz;
+                        size_t portion_num = offset/portion_sz; //which portion
+                        size_t num_portions = size/portion_sz; //how many portions in this req
+                        size_t pn = 0; //used for adjacency check
+
                         if(portion_num > nr_portions){
                                 printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
                                 goto exit;
                         }
 
-                        if(BitArrayTestBit(access_history, portion_num)){
-                                sequentiality += 1;
+                        /*
+                         * Go through the bit array, setting ones portions associated
+                         * with this read request
+                         */
+                        for(long i=0; i<=num_portions; i++)
+                                        BitArraySetBit(access_history, portion_num+i);
+
+
+                        /*
+                         * Go through the adjacent bits in bitarray 
+                         * to check for sequentiality
+                         * TODO: Convert this a bit operation, this is heavy
+                         * Develop a bit mask and test the corresponding bits
+                         */
+                        for(long i = -NR_ADJACENT_CHECK; i < NR_ADJACENT_CHECK; i++){
+                                if(i == 0)
+                                        continue;
+
+                                pn = portion_num + i;
+                                if(i > 0){
+                                        //takes seq for reverse reads
+                                        pn += num_portions; //look forward
+                                }
+
+                                /*bounds check*/
+                                if(pn < 0 || pn > nr_portions)
+                                        continue;
+
+                                /*
+                                 * If any one of the adjacent bits is set
+                                 * consider it to be seq
+                                 */
+                                if(BitArrayTestBit(access_history, pn)){
+                                        goto is_seq;
+                                }
                         }
-                        else{
-                                BitArraySetBit(access_history, portion_num);
-                                sequentiality -= 1;
-                        }
+
+is_not_seq:
+                        sequentiality -= 1;
+                        goto exit;
+
+is_seq:
+                        sequentiality += 1;
+
 exit:
                         return;
                 }
