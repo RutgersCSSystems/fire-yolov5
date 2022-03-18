@@ -145,7 +145,12 @@ int main(int argc, char **argv)
                 }
                 fd_list.push_back(fd);
                 fd = -1;
+#ifdef SHARED_FILE
+                //Open just one file since shared
+                break;
+#endif
         }
+
         //Done opening all files
 
 
@@ -173,11 +178,19 @@ int main(int argc, char **argv)
 
 
         for(int i=0; i<NR_THREADS; i++){
-                req[i].fd = fd_list[i]; //assign one file to each worker thread
+
                 req[i].size = FILESIZE/NR_THREADS;
-                req[i].offset = 0;
                 req[i].nr_read_pg = NR_PAGES_READ;
                 req[i].read_time = 0UL;
+
+#ifdef SHARED_FILE
+                req[i].fd = fd_list[0];
+                req[i].offset = req[i].size*i; //Start at different position
+#else
+                req[i].fd = fd_list[i]; //assign one file to each worker thread
+                req[i].offset = 0;
+#endif
+
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
         }
 
