@@ -84,16 +84,17 @@ Before running the following commands, make sure you dont have other deb files i
 
 ```
 cd prefetching/linux-5.14.0
-./compile_deb.sh ## This will produce and install deb for this linux kernel
+./compile_modified_deb.sh ## This will produce and install the modified kernel
+#./compile_vanilla_deb.sh ## This will produce and install the vanilla kernel
 sudo reboot ## this will reboot the node with the new linux 
 ```
 
 #### To compile for qemu
 
 ```
+source ./scripts/setvars.sh
 cd prefetching/linux-5.14.0
-sudo cp oldnix.config .config
-sudo make prepare
+./compile_qemu.sh
 cd prefetching
 ./scripts/compile-install/compile_kern_kvm.sh
 ```
@@ -123,8 +124,10 @@ To run qemu, first compile the kernel for qemu; then
 All the experiments are in the following folder.
 this script needs to be updated to run different applications
 
+Check the scripts before running all_variation.
+
 ```
-cd ./scripts/run/run_all_variation.sh
+./scripts/run/run_all_variation.sh
 ```
 
 ## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
