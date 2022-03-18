@@ -10,7 +10,8 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #WORKLOAD="read_seq"
-WORKLOAD="read_seq"
+WORKLOAD="read_shared_seq"
+WRITE_LOAD="write_shared"
 
 experiment=$1 #which preload library to call
 
@@ -38,7 +39,7 @@ CLEAN_AND_WRITE() {
         UNSETPRELOAD
         CLEAR_FILES
 
-        ./bin/write
+        ./bin/${WRITE_LOAD}
 
         FlushDisk
 }
@@ -49,18 +50,10 @@ COMPILE_APP $FILESIZE $READ_SIZE $THREAD
 CLEAN_AND_WRITE
 FlushDisk
 
-COMMAND="$APPPREFIX ./bin/$WORKLOAD"
+COMMAND="./bin/$WORKLOAD"
 
 printf "\nRUNNING Vanilla.................\n"
 SETPRELOAD "VANILLA"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
-
-exit
-
-printf "\nRUNNING CROSS_FILERA_NOPRED_MAXMEM_BG................\n"
-SETPRELOAD "CFNMB"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
@@ -78,3 +71,8 @@ $COMMAND
 export LD_PRELOAD=""
 FlushDisk
 
+printf "\nRUNNING CROSS_FILERA_NOPRED_MAXMEM_BG................\n"
+SETPRELOAD "CFNMB"
+$COMMAND
+export LD_PRELOAD=""
+FlushDisk
