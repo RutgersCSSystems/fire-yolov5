@@ -11,12 +11,12 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("simple_bench")
+declare -a apparr=("simple_bench_shared")
 #declare -a apparr=("libgrape")
 #declare -a apparr=("strided_madbench")
 #experiment names should be same as preloadlib names in SETPRELOAD
 #declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CFPMB" "CBPMB")
-declare -a experiment=("VANILLA" "CFNMB" "CFPMB" "CBPMB")
+declare -a experiment=("VANILLA" "CBNMB" "CFNMB" "CFPMB" "CBPMB")
 #declare -a experiment=("CFPMB" "CBPMB")
 #C - Cross
 #F - FileRA, B - BlockRS
@@ -29,7 +29,7 @@ RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf_new/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then
@@ -38,8 +38,10 @@ RUNAPP()
                 $RUN_SCRIPTS/run_graphchi.sh $EXPERIMENT $OUTPUT	
         elif [ "$APP" = "rocksdb" ]; then
                 $RUN_SCRIPTS/run_dbbench.sh $EXPERIMENT $OUTPUT
-        elif [ "$APP" = "simple_bench" ]; then
-                $RUN_SCRIPTS/run_simple_bench.sh $EXPERIMENT $OUTPUT
+        elif [ "$APP" = "simple_bench_pvt" ]; then
+                $RUN_SCRIPTS/run_simple_bench_pvt.sh $EXPERIMENT $OUTPUT
+        elif [ "$APP" = "simple_bench_shared" ]; then
+                $RUN_SCRIPTS/run_simple_bench_shared.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "libgrape" ]; then
                 $RUN_SCRIPTS/run_libgrape.sh $EXPERIMENT $OUTPUT
         fi

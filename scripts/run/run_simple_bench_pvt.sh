@@ -18,7 +18,7 @@ base=$APPS/simple_bench/pvt_multi_thread_read
 declare -a nproc=("1" "2" "4" "8" "16")
 declare -a filesize=("40") ##GB
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_seq" "read_rand") ##read binaries
+declare -a workload_arr=("read_pvt_seq" "read_pvt_rand") ##read binaries
 
 #Compiles the application
 COMPILE_APP() {
@@ -43,7 +43,7 @@ CLEAN_AND_WRITE() {
         CLEAR_FILES
 
         pushd $base
-        $base/bin/write
+        $base/bin/write_pvt
         popd
 
         FlushDisk
