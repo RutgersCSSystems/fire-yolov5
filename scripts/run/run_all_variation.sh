@@ -11,7 +11,7 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("simple_bench_shared")
+declare -a apparr=("simple_bench_shared" "simple_bench_pvt" "rocksdb")
 #declare -a apparr=("libgrape")
 #declare -a apparr=("strided_madbench")
 #experiment names should be same as preloadlib names in SETPRELOAD
@@ -29,7 +29,7 @@ RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf_${RIGHTNOW}/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then

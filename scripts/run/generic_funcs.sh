@@ -54,6 +54,9 @@ SETPRELOAD()
     elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
         printf "Only OS prefetching enabled\n"
         export LD_PRELOAD=/usr/lib/lib_OSonly.so
+    elif [[ "$1" == "CBNMB" ]]; then
+        printf "Cross_BlockRA_NoPred_MaxMem_BG\n"
+        export LD_PRELOAD=/usr/lib/lib_CBNMB.so
     elif [[ "$1" == "CFNMB" ]]; then
         printf "Cross_FileRA_NoPred_MaxMem_BG\n"
         export LD_PRELOAD=/usr/lib/lib_CFNMB.so
