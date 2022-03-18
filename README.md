@@ -13,7 +13,7 @@ A small description
 ├── references.txt      # list of references for paper
 ├── results             # folder with all results 
 ├── scripts             # all scripts for setup and microbench running
-└── shared_libs/pred    # shared lib predictor src
+└── shared_libs/simple_prefetcher    # shared lib predictor src
 ```
 
 
@@ -127,6 +127,11 @@ this script needs to be updated to run different applications
 Check the scripts before running all_variation.
 
 ```
+pushd ./shared_libs/simple_prefetcher/
+./compile.sh
+popd
+
+source ./scripts/setvars.sh
 ./scripts/run/run_all_variation.sh
 ```
 
