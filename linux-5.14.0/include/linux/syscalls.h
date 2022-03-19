@@ -1057,6 +1057,8 @@ asmlinkage ssize_t sys_pread_ra(unsigned int fd, char __user * buf,
 			size_t count, loff_t pos, struct read_ra_req __user * ra);
 asmlinkage ssize_t sys_read_ra(unsigned int fd, char __user * buf,
 			size_t count, size_t ra_count);
+asmlinkage long sys_readahead_info(int fd, loff_t offset,
+			size_t count, struct read_ra_req __user * ra);
 /*
  * Architecture-specific system calls
  */
