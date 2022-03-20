@@ -130,5 +130,5 @@ void dest(){
         long total_mem_used = initial_memfree - memfree;
         long total_cache_used = cached - initial_cached;
 
-        printf("total_anon_used=%ld KB, total_cache=%ld KB\n", total_mem_used-total_cache_used, total_cache_used);
+        printf("total_anon_used=%ld MB, total_cache=%ld MB\n", (total_mem_used-total_cache_used)/1024, total_cache_used/1024);
 }
