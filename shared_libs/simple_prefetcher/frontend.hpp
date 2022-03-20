@@ -7,6 +7,7 @@
 
 #define __PREAD_RA_SYSCALL 449
 #define __READ_RA_SYSCALL 450
+#define __READAHEAD_INFO 451
 
 #define DEFNSEQ (-8) //Not seq or strided(since off_t is ulong)
 #define LIKELYNSEQ (-4) /*possibly not seq */
@@ -76,6 +77,11 @@ ssize_t pread_ra(int fd, void *data, size_t size, off_t offset,
         struct read_ra_req *ra_req)
 {
     return syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, ra_req);
+}
+
+long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_req)
+{
+        return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
 }
 
 /*

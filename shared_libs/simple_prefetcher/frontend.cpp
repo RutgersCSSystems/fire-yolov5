@@ -84,13 +84,25 @@ void prefetcher_th(void *arg) {
 
         off_t curr_pos = 0;
         size_t readnow;
+        struct read_ra_req ra;
+
 
 #ifdef PREFETCH_READAHEAD
         while (curr_pos < a->file_size){
+#ifdef MODIFIED_RA
+                if(readahead_info(a->fd, (curr_pos + a->offset), 
+                                        a->prefetch_size, &ra) > 0)
+                {
+                        printf("error while readahead_info: TID:%ld \n", tid);
+                        goto exit;
+                }
+                printf("nr_free = %ld\n", ra.nr_free);
+#else
                 if(readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
                         printf("error while readahead: TID:%ld \n", tid);
                         goto exit;
                 }
+#endif
                 curr_pos += a->prefetch_size;
         }
 #endif

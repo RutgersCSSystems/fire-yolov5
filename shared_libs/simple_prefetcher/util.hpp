@@ -95,6 +95,7 @@ struct read_ra_req{
     	bool full_file_ra; //populated by app true if pread_ra is being done to get full file
     	long cache_limit; //populated by the app, desired cache_limit
 
+        unsigned long nr_free; //nr pages that are free in mem
 };
 
 //Used to send data to pthread or worker thread

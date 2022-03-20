@@ -27,7 +27,11 @@ PREDICTOR_THPOOL_FILE_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DFULL_PREFETCH 
 PREDICTOR_THPOOL_BLOCK_RA=-DTHPOOL_PREFETCH -DPREFETCH_READAHEAD -DPREDICTOR
 
 
-all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cross_BlockRA_Pred_MaxMem_BG
+all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cross_BlockRA_Pred_MaxMem_BG test
+
+test: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_test.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) -DMODIFIED_RA
 
 
 Cross_FileRA_Pred_MaxMem_BG: $(SOURCES)
