@@ -9,13 +9,15 @@ fi
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
+umount_ext4ramdisk
+
 #WORKLOAD="read_seq"
-WORKLOAD="read_pvt_seq"
+WORKLOAD="read_pvt_rand"
 WRITE_LOAD="write_pvt"
 
 experiment=$1 #which preload library to call
 
-FILESIZE=10 ##in GB
+FILESIZE=40 ##in GB
 READ_SIZE=20 ## In pages
 THREAD=4
 
@@ -47,17 +49,36 @@ CLEAN_AND_WRITE() {
 
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD
-CLEAN_AND_WRITE
+#CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
 
-printf "\nRUNNING Vanilla.................\n"
+printf "\nRUNNING Memlimit.................\n"
 #SETPRELOAD "VANILLA"
-export LD_PRELOAD=/usr/lib/lib_test.so
-$COMMAND
+#export LD_PRELOAD=/usr/lib/lib_memusage.so
+#$COMMAND
 export LD_PRELOAD=""
 FlushDisk
+
+anon=100
+cache=40960
+
+free -h
+
+SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.1))/1" | bc --mathlib`
+
+free -h
+
+printf "\nRUNNING Memlimit.................\n"
+SETPRELOAD "VANILLA"
+$COMMAND
+export LD_PRELOAD=""
+
+free -h
+FlushDisk
+
+umount_ext4ramdisk
 
 exit
 
@@ -79,3 +100,4 @@ SETPRELOAD "CFNMB"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
+
