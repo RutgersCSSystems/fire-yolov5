@@ -86,6 +86,7 @@ UNSETPRELOAD(){
 #clears cache and unloads
 REFRESH() {
         UNSETPRELOAD
+        umount_ext4ramdisk
         FlushDisk
 }
 

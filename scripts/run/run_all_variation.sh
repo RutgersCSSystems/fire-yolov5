@@ -17,7 +17,7 @@ declare -a apparr=("rocksdb")
 #experiment names should be same as preloadlib names in SETPRELOAD
 #declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CFPMB" "CBPMB")
 #declare -a experiment=("VANILLA" "CBNMB" "CFNMB" "CFPMB" "CBPMB")
-declare -a experiment=("VANILLA" "CBNMB" "CBNBB" "CBPMB" "CBPBB")
+declare -a experiment=("CBNMB" "CBNBB" "CBPMB" "CBPBB")
 #declare -a experiment=("CFPMB" "CBPMB")
 #C - Cross
 #F - FileRA, B - BlockRS
@@ -30,7 +30,8 @@ RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/PrefetchPerf_${RIGHTNOW}/${EXPERIMENT}
+        #OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_${RIGHTNOW}/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then
@@ -56,6 +57,5 @@ do
                 REFRESH
                 RUNAPP $APP $EXPERIMENT
                 REFRESH
-                exit
         done
 done	

@@ -162,7 +162,7 @@ do
                                         done
                                 done
 
-                                umount_ext4_ramdisk
+                                umount_ext4ramdisk
                         done
                 done
         done
