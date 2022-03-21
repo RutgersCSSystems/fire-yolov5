@@ -11,12 +11,13 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("simple_bench_shared" "simple_bench_pvt" "rocksdb")
+declare -a apparr=("rocksdb")
 #declare -a apparr=("libgrape")
 #declare -a apparr=("strided_madbench")
 #experiment names should be same as preloadlib names in SETPRELOAD
 #declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CFPMB" "CBPMB")
-declare -a experiment=("VANILLA" "CBNMB" "CFNMB" "CFPMB" "CBPMB")
+#declare -a experiment=("VANILLA" "CBNMB" "CFNMB" "CFPMB" "CBPMB")
+declare -a experiment=("VANILLA" "CBNMB" "CBNBB" "CBPMB" "CBPBB")
 #declare -a experiment=("CFPMB" "CBPMB")
 #C - Cross
 #F - FileRA, B - BlockRS
@@ -55,5 +56,6 @@ do
                 REFRESH
                 RUNAPP $APP $EXPERIMENT
                 REFRESH
+                exit
         done
 done	
