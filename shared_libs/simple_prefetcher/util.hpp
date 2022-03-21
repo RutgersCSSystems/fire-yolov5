@@ -65,6 +65,19 @@
 #define NR_ADJACENT_CHECK 1
 #endif
 
+
+/*
+ * When prefetching, check the number of pages left
+ * in the node. If it is less than NR_REMAINING
+ * stop prefetching for this file
+ */
+#ifndef NR_REMAINING
+#define NR_REMAINING ((700 * MB)/PAGESIZE)
+#endif
+
+
+
+
 /*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about

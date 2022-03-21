@@ -33,7 +33,6 @@
 
 #include "util.hpp"
 #include "frontend.hpp"
-//#include "predictor.hpp"
 #include "utils/robin_hood.h"
 
 #ifdef THPOOL_PREFETCH
@@ -96,7 +95,16 @@ void prefetcher_th(void *arg) {
                         printf("error while readahead_info: TID:%ld \n", tid);
                         goto exit;
                 }
-                printf("nr_free = %ld\n", ra.nr_free);
+
+                /*
+                 * if the memory is less NR_REMAINING
+                 * the prefetcher stops
+                 */
+                if(ra.nr_free < NR_REMAINING)
+                {
+                        printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+                        goto exit;
+                }
 #else
                 if(readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
                         printf("error while readahead: TID:%ld \n", tid);
