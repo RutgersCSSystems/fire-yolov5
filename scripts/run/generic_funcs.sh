@@ -66,6 +66,15 @@ SETPRELOAD()
         elif [[ "$1" == "CBPMB" ]]; then
                 printf "Cross_BlockRA_Pred_MaxMem_BG\n"
                 export LD_PRELOAD=/usr/lib/lib_CBPMB.so
+        elif [[ "$1" == "CBPBB" ]]; then
+                printf "Cross_BlockRA_Pred_Budget_BG\n"
+                export LD_PRELOAD=/usr/lib/lib_CBPBB.so
+        elif [[ "$1" == "CBNBB" ]]; then
+                printf "Cross_BlockRA_NoPred_Budget_BG\n"
+                export LD_PRELOAD=/usr/lib/lib_CBNBB.so
+        elif [[ "$1" == "MEMUSAGE" ]]; then
+                printf "Checks the MemUsage for this App\n"
+                export LD_PRELOAD=/usr/lib/lib_memusage.so
         fi
         ##export TARGET_GPPID=$PPID
 }

@@ -25,9 +25,18 @@ declare -a num_arr=("1000000") ## Num of elements in DB
 declare -a workload_arr=("readseq" "readrandom") ##kinds of db_bench workloads
 declare -a nproc=("1" "2" "4" "8" "16")
 
+# Memory Budget = total_anon_MB + (total_cache_MB * memory_budget_percent)
+# higher means more memory limit
+declare -a memory_budget_percent=("1" "0.7" "0.5" "0.2")
+
+
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 ORI_PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE"
 ORI_READARGS="--use_existing_db=1 --mmap_read=0"
+
+#updated by lib_memusage
+total_anon_MB=0
+total_cache_MB=0
 
 #Compiles the application
 COMPILE_APP() {
@@ -58,7 +67,15 @@ CLEAN_AND_WRITE()
         echo "Reading DB Twice to Stabalize results"
         $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
         FlushDisk
-        $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
+
+        SETPRELOAD "MEMUSAGE"
+        $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> out_memusage
+        UNSETPRELOAD
+
+        ##update the total anon and cache usage for this app
+        total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
+        total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
+
         FlushDisk
 }
 
@@ -116,25 +133,36 @@ do
                 for KEYSIZE in "${key_size_arr[@]}"
                 do
                         PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
-                        #CLEAN_AND_WRITE
+                        CLEAN_AND_WRITE
 
-                        for WORKLOAD in "${workload_arr[@]}"
+                        #echo "total_anon_mb = $total_anon_MB"
+                        #echo "total_cache_mb = $total_cache_MB"
+
+                        for mem_budget_percent in "${memory_budget_percent[@]}"
                         do
-                                echo "######################################################,"
-                                echo "Num=$NUM, Valuesz=$VALUESIZE, KeySize=$KEYSIZE, load=$WORKLOAD, Experiment=$experiment"
-                                OUTFOLDER=$out_base/$WORKLOAD
-                                CREATE_OUTFOLDER $OUTFOLDER
-                                OUTFILENAME="num-${NUM}_valuesz-${VALUESIZE}_keysz-${KEYSIZE}"
-                                OUTFILE=$OUTFOLDER/$OUTFILENAME
-                                TOUCH_OUTFILE $OUTFILE
+                                umount_ext4ramdisk
+                                SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$mem_budget_percent))/1" | bc --mathlib`
 
-                                for NPROC in "${nproc[@]}"
+                                for WORKLOAD in "${workload_arr[@]}"
                                 do
-                                        echo "NPROC=$NPROC"
-                                        READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$NPROC"
-                                        REFRESH
-                                        RUNAPP
+                                        echo "######################################################,"
+                                        echo "Num=$NUM, Valuesz=$VALUESIZE, KeySize=$KEYSIZE, load=$WORKLOAD, Experiment=$experiment, Mem_budget_%=$mem_budget_percent"
+                                        OUTFOLDER=$out_base/$WORKLOAD
+                                        CREATE_OUTFOLDER $OUTFOLDER
+                                        OUTFILENAME="num-${NUM}_valuesz-${VALUESIZE}_keysz-${KEYSIZE}_mem_per-${mem_budget_percent}"
+                                        OUTFILE=$OUTFOLDER/$OUTFILENAME
+                                        TOUCH_OUTFILE $OUTFILE
+
+                                        for NPROC in "${nproc[@]}"
+                                        do
+                                                echo "NPROC=$NPROC"
+                                                READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$NPROC"
+                                                REFRESH
+                                                RUNAPP
+                                        done
                                 done
+
+                                umount_ext4_ramdisk
                         done
                 done
         done
