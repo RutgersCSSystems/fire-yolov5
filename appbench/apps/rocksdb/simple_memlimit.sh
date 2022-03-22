@@ -15,7 +15,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=500000
+NUM=1000000
 DBDIR=$DBHOME/DATA
 
 WORKLOAD="readseq"
@@ -58,12 +58,12 @@ for NUM in "${num_arr[@]}"
 do
         PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 
-        #CLEAN_AND_WRITE
+        CLEAN_AND_WRITE
         FlushDisk
 
         printf "\nRUNNING Memlimit.................\n"
         #SETPRELOAD "VANILLA"
-        #export LD_PRELOAD=/usr/lib/lib_memusage.so
+        export LD_PRELOAD=/usr/lib/lib_memusage.so
         $DBHOME/db_bench $PARAMS $READARGS
         export LD_PRELOAD=""
         FlushDisk
@@ -71,8 +71,12 @@ do
         anon=62
         cache=2424
 
+        #total_anon_used=62 MB, total_cache=2833 MB
+
+        exit
+
         free -h
-        SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.5))/1" | bc --mathlib`
+        SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.4))/1" | bc --mathlib`
         free -h
 
         printf "\nRUNNING Vanilla.................\n"
