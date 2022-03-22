@@ -122,6 +122,7 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
  * constructors for threadlocal objects
  */
 
+#if 0
 class per_thread_ds{
     public:
         //Any variables here.
@@ -135,6 +136,7 @@ class per_thread_ds{
         per_thread_ds(); //constructor
         ~per_thread_ds(); //destructor
 };
+#endif
 
 
 /*

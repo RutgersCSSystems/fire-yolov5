@@ -44,7 +44,7 @@ threadpool workerpool = NULL;
 std::unordered_map<int, file_predictor*> fd_to_file_pred;
 
 //enables per thread constructor and destructor
-thread_local per_thread_ds tcd;
+//thread_local per_thread_ds tcd;
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
