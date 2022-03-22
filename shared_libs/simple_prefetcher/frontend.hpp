@@ -121,16 +121,19 @@ size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_si
  * Per-Thread constructors can be made using
  * constructors for threadlocal objects
  */
-class thread_cons_dest{
+
+class per_thread_ds{
     public:
         //Any variables here.
-        bool test_new; //set true at construction
+        bool isold; //set true at construction
         long mytid; //this threads TID
+
+        int current_fd; //records the current fd being used
 
         unsigned long nr_readaheads; //Counts the nr of readaheads done by apps
 
-        thread_cons_dest(); //constructor
-        ~thread_cons_dest(); //destructor
+        per_thread_ds(); //constructor
+        ~per_thread_ds(); //destructor
 };
 
 

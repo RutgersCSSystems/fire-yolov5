@@ -43,6 +43,9 @@ threadpool workerpool = NULL;
 //robin_hood::unordered_node_map<int, file_predictor*> fd_to_file_pred;
 std::unordered_map<int, file_predictor*> fd_to_file_pred;
 
+//enables per thread constructor and destructor
+thread_local per_thread_ds tcd;
+
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
@@ -106,7 +109,7 @@ void prefetcher_th(void *arg) {
                         goto exit;
                 }
 #else
-                if(readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
+                if(real_readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
                         printf("error while readahead: TID:%ld \n", tid);
                         goto exit;
                 }
@@ -132,14 +135,14 @@ void inline prefetch_file(int fd)
         struct thread_args *arg = NULL;
         off_t filesize;
 
-/*
- * When PREDICTOR is enabled, file sanity checks are not required
- * This is because the file has already been screened for 
- * 1. Filesize
- * 2. Type (regular file etc.)
- * 3. Sequentiality
- * This was done at record_open
- */
+        /*
+        * When PREDICTOR is enabled, file sanity checks are not required
+        * This is because the file has already been screened for 
+        * 1. Filesize
+        * 2. Type (regular file etc.)
+        * 3. Sequentiality
+        * This was done at record_open
+        */
 #ifdef PREDICTOR
         filesize = fp->filesize;
 #else
@@ -165,18 +168,18 @@ void inline prefetch_file(int fd)
         }
 
 #ifdef CONCURRENT_PREFETCH
-                pthread_t thread;
-                pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
+        pthread_t thread;
+        pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif THPOOL_PREFETCH
-                //Enlists the prefetching request using the thpool
-                if(!workerpool)
-                        printf("%s: No workerpool ? \n", __func__);
-                else
-                        thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+        //Enlists the prefetching request using the thpool
+        if(!workerpool)
+                printf("%s: No workerpool ? \n", __func__);
+        else
+                thpool_add_work(workerpool, prefetcher_th, (void*)arg);
 #endif
 
 exit:
-                return;
+        return;
 }
 
 
@@ -193,7 +196,7 @@ void inline record_open(int fd){
 
                 debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
                                 __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
-                
+
                 fd_to_file_pred[fd] = fp;
         }
         else{
@@ -295,50 +298,50 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
         if(fp){
                 fp->predictor_update(offset, size);
                 if((fp->is_sequential() >= LIKELYSEQ) && !fp->already_prefetched){
-                //if(!fp->already_prefetched){
+                        //if(!fp->already_prefetched){
                         prefetch_file(fd, fp);
                         fp->already_prefetched = true;
                 }
-        }
+                }
 #endif
 
 #ifdef SEQ_PREFETCH
-        struct read_ra_req ra_req;
-        ra_req.ra_pos = 0;
-        ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
+                struct read_ra_req ra_req;
+                ra_req.ra_pos = 0;
+                ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
 
-        ra_req.full_file_ra = false;
-        ra_req.cache_limit = -1; //disables cache limiting in kernel
+                ra_req.full_file_ra = false;
+                ra_req.cache_limit = -1; //disables cache limiting in kernel
 
-        amount_read = pread_ra(fd, data, size, offset, &ra_req);
+                amount_read = pread_ra(fd, data, size, offset, &ra_req);
 #else
-        amount_read = real_pread(fd, data, size, offset);
+                amount_read = real_pread(fd, data, size, offset);
 #endif
 
 exit:
-        return amount_read;
-}
+                return amount_read;
+        }
 
 
 /*
-size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+   size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-        //debug_printf("%s: TID:%ld\n", __func__, gettid());
-        size_t pfetch_size = 0;
-        size_t amount_read = 0;
+//debug_printf("%s: TID:%ld\n", __func__, gettid());
+size_t pfetch_size = 0;
+size_t amount_read = 0;
 
-        amount_read = real_fread(ptr, size, nmemb, stream);
-        return amount_read;
+amount_read = real_fread(ptr, size, nmemb, stream);
+return amount_read;
 
 
 #ifdef SEQ_PREFETCH
-        amount_read = fread_ra(ptr, size, nmemb, stream, NR_RA_PAGES*PAGESIZE);
+amount_read = fread_ra(ptr, size, nmemb, stream, NR_RA_PAGES*PAGESIZE);
 #else
-        amount_read = real_fread(ptr, size, nmemb, stream);
+amount_read = real_fread(ptr, size, nmemb, stream);
 #endif
 
 exit:
-        return amount_read;
+return amount_read;
 }
 */
 
@@ -346,23 +349,37 @@ exit:
 void handle_file_close(int fd){
 #ifdef PREDICTOR
         file_predictor *fp = fd_to_file_pred[fd];
-	if(fp){
-		delete(fp);
-	}
+        if(fp){
+                delete(fp);
+        }
 #endif
 exit:
-	return;
+        return;
 }
 
 
 int fclose(FILE *stream){
-    int fd = fileno(stream);
-    handle_file_close(fd);
-    return real_fclose(stream);
+        int fd = fileno(stream);
+        handle_file_close(fd);
+        return real_fclose(stream);
 }
 
 
 int close(int fd){
-    handle_file_close(fd);
-    return real_close(fd);
+        handle_file_close(fd);
+        return real_close(fd);
+}
+
+
+ssize_t readahead(int fd, off_t offset, size_t count){
+        ssize_t ret = 0;
+
+#ifdef DISABLE_APP_READAHEADS
+        goto exit;
+#endif
+
+        ret = real_readahead(fd, offset, count);
+
+exit:
+        return ret;
 }
