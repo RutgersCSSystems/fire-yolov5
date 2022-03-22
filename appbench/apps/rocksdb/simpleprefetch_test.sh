@@ -16,7 +16,7 @@ READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$TH
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
 
-declare -a num_arr=("1000000")
+declare -a num_arr=("500000")
 
 FlushDisk()
 {
@@ -98,6 +98,8 @@ do
     $DBHOME/db_bench $PARAMS $READARGS
     export LD_PRELOAD=""
     FlushDisk
+
+    exit
 
     printf "\nRUNNING OSONLY...............\n"
     SETPRELOAD "OSONLY"
