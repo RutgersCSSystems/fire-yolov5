@@ -119,9 +119,10 @@ struct thread_args{
         long prefetch_size; //size of each prefetch req
 
         /*
-         * In an event that memory is scarce
+         * Share current and last fd with the prefetcher thread
          */
-        int last_fd;
+        int current_fd;
+        int last_fd; 
 };
 
 #endif
