@@ -26,7 +26,7 @@ WRITE_BUFF_SIZE=67108864
 declare -a value_size_arr=("4096")
 declare -a key_size_arr=("1000")
 declare -a num_arr=("1000000") ## Num of elements in DB
-declare -a workload_arr=("readseq" "readrand") ##kinds of db_bench workloads
+declare -a workload_arr=("readseq" "readrandom") ##kinds of db_bench workloads
 declare -a nproc=("16")
 
 declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1" "2")
