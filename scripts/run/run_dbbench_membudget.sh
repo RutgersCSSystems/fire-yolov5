@@ -29,7 +29,7 @@ declare -a num_arr=("1000000") ## Num of elements in DB
 declare -a workload_arr=("readseq" "readrand") ##kinds of db_bench workloads
 declare -a nproc=("16")
 
-declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1")
+declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1" "2")
 
 # Memory Budget = total_anon_MB + (total_cache_MB * memory_budget_percent)
 # higher means more memory limit
@@ -75,12 +75,16 @@ CLEAN_AND_WRITE()
 	SETPRELOAD "MEMUSAGE"
 	$base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> out_memusage
 	UNSETPRELOAD
+	FlushDisk
+
+        cat out_memusage
 
 	##update the total anon and cache usage for this app
 	total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
 	total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
 
-	FlushDisk
+	printf "in ${FUNCNAME[0]}: $total_anon_MB, $total_cache_MB\n"
+
 }
 
 
@@ -146,27 +150,27 @@ do
 			PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
 			CLEAN_AND_WRITE
 
-			#echo "total_anon_mb = $total_anon_MB"
-			#echo "total_cache_mb = $total_cache_MB"
+			echo "total_anon_mb = $total_anon_MB"
+			echo "total_cache_mb = $total_cache_MB"
 
 			for WORKLOAD in "${workload_arr[@]}"
 			do
 				echo "######################################################,"
 				OUTFOLDER=$out_base/$WORKLOAD
 				CREATE_OUTFOLDER $OUTFOLDER
-				TOUCH_OUTFILE $OUTFILE
 
 				for NPROC in "${nproc[@]}"
 				do
 					echo "Num=$NUM, Valuesz=$VALUESIZE, KeySize=$KEYSIZE, load=$WORKLOAD, Experiment=$experiment, NPROC=$NPROC"
 					OUTFILENAME="num-${NUM}_valuesz-${VALUESIZE}_keysz-${KEYSIZE}_nproc-${NPROC}"
 					OUTFILE=$OUTFOLDER/$OUTFILENAME
+				        TOUCH_OUTFILE $OUTFILE
 					READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$NPROC"
 
 					for MEM_BUDGET_PER in "${memory_budget_percent[@]}"
 					do
 						umount_ext4ramdisk
-						SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$mem_budget_percent))/1" | bc --mathlib`
+						SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))/1" | bc --mathlib`
 						REFRESH
 						RUNAPP
 					done
