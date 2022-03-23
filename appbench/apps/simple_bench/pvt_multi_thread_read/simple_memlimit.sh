@@ -12,8 +12,12 @@ source $RUN_SCRIPTS/generic_funcs.sh
 umount_ext4ramdisk
 
 #WORKLOAD="read_seq"
-WORKLOAD="read_pvt_seq"
+WORKLOAD="read_pvt_strided"
 WRITE_LOAD="write_pvt"
+
+#WORKLOAD="read_pvt_strided"
+#WRITE_LOAD="write_pvt"
+
 
 experiment=$1 #which preload library to call
 
@@ -48,9 +52,10 @@ CLEAN_AND_WRITE() {
 }
 
 
+umount_ext4ramdisk
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD $NR_STRIDE
-CLEAN_AND_WRITE
+#CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
@@ -67,7 +72,7 @@ cache=40960
 
 free -h
 
-SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.2))/1" | bc --mathlib`
+SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.5))/1" | bc --mathlib`
 
 free -h
 
@@ -89,8 +94,11 @@ $COMMAND
 export LD_PRELOAD=""
 FlushDisk
 
-umount_ext4ramdisk
-exit
+printf "\nRUNNING CROSS_BLOCKRA_PRED_BUDGET_BG................\n"
+SETPRELOAD "CBPBB"
+$COMMAND
+export LD_PRELOAD=""
+FlushDisk
 
 printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
 SETPRELOAD "CBPMB"
@@ -98,9 +106,11 @@ $COMMAND
 export LD_PRELOAD=""
 FlushDisk
 
-
 printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
 SETPRELOAD "CFPMB"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
+
+umount_ext4ramdisk
+exit
