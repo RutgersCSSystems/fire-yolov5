@@ -86,7 +86,6 @@ UNSETPRELOAD(){
 #clears cache and unloads
 REFRESH() {
         UNSETPRELOAD
-        umount_ext4ramdisk
         FlushDisk
 }
 
@@ -109,6 +108,16 @@ min_number() {
 max_number() {
         printf "%s\n" "$@" | sort -gr | head -n1
 }
+
+is_number() {
+        re='^[0-9]+([.][0-9]+)?$'
+
+        if ! [[ $1 =~ $re ]] ; then
+                return 0 ##Not a number
+        fi
+        return 1 ##is a number
+}
+
 
 
 umount_ext4ramdisk() {
