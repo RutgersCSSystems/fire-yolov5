@@ -44,7 +44,7 @@ threadpool workerpool = NULL;
 std::unordered_map<int, file_predictor*> fd_to_file_pred;
 
 //enables per thread constructor and destructor
-//thread_local per_thread_ds tcd;
+thread_local per_thread_ds ptd;
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
@@ -105,8 +105,19 @@ void prefetcher_th(void *arg) {
                  */
                 if(ra.nr_free < NR_REMAINING)
                 {
-                        printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+                        debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+#ifdef ENABLE_EVICTION
+                        /*
+                         * when crunched with memory, remove cache pages for
+                         * last fd. Since the thread has moved on from it.
+                         */
+                        if(a->current_fd != a->last_fd){
+                                debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
+                                posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
+                        }
+#else
                         goto exit;
+#endif
                 }
 #else
                 if(real_readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
@@ -117,6 +128,7 @@ void prefetcher_th(void *arg) {
                 curr_pos += a->prefetch_size;
         }
 #endif
+
 exit:
         free(arg);
 }
@@ -154,6 +166,15 @@ void inline prefetch_file(int fd)
                 arg->fd = fd;
                 arg->offset = 0;
                 arg->file_size = filesize;
+
+#ifdef ENABLE_EVICTION
+                arg->current_fd = ptd.current_fd;
+                arg->last_fd = ptd.last_fd;
+#else
+                arg->current_fd = 0;
+                arg->last_fd = 0;
+#endif
+
 #ifdef FULL_PREFETCH
                 //Allows the whole file to be prefetched at once
                 arg->prefetch_size = filesize;
@@ -293,6 +314,31 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
         ssize_t amount_read;
 
+#ifdef ENABLE_EVICTION
+        /*
+         * The first time ptd is accessed by a thread(clone)
+         * it calls its constructor. 
+         */
+        if(ptd.last_fd == 0){
+                ptd.last_fd = fd;
+                ptd.current_fd = fd;
+        }
+        else{
+                /*
+                 * Update the current and last fd
+                 * for this thread each time it reads
+                 *
+                 * Heuristic: If the thread moves on to
+                 * another fd, it is likely done with last_fd
+                 * ie. in an event of memory pressure, cleanup that
+                 * file from memory
+                 */
+                ptd.last_fd = ptd.current_fd;
+                ptd.current_fd = fd;
+        }
+#endif
+
+
 #ifdef PREDICTOR
         file_predictor *fp = fd_to_file_pred[fd];
         if(fp){
@@ -302,25 +348,25 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
                         prefetch_file(fd, fp);
                         fp->already_prefetched = true;
                 }
-                }
+        }
 #endif
 
 #ifdef SEQ_PREFETCH
-                struct read_ra_req ra_req;
-                ra_req.ra_pos = 0;
-                ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
+        struct read_ra_req ra_req;
+        ra_req.ra_pos = 0;
+        ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
 
-                ra_req.full_file_ra = false;
-                ra_req.cache_limit = -1; //disables cache limiting in kernel
+        ra_req.full_file_ra = false;
+        ra_req.cache_limit = -1; //disables cache limiting in kernel
 
-                amount_read = pread_ra(fd, data, size, offset, &ra_req);
+        amount_read = pread_ra(fd, data, size, offset, &ra_req);
 #else
-                amount_read = real_pread(fd, data, size, offset);
+        amount_read = real_pread(fd, data, size, offset);
 #endif
 
 exit:
-                return amount_read;
-        }
+        return amount_read;
+}
 
 
 /*
