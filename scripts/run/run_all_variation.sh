@@ -11,10 +11,12 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("rocksdb_membudget")
+#declare -a apparr=("rocksdb_membudget")
+declare -a apparr=("simple_bench_pvt_membudget")
 
 #experiment names should be same as preloadlib names in SETPRELOAD
-declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
+#declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
+declare -a experiment=("OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
 #C - Cross
 #F - FileRA, B - BlockRS
 #N - NoPred, P - Pred
@@ -27,7 +29,7 @@ RUNAPP()
         APP=$1
         EXPERIMENT=$2
         #OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_${RIGHTNOW}/${EXPERIMENT}
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_correct/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_diff_membudget/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then
@@ -40,6 +42,8 @@ RUNAPP()
                 $RUN_SCRIPTS/run_dbbench_membudget.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "simple_bench_pvt" ]; then
                 $RUN_SCRIPTS/run_simple_bench_pvt.sh $EXPERIMENT $OUTPUT
+        elif [ "$APP" = "simple_bench_pvt_membudget" ]; then
+                $RUN_SCRIPTS/run_simple_bench_pvt_membudget.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "simple_bench_shared" ]; then
                 $RUN_SCRIPTS/run_simple_bench_shared.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "libgrape" ]; then
