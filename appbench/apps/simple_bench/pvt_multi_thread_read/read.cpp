@@ -86,6 +86,11 @@ void reader_th(void *arg){
         gettimeofday(&start, NULL);
         bytes_read = 0UL;
         while(bytes_read < a->size){
+
+#ifdef DEBUG
+                printf("%s: fd=%d bytes_read=%ld, size=%ld\n", __func__, a->fd, bytes_read, buff_sz);
+#endif
+
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, bytes_read);
                 if(readnow < 0){
@@ -94,6 +99,9 @@ void reader_th(void *arg){
                         goto exit;
                 }
                 bytes_read += readnow;
+#ifdef STRIDED_READ
+                bytes_read += NR_STRIDE * PG_SZ;
+#endif
         }
         gettimeofday(&end, NULL);
 
@@ -197,9 +205,19 @@ int main(int argc, char **argv)
         thpool_wait(thpool);
 
         //Print the Throughput
-        long size_mb = FILESIZE/(1024L*1024L);
+        
+        long size_mb;
         float max_time = 0.f; //in sec
         float time;
+
+#ifdef STRIDED_READ
+        long nr_file_pg = FILESIZE/PG_SZ;
+        long nr_read_stride_blocks = nr_file_pg/(NR_PAGES_READ+NR_STRIDE);
+        size_mb = (nr_read_stride_blocks * NR_PAGES_READ * PG_SZ)/(1024L*1024L);
+#else
+        size_mb = FILESIZE/(1024L*1024L);
+#endif
+        printf("Total File size = %ld MB\n", size_mb);
         for(int i=0; i<NR_THREADS; i++){
                 time = req[i].read_time/1000000.f;
                 if(max_time < time)

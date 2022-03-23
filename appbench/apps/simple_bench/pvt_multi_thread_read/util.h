@@ -7,6 +7,16 @@
 #define NR_THREADS 1
 #endif
 
+/*
+ * NR of pages to skip after each read
+ */
+#ifndef NR_STRIDE
+#define NR_STRIDE 50
+#endif
+
+/*
+ * Size of file in GB
+ */
 #ifdef FILESZ
 #define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
 #else
