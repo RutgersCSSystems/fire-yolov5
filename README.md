@@ -13,7 +13,7 @@ A small description
 ├── references.txt      # list of references for paper
 ├── results             # folder with all results 
 ├── scripts             # all scripts for setup and microbench running
-└── shared_libs/pred    # shared lib predictor src
+└── shared_libs/simple_prefetcher    # shared lib predictor src
 ```
 
 
@@ -45,40 +45,15 @@ nvme0n1     259:1    0  1.5T  0 disk
 ├─nvme0n1p2 259:3    0    3G  0 part 
 ├─nvme0n1p3 259:4    0    3G  0 part [SWAP]
 └─nvme0n1p4 259:5    0  1.4T  0 part 
-nvme1n1     259:7    0  1.5T  0 disk 
-```
-
-To partition the device use the following commands
-
-```
-sudo fdisk /dev/nvme1n1
-```
-
-You will see the following output. Choose the following options to complete partition setup
-```
-Command (m for help): n
-Partition type
-   p   primary (0 primary, 0 extended, 4 free)
-   e   extended (container for logical partitions)
-Select (default p):
-....
-Last sector, +sectors or +size{K,M,G,T,P} (2048-937703087, default 937703087):
-....
-Created a new partition 1 of type 'Linux' and of size 1.5 TiB.
-
-Command (m for help): w
-The partition table has been altered.
-Calling ioctl() to re-read partition table.
-Syncing disks.
-.....
+nvme1n1     259:7    0  1.5T  0 disk  ##This partition fails the node sometimes
 ```
 
 Now you would have to setup a filesystem and mount it 
 
 ```
-sudo mkfs.ext4 /dev/nvme1n1p1
+sudo mkfs.ext4 /dev/nvme0n1p4
 
-mkdir ~/ssd; sudo mount /dev/nvme1n1p1 ~/ssd
+mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
 
 cd ~/ssd; sudo chown $USER .
 ```
@@ -109,16 +84,17 @@ Before running the following commands, make sure you dont have other deb files i
 
 ```
 cd prefetching/linux-5.14.0
-./compile_deb.sh ## This will produce and install deb for this linux kernel
+./compile_modified_deb.sh ## This will produce and install the modified kernel
+#./compile_vanilla_deb.sh ## This will produce and install the vanilla kernel
 sudo reboot ## this will reboot the node with the new linux 
 ```
 
 #### To compile for qemu
 
 ```
+source ./scripts/setvars.sh
 cd prefetching/linux-5.14.0
-sudo cp oldnix.config .config
-sudo make prepare
+./compile_qemu.sh
 cd prefetching
 ./scripts/compile-install/compile_kern_kvm.sh
 ```
@@ -148,8 +124,15 @@ To run qemu, first compile the kernel for qemu; then
 All the experiments are in the following folder.
 this script needs to be updated to run different applications
 
+Check the scripts before running all_variation.
+
 ```
-cd ./scripts/run/run_all_variation.sh
+pushd ./shared_libs/simple_prefetcher/
+./compile.sh
+popd
+
+source ./scripts/setvars.sh
+./scripts/run/run_all_variation.sh
 ```
 
 ## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage

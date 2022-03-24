@@ -23,6 +23,8 @@
 #include <linux/blk-cgroup.h>
 #include <linux/fadvise.h>
 #include <linux/sched/mm.h>
+#include <linux/crosslayer.h>
+#include <linux/vmstat.h>
 
 #include "internal.h"
 
@@ -692,7 +694,39 @@ out:
 
 SYSCALL_DEFINE3(readahead, int, fd, loff_t, offset, size_t, count)
 {
+        //printk("%s: pid=%d, fd=%d\n", __func__, current->pid, fd);
 	return ksys_readahead(fd, offset, count);
+}
+
+
+//syscall 451
+SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
+                struct read_ra_req __user *, ra_user)
+{
+        long ret = -1;
+        struct read_ra_req ra;
+        /* NOT REQUIRED NOW 
+        if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
+	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
+	        goto normal_readahead;
+        }
+        */
+
+normal_readahead:
+	ret = ksys_readahead(fd, offset, count);
+
+        /*
+         * Get the number of free pages in the system right now
+         */
+        ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
+
+    if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
+            printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
+    }
+
+exit:
+        return ret;
+
 }
 
 /**

@@ -597,6 +597,7 @@ IOStatus PosixRandomAccessFile::Read(uint64_t offset, size_t n,
     } else {
 	    //fprintf(stderr,"Asking to prefetch %zu bytes \n", opts.ra_bytes);
 	    r = syscall(449, fd_, ptr, left, static_cast<off_t>(offset), 0, 655360);
+         //TODO: OUTDATED call to pread_ra, need to update using struct 
     }
 #else
     r = pread(fd_, ptr, left, static_cast<off_t>(offset));

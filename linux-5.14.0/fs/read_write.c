@@ -868,16 +868,12 @@ SYSCALL_DEFINE5(pread_ra, unsigned int, fd, char __user *, buf,
 	        printk("%s: unable to copy from user, doing vanilla pread\n", __func__);
 	        goto normal_pread;
         }
+
 #ifdef CONFIG_PREAD_RA_SIMPLE
 	ret = ksys_pread64(fd, buf, count, pos);
         ksys_readahead(fd, pos+ra.ra_pos, ra.ra_count);
         return ret;
 #else
-
-    if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
-	printk("%s: unable to copy from user, doing vanilla pread\n", __func__);
-	goto normal_pread;
-    }
 
     if(unlikely(ra.ra_count <= 0)){
 	goto normal_pread;
