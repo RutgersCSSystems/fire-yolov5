@@ -17,6 +17,7 @@ declare -a apparr=("simple_bench_pvt_membudget")
 #experiment names should be same as preloadlib names in SETPRELOAD
 #declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
 declare -a experiment=("OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
+#declare -a experiment=("CBPBB")
 #C - Cross
 #F - FileRA, B - BlockRS
 #N - NoPred, P - Pred

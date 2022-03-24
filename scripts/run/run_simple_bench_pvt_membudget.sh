@@ -18,7 +18,7 @@ base=$APPS/simple_bench/pvt_multi_thread_read
 declare -a nproc=("16")
 declare -a filesize=("40") ##GB
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_pvt_seq" "read_pvt_rand") ##read binaries
+declare -a workload_arr=("read_pvt_strided") ##read binaries
 
 declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1" "2")
 
@@ -158,4 +158,3 @@ do
                 done
         done
 done
-
