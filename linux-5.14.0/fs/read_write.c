@@ -411,7 +411,7 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
 
 	init_sync_kiocb(&kiocb, filp);
 	kiocb.ki_pos = (ppos ? *ppos : 0);
-     kiocb.ki_do_ra = false;
+     	kiocb.ki_do_ra = false;
 	iov_iter_init(&iter, READ, &iov, 1, len);
 
 #if 0
@@ -436,6 +436,7 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
 }
 
 
+
 static ssize_t new_sync_read_ra(struct file *filp, char __user *buf, size_t len, loff_t *ppos,
         struct read_ra_req *ra)
 {
@@ -446,15 +447,16 @@ static ssize_t new_sync_read_ra(struct file *filp, char __user *buf, size_t len,
 
 	init_sync_kiocb(&kiocb, filp);
 	kiocb.ki_pos = (ppos ? *ppos : 0);
-     kiocb.ki_ra_pos = (ra->ra_pos ? ra->ra_pos : 0);
-     kiocb.ki_ra_count = (ra->ra_count ? ra->ra_count : 0);
-     kiocb.ki_do_ra = true;
-     kiocb.ra_req = ra;
 
-     /*
-     printk("%s: ra_pos=%ld, ra_count=%ld\n", 
+     	kiocb.ki_ra_pos = (ra->ra_pos ? ra->ra_pos : 0);
+     	kiocb.ki_ra_count = (ra->ra_count ? ra->ra_count : 0);
+     	kiocb.ki_do_ra = true;
+     	kiocb.ra_req = ra;
+
+     	/*
+     	printk("%s: ra_pos=%ld, ra_count=%ld\n", 
              __func__, kiocb.ki_ra_pos, kiocb.ki_ra_count);
-     */
+     	*/
 
 	iov_iter_init(&iter, READ, &iov, 1, len);
 
@@ -555,8 +557,8 @@ ssize_t vfs_read_ra(struct file *file, char __user *buf, size_t count, loff_t *p
         struct read_ra_req *ra)
 {
 	ssize_t ret;
-     ssize_t ret_ra;
-     bool do_ra = true;
+     	ssize_t ret_ra;
+     	bool do_ra = true;
 
 	if (!(file->f_mode & FMODE_READ))
 		return -EBADF;
@@ -565,16 +567,16 @@ ssize_t vfs_read_ra(struct file *file, char __user *buf, size_t count, loff_t *p
 	if (unlikely(!access_ok(buf, count)))
 		return -EFAULT;
 
-     if(*pos+count == ra->ra_pos || ra->ra_pos == 0){
-	   ret = rw_verify_area(READ, file, pos, count+ra->ra_count);
-        goto chk_ret;
-     }
-     else{
-	   ret = rw_verify_area(READ, file, pos, count);
-	   ret_ra = rw_verify_area(READ, file, &ra->ra_pos, ra->ra_count);
-     if (ret_ra)
-         do_ra = false;
-     }
+	if(*pos+count == ra->ra_pos || ra->ra_pos == 0){
+	   	ret = rw_verify_area(READ, file, pos, count+ra->ra_count);
+		goto chk_ret;
+	}
+	else{
+	   	ret = rw_verify_area(READ, file, pos, count);
+	   	ret_ra = rw_verify_area(READ, file, &ra->ra_pos, ra->ra_count);
+		if (ret_ra)
+		 do_ra = false;
+	}
 
 chk_ret:
 	if (ret)
@@ -585,15 +587,18 @@ chk_ret:
 
 	if (file->f_op->read)
 		ret = file->f_op->read(file, buf, count, pos);
+
 	else if (file->f_op->read_iter)
-     {
-          if(likely(do_ra))
-             ret = new_sync_read_ra(file, buf, count, pos, ra);
-          else
-		   ret = new_sync_read(file, buf, count, pos);
-     }
-	else
+     	{	
+         	if(likely(do_ra))
+             		ret = new_sync_read_ra(file, buf, count, pos, ra);
+		else
+		   	ret = new_sync_read(file, buf, count, pos);
+     	}
+	else {
 		ret = -EINVAL;
+	}
+
 	if (ret > 0) {
 		fsnotify_access(file);
 		add_rchar(current, ret);
@@ -601,6 +606,7 @@ chk_ret:
 	inc_syscr(current);
 	return ret;
 }
+
 
 static ssize_t new_sync_write(struct file *filp, const char __user *buf, size_t len, loff_t *ppos)
 {

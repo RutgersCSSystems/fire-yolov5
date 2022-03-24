@@ -64,6 +64,11 @@ do
 		#./bin/read_onlyospfetch
 		#FlushDisk
 
+		echo "@@@@@@@@@Read OS Prefetch"
+		./bin/read_onlyospfetch
+		FlushDisk
+		continue
+
 		echo "@@@@@@@@@Read small prefetch READAHEAD OS"
 		./bin/read_os_smallpfetch
 		FlushDisk
@@ -87,9 +92,6 @@ do
 		./bin/read_nopfetch
 		FlushDisk
 
-		echo "@@@@@@@@@Read OS Prefetch"
-		./bin/read_onlyospfetch
-		FlushDisk
 
 		echo "@@@@@@@@@Read small prefetch READAHEAD noOS"
 		./bin/read_noos_smallpfetch

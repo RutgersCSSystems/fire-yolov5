@@ -913,10 +913,10 @@ config CROSSLAYER_UNBOUNDED_READAHEAD
 config UNLIMITED_MAX_SECTORS
     bool "unlimited max_hw_sectors_kb for loop"
 
-config CACHE_LIMITING
-    bool "Accounts total cache being used for a subset of tasks"
+#config CACHE_LIMITING
+#    bool "Accounts total cache being used for a subset of tasks"
 
-config PREAD_RA_SIMPLE
-        bool "Make pread_ra to be pread and readahead calls"
+#config PREAD_RA_SIMPLE
+#       bool "Make pread_ra to be pread and readahead calls"
 
 endmenu
