@@ -9,22 +9,20 @@ fi
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
-umount_ext4ramdisk
+#declare -a membudget=("0.2" "0.5" "0.7" "1" "2")
+declare -a membudget=("0.2")
 
 #WORKLOAD="read_seq"
+#WORKLOAD="read_shared_strided"
+#WRITE_LOAD="write_shared"
+
 WORKLOAD="read_pvt_strided"
 WRITE_LOAD="write_pvt"
-
-#WORKLOAD="read_pvt_strided"
-#WRITE_LOAD="write_pvt"
-
-
-experiment=$1 #which preload library to call
 
 FILESIZE=40 ##in GB
 READ_SIZE=20 ## In pages
 THREAD=16
-NR_STRIDE=64
+NR_STRIDE=32
 
 #declare -a filesize=("40")
 
@@ -36,6 +34,7 @@ CLEAR_FILES() {
 #Compiles the application
 COMPILE_APP() {
         CREATE_OUTFOLDER ./bin
+        echo $NR_STRIDE
         make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3 NR_STRIDE=$4
 }
 
@@ -55,7 +54,7 @@ CLEAN_AND_WRITE() {
 umount_ext4ramdisk
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD $NR_STRIDE
-#CLEAN_AND_WRITE
+CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
@@ -72,45 +71,57 @@ cache=40960
 
 free -h
 
-SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * 0.5))/1" | bc --mathlib`
+for MEM_BUD in "${membudget[@]}"
+do
+        SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * $MEM_BUD))/1" | bc --mathlib`
 
-free -h
+        free -h
 
-printf "\nRUNNING VANILLA.................\n"
-SETPRELOAD "VANILLA"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING VANILLA.................\n"
+        SETPRELOAD "VANILLA"
+        #SETPRELOAD "CBNMB"
+        $COMMAND
+        export LD_PRELOAD=""
+        FlushDisk
 
-printf "\nRUNNING CROSS_BLOCKRA_NOPRED_MAXMEM_BG................\n"
-SETPRELOAD "CBNMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING CROSS_BLOCKRA_NOPRED_MAXMEM_BG................\n"
+        SETPRELOAD "CBNMB"
+        #SETPRELOAD "VANILLA"
+        $COMMAND
+        export LD_PRELOAD=""
+        FlushDisk
 
-printf "\nRUNNING CROSS_BLOCKRA_NOPRED_BUDGET_BG................\n"
-SETPRELOAD "CBNBB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING CROSS_BLOCKRA_NOPRED_BUDGET_BG................\n"
+        SETPRELOAD "CBNBB"
+        $COMMAND &> tmp
+        export LD_PRELOAD=""
+        FlushDisk
+        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
+        echo $this_bw
 
-printf "\nRUNNING CROSS_BLOCKRA_PRED_BUDGET_BG................\n"
-SETPRELOAD "CBPBB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING CROSS_BLOCKRA_PRED_BUDGET_BG................\n"
+        SETPRELOAD "CBPBB"
+        $COMMAND &> tmp
+        export LD_PRELOAD=""
+        FlushDisk
+        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
+        echo $this_bw
 
-printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
-SETPRELOAD "CBPMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
+        SETPRELOAD "CBPMB"
+        $COMMAND &> tmp
+        export LD_PRELOAD=""
+        FlushDisk
+        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
+        echo $this_bw
 
-printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
-SETPRELOAD "CFPMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
+        printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
+        SETPRELOAD "CFPMB"
+        $COMMAND &> tmp
+        export LD_PRELOAD=""
+        FlushDisk
+        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
+        echo $this_bw
 
-umount_ext4ramdisk
-exit
+        umount_ext4ramdisk
+done
