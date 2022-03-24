@@ -22,6 +22,8 @@ declare -a workload_arr=("read_pvt_strided") ##read binaries
 
 declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1" "2")
 
+NR_STRIDE=64
+
 #updated by lib_memusage
 total_anon_MB=0
 total_cache_MB=0
@@ -30,7 +32,7 @@ total_cache_MB=0
 COMPILE_APP() {
         pushd $base
         CREATE_OUTFOLDER $base/bin
-        make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3
+        make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3 NR_STRIDE=$NR_STRIDE
         popd
 }
 
@@ -59,13 +61,31 @@ CLEAN_AND_WRITE() {
         $base/bin/read_pvt_seq &> ~/out_memusage
 	UNSETPRELOAD
         popd
+        FlushDisk
 
 	##update the total anon and cache usage for this app
 	total_anon_MB=`cat ~/out_memusage | grep "total_anon_used" | awk '{print $2}'`
 	total_cache_MB=`cat ~/out_memusage | grep "total_anon_used" | awk '{print $5}'`
 
-        FlushDisk
+
 	printf "in ${FUNCNAME[0]}: $total_anon_MB, $total_cache_MB\n"
+}
+
+STABALIZE() {
+
+        #Stabalizing Results
+        pushd $base
+	SETPRELOAD "VANILLA"
+        $base/bin/read_pvt_seq
+	UNSETPRELOAD
+        FlushDisk
+
+	SETPRELOAD "VANILLA"
+        $base/bin/read_pvt_seq
+	UNSETPRELOAD
+        FlushDisk
+        popd
+
 }
 
 #Checks if the OUTFILE exists, 
@@ -150,6 +170,8 @@ do
 				do
 					umount_ext4ramdisk
 					SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))/1" | bc --mathlib`
+                                        STABALIZE
+
 					REFRESH
 					RUNAPP
 
