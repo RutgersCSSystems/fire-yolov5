@@ -18,7 +18,8 @@ sudo make prepare
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 #sudo make prepare ##Uses the modified .config file to compile kernel
 
-sudo make $PARA &> $KERN_SRC/compile.out
+#sudo make $PARA &> $KERN_SRC/compile.out
+sudo make $PARA | tee $KERN_SRC/compile.out
 
 grep -r "error:|undefined|warning|Permission" $KERN_SRC/compile.out &> $KERN_SRC/errors.out
 
