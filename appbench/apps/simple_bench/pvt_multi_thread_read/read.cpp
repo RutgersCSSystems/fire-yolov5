@@ -102,6 +102,7 @@ void reader_th(void *arg){
 #ifdef STRIDED_READ
                 bytes_read += NR_STRIDE * PG_SZ;
 #endif
+                usleep(1);
         }
         gettimeofday(&end, NULL);
 
