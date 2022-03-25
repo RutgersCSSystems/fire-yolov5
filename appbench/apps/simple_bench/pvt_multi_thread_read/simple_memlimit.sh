@@ -10,7 +10,7 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a membudget=("0.2" "0.5" "0.7" "1" "2")
-declare -a membudget=("0.2")
+#declare -a membudget=("0.2" "0.5" "0.7")
 
 #WORKLOAD="read_seq"
 #WORKLOAD="read_shared_strided"
@@ -23,6 +23,7 @@ FILESIZE=40 ##in GB
 READ_SIZE=40 ## In pages
 THREAD=16
 NR_STRIDE=64
+MEM_BUD=0.5
 
 #declare -a filesize=("40")
 
@@ -54,7 +55,7 @@ CLEAN_AND_WRITE() {
 umount_ext4ramdisk
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD $NR_STRIDE
-#CLEAN_AND_WRITE
+CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
@@ -70,10 +71,10 @@ anon=100
 cache=40960
 
 free -h
+SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * $MEM_BUD))/1" | bc --mathlib`
 
-for MEM_BUD in "${membudget[@]}"
-do
-        SETUPEXTRAM_1 `echo "scale=0; ($anon + ($cache * $MEM_BUD))/1" | bc --mathlib`
+#for MEM_BUD in "${membudget[@]}"
+#do
 
         free -h
 
@@ -96,32 +97,24 @@ do
         $COMMAND
         export LD_PRELOAD=""
         FlushDisk
-        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
-        echo $this_bw
 
         printf "\nRUNNING CROSS_BLOCKRA_PRED_BUDGET_BG................\n"
         SETPRELOAD "CBPBB"
         $COMMAND
         export LD_PRELOAD=""
         FlushDisk
-        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
-        echo $this_bw
 
         printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
         SETPRELOAD "CBPMB"
         $COMMAND
         export LD_PRELOAD=""
         FlushDisk
-        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
-        echo $this_bw
 
         printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
         SETPRELOAD "CFPMB"
         $COMMAND
         export LD_PRELOAD=""
         FlushDisk
-        this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
-        echo $this_bw
 
         umount_ext4ramdisk
-done
+#done
