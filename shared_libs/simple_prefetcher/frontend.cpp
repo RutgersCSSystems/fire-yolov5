@@ -184,7 +184,7 @@ void inline prefetch_file(int fd)
 #endif
         }
         else{
-                debug_printf("%s: fd=%d is smaller than %ld bytes\n", __func__, fd, MIN_FILE_SZ);
+                debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
                 goto exit;
         }
 
@@ -221,7 +221,7 @@ void inline record_open(int fd){
                 fd_to_file_pred[fd] = fp;
         }
         else{
-                debug_printf("%s: fd=%d is smaller than %ld bytes\n", __func__, fd, MIN_FILE_SZ);
+                debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
                 goto exit;
         }
 
