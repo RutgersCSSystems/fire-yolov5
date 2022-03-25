@@ -4,5 +4,5 @@
 
 PREFETCH_SIZE=120 ##in nr of pages
 
-make NR_RA_PG=$PREFETCH_SIZE -j
+make NR_RA_PAGES=$PREFETCH_SIZE -j
 make install
