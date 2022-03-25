@@ -175,8 +175,6 @@ int main(int argc, char **argv)
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
-        else
-                printf("Created %d bg threads\n", NR_THREADS);
 
 
         //Preallocating all the thread_args to remove overheads

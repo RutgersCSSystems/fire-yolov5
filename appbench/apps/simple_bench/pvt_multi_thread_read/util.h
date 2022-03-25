@@ -44,7 +44,6 @@ void file_name(const char *str1, int rank, char *buffer){
         } else {
                 strcat(strcpy(buffer, str1), num);
                 strcat(buffer, ".txt");
-                printf("%s\n", buffer);
                 free(num);
         }
 }
