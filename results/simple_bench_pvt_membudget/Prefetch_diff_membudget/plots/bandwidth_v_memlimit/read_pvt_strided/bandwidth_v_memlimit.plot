@@ -12,15 +12,17 @@ set style data histograms
 set xtics border in scale 0,0 nomirror autojustify
 set xtics  norangelimit 
 
+set grid ytics
+
 set key font "Helvetica, 14"
 set key fixed left top vertical Right noreverse noenhanced autotitle nobox
 
-set title "SimpleBench-pvt_strided MemBudget Prefetching Characterization np=16"
+set title "SimpleBench-pvt Strided MemBudget Prefetching Characterization np=16"
 
 set ylabel "Throughput (MB/sec)"
 set xlabel "Memory Budget (% of Total Cache Usage)"
 
-set yrange [0:2000]
+set yrange [0:2500]
 
 plot 'all.csv' u "VANILLA":xtic(1) title "VANILLA",\
  '' u "CBNMB" title "Cross_BlockRA_NoPred_MaxMem_BG",\
