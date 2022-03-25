@@ -20,9 +20,9 @@ WORKLOAD="read_pvt_strided"
 WRITE_LOAD="write_pvt"
 
 FILESIZE=40 ##in GB
-READ_SIZE=20 ## In pages
+READ_SIZE=40 ## In pages
 THREAD=16
-NR_STRIDE=32
+NR_STRIDE=64
 
 #declare -a filesize=("40")
 
@@ -54,7 +54,7 @@ CLEAN_AND_WRITE() {
 umount_ext4ramdisk
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD $NR_STRIDE
-CLEAN_AND_WRITE
+#CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
@@ -93,7 +93,7 @@ do
 
         printf "\nRUNNING CROSS_BLOCKRA_NOPRED_BUDGET_BG................\n"
         SETPRELOAD "CBNBB"
-        $COMMAND &> tmp
+        $COMMAND
         export LD_PRELOAD=""
         FlushDisk
         this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
@@ -101,7 +101,7 @@ do
 
         printf "\nRUNNING CROSS_BLOCKRA_PRED_BUDGET_BG................\n"
         SETPRELOAD "CBPBB"
-        $COMMAND &> tmp
+        $COMMAND
         export LD_PRELOAD=""
         FlushDisk
         this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
@@ -109,7 +109,7 @@ do
 
         printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
         SETPRELOAD "CBPMB"
-        $COMMAND &> tmp
+        $COMMAND
         export LD_PRELOAD=""
         FlushDisk
         this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
@@ -117,7 +117,7 @@ do
 
         printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
         SETPRELOAD "CFPMB"
-        $COMMAND &> tmp
+        $COMMAND
         export LD_PRELOAD=""
         FlushDisk
         this_bw=`cat tmp | grep "Bandwidth" | head -1 | awk '{print $4}'`
