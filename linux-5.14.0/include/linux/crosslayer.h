@@ -70,6 +70,8 @@ struct read_ra_req {
 //
     unsigned long nr_free; //nr pages that are free in memory
     
+    void *data;  //page bitmap
+    
 };
 
 
