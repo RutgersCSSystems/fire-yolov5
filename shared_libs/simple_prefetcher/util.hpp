@@ -2,9 +2,12 @@
 #define _UTIL_HPP
 
 #define PAGESIZE 4096L //Page size
+#define PAGE_SHIFT 12
+
 #define KB 1024L
 #define MB 1024L * KB
 #define GB 1024L * MB
+
 
 #define __PREAD_RA_SYSCALL 449
 
@@ -22,6 +25,7 @@
 
 //NR of pages to prefetch in each cycle
 #ifndef NR_RA_PAGES
+#warning NR_RA_PAGES not defined. Assuming 40 pages
 #define NR_RA_PAGES 40
 #endif
 
@@ -36,6 +40,7 @@
 
 //Nr of worker threads
 #ifndef NR_WORKERS
+#warning NR_WORKERS not defined. Assuming 2 workers
 #define NR_WORKERS 2
 #endif
 
@@ -76,6 +81,14 @@
 #endif
 
 
+/*
+ * Inside the kernel, the Page cache bitmap 
+ * is preallocated to this size. So we have 
+ * todo the same. Defaulted to 1TB pages worth bits
+ */
+#ifndef NR_BITS_PREALLOC_PC_STATE
+#define NR_BITS_PREALLOC_PC_STATE  (1UL << (40-PAGE_SHIFT))
+#endif
 
 
 /*
@@ -85,44 +98,54 @@
  */
 struct read_ra_req{
 
-        /*These are to be filled while sending the pread_ra req
-         * position for readahead and nr_bytes for readahead
-         */
-        loff_t ra_pos;
-        size_t ra_count; //in bytes
+	/*These are to be filled while sending the pread_ra req
+	 * position for readahead and nr_bytes for readahead
+	 */
+	loff_t ra_pos;
+	size_t ra_count; //in bytes
 
-        /* these are values returned by the OS
-         * for the above given readahead request 
-         * 1. how many pages were already present
-         * 2. For how many pages, bio was submitted
-         */
-        unsigned long nr_present;
-        unsigned long bio_req_nr;
+	/* these are values returned by the OS
+	 * for the above given readahead request 
+	 * 1. how many pages were already present
+	 * 2. For how many pages, bio was submitted
+	 */
+	unsigned long nr_present;
+	unsigned long bio_req_nr;
 
-        /* this is used to return the number of cache usage in bytes
-         * used by this application.
-         * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
-         * to get a non-zero value
-         */
-        long total_cache_usage; //total cache usage in bytes (OS return)
-        bool full_file_ra; //populated by app true if pread_ra is being done to get full file
-        long cache_limit; //populated by the app, desired cache_limit
+	/* this is used to return the number of cache usage in bytes
+	 * used by this application.
+	 * enable CONFIG_CACHE_LIMITING(linux) and ENABLE_CACHE_LIMITING(library)
+	 * to get a non-zero value
+	 */
+	long total_cache_usage; //total cache usage in bytes (OS return)
+	bool full_file_ra; //populated by app true if pread_ra is being done to get full file
+	long cache_limit; //populated by the app, desired cache_limit
 
-        unsigned long nr_free; //nr pages that are free in mem
+	unsigned long nr_free; //nr pages that are free in mem
+
+
+	/*
+	 * The following are populated by the kernel
+	 * and returned to user space
+	 */
+	void *data;  //page bitmap for readahead file
+	unsigned long nr_relevant_bits; //number of bits relevant for the file
+
+
 };
 
 //Used to send data to pthread or worker thread
 struct thread_args{
-        int fd; //opened file fd
-        long offset; //where to start
-        long file_size; //total filesize
-        long prefetch_size; //size of each prefetch req
+	int fd; //opened file fd
+	long offset; //where to start
+	long file_size; //total filesize
+	long prefetch_size; //size of each prefetch req
 
-        /*
-         * Share current and last fd with the prefetcher thread
-         */
-        int current_fd;
-        int last_fd; 
+	/*
+	 * Share current and last fd with the prefetcher thread
+	 */
+	int current_fd;
+	int last_fd; 
 };
 
 #endif
