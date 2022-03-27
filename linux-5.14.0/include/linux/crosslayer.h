@@ -70,14 +70,14 @@ struct read_ra_req {
 //
     unsigned long nr_free; //nr pages that are free in memory
     
-#ifdef CONFIG_CROSS_FILE_BITMAP
+//#ifdef CONFIG_CROSS_FILE_BITMAP
     /*
      * The following are populated by the kernel
      * and returned to user space
      */
     void *data;  //page bitmap for readahead file
     unsigned long nr_relevant_bits; //number of bits relevant for the file
-#endif
+//#endif
 };
 
 
