@@ -207,6 +207,14 @@ class file_predictor{
                 size_t nr_portions;
                 size_t portion_sz;
 
+		/*
+		 * For each file doing readahead_info, the syscall
+		 * returns the page cache state in its return struct
+		 * We will be using this to update the access_history
+		 * based on the PORTION_PAGES.
+		 */
+                bit_array_t *page_cache_state;
+
                 /*
                  * This variable summarizes if the file is reasonably
                  * sequential/strided for prefetching to happen.
@@ -235,6 +243,13 @@ class file_predictor{
 
                         access_history = BitArrayCreate(nr_portions);
                         BitArrayClearAll(access_history);
+
+#ifdef READAHEAD_INFO_PC_STATE
+			page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+                        BitArrayClearAll(page_cache_state);
+#else
+			page_cache_state->array = NULL;
+#endif
 
                         //Assume any opened file is probably not sequential
                         sequentiality = POSSNSEQ;
