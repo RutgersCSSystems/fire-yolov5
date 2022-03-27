@@ -36,15 +36,22 @@
 *                            TYPE DEFINITIONS
 ***************************************************************************/
 /* incomplete type to hide implementation */
-struct bit_array_t;
-typedef struct bit_array_t bit_array_t;
+/***************************************************************************
+*                            TYPE DEFINITIONS
+***************************************************************************/
+typedef struct bit_array_t
+{
+    unsigned long *array;       /* pointer to array containing bits */
+    unsigned long numBits;       /* number of bits in array */
+}bit_array_t;
+/*typedef struct bit_array_t bit_array_t;*/
 
 /***************************************************************************
 *                               PROTOTYPES
 ***************************************************************************/
 
 /* create/destroy functions */
-bit_array_t *BitArrayCreate(const unsigned int bits);
+bit_array_t *BitArrayCreate(const unsigned long bits);
 void BitArrayDestroy(bit_array_t *ba);
 
 /* debug functions */
@@ -91,6 +98,6 @@ int BitArrayIncrement(const bit_array_t *const ba);
 int BitArrayDecrement(const bit_array_t *const ba);
 
 /* comparison */
-int BitArrayCompare(const bit_array_t *ba1, const bit_array_t *ba2);
+unsigned long BitArrayCompare(const bit_array_t *ba1, const bit_array_t *ba2);
 
 #endif  /* ndef BIT_ARRAY_H */
