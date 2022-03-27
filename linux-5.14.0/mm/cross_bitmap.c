@@ -68,21 +68,36 @@
  * nr_pages : nr of pages in the file. 
  * nr_portion : How many pages would each bit represent
  */
-//unsigned long *alloc_cross_bitmap(unsigned long **bitmap, unsigned long nr_pages, 
-void alloc_cross_bitmap(unsigned long **bitmap, unsigned long nr_pages, 
-                unsigned long nr_pg_portion)
-{
-        unsigned long nr_bits = DIV_ROUND_UP(nr_pages, nr_pg_portion);
-        long nr_longs = BITS_TO_LONGS(nr_bits);
+void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
-        printk("%s: nr_bits = %ld, nr_longs=%ld \n", __func__, nr_bits, nr_longs);
+        if(!inode || !nr_pages){
+                goto exit;
+        }
 
-        if(!*bitmap)
-                *bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
+        //allocate 1TB worth bitmaps 
+        unsigned long prealloc_pg = 1 << (40 - PAGE_SHIFT);
 
-        if(!*bitmap)
+        long nr_longs = BITS_TO_LONGS(prealloc_pg);
+
+        //printk("%s: preallocate %ld pg, nr_longs=%ld \n", __func__, prealloc_pg, nr_longs);
+
+        if(!inode->bitmap)
+                inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
+
+        if(!inode->bitmap){
                 printk("ERR:%s unable to allocate bitmap\n", __func__);
+                return;
+        }
+        
+        inode->nr_bits_used = nr_pages;
+        inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
 
+        inode->nr_bits_tot = prealloc_pg;
+        inode->nr_longs_tot = nr_longs;
+
+        bitmap_zero(inode->bitmap, prealloc_pg);
+
+exit:
         return;
 }
 EXPORT_SYMBOL(alloc_cross_bitmap);
@@ -90,7 +105,8 @@ EXPORT_SYMBOL(alloc_cross_bitmap);
 
 /*
  * Frees the bitmap
- * TODO: Check if this works
+ * TODO: Check if this works, and place it in relevant functions
+ * something like destroy inode
  */
 void free_cross_bitmap(unsigned long **bitmap){
 
@@ -101,12 +117,42 @@ void free_cross_bitmap(unsigned long **bitmap){
 EXPORT_SYMBOL(free_cross_bitmap);
 
 
+/*
+ */
+void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
+
+        if(!inode->bitmap)
+                goto exit;
+
+        bitmap_clear(inode->bitmap, index, 1);
+
+exit:
+        return;
+}
+EXPORT_SYMBOL(remove_pg_cross_bitmap);
+
+
+/*
+ */
+void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
+
+        if(!inode->bitmap)
+                goto exit;
+
+        bitmap_set(inode->bitmap, index, 1);
+
+exit:
+        return;
+}
+EXPORT_SYMBOL(add_pg_cross_bitmap);
+
+#if 0
 void *cross_test(void){
 
         //DECLARE_BITMAP(bitmap, 64);
         unsigned long *bitmap = NULL;
         
-        alloc_cross_bitmap(&bitmap, 129, 2);
+        alloc_cross_bitmap(&bitmap, 129);
 
         bitmap_zero(bitmap, 129);
 
@@ -120,3 +166,4 @@ void *cross_test(void){
         return (void*)bitmap;
 }
 EXPORT_SYMBOL(cross_test);
+#endif

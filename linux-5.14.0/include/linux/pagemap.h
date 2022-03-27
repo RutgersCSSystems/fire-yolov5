@@ -845,8 +845,8 @@ struct readahead_control {
 	pgoff_t _index;
 	unsigned int _nr_pages;
 	unsigned int _batch_count;
-     struct file_pfetch_state pfetch_state; /*Ractl level pfetch stats*/
-     struct read_ra_req *ra_req;    //user req struct
+        struct file_pfetch_state pfetch_state; /*Ractl level pfetch stats*/
+        struct read_ra_req *ra_req;    //user req struct
 };
 
 #ifdef CONFIG_ENABLE_CROSSLAYER

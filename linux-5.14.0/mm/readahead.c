@@ -218,7 +218,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 		page = __page_cache_alloc(gfp_mask);
 		if (!page){
 			break;
-          }
+                }
 		if (mapping->a_ops->readpages) {
 			page->index = index + i;
 			list_add(&page->lru, &page_pool);
@@ -229,14 +229,19 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			i = ractl->_index + ractl->_nr_pages - index - 1;
 			continue;
 		}
-          //only happens if lookahead_size > 0
+                //only happens if lookahead_size > 0
 		if (i == nr_to_read - lookahead_size)
 			SetPageReadahead(page);
 
 		ractl->_nr_pages++;
-          /*update read_req from user*/
-          if(ractl->ra_req)
-              ractl->ra_req->bio_req_nr += 1;
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+                add_pg_cross_bitmap(mapping->host, index+i);
+#endif
+
+                /*update read_req from user*/
+                if(ractl->ra_req)
+                        ractl->ra_req->bio_req_nr += 1;
 	}
 
 
@@ -706,12 +711,29 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 {
         long ret = -1;
         struct read_ra_req ra;
+        struct inode *inode;
 
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
+                goto normal_readahead;
         }
 
-normal_readahead:
+        
+        /*
+         * Return the file bitmap
+         */
+#ifdef CONFIG_CROSS_FILE_BITMAP
+
+        inode = file_inode(fdget(fd).file);
+
+        //allocate bitmap if not already done 
+        if(!inode->bitmap){
+                unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
+                alloc_cross_bitmap(inode, end_index);
+        }
+        ra.nr_relevant_bits = inode->nr_longs_used;
+#endif
+
 	ret = ksys_readahead(fd, offset, count);
 
         /*
@@ -719,21 +741,23 @@ normal_readahead:
          */
         ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
 
-#ifdef CONFIG_CROSSLAYER_READ_BITMAP
-
-        // i know this is 2 x unsinged long
-        unsigned long *data = (unsigned long *) cross_test();
-        if (unlikely(copy_to_user(ra.data, data, sizeof(unsigned long)*2))){
-                printk("%s: couldnt copy data back to user\n", __func__);
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        if(ra.data){
+                if (unlikely(copy_to_user(ra.data, inode->bitmap, 
+                                sizeof(unsigned long)*inode->nr_longs_tot)))
+                {
+                        printk("%s: couldnt copy data back to user\n", __func__);
+                }
         }
-
-        printk("%s: test: %lX\n", __func__, data[0]);
-        printk("%s: test: %lX\n", __func__, data[1]);
 #endif
 
         if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
                 printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
         }
+        goto exit;
+
+normal_readahead:
+	ret = ksys_readahead(fd, offset, count);
 
 exit:
         return ret;

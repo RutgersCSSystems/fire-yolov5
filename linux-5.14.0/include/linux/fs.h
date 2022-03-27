@@ -728,6 +728,20 @@ struct inode {
 	struct fsverity_info	*i_verity_info;
 #endif
 
+        /*
+         * Crosslayer Bitmap for files
+         * look at mm/cross_bitmap.c
+         */
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        unsigned long *bitmap;
+
+        unsigned long nr_bits_used; //how many relevant bits in the bitmap ?
+        unsigned long nr_longs_used; //how many relevant longs in the bitmap ?
+
+        unsigned long nr_bits_tot; //how many bits preallocated in the bitmap ?
+        unsigned long nr_longs_tot; //how many total longs preallocated in the bitmap ?
+#endif
+
 	void			*i_private; /* fs or device private pointer */
 } __randomize_layout;
 
