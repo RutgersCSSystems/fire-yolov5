@@ -85,19 +85,50 @@ void prefetcher_th(void *arg) {
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
         off_t curr_pos = 0;
+        off_t file_pos; //actual file position where readahead will be done
         size_t readnow;
         struct read_ra_req ra;
+
+        off_t start_pg; //start from here in page_cache_state
+        off_t zero_pg; //first zero bit found here
 
 
 #ifdef PREFETCH_READAHEAD
         while (curr_pos < a->file_size){
+                file_pos = curr_pos + a->offset;
 #ifdef MODIFIED_RA
-                if(readahead_info(a->fd, (curr_pos + a->offset), 
+
+#ifdef READAHEAD_INFO_PC_STATE
+                ra.data = (void*)a->page_cache_state->array;
+#else
+                ra.data = NULL;
+#endif //READAHEAD_INFO_PC_STATE
+
+                if(readahead_info(a->fd, file_pos, 
                                         a->prefetch_size, &ra) > 0)
                 {
                         printf("error while readahead_info: TID:%ld \n", tid);
                         goto exit;
                 }
+#ifdef READAHEAD_INFO_PC_STATE
+                a->page_cache_state->array = (unsigned long*)ra.data;
+                //BitArrayDump(a->page_cache_state, stdout);
+                start_pg = file_pos >> PAGE_SHIFT;
+                //printf("start_pg = %ld\n", start_pg);
+                zero_pg = start_pg;
+                while((zero_pg << PAGE_SHIFT) < a->file_size){
+                        if(!BitArrayTestBit(a->page_cache_state, zero_pg))
+                        {
+                                break;
+                        }
+                        zero_pg += 1;
+                }
+                //printf("nr_pg moved = %ld\n", zero_pg-start_pg);
+                //zero_pg += a->prefetch_size >> PAGE_SHIFT;
+                curr_pos += (zero_pg-start_pg) << PAGE_SHIFT;
+#else
+                curr_pos += a->prefetch_size;
+#endif
 
                 /*
                  * if the memory is less NR_REMAINING
@@ -115,19 +146,20 @@ void prefetcher_th(void *arg) {
                                 debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
                                 posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
                         }
-#else
+#else //ENABLE_EVICTION
                         goto exit;
-#endif
+#endif //ENABLE_EVICTION
                 }
-#else
-                if(real_readahead(a->fd, (curr_pos + a->offset), a->prefetch_size) > 0){
+
+#else //MODIFIED_RA
+                if(real_readahead(a->fd, file_pos, a->prefetch_size) > 0){
                         printf("error while readahead: TID:%ld \n", tid);
                         goto exit;
                 }
-#endif
                 curr_pos += a->prefetch_size;
+#endif //MODIFIED_RA
         }
-#endif
+#endif //PREFETCH_READAHEAD
 
 exit:
         free(arg);
@@ -181,6 +213,12 @@ void inline prefetch_file(int fd)
 #else
                 //Whole file prefetched in NR_RA_PAGES bites
                 arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+#endif
+
+#ifdef READAHEAD_INFO_PC_STATE
+        arg->page_cache_state = fp->page_cache_state;
+#else
+        arg->page_cache_state = NULL;
 #endif
         }
         else{

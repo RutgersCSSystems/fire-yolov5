@@ -134,18 +134,4 @@ struct read_ra_req{
 
 };
 
-//Used to send data to pthread or worker thread
-struct thread_args{
-	int fd; //opened file fd
-	long offset; //where to start
-	long file_size; //total filesize
-	long prefetch_size; //size of each prefetch req
-
-	/*
-	 * Share current and last fd with the prefetcher thread
-	 */
-	int current_fd;
-	int last_fd; 
-};
-
 #endif

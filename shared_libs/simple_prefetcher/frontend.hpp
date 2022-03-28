@@ -18,6 +18,25 @@
 #define DEFSEQ 64 /* definitely seq */
 
 
+//Used to send data to pthread or worker thread
+struct thread_args{
+	int fd; //opened file fd
+	long offset; //where to start
+	long file_size; //total filesize
+	long prefetch_size; //size of each prefetch req
+
+	/*
+	 * Share current and last fd with the prefetcher thread
+	 */
+	int current_fd;
+	int last_fd; 
+
+        /*
+         * Send a pointer to the page cache state to be updated
+         */
+        bit_array_t *page_cache_state;
+};
+
 //returns filesize if fd is regular file
 //else 0
 off_t reg_fd(int fd){
@@ -248,7 +267,7 @@ class file_predictor{
 			page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
                         BitArrayClearAll(page_cache_state);
 #else
-			page_cache_state->array = NULL;
+			page_cache_state = NULL;
 #endif
 
                         //Assume any opened file is probably not sequential
