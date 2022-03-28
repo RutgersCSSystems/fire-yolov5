@@ -69,12 +69,12 @@ SETPRELOAD()
         elif [[ "$1" == "CBPBB" ]]; then
                 printf "Cross_BlockRA_Pred_Budget_BG\n"
                 export LD_PRELOAD=/usr/lib/lib_CBPBB.so
+        elif [[ "$1" == "CBPBB_info" ]]; then
+                printf "Cross_BlockRA_Pred_Budget_BG_info\n"
+                export LD_PRELOAD=/usr/lib/lib_CBPBB_info.so
         elif [[ "$1" == "CBNBB" ]]; then
                 printf "Cross_BlockRA_NoPred_Budget_BG\n"
                 export LD_PRELOAD=/usr/lib/lib_CBNBB.so
-        elif [[ "$1" == "CBNBB_info" ]]; then
-                printf "Cross_BlockRA_NoPred_Budget_BG_info\n"
-                export LD_PRELOAD=/usr/lib/lib_CBNBB_info.so
         elif [[ "$1" == "MEMUSAGE" ]]; then
                 printf "Checks the MemUsage for this App\n"
                 export LD_PRELOAD=/usr/lib/lib_memusage.so
