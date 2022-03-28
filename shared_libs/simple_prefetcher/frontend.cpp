@@ -386,6 +386,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
                         prefetch_file(fd, fp);
                         fp->already_prefetched = true;
                 }
+                debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
         }
 #endif
 
