@@ -726,6 +726,11 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
         inode = file_inode(fdget(fd).file);
 
+        if(!inode){
+	        printk("%s: no inode!\n", __func__);
+                goto normal_readahead;
+        }
+
         //allocate bitmap if not already done 
         if(!inode->bitmap){
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
@@ -742,7 +747,7 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
 
 #ifdef CONFIG_CROSS_FILE_BITMAP
-        if(ra.data){
+        if(ra.data && inode->bitmap){
                 if (unlikely(copy_to_user(ra.data, inode->bitmap, 
                                 sizeof(unsigned long)*inode->nr_longs_tot)))
                 {
