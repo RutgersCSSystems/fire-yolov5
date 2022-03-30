@@ -113,9 +113,7 @@ void prefetcher_th(void *arg) {
                 }
 #ifdef READAHEAD_INFO_PC_STATE
                 a->page_cache_state->array = (unsigned long*)ra.data;
-                //BitArrayDump(a->page_cache_state, stdout);
                 start_pg = file_pos >> PAGE_SHIFT;
-                //printf("start_pg = %ld\n", start_pg);
                 zero_pg = start_pg;
                 while((zero_pg << PAGE_SHIFT) < a->file_size){
                         if(!BitArrayTestBit(a->page_cache_state, zero_pg))
@@ -124,9 +122,10 @@ void prefetcher_th(void *arg) {
                         }
                         zero_pg += 1;
                 }
-                //printf("nr_pg moved = %ld\n", zero_pg-start_pg);
-                //zero_pg += a->prefetch_size >> PAGE_SHIFT;
-                curr_pos += (zero_pg-start_pg) << PAGE_SHIFT;
+                if(zero_pg-start_pg > 0) //else infinite loop
+                        curr_pos += (zero_pg-start_pg) << PAGE_SHIFT;
+                else
+                        curr_pos += a->prefetch_size;
 #else
                 curr_pos += a->prefetch_size;
 #endif
