@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <string>
 #include <iterator>
+#include <atomic>
 
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
@@ -381,10 +382,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
         file_predictor *fp = fd_to_file_pred[fd];
         if(fp){
                 fp->predictor_update(offset, size);
-                if((fp->is_sequential() >= LIKELYSEQ) && !fp->already_prefetched){
-                        //if(!fp->already_prefetched){
+                if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
                         prefetch_file(fd, fp);
-                        fp->already_prefetched = true;
                 }
                 debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
         }

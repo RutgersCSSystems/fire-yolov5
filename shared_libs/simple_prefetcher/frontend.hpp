@@ -244,7 +244,7 @@ class file_predictor{
                  * Returns true if readahead has been issued 
                  * for this file
                  */
-                bool already_prefetched;
+                std::atomic_flag already_prefetched;
 
                 /*Constructor*/
                 file_predictor(int this_fd, size_t size){
@@ -272,7 +272,6 @@ class file_predictor{
 
                         //Assume any opened file is probably not sequential
                         sequentiality = POSSNSEQ;
-                        already_prefetched = false;
                 }
 
 		/*Destructor*/
