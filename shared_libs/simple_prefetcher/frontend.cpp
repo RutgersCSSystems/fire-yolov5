@@ -267,6 +267,7 @@ void inline record_open(int fd){
 		 * So no file cache data is lost from bitmap
 		 */
 #ifdef READAHEAD_INFO_PC_STATE
+		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 #endif
         }
