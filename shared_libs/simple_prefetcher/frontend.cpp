@@ -106,7 +106,7 @@ void prefetcher_th(void *arg) {
 #endif //READAHEAD_INFO_PC_STATE
 
                 if(readahead_info(a->fd, file_pos, 
-                                        a->prefetch_size, &ra) > 0)
+                                        a->prefetch_size, &ra) < 0)
                 {
                         printf("error while readahead_info: TID:%ld \n", tid);
                         goto exit;
@@ -153,7 +153,7 @@ void prefetcher_th(void *arg) {
                 }
 
 #else //MODIFIED_RA
-                if(real_readahead(a->fd, file_pos, a->prefetch_size) > 0){
+                if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0){
                         printf("error while readahead: TID:%ld \n", tid);
                         goto exit;
                 }
