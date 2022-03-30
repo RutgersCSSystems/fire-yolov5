@@ -126,7 +126,7 @@ void prefetcher_th(void *arg) {
 		pg_diff = zero_pg - start_pg;
 		//printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
                 if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
-                        curr_pos += (zero_pg-start_pg) << PAGE_SHIFT;
+                        curr_pos += pg_diff << PAGE_SHIFT;
                 else
                         curr_pos += a->prefetch_size;
 #else
@@ -266,7 +266,9 @@ void inline record_open(int fd){
 		 * This allocates the file's bitmap inside the kernel
 		 * So no file cache data is lost from bitmap
 		 */
+#ifdef READAHEAD_INFO_PC_STATE
 		readahead_info(fd, 0, 0, &ra);
+#endif
         }
         else{
                 debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
