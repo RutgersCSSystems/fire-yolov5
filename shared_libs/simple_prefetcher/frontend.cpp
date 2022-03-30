@@ -248,6 +248,7 @@ exit:
  */
 void inline record_open(int fd){
         off_t filesize = reg_fd(fd);
+	struct read_ra_req ra;
 
         if(filesize > MIN_FILE_SZ){
 
@@ -257,6 +258,12 @@ void inline record_open(int fd){
                                 __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
                 fd_to_file_pred[fd] = fp;
+
+		/*
+		 * This allocates the file's bitmap inside the kernel
+		 * So no file cache data is lost from bitmap
+		 */
+		readahead_info(fd, 0, 0, &ra);
         }
         else{
                 debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
