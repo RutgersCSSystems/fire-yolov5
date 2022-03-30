@@ -92,6 +92,7 @@ void prefetcher_th(void *arg) {
 
         off_t start_pg; //start from here in page_cache_state
         off_t zero_pg; //first zero bit found here
+	off_t pg_diff;
 
 
 #ifdef PREFETCH_READAHEAD
@@ -122,7 +123,9 @@ void prefetcher_th(void *arg) {
                         }
                         zero_pg += 1;
                 }
-                if(zero_pg-start_pg > 0) //else infinite loop
+		pg_diff = zero_pg - start_pg;
+		//printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
+                if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
                         curr_pos += (zero_pg-start_pg) << PAGE_SHIFT;
                 else
                         curr_pos += a->prefetch_size;
