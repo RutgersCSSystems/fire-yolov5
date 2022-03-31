@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl
-FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result 
+FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result -g
 INCLUDE=
 
 KB=1024
@@ -37,7 +37,7 @@ all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cr
 
 #test: $(SOURCES)
 Cross_BlockRA_Pred_Budget_BG_info: $(SOURCES)
-	$(CXX) -E $(INCLUDE) $(FLAGS) -o lib_CBPBB_info.so $^ $(LIBS) $(DEBUG) \
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBPBB_info.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO)
 
 Cross_BlockRA_Pred_Budget_BG: $(SOURCES)
@@ -57,7 +57,7 @@ Cross_BlockRA_NoPred_MaxMem_BG: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA)
 
 Cross_BlockRA_NoPred_Budget_BG_info: $(SOURCES)
-	$(CXX) -E $(INCLUDE) $(FLAGS) -o lib_CBNBB_info.so $^ $(LIBS) $(DEBUG) \
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBNBB_info.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_BUDGET_INFO)
 
 Cross_BlockRA_NoPred_Budget_BG: $(SOURCES)
