@@ -82,7 +82,7 @@ void prefetcher_th(void *arg) {
 #endif
         long tid = gettid();
         struct thread_args *a = (struct thread_args*)arg;
-        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
+        printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
         off_t curr_pos = 0;
@@ -93,18 +93,41 @@ void prefetcher_th(void *arg) {
         off_t start_pg; //start from here in page_cache_state
         off_t zero_pg; //first zero bit found here
 	off_t pg_diff;
+        
+        bit_array_t *page_cache_state = NULL;
+        
+        /*
+         * Allocate page cache bitmap if you want to use it without predictor
+         */
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
+	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+        BitArrayClearAll(page_cache_state);
+#elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
+	page_cache_state = a->page_cache_state;
+#else
+        page_cache_state = NULL;
+#endif
+        
 
 
 #ifdef PREFETCH_READAHEAD
         while (curr_pos < a->file_size){
                 file_pos = curr_pos + a->offset;
+
 #ifdef MODIFIED_RA
 
+/*
 #ifdef READAHEAD_INFO_PC_STATE
                 ra.data = (void*)a->page_cache_state->array;
-#else
+#else //READAHEAD_INFO_PC_STATE
                 ra.data = NULL;
 #endif //READAHEAD_INFO_PC_STATE
+*/
+                if(page_cache_state){
+                        ra.data = page_cache_state->array;
+                }else{
+                        ra.data = NULL;
+                }
 
                 if(readahead_info(a->fd, file_pos, 
                                         a->prefetch_size, &ra) < 0)
@@ -113,25 +136,25 @@ void prefetcher_th(void *arg) {
                         goto exit;
                 }
 #ifdef READAHEAD_INFO_PC_STATE
-                a->page_cache_state->array = (unsigned long*)ra.data;
+                page_cache_state->array = (unsigned long*)ra.data;
                 start_pg = file_pos >> PAGE_SHIFT;
                 zero_pg = start_pg;
                 while((zero_pg << PAGE_SHIFT) < a->file_size){
-                        if(!BitArrayTestBit(a->page_cache_state, zero_pg))
+                        if(!BitArrayTestBit(page_cache_state, zero_pg))
                         {
                                 break;
                         }
                         zero_pg += 1;
                 }
 		pg_diff = zero_pg - start_pg;
-		//printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
+		printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
                 if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
                         curr_pos += pg_diff << PAGE_SHIFT;
                 else
                         curr_pos += a->prefetch_size;
-#else
+#else //READAHEAD_INFO_PC_STATE
                 curr_pos += a->prefetch_size;
-#endif
+#endif //READAHEAD_INFO_PC_STATE
 
                 /*
                  * if the memory is less NR_REMAINING
@@ -165,6 +188,11 @@ void prefetcher_th(void *arg) {
 #endif //PREFETCH_READAHEAD
 
 exit:
+
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
+        BitArrayDestroy(page_cache_state);
+#endif
+
         free(arg);
 }
 
@@ -218,7 +246,7 @@ void inline prefetch_file(int fd)
                 arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 #endif
 
-#ifdef READAHEAD_INFO_PC_STATE
+#if defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
         arg->page_cache_state = fp->page_cache_state;
 #else
         arg->page_cache_state = NULL;
