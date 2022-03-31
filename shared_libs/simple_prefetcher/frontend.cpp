@@ -40,14 +40,25 @@
 threadpool workerpool = NULL;
 #endif
 
-//Maps fd to its file_predictor
-std::unordered_map<int, file_predictor*> fd_to_file_pred;
+//Maps fd to its file_predictor, global ds
+std::unordered_map<int, file_predictor*> *fd_to_file_pred;
+std::atomic_flag fd_to_file_pred_init;
 
 //enables per thread constructor and destructor
 thread_local per_thread_ds ptd;
 
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
+
+
+/*
+ * Initialize fd_to_file_pred
+ */
+void init_global_ds(void){
+	if(!fd_to_file_pred_init.test_and_set()){
+		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
+	}
+}
 
 
 void con(){
@@ -63,6 +74,7 @@ void con(){
                 debug_printf("Created %d bg_threads\n", NR_WORKERS);
         }
 #endif
+	init_global_ds();
 
 }
 
@@ -287,7 +299,8 @@ void inline record_open(int fd){
                 debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
                                 __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-                fd_to_file_pred[fd] = fp;
+                //fd_to_file_pred[fd] = fp;
+                fd_to_file_pred->insert({fd, fp});
 
 		/*
 		 * This allocates the file's bitmap inside the kernel
@@ -418,7 +431,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 
 #ifdef PREDICTOR
-        file_predictor *fp = fd_to_file_pred[fd];
+        //file_predictor *fp = fd_to_file_pred[fd];
+        file_predictor *fp = fd_to_file_pred->at(fd);
         if(fp){
                 fp->predictor_update(offset, size);
                 if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
@@ -471,7 +485,8 @@ return amount_read;
 
 void handle_file_close(int fd){
 #ifdef PREDICTOR
-        file_predictor *fp = fd_to_file_pred[fd];
+        //file_predictor *fp = fd_to_file_pred[fd];
+        file_predictor *fp = fd_to_file_pred->at(fd);
         if(fp){
                 delete(fp);
         }
