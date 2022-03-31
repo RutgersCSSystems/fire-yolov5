@@ -29,7 +29,8 @@ FlushDisk()
 CLEAN_AND_WRITE(){
     echo "Creating Files for reading"
     rm -rf $PWD/files/
-    /usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 $NPROC $FLUSH
+    #/usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 $NPROC $FLUSH
+    mpirun -env MV2_SMP_USE_CMA=0 -env MV2_USE_RoCE=1 --hostfile ~/hostfile -np $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 $NPROC $FLUSH
     FlushDisk
 }
 
@@ -38,11 +39,12 @@ for NO_MAT in "${no_mat[@]}"
 do
     echo "##################### $NO_MAT"
     #CLEAN_AND_WRITE
-    #du -h $PWD/files
+    du -h $PWD/files
 
     echo "@@@MADbench with no prefetcher"
-    export LD_PRELOAD="/usr/lib/libsimplenoprefetcher.so"
-    /usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 0
+    #export LD_PRELOAD="/usr/lib/libsimplenoprefetcher.so"
+    #/usr/bin/time -v mpiexec.mpich -n $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 0
+    mpirun -env LD_PRELOAD=/usr/lib/lib_OSonly.so -env MV2_SMP_USE_CMA=0 -env MV2_USE_RoCE=1 --hostfile ~/hostfile -np $NPROC ./MADbench2_io $NO_PIX $NO_MAT 1 8 64 1 1 0
     export LD_PRELOAD=
     #FlushDisk
 
