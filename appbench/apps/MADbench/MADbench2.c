@@ -1116,7 +1116,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) 
       {
-          printf("MAD: fread\n");
+          //printf("MAD: fread\n");
           error_check("fread", filename, 
                   fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
       }
