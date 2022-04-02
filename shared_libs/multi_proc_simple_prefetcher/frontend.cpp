@@ -44,6 +44,7 @@ threadpool workerpool = NULL;
 std::unordered_map<int, file_predictor*> *fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
 
+
 //enables per thread constructor and destructor
 thread_local per_thread_ds ptd;
 
@@ -56,6 +57,7 @@ static void dest() __attribute__((destructor));
  */
 void init_global_ds(void){
 	if(!fd_to_file_pred_init.test_and_set()){
+		debug_printf("%s: Allocating fd_to_file_pred\n", __func__);
 		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
 	}
 }
@@ -93,7 +95,7 @@ void prefetcher_th(void *arg) {
 #endif
         long tid = gettid();
         struct thread_args *a = (struct thread_args*)arg;
-        printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
+        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
         off_t curr_pos = 0;
@@ -234,6 +236,7 @@ void inline prefetch_file(int fd)
 #else
         filesize = reg_fd(fd);
 #endif
+	debug_printf("filesize = %ld\n", filesize);
 
         if(filesize > MIN_FILE_SZ){
                 arg = (struct thread_args *)malloc(sizeof(struct thread_args));
@@ -346,6 +349,10 @@ int open(const char *pathname, int flags, ...){
 
         debug_printf("Opening file %s\n", pathname);
 
+#ifdef ONLY_INTERCEPT
+	goto exit;
+#endif
+
 
 #ifdef PREDICTOR
         // Predict, then prefetch if needed
@@ -369,7 +376,11 @@ FILE *fopen(const char *filename, const char *mode){
         if(!ret)
                 return ret;
 
-        debug_printf("FOpening file\n");
+#ifdef ONLY_INTERCEPT
+	goto exit;
+#endif
+
+        debug_printf("FOpening file %s\n", filename);
 
         fd = fileno(ret);
 
@@ -381,6 +392,8 @@ FILE *fopen(const char *filename, const char *mode){
         // Prefetch without predicting
         prefetch_file(fd);
 #endif
+
+exit:
 
         return ret;
 }
@@ -431,8 +444,14 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 
 #ifdef PREDICTOR
-        //file_predictor *fp = fd_to_file_pred[fd];
-        file_predictor *fp = fd_to_file_pred->at(fd);
+        file_predictor *fp;
+	try{
+        	fp = fd_to_file_pred->at(fd);
+	}
+	catch(const std::out_of_range &orr){
+		goto skip_predictor;
+	}
+
         if(fp){
                 fp->predictor_update(offset, size);
                 if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
@@ -441,6 +460,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
                 debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
         }
 #endif
+
+skip_predictor:
 
 #ifdef SEQ_PREFETCH
         struct read_ra_req ra_req;
@@ -485,8 +506,14 @@ return amount_read;
 
 void handle_file_close(int fd){
 #ifdef PREDICTOR
-        //file_predictor *fp = fd_to_file_pred[fd];
-        file_predictor *fp = fd_to_file_pred->at(fd);
+	init_global_ds();
+        file_predictor *fp;
+	try{
+        	fp = fd_to_file_pred->at(fd);
+	}
+	catch(const std::out_of_range){
+		goto exit;
+	}
         if(fp){
                 delete(fp);
         }
@@ -497,14 +524,28 @@ exit:
 
 
 int fclose(FILE *stream){
+
+
+#ifdef ONLY_INTERCEPT
+	goto exit;
+#endif
         int fd = fileno(stream);
+	debug_printf("%s: closing %d\n", __func__, fd);
         handle_file_close(fd);
+
+exit:
         return real_fclose(stream);
 }
 
 
 int close(int fd){
+#ifdef ONLY_INTERCEPT
+	goto exit;
+#endif
+
+	debug_printf("%s: closing %d\n", __func__, fd);
         handle_file_close(fd);
+exit:
         return real_close(fd);
 }
 

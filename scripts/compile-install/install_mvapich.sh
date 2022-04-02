@@ -67,10 +67,10 @@ INSTALL_SYSTEM_LIBS(){
 
 #IB libs
 INSTALL_IB_LIBS() {
-	sudo apt-get install -y libibmad-dev libibumad-dev libibumad3
-	sudo apt-get install -y libibverbs-dev
-	sudo apt-get install -y gfortran
-	sudo apt-get install -y infiniband-diags rdma-core
+	#sudo apt-get install -y libibmad-dev libibumad-dev libibumad3
+	#sudo apt-get install -y libibverbs-dev
+	#sudo apt-get install -y gfortran
+	#sudo apt-get install -y infiniband-diags rdma-core
 	#INSTALL MVAPICH
 	cd $CLOUDLABDIR
 	wget $MVAPICHURL
@@ -97,11 +97,11 @@ RUN_IBBENCH() {
 	sudo mpirun -np $MPIPROCS mpi/collective/osu_igatherv
 	COOL_DOWN
 	sudo mpirun -np $MPIPROCS mpi/pt2pt/osu_bw
-	sudo apt-get install -y ibverbs-utils libnes-dev libmlx5-dev libmlx4-dev libmlx5-dev libmthca-dev rdmacm-utils
+	#sudo apt-get install -y ibverbs-utils libnes-dev libmlx5-dev libmlx4-dev libmlx5-dev libmthca-dev rdmacm-utils
 }
 
-INSTALL_SYSTEM_LIBS
-CONFIGURE_GIT
-COOL_DOWN
+#INSTALL_SYSTEM_LIBS
+#CONFIGURE_GIT
+#COOL_DOWN
 INSTALL_IB_LIBS
 RUN_IBBENCH

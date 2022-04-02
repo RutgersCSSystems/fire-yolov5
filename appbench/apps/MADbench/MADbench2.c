@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <stdbool.h>
 #include "mpi.h"
 #include "MADbench2.h"
@@ -94,6 +95,7 @@ char *IOMETHOD, *IOMODE, *FILETYPE, *REMAP;
 double BWEXP = -1.0;
 int flushit = 0; //true if flushit
 bool fileexists = false;
+off_t file_sz = 0;
 
 int no_pe, my_pe;
 GANG gang1, gang2;
@@ -118,22 +120,43 @@ static int null_desc[]={0, -1, 0, 0, 0, 0, 0, 0, 0};
 static double d0=0.0, d1=1.0;
 static char lo='L', no='N', tr='T';
 
+//returns microsecond time difference
+unsigned long usec_diff(struct timeval *a, struct timeval *b)
+{
+    unsigned long usec;
+
+    usec = (b->tv_sec - a->tv_sec)*1000000;
+    usec += b->tv_usec - a->tv_usec;
+    return usec;
+}
+
 /**********************************************************************************************************************************/
 
 int main(int argc, char** argv)
 {
-
   initialize(argc, argv); PMPI_Barrier(MPI_COMM_WORLD);
+
+  struct timeval start, end;
+
 
   build_S(); PMPI_Barrier(MPI_COMM_WORLD);
 
 #ifndef IO
   invert_D(); PMPI_Barrier(MPI_COMM_WORLD);
 #endif
+  gettimeofday(&start, NULL);
 
   calc_W(); PMPI_Barrier(MPI_COMM_WORLD);
 
   calc_dC(); PMPI_Barrier(MPI_COMM_WORLD);
+
+  gettimeofday(&end, NULL);
+
+  unsigned long time = usec_diff(&start, &end);
+
+  unsigned long mbps = ((file_sz/(1024*1024))/(time/(1000000)));
+
+  printf("Bandwidth = %ld MB/s\n", mbps);
 
   finalize();
 }
@@ -320,6 +343,12 @@ void initialize(int argc, char** argv)
       mpi_info = MPI_INFO_NULL;
 #endif
       error_check("MPI_File_open", filename, MPI_File_open((strcmp(FILETYPE, "UNIQUE")==0) ? MPI_COMM_SELF : MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_RDWR, mpi_info, &dfh)==0);
+    }
+
+    if(fileexists){
+	    fseek(df, 0L, SEEK_END);
+	    file_sz=ftell(df);
+	    fseek(df, 0L, SEEK_SET);
     }
 
   }
@@ -1087,7 +1116,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
     if (*rw=='r') {
       if (strcmp(IOMODE, "SYNC")==0) 
       {
-          printf("MAD: fread\n");
+          //printf("MAD: fread\n");
           error_check("fread", filename, 
                   fread(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
       }
