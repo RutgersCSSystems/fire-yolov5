@@ -260,7 +260,7 @@ int ext4_mpage_readpages(struct inode *inode,
 		if (page_has_buffers(page))
 			goto confused;
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
                //printk("%s: RA_final_nr_pages: prog:%s\n", __func__, current->comm);
                update_ra_final_nr_pages(current, inode, rac, 1);
                update_final_async_pages(current, inode, rac, 1);

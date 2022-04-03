@@ -161,7 +161,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	inode->i_rdev = 0;
 	inode->dirtied_when = 0;
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
 	/* Initialize the pfetch_state structure that maintains 
 	 * per inode prefetch information
 	 */

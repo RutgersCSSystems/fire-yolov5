@@ -849,7 +849,7 @@ struct readahead_control {
         struct read_ra_req *ra_req;    //user req struct
 };
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
 
 #define DEFINE_READAHEAD(ractl, f, r, m, i)				\
 	struct readahead_control ractl = {				\

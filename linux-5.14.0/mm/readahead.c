@@ -177,6 +177,8 @@ out:
 void page_cache_ra_unbounded(struct readahead_control *ractl,
 		unsigned long nr_to_read, unsigned long lookahead_size)
 {
+
+        printk("%s: nr_to_read=%ld\n", __func__, nr_to_read);
 	struct address_space *mapping = ractl->mapping;
 	unsigned long index = readahead_index(ractl);
 	LIST_HEAD(page_pool);
@@ -212,11 +214,13 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			 */
 			read_pages(ractl, &page_pool, true);
 			i = ractl->_index + ractl->_nr_pages - index - 1;
+                        printk("%s: page\n", __func__);
 			continue;
 		}
 
 		page = __page_cache_alloc(gfp_mask);
 		if (!page){
+                        printk("%s: nopage\n", __func__);
 			break;
                 }
 		if (mapping->a_ops->readpages) {
@@ -227,6 +231,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			put_page(page);
 			read_pages(ractl, &page_pool, true);
 			i = ractl->_index + ractl->_nr_pages - index - 1;
+                        printk("%s: no add page_cache\n", __func__);
 			continue;
 		}
                 //only happens if lookahead_size > 0
@@ -244,8 +249,11 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
                         ractl->ra_req->bio_req_nr += 1;
 	}
 
+        printk("%s: after _nr_pages=%d\n", __func__, ractl->_nr_pages);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+
+
+#ifdef CONFIG_ENABLE_CROSS_STATS
      update_pfetch_success(current, ractl->file->f_inode, ractl, ractl->_nr_pages);
 #endif
 
@@ -594,7 +602,7 @@ readit:
 	}
 
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      //Async reads going to happen
     update_async_pages(current, ractl->file->f_inode, ractl, ra->size);
 #endif
@@ -648,7 +656,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
 
 	ClearPageReadahead(page);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         update_async_pages(current, ractl->mapping->host, ractl, req_count);
 #endif
 
@@ -665,7 +673,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
 	/* do read-ahead */
 	ondemand_readahead(ractl, true, req_count);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         print_ractl_stats(ractl);
 #endif
 }

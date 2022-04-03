@@ -2615,14 +2615,14 @@ retry:
 
      	page = NULL; 
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         nr_misses = filemap_check_pagecache(mapping, index, orig_last_index);
 #endif
 
      	page = filemap_get_read_batch(mapping, index, last_index, pvec, false);
 	//page = filemap_get_read_batch(mapping, index, last_index, pvec, iocb->ki_do_ra);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      	//update the number of pg cache hits
      	if(read_stats){
 

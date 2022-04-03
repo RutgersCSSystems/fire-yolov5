@@ -890,8 +890,8 @@ config SECRETMEM
 	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
 
 # Crosslayer Stats and functionality
-config ENABLE_CROSSLAYER
-    bool "enable crosslayer OS"
+config ENABLE_CROSS_STATS
+    bool "enable crosslayer OS stats, reduces performance"
 
 # Crosslayer debug prints
 config ENABLE_CROSSLAYER_DEBUG

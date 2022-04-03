@@ -1420,7 +1420,7 @@ static int run_init_process(const char *init_filename)
 	for (p = envp_init; *p; p++)
 		pr_debug("    %s\n", *p);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      init_global_pfetch_state();
 #endif
 

@@ -646,7 +646,7 @@ void init_global_pfetch_state(void){
 
 //Syscall Nr: 448
 SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         switch(flag){
 
                 case ENABLE_FILE_STATS:

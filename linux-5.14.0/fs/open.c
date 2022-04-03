@@ -1209,7 +1209,7 @@ static long do_sys_openat2(int dfd, const char __user *filename,
 			fsnotify_open(f);
 			fd_install(fd, f);
 #if 0
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
                 if(current->enable_f_stats){
                     f->enable_read_stats = true;
                     f->nr_reads = 0UL;

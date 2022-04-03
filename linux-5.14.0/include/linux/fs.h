@@ -983,7 +983,7 @@ struct file {
 	errseq_t		f_wb_err;
 	errseq_t		f_sb_err; /* for syncfs */
 
-//#ifdef CONFIG_ENABLE_CROSSLAYER
+//#ifdef CONFIG_ENABLE_CROSS_STATS
      /*bool enable_read_stats;
      unsigned long nr_reads;
      unsigned long nr_disk_reads;
