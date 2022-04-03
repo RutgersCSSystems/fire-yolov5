@@ -418,6 +418,10 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
         ssize_t amount_read;
 
+#ifdef ONLY_INTERCEPT
+	goto skip_predictor;
+#endif
+
 #ifdef ENABLE_EVICTION
         /*
          * The first time ptd is accessed by a thread(clone)
@@ -481,27 +485,72 @@ exit:
 }
 
 
-/*
-   size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-//debug_printf("%s: TID:%ld\n", __func__, gettid());
-size_t pfetch_size = 0;
-size_t amount_read = 0;
+        debug_printf("%s: TID:%ld\n", __func__, gettid());
+        size_t amount_read = 0;
+        int fd = fileno(stream);
 
-amount_read = real_fread(ptr, size, nmemb, stream);
-return amount_read;
-
-
-#ifdef SEQ_PREFETCH
-amount_read = fread_ra(ptr, size, nmemb, stream, NR_RA_PAGES*PAGESIZE);
-#else
-amount_read = real_fread(ptr, size, nmemb, stream);
+#ifdef ONLY_INTERCEPT
+	goto skip_predictor;
 #endif
 
+        /*
+         * Sanity check
+         */
+        if(fd < 3){
+                goto skip_predictor;
+        }
+
+#ifdef ENABLE_EVICTION
+        /*
+         * The first time ptd is accessed by a thread(clone)
+         * it calls its constructor.
+         */
+        if(ptd.last_fd == 0){
+                ptd.last_fd = fd;
+                ptd.current_fd = fd;
+        }
+        else{
+                /*
+                 * Update the current and last fd
+                 * for this thread each time it reads
+                 *
+                 * Heuristic: If the thread moves on to
+                 * another fd, it is likely done with last_fd
+                 * ie. in an event of memory pressure, cleanup that
+                 * file from memory
+                 */
+                ptd.last_fd = ptd.current_fd;
+                ptd.current_fd = fd;
+        }
+#endif
+
+#ifdef PREDICTOR
+        file_predictor *fp;
+	try{
+                fp = fd_to_file_pred->at(fd);
+	}
+	catch(const std::out_of_range &orr){
+		goto skip_predictor;
+	}
+
+        if(fp){
+                fp->predictor_update(ftell(stream), size*nmemb);
+                if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+                        prefetch_file(fd, fp);
+                }
+                debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+        }
+#endif
+
+skip_predictor:
+        amount_read = real_fread(ptr, size, nmemb, stream);
+
 exit:
-return amount_read;
+        return amount_read;
 }
-*/
+
 
 
 void handle_file_close(int fd){
@@ -524,12 +573,11 @@ exit:
 
 
 int fclose(FILE *stream){
-
+        int fd = fileno(stream);
 
 #ifdef ONLY_INTERCEPT
 	goto exit;
 #endif
-        int fd = fileno(stream);
 	debug_printf("%s: closing %d\n", __func__, fd);
         handle_file_close(fd);
 
