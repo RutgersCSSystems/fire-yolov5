@@ -178,7 +178,6 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 		unsigned long nr_to_read, unsigned long lookahead_size)
 {
 
-        printk("%s: nr_to_read=%ld\n", __func__, nr_to_read);
 	struct address_space *mapping = ractl->mapping;
 	unsigned long index = readahead_index(ractl);
 	LIST_HEAD(page_pool);
@@ -214,13 +213,11 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			 */
 			read_pages(ractl, &page_pool, true);
 			i = ractl->_index + ractl->_nr_pages - index - 1;
-                        printk("%s: page\n", __func__);
 			continue;
 		}
 
 		page = __page_cache_alloc(gfp_mask);
 		if (!page){
-                        printk("%s: nopage\n", __func__);
 			break;
                 }
 		if (mapping->a_ops->readpages) {
@@ -231,7 +228,6 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			put_page(page);
 			read_pages(ractl, &page_pool, true);
 			i = ractl->_index + ractl->_nr_pages - index - 1;
-                        printk("%s: no add page_cache\n", __func__);
 			continue;
 		}
                 //only happens if lookahead_size > 0
@@ -248,9 +244,6 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
                 if(ractl->ra_req)
                         ractl->ra_req->bio_req_nr += 1;
 	}
-
-        printk("%s: after _nr_pages=%d\n", __func__, ractl->_nr_pages);
-
 
 
 #ifdef CONFIG_ENABLE_CROSS_STATS
