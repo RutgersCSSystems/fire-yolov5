@@ -313,14 +313,15 @@ void force_page_cache_ra(struct readahead_control *ractl,
 		return;
 
 	index = readahead_index(ractl);
-#ifndef CONFIG_CROSSLAYER_UNBOUNDED_READAHEAD
-	/*
-	 * If the request exceeds the readahead window, allow the read to
-	 * be up to the optimal hardware IO size
-	 */
-	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
-	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
-#endif
+
+        if(!enable_unbounded){
+	        /*
+	        * If the request exceeds the readahead window, allow the read to
+	        * be up to the optimal hardware IO size
+	        */
+	        max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+	        nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+        }
 
     //If PREFETCH LIMIT not defined, we will do all of it together
     //else we do the typical 2 MB limit
@@ -564,11 +565,13 @@ static void ondemand_readahead(struct readahead_control *ractl,
 
 initial_readahead:
 	ra->start = index;
-#ifdef CONFIG_CROSSLAYER_UNBOUNDED_READ
-	ra->size = req_size;
-#else
-	ra->size = get_init_ra_size(req_size, max_pages);
-#endif
+
+        if(enable_unbounded){ //UNBOUNDED_READ
+	        ra->size = req_size;
+        }else{
+	        ra->size = get_init_ra_size(req_size, max_pages);
+        }
+
 	ra->async_size = ra->size > req_size ? ra->size - req_size : ra->size;
 
 readit:
@@ -584,11 +587,11 @@ readit:
 			ra->async_size = add_pages;
 			ra->size += add_pages;
 		} else {
-#ifdef CONFIG_CROSSLAYER_UNBOUNDED_READ
-			ra->size = req_size;
-#else
-			ra->size = max_pages;
-#endif
+                        if(enable_unbounded){ //UNBOUNDED_READ
+			        ra->size = req_size;
+                        }else{
+			        ra->size = max_pages;
+                        }
                
 			ra->async_size = max_pages >> 1;
 		}

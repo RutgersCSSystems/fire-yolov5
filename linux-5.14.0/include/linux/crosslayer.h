@@ -120,4 +120,6 @@ void cache_usage_increase(int nr_pages);
 void cache_usage_reduce(int nr_pages);
 #endif
 
+void setup_cross_interface(void);
+
 #endif

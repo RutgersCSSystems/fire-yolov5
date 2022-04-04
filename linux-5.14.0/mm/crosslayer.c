@@ -39,6 +39,9 @@
 #include <linux/pkeys.h>
 #include <linux/oom.h>
 #include <linux/jiffies.h>
+#include <linux/proc_fs.h>
+#include <linux/sched.h>
+#include <asm/uaccess.h>
 
 #include <linux/btree.h>
 #include <linux/radix-tree.h>
@@ -72,6 +75,15 @@
 #define WALK_PAGECACHE 9
 
 struct file_pfetch_state global_counts; //global counters
+
+atomic_t setup_cross_procfs = ATOMIC_INIT(-1);
+#define BUFSIZE 100
+/*
+ * This variable changes behaviour of reads and readaheads
+ * if 1 -> no read and readahead limits apply
+ * if 0 -> vanilla read and readahead limits apply
+ */
+int enable_unbounded = 0;
 
 #ifdef CONFIG_CACHE_LIMITING
 /*
@@ -642,6 +654,76 @@ EXPORT_SYMBOL(print_inter_global_stats);
 void init_global_pfetch_state(void){
         init_file_pfetch_state(&global_counts);
 }
+
+
+/*
+ * write procfs file for updating values in kernel
+ */
+static ssize_t write_proc(struct file *filp, const char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        printk(KERN_INFO "proc file write.....\n");
+        int length = 0;
+        char buf[BUFSIZE];
+
+        if(*offset > 0 || len > BUFSIZE){
+                return -EFAULT;
+        }
+
+        if(copy_from_user(buf, buffer, len)){
+                return -EFAULT;
+        }
+
+
+        sscanf(buf, "%d", &enable_unbounded);
+        printk("Value of write = %d\n", enable_unbounded);
+
+        return len;
+}
+
+
+/*
+ * read procfs file for showing to userspace
+ */
+static ssize_t read_proc(struct file *filp, char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        printk(KERN_INFO "proc file read\n");
+
+        int length = 0;
+        char buf[BUFSIZE];
+        if(*offset > 0 || len < BUFSIZE){
+                return 0;
+        }
+
+        length += sprintf(buf, "%d\n", enable_unbounded);
+
+        if(copy_to_user(buffer, buf, length)){
+                return -EFAULT;
+        }
+        *offset = len;
+        return len;
+}
+
+
+/*
+ * This procfs interface controls the limits inside the kernel
+ * right now it only enables and disables unbounded read/readaheads
+ * check /proc/unbounded_read
+ */
+void setup_cross_interface(void){
+
+        if(atomic_inc_and_test(&setup_cross_procfs)){
+                printk("%s : inside setup procfs\n", __func__);
+                static struct proc_ops proc_fops = {
+                        .proc_read = read_proc,
+                        .proc_write = write_proc,
+                };
+                proc_create("unbounded_read", 0666, NULL, &proc_fops);
+        }
+        return;
+}
+EXPORT_SYMBOL(setup_cross_interface);
 
 
 //Syscall Nr: 448

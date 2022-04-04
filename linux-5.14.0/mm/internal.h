@@ -13,6 +13,12 @@
 #include <linux/tracepoint-defs.h>
 
 /*
+ * from mm/crosslayer.c
+ * used for enabling/disabling unbounded reads/readahead
+ */
+extern int enable_unbounded;
+
+/*
  * The set of flags that only affect watermark checking and reclaim
  * behaviour. This is used by the MM to obey the caller constraints
  * about IO, FS and watermark checking while ignoring placement

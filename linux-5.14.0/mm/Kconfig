@@ -902,12 +902,6 @@ config ENABLE_CROSSLAYER_DEBUG
 config PREFETCH_2MB_LIMIT
     bool "2MB read limiting?"
 
-config CROSSLAYER_UNBOUNDED_READ
-    bool "doesnt limit read wrt VM_READAHEAD_PAGES"
-
-config CROSSLAYER_UNBOUNDED_READAHEAD
-    bool "doesnt limit readahead to VM_READAHEAD_PAGES"
-
 # if this is enabled, BLK_DEF_MAX_SECTORS= ~0UL
 # unlimited hardware sectors
 config UNLIMITED_MAX_SECTORS
