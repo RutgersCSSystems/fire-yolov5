@@ -1684,6 +1684,12 @@ void iput(struct inode *inode)
 	BUG_ON(inode->i_state & I_CLEAR);
 retry:
 	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+                if(inode->bitmap){
+                        vfree(inode->bitmap);
+                }
+#endif
 		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
 			atomic_inc(&inode->i_count);
 			spin_unlock(&inode->i_lock);
