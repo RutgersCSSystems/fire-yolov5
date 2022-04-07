@@ -118,3 +118,6 @@ INTERCEPT: $(SOURCES)
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
+
+clean:
+	rm *.so
