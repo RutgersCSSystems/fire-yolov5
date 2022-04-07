@@ -8,11 +8,16 @@
 #define MB 1024L * KB
 #define GB 1024L * MB
 
-
-#define __PREAD_RA_SYSCALL 449
-
 #define likely(x)      __builtin_expect(!!(x), 1)
 #define unlikely(x)    __builtin_expect(!!(x), 0)
+
+
+/*
+ * Setting 0 -> vanilla limits on reads and readaheads
+ * Setting 1 -> no limits on reads and readaheads
+ * Note: linux 5.14 doesnt prefetch more than 256 pg in vanilla
+ */
+#define LIMITS_PROCFS_FILE "/proc/unbounded_read"
 
 #ifdef DEBUG
 #define debug_printf(...) printf(__VA_ARGS__ )

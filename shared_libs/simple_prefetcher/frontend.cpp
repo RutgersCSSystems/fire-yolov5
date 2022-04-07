@@ -62,12 +62,21 @@ void init_global_ds(void){
 	}
 }
 
+/*
+ * Set unbounded_read to 0 or 1
+ */
+void set_read_limits(char a){
+        debug_printf("Setting Read Limits to %c\n", a);
+        int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
+        pwrite(fd, &a, sizeof(char), 0);
+        real_close(fd);
+}
+
 
 void con(){
         printf("CONSTRUCTOR GETTING CALLED \n");
 
 #ifdef THPOOL_PREFETCH
-        //workerpool = create_thpool(NR_WORKERS);
         workerpool = thpool_init(NR_WORKERS);
         if(!workerpool){
                 printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
@@ -77,6 +86,15 @@ void con(){
         }
 #endif
 	init_global_ds();
+
+        char a;
+#ifdef SET_READ_UNLIMITED
+        a = '1';
+        set_read_limits(a);
+#else
+        a = '0';
+        set_read_limits(a);
+#endif
 
 }
 
