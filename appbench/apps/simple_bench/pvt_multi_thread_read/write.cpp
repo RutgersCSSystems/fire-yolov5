@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include <iostream>
 #include <vector>
@@ -31,6 +33,11 @@ void prefetcher_th(void *arg){
         FILE *fp;
         fp=fopen(a->filename, "w");
 
+        if(!fp){
+                printf("Unable to open file\n");
+                return;
+        }
+
         for(long i=0; i <a->size; i++) {
                 fprintf(fp, "C");
         }
@@ -44,8 +51,12 @@ int main() {
         int fileno=0;
         vector<FILE *> filp_list;
 
-        const char* str1 = "bigfakefile";
         char filename[FILENAMEMAX];
+        char foldername[FILENAMEMAX];
+
+        folder_name(foldername, NR_THREADS);
+
+        mkdir(foldername, S_IRWXU);
 
         threadpool thpool;
         thpool = thpool_init(NR_THREADS);
@@ -57,7 +68,8 @@ int main() {
 
         for(int i=0; i<NR_THREADS; i++){
                 struct thread_args *req = (struct thread_args*)malloc(sizeof(struct thread_args));
-                file_name(str1, i, filename);
+                //file_name(str1, i, filename);
+                file_name(i, filename, NR_THREADS);
                 req->size = FILESIZE/NR_THREADS;
                 strcpy(req->filename, filename);
                 thpool_add_work(thpool, prefetcher_th, (struct thread_args*)req);

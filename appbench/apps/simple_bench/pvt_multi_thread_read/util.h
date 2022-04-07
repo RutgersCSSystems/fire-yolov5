@@ -28,23 +28,44 @@
 #define NR_PAGES_READ 10
 #endif
 
+#define FILEBASE "bigfakefile"
+
 #define gettid() syscall(SYS_gettid)
 
 #define FILENAMEMAX 1024
 
+
+void folder_name(char *buffer, int nr_files){
+        char *nr_threads;
+        const char* str1 = "./threads_";
+
+        if (asprintf(&nr_threads, "%d", nr_files) == -1) {
+                perror("asprintf");
+        } else {
+                strcat(strcpy(buffer, str1), nr_threads);
+                free(nr_threads);
+        }
+}
 /*
  * Given the mpi rank and the initial string, this
  * function returns the filename per mpi rank
  */
-void file_name(const char *str1, int rank, char *buffer){
+void file_name(int rank, char *buffer, int nr_files){
         char *num;
+        char *nr_threads;
 
-        if (asprintf(&num, "%d", rank) == -1) {
+        const char* str1 = "./threads_";
+
+        if (asprintf(&num, "%d", rank) == -1 || asprintf(&nr_threads, "%d", nr_files) == -1) {
                 perror("asprintf");
         } else {
-                strcat(strcpy(buffer, str1), num);
+                strcat(strcpy(buffer, str1), nr_threads);
+                strcat(buffer, "/");
+                strcat(buffer, FILEBASE);
+                strcat(buffer, num);
                 strcat(buffer, ".txt");
                 free(num);
+                free(nr_threads);
         }
 }
 

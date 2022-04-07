@@ -141,12 +141,11 @@ int main(int argc, char **argv)
          * Open all the files and save their fds
          */
         vector<int> fd_list;
-        const char* str1 = "bigfakefile";
         char filename[FILENAMEMAX];
         int fd;
 
         for(int i=0; i<NR_THREADS; i++){
-                file_name(str1, i, filename);
+                file_name(i, filename, NR_THREADS);
                 fd = open(filename, O_RDWR);
                 if (fd == -1){
                         printf("\nFile %s Open Unsuccessful\n", filename);
