@@ -54,27 +54,21 @@ SETPRELOAD()
         elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
                 printf "Only OS prefetching enabled\n"
                 export LD_PRELOAD=/usr/lib/lib_OSonly.so
-        elif [[ "$1" == "CBNMB" ]]; then
-                printf "Cross_BlockRA_NoPred_MaxMem_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CBNMB.so
-        elif [[ "$1" == "CFNMB" ]]; then
-                printf "Cross_FileRA_NoPred_MaxMem_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CFNMB.so
-        elif [[ "$1" == "CFPMB" ]]; then
-                printf "Cross_FileRA_Pred_MaxMem_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CFPMB.so
-        elif [[ "$1" == "CBPMB" ]]; then
-                printf "Cross_BlockRA_Pred_MaxMem_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CBPMB.so
-        elif [[ "$1" == "CBPBB" ]]; then
-                printf "Cross_BlockRA_Pred_Budget_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CBPBB.so
-        elif [[ "$1" == "CBPBB_info" ]]; then
-                printf "Cross_BlockRA_Pred_Budget_BG_info\n"
-                export LD_PRELOAD=/usr/lib/lib_CBPBB_info.so
-        elif [[ "$1" == "CBNBB" ]]; then
-                printf "Cross_BlockRA_NoPred_Budget_BG\n"
-                export LD_PRELOAD=/usr/lib/lib_CBNBB.so
+        elif [[ "$1" == "CN" ]]; then
+                printf "Cross Naive\n"
+                export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
+        elif [[ "$1" == "CPNV" ]]; then
+                printf "Cross Pred NoLimit Vanilla_IO\n"
+                export LD_PRELOAD=/usr/lib/lib_CPNV.so
+        elif [[ "$1" == "CPNI" ]]; then
+                printf "Cross Pred NoLimit IO_OPT\n"
+                export LD_PRELOAD=/usr/lib/lib_CPNI.so
+        elif [[ "$1" == "CPBV" ]]; then
+                printf "Cross Pred Budget Vanilla_IO\n"
+                export LD_PRELOAD=/usr/lib/lib_CPBV.so
+        elif [[ "$1" == "CPBI" ]]; then
+                printf "Cross Pred Budget IO_OPT\n"
+                export LD_PRELOAD=/usr/lib/lib_CPBI.so
         elif [[ "$1" == "MEMUSAGE" ]]; then
                 printf "Checks the MemUsage for this App\n"
                 export LD_PRELOAD=/usr/lib/lib_memusage.so
