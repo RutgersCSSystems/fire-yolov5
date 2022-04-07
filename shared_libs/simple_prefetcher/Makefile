@@ -42,7 +42,7 @@ PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_R
 
 #all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cross_BlockRA_Pred_MaxMem_BG Cross_BlockRA_Pred_Budget_BG Cross_BlockRA_NoPred_Budget_BG Cross_BlockRA_NoPred_MaxMem_BG Cross_BlockRA_Pred_Budget_BG_info Cross_BlockRA_NoPred_Budget_BG_info INTERCEPT
 
-all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit
+all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT
 
 
 #CBNMB_info
@@ -53,8 +53,23 @@ Cross_Naive: $(SOURCES)
 
 #CBPMB_info
 Cross_Pred_NoLimit: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPN.so $^ $(LIBS) $(DEBUG) \
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPNV.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)
+
+Cross_Pred_NoLimit_IOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPNI.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
+	    -DSET_READ_UNLIMITED
+
+#CBPBB_info
+Cross_Pred_Budget: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBV.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO)
+
+Cross_Pred_Budget_IOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO) \
+	    -DSET_READ_UNLIMITED
 
 
 Cross_BlockRA_Pred_Budget_BG_info: $(SOURCES)
