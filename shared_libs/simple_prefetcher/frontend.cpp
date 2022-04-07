@@ -142,7 +142,6 @@ void prefetcher_th(void *arg) {
         
 
 
-#ifdef PREFETCH_READAHEAD
         while (curr_pos < a->file_size){
                 file_pos = curr_pos + a->offset;
 
@@ -210,7 +209,6 @@ void prefetcher_th(void *arg) {
                 curr_pos += a->prefetch_size;
 #endif //MODIFIED_RA
         }
-#endif //PREFETCH_READAHEAD
 
 exit:
 
