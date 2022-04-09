@@ -15,7 +15,8 @@ SYNC=0 ##Call sync when writing
 WRITE_BUFF_SIZE=67108864
 VALUESIZE=4096
 KEYSIZE=1000
-NUM=10000000
+NUM=1000000
+SST_SIZE=`echo "128 * $MB" | bc`
 
 declare -a experiment=("VANILLA" "OSONLY" "CN" "CPNV" "CPNI")
 declare -a mem_budget=("1")
@@ -26,14 +27,14 @@ declare -a threads=("1" "2" "4" "8" "16")
 declare -a mem_budget=("1")
 
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-ORI_PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE"
+ORI_PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE --target_file_size_base=$SST_SIZE"
 ORI_READARGS="--use_existing_db=1 --mmap_read=0"
 
 #updated by lib_memusage
 total_anon_MB=0
 total_cache_MB=0
 
-WORKLOAD="readrandom"
+WORKLOAD="readseq"
 
 #Compiles the application
 COMPILE_APP() {
@@ -95,12 +96,14 @@ TOUCH_OUTFILE(){
 
 PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
 
-OUTFILENAME="${WORKLOAD}_num-${NUM}_valuesz-${VALUESIZE}_keysz-${KEYSIZE}"
+OUTFILENAME="${WORKLOAD}_num-${NUM}_valuesz-${VALUESIZE}_keysz-${KEYSIZE}_filesize-${SST_SIZE}"
 OUTFILE=./$OUTFILENAME
 TOUCH_OUTFILE $OUTFILE
 
-#COMPILE_APP
-#CLEAN_AND_WRITE
+COMPILE_APP
+CLEAN_AND_WRITE
+
+exit
 
 for THREAD in "${threads[@]}"
 do
