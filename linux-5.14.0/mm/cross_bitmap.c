@@ -63,8 +63,6 @@
 #include "internal.h"
 
 
-#define CROSS_PREALLOC_SHIFT 35
-
 
 /*
  * ptr : address where to allocate the bitmap
@@ -79,7 +77,7 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         //allocate 1TB worth bitmaps 
         //unsigned long prealloc_pg = 1 << (40 - PAGE_SHIFT);
-        unsigned long prealloc_pg = 1 << (CROSS_PREALLOC_SHIFT - PAGE_SHIFT);
+        unsigned long prealloc_pg = 1 << (CONFIG_CROSS_PREALLOC_SHIFT - PAGE_SHIFT);
 
         long nr_longs = BITS_TO_LONGS(prealloc_pg);
 

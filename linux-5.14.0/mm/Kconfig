@@ -916,4 +916,9 @@ config PREAD_RA_SIMPLE
 config CROSS_FILE_BITMAP
         bool "bitmap for readahead_info"
 
+config CROSS_PREALLOC_SHIFT
+	int "SHIFT to use to preallocate bits for bitmap"
+	default 40
+	depends on CROSS_FILE_BITMAP
+
 endmenu
