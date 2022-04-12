@@ -662,7 +662,6 @@ void init_global_pfetch_state(void){
 static ssize_t write_proc(struct file *filp, const char __user *buffer,
                 size_t len, loff_t * offset)
 {
-        printk(KERN_INFO "proc file write.....\n");
         int length = 0;
         char buf[BUFSIZE];
 
@@ -676,7 +675,7 @@ static ssize_t write_proc(struct file *filp, const char __user *buffer,
 
 
         sscanf(buf, "%d", &enable_unbounded);
-        printk("Value of write = %d\n", enable_unbounded);
+        printk("%s: Value of write = %d\n", __func__, enable_unbounded);
 
         return len;
 }
@@ -688,7 +687,7 @@ static ssize_t write_proc(struct file *filp, const char __user *buffer,
 static ssize_t read_proc(struct file *filp, char __user *buffer,
                 size_t len, loff_t * offset)
 {
-        printk(KERN_INFO "proc file read\n");
+        printk(KERN_INFO "%s: proc file read\n", __func__);
 
         int length = 0;
         char buf[BUFSIZE];
