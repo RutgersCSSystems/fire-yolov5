@@ -57,6 +57,9 @@ SETPRELOAD()
         elif [[ "$1" == "CN" ]]; then
                 printf "Cross Naive\n"
                 export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
+        elif [[ "$1" == "CNI" ]]; then
+                printf "Cross Naive IOOPT\n"
+                export LD_PRELOAD=/usr/lib/lib_CNI.so
         elif [[ "$1" == "CPNV" ]]; then
                 printf "Cross Pred NoLimit Vanilla_IO\n"
                 export LD_PRELOAD=/usr/lib/lib_CPNV.so
