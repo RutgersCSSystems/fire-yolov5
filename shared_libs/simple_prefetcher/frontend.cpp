@@ -66,7 +66,7 @@ void init_global_ds(void){
  * Set unbounded_read to 0 or 1
  */
 void set_read_limits(char a){
-        debug_printf("Setting Read Limits to %c\n", a);
+        debug_printf("%s: Setting Read Limits to %c\n", __func__, a);
         int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
         pwrite(fd, &a, sizeof(char), 0);
         real_close(fd);
@@ -75,6 +75,12 @@ void set_read_limits(char a){
 
 void con(){
         printf("CONSTRUCTOR GETTING CALLED \n");
+
+	/*
+	 * Sometimes, if dlsym is called with thread spawn
+	 * glibc incurres an error.
+	 */
+	link_shim_functions();
 
 #ifdef THPOOL_PREFETCH
         workerpool = thpool_init(NR_WORKERS);
@@ -458,6 +464,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 
 #ifdef PREDICTOR
+	//init_global_ds();
         file_predictor *fp;
 	try{
         	fp = fd_to_file_pred->at(fd);
@@ -470,8 +477,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
                 fp->predictor_update(offset, size);
                 if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
                         prefetch_file(fd, fp);
+			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
                 }
-                debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
         }
 #endif
 
@@ -537,6 +544,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 #endif
 
 #ifdef PREDICTOR
+	//init_global_ds();
         file_predictor *fp;
 	try{
                 fp = fd_to_file_pred->at(fd);
@@ -549,8 +557,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
                 fp->predictor_update(ftell(stream), size*nmemb);
                 if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
                         prefetch_file(fd, fp);
+			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
                 }
-                debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
         }
 #endif
 
@@ -564,13 +572,17 @@ exit:
 
 
 void handle_file_close(int fd){
+
 #ifdef PREDICTOR
 	init_global_ds();
         file_predictor *fp;
 	try{
+		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
         	fp = fd_to_file_pred->at(fd);
+		fd_to_file_pred->erase(fd);
 	}
 	catch(const std::out_of_range){
+		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
 		goto exit;
 	}
         if(fp){
