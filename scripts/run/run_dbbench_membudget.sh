@@ -41,6 +41,7 @@ ORI_READARGS="--use_existing_db=1 --mmap_read=0"
 #updated by lib_memusage
 total_anon_MB=0
 total_cache_MB=0
+slack_MB=1024
 
 #Compiles the application
 COMPILE_APP() {
@@ -170,7 +171,7 @@ do
 					for MEM_BUDGET_PER in "${memory_budget_percent[@]}"
 					do
 						umount_ext4ramdisk
-						SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))/1" | bc --mathlib`
+                                                SETUPEXTRAM_1 `echo "scale=0; (($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))+$slack_MB)/1" | bc --mathlib`
 						REFRESH
 						RUNAPP
 					done

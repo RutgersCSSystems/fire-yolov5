@@ -22,8 +22,8 @@ RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        #OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_${RIGHTNOW}/${EXPERIMENT}
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_diff_membudget/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_${RIGHTNOW}/${EXPERIMENT}
+        #OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_diff_membudget/${EXPERIMENT}
         mkdir -p $OUTPUT
 
         if [ "$APP" = "strided_madbench" ]; then
