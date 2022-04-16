@@ -137,6 +137,10 @@ int main(int argc, char** argv)
   initialize(argc, argv); PMPI_Barrier(MPI_COMM_WORLD);
 
   struct timeval start, end;
+  
+  // Get the number of processes
+  int world_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
 
   build_S(); PMPI_Barrier(MPI_COMM_WORLD);
@@ -156,7 +160,7 @@ int main(int argc, char** argv)
 
   unsigned long mbps = ((file_sz/(1024*1024))/(time/(1000000)));
 
-  printf("Bandwidth = %ld MB/s\n", mbps);
+  printf("Bandwidth = %ld MB/s\n", mbps*world_size);
 
   finalize();
 }
