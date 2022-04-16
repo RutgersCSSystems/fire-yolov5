@@ -11,18 +11,11 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-#declare -a apparr=("rocksdb_membudget")
-declare -a apparr=("simple_bench_pvt_membudget")
+declare -a apparr=("rocksdb_membudget")
+#declare -a apparr=("simple_bench_pvt_membudget")
 
 #experiment names should be same as preloadlib names in SETPRELOAD
-#declare -a experiment=("VANILLA" "OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
-declare -a experiment=("OSONLY" "CFNMB" "CBNMB" "CFPMB" "CBPMB" "CBNBB" "CBPBB")
-#declare -a experiment=("CBPBB")
-#C - Cross
-#F - FileRA, B - BlockRS
-#N - NoPred, P - Pred
-#M - MaxMem, B - Budget
-#B - BG, F - FG
+declare -a experiment=("VANILLA" "OSONLY" "CN" "CPNV" "CPNI" "CPBV" "CPBI")
 
 #Here is where we run the application
 RUNAPP()
