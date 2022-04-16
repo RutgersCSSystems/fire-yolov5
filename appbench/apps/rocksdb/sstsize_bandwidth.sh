@@ -18,8 +18,8 @@ KEYSIZE=1000
 NUM=1000000
 THREAD=16
 
-declare -a experiment=("VANILLA" "OSONLY" "CN" "CPNV" "CPNI")
-declare -a sst_size=("128" "512" "1024" "2048")
+declare -a experiment=("VANILLA" "OSONLY" "CN" "CNI" "CPNV" "CPNI")
+declare -a sst_size=("64" "128" "512" "1024" "2048")
 
 
 # Memory Budget = total_anon_MB + (total_cache_MB * memory_budget_percent)
@@ -29,7 +29,7 @@ declare -a mem_budget=("1")
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 ORI_READARGS="--use_existing_db=1 --mmap_read=0"
 
-WORKLOAD="readseq"
+WORKLOAD="readrandom"
 
 #Compiles the application
 COMPILE_APP() {
@@ -93,6 +93,7 @@ do
 		--target_file_size_base=`echo "$SST_SIZE * $MB" | bc`"
 	PARAMS="$ORI_PARAMS --value_size=$VALUESIZE --key_size=$KEYSIZE --num=$NUM"
 	CLEAN_AND_WRITE
+
 
         READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$THREAD"
         COMMAND="$base/db_bench $PARAMS $READARGS"
