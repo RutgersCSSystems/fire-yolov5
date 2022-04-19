@@ -81,28 +81,20 @@ do
     du -h $PWD/files
     FlushDisk
 
-    echo "@@@@@@VANILLA"
+    echo "@@@@@@ VANILLA"
     mpirun -hostfile ~/hostfile $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
     FlushDisk
 
-    echo "@@@@@@@Cross_FileRA_NoPred_MaxMem_BG"
-    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CFNMB.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
+    echo "@@@@@@@ Cross [Naive]"
+    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CN.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
     FlushDisk
 
-    echo "@@@@@@@Cross_BlockRA_NoPred_MaxMem_BG"
-    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CBNMB.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
+    echo "@@@@@@@Cross [Predict + noLimit]"
+    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CPNV.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
     FlushDisk
 
-    echo "@@@@@@@Cross_FileRA_Pred_MaxMem_BG"
-    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CFPMB.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
-    FlushDisk
-
-    echo "@@@@@@@Cross_BlockRA_Pred_MaxMem_BG"
-    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CBPMB.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
-    FlushDisk
-
-    echo "@@@@@@@Cross_BlockRA_Pred_Budget_BG_info"
-    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CBPBB_info.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
+    echo "@@@@@@@Cross [Predict + noLimit + IOOPT]"
+    mpirun -hostfile ~/hostfile -env LD_PRELOAD=/usr/lib/lib_CPNI.so $ENV -np $NPROC $COMMAND |& grep "Bandwidth" | head -1 | awk '{print $3}'
     FlushDisk
 
 done
