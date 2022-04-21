@@ -550,7 +550,9 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     size_t pfetch_size = 0;
     size_t amount_read = 0;
-    printf("%s: TID:%ld\n", __func__, gettid());
+
+    fprintf(stderr, "%s: TID:%ld\n", __func__, gettid());
+
     amount_read = real_fread(ptr, size, nmemb, stream);
     return amount_read;
 
@@ -577,9 +579,13 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 }
 
 
+static int reads_called = 0;
+
 ssize_t read(int fd, void *data, size_t size){
 
     ssize_t amount_read = real_read(fd, data, size);
+
+    fprintf(stderr, "%s: TID:%ld reads:%d\n", __func__, gettid(), reads_called++);
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
@@ -599,6 +605,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
     ssize_t amount_read;
     size_t pfetch_size = 0;
+
+    fprintf(stderr, "%s: TID:%ld reads:%d\n", __func__, gettid(), reads_called++);
 
     //amount_read = real_pread(fd, data, size, offset);
 #ifndef READ_RA
@@ -645,6 +653,8 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     // Perform the actual system call
     size_t amount_written = real_fwrite(ptr, size, nmemb, stream);
+
+    printf("%s: TID:%ld reads:%d\n", __func__, gettid(), reads_called++);
 
 #ifdef PREDICTOR
     debug_print("%s: TID:%ld\n", __func__, gettid());
