@@ -963,7 +963,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
      tsk->do_cache_acct = false;
 #endif
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
     init_file_pfetch_state(&tsk->pfetch_state);
 #endif
 	return tsk;

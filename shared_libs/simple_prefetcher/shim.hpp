@@ -45,6 +45,25 @@ real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 
 
+void link_shim_functions(void){
+        clone_ptr = (real_clone_t)dlsym(RTLD_NEXT, "clone");
+        posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
+        readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+        fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
+        fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+        fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
+        pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+        write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+        read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
+        open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
+        fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
+        close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
+
+	printf("done with %s\n", __func__);
+	return;
+}
+
+
 int real_clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
         pid_t *ptid, void *newtls, pid_t *ctid){
     if(!clone_ptr)
@@ -126,13 +145,13 @@ int real_open(const char *pathname, int flags, mode_t mode){
 int real_fclose(FILE *stream){
     if(!fclose_ptr)
         fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
-        return ((real_fclose_t)fclose_ptr)(stream);
+    return ((real_fclose_t)fclose_ptr)(stream);
 }
 
 int real_close(int fd){
     if(!close_ptr)
         close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
-        return ((real_close_t)close_ptr)(fd);
+    return ((real_close_t)close_ptr)(fd);
 }
 
 uid_t real_getuid(){

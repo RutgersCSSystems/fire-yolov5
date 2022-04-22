@@ -729,7 +729,7 @@ void __noreturn do_exit(long code)
 	struct task_struct *tsk = current;
 	int group_dead;
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      print_task_stats(tsk);
 #endif
 

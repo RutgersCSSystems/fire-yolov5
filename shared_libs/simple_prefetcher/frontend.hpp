@@ -18,6 +18,25 @@
 #define DEFSEQ 64 /* definitely seq */
 
 
+//Used to send data to pthread or worker thread
+struct thread_args{
+	int fd; //opened file fd
+	long offset; //where to start
+	long file_size; //total filesize
+	long prefetch_size; //size of each prefetch req
+
+	/*
+	 * Share current and last fd with the prefetcher thread
+	 */
+	int current_fd;
+	int last_fd; 
+
+        /*
+         * Send a pointer to the page cache state to be updated
+         */
+        bit_array_t *page_cache_state;
+};
+
 //returns filesize if fd is regular file
 //else 0
 off_t reg_fd(int fd){
@@ -207,6 +226,14 @@ class file_predictor{
                 size_t nr_portions;
                 size_t portion_sz;
 
+		/*
+		 * For each file doing readahead_info, the syscall
+		 * returns the page cache state in its return struct
+		 * We will be using this to update the access_history
+		 * based on the PORTION_PAGES.
+		 */
+                bit_array_t *page_cache_state;
+
                 /*
                  * This variable summarizes if the file is reasonably
                  * sequential/strided for prefetching to happen.
@@ -217,7 +244,7 @@ class file_predictor{
                  * Returns true if readahead has been issued 
                  * for this file
                  */
-                bool already_prefetched;
+                std::atomic_flag already_prefetched;
 
                 /*Constructor*/
                 file_predictor(int this_fd, size_t size){
@@ -236,9 +263,15 @@ class file_predictor{
                         access_history = BitArrayCreate(nr_portions);
                         BitArrayClearAll(access_history);
 
+#ifdef READAHEAD_INFO_PC_STATE
+			page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+                        BitArrayClearAll(page_cache_state);
+#else
+			page_cache_state = NULL;
+#endif
+
                         //Assume any opened file is probably not sequential
                         sequentiality = POSSNSEQ;
-                        already_prefetched = false;
                 }
 
 		/*Destructor*/

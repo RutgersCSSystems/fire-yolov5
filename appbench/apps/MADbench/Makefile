@@ -1,5 +1,5 @@
 CC=mpicc
-LIBS=-L/usr/local/lib -lm
+LIBS=-L/usr/local/lib -lm -lmpi
 
 FLAGS=-D SYSTEM -D COLUMBIA -D IO
 

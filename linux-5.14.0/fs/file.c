@@ -626,7 +626,7 @@ int close_fd(unsigned fd)
 	file = pick_file(files, fd);
 	if (!file)
 		return -EBADF;
-#ifdef CONFIG_ENABLE_CROSSLAYER 
+#ifdef CONFIG_ENABLE_CROSS_STATS 
     	print_inode_stats(file->f_inode);
 #endif
 

@@ -415,7 +415,7 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
 	iov_iter_init(&iter, READ, &iov, 1, len);
 
 #if 0
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      char *f_name = kmalloc(NAME_MAX+1, GFP_KERNEL);
 	pgoff_t index = kiocb.ki_pos >> PAGE_SHIFT;
      pgoff_t last_index = DIV_ROUND_UP(kiocb.ki_pos + iter.count, PAGE_SIZE);

@@ -4310,7 +4310,7 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
 		vmf->prealloc_pte = NULL;
 	}
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      add_nr_read_fault(current);
 #endif
 

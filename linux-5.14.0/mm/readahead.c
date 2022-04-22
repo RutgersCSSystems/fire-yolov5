@@ -25,6 +25,7 @@
 #include <linux/sched/mm.h>
 #include <linux/crosslayer.h>
 #include <linux/vmstat.h>
+#include <linux/cross_bitmap.h>
 
 #include "internal.h"
 
@@ -176,6 +177,7 @@ out:
 void page_cache_ra_unbounded(struct readahead_control *ractl,
 		unsigned long nr_to_read, unsigned long lookahead_size)
 {
+
 	struct address_space *mapping = ractl->mapping;
 	unsigned long index = readahead_index(ractl);
 	LIST_HEAD(page_pool);
@@ -217,7 +219,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 		page = __page_cache_alloc(gfp_mask);
 		if (!page){
 			break;
-          }
+                }
 		if (mapping->a_ops->readpages) {
 			page->index = index + i;
 			list_add(&page->lru, &page_pool);
@@ -228,19 +230,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 			i = ractl->_index + ractl->_nr_pages - index - 1;
 			continue;
 		}
-          //only happens if lookahead_size > 0
+                //only happens if lookahead_size > 0
 		if (i == nr_to_read - lookahead_size)
 			SetPageReadahead(page);
 
 		ractl->_nr_pages++;
-          /*update read_req from user*/
-          if(ractl->ra_req)
-              ractl->ra_req->bio_req_nr += 1;
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+                add_pg_cross_bitmap(mapping->host, index+i);
+#endif
+
+                /*update read_req from user*/
+                if(ractl->ra_req)
+                        ractl->ra_req->bio_req_nr += 1;
 	}
 
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
-       update_pfetch_success(current, ractl->file->f_inode, ractl, ractl->_nr_pages);
+#ifdef CONFIG_ENABLE_CROSS_STATS
+     update_pfetch_success(current, ractl->file->f_inode, ractl, ractl->_nr_pages);
 #endif
 
 	/*
@@ -306,14 +313,15 @@ void force_page_cache_ra(struct readahead_control *ractl,
 		return;
 
 	index = readahead_index(ractl);
-#ifndef CONFIG_CROSSLAYER_UNBOUNDED_READAHEAD
-	/*
-	 * If the request exceeds the readahead window, allow the read to
-	 * be up to the optimal hardware IO size
-	 */
-	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
-	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
-#endif
+
+        if(!enable_unbounded){
+	        /*
+	        * If the request exceeds the readahead window, allow the read to
+	        * be up to the optimal hardware IO size
+	        */
+	        max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+	        nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+        }
 
     //If PREFETCH LIMIT not defined, we will do all of it together
     //else we do the typical 2 MB limit
@@ -557,11 +565,13 @@ static void ondemand_readahead(struct readahead_control *ractl,
 
 initial_readahead:
 	ra->start = index;
-#ifdef CONFIG_CROSSLAYER_UNBOUNDED_READ
-	ra->size = req_size;
-#else
-	ra->size = get_init_ra_size(req_size, max_pages);
-#endif
+
+        if(enable_unbounded){ //UNBOUNDED_READ
+	        ra->size = req_size;
+        }else{
+	        ra->size = get_init_ra_size(req_size, max_pages);
+        }
+
 	ra->async_size = ra->size > req_size ? ra->size - req_size : ra->size;
 
 readit:
@@ -577,18 +587,18 @@ readit:
 			ra->async_size = add_pages;
 			ra->size += add_pages;
 		} else {
-#ifdef CONFIG_CROSSLAYER_UNBOUNDED_READ
-			ra->size = req_size;
-#else
-			ra->size = max_pages;
-#endif
+                        if(enable_unbounded){ //UNBOUNDED_READ
+			        ra->size = req_size;
+                        }else{
+			        ra->size = max_pages;
+                        }
                
 			ra->async_size = max_pages >> 1;
 		}
 	}
 
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      //Async reads going to happen
     update_async_pages(current, ractl->file->f_inode, ractl, ra->size);
 #endif
@@ -642,7 +652,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
 
 	ClearPageReadahead(page);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         update_async_pages(current, ractl->mapping->host, ractl, req_count);
 #endif
 
@@ -659,7 +669,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
 	/* do read-ahead */
 	ondemand_readahead(ractl, true, req_count);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
         print_ractl_stats(ractl);
 #endif
 }
@@ -705,14 +715,34 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 {
         long ret = -1;
         struct read_ra_req ra;
-        /* NOT REQUIRED NOW 
+        struct inode *inode;
+
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
-	        goto normal_readahead;
+                goto normal_readahead;
         }
-        */
 
-normal_readahead:
+        
+        /*
+         * Return the file bitmap
+         */
+#ifdef CONFIG_CROSS_FILE_BITMAP
+
+        inode = file_inode(fdget(fd).file);
+
+        if(!inode){
+	        printk("%s: no inode!\n", __func__);
+                goto normal_readahead;
+        }
+
+        //allocate bitmap if not already done 
+        if(!inode->bitmap){
+                unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
+                alloc_cross_bitmap(inode, end_index);
+        }
+        ra.nr_relevant_bits = inode->nr_longs_used;
+#endif
+
 	ret = ksys_readahead(fd, offset, count);
 
         /*
@@ -720,9 +750,23 @@ normal_readahead:
          */
         ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
 
-    if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
-            printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
-    }
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        if(ra.data && inode->bitmap){
+                if (unlikely(copy_to_user(ra.data, inode->bitmap, 
+                                sizeof(unsigned long)*inode->nr_longs_tot)))
+                {
+                        printk("%s: couldnt copy data back to user\n", __func__);
+                }
+        }
+#endif
+
+        if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
+                printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
+        }
+        goto exit;
+
+normal_readahead:
+	ret = ksys_readahead(fd, offset, count);
 
 exit:
         return ret;

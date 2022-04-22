@@ -890,8 +890,8 @@ config SECRETMEM
 	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
 
 # Crosslayer Stats and functionality
-config ENABLE_CROSSLAYER
-    bool "enable crosslayer OS"
+config ENABLE_CROSS_STATS
+    bool "enable crosslayer OS stats, reduces performance"
 
 # Crosslayer debug prints
 config ENABLE_CROSSLAYER_DEBUG
@@ -901,12 +901,6 @@ config ENABLE_CROSSLAYER_DEBUG
 # will submit IO in 2MB chunks
 config PREFETCH_2MB_LIMIT
     bool "2MB read limiting?"
-
-config CROSSLAYER_UNBOUNDED_READ
-    bool "doesnt limit read wrt VM_READAHEAD_PAGES"
-
-config CROSSLAYER_UNBOUNDED_READAHEAD
-    bool "doesnt limit readahead to VM_READAHEAD_PAGES"
 
 # if this is enabled, BLK_DEF_MAX_SECTORS= ~0UL
 # unlimited hardware sectors
@@ -918,5 +912,14 @@ config UNLIMITED_MAX_SECTORS
 
 #config PREAD_RA_SIMPLE
 #       bool "Make pread_ra to be pread and readahead calls"
+
+config CROSS_FILE_BITMAP
+	def_bool y
+        bool "bitmap for readahead_info"
+
+config CROSS_PREALLOC_SHIFT
+	int "SHIFT to use to preallocate bits for bitmap"
+	default 40
+	depends on CROSS_FILE_BITMAP
 
 endmenu

@@ -15,7 +15,7 @@ WRITE_LOAD="write_pvt"
 
 experiment=$1 #which preload library to call
 
-FILESIZE=10 ##in GB
+FILESIZE=4 ##in GB
 READ_SIZE=20 ## In pages
 THREAD=4
 
@@ -47,14 +47,26 @@ CLEAN_AND_WRITE() {
 
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD
-CLEAN_AND_WRITE
+#CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
 
 printf "\nRUNNING Vanilla.................\n"
 #SETPRELOAD "VANILLA"
-export LD_PRELOAD=/usr/lib/lib_test.so
+$COMMAND
+export LD_PRELOAD=""
+FlushDisk
+
+printf "\nRUNNING CBPBB.................\n"
+SETPRELOAD "CBPBB"
+$COMMAND
+export LD_PRELOAD=""
+FlushDisk
+
+printf "\nRUNNING CBPBB_info.................\n"
+#SETPRELOAD "CBPBB"
+#export LD_PRELOAD="/usr/lib/lib_CBPBB_info.so"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk

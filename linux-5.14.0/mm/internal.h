@@ -13,6 +13,12 @@
 #include <linux/tracepoint-defs.h>
 
 /*
+ * from mm/crosslayer.c
+ * used for enabling/disabling unbounded reads/readahead
+ */
+extern int enable_unbounded;
+
+/*
  * The set of flags that only affect watermark checking and reclaim
  * behaviour. This is used by the MM to obey the caller constraints
  * about IO, FS and watermark checking while ignoring placement
@@ -59,14 +65,14 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
 {
      DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
      ractl.pfetch_state.is_app_readahead = true;
      update_ra_orig_nr_pages(current, file->f_inode, &ractl, nr_to_read); 
 #endif
     
      force_page_cache_ra(&ractl, nr_to_read);
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
     print_ractl_stats(&ractl);
 #endif
 }

@@ -102,6 +102,7 @@ void reader_th(void *arg){
 #ifdef STRIDED_READ
                 bytes_read += NR_STRIDE * PG_SZ;
 #endif
+                usleep(1);
         }
         gettimeofday(&end, NULL);
 
@@ -140,12 +141,11 @@ int main(int argc, char **argv)
          * Open all the files and save their fds
          */
         vector<int> fd_list;
-        const char* str1 = "bigfakefile";
         char filename[FILENAMEMAX];
         int fd;
 
         for(int i=0; i<NR_THREADS; i++){
-                file_name(str1, i, filename);
+                file_name(i, filename, NR_THREADS);
                 fd = open(filename, O_RDWR);
                 if (fd == -1){
                         printf("\nFile %s Open Unsuccessful\n", filename);
@@ -175,8 +175,6 @@ int main(int argc, char **argv)
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
-        else
-                printf("Created %d bg threads\n", NR_THREADS);
 
 
         //Preallocating all the thread_args to remove overheads

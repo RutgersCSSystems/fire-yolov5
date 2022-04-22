@@ -1,0 +1,182 @@
+#!/bin/bash
+DBHOME=$PWD
+THREAD=4
+VALUE_SIZE=4096
+SYNC=0
+KEYSIZE=1000
+WRITE_BUFF_SIZE=67108864
+NUM=1000000
+DBDIR=$DBHOME/DATA
+
+WORKLOAD="readseq"
+#WORKLOAD="readrandom"
+#WORKLOAD="readreverse"
+WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
+READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+#READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
+APPPREFIX="/usr/bin/time -v"
+
+declare -a num_arr=("10000000")
+
+FlushDisk()
+{
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+        sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+        sudo sh -c "sync"
+        sudo dmesg --clear
+        sleep 5
+}
+
+
+SETPRELOAD()
+{
+        if [[ "$1" == "VANILLA" ]]; then ##All three
+                printf "setting Vanilla\n"
+                #export LD_PRELOAD=/usr/lib/lib_Vanilla.so
+                export LD_PRELOAD=/usr/lib/lib_Vanilla.so
+        elif [[ "$1" == "OSONLY" ]]; then ##None
+                printf "setting OSonly\n"
+                export LD_PRELOAD=/usr/lib/lib_OSonly.so
+        elif [[ "$1" == "CPNI" ]]; then
+                export LD_PRELOAD=/usr/lib/lib_CPNI.so
+        fi
+
+        ##export TARGET_GPPID=$PPID
+}
+
+CLEAR_PWD()
+{
+        cd $DBDIR
+        rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
+        cd ..
+}
+
+
+CLEAN_AND_WRITE()
+{
+        printf "in ${FUNCNAME[0]}\n"
+
+        export LD_PRELOAD=""
+        CLEAR_PWD
+        $DBHOME/db_bench $PARAMS $WRITEARGS &> WARMUP-WRITE.out
+        FlushDisk
+
+        ##Condition the DB to get Stable results
+        $DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ1.out
+        FlushDisk
+        $DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
+        FlushDisk
+}
+
+print_results() {
+
+	echo "Vanilla Results"
+	cat VANILLA.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CPNI Results"
+	cat CPNI.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CNI Results"
+	cat CNI.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CPBI Results"
+	cat CPBI.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CPBV Results"
+	cat CPBV.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CPNV Results"
+	cat CPNV.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+	echo "CROSS-NAIVE Results"
+	cat Cross_Naive.out | grep "readseq" | awk '{print $7}'
+	echo "...."
+
+}
+
+
+for NUM in "${num_arr[@]}"
+do
+        PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+
+	echo "BEGINNING TO WARM UP ......."
+        #CLEAN_AND_WRITE
+        #FlushDisk
+	printf "\n FINISHING WARM UP ......."
+	print "\n .................\n"
+	print "\n .................\n"
+	print "\n .................\n"
+
+        FlushDisk
+        FlushDisk
+
+        echo "RUNNING Vanilla.................\n"
+        #SETPRELOAD "VANILLA"
+        $DBHOME/db_bench $PARAMS $READARGS  &> VANILLA.out
+        export LD_PRELOAD=""
+	echo "................."
+	echo "................."
+        FlushDisk
+
+
+        printf "\nRUNNING CPNI.................\n"
+        export LD_PRELOAD=/usr/lib/lib_CPNI.so
+        $DBHOME/db_bench $PARAMS $READARGS &> CPNI.out
+        export LD_PRELOAD=""
+	FlushDisk
+
+        echo "RUNNING CNI.............\n"
+        export LD_PRELOAD=/usr/lib/lib_CNI.so
+        $DBHOME/db_bench $PARAMS $READARGS &> CNI.out
+        export LD_PRELOAD=""
+        FlushDisk
+	echo "................."
+	echo "................."
+        FlushDisk
+
+        echo "RUNNING CPBI.............\n"
+        export LD_PRELOAD=/usr/lib/lib_CPBI.so
+        $DBHOME/db_bench $PARAMS $READARGS &> CPBI.out
+        export LD_PRELOAD=""
+        FlushDisk
+	echo "................."
+	echo "................."
+        FlushDisk
+
+        echo "RUNNING CPBV.............\n"
+        export LD_PRELOAD=/usr/lib/lib_CPBV.so
+        $DBHOME/db_bench $PARAMS $READARGS &> CPBV.out
+        export LD_PRELOAD=""
+        FlushDisk
+	echo "................."
+	echo "................."
+        FlushDisk
+
+
+        echo "RUNNING CPNV.............\n"
+        export LD_PRELOAD=/usr/lib/lib_CPNV.so 
+        $DBHOME/db_bench $PARAMS $READARGS &> CPNV.out
+        export LD_PRELOAD=""
+        FlushDisk
+	echo "................."
+	echo "................."
+        FlushDisk
+
+        echo "RUNNING Cross Naive.............\n"
+        export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so 
+        $DBHOME/db_bench $PARAMS $READARGS &> Cross_Naive.out
+        export LD_PRELOAD=""
+        FlushDisk
+	echo "................."
+	echo "................."
+        FlushDisk
+done
+
+print_results

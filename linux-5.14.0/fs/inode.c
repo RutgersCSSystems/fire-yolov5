@@ -161,7 +161,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
 	inode->i_rdev = 0;
 	inode->dirtied_when = 0;
 
-#ifdef CONFIG_ENABLE_CROSSLAYER
+#ifdef CONFIG_ENABLE_CROSS_STATS
 	/* Initialize the pfetch_state structure that maintains 
 	 * per inode prefetch information
 	 */
@@ -1684,6 +1684,12 @@ void iput(struct inode *inode)
 	BUG_ON(inode->i_state & I_CLEAR);
 retry:
 	if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+                if(inode->bitmap){
+                        vfree(inode->bitmap);
+                }
+#endif
 		if (inode->i_nlink && (inode->i_state & I_DIRTY_TIME)) {
 			atomic_inc(&inode->i_count);
 			spin_unlock(&inode->i_lock);

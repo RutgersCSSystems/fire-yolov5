@@ -1001,7 +1001,7 @@ struct task_struct {
 	/* Open file information: */
 	struct files_struct		*files;
 
-//#ifdef CONFIG_ENABLE_CROSSLAYER
+//#ifdef CONFIG_ENABLE_CROSS_STATS
 /*XXX: Commented the config since it interferes with compile
  * when it is not enabled.
  */
