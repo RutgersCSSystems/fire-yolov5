@@ -1,0 +1,21 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+CONSTRUCTOR GETTING CALLED 
+done with link_shim_functions
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.006: Random Read Version 3.0 personality successfully loaded
+0.006: Populating and pre-allocating filesets
+0.006: Reusing existing largefile1 tree
+0.006: Pre-allocating files in largefile1 tree
+FINISHED PREALLOCATION 
+0.007: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+0.007: Population and pre-allocation of filesets completed
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+FINISHED PREALLOCATION 
+4.167: Starting 1 rand-read instances

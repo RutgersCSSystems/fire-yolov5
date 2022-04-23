@@ -73,10 +73,9 @@ RUNCACHESTAT()
 
 RUN()
 {
-	RUNCACHESTAT
-	SETPRELOAD
-
-	./filebench -f $DATAPATH &> $APPNAME"-"$PREDICT".out"
+	#RUNCACHESTAT
+	#SETPRELOAD
+	./filebench -f $DATAPATH #&> $APPNAME"-"$PREDICT".out"
 
 	FlushDisk
 	export LD_PRELOAD=""
@@ -85,9 +84,8 @@ RUN()
 
 #Run write workload twice
 #CLEAR_PWD
-
 FlushDisk
-PREDICT="CROSSLAYER"
+#PREDICT="CROSSLAYER"
 echo "RUNNING $PREDICT.................."
 RUN
 exit
