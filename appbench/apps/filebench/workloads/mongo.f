@@ -25,7 +25,7 @@
 # ident	"%Z%%M%	%I%	%E% SMI"
 
 set $dir=DATA/
-set $nfiles=2000000
+set $nfiles=200000
 set $dirwidth=20
 set $filesize=64k
 set $nthreads=16

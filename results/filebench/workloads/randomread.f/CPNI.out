@@ -19,3 +19,37 @@ FINISHED PREALLOCATION
 + sudo sh -c sync
 FINISHED PREALLOCATION 
 4.167: Starting 1 rand-read instances
+12.449: Running...
+42.453: Run took 30 seconds...
+42.454: Per-Operation Breakdown
+rand-read1           2526796ops    84215ops/s 657.9mb/s    0.094ms/op [0.003ms - 5.535ms]
+42.454: IO Summary: 2526796 ops 84215.470 ops/s 84215/0 rd/wr 657.9mb/s 0.094ms/op
+42.454: Shutting down processes
+308.754: Aborting...
+Command terminated by signal 15
+	Command being timed: "./filebench -f workloads/randomread.f"
+	User time (seconds): 14.94
+	System time (seconds): 4.39
+	Percent of CPU this job got: 5%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:43.45
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691332
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921784
+	Minor (reclaiming a frame) page faults: 3739
+	Voluntary context switches: 3947
+	Involuntary context switches: 1883
+	Swaps: 0
+	File system inputs: 10776
+	File system outputs: 7375352
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+CONSTRUCTOR GETTING CALLED 
+done with link_shim_functions
+DESTRUCTOR GETTING CALLED 
