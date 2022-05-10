@@ -14,6 +14,7 @@ A small description
 ├── results             # folder with all results 
 ├── scripts             # all scripts for setup and microbench running
 └── shared_libs/simple_prefetcher    # shared lib predictor src
+└── shared_libs/memory_analysis    # returns the anon and cache usage during an apprun
 ```
 
 
