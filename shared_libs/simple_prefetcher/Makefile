@@ -76,39 +76,6 @@ Cross_Pred_Budget_IOOPT: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO) \
 	    -DSET_READ_UNLIMITED
 
-
-Cross_BlockRA_Pred_Budget_BG_info: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBPBB_info.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO)
-
-Cross_BlockRA_Pred_Budget_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBPBB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET)
-
-Cross_FileRA_Pred_MaxMem_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFPMB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_FILE_RA)
-
-Cross_BlockRA_Pred_MaxMem_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBPMB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA)
-
-Cross_BlockRA_NoPred_MaxMem_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBNMB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA)
-
-Cross_BlockRA_NoPred_Budget_BG_info: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBNBB_info.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_BUDGET_INFO)
-
-Cross_BlockRA_NoPred_Budget_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CBNBB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_BUDGET)
-
-Cross_FileRA_NoPred_MaxMem_BG: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CFNMB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FILE_RA)
-
 OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY)
