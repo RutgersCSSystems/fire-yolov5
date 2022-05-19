@@ -8,7 +8,7 @@ WRITE_BUFF_SIZE=67108864
 NUM=1000000
 DBDIR=$DBHOME/DATA
 
-DEV=/dev/nvme1n1p1
+DEV=/dev/nvme0n1p1
 
 BLOCK_SZ=512 #Bytes
 RA_SIZE=128 #KB
@@ -19,13 +19,14 @@ KB=1024
 MB=`echo "1024*$KB" | bc`
 GB=`echo "1024*$MB" | bc`
 
-sudo blockdev --setra $NR_RA_BLOCKS $DEV
+#sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
 WORKLOAD="readseq"
 #WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
+READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+#READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
 
@@ -37,7 +38,7 @@ FlushDisk()
     sudo sh -c "sync"
     sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
     sudo sh -c "sync"
-    sudo dmesg --clear
+    #sudo dmesg --clear
 }
 
 
@@ -107,15 +108,15 @@ CLEAR_PWD()
     cd ..
 }
 
-DISABLE_LOCK_STATS
+#DISABLE_LOCK_STATS
 
 #Run write workload twice
-#CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS
+CLEAR_PWD
+$DBHOME/db_bench $PARAMS $WRITEARGS
 #exit
 
-LOCKDAT=$PWD/lockdat
-mkdir $LOCKDAT
+#LOCKDAT=$PWD/lockdat
+#mkdir $LOCKDAT
 
 
 
@@ -123,11 +124,14 @@ echo "RUNNING Vanilla................."
 FlushDisk
 #export APPCACHELIMIT=`echo "10*$GB" | bc`
 #SETPRELOAD "CACHELIMIT"
-SETPRELOAD "FETCHALL"
+#SETPRELOAD "FETCHALL"
 #SETPRELOAD "ONLYOS"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
+
+
+exit
 
 echo "RUNNING Only Intercept.................."
 FlushDisk
