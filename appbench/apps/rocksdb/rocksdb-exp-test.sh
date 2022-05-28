@@ -5,7 +5,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=1000000
+NUM=10000000
 DBDIR=$DBHOME/DATA
 
 #WORKLOAD="readseq"
@@ -69,8 +69,8 @@ CLEAN_AND_WRITE()
         ##Condition the DB to get Stable results
         $DBHOME/db_bench $PARAMS $READARGS  &> $RESULTS/WARMUP-READ1.out
         FlushDisk
-        #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
-        #FlushDisk
+        $DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
+        FlushDisk
 }
 
 print_results() {
@@ -113,8 +113,8 @@ RUN() {
 		PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 
 		echo "BEGINNING TO WARM UP ......."
-		#CLEAN_AND_WRITE
-		#FlushDisk
+		CLEAN_AND_WRITE
+		FlushDisk
 		printf "\n FINISHING WARM UP ......."
 		print "\n .................\n"
 		print "\n .................\n"
@@ -136,6 +136,8 @@ RUN() {
 		export LD_PRELOAD=/usr/lib/lib_CPNI.so
 		$DBHOME/db_bench $PARAMS $READARGS &> $RESULTS/CPNI.out
 		export LD_PRELOAD=""
+		echo "................."
+		echo "................."
 		FlushDisk
 
 		echo "RUNNING CNI.............\n"
@@ -186,5 +188,5 @@ RUN() {
 	done
 }
 
-#RUN
+RUN
 print_results
