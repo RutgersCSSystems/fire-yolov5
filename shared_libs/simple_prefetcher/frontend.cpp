@@ -346,6 +346,8 @@ exit:
 //Intercepted Functions
 //////////////////////////////////////////////////////////
 
+//add openat here
+
 
 int open(const char *pathname, int flags, ...){
         int fd;
@@ -429,6 +431,9 @@ exit:
         return ret;
 }
 
+ssize_t pread64(int fd, void *data, size_t size, off_t offset){
+        return pread(fd, data, size, offset);
+}
 
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
