@@ -346,7 +346,41 @@ exit:
 //Intercepted Functions
 //////////////////////////////////////////////////////////
 
-//add openat here
+int openat(int dirfd, const char *pathname, int flags, ...){
+        int fd;
+        if(flags & O_CREAT){
+                va_list valist;
+                va_start(valist, flags);
+                mode_t mode = va_arg(valist, mode_t);
+                va_end(valist);
+                fd = real_openat(dirfd, pathname, flags, mode);
+        }
+        else{
+                fd = real_openat(dirfd, pathname, flags, 0);
+        }
+
+        if(fd < 0)
+                goto exit;
+
+        debug_printf("Openingat file %s\n", pathname);
+
+#ifdef ONLY_INTERCEPT
+        //printf("Calling %s\n", __func__);
+	goto exit;
+#endif
+
+#ifdef PREDICTOR
+        // Predict, then prefetch if needed
+        record_open(fd);
+
+#elif BLIND_PREFETCH
+        // Prefetch without predicting
+        prefetch_file(fd);
+#endif
+
+exit:
+        return fd;
+}
 
 
 int open(const char *pathname, int flags, ...){
@@ -384,6 +418,7 @@ int open(const char *pathname, int flags, ...){
 exit:
         return fd;
 }
+
 
 
 FILE *fopen(const char *filename, const char *mode){

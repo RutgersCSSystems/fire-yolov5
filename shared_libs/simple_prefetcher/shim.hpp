@@ -2,8 +2,7 @@
 #define _SHIM_HPP
 /*The following are the intercepted function definitions*/
 typedef int (*real_open_t)(const char *, int, ...);
-typedef int (*real_openat_t)(int, const char *, int);
-typedef int (*real_openat1_t)(int, const char *, int, mode_t);
+typedef int (*real_openat_t)(int, const char *, int, ...);
 typedef int (*real_creat_t)(const char *, mode_t);
 typedef FILE *(*real_fopen_t)(const char *, const char *);
 
@@ -25,6 +24,7 @@ typedef int (*real_clone_t)(int (void*), void *, int, void *, pid_t *, void *, p
 
 real_fopen_t fopen_ptr = NULL;
 real_open_t open_ptr = NULL;
+real_openat_t openat_ptr = NULL;
 
 real_pread_t pread_ptr = NULL;
 real_read_t read_ptr = NULL;
@@ -56,6 +56,7 @@ void link_shim_functions(void){
         write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
         read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
         open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
+        openat_ptr = ((real_openat_t)dlsym(RTLD_NEXT, "openat"));
         fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
         close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
 
@@ -133,6 +134,13 @@ ssize_t real_read(int fd, void *data, size_t size) {
         read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
 
     return ((real_read_t)read_ptr)(fd, data, size);
+}
+
+int real_openat(int dirfd, const char *pathname, int flags, mode_t mode){
+    if(!openat_ptr)
+        openat_ptr = ((real_openat_t)dlsym(RTLD_NEXT, "openat"));
+
+    return ((real_openat_t)openat_ptr)(dirfd, pathname, flags, mode);
 }
 
 int real_open(const char *pathname, int flags, mode_t mode){
