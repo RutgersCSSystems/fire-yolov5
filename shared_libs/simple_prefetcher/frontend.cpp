@@ -383,6 +383,41 @@ exit:
 }
 
 
+int open64(const char *pathname, int flags, ...){
+        int fd;
+        if(flags & O_CREAT){
+                va_list valist;
+                va_start(valist, flags);
+                mode_t mode = va_arg(valist, mode_t);
+                va_end(valist);
+                fd = real_open(pathname, flags, mode);
+        }
+        else{
+                fd = real_open(pathname, flags, 0);
+        }
+
+        debug_printf("Opening file %s\n", pathname);
+
+#ifdef ONLY_INTERCEPT
+	goto exit;
+#endif
+
+
+#ifdef PREDICTOR
+        // Predict, then prefetch if needed
+        record_open(fd);
+
+#elif BLIND_PREFETCH
+        // Prefetch without predicting
+        prefetch_file(fd);
+#endif
+
+exit:
+        printf("hello %s : %s:%d\n", __func__, pathname, fd);
+        return fd;
+}
+
+
 int open(const char *pathname, int flags, ...){
         int fd;
         if(flags & O_CREAT){
@@ -418,7 +453,6 @@ int open(const char *pathname, int flags, ...){
 exit:
         return fd;
 }
-
 
 
 FILE *fopen(const char *filename, const char *mode){
