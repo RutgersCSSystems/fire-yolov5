@@ -21,12 +21,15 @@ do
         NAME=NVME_${NPROC}
 
         FlushDisk
-        fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 > out_$NAME
+        export LD_PRELOAD=/usr/lib/lib_INTERCEPT.so
+        #export LD_PRELOAD=/users/shaleen/ssd/prefetching/shared_libs/simple_prefetcher/lib_INTERCEPT.so
+        #ltrace -C -f -S -l /users/shaleen/ssd/prefetching/shared_libs/simple_prefetcher/lib_INTERCEPT.so fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 #> out_$NAME
+        fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 #> out_$NAME
+        export LD_PRELOAD=""
+        exit
 done
 
-#export LD_PRELOAD=/usr/lib/libjuststats.so
 #fio --name=nvme --directory=./fio-test --time_based --size=10G --direct=0 --verify=0 --bs=4K --iodepth=1024 --rw=read --group_reporting=1 --numjobs=4
-#export LD_PRELOAD=""
 
 
 #fio can do strided reads 
