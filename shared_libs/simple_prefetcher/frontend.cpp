@@ -413,7 +413,7 @@ int open64(const char *pathname, int flags, ...){
 #endif
 
 exit:
-        printf("hello %s : %s:%d\n", __func__, pathname, fd);
+        //printf("hello %s : %s:%d\n", __func__, pathname, fd);
         return fd;
 }
 
@@ -495,6 +495,12 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
         if(advice == POSIX_FADV_RANDOM)
                 goto exit;
 #endif
+
+#ifdef DISABLE_FADV_DONTNEED
+        if(advice == POSIX_FADV_DONTNEED)
+                goto exit;
+#endif
+
         ret = real_posix_fadvise(fd, offset, len, advice);
 exit:
         return ret;
