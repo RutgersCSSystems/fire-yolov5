@@ -486,6 +486,12 @@ exit:
 }
 
 
+int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
+        debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+        return posix_fadvise(fd, offset, len, advice);
+}
+
+
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
         int ret = 0;
 
@@ -505,6 +511,23 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 exit:
         return ret;
 }
+
+
+int madvise(void *addr, size_t length, int advice){
+        int ret = 0;
+
+        printf("%s: called ADV=%d\n", __func__, advice);
+
+#ifdef DISABLE_MADV_DONTNEED
+        if(advice == MADV_DONTNEED)
+                goto exit;
+#endif
+
+        ret = real_madvise(addr, length, advice);
+exit:
+        return ret;
+}
+
 
 ssize_t pread64(int fd, void *data, size_t size, off_t offset){
         return pread(fd, data, size, offset);

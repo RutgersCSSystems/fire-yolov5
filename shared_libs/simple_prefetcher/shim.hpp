@@ -19,6 +19,7 @@ typedef uid_t (*real_getuid_t)(void);
 
 typedef int (*real_posix_fadvise_t)(int, off_t, off_t, int);
 typedef ssize_t (*real_readahead_t)(int, off64_t, size_t);
+typedef int (*real_madvise_t)(void *, size_t, int);
 
 typedef int (*real_clone_t)(int (void*), void *, int, void *, pid_t *, void *, pid_t *);
 
@@ -43,12 +44,14 @@ real_clone_t clone_ptr = NULL;
 
 real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
+real_madvise_t madvise_ptr = NULL;
 
 
 void link_shim_functions(void){
         clone_ptr = (real_clone_t)dlsym(RTLD_NEXT, "clone");
         posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
         readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+        madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
         fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
         fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
         fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
@@ -86,6 +89,13 @@ ssize_t real_readahead(int fd, off_t offset, size_t count){
         readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
 
     return ((real_readahead_t)readahead_ptr)(fd, offset, count);
+}
+
+int real_madvise(void *addr, size_t length, int advice){
+    if(!madvise_ptr)
+        madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
+
+    return ((real_madvise_t)madvise_ptr)(addr, length, advice);
 }
 
 FILE *real_fopen(const char *filename, const char *mode){
