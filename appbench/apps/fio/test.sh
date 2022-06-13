@@ -19,7 +19,8 @@ SIZE=`echo "$TOTSIZE/$NPROC" | bc`
 NAME=NVME_${NPROC}
 
 #COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 #> out_$NAME"
-COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=512 --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 --thread"
+#COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 --thread --thinktime=1"
+COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 --thread"
 
 
 WRITE() {
@@ -31,24 +32,38 @@ WRITE() {
 
 #WRITE
 
-<< 'vanilla'
+#<< 'vanilla'
 echo "Vanilla.................."
 FlushDisk
+free -h
 export LD_PRELOAD=""
+#strace -f $COMMAND
+#$COMMAND
+export LD_PRELOAD=""
+FlushDisk
+#vanilla
+
+free -h
+
+echo "################################################################################"
+
+<< 'disable_adv'
+echo "DISABLE ADV.................."
+export LD_PRELOAD=/usr/lib/lib_DISABLE_ADV.so
+#ltrace -C -f -S -l /usr/lib/lib_DISABLE_ADV.so $COMMAND 2> ltrace_out_${TOTSIZE}_DISABLE
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
-vanilla
+disable_adv
 
 echo "Cross_Naive.................."
 FlushDisk
-export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
-#export LD_PRELOAD=/usr/lib/lib_INTERCEPT.so
+#export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
+export LD_PRELOAD=/usr/lib/lib_CNI.so
 #ltrace -C -f -S -l /usr/lib/lib_Cross_Naive.so $COMMAND 2> ltrace_out_$TOTSIZE
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
-exit
 
 echo "Cross_Naive_IOOPT.................."
 FlushDisk
@@ -80,3 +95,4 @@ comment
 
 
 #fio can do strided reads 
+#fio can 
