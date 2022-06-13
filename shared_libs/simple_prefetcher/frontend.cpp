@@ -137,7 +137,7 @@ void prefetcher_th(void *arg) {
          * Allocate page cache bitmap if you want to use it without predictor
          */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-        //debug_printf("%s: defining bitarray in worker\n", __func__);
+        debug_printf("%s: defining bitarray in worker\n", __func__);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
         BitArrayClearAll(page_cache_state);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
@@ -177,7 +177,7 @@ void prefetcher_th(void *arg) {
                         zero_pg += 1;
                 }
 		pg_diff = zero_pg - start_pg;
-		//printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
+		debug_printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
                 if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
                         curr_pos += pg_diff << PAGE_SHIFT;
                 else
@@ -235,7 +235,6 @@ void inline prefetch_file(int fd, file_predictor *fp)
 void inline prefetch_file(int fd)
 #endif
 {
-
         struct thread_args *arg = NULL;
         off_t filesize;
 
@@ -252,7 +251,7 @@ void inline prefetch_file(int fd)
 #else
         filesize = reg_fd(fd);
 #endif
-	debug_printf("filesize = %ld\n", filesize);
+	debug_printf("%s: fd=%d, filesize = %ld\n", __func__, fd, filesize);
 
         if(filesize > MIN_FILE_SZ){
                 arg = (struct thread_args *)malloc(sizeof(struct thread_args));
@@ -293,9 +292,11 @@ void inline prefetch_file(int fd)
 #elif THPOOL_PREFETCH
         //Enlists the prefetching request using the thpool
         if(!workerpool)
-                printf("%s: No workerpool ? \n", __func__);
+                printf("ERR: %s: No workerpool ? \n", __func__);
         else
                 thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+#else
+        printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
 #endif
 
 exit:
@@ -396,7 +397,7 @@ int open64(const char *pathname, int flags, ...){
                 fd = real_open(pathname, flags, 0);
         }
 
-        debug_printf("Opening file %s\n", pathname);
+        debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
 
 #ifdef ONLY_INTERCEPT
 	goto exit;
@@ -434,7 +435,7 @@ int open(const char *pathname, int flags, ...){
         if(fd < 0)
                 goto exit;
 
-        debug_printf("Opening file %s\n", pathname);
+        debug_printf("%s: file %s\n", __func__,  pathname);
 
 #ifdef ONLY_INTERCEPT
 	goto exit;
@@ -467,8 +468,7 @@ FILE *fopen(const char *filename, const char *mode){
 	goto exit;
 #endif
 
-        debug_printf("FOpening file %s\n", filename);
-
+        debug_printf("%s: file %s\n", __func__,  filename);
         fd = fileno(ret);
 
 #ifdef PREDICTOR
