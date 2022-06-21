@@ -177,7 +177,7 @@ void prefetcher_th(void *arg) {
                         zero_pg += 1;
                 }
 		pg_diff = zero_pg - start_pg;
-		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, (curr_pos<<PAGE_SHIFT), pg_diff, a->fd);
+		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
                 if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
                         curr_pos += pg_diff << PAGE_SHIFT;
                 else
