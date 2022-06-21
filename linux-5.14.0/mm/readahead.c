@@ -717,12 +717,13 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         struct read_ra_req ra;
         struct inode *inode;
 
+        //printk("%s: fd=%d, offset=%lld, count=%ld \n", __func__, fd, offset, count);
+
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
                 goto normal_readahead;
         }
 
-        
         /*
          * Return the file bitmap
          */
@@ -755,12 +756,18 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 if (unlikely(copy_to_user(ra.data, inode->bitmap, 
                                 sizeof(unsigned long)*inode->nr_longs_tot)))
                 {
+                        ret = -1;
                         printk("%s: couldnt copy data back to user\n", __func__);
                 }
+        }
+        else{
+                ret = -2;
+                printk("%s: ra.data or inode->bitmap NULL\n", __func__);
         }
 #endif
 
         if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
+                ret = -3;
                 printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
         }
         goto exit;

@@ -77,11 +77,14 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         //allocate 1TB worth bitmaps 
         //unsigned long prealloc_pg = 1 << (40 - PAGE_SHIFT);
-        unsigned long prealloc_pg = 1 << (CONFIG_CROSS_PREALLOC_SHIFT - PAGE_SHIFT);
+        unsigned long prealloc_pg;
+        long nr_longs;
 
-        long nr_longs = BITS_TO_LONGS(prealloc_pg);
+        prealloc_pg = 1UL << (CONFIG_CROSS_PREALLOC_SHIFT - PAGE_SHIFT);
 
-        //printk("%s: preallocate %ld pg, nr_longs=%ld \n", __func__, prealloc_pg, nr_longs);
+        nr_longs = BITS_TO_LONGS(prealloc_pg);
+
+        printk("%s: preallocate %ld pg, nr_longs=%ld \n", __func__, prealloc_pg, nr_longs);
 
         if(!inode->bitmap)
                 inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
