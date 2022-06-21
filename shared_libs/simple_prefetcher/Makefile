@@ -42,9 +42,17 @@ PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREA
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS
 
-#all: Vanilla OSonly Cross_FileRA_NoPred_MaxMem_BG Cross_FileRA_Pred_MaxMem_BG Cross_BlockRA_Pred_MaxMem_BG Cross_BlockRA_Pred_Budget_BG Cross_BlockRA_NoPred_Budget_BG Cross_BlockRA_NoPred_MaxMem_BG Cross_BlockRA_Pred_Budget_BG_info Cross_BlockRA_NoPred_Budget_BG_info INTERCEPT
+all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA Vanilla_RA_IOOPT
 
-all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full
+
+Vanilla_RA: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRA.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
+
+Vanilla_RA_IOOPT: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRAI.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) \
+	    -DSET_READ_UNLIMITED
 
 Cross_Naive_full: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CNF.so $^ $(LIBS) $(DEBUG) \
