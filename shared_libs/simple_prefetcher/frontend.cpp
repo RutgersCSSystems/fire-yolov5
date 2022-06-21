@@ -137,7 +137,7 @@ void prefetcher_th(void *arg) {
          * Allocate page cache bitmap if you want to use it without predictor
          */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-        debug_printf("%s: defining bitarray in worker\n", __func__);
+        debug_printf("%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
         BitArrayClearAll(page_cache_state);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
@@ -177,7 +177,7 @@ void prefetcher_th(void *arg) {
                         zero_pg += 1;
                 }
 		pg_diff = zero_pg - start_pg;
-		debug_printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, a->fd);
+		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, (curr_pos<<PAGE_SHIFT), pg_diff, a->fd);
                 if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
                         curr_pos += pg_diff << PAGE_SHIFT;
                 else
@@ -536,6 +536,8 @@ ssize_t pread64(int fd, void *data, size_t size, off_t offset){
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
         ssize_t amount_read;
+
+	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
