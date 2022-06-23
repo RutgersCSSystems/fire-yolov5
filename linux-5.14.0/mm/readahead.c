@@ -736,7 +736,16 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 goto normal_readahead;
         }
 
-        //allocate bitmap if not already done 
+        /*
+         * allocate bitmap if not already done
+         *
+         * if there is intention to readahead_info on a file
+         * alloc_cross_bitmap should be called first.
+         *
+         * can do that in the following fashion.
+         * at open, call readahead_info(fd, 0, 0, ra_user);
+         * This way no RA is done but atleast cross bitmap is created
+         */
         if(!inode->bitmap){
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
                 alloc_cross_bitmap(inode, end_index);
