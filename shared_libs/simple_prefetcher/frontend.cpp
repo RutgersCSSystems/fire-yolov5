@@ -307,6 +307,8 @@ exit:
 /*
  * Initialize a file_predictor object if
  * the file is > Min_FILE_SZ
+ * 
+ * and init the bitmap inside the kernel
  */
 void inline record_open(int fd){
         off_t filesize = reg_fd(fd);
@@ -314,17 +316,19 @@ void inline record_open(int fd){
 
         if(filesize > MIN_FILE_SZ){
 
+#ifdef PREDICTOR
                 file_predictor *fp = new file_predictor(fd, filesize);
 
                 debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
                                 __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-                //fd_to_file_pred[fd] = fp;
                 fd_to_file_pred->insert({fd, fp});
+#endif
 
 		/*
 		 * This allocates the file's bitmap inside the kernel
 		 * So no file cache data is lost from bitmap
+                 * This is very important todo before any app reads happen
 		 */
 #ifdef READAHEAD_INFO_PC_STATE
 		ra.data = NULL;
@@ -341,6 +345,25 @@ exit:
 }
 
 
+/*
+ * Does all the extra computing at open
+ * for all the open functions
+ */
+void handle_open(int fd){
+
+#ifdef ONLY_INTERCEPT
+        return;
+#endif
+
+#if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
+        // Predict, then prefetch if needed
+        record_open(fd);
+
+#elif BLIND_PREFETCH
+        // Prefetch without predicting
+        prefetch_file(fd);
+#endif
+}
 
 
 //////////////////////////////////////////////////////////
@@ -365,19 +388,7 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 
         debug_printf("Openingat file %s\n", pathname);
 
-#ifdef ONLY_INTERCEPT
-        //printf("Calling %s\n", __func__);
-	goto exit;
-#endif
-
-#ifdef PREDICTOR
-        // Predict, then prefetch if needed
-        record_open(fd);
-
-#elif BLIND_PREFETCH
-        // Prefetch without predicting
-        prefetch_file(fd);
-#endif
+        handle_open(fd);
 
 exit:
         return fd;
@@ -399,22 +410,9 @@ int open64(const char *pathname, int flags, ...){
 
         debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
 
-#ifdef ONLY_INTERCEPT
-	goto exit;
-#endif
-
-
-#ifdef PREDICTOR
-        // Predict, then prefetch if needed
-        record_open(fd);
-
-#elif BLIND_PREFETCH
-        // Prefetch without predicting
-        prefetch_file(fd);
-#endif
+        handle_open(fd);
 
 exit:
-        //printf("hello %s : %s:%d\n", __func__, pathname, fd);
         return fd;
 }
 
@@ -437,19 +435,7 @@ int open(const char *pathname, int flags, ...){
 
         debug_printf("%s: file %s\n", __func__,  pathname);
 
-#ifdef ONLY_INTERCEPT
-	goto exit;
-#endif
-
-
-#ifdef PREDICTOR
-        // Predict, then prefetch if needed
-        record_open(fd);
-
-#elif BLIND_PREFETCH
-        // Prefetch without predicting
-        prefetch_file(fd);
-#endif
+        handle_open(fd);
 
 exit:
         return fd;
@@ -464,24 +450,13 @@ FILE *fopen(const char *filename, const char *mode){
         if(!ret)
                 return ret;
 
-#ifdef ONLY_INTERCEPT
-	goto exit;
-#endif
-
         debug_printf("%s: file %s\n", __func__,  filename);
+
         fd = fileno(ret);
 
-#ifdef PREDICTOR
-        // Predict, then prefetch if needed
-        record_open(fd);
-
-#elif BLIND_PREFETCH
-        // Prefetch without predicting
-        prefetch_file(fd);
-#endif
+        handle_open(fd);
 
 exit:
-
         return ret;
 }
 
