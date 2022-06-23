@@ -356,10 +356,13 @@ void handle_open(int fd){
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-        // Predict, then prefetch if needed
         record_open(fd);
+#endif
 
-#elif BLIND_PREFETCH
+/*
+ * DONT compile library with both PREDICTOR and BLIND_PREFETCH
+ */
+#ifdef BLIND_PREFETCH
         // Prefetch without predicting
         prefetch_file(fd);
 #endif
@@ -512,7 +515,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
         ssize_t amount_read;
 
-	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
+	//debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
