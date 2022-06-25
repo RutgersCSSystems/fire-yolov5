@@ -716,6 +716,9 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         long ret = -1;
         struct read_ra_req ra;
         struct inode *inode;
+        bool first_time;
+
+        first_time = false;
 
         //printk("%s: fd=%d, offset=%lld, count=%ld \n", __func__, fd, offset, count);
 
@@ -749,6 +752,8 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(!inode->bitmap){
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
                 alloc_cross_bitmap(inode, end_index);
+
+                first_time = true;
         }
         ra.nr_relevant_bits = inode->nr_longs_used;
 #endif
@@ -761,17 +766,13 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
 
 #ifdef CONFIG_CROSS_FILE_BITMAP
-        if(ra.data && inode->bitmap){
+        if(ra.data && inode->bitmap && !first_time){
                 if (unlikely(copy_to_user(ra.data, inode->bitmap, 
                                 sizeof(unsigned long)*inode->nr_longs_tot)))
                 {
                         ret = -1;
                         printk("%s: couldnt copy data back to user\n", __func__);
                 }
-        }
-        else{
-                ret = -2;
-                printk("%s: ra.data or inode->bitmap NULL\n", __func__);
         }
 #endif
 
