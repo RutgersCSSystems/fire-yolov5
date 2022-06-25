@@ -26,6 +26,7 @@
 #include <linux/crosslayer.h>
 #include <linux/vmstat.h>
 #include <linux/cross_bitmap.h>
+#include <linux/jiffies.h>
 
 #include "internal.h"
 
@@ -718,9 +719,12 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         struct inode *inode;
         bool first_time;
 
+
+        unsigned long start, end;
+
         first_time = false;
 
-        //printk("%s: fd=%d, offset=%lld, count=%ld \n", __func__, fd, offset, count);
+        //start = jiffies;
 
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
@@ -757,8 +761,12 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         }
         ra.nr_relevant_bits = inode->nr_longs_used;
 #endif
+        if(count > 0)
+	        ret = ksys_readahead(fd, offset, count);
+        //end = jiffies;
 
-	ret = ksys_readahead(fd, offset, count);
+        //printk("%s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
+
 
         /*
          * Get the number of free pages in the system right now
