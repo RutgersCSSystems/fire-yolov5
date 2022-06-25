@@ -51,6 +51,21 @@ thread_local per_thread_ds ptd;
 static void con() __attribute__((constructor));
 static void dest() __attribute__((destructor));
 
+void print_affinity() {
+    cpu_set_t mask;
+    long nproc, i;
+
+    if (sched_getaffinity(0, sizeof(cpu_set_t), &mask) == -1) {
+        perror("sched_getaffinity");
+    }
+    nproc = sysconf(_SC_NPROCESSORS_ONLN);
+    printf("sched_getaffinity = ");
+    for (i = 0; i < nproc; i++) {
+        printf("%d ", CPU_ISSET(i, &mask));
+    }
+    printf("\n");
+}
+
 
 /*
  * Initialize fd_to_file_pred
@@ -102,6 +117,8 @@ void con(){
         set_read_limits(a);
 #endif
 
+        //print_affinity();
+
 }
 
 void dest(){
@@ -118,6 +135,8 @@ void *prefetcher_th(void *arg) {
 void prefetcher_th(void *arg) {
 #endif
         long tid = gettid();
+
+
         struct thread_args *a = (struct thread_args*)arg;
         debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
@@ -140,6 +159,7 @@ void prefetcher_th(void *arg) {
         debug_printf("%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
         BitArrayClearAll(page_cache_state);
+        debug_printf("%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
 	page_cache_state = a->page_cache_state;
 #else
@@ -159,13 +179,16 @@ void prefetcher_th(void *arg) {
                         ra.data = NULL;
                 }
 
+                debug_printf("%s: Readahead_info\n", __func__);
                 if(readahead_info(a->fd, file_pos, 
                                         a->prefetch_size, &ra) < 0)
                 {
                         printf("error while readahead_info: TID:%ld \n", tid);
                         goto exit;
                 }
+                debug_printf("%s: DONE Readahead_info\n", __func__);
 #ifdef READAHEAD_INFO_PC_STATE
+                debug_printf("%s: while loop start: %ld\n", __func__, ptd.mytid);
                 page_cache_state->array = (unsigned long*)ra.data;
                 start_pg = file_pos >> PAGE_SHIFT;
                 zero_pg = start_pg;
@@ -331,8 +354,10 @@ void inline record_open(int fd){
                  * This is very important todo before any app reads happen
 		 */
 #ifdef READAHEAD_INFO_PC_STATE
+                debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
+                debug_printf("%s: DONE first READAHEAD: %ld\n", __func__, ptd.mytid);
 #endif
         }
         else{
