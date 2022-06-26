@@ -26,6 +26,7 @@
 #include <linux/crosslayer.h>
 #include <linux/vmstat.h>
 #include <linux/cross_bitmap.h>
+#include <linux/jiffies.h>
 
 #include "internal.h"
 
@@ -716,8 +717,14 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         long ret = -1;
         struct read_ra_req ra;
         struct inode *inode;
+        bool first_time;
 
-        //printk("%s: fd=%d, offset=%lld, count=%ld \n", __func__, fd, offset, count);
+
+        unsigned long start, end;
+
+        first_time = false;
+
+        //start = jiffies;
 
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
@@ -749,11 +756,17 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(!inode->bitmap){
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
                 alloc_cross_bitmap(inode, end_index);
+
+                first_time = true;
         }
         ra.nr_relevant_bits = inode->nr_longs_used;
 #endif
+        if(count > 0)
+	        ret = ksys_readahead(fd, offset, count);
+        //end = jiffies;
 
-	ret = ksys_readahead(fd, offset, count);
+        //printk("%s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
+
 
         /*
          * Get the number of free pages in the system right now
@@ -761,17 +774,13 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         ra.nr_free = global_zone_page_state(NR_FREE_PAGES);
 
 #ifdef CONFIG_CROSS_FILE_BITMAP
-        if(ra.data && inode->bitmap){
+        if(ra.data && inode->bitmap && !first_time){
                 if (unlikely(copy_to_user(ra.data, inode->bitmap, 
                                 sizeof(unsigned long)*inode->nr_longs_tot)))
                 {
                         ret = -1;
                         printk("%s: couldnt copy data back to user\n", __func__);
                 }
-        }
-        else{
-                ret = -2;
-                printk("%s: ra.data or inode->bitmap NULL\n", __func__);
         }
 #endif
 

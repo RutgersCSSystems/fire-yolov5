@@ -75,6 +75,10 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
                 goto exit;
         }
 
+        unsigned long start, end;
+
+        start = jiffies;
+
         //allocate 1TB worth bitmaps 
         //unsigned long prealloc_pg = 1 << (40 - PAGE_SHIFT);
         unsigned long prealloc_pg;
@@ -84,7 +88,6 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         nr_longs = BITS_TO_LONGS(prealloc_pg);
 
-        printk("%s: preallocate %ld pg, nr_longs=%ld \n", __func__, prealloc_pg, nr_longs);
 
         if(!inode->bitmap)
                 inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
@@ -101,6 +104,13 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
         inode->nr_longs_tot = nr_longs;
 
         bitmap_zero(inode->bitmap, prealloc_pg);
+
+        end = jiffies;
+
+        printk("%s: preallocate %ld pg, nr_longs=%ld in %ld millisec\n", __func__, prealloc_pg, nr_longs,
+                        (((end-start)*1000)/HZ));
+
+
 
 exit:
         return;
