@@ -718,11 +718,14 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         struct read_ra_req ra;
         struct inode *inode;
         bool first_time;
-
+        struct fd this_fd;
 
         unsigned long start, end;
 
+
         first_time = false;
+
+        printk("\n %s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
 
         //start = jiffies;
 
@@ -736,7 +739,12 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
          */
 #ifdef CONFIG_CROSS_FILE_BITMAP
 
-        inode = file_inode(fdget(fd).file);
+        this_fd = fdget(fd);
+
+        if(likely(this_fd.file))
+                inode = file_inode(this_fd.file);
+        else
+                goto exit;
 
         if(!inode){
 	        printk("%s: no inode!\n", __func__);
@@ -763,9 +771,9 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 #endif
         if(count > 0)
 	        ret = ksys_readahead(fd, offset, count);
+
         //end = jiffies;
 
-        //printk("%s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
 
 
         /*
