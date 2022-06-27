@@ -179,16 +179,13 @@ void prefetcher_th(void *arg) {
                         ra.data = NULL;
                 }
 
-                debug_printf("%s: Readahead_info\n", __func__);
                 if(readahead_info(a->fd, file_pos, 
                                         a->prefetch_size, &ra) < 0)
                 {
                         printf("error while readahead_info: TID:%ld \n", tid);
                         goto exit;
                 }
-                debug_printf("%s: DONE Readahead_info\n", __func__);
 #ifdef READAHEAD_INFO_PC_STATE
-                debug_printf("%s: while loop start: %ld\n", __func__, ptd.mytid);
                 page_cache_state->array = (unsigned long*)ra.data;
                 start_pg = file_pos >> PAGE_SHIFT;
                 zero_pg = start_pg;
