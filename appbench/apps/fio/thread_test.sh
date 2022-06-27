@@ -32,16 +32,20 @@ do
 	$COMMAND | grep "READ"
 	FlushDisk
 
-<< 'MULTILINE-COMMENT'
 	FlushDisk
 	echo "#######"
-	echo "CNI"
-	export LD_PRELOAD=/usr/lib/lib_CNI.so
-	$COMMAND
+	echo "Vanilla Naive RA IOOPT"
+	export LD_PRELOAD=/usr/lib/lib_VRAI.so
+	$COMMAND | grep "READ"
 	export LD_PRELOAD=""
 	FlushDisk
-MULTILINE-COMMENT
 
-	exit
+	FlushDisk
+	echo "#######"
+	echo "Cross Naive RA_info IOOPT"
+	export LD_PRELOAD=/usr/lib/lib_CNI.so
+	$COMMAND | grep "READ"
+	export LD_PRELOAD=""
+	FlushDisk
 done
 set +x
