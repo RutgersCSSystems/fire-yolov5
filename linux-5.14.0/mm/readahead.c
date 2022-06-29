@@ -722,10 +722,9 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
         unsigned long start, end;
 
-
         first_time = false;
 
-        printk("\n %s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
+        //printk("\n %s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
 
         //start = jiffies;
 
@@ -743,8 +742,10 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
         if(likely(this_fd.file))
                 inode = file_inode(this_fd.file);
-        else
+        else{
+                printk("%s: unable to find struct file for this fd\n", __func__);
                 goto exit;
+        }
 
         if(!inode){
 	        printk("%s: no inode!\n", __func__);
@@ -768,12 +769,18 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 first_time = true;
         }
         ra.nr_relevant_bits = inode->nr_longs_used;
+
 #endif
+
+        /*
+         *  with count == 0, ksys_readahead will
+         *  fetch the whole file in memory.
+         *  That is incorrect behaviour.
+         */
         if(count > 0)
 	        ret = ksys_readahead(fd, offset, count);
 
         //end = jiffies;
-
 
 
         /*
