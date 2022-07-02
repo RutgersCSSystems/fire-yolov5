@@ -140,4 +140,11 @@ struct read_ra_req{
 
 };
 
+//Time in microseconds
+double get_micro_sec(struct timespec *start, struct timespec *end)
+{
+    return ((end->tv_sec - start->tv_sec)*1000000000 + \
+                end->tv_nsec - start->tv_nsec)/1000; //Time in microseconds
+}
+
 #endif
