@@ -722,6 +722,11 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
         unsigned long start, end;
 
+        /*
+         * Sets to true if no bitmap is allocated for
+         * this inode and readahead_info(fd, 0, 0, ra_user);
+         * is called
+         */
         first_time = false;
 
         //printk("\n %s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
@@ -747,7 +752,7 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 goto exit;
         }
 
-        if(!inode){
+        if(unlikely(!inode)){
 	        printk("%s: no inode!\n", __func__);
                 goto normal_readahead;
         }
@@ -766,7 +771,14 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
                 alloc_cross_bitmap(inode, end_index);
 
-                first_time = true;
+                /*
+                 * Makes sure that the bitmap is copied only
+                 * if count > 0. It is possible that the
+                 * user sends a 0 count RA_info without allocating
+                 * bitmaps in the userspace.
+                 */
+                if(!count)
+                        first_time = true;
         }
         ra.nr_relevant_bits = inode->nr_longs_used;
 
