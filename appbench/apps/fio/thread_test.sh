@@ -28,7 +28,7 @@ do
 	FlushDisk
 	echo "VANILLA"
 	export LD_PRELOAD=""
-	$COMMAND
+	$COMMAND | grep "READ"
 	FlushDisk
 
 	FlushDisk
@@ -40,5 +40,11 @@ do
 	FlushDisk
 
 	exit
+
+	echo "Vanilla Naive RA IOOPT"
+	export LD_PRELOAD=/usr/lib/lib_VRAI.so
+	$COMMAND | grep "READ"
+	export LD_PRELOAD=""
+	FlushDisk
 done
 set +x
