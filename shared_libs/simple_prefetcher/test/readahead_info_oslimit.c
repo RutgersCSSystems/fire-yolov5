@@ -19,8 +19,22 @@ long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_
         return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
 }
 
+/*
+ * Set unbounded_read to 0 or 1
+ */
+void set_read_limits(char a){
+        printf("%s: Setting Read Limits to %c\n", __func__, a);
+        int fd = open(LIMITS_PROCFS_FILE, O_RDWR, 0);
+        pwrite(fd, &a, sizeof(char), 0);
+        close(fd);
+}
+
 int main()
 {
+
+        char a = '1';
+        set_read_limits(a);
+
         struct read_ra_req ra;
         off_t file_pos = 0;
 
@@ -38,6 +52,7 @@ int main()
 
         ra.data = page_cache_state->array;
 
+        //if(readahead_info(fd, file_pos, file_size, &ra) < 0)
         if(readahead_info(fd, file_pos, (PAGES * PAGESIZE), &ra) < 0)
         {
                 printf("error while readahead_info\n");
@@ -49,9 +64,10 @@ int main()
                 if(!BitArrayTestBit(page_cache_state, zero_pg))
                 {
                         break;
-                }
+		}
                 zero_pg += 1;
         }
+	printf("\n");
         pg_diff = zero_pg - start_pg;
         printf("%s: pg_diff=%ld, fd=%d\n", __func__, pg_diff, fd);
 
