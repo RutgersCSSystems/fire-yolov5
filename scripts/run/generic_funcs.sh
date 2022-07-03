@@ -54,6 +54,12 @@ SETPRELOAD()
         elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
                 printf "Only OS prefetching enabled\n"
                 export LD_PRELOAD=/usr/lib/lib_OSonly.so
+        elif [[ "$1" == "VRA" ]]; then
+                printf "Vanilla Readahead\n"
+                export LD_PRELOAD=/usr/lib/lib_VRA.so
+        elif [[ "$1" == "VRAI" ]]; then
+                printf "Vanilla Readahead IOOPT\n"
+                export LD_PRELOAD=/usr/lib/lib_VRAI.so
         elif [[ "$1" == "CN" ]]; then
                 printf "Cross Naive\n"
                 export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
