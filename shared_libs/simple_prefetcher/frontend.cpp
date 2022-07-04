@@ -122,6 +122,14 @@ void con(){
 }
 
 void dest(){
+
+        /*
+         * Reset the IO limits to normal
+         */
+        char a;
+        a = '0';
+        set_read_limits(a);
+
         printf("DESTRUCTOR GETTING CALLED \n");
 }
 
