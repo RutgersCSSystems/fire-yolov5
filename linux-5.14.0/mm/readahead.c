@@ -729,14 +729,15 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
          */
         first_time = false;
 
-        //printk("\n %s: fd=%d, offset=%lld, count=%ld in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
+
 
         //start = jiffies;
-
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
                 goto normal_readahead;
         }
+        //end = jiffies;
+        //printk("\n %s: fd=%d, offset=%lld, count=%ld c_f_u in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
 
         /*
          * Return the file bitmap
@@ -780,7 +781,8 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 if(!count)
                         first_time = true;
         }
-        ra.nr_relevant_bits = inode->nr_longs_used;
+        //ra.nr_relevant_bits = inode->nr_longs_used;
+        ra.nr_relevant_ulongs = inode->nr_longs_used;
 
 #endif
 
@@ -792,9 +794,6 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(count > 0)
 	        ret = ksys_readahead(fd, offset, count);
 
-        //end = jiffies;
-
-
         /*
          * Get the number of free pages in the system right now
          */
@@ -802,13 +801,26 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
 #ifdef CONFIG_CROSS_FILE_BITMAP
         if(ra.data && inode->bitmap && !first_time){
-                if (unlikely(copy_to_user(ra.data, inode->bitmap, 
-                                sizeof(unsigned long)*inode->nr_longs_tot)))
+                unsigned long *to = ra.data;
+                unsigned long *from = inode->bitmap;
+
+                
+                //Calculate the start and end 
+                unsigned long start_pg = offset >> PAGE_SHIFT;
+                unsigned long nr_pg = count >> PAGE_SHIFT;
+
+                unsigned long start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
+                unsigned long size_ul = (nr_pg >> 6) + 1;
+
+                //printk_once("%s: order_ul=%d\n", __func__, get_count_order_long(sizeof(unsigned long)*8));
+                if (unlikely(copy_to_user(to+start_ul, from+start_ul, 
+                                sizeof(unsigned long)*size_ul)))
                 {
                         ret = -1;
                         printk("%s: couldnt copy data back to user\n", __func__);
                 }
         }
+
 #endif
 
         if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
