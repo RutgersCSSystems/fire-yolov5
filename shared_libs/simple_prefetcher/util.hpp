@@ -134,10 +134,17 @@ struct read_ra_req{
 	 * The following are populated by the kernel
 	 * and returned to user space
 	 */
-	void *data;  //page bitmap for readahead file
-	unsigned long nr_relevant_bits; //number of bits relevant for the file
+	unsigned long *data;  //page bitmap for readahead file
+	unsigned long nr_relevant_ulongs; //number of bits relevant for the file
 
 
 };
+
+//Time in microseconds
+double get_micro_sec(struct timespec *start, struct timespec *end)
+{
+    return ((end->tv_sec - start->tv_sec)*1000000000 + \
+                end->tv_nsec - start->tv_nsec)/1000; //Time in microseconds
+}
 
 #endif

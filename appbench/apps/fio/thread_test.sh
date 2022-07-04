@@ -15,8 +15,7 @@ FlushDisk()
 
 FILESIZE=16
 
-declare -a nr_threads=("1" "2" "4" "8" "16")
-#declare -a readsize=("4" "2" "4" "8" "16") #in KB
+declare -a nr_threads=("16" "2" "4" "8")
 
 for NPROC in "${nr_threads[@]}"
 do
@@ -34,16 +33,16 @@ do
 
 	FlushDisk
 	echo "#######"
-	echo "Vanilla Naive RA IOOPT"
-	export LD_PRELOAD=/usr/lib/lib_VRAI.so
-	$COMMAND | grep "READ"
+	echo "CNI"
+	export LD_PRELOAD=/usr/lib/lib_CNI.so
+	$COMMAND
 	export LD_PRELOAD=""
 	FlushDisk
 
-	FlushDisk
-	echo "#######"
-	echo "Cross Naive RA_info IOOPT"
-	export LD_PRELOAD=/usr/lib/lib_CNI.so
+	exit
+
+	echo "Vanilla Naive RA IOOPT"
+	export LD_PRELOAD=/usr/lib/lib_VRAI.so
 	$COMMAND | grep "READ"
 	export LD_PRELOAD=""
 	FlushDisk
