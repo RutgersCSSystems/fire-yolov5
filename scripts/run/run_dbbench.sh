@@ -27,7 +27,8 @@ declare -a nproc=("1" "2" "4" "8" "16")
 
 # Memory Budget = total_anon_MB + (total_cache_MB * memory_budget_percent)
 # higher means more memory limit
-declare -a memory_budget_percent=("1" "0.7" "0.5" "0.2")
+#declare -a memory_budget_percent=("1" "0.7" "0.5" "0.2")
+declare -a memory_budget_percent=("1")
 
 
 WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
@@ -68,13 +69,13 @@ CLEAN_AND_WRITE()
         $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
         FlushDisk
 
-        SETPRELOAD "MEMUSAGE"
+        #SETPRELOAD "MEMUSAGE"
         $base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> out_memusage
-        UNSETPRELOAD
+        #UNSETPRELOAD
 
         ##update the total anon and cache usage for this app
-        total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
-        total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
+        #total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
+        #total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
 
         FlushDisk
 }
@@ -140,8 +141,8 @@ do
 
                         for mem_budget_percent in "${memory_budget_percent[@]}"
                         do
-                                umount_ext4ramdisk
-                                SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$mem_budget_percent))/1" | bc --mathlib`
+                                #umount_ext4ramdisk
+                                #SETUPEXTRAM_1 `echo "scale=0; ($total_anon_MB + ($total_cache_MB*$mem_budget_percent))/1" | bc --mathlib`
 
                                 for WORKLOAD in "${workload_arr[@]}"
                                 do
@@ -162,7 +163,7 @@ do
                                         done
                                 done
 
-                                umount_ext4ramdisk
+                                #umount_ext4ramdisk
                         done
                 done
         done
