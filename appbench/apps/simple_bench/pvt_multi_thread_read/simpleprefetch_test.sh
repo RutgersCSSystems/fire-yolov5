@@ -47,7 +47,7 @@ CLEAN_AND_WRITE() {
 
 
 COMPILE_APP $FILESIZE $READ_SIZE $THREAD
-#CLEAN_AND_WRITE
+CLEAN_AND_WRITE
 FlushDisk
 
 COMMAND="./bin/$WORKLOAD"
@@ -58,15 +58,14 @@ $COMMAND
 export LD_PRELOAD=""
 FlushDisk
 
-printf "\nRUNNING CBPBB.................\n"
-SETPRELOAD "CBPBB"
+printf "\nRUNNING Cross Naive.................\n"
+SETPRELOAD "CN"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
 
-printf "\nRUNNING CBPBB_info.................\n"
-#SETPRELOAD "CBPBB"
-#export LD_PRELOAD="/usr/lib/lib_CBPBB_info.so"
+printf "\nRUNNING CN_info.................\n"
+SETPRELOAD "CNI"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk

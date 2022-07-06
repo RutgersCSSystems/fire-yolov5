@@ -9,9 +9,7 @@ fi
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
-declare -a experiment=("VANILLA" "CN" "CPNV" "CPNI")
-#declare -a experiment=("CBPBB_info" "CBNBB_info")
-#declare -a experiment=("CBNBB_info" "CBPBB_info")
+declare -a experiment=("VANILLA" "CN" "CNI" "VRA" "VRAI")
 declare -a mem_budget=("1")
 #declare -a threads=("16" "8" "4" "2" "1")
 declare -a threads=("2" "4" "8" "16")
@@ -20,7 +18,8 @@ declare -a threads=("2" "4" "8" "16")
 #WORKLOAD="read_shared_strided"
 #WRITE_LOAD="write_shared"
 
-WORKLOAD="read_pvt_strided"
+#WORKLOAD="read_pvt_strided"
+WORKLOAD="read_pvt_seq"
 #WORKLOAD="read_pvt_rand"
 WRITE_LOAD="write_pvt"
 
