@@ -11,18 +11,18 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
-declare -a apparr=("rocksdb_membudget")
-#declare -a apparr=("simple_bench_pvt_membudget")
+#declare -a apparr=("rocksdb_membudget")
+declare -a apparr=("fio")
 
 #experiment names should be same as preloadlib names in SETPRELOAD
-declare -a experiment=("VANILLA" "OSONLY" "CN" "CPNV" "CPNI" "CPBV" "CPBI")
+declare -a experiment=("VANILLA" "OSONLY" "CN" "CNI" "CPNV" "CPNI")
 
 #Here is where we run the application
 RUNAPP()
 {
         APP=$1
         EXPERIMENT=$2
-        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_membudget_${RIGHTNOW}/${EXPERIMENT}
+        OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_${RIGHTNOW}/${EXPERIMENT}
         #OUTPUT=${OUTPUT_FOLDER}/${APP}/Prefetch_diff_membudget/${EXPERIMENT}
         mkdir -p $OUTPUT
 
@@ -30,6 +30,8 @@ RUNAPP()
                 $RUN_SCRIPTS/run_strided_madbench.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "graphchi" ]; then
                 $RUN_SCRIPTS/run_graphchi.sh $EXPERIMENT $OUTPUT	
+        elif [ "$APP" = "fio" ]; then
+                $RUN_SCRIPTS/run_fio.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "rocksdb" ]; then
                 $RUN_SCRIPTS/run_dbbench.sh $EXPERIMENT $OUTPUT
         elif [ "$APP" = "rocksdb_membudget" ]; then
