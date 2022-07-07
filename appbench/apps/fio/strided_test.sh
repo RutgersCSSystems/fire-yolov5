@@ -58,8 +58,8 @@ echo "##########################################################################
 echo "Cross_Naive.................."
 FlushDisk
 #export LD_PRELOAD=/usr/lib/lib_Cross_Naive.so
-export LD_PRELOAD=/usr/lib/lib_CNI.so
-#export LD_PRELOAD=/usr/lib/lib_CPNI.so
+#export LD_PRELOAD=/usr/lib/lib_CNI.so
+export LD_PRELOAD=/usr/lib/lib_CPNI.so
 #export LD_PRELOAD=/usr/lib/lib_VRAI.so
 #ltrace -C -f -S -l /usr/lib/lib_Cross_Naive.so $COMMAND 2> ltrace_out_$TOTSIZE
 $COMMAND
