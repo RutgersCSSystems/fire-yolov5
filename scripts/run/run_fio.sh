@@ -19,12 +19,16 @@ DATA_FOLDER=$base/fio-test
 
 declare -a nproc=("1" "2" "4" "8" "16")
 declare -a filesize=("32") ##GB
-declare -a read_size=("10") ## in pages
-declare -a workload_arr=("read_pvt_seq") ##To change this with other fio workloads
+declare -a read_size=("1") ## in pages
+#declare -a workload_arr=("read_pvt_seq") ##To change this with other fio workloads
+declare -a workload_arr=("read_pvt_seq" "read_pvt_strided") ##To change this with other fio workloads
 
-#COMMAND="--name=$NAME --bs=4k --numjobs=$NPROC --size=${SIZE}g"
+STRIDE=10 #in nr_pages, only used for read_pvt_strided
+IODEPTH=1
+
+#COMMAND="--name=$NAME --bs=4k --numjobs=$NPROC --size=${SIZE}g --rw=read"
 #Base commands
-ORI_PARAMS="--directory=$DATA_FOLDER --ioengine=psync --rw=read --iodepth=1 --fadvise_hint=0 --thread"
+ORI_PARAMS="--directory=$DATA_FOLDER --ioengine=psync --iodepth=$IODEPTH --fadvise_hint=0 --thread"
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -39,7 +43,7 @@ CLEAN_AND_WRITE() {
         UNSETPRELOAD
         CLEAR_FILES
 
-        WRITE_PARAMS="--name=NVME_${NPROC} --bs=4Ki --numjobs=$NPROC --size=${SIZE}Gi"
+        WRITE_PARAMS="--name=NVME_${NPROC} --rw=read --bs=4Ki --numjobs=$NPROC --filesize=${SIZE}Gi"
 
         fio $ORI_PARAMS $WRITE_PARAMS
 
@@ -98,15 +102,21 @@ do
                 CLEAN_AND_WRITE
                 for READ_SIZE in "${read_size[@]}"
                 do
-                        read_kib=`echo "$READ_SIZE*$PAGE_SZ" | bc`
-                        READARGS="--name=NVME_${NPROC} --bs=${read_kib}Ki --numjobs=$NPROC --size=${SIZE}Gi"
+                        read_kib=`echo "$READ_SIZE*$PAGE_SZ" | bc` #in bytes
                         for WORKLOAD in "${workload_arr[@]}"
                         do
+                                STRIDE_KB=0
+                                if [[ "$WORKLOAD" == "read_pvt_strided" ]]; then
+                                        STRIDE_KB=`echo "$STRIDE * $PAGE_SZ" | bc`
+                                fi
+
+                                READARGS="--name=NVME_${NPROC} --bs=${read_kib} --numjobs=$NPROC --filesize=${SIZE}Gi --rw=read:$STRIDE_KB"
+
                                 echo "######################################################,"
                                 echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READ_SIZE"
                                 OUTFOLDER=$out_base/$WORKLOAD
                                 CREATE_OUTFOLDER $OUTFOLDER
-                                OUTFILENAME="filesz-${FILESIZE}_Readsz-${READ_SIZE}"
+                                OUTFILENAME="filesz-${FILESIZE}_Readsz-${READ_SIZE}_STRIDE-${STRIDE}"
                                 OUTFILE=$OUTFOLDER/$OUTFILENAME
                                 TOUCH_OUTFILE $OUTFILE
 
