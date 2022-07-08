@@ -116,7 +116,7 @@ do
                                 echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READ_SIZE"
                                 OUTFOLDER=$out_base/$WORKLOAD
                                 CREATE_OUTFOLDER $OUTFOLDER
-                                OUTFILENAME="filesz-${FILESIZE}_Readsz-${READ_SIZE}_STRIDE-${STRIDE}"
+                                OUTFILENAME="filesz-${FILESIZE}_Readsz-${READ_SIZE}_STRIDE-${STRIDE_KB}"
                                 OUTFILE=$OUTFOLDER/$OUTFILENAME
                                 TOUCH_OUTFILE $OUTFILE
 
