@@ -18,13 +18,15 @@ base=$APPS/simple_bench/pvt_multi_thread_read
 declare -a nproc=("1" "2" "4" "8" "16")
 declare -a filesize=("40") ##GB
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_pvt_seq" "read_pvt_rand") ##read binaries
+declare -a workload_arr=("read_pvt_strided") ##read binaries
+
+NR_STRIDE=64 ##In pages, only relevant for strided
 
 #Compiles the application
 COMPILE_APP() {
         pushd $base
         CREATE_OUTFOLDER $base/bin
-        make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3
+        make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3 NR_STRIDE=$NR_STRIDE
         popd
 }
 
