@@ -14,16 +14,16 @@ FlushDisk()
 
 TOTSIZE=16 ##GB
 NPROC=2
-SKIP=10 #Nr pages for strided access
+SKIP=0 #Nr pages for strided access
 
 SIZE=`echo "$TOTSIZE/$NPROC" | bc`
 NAME=NVME_${NPROC}
 
-SKIP_KB=`echo "$SKIP*4" | bc`
+SKIP_KB=`echo "$SKIP*4096" | bc`
 
 #COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 #> out_$NAME"
 #COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read --bs=4k --numjobs=$NPROC --size=${SIZE}g --iodepth=1 --fadvise_hint=0 --thread --thinktime=1"
-COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read:${SKIP_KB}ki --bs=4ki --numjobs=$NPROC --filesize=${SIZE}gi --iodepth=1 --fadvise_hint=0 --thread"
+COMMAND="fio --name=$NAME --directory=./fio-test --ioengine=psync --rw=read:${SKIP_KB} --bs=4ki --numjobs=$NPROC --filesize=${SIZE}gi --iodepth=1 --fadvise_hint=0 --thread"
 
 echo "$COMMAND"
 
