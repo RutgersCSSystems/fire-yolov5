@@ -76,9 +76,12 @@ void handle_app_sig_handler(int signum){
   fprintf(stderr, "Inside handler function\n");
   dest();
 #ifdef THPOOL_PREFETCH
-  if(workerpool)
+  if(workerpool) {
 	  thpool_destroy(workerpool);
+	  workerpool = NULL;
+  }
 #endif
+  fprintf(stderr, "Finished destruction\n");
   return;
 }
 
