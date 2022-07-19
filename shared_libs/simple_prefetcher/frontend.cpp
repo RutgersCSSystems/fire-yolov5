@@ -507,7 +507,7 @@ int open(const char *pathname, int flags, ...){
 	handle_open(fd);
 
 exit:
-	fprintf(stderr, "Exiting %s\n", __func__);
+	debug_printf(stderr, "Exiting %s\n", __func__);
 	return fd;
 }
 

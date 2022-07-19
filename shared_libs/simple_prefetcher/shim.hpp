@@ -63,7 +63,7 @@ void link_shim_functions(void){
         fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
         close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
 
-	printf("done with %s\n", __func__);
+    debug_printf("done with %s\n", __func__);
 	return;
 }
 
