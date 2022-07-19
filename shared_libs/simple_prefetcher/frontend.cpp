@@ -87,6 +87,8 @@ void set_read_limits(char a){
 	int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
 	pwrite(fd, &a, sizeof(char), 0);
 	real_close(fd);
+
+	debug_printf("Exiting %s\n", __func__);
 }
 
 
@@ -144,115 +146,112 @@ void *prefetcher_th(void *arg) {
 #else //THPOOL needs void 
 void prefetcher_th(void *arg) {
 #endif
-        long tid = gettid();
 
+	long tid = gettid();
+	struct thread_args *a = (struct thread_args*)arg;
 
-        struct thread_args *a = (struct thread_args*)arg;
-        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n",
-                        tid, a->offset, a->file_size, a->fd, a->prefetch_size);
+	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n",
+			tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
-        off_t curr_pos = 0;
-        off_t file_pos; //actual file position where readahead will be done
-        size_t readnow;
-        struct read_ra_req ra;
+	off_t curr_pos = 0;
+	off_t file_pos; //actual file position where readahead will be done
+	size_t readnow;
+	struct read_ra_req ra;
 
-        off_t start_pg; //start from here in page_cache_state
-        off_t zero_pg; //first zero bit found here
+	off_t start_pg; //start from here in page_cache_state
+	off_t zero_pg; //first zero bit found here
 	off_t pg_diff;
 
-        bit_array_t *page_cache_state = NULL;
-
-        /*
-         * Allocate page cache bitmap if you want to use it without predictor
-         */
+	bit_array_t *page_cache_state = NULL;
+	/*
+	 * Allocate page cache bitmap if you want to use it without predictor
+	 */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-        debug_printf("%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	debug_printf("%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
-        BitArrayClearAll(page_cache_state);
-        debug_printf("%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	BitArrayClearAll(page_cache_state);
+	debug_printf("%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
 	page_cache_state = a->page_cache_state;
 #else
-        page_cache_state = NULL;
+	page_cache_state = NULL;
 #endif
 
-
-
-        while (curr_pos < a->file_size){
-                file_pos = curr_pos + a->offset;
+	while (curr_pos < a->file_size){
+		file_pos = curr_pos + a->offset;
 
 #ifdef MODIFIED_RA
 
-                if(page_cache_state){
-                        ra.data = page_cache_state->array;
-                }else{
-                        ra.data = NULL;
-                }
+		if(page_cache_state){
+			ra.data = page_cache_state->array;
+		}else{
+			ra.data = NULL;
+		}
 
-                if(readahead_info(a->fd, file_pos,
-                                        a->prefetch_size, &ra) < 0)
-                {
-                        printf("error while readahead_info: TID:%ld \n", tid);
-                        goto exit;
-                }
+		if(readahead_info(a->fd, file_pos,
+				a->prefetch_size, &ra) < 0)
+		{
+			printf("error while readahead_info: TID:%ld \n", tid);
+			goto exit;
+		}
 #ifdef READAHEAD_INFO_PC_STATE
-                page_cache_state->array = (unsigned long*)ra.data;
-                start_pg = file_pos >> PAGE_SHIFT;
-                zero_pg = start_pg;
-                while((zero_pg << PAGE_SHIFT) < a->file_size){
-                        if(!BitArrayTestBit(page_cache_state, zero_pg))
-                        {
-                                break;
-                        }
-                        zero_pg += 1;
-                }
+		page_cache_state->array = (unsigned long*)ra.data;
+		start_pg = file_pos >> PAGE_SHIFT;
+		zero_pg = start_pg;
+		while((zero_pg << PAGE_SHIFT) < a->file_size){
+			if(!BitArrayTestBit(page_cache_state, zero_pg))
+			{
+				break;
+			}
+			zero_pg += 1;
+		}
 		pg_diff = zero_pg - start_pg;
 		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
-                if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
-                        curr_pos += pg_diff << PAGE_SHIFT;
-                else
-                        curr_pos += a->prefetch_size;
+		if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
+			curr_pos += pg_diff << PAGE_SHIFT;
+		else
+			curr_pos += a->prefetch_size;
 #else //READAHEAD_INFO_PC_STATE
-                curr_pos += a->prefetch_size;
+		curr_pos += a->prefetch_size;
 #endif //READAHEAD_INFO_PC_STATE
 
-                /*
-                 * if the memory is less NR_REMAINING
-                 * the prefetcher stops
-                 */
-                if(ra.nr_free < NR_REMAINING)
-                {
-                        debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+		/*
+		 * if the memory is less NR_REMAINING
+		 * the prefetcher stops
+		 */
+		if(ra.nr_free < NR_REMAINING)
+		{
+			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
 #ifdef ENABLE_EVICTION
-                        /*
-                         * when crunched with memory, remove cache pages for
-                         * last fd. Since the thread has moved on from it.
-                         */
-                        if(a->current_fd != a->last_fd){
-                                debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
-                                posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
-                        }
+			/*
+			 * when crunched with memory, remove cache pages for
+			 * last fd. Since the thread has moved on from it.
+			 */
+			if(a->current_fd != a->last_fd){
+				debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
+				posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
+			}
 #else //ENABLE_EVICTION
-                        goto exit;
+			goto exit;
 #endif //ENABLE_EVICTION
-                }
+		}
 
 #else //MODIFIED_RA
-                if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0){
-                        printf("error while readahead: TID:%ld \n", tid);
-                        goto exit;
-                }
-                curr_pos += a->prefetch_size;
+		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0){
+			printf("error while readahead: TID:%ld \n", tid);
+			goto exit;
+		}
+		curr_pos += a->prefetch_size;
 #endif //MODIFIED_RA
-        }
+	}
 
 exit:
-
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-        BitArrayDestroy(page_cache_state);
+	BitArrayDestroy(page_cache_state);
 #endif
+	free(arg);
 
-        free(arg);
+	debug_printf("Exiting %s\n", __func__);
 }
 
 
@@ -268,6 +267,7 @@ void inline prefetch_file(int fd)
 	struct thread_args *arg = NULL;
 	off_t filesize;
 
+	debug_printf("Entering %s\n", __func__);
 	/*
 	 * When PREDICTOR is enabled, file sanity checks are not required
 	 * This is because the file has already been screened for
@@ -330,6 +330,7 @@ void inline prefetch_file(int fd)
 #endif
 
 exit:
+	debug_printf("Exiting %s\n", __func__);
 	return;
 }
 
@@ -342,45 +343,47 @@ exit:
  * and init the bitmap inside the kernel
  */
 void inline record_open(int fd){
-        off_t filesize = reg_fd(fd);
-	struct read_ra_req ra;
 
+	off_t filesize = reg_fd(fd);
+	struct read_ra_req ra;
 	struct timespec start, end;
 
+	debug_printf("Entering %s\n", __func__);
 
-        if(filesize > MIN_FILE_SZ){
+	if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
-                file_predictor *fp = new file_predictor(fd, filesize);
+		file_predictor *fp = new file_predictor(fd, filesize);
 
-                debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
-                                __func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
+		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
+				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-                fd_to_file_pred->insert({fd, fp});
+		fd_to_file_pred->insert({fd, fp});
 #endif
 
 		/*
 		 * This allocates the file's bitmap inside the kernel
 		 * So no file cache data is lost from bitmap
-                 * This is very important todo before any app reads happen
+		 * This is very important todo before any app reads happen
 		 */
 #ifdef READAHEAD_INFO_PC_STATE
-                debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
+		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 
 		//clock_gettime(CLOCK_REALTIME, &end);
-                //debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
-        }
-        else{
-                debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-                goto exit;
-        }
+	}
+	else{
+		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
+		goto exit;
+	}
 
 exit:
-        return;
+	debug_printf("Exiting %s\n", __func__);
+	return;
 }
 
 
@@ -390,21 +393,24 @@ exit:
  */
 void handle_open(int fd){
 
+	debug_printf("%s: %s\n", __func__, pathname);
+
 #ifdef ONLY_INTERCEPT
-        return;
+	return;
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-        record_open(fd);
+	record_open(fd);
+#endif
+	/*
+	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
+	 */
+#ifdef BLIND_PREFETCH
+	// Prefetch without predicting
+	prefetch_file(fd);
 #endif
 
-/*
- * DONT compile library with both PREDICTOR and BLIND_PREFETCH
- */
-#ifdef BLIND_PREFETCH
-        // Prefetch without predicting
-        prefetch_file(fd);
-#endif
+	debug_printf("Exiting %s\n", __func__);
 }
 
 
@@ -413,27 +419,30 @@ void handle_open(int fd){
 //////////////////////////////////////////////////////////
 
 int openat(int dirfd, const char *pathname, int flags, ...){
-        int fd;
-        if(flags & O_CREAT){
-                va_list valist;
-                va_start(valist, flags);
-                mode_t mode = va_arg(valist, mode_t);
-                va_end(valist);
-                fd = real_openat(dirfd, pathname, flags, mode);
-        }
-        else{
-                fd = real_openat(dirfd, pathname, flags, 0);
-        }
 
-        if(fd < 0)
-                goto exit;
+	int fd;
 
-        debug_printf("Openingat file %s\n", pathname);
+	debug_printf("Openingat file %s\n", pathname);
 
-        handle_open(fd);
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_openat(dirfd, pathname, flags, mode);
+	}
+	else{
+		fd = real_openat(dirfd, pathname, flags, 0);
+	}
+
+	if(fd < 0)
+		goto exit;
+
+	handle_open(fd);
 
 exit:
-        return fd;
+	debug_printf("Exiting %s\n", __func__);
+	return fd;
 }
 
 
@@ -491,15 +500,12 @@ exit:
 FILE *fopen(const char *filename, const char *mode){
 
 	int fd;
+	FILE *ret;
 
 	debug_printf("%s: file %s\n", __func__,  filename);
-
-	FILE *ret;
 	ret = real_fopen(filename, mode);
 	if(!ret)
 		return ret;
-
-
 
 	fd = fileno(ret);
 	handle_open(fd);
