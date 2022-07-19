@@ -155,6 +155,7 @@ void dest(){
         char a;
         a = '0';
         set_read_limits(a);
+        fprintf(stderr, "DESTRUCTOR GETTING CALLED \n");
         debug_printf("DESTRUCTOR GETTING CALLED \n");
 }
 
