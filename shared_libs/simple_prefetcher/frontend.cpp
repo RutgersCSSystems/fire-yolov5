@@ -75,12 +75,11 @@ void handle_app_sig_handler(int signum){
 
   fprintf(stderr, "Inside handler function\n");
   dest();
-  return;
-
 #ifdef THPOOL_PREFETCH
   if(workerpool)
 	  thpool_destroy(workerpool);
 #endif
+  return;
 }
 
 void reg_app_sig_handler(void){
