@@ -456,7 +456,7 @@ int open64(const char *pathname, int flags, ...){
 	handle_open(fd);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf("Exiting %s\n", __func__);
 	return fd;
 }
 
@@ -505,7 +505,7 @@ FILE *fopen(const char *filename, const char *mode){
 	handle_open(fd);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf("Exiting %s\n", __func__);
 	return ret;
 }
 
@@ -515,7 +515,7 @@ int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
 	int ret = -1;
 	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
 	ret = posix_fadvise(fd, offset, len, advice);
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
 
@@ -538,7 +538,7 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
 	ret = real_posix_fadvise(fd, offset, len, advice);
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
 
@@ -555,7 +555,7 @@ int madvise(void *addr, size_t length, int advice){
 
 	ret = real_madvise(addr, length, advice);
 exit:
-    debug_printf(stderr, "Exiting %s\n", __func__);
+    debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
 
@@ -635,7 +635,7 @@ skip_predictor:
 #endif
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return amount_read;
 }
 
@@ -706,7 +706,7 @@ skip_predictor:
     amount_read = real_fread(ptr, size, nmemb, stream);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return amount_read;
 }
 
@@ -743,7 +743,7 @@ int fclose(FILE *stream){
 
 	int fd = fileno(stream);
 
-	debug_printf(stderr, "Entering %s\n", __func__);
+	debug_printf( "Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
 	goto exit;
@@ -752,7 +752,7 @@ int fclose(FILE *stream){
 	handle_file_close(fd);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return real_fclose(stream);
 }
 
@@ -767,7 +767,7 @@ int close(int fd){
 
 	handle_file_close(fd);
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
 }
 
@@ -784,6 +784,6 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 	ret = real_readahead(fd, offset, count);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
