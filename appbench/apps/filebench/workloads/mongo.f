@@ -26,11 +26,11 @@
 
 set $dir=DATA/
 set $nfiles=100
-set $dirwidth=20
+set $dirwidth=10
 set $filesize=128m
-set $nthreads=2
+set $nthreads=16
 set $meaniosize=16k
-set $readiosize=1m
+set $readiosize=16k
 
 set mode quit firstdone
 
@@ -52,4 +52,4 @@ define process name=filereader,instances=1
 }
 
 echo  "Mongo-like Version 2.3 personality successfully loaded"
-run 20
+run 30
