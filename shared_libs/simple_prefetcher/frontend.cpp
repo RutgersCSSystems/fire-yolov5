@@ -393,7 +393,7 @@ exit:
  */
 void handle_open(int fd){
 
-	debug_printf("%s: %s\n", __func__, pathname);
+	debug_printf("%s: %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
 	return;
