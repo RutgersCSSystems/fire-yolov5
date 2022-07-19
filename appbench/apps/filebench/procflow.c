@@ -833,7 +833,10 @@ proc_shutdown()
 	filebench_log(LOG_INFO, "Shutting down processes and raising singal");
 	raise(SIGUSR2);
 	procflow_shutdown();
+	filebench_log(LOG_INFO, "Finished calling procflow_shutdown");
 	if (filebench_shm->shm_required)
 		ipc_ismdelete();
+	filebench_log(LOG_INFO, "Finished calling ipc_ismdelete");
 	eventgen_reset();
+	filebench_log(LOG_INFO, "Finished calling eventgen_reset");
 }
