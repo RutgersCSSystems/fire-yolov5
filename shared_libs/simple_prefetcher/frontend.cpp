@@ -66,6 +66,23 @@ void print_affinity() {
     printf("\n");
 }
 
+/*
+ * Handle signals from application to wind-up a
+ * bunch of things. For example, filebench does
+ * not terminate unless the worker threads terminate
+ */
+void handle_app_sig_handler(int signum){
+  printf("Inside handler function\n");
+#ifdef THPOOL_PREFETCH
+  if(workerpool)
+	  thpool_destroy(workerpool);
+#endif
+}
+
+void register_app_sig_handler(int signum){
+	signal(SIGUSR2,handle_app_sig_handler);
+}
+
 
 /*
  * Initialize fd_to_file_pred
