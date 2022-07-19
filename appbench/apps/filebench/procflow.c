@@ -830,7 +830,8 @@ proc_create()
 void
 proc_shutdown()
 {
-	filebench_log(LOG_INFO, "Shutting down processes");
+	filebench_log(LOG_INFO, "Shutting down processes and raising singal");
+	raise(SIGUSR2);
 	procflow_shutdown();
 	if (filebench_shm->shm_required)
 		ipc_ismdelete();
