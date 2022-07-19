@@ -687,7 +687,8 @@ procflow_shutdown(void)
 			(void) kill(pid, SIGUSR1);
 #endif
 			filebench_log(LOG_INFO, "Before procflow_wait");
-			procflow_wait(pid);
+			//procflow_wait(pid);
+			(void) kill(pid, SIGUSR1);
 		}
 
 		filebench_log(LOG_INFO, "Before procflow_cleanup");
