@@ -87,7 +87,6 @@ void set_read_limits(char a){
 	int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
 	pwrite(fd, &a, sizeof(char), 0);
 	real_close(fd);
-
 	debug_printf("Exiting %s\n", __func__);
 }
 
@@ -393,7 +392,7 @@ exit:
  */
 void handle_open(int fd){
 
-	debug_printf("%s: %s\n", __func__);
+	debug_printf("Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
 	return;
@@ -422,7 +421,7 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 
 	int fd;
 
-	debug_printf("Openingat file %s\n", pathname);
+	debug_printf("Entering %s\n", pathname);
 
 	if(flags & O_CREAT){
 		va_list valist;
