@@ -111,7 +111,8 @@ void set_read_limits(char a){
 void con(){
 
 	char a;
-	printf("CONSTRUCTOR GETTING CALLED \n");
+
+	debug_printf("CONSTRUCTOR GETTING CALLED \n");
 
 	/*
 	 * Sometimes, if dlsym is called with thread spawn
@@ -142,15 +143,13 @@ void con(){
 
 
 void dest(){
-
         /*
          * Reset the IO limits to normal
          */
         char a;
         a = '0';
         set_read_limits(a);
-
-        printf("DESTRUCTOR GETTING CALLED \n");
+        debug_printf("DESTRUCTOR GETTING CALLED \n");
 }
 
 
