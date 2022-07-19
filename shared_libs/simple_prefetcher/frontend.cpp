@@ -144,7 +144,7 @@ void con(){
 	//print_affinity();
 
 	/* register application specific handler */
-	//reg_app_sig_handler();
+	reg_app_sig_handler();
 }
 
 
