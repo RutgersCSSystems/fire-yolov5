@@ -48,22 +48,23 @@ real_madvise_t madvise_ptr = NULL;
 
 
 void link_shim_functions(void){
-        clone_ptr = (real_clone_t)dlsym(RTLD_NEXT, "clone");
-        posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
-        readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
-        madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
-        fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
-        fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
-        fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
-        pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
-        write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
-        read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
-        open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
-        openat_ptr = ((real_openat_t)dlsym(RTLD_NEXT, "openat"));
-        fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
-        close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
 
-    debug_printf("done with %s\n", __func__);
+	clone_ptr = (real_clone_t)dlsym(RTLD_NEXT, "clone");
+	posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
+	readahead_ptr = (real_readahead_t)dlsym(RTLD_NEXT, "readahead");
+	madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
+	fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
+	fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+	fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
+	pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+	write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+	read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
+	open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
+	openat_ptr = ((real_openat_t)dlsym(RTLD_NEXT, "openat"));
+	fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
+	close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
+
+	debug_printf("done with %s\n", __func__);
 	return;
 }
 

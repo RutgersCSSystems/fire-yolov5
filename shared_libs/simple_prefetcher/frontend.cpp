@@ -72,14 +72,18 @@ void print_affinity() {
  * not terminate unless the worker threads terminate
  */
 void handle_app_sig_handler(int signum){
-  printf("Inside handler function\n");
+
+  fprintf(stderr, "Inside handler function\n");
+  dest();
+  return;
+
 #ifdef THPOOL_PREFETCH
   if(workerpool)
 	  thpool_destroy(workerpool);
 #endif
 }
 
-void register_app_sig_handler(int signum){
+void reg_app_sig_handler(void){
 	signal(SIGUSR2,handle_app_sig_handler);
 }
 
@@ -113,7 +117,6 @@ void con(){
 	char a;
 
 	debug_printf("CONSTRUCTOR GETTING CALLED \n");
-
 	/*
 	 * Sometimes, if dlsym is called with thread spawn
 	 * glibc incurres an error.
@@ -139,6 +142,9 @@ void con(){
 	set_read_limits(a);
 #endif
 	//print_affinity();
+
+	/* register application specific handler */
+	reg_app_sig_handler();
 }
 
 
