@@ -655,6 +655,8 @@ procflow_shutdown(void)
 	if (filebench_shm->shm_f_abort == FILEBENCH_OK)
 		filebench_shm->shm_f_abort = FILEBENCH_ABORT_DONE;
 
+	filebench_log(LOG_INFO, "Before iterating through procflow");
+
 	while (procflow) {
 		if (procflow->pf_instance &&
 		    (procflow->pf_instance == FLOW_MASTER)) {
@@ -667,6 +669,8 @@ procflow_shutdown(void)
 		    procflow->pf_pid);
 
 		next_procflow = procflow->pf_next;
+
+		filebench_log(LOG_INFO, "Before procflow_sleep");
 
 		/*
 		 * Signalling the process with SIGUSR1 will result in it
@@ -682,8 +686,12 @@ procflow_shutdown(void)
 #else
 			(void) kill(pid, SIGUSR1);
 #endif
+			filebench_log(LOG_INFO, "Before procflow_wait");
 			procflow_wait(pid);
 		}
+
+		filebench_log(LOG_INFO, "Before procflow_cleanup");
+
 		(void) procflow_cleanup(procflow);
 		procflow = next_procflow;
 		if (wait_cnt > 0)
