@@ -71,6 +71,7 @@ void print_affinity() {
  * Initialize fd_to_file_pred
  */
 void init_global_ds(void){
+
 	if(!fd_to_file_pred_init.test_and_set()){
 		debug_printf("%s: Allocating fd_to_file_pred\n", __func__);
 		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
@@ -81,15 +82,18 @@ void init_global_ds(void){
  * Set unbounded_read to 0 or 1
  */
 void set_read_limits(char a){
-        debug_printf("%s: Setting Read Limits to %c\n", __func__, a);
-        int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
-        pwrite(fd, &a, sizeof(char), 0);
-        real_close(fd);
+
+	debug_printf("%s: Setting Read Limits to %c\n", __func__, a);
+	int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
+	pwrite(fd, &a, sizeof(char), 0);
+	real_close(fd);
 }
 
 
 void con(){
-        printf("CONSTRUCTOR GETTING CALLED \n");
+
+	char a;
+	printf("CONSTRUCTOR GETTING CALLED \n");
 
 	/*
 	 * Sometimes, if dlsym is called with thread spawn
@@ -98,28 +102,26 @@ void con(){
 	link_shim_functions();
 
 #ifdef THPOOL_PREFETCH
-        workerpool = thpool_init(NR_WORKERS);
-        if(!workerpool){
-                printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
-        }
-        else{
-                debug_printf("Created %d bg_threads\n", NR_WORKERS);
-        }
+	workerpool = thpool_init(NR_WORKERS);
+	if(!workerpool){
+		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
+	}
+	else{
+		debug_printf("Created %d bg_threads\n", NR_WORKERS);
+	}
 #endif
 	init_global_ds();
 
-        char a;
 #ifdef SET_READ_UNLIMITED
-        a = '1';
-        set_read_limits(a);
+	a = '1';
+	set_read_limits(a);
 #else
-        a = '0';
-        set_read_limits(a);
+	a = '0';
+	set_read_limits(a);
 #endif
-
-        //print_affinity();
-
+	//print_affinity();
 }
+
 
 void dest(){
 
@@ -146,7 +148,7 @@ void prefetcher_th(void *arg) {
 
 
         struct thread_args *a = (struct thread_args*)arg;
-        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n", 
+        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n",
                         tid, a->offset, a->file_size, a->fd, a->prefetch_size);
 
         off_t curr_pos = 0;
@@ -157,9 +159,9 @@ void prefetcher_th(void *arg) {
         off_t start_pg; //start from here in page_cache_state
         off_t zero_pg; //first zero bit found here
 	off_t pg_diff;
-        
+
         bit_array_t *page_cache_state = NULL;
-        
+
         /*
          * Allocate page cache bitmap if you want to use it without predictor
          */
@@ -173,7 +175,7 @@ void prefetcher_th(void *arg) {
 #else
         page_cache_state = NULL;
 #endif
-        
+
 
 
         while (curr_pos < a->file_size){
@@ -187,7 +189,7 @@ void prefetcher_th(void *arg) {
                         ra.data = NULL;
                 }
 
-                if(readahead_info(a->fd, file_pos, 
+                if(readahead_info(a->fd, file_pos,
                                         a->prefetch_size, &ra) < 0)
                 {
                         printf("error while readahead_info: TID:%ld \n", tid);
@@ -268,7 +270,7 @@ void inline prefetch_file(int fd)
 
         /*
         * When PREDICTOR is enabled, file sanity checks are not required
-        * This is because the file has already been screened for 
+        * This is because the file has already been screened for
         * 1. Filesize
         * 2. Type (regular file etc.)
         * 3. Sequentiality
@@ -335,7 +337,7 @@ exit:
 /*
  * Initialize a file_predictor object if
  * the file is > Min_FILE_SZ
- * 
+ *
  * and init the bitmap inside the kernel
  */
 void inline record_open(int fd){
@@ -435,68 +437,74 @@ exit:
 
 
 int open64(const char *pathname, int flags, ...){
-        int fd;
-        if(flags & O_CREAT){
-                va_list valist;
-                va_start(valist, flags);
-                mode_t mode = va_arg(valist, mode_t);
-                va_end(valist);
-                fd = real_open(pathname, flags, mode);
-        }
-        else{
-                fd = real_open(pathname, flags, 0);
-        }
 
-        debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
+	int fd;
 
-        handle_open(fd);
+	debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
+
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_open(pathname, flags, mode);
+	}
+	else{
+		fd = real_open(pathname, flags, 0);
+	}
+	handle_open(fd);
 
 exit:
-        return fd;
+	fprintf(stderr, "Exiting %s\n", __func__);
+	return fd;
 }
 
 
 int open(const char *pathname, int flags, ...){
-        int fd;
-        if(flags & O_CREAT){
-                va_list valist;
-                va_start(valist, flags);
-                mode_t mode = va_arg(valist, mode_t);
-                va_end(valist);
-                fd = real_open(pathname, flags, mode);
-        }
-        else{
-                fd = real_open(pathname, flags, 0);
-        }
 
-        if(fd < 0)
-                goto exit;
+	int fd;
 
-        debug_printf("%s: file %s\n", __func__,  pathname);
+	debug_printf("%s: file %s\n", __func__,  pathname);
 
-        handle_open(fd);
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_open(pathname, flags, mode);
+	}
+	else{
+		fd = real_open(pathname, flags, 0);
+	}
+
+	if(fd < 0)
+		goto exit;
+	handle_open(fd);
 
 exit:
-        return fd;
+	fprintf(stderr, "Exiting %s\n", __func__);
+	return fd;
 }
 
 
 FILE *fopen(const char *filename, const char *mode){
-        int fd;
 
-        FILE *ret;
-        ret = real_fopen(filename, mode);
-        if(!ret)
-                return ret;
 
-        debug_printf("%s: file %s\n", __func__,  filename);
+	int fd;
 
-        fd = fileno(ret);
+	FILE *ret;
+	ret = real_fopen(filename, mode);
+	if(!ret)
+		return ret;
 
-        handle_open(fd);
+	debug_printf("%s: file %s\n", __func__,  filename);
+
+	fd = fileno(ret);
+	handle_open(fd);
 
 exit:
-        return ret;
+	fprintf(stderr, "Exiting %s\n", __func__);
+	return ret;
 }
 
 
@@ -528,18 +536,19 @@ exit:
 
 
 int madvise(void *addr, size_t length, int advice){
-        int ret = 0;
+	int ret = 0;
 
-        printf("%s: called ADV=%d\n", __func__, advice);
+	fprintf(stderr, "%s: called ADV=%d\n", __func__, advice);
 
 #ifdef DISABLE_MADV_DONTNEED
-        if(advice == MADV_DONTNEED)
-                goto exit;
+	if(advice == MADV_DONTNEED)
+		goto exit;
 #endif
 
-        ret = real_madvise(addr, length, advice);
+	ret = real_madvise(addr, length, advice);
 exit:
-        return ret;
+	fprintf(stderr, "Exiting %s\n", __func__);
+	return ret;
 }
 
 
@@ -560,7 +569,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #ifdef ENABLE_EVICTION
         /*
          * The first time ptd is accessed by a thread(clone)
-         * it calls its constructor. 
+         * it calls its constructor.
          */
         if(ptd.last_fd == 0){
                 ptd.last_fd = fd;
@@ -623,99 +632,105 @@ exit:
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-        debug_printf("%s: TID:%ld\n", __func__, gettid());
-        size_t amount_read = 0;
-        int fd = fileno(stream);
+	debug_printf("%s: TID:%ld\n", __func__, gettid());
+	size_t amount_read = 0;
+	int fd = fileno(stream);
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
 #endif
 
-        /*
-         * Sanity check
-         */
-        if(fd < 3){
-                goto skip_predictor;
-        }
+	/*
+	 * Sanity check
+	 */
+	if(fd < 3){
+		goto skip_predictor;
+	}
 
 #ifdef ENABLE_EVICTION
-        /*
-         * The first time ptd is accessed by a thread(clone)
-         * it calls its constructor.
-         */
-        if(ptd.last_fd == 0){
-                ptd.last_fd = fd;
-                ptd.current_fd = fd;
-        }
-        else{
-                /*
-                 * Update the current and last fd
-                 * for this thread each time it reads
-                 *
-                 * Heuristic: If the thread moves on to
-                 * another fd, it is likely done with last_fd
-                 * ie. in an event of memory pressure, cleanup that
-                 * file from memory
-                 */
-                ptd.last_fd = ptd.current_fd;
-                ptd.current_fd = fd;
-        }
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
 #endif
 
 #ifdef PREDICTOR
 	//init_global_ds();
-        file_predictor *fp;
+	file_predictor *fp;
 	try{
-                fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred->at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
 	}
 
-        if(fp){
-                fp->predictor_update(ftell(stream), size*nmemb);
-                if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
-                        prefetch_file(fd, fp);
+	if(fp){
+		fp->predictor_update(ftell(stream), size*nmemb);
+		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+			prefetch_file(fd, fp);
 			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
-                }
-        }
+		}
+	}
 #endif
 
 skip_predictor:
-        amount_read = real_fread(ptr, size, nmemb, stream);
+    amount_read = real_fread(ptr, size, nmemb, stream);
 
 exit:
-        return amount_read;
+    fprintf(stderr, "Exiting %s\n", __func__);
+	return amount_read;
 }
 
 
 
 void handle_file_close(int fd){
 
+	fprintf(stderr, "Entering %s\n", __func__);
 #ifdef PREDICTOR
 	init_global_ds();
-        file_predictor *fp;
+	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-        	fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred->at(fd);
 		fd_to_file_pred->erase(fd);
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
 		goto exit;
 	}
-        if(fp){
-                delete(fp);
-        }
+	if(fp){
+		delete(fp);
+	}
 #endif
+
 exit:
-        return;
+	fprintf(stderr, "Exiting %s\n", __func__);
+	return;
 }
 
 
 int fclose(FILE *stream){
         int fd = fileno(stream);
 
+   fprintf(stderr, "Entering %s\n", __func__);
+
 #ifdef ONLY_INTERCEPT
 	goto exit;
 #endif
@@ -723,19 +738,24 @@ int fclose(FILE *stream){
         handle_file_close(fd);
 
 exit:
-        return real_fclose(stream);
+	fprintf(stderr, "Exiting %s\n", __func__);
+    return real_fclose(stream);
 }
 
 
 int close(int fd){
+
+    fprintf(stderr, "Entering %s\n", __func__);
+
 #ifdef ONLY_INTERCEPT
 	goto exit;
 #endif
 
-	debug_printf("%s: closing %d\n", __func__, fd);
+    debug_printf("%s: closing %d\n", __func__, fd);
         handle_file_close(fd);
 exit:
-        return real_close(fd);
+	fprintf(stderr, "Exiting %s\n", __func__);
+    return real_close(fd);
 }
 
 
