@@ -26,13 +26,14 @@
 
 # Single threaded sequential reads (1MB I/Os) on a 1G file.
 
-set $dir=/tmp
+set $dir=DATA/
 set $cached=false
 set $filesize=1g
 set $iosize=1m
-set $nthreads=1
+set $nthreads=16
 
-define file name=largefile,path=$dir,size=$filesize,prealloc,reuse,cached=$cached
+define file name=largefile,path=$dir,size=$filesize,prealloc,reuse
+#,cached=$cached
 
 define process name=filereader,instances=1
 {
@@ -42,4 +43,5 @@ define process name=filereader,instances=1
   }
 }
 
-echo  "FileMicro-SeqRead Version 2.1 personality successfully loaded"
+#echo  "FileMicro-SeqRead Version 2.1 personality successfully loaded"
+run 60

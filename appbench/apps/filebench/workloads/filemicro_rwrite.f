@@ -27,16 +27,18 @@
 # Single threaded asynchronous ($sync) random writes (2KB I/Os) on a 1GB file.
 # Stops when 128MB ($bytes) has been written.
 
-set $dir=/tmp
+set $dir=DATA/
 set $bytes=128m
 set $cached=false
 set $filesize=1g
 set $iosize=2k
 set $iters=1
-set $nthreads=1
+set $nthreads=16
 set $sync=false
 
-define file name=bigfile1,path=$dir,size=$filesize,prealloc,reuse,cached=$cached
+define file name=bigfile1,path=$dir,size=$filesize,prealloc
+#,reuse
+#,cached=$cached
 
 define process name=filewriter,instances=1
 {
@@ -48,3 +50,4 @@ define process name=filewriter,instances=1
 }
 
 echo  "FileMicro-WriteRand Version 2.1 personality successfully loaded"
+run 40

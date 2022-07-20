@@ -25,7 +25,7 @@
 
 set $dir=DATA/
 set $eventrate=0
-set $runtime=30
+set $runtime=40
 set $iosize=2k
 set $nshadows=200
 set $ndbwriters=10

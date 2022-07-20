@@ -34,7 +34,7 @@
 #
 
 set $dir=DATA/
-set $eventrate=120
+set $eventrate=40
 set $filesize=1g
 set $nthreads=16
 set $numactivevids=4
@@ -75,3 +75,5 @@ define process name=vidreaders,instances=1
 
 echo  "Video Server Version 3.0 personality successfully loaded"
 run 40
+
+

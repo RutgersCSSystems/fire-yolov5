@@ -23,10 +23,10 @@
 # Use is subject to license terms.
 #
 
-set $dir=/localhome/sudarsun/projects/HPC/NVM/appbench/apps/filebench/data
+set $dir=DATA/
 set $filesize=10g
 set $iosize=8k
-set $nthreads=8
+set $nthreads=16
 set $workingset=4g
 set $directio=0
 

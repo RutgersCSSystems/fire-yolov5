@@ -86,6 +86,8 @@ void handle_app_sig_handler(int signum){
 }
 
 void reg_app_sig_handler(void){
+
+	fprintf(stderr, "Regsitering signal handler \n");
 	signal(SIGUSR2,handle_app_sig_handler);
 }
 

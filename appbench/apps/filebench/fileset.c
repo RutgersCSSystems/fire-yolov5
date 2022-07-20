@@ -384,7 +384,6 @@ fileset_alloc_file(filesetentry_t *entry)
 	    path, (u_longlong_t)entry->fse_size);
 
 	//system("sudo sync"); 
-	//system("./clearcache.sh");
 
 	return (FILEBENCH_OK);
 }
@@ -1165,7 +1164,8 @@ fileset_create(fileset_t *fileset)
 	    fileset_name,
 	    (u_longlong_t)(((gethrtime() - start) / 1000000000) + 1));
 
-	fprintf(stderr, "FINISHED PREALLOCATION \n");
+	filebench_log(LOG_VERBOSE, "FINISHED PREALLOCATION \n");
+	system("./clearcache.sh");
 
 	return (FILEBENCH_OK);
 }

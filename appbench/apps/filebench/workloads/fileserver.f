@@ -24,13 +24,13 @@
 #
 
 set $dir=DATA/
-set $nfiles=10000
+set $nfiles=20000
 set $meandirwidth=20
 set $filesize=cvar(type=cvar-gamma,parameters=mean:13107200;gamma:1.5)
 set $nthreads=10
 set $iosize=8k
 set $meanappendsize=16k
-set $runtime=20
+set $runtime=40
 
 define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=80
 

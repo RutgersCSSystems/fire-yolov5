@@ -27,15 +27,16 @@
 # Single threaded random reads (2KB I/Os) on a 1GB file.
 # Stops after 128MB ($bytes) has been read.
 
-set $dir=/tmp
+set $dir=DATA/
 set $bytes=128m
 set $cached=false
-set $filesize=1g
+set $filesize=2g
 set $iosize=2k
 set $iters=1
-set $nthreads=1
+set $nthreads=16
 
-define file name=bigfile1,path=$dir,size=$filesize,prealloc,reuse,cached=$cached
+define file name=bigfile1,path=$dir,size=$filesize,prealloc,reuse 
+#,cached=$cached
 
 define process name=filereader,instances=1
 {
@@ -46,4 +47,5 @@ define process name=filereader,instances=1
   }
 }
 
+run 50
 echo  "FileMicro-ReadRand Version 2.2 personality successfully loaded"

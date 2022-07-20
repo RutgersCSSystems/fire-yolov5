@@ -1,5 +1,5 @@
 #/bin/bash
-set -x
+#set -x
 
 FlushDisk()
 {
@@ -7,6 +7,7 @@ FlushDisk()
         sudo sh -c "sync"
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
         sudo sh -c "sync"
+	#echo "FINISHED CACHE CLEARING AFTER PREALLOCATION"
 }
 
 FlushDisk
