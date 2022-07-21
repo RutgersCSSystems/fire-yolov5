@@ -77,10 +77,10 @@ PULL_RESULT() {
 	#mkdir -p $ZPLOT/data/$GRAPHDATA
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
-	echo $resultfile
+	#echo $resultfile
 
 	rm -rf "num.tmp"
-	echo "$APPFILE"
+	##echo "$APPFILE"
 
 	if [ -f $APPFILE ]; then
 
@@ -97,8 +97,6 @@ PULL_RESULT() {
                         scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
                         echo $scaled_value &> $APP".data"
 		fi
-
-		echo $WORKLOAD
 
 		if [[ "$ADDNUM" -eq 0 ]]; then
 			((j++))
@@ -174,14 +172,24 @@ EXTRACT_RESULT() {
 	do
 		  VAR+="${APPLICATION} "
 	done
+
+	rm $APP".data"
+	rm "num.tmp"
+
 	`paste $VAR &>> $APP.DATA`
+
+	for APPLICATION in "${apparr[@]}"
+	do
+		  rm $APPLICATION
+	done
+
 }
 
 
 j=0
 APP='filebench'
 TARGET="$OUTPUTDIR/filebench/workloads"
-echo $TARGET
+#echo $TARGET
 apparr=("${filesworkarr[@]}")     
 EXTRACT_RESULT "filebench"
 
@@ -190,7 +198,7 @@ EXTRACT_RESULT "filebench"
 j=0
 APP='ROCKSDB'
 TARGET="$OUTPUTDIR/ROCKSDB"
-echo $TARGET
+#echo $TARGET
 apparr=("${rocksworkarr[@]}")
 EXTRACT_RESULT "ROCKSDB"
 
