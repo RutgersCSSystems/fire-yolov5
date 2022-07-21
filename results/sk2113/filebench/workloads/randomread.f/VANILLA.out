@@ -1,0 +1,54 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.005: Random Read Version 3.0 personality successfully loaded
+0.005: Populating and pre-allocating filesets
+0.005: Removing largefile1 tree (if exists)
+0.009: Pre-allocating directories in largefile1 tree
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+4.444: Pre-allocating files in largefile1 tree
+FINISHED PREALLOCATION 
+33.112: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+33.112: Population and pre-allocation of filesets completed
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+FINISHED PREALLOCATION 
+68.874: Starting 1 rand-read instances
+69.881: Running...
+99.885: Run took 30 seconds...
+99.885: Per-Operation Breakdown
+rand-read1           2796678ops    93209ops/s 728.2mb/s    0.085ms/op [0.001ms - 3.593ms]
+99.885: IO Summary: 2796678 ops 93209.218 ops/s 93209/0 rd/wr 728.2mb/s 0.085ms/op
+99.885: Shutting down processes
+	Command being timed: "./filebench -f workloads/randomread.f"
+	User time (seconds): 2.57
+	System time (seconds): 53.78
+	Percent of CPU this job got: 53%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:45.46
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3689880
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921929
+	Minor (reclaiming a frame) page faults: 15557
+	Voluntary context switches: 1978141
+	Involuntary context switches: 3893
+	Swaps: 0
+	File system inputs: 37757528
+	File system outputs: 74484520
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

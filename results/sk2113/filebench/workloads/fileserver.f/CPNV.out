@@ -1,0 +1,75 @@
+Regsitering signal handler 
+Regsitering signal handler 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.006: File-server Version 3.0 personality successfully loaded
+0.006: Populating and pre-allocating filesets
+0.019: bigfileset populated: 20000 files, avg. dir. width = 20, avg. dir. depth = 3.3, 0 leafdirs, 248732.753MB total size
+0.019: Removing bigfileset tree (if exists)
+Regsitering signal handler 
+Regsitering signal handler 
+0.031: Pre-allocating directories in bigfileset tree
+Regsitering signal handler 
+4.789: Pre-allocating files in bigfileset tree
+Regsitering signal handler 
+Regsitering signal handler 
+333.755: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+333.756: Population and pre-allocation of filesets completed
+Regsitering signal handler 
+FINISHED PREALLOCATION 
+335.045: Starting 1 filereader instances
+Regsitering signal handler 
+336.098: Running...
+386.106: Run took 50 seconds...
+386.108: Per-Operation Breakdown
+statfile1            3387ops       68ops/s   0.0mb/s    0.042ms/op [0.002ms - 27.631ms]
+deletefile1          3386ops       68ops/s   0.0mb/s    1.605ms/op [0.032ms - 137.003ms]
+closefile3           3387ops       68ops/s   0.0mb/s    0.021ms/op [0.004ms - 5.582ms]
+readfile1            3387ops       68ops/s 832.4mb/s   84.198ms/op [0.048ms - 1049.070ms]
+openfile2            3394ops       68ops/s   0.0mb/s   45.754ms/op [0.004ms - 517.927ms]
+closefile2           3398ops       68ops/s   0.0mb/s    0.010ms/op [0.002ms - 0.115ms]
+appendfilerand1      3398ops       68ops/s   0.5mb/s    1.353ms/op [0.009ms - 28.515ms]
+openfile1            3398ops       68ops/s   0.0mb/s   44.348ms/op [0.006ms - 548.510ms]
+closefile1           3401ops       68ops/s   0.0mb/s    0.022ms/op [0.007ms - 1.038ms]
+wrtfile1             3401ops       68ops/s 837.6mb/s   56.846ms/op [0.100ms - 588.623ms]
+createfile1          3403ops       68ops/s   0.0mb/s    0.370ms/op [0.020ms - 11.167ms]
+386.108: IO Summary: 37340 ops 746.678 ops/s 68/136 rd/wr 1670.6mb/s 21.321ms/op
+386.108: Shutting down processes and raising singal
+Inside handler function
+DESTRUCTOR GETTING CALLED 
+Finished destruction
+386.109: Before iterating through procflow
+386.109: Before procflow_sleep
+387.109: Before procflow_wait
+387.109: Before procflow_cleanup
+387.109: Finished calling procflow_shutdown
+387.109: Finished calling ipc_ismdelete
+387.109: Finished calling eventgen_reset
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "filebench -f workloads/fileserver.f"
+	User time (seconds): 0.91
+	System time (seconds): 333.30
+	Percent of CPU this job got: 85%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:32.92
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3694488
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 927223
+	Minor (reclaiming a frame) page faults: 12697
+	Voluntary context switches: 1806
+	Involuntary context switches: 34654
+	Swaps: 0
+	File system inputs: 57312
+	File system outputs: 414046488
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
