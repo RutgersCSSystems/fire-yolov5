@@ -16,7 +16,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=1
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=1
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -52,7 +52,12 @@ let INCR_ONE_SPACE=1
 declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 #APPlication Array for file bench
-declare -a apparr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
+declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
+
+#APPlication Array for file bench
+declare -a rocksworkarr=("readseq" "readrandom")
+
+
 
 
 PULL_RESULT() {
@@ -86,6 +91,11 @@ PULL_RESULT() {
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
 
+		elif [ "$APP" = 'ROCKSDB' ];
+		then
+                        val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+                        echo $scaled_value &> $APP".data"
 		fi
 
 		echo $WORKLOAD
@@ -170,10 +180,23 @@ EXTRACT_RESULT() {
 
 j=0
 APP='filebench'
-OUTPUTDIR="$OUTPUTDI/filebench/workloads"
-TARGET=$OUTPUTDIR
+TARGET="$OUTPUTDIR/filebench/workloads"
 echo $TARGET
+apparr=("${filesworkarr[@]}")     
 EXTRACT_RESULT "filebench"
+
+
+
+j=0
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/ROCKSDB"
+echo $TARGET
+apparr=("${rocksworkarr[@]}")
+EXTRACT_RESULT "ROCKSDB"
+
+
+
+
 
 #cd $ZPLOT
 #python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
