@@ -1,55 +1,64 @@
+Regsitering signal handler 
+Regsitering signal handler 
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
-CONSTRUCTOR GETTING CALLED 
-done with link_shim_functions
 Filebench Version 1.5-alpha3
 0.000: Allocated 14825MB of shared memory
-0.006: Random Read Version 3.0 personality successfully loaded
-0.006: Populating and pre-allocating filesets
-0.006: Reusing existing largefile1 tree
-0.006: Pre-allocating files in largefile1 tree
+0.005: Random Read Version 3.0 personality successfully loaded
+0.005: Populating and pre-allocating filesets
+0.006: Removing largefile1 tree (if exists)
+Regsitering signal handler 
+Regsitering signal handler 
+0.016: Pre-allocating directories in largefile1 tree
+Regsitering signal handler 
+4.790: Pre-allocating files in largefile1 tree
+Regsitering signal handler 
+Regsitering signal handler 
+73.464: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+73.464: Population and pre-allocation of filesets completed
+Regsitering signal handler 
 FINISHED PREALLOCATION 
-0.007: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-0.007: Population and pre-allocation of filesets completed
-+ FlushDisk
-+ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
-+ sudo sh -c sync
-+ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
-+ sudo sh -c sync
-FINISHED PREALLOCATION 
-4.167: Starting 1 rand-read instances
-12.449: Running...
-42.453: Run took 30 seconds...
-42.454: Per-Operation Breakdown
-rand-read1           2526796ops    84215ops/s 657.9mb/s    0.094ms/op [0.003ms - 5.535ms]
-42.454: IO Summary: 2526796 ops 84215.470 ops/s 84215/0 rd/wr 657.9mb/s 0.094ms/op
-42.454: Shutting down processes
-308.754: Aborting...
-Command terminated by signal 15
-	Command being timed: "./filebench -f workloads/randomread.f"
-	User time (seconds): 14.94
-	System time (seconds): 4.39
-	Percent of CPU this job got: 5%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:43.45
+74.768: Starting 1 rand-read instances
+Regsitering signal handler 
+75.809: Running...
+105.812: Run took 30 seconds...
+105.812: Per-Operation Breakdown
+rand-read1           2764534ops    92145ops/s 719.9mb/s    0.086ms/op [0.001ms - 40.353ms]
+105.812: IO Summary: 2764534 ops 92144.689 ops/s 92145/0 rd/wr 719.9mb/s 0.086ms/op
+105.812: Shutting down processes and raising singal
+Inside handler function
+DESTRUCTOR GETTING CALLED 
+Finished destruction
+105.812: Before iterating through procflow
+105.812: Before procflow_sleep
+106.812: Before procflow_wait
+106.812: Before procflow_cleanup
+106.812: Finished calling procflow_shutdown
+106.812: Finished calling ipc_ismdelete
+106.812: Finished calling eventgen_reset
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "filebench -f workloads/randomread.f"
+	User time (seconds): 0.58
+	System time (seconds): 56.51
+	Percent of CPU this job got: 50%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:52.70
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3691332
+	Maximum resident set size (kbytes): 3691528
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 921784
-	Minor (reclaiming a frame) page faults: 3739
-	Voluntary context switches: 3947
-	Involuntary context switches: 1883
+	Major (requiring I/O) page faults: 921996
+	Minor (reclaiming a frame) page faults: 10758
+	Voluntary context switches: 3591
+	Involuntary context switches: 5617
 	Swaps: 0
-	File system inputs: 10776
-	File system outputs: 7375352
+	File system inputs: 60680
+	File system outputs: 74484320
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
-CONSTRUCTOR GETTING CALLED 
-done with link_shim_functions
 DESTRUCTOR GETTING CALLED 
