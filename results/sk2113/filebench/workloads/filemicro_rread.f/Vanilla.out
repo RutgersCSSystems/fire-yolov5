@@ -1,0 +1,63 @@
+Regsitering signal handler 
+Regsitering signal handler 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: Populating and pre-allocating filesets
+0.004: Removing bigfile1 tree (if exists)
+Regsitering signal handler 
+Regsitering signal handler 
+0.012: Pre-allocating directories in bigfile1 tree
+Regsitering signal handler 
+4.557: Pre-allocating files in bigfile1 tree
+Regsitering signal handler 
+Regsitering signal handler 
+9.690: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+9.691: Population and pre-allocation of filesets completed
+Regsitering signal handler 
+FINISHED PREALLOCATION 
+10.869: Starting 1 filereader instances
+Regsitering signal handler 
+11.879: Running...
+12.306: WARNING! Run stopped early:
+                flowop finish-1 could not obtain a file. Please
+                reduce runtime, increase fileset entries ($nfiles), or switch modes.
+12.880: Run took 1 seconds...
+12.880: Shutting down processes and raising singal
+Inside handler function
+DESTRUCTOR GETTING CALLED 
+Finished destruction
+12.880: Before iterating through procflow
+12.880: Before procflow_sleep
+DESTRUCTOR GETTING CALLED 
+13.880: Before procflow_cleanup
+13.880: Finished calling procflow_shutdown
+13.880: Finished calling ipc_ismdelete
+13.880: Finished calling eventgen_reset
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "filebench -f workloads/filemicro_rread.f"
+	User time (seconds): 0.63
+	System time (seconds): 7.83
+	Percent of CPU this job got: 47%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.82
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691252
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922035
+	Minor (reclaiming a frame) page faults: 51543
+	Voluntary context switches: 65940
+	Involuntary context switches: 807
+	Swaps: 0
+	File system inputs: 554800
+	File system outputs: 11569872
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

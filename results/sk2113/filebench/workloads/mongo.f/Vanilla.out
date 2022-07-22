@@ -1,0 +1,79 @@
+Regsitering signal handler 
+Regsitering signal handler 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: Mongo-like Version 2.3 personality successfully loaded
+0.004: Populating and pre-allocating filesets
+0.004: postsetdel populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+0.004: Removing postsetdel tree (if exists)
+Regsitering signal handler 
+Regsitering signal handler 
+0.013: Pre-allocating directories in postsetdel tree
+Regsitering signal handler 
+3.930: Pre-allocating files in postsetdel tree
+Regsitering signal handler 
+Regsitering signal handler 
+20.558: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+20.559: Removing postset tree (if exists)
+Regsitering signal handler 
+Regsitering signal handler 
+20.569: Pre-allocating directories in postset tree
+Regsitering signal handler 
+21.139: Pre-allocating files in postset tree
+Regsitering signal handler 
+Regsitering signal handler 
+37.735: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+37.735: Population and pre-allocation of filesets completed
+Regsitering signal handler 
+FINISHED PREALLOCATION 
+38.906: Starting 1 filereader instances
+Regsitering signal handler 
+39.917: Running...
+89.923: Run took 50 seconds...
+89.924: Per-Operation Breakdown
+closefile2           6453ops      129ops/s   0.0mb/s    0.010ms/op [0.001ms - 0.224ms]
+readfile1            6453ops      129ops/s 16520.5mb/s  123.336ms/op [35.934ms - 1677.931ms]
+openfile2            6469ops      129ops/s   0.0mb/s    0.008ms/op [0.002ms - 1.953ms]
+closefile1           6469ops      129ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.047ms]
+appendfilerand1      6469ops      129ops/s   1.0mb/s    0.099ms/op [0.009ms - 2.115ms]
+openfile1            6469ops      129ops/s   0.0mb/s    0.035ms/op [0.007ms - 0.898ms]
+89.924: IO Summary: 38782 ops 775.546 ops/s 129/129 rd/wr 16521.5mb/s 20.548ms/op
+89.924: Shutting down processes and raising singal
+Inside handler function
+DESTRUCTOR GETTING CALLED 
+Finished destruction
+89.924: Before iterating through procflow
+89.924: Before procflow_sleep
+90.924: Before procflow_wait
+90.924: Before procflow_cleanup
+90.924: Finished calling procflow_shutdown
+90.924: Finished calling ipc_ismdelete
+90.924: Finished calling eventgen_reset
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "filebench -f workloads/mongo.f"
+	User time (seconds): 0.67
+	System time (seconds): 128.24
+	Percent of CPU this job got: 135%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:35.43
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3692228
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922279
+	Minor (reclaiming a frame) page faults: 33373
+	Voluntary context switches: 4082
+	Involuntary context switches: 12913
+	Swaps: 0
+	File system inputs: 95752
+	File system outputs: 59804592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

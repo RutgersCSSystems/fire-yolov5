@@ -24,10 +24,10 @@
 #
 
 set $dir=DATA/
-set $filesize=10g
+set $filesize=20g
 set $iosize=8k
 set $nthreads=16
-set $workingset=4g
+set $workingset=8g
 set $directio=0
 
 define file name=largefile1,path=$dir,size=$filesize,prealloc,reuse,paralloc
@@ -45,4 +45,4 @@ define process name=rand-rw,instances=1
 }
 
 echo "Random RW Version 3.0 personality successfully loaded"
-run 60
+run 100

@@ -16,7 +16,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=1
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=1
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -50,10 +50,14 @@ let INCR_ONE_SPACE=1
 #let slowmemhists=0
 
 declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a techarrshort=("Vanilla" "CRnaive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+
+#APPlication Array for file bench
+declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
+
+#APPlication Array for file bench
+declare -a rocksworkarr=("readseq" "readrandom")
 
 
-declare -a apparr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f")
 
 
 PULL_RESULT() {
@@ -73,10 +77,10 @@ PULL_RESULT() {
 	#mkdir -p $ZPLOT/data/$GRAPHDATA
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
-	echo $resultfile
+	#echo $resultfile
 
-	rm -rf "num.data"
-	echo "$APPFILE"
+	rm -rf "num.tmp"
+	##echo "$APPFILE"
 
 	if [ -f $APPFILE ]; then
 
@@ -87,19 +91,22 @@ PULL_RESULT() {
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 			echo $scaled_value &> $APP".data"
 
+		elif [ "$APP" = 'ROCKSDB' ];
+		then
+                        val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+                        echo $scaled_value &> $APP".data"
 		fi
-
-		echo $WORKLOAD
 
 		if [[ "$ADDNUM" -eq 0 ]]; then
 			((j++))
-			#echo $j &>> "num.data"
+			#echo $j &>> "num.tmp"
 
 			if [ "$APPVAL" = "Cross_Naive" ]; then
 			    APPVAL="CRNaive"
 			fi
-			echo $APPVAL &>> "num.data"
-			paste "num.data" $APP".data" &>> $WORKLOAD
+			echo $APPVAL &>> "num.tmp"
+			paste "num.tmp" $APP".data" &>> $WORKLOAD
 		else
 			paste $APP".data" &>> $WORKLOAD
 		fi
@@ -111,7 +118,7 @@ PULL_RESULT() {
 
 EXTRACT_RESULT() {
 	rm $APP".data"
-	rm "num.data"
+	rm "num.tmp"
 	exclude=0
 	ADD=$1
 	dir=0
@@ -130,9 +137,9 @@ EXTRACT_RESULT() {
 
 
 		if [[ "$num" -eq 0 ]]; then
-			echo "Index" > num.data
+			echo "Index" > num.tmp
 			echo $APPLICATION > APP.DATA
-			paste num.data APP.DATA > $APPLICATION 
+			paste num.tmp APP.DATA > $APPLICATION 
 		else
 			echo $APPLICATION > APP.DATA
 			paste APP.DATA > $APPLICATION
@@ -153,7 +160,9 @@ EXTRACT_RESULT() {
 				PULL_RESULT $APP $APPVAL $j $TARGET/$APPLICATION/$APPFILE $num "$APPLICATION"
 			fi
 		done
+
 		let "num=num+1"
+
 		#done
 	done
 	j=$((j+$INCR_FULL_BAR_SPACE))
@@ -163,16 +172,39 @@ EXTRACT_RESULT() {
 	do
 		  VAR+="${APPLICATION} "
 	done
+
+	rm $APP".data"
+	rm "num.tmp"
+
 	`paste $VAR &>> $APP.DATA`
+
+	for APPLICATION in "${apparr[@]}"
+	do
+		  rm $APPLICATION
+	done
+
 }
 
 
 j=0
 APP='filebench'
-OUTPUTDIR="/localhome/sudarsun/projects/HPC/prefetching/results/filebench/workloads"
-TARGET=$OUTPUTDIR
-echo $TARGET
+TARGET="$OUTPUTDIR/filebench/workloads"
+#echo $TARGET
+apparr=("${filesworkarr[@]}")     
 EXTRACT_RESULT "filebench"
+
+
+
+j=0
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/ROCKSDB"
+#echo $TARGET
+apparr=("${rocksworkarr[@]}")
+EXTRACT_RESULT "ROCKSDB"
+
+
+
+
 
 #cd $ZPLOT
 #python2.7 $NVMBASE/graphs/zplot/scripts/e-allapps-total.py
