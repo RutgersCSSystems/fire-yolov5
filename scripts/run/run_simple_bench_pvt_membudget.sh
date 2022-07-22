@@ -18,7 +18,8 @@ base=$APPS/simple_bench/pvt_multi_thread_read
 declare -a nproc=("16")
 declare -a filesize=("40") ##GB
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_pvt_strided") ##read binaries
+declare -a workload_arr=("read_pvt_seq") ##read binaries
+#read_pvt_rand, read_pvt_strided, read_pvt_seq
 
 declare -a memory_budget_percent=("0.2" "0.5" "0.7" "1" "2")
 
@@ -68,7 +69,7 @@ CLEAN_AND_WRITE() {
 	total_cache_MB=`cat ~/out_memusage | grep "total_anon_used" | awk '{print $5}'`
 
 
-	printf "in ${FUNCNAME[0]}: $total_anon_MB, $total_cache_MB\n"
+	printf "in ${FUNCNAME[0]}: Membudget Anon:$total_anon_MB MB, Cache:$total_cache_MB MB\n"
 }
 
 STABALIZE() {

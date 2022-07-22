@@ -8,14 +8,18 @@ if [ -z "$APPS" ]; then
         exit 1
 fi
 
+#sudo apt update; sudo apt install numactl bc 
+
 source $RUN_SCRIPTS/generic_funcs.sh
 
 #declare -a apparr=("strided_madbench" "rocksdb" "graphchi" "ior")
 #declare -a apparr=("rocksdb_membudget")
-declare -a apparr=("fio")
+declare -a apparr=("simple_bench_pvt_membudget")
 
 #experiment names should be same as preloadlib names in SETPRELOAD
-declare -a experiment=("VANILLA" "OSONLY" "CN" "CNI" "CPNV" "CPNI")
+declare -a experiment=("VANILLA" "OSONLY" "CN" "CNI" "CPNV" "CPNI" "CPBV" "CPBI")
+
+#All available ("VANILLA" "OSONLY" "CN" "CNI" "CPNV" "CPNI" "CPBV" "CPBI")
 
 #Here is where we run the application
 RUNAPP()
