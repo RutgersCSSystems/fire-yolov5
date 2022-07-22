@@ -24,7 +24,8 @@ mkdir -p $RESULTS
 
 
 declare -a num_arr=("4000000")
-declare -a workload_arr=("readrandom" "readseq")
+#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite")
+declare -a workload_arr=("overwrite")
 declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 
