@@ -6,7 +6,7 @@
 sudo apt update
 sudo apt-get install -y libgflags2.2 libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
 
-rocksdb_clean
+#rocksdb_clean
 
 echo "compiling rocksdb"
 make clean
