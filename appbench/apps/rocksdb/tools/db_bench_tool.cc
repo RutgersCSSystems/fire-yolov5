@@ -79,6 +79,7 @@
 #include "utilities/merge_operators/bytesxor.h"
 #include "utilities/merge_operators/sortlist.h"
 #include "utilities/persistent_cache/block_cache_tier.h"
+#include "util/zipf.h"
 
 #ifdef MEMKIND
 #include "memory/memkind_kmem_allocator.h"
@@ -140,6 +141,7 @@ DEFINE_string(
     "randomtransaction,"
     "randomreplacekeys,"
     "timeseries,"
+    "ycsbworkloadc,"
     "getmergeoperands",
 
     "Comma-separated list of operations to run in the specified"
@@ -3237,6 +3239,8 @@ class Benchmark {
           exit(1);
         }
         method = &Benchmark::MergeRandom;
+      } else if (name == "ycsbworkloadc"){ //YCSB
+        method = &Benchmark::YCSBWorkloadC;
       } else if (name == "randomwithverify") {
         method = &Benchmark::RandomWithVerify;
       } else if (name == "fillseekseq") {
@@ -6520,6 +6524,68 @@ class Benchmark {
              reads_done, writes_done, readwrites_, found);
     thread->stats.AddMessage(msg);
   }
+
+  //XXX: Here is where we add YCSB implementation
+  //
+  void YCSBWorkloadC(ThreadState* thread) {
+          //printf("Hello\n");
+    ReadOptions options(FLAGS_verify_checksum, true);
+    RandomGenerator gen;
+
+    //TODO:
+    //init_latestgen(FLAGS_num);
+    init_zipf_generator(0, FLAGS_num);
+
+    //printf("%s: Flags_num=%ld\n");
+
+    std::string value;
+    int64_t found = 0;
+
+    int64_t reads_done = 0;
+    int64_t writes_done = 0;
+    Duration duration(FLAGS_duration, reads_);
+    // Duration duration(FLAGS_duration, 0);
+
+    std::unique_ptr<const char[]> key_guard;
+    Slice key = AllocateKey(&key_guard);
+
+    // the number of iterations is the larger of read_ or write_
+    while (!duration.Done(1)) {
+      DB* db = SelectDB(thread);
+
+      long k;
+      //if (FLAGS_YCSB_uniform_distribution){
+        //Generate number from uniform distribution
+        //k = thread->rand.Next() % FLAGS_num;
+      //} else { //default
+        //Generate number from zipf distribution
+        k = nextValue() % FLAGS_num;
+      //}
+      GenerateKeyFromInt(k, FLAGS_num, &key);
+
+
+      //read
+      Status s = db->Get(options, key, &value);
+      if (!s.ok() && !s.IsNotFound()) {
+        fprintf(stderr, "get error: %s\n", s.ToString().c_str());
+        // we continue after error rather than exiting so that we can
+        // find more errors if any
+      } else if (!s.IsNotFound()) {
+        found++;
+        thread->stats.FinishedOps(nullptr, db, 1, kRead);
+      }
+      reads_done++;
+
+      //std::cout << k << "\n";
+    }
+    char msg[100];
+    snprintf(msg, sizeof(msg), "( reads:%" PRIu64 " writes:%" PRIu64 \
+             " total:%" PRIu64 " found:%" PRIu64 ")",
+             reads_done, writes_done, readwrites_, found);
+    thread->stats.AddMessage(msg);
+  }
+
+
 
   //
   // Read-modify-write for random keys
