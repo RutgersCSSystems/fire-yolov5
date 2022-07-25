@@ -1,22 +1,24 @@
 #!/bin/bash
-set -x
+#set -x
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=100
 WRITE_BUFF_SIZE=67108864
-NUM=100000
+NUM=1000000
 DBDIR=$DBHOME/DATA
 LOAD_TRACE=$HOME/ssd/ycsb-ledger/load_c_5M
 RUN_TRACE=$HOME/ssd/ycsb-ledger/run_c_5M
 
-WRITEARGS="--benchmarks=replay --use_existing_db=0 --threads=1"
-READARGS="--benchmarks=replay --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+#WRITEARGS="--benchmarks=replay --use_existing_db=0 --threads=1"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
+READARGS="--benchmarks=ycsbworkloadc --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+#READARGS="--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 APPPREFIX="/usr/bin/time -v"
 
-#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --threads=$THREAD"
-PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE"
+PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+#PARAMS="--db=$DBDIR --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 
 FlushDisk()
 {
@@ -40,6 +42,8 @@ FlushDisk
 
 CLEAR_DB
 
-$DBHOME/db_bench $PARAMS $WRITEARGS --trace_file=$LOAD_TRACE
+$DBHOME/db_bench $PARAMS $WRITEARGS
 
-#$DBHOME/db_bench $PARAMS $READARGS --trace_file=$RUN_TRACE
+FlushDisk
+
+$DBHOME/db_bench $PARAMS $READARGS
