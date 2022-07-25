@@ -314,7 +314,7 @@ void inline prefetch_file(int fd)
 	filesize = reg_fd(fd);
         stride = 0;
 #endif
-	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
+	//debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
 	if(filesize > MIN_FILE_SZ){
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
