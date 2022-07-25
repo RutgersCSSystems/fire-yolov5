@@ -221,6 +221,8 @@ void prefetcher_th(void *arg) {
 		{
 			printf("error while readahead_info: TID:%ld \n", tid);
 			goto exit;
+		}else {
+			printf(" readahead_info: TID:%ld succeeded \n", tid);
 		}
 #ifdef READAHEAD_INFO_PC_STATE
 		page_cache_state->array = (unsigned long*)ra.data;
