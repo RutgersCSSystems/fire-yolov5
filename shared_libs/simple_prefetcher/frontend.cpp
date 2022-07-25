@@ -219,7 +219,7 @@ void prefetcher_th(void *arg) {
 		if(readahead_info(a->fd, file_pos,
 				a->prefetch_size, &ra) < 0)
 		{
-			printf("error while readahead_info: TID:%ld \n", tid);
+			printf("readahead_info: TID:%ld failed \n", tid);
 			goto exit;
 		}else {
 			printf(" readahead_info: TID:%ld succeeded \n", tid);
