@@ -731,13 +731,14 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
 
 
-        //start = jiffies;
+        start = jiffies;
         if (unlikely(copy_from_user(&ra, ra_user, sizeof(struct read_ra_req)))){
 	        printk("%s: unable to copy from user, doing vanilla readahead\n", __func__);
                 goto normal_readahead;
         }
-        //end = jiffies;
-        //printk("\n %s: fd=%d, offset=%lld, count=%ld c_f_u in %ld millisec\n", __func__, fd, offset, count, (((end-start)*1000)/HZ));
+        end = jiffies;
+	printk("\n %s: fd=%d, offset=%lld, count=%ld c_f_u in %ld millisec\n",
+			__func__, fd, offset, count, (((end-start)*1000)/HZ));
 
         /*
          * Return the file bitmap
@@ -794,6 +795,9 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(count > 0)
 	        ret = ksys_readahead(fd, offset, count);
 
+        printk("%s: ksys_readahead RET %ld\n", __func__, ret);
+
+
         /*
          * Get the number of free pages in the system right now
          */
@@ -812,7 +816,9 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 unsigned long start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
                 unsigned long size_ul = (nr_pg >> 6) + 1;
 
-                //printk_once("%s: order_ul=%d\n", __func__, get_count_order_long(sizeof(unsigned long)*8));
+		printk_once("%s: order_ul=%ld\n", __func__,
+				get_count_order_long(sizeof(unsigned long)*8));
+
                 if (unlikely(copy_to_user(to+start_ul, from+start_ul, 
                                 sizeof(unsigned long)*size_ul)))
                 {
@@ -825,14 +831,17 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 
         if (unlikely(copy_to_user(ra_user, &ra, sizeof(struct read_ra_req)))){
                 ret = -3;
-                printk("%s: couldnt copy struct read_ra_req back to user\n", __func__);
+		printk("%s: couldnt copy struct read_ra_req back to user\n",
+				__func__);
         }
+        printk("%s: After unlikely(copy_to_user RET %ld\n", __func__, ret);
         goto exit;
 
 normal_readahead:
 	ret = ksys_readahead(fd, offset, count);
 
 exit:
+        printk("%s: BEFORE returning: RET %ld\n", __func__, ret);
         return ret;
 
 }

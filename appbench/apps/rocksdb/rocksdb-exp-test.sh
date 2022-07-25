@@ -23,10 +23,12 @@ APPOUTPUTNAME="ROCKSDB"
 mkdir -p $RESULTS
 
 
-declare -a num_arr=("4000000")
+declare -a num_arr=("400000")
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 declare -a workload_arr=("readwhilescanning")
-declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+declare -a config_arr=("CPBI")
+
 
 
 FlushDisk()
@@ -119,6 +121,13 @@ print_results() {
 }
 
 
+GEN_RESULT_PATH() {
+	#WORKLOAD=$1
+	WORKLOAD="DUMMY"
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKLOAD
+}
+
+
 RUN() {
 
 	for NUM in "${num_arr[@]}"
@@ -138,7 +147,7 @@ RUN() {
 			do
 				RESULTS=""
 				READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
-				RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKLOAD
+				GEN_RESULT_PATH $WORKLOAD
 
 				mkdir -p $RESULTS
 
