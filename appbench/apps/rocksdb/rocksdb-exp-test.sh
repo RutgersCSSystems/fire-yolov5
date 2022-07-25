@@ -24,10 +24,9 @@ mkdir -p $RESULTS
 
 
 declare -a num_arr=("4000000")
-#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite")
-declare -a workload_arr=("overwrite")
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a config_arr=("CPNI" "CNI" "CPBV" "CPNV")
+#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
+declare -a workload_arr=("readwhilescanning")
+declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 
 FlushDisk()
@@ -79,15 +78,16 @@ CLEAN_AND_WRITE()
         export LD_PRELOAD=""
         CLEAR_PWD
         $DBHOME/db_bench $PARAMS $WRITEARGS &> $RESULTS/WARMUP-WRITE.out
-        FlushDisk
+        #FlushDisk
 
         ##Condition the DB to get Stable results
         $DBHOME/db_bench $PARAMS $READARGS  &> $RESULTS/WARMUP-READ1.out
         FlushDisk
-        $DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
-        FlushDisk
+        #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
+        #FlushDisk
 }
 
+#FIXME: This needs to be automated and looped instead of hardcoding similar to the RUN function
 print_results() {
 	echo "Vanilla Results"
 	cat $RESULTS/VANILLA.out | grep "$WORKLOAD" | awk '{print $7}'

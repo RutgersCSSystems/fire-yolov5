@@ -55,7 +55,7 @@ declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
 
 #APPlication Array for file bench
-declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "compact")
+declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "compact" "readwhilewriting")
 
 
 
