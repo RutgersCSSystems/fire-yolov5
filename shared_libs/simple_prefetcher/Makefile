@@ -13,7 +13,7 @@ MB=`echo "$(KB)*1024" | bc`
 NR_RA_PAGES=40
 NR_WORKERS=2
 PORTION_PAGES=32
-NR_ADJACENT_CHECK=1
+NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(15MB)
 
 SOURCES = frontend.cpp utils/thpool.c utils/bitarray.c

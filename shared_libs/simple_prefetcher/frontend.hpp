@@ -14,7 +14,7 @@
 #define POSSNSEQ 0 /*possibly not seq */
 #define MAYBESEQ 1 /*maybe seq */
 #define POSSSEQ 2 /* possibly seq? */
-#define LIKELYSEQ 4 /* likely seq? */
+#define LIKELYSEQ 8 /* likely seq? */
 #define DEFSEQ 64 /* definitely seq */
 
 
@@ -24,6 +24,9 @@ struct thread_args{
 	long offset; //where to start
 	long file_size; //total filesize
 	long prefetch_size; //size of each prefetch req
+
+        //difference between the end of last access and start of this access in pages
+        size_t stride;
 
 	/*
 	 * Share current and last fd with the prefetcher thread
@@ -226,6 +229,13 @@ class file_predictor{
                 size_t nr_portions;
                 size_t portion_sz;
 
+                /*
+                 * This is the difference between the last access
+                 * and this access.
+                 * XXX: ASSUMPTION for now: Stride doesnt change for a file
+                 */
+                size_t stride;
+
 		/*
 		 * For each file doing readahead_info, the syscall
 		 * returns the page cache state in its return struct
@@ -251,6 +261,7 @@ class file_predictor{
                         fd = this_fd;
                         filesize = size;
 
+
                         portion_sz = PAGESIZE * PORTION_PAGES;
                         nr_portions = size/portion_sz;
 
@@ -272,11 +283,16 @@ class file_predictor{
 
                         //Assume any opened file is probably not sequential
                         sequentiality = POSSNSEQ;
+                        stride = 0;
                 }
 
 		/*Destructor*/
 		~file_predictor(){
 			BitArrayDestroy(access_history);
+
+#ifdef READAHEAD_INFO_PC_STATE
+			BitArrayDestroy(page_cache_state);
+#endif
 		}
 
                 /*
@@ -286,7 +302,6 @@ class file_predictor{
                  *
                  * else increase the sequentiality
                  *
-                 * XXX: Doesnt limit the sequentiality number, may overflow for large files
                  */
                 void predictor_update(off_t offset, size_t size){
 
@@ -306,12 +321,11 @@ class file_predictor{
                         for(long i=0; i<=num_portions; i++)
                                         BitArraySetBit(access_history, portion_num+i);
 
+#if 0
 
                         /*
                          * Go through the adjacent bits in bitarray 
                          * to check for sequentiality
-                         * TODO: Convert this a bit operation, this is heavy
-                         * Develop a bit mask and test the corresponding bits
                          */
                         for(long i = -NR_ADJACENT_CHECK; i < NR_ADJACENT_CHECK; i++){
                                 if(i == 0)
@@ -332,16 +346,43 @@ class file_predictor{
                                  * consider it to be seq
                                  */
                                 if(BitArrayTestBit(access_history, pn)){
+                                        debug_printf("%s: pn=%ld, stride=%ld\n", __func__, pn, pn-portion_num);
                                         goto is_seq;
                                 }
+                        }
+#endif
+
+                        /*
+                         * Determine if this sequential or strided
+                         * TODO: Convert this to a bit operation, this is heavy
+                         * Develop a bit mask and test the corresponding bits
+                         */
+
+                        for(long i = 1; i <= NR_ADJACENT_CHECK; i++){
+
+                                pn = portion_num - i;
+
+                                /*bounds check*/
+                                if((long)pn < 0){
+                                        goto exit;
+                                }
+
+                                if(BitArrayTestBit(access_history, pn)){
+                                        stride = portion_num - pn - 1;
+                                        debug_printf("%s: stride=%ld\n", __func__, stride);
+                                        goto is_seq;
+                                }
+
                         }
 
 is_not_seq:
                         sequentiality -= 1;
+                        sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
                         goto exit;
 
 is_seq:
                         sequentiality += 1;
+                        sequentiality %= (DEFSEQ+1); //Keeps from overflowing
 
 exit:
                         return;
@@ -350,6 +391,12 @@ exit:
                 //Returns the current Sequentiality value
                 long is_sequential(){
                         return sequentiality;
+                }
+
+                //returns the approximate stride in pages
+                //0 if not strided. doesnt mean its not sequential
+                long is_strided(){
+                        return stride*PORTION_PAGES;
                 }
 
 };
