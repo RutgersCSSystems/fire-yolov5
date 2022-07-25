@@ -176,8 +176,8 @@ void prefetcher_th(void *arg) {
 	long tid = gettid();
 	struct thread_args *a = (struct thread_args*)arg;
 
-	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld\n",
-			tid, a->offset, a->file_size, a->fd, a->prefetch_size);
+	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld, stride = %ld\n",
+			tid, a->offset, a->file_size, a->fd, a->prefetch_size, a->stride);
 
 	off_t curr_pos = 0;
 	off_t file_pos; //actual file position where readahead will be done
@@ -187,6 +187,8 @@ void prefetcher_th(void *arg) {
 	off_t start_pg; //start from here in page_cache_state
 	off_t zero_pg; //first zero bit found here
 	off_t pg_diff;
+
+        off_t stride = a->stride;
 
 	bit_array_t *page_cache_state = NULL;
 	/*
@@ -292,6 +294,7 @@ void inline prefetch_file(int fd)
 {
 	struct thread_args *arg = NULL;
 	off_t filesize;
+        off_t stride;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -304,16 +307,19 @@ void inline prefetch_file(int fd)
 	 */
 #ifdef PREDICTOR
 	filesize = fp->filesize;
+        stride = fp->is_strided();
 #else
 	filesize = reg_fd(fd);
+        stride = 0;
 #endif
-	debug_printf("%s: fd=%d, filesize = %ld\n", __func__, fd, filesize);
+	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
 	if(filesize > MIN_FILE_SZ){
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 		arg->fd = fd;
 		arg->offset = 0;
 		arg->file_size = filesize;
+                arg->stride = stride;
 
 #ifdef ENABLE_EVICTION
 		arg->current_fd = ptd.current_fd;
@@ -518,7 +524,7 @@ int open(const char *pathname, int flags, ...){
 	handle_open(fd);
 
 exit:
-	debug_printf(stderr, "Exiting %s\n", __func__);
+	debug_printf("Exiting %s\n", __func__);
 	return fd;
 }
 
