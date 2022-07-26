@@ -94,4 +94,18 @@ $DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 
+echo "RUNNING CPNI................"
+FlushDisk
+SETPRELOAD "CPNI"
+$DBHOME/db_bench $PARAMS $READARGS 
+export LD_PRELOAD=""
+FlushDisk
+
+echo "RUNNING CPBI................"
+FlushDisk
+SETPRELOAD "CPBI"
+$DBHOME/db_bench $PARAMS $READARGS 
+export LD_PRELOAD=""
+FlushDisk
+
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
