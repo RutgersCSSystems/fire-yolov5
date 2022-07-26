@@ -87,8 +87,8 @@ void handle_app_sig_handler(int signum){
 
 void reg_app_sig_handler(void){
 
-	fprintf(stderr, "Regsitering signal handler \n");
-	signal(SIGUSR2,handle_app_sig_handler);
+	//fprintf(stderr, "Regsitering signal handler \n");
+	//signal(SIGUSR2,handle_app_sig_handler);
 }
 
 
@@ -296,7 +296,7 @@ void inline prefetch_file(int fd)
 {
 	struct thread_args *arg = NULL;
 	off_t filesize;
-        off_t stride;
+    off_t stride;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
