@@ -73,7 +73,7 @@ void print_affinity() {
  */
 void handle_app_sig_handler(int signum){
 
-  fprintf(stderr, "Inside handler function\n");
+  //fprintf(stderr, "Inside handler function\n");
   dest();
 #ifdef THPOOL_PREFETCH
   if(workerpool) {
@@ -81,7 +81,7 @@ void handle_app_sig_handler(int signum){
 	  workerpool = NULL;
   }
 #endif
-  fprintf(stderr, "Finished destruction\n");
+  //fprintf(stderr, "Finished destruction\n");
   return;
 }
 
