@@ -176,7 +176,7 @@ void prefetcher_th(void *arg) {
 	long tid = gettid();
 	struct thread_args *a = (struct thread_args*)arg;
 
-	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld, stride = %ld\n",
+	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld, stride = %ld bytes\n",
 			tid, a->offset, a->file_size, a->fd, a->prefetch_size, a->stride);
 
 	off_t curr_pos = 0;
@@ -187,8 +187,6 @@ void prefetcher_th(void *arg) {
 	off_t start_pg; //start from here in page_cache_state
 	off_t zero_pg; //first zero bit found here
 	off_t pg_diff;
-
-        off_t stride = a->stride;
 
 	bit_array_t *page_cache_state = NULL;
 	/*
@@ -205,9 +203,9 @@ void prefetcher_th(void *arg) {
 	page_cache_state = NULL;
 #endif
 
-	while (curr_pos < a->file_size){
-		file_pos = curr_pos + a->offset;
+	file_pos = curr_pos + a->offset;
 
+	while (file_pos < a->file_size){
 #ifdef MODIFIED_RA
 
 		if(page_cache_state){
@@ -273,6 +271,7 @@ void prefetcher_th(void *arg) {
 		}
 		curr_pos += a->prefetch_size;
 #endif //MODIFIED_RA
+	        file_pos = curr_pos + a->stride;
 	}
 
 exit:
@@ -296,7 +295,7 @@ void inline prefetch_file(int fd)
 {
 	struct thread_args *arg = NULL;
 	off_t filesize;
-    off_t stride;
+        off_t stride;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -309,7 +308,11 @@ void inline prefetch_file(int fd)
 	 */
 #ifdef PREDICTOR
 	filesize = fp->filesize;
-        stride = fp->is_strided();
+        stride = fp->is_strided() * fp->portion_sz;
+        if(stride < 0){
+                printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
+                stride = 0;
+        }
 #else
 	filesize = reg_fd(fd);
         stride = 0;
@@ -334,8 +337,34 @@ void inline prefetch_file(int fd)
 #ifdef FULL_PREFETCH
 		//Allows the whole file to be prefetched at once
 		arg->prefetch_size = filesize;
+#elif PREDICTOR
+                /*
+                 * FULL_PREFETCH is never used with PREDICTOR
+                 * This means PREDICTOR and FULL_PREFETCH is off
+                 */
+
+                /*
+                 * If the application is doing strided reads
+                 * doing large prefetches wastes the IO bandwidth
+                 * and also wastes cache memory. To mitigate that,
+                 * we shall decrease the prefetch range to the size
+                 * of each read done in strided access.
+                 */
+                if(stride){
+                        arg->prefetch_size = fp->read_size;
+                }
+                else{
+		        /*
+                         * The application is doing seq reads,
+                         * Whole file prefetched in NR_RA_PAGES bytes
+                         */
+		        arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+                }
 #else
-		//Whole file prefetched in NR_RA_PAGES bites
+                 /*
+                  * This is !PREDICTOR and !FULL_PREFETCH
+                  * which means prefetch blindly NR_RA_PAGES at a time
+                  */
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 #endif
 

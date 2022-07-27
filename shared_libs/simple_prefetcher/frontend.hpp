@@ -233,8 +233,10 @@ class file_predictor{
                  * This is the difference between the last access
                  * and this access.
                  * XXX: ASSUMPTION for now: Stride doesnt change for a file
+                 * the read_size doesnt change either
                  */
-                size_t stride;
+                size_t stride; //in nr_portions
+                size_t read_size; //in bytes
 
 		/*
 		 * For each file doing readahead_info, the syscall
@@ -284,6 +286,7 @@ class file_predictor{
                         //Assume any opened file is probably not sequential
                         sequentiality = POSSNSEQ;
                         stride = 0;
+                        read_size = 0;
                 }
 
 		/*Destructor*/
@@ -305,6 +308,18 @@ class file_predictor{
                  */
                 void predictor_update(off_t offset, size_t size){
 
+#if 0
+                        /*
+                         * Once the file is sent for prefetching
+                         * there is no point in keeping the prefetcher running for this file
+                         * TODO: test only works for C++20
+                         */
+		        if(already_prefetched.test()){
+                                goto exit;
+                        }
+#endif
+
+
                         size_t portion_num = offset/portion_sz; //which portion
                         size_t num_portions = size/portion_sz; //how many portions in this req
                         size_t pn = 0; //used for adjacency check
@@ -321,43 +336,11 @@ class file_predictor{
                         for(long i=0; i<=num_portions; i++)
                                         BitArraySetBit(access_history, portion_num+i);
 
-#if 0
-
-                        /*
-                         * Go through the adjacent bits in bitarray 
-                         * to check for sequentiality
-                         */
-                        for(long i = -NR_ADJACENT_CHECK; i < NR_ADJACENT_CHECK; i++){
-                                if(i == 0)
-                                        continue;
-
-                                pn = portion_num + i;
-                                if(i > 0){
-                                        //takes seq for reverse reads
-                                        pn += num_portions; //look forward
-                                }
-
-                                /*bounds check*/
-                                if(pn < 0 || pn > nr_portions)
-                                        continue;
-
-                                /*
-                                 * If any one of the adjacent bits is set
-                                 * consider it to be seq
-                                 */
-                                if(BitArrayTestBit(access_history, pn)){
-                                        debug_printf("%s: pn=%ld, stride=%ld\n", __func__, pn, pn-portion_num);
-                                        goto is_seq;
-                                }
-                        }
-#endif
-
                         /*
                          * Determine if this sequential or strided
                          * TODO: Convert this to a bit operation, this is heavy
                          * Develop a bit mask and test the corresponding bits
                          */
-
                         for(long i = 1; i <= NR_ADJACENT_CHECK; i++){
 
                                 pn = portion_num - i;
@@ -369,6 +352,8 @@ class file_predictor{
 
                                 if(BitArrayTestBit(access_history, pn)){
                                         stride = portion_num - pn - 1;
+                                        if(stride > 0)
+                                                read_size = size;
                                         debug_printf("%s: stride=%ld\n", __func__, stride);
                                         goto is_seq;
                                 }
