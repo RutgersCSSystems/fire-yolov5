@@ -354,7 +354,7 @@ class file_predictor{
                                         stride = portion_num - pn - 1;
                                         if(stride > 0)
                                                 read_size = size;
-                                        debug_printf("%s: stride=%ld\n", __func__, stride);
+                                        //debug_printf("%s: stride=%ld\n", __func__, stride);
                                         goto is_seq;
                                 }
 

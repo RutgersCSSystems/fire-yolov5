@@ -219,9 +219,12 @@ void prefetcher_th(void *arg) {
 		{
 			printf("readahead_info: failed TID:%ld \n", tid);
 			goto exit;
-		}else {
+		}
+                /*
+                else {
 			printf(" readahead_info: TID:%ld succeeded \n", tid);
 		}
+                */
 #ifdef READAHEAD_INFO_PC_STATE
 		page_cache_state->array = (unsigned long*)ra.data;
 		start_pg = file_pos >> PAGE_SHIFT;
@@ -234,7 +237,7 @@ void prefetcher_th(void *arg) {
 			zero_pg += 1;
 		}
 		pg_diff = zero_pg - start_pg;
-		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
+		//debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
 		if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
 			curr_pos += pg_diff << PAGE_SHIFT;
 		else
@@ -638,7 +641,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	ssize_t amount_read;
 
-	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
+	//debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
@@ -704,7 +707,6 @@ skip_predictor:
 #endif
 
 exit:
-	debug_printf( "Exiting %s\n", __func__);
 	return amount_read;
 }
 
