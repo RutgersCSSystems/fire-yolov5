@@ -221,7 +221,9 @@ int main(int argc, char **argv)
                 if(max_time < time)
                         max_time = time;
         }
-#ifdef READ_SEQUENTIAL
+#if defined(READ_SEQUENTIAL) && defined(STRIDED_READ)
+        printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#elif defined(READ_SEQUENTIAL) && !defined(STRIDED_READ)
         printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif READ_RANDOM
         printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
