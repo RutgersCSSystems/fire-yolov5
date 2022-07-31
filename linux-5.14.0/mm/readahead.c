@@ -329,6 +329,7 @@ void force_page_cache_ra(struct readahead_control *ractl,
 #ifndef CONFIG_PREFETCH_2MB_LIMIT
      do_page_cache_ra(ractl, nr_to_read, 0);
 #else
+        printk("%s: CONFIG_PREFETCH_2MB_limit == True\n");
 	while (nr_to_read) {
 		unsigned long this_chunk = (2 * 1024 * 1024) / PAGE_SIZE;
 
@@ -737,8 +738,10 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 goto normal_readahead;
         }
         end = jiffies;
+        /*
 	printk("\n %s: fd=%d, offset=%lld, count=%ld c_f_u in %ld millisec\n",
 			__func__, fd, offset, count, (((end-start)*1000)/HZ));
+        */
 
         /*
          * Return the file bitmap
@@ -795,8 +798,6 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(count > 0)
 	        ret = ksys_readahead(fd, offset, count);
 
-        printk("%s: ksys_readahead RET %ld\n", __func__, ret);
-
 
         /*
          * Get the number of free pages in the system right now
@@ -816,7 +817,7 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 unsigned long start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
                 unsigned long size_ul = (nr_pg >> 6) + 1;
 
-		printk_once("%s: order_ul=%ld\n", __func__,
+		printk_once("%s: order_ul=%d\n", __func__,
 				get_count_order_long(sizeof(unsigned long)*8));
 
                 if (unlikely(copy_to_user(to+start_ul, from+start_ul, 
@@ -834,14 +835,12 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
 		printk("%s: couldnt copy struct read_ra_req back to user\n",
 				__func__);
         }
-        printk("%s: After unlikely(copy_to_user RET %ld\n", __func__, ret);
         goto exit;
 
 normal_readahead:
 	ret = ksys_readahead(fd, offset, count);
 
 exit:
-        printk("%s: BEFORE returning: RET %ld\n", __func__, ret);
         return ret;
 
 }

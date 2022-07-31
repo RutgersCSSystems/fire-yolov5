@@ -2705,7 +2705,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
 	struct inode *inode = mapping->host;
 	struct pagevec pvec;
 	int i, error = 0;
-     bool read_stats = true; /*Controls recording read stats based on conditions*/
+        bool read_stats = true; /*Controls recording read stats based on conditions*/
 	bool writably_mapped;
 	loff_t isize, end_offset;
 
