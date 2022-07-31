@@ -69,24 +69,3 @@ SETPRELOAD "CNI"
 $COMMAND
 export LD_PRELOAD=""
 FlushDisk
-
-exit
-
-printf "\nRUNNING CROSS_BLOCKRA_PRED_MAXMEM_BG................\n"
-SETPRELOAD "CBPMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
-
-
-printf "\nRUNNING CROSS_FILERA_PRED_MAXMEM_BG................\n"
-SETPRELOAD "CFPMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
-
-printf "\nRUNNING CROSS_FILERA_NOPRED_MAXMEM_BG................\n"
-SETPRELOAD "CFNMB"
-$COMMAND
-export LD_PRELOAD=""
-FlushDisk
