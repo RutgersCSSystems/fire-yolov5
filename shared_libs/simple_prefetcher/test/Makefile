@@ -1,4 +1,4 @@
-SIZE=5
+SIZE=1
 OBJS=../frontend.o ../bitarray.o ../thpool.o
 FLAGOBJ=-std=gnu++11 -Wno-unused-result -g -lpthread -lrt -ldl
 all:

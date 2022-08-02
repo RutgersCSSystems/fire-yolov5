@@ -110,7 +110,7 @@ int main() {
 	long buff_sz = (PG_SZ * NR_PAGES_READ);
 
 	char *buffer = (char*) malloc(buff_sz * sizeof(char));
-	fd = open("bigfakefile.txt", O_RDWR);
+	fd = open("DATA/bigfakefile.txt", O_RDWR);
 	if (fd == -1){
 		printf("\nFile Open Unsuccessful\n");
 		exit (0);;
@@ -130,7 +130,9 @@ int main() {
         struct read_ra_req ra_req;
 
 	while ( chunk < size ){
+
 		size_t readnow;
+
 #ifdef ONLYOS //No PRediction from app
 		if(prefetch){
 			//readnow = pread(fd, ((char *)buffer), PG_SZ*NR_PAGES_READ, chunk);

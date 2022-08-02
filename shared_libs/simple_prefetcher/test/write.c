@@ -11,7 +11,7 @@ int main() {
 	long i;
 	FILE *fp;
 
-	fp=fopen("bigfakefile.txt","w");
+	fp=fopen("DATA/bigfakefile.txt","w");
 
 	for(i=0; i<FILESIZE; i++) {
 		fprintf(fp,"C");
