@@ -55,9 +55,11 @@ declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
 
 #APPlication Array for file bench
-declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
+declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting" "readwhilescanning")
 
 
+#declare -a threadarr=("4" "8" "16" "32")
+declare -a threadarr=("8")
 
 
 PULL_RESULT() {
@@ -73,13 +75,8 @@ PULL_RESULT() {
 	outfile=$(basename $dir)
 	outputfile=$APP".data"
 
-	#resultfile=$ZPLOT/data/$GRAPHDATA/$outputfile
-	#mkdir -p $ZPLOT/data/$GRAPHDATA
-
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
 	#echo $resultfile
-
-	rm -rf "num.tmp"
 	##echo "$APPFILE"
 
 	if [ -f $APPFILE ]; then
@@ -89,28 +86,14 @@ PULL_RESULT() {
 			
 			val=`cat $APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
-			echo $scaled_value &> $APP".data"
+			echo $scaled_value &>> $APPVAL".DATA"
 
 		elif [ "$APP" = 'ROCKSDB' ];
 		then
                         val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
-                        echo $scaled_value &> $APP".data"
+                        echo $scaled_value &>> $APPVAL".DATA"
 		fi
-
-		if [[ "$ADDNUM" -eq 0 ]]; then
-			((j++))
-			#echo $j &>> "num.tmp"
-
-			if [ "$APPVAL" = "Cross_Naive" ]; then
-			    APPVAL="CRNaive"
-			fi
-			echo $APPVAL &>> "num.tmp"
-			paste "num.tmp" $APP".data" &>> $WORKLOAD
-		else
-			paste $APP".data" &>> $WORKLOAD
-		fi
-		#cat $resultfile
 	fi
 }
 
@@ -118,7 +101,6 @@ PULL_RESULT() {
 
 EXTRACT_RESULT() {
 	rm $APP".data"
-	rm "num.tmp"
 	exclude=0
 	ADD=$1
 	dir=0
@@ -126,61 +108,66 @@ EXTRACT_RESULT() {
 
 	rm "$APP.DATA"
 
-
 	for APPLICATION in "${apparr[@]}"
 	do
-		TYPE=$APPLICATION
-		APPFILE=""
-		dir=$TARGET/$APPLICATION
-
-		rm "$APPLICATION"
-
-
 		if [[ "$num" -eq 0 ]]; then
-			echo "Index" > num.tmp
-			echo $APPLICATION > APP.DATA
-			paste num.tmp APP.DATA > $APPLICATION 
+			echo "# index" > num.tmp
+			echo $APPLICATION >> num.tmp
+			let "num=num+1"
 		else
-			echo $APPLICATION > APP.DATA
-			paste APP.DATA > $APPLICATION
+			echo $APPLICATION >> num.tmp
 		fi
+	done 
+	let num=0;
 
 
-
-		for APPVAL in "${techarr[@]}"
-		#do
-		#for APPFILE in $TARGET/*$APPLICATION*/*.out
+	#for APPLICATION in "${apparr[@]}"
+	for APPVAL in "${techarr[@]}"
+	do
+		for THREAD in "${threadarr[@]}"
 		do
-			APPFILE=$APPVAL".out"
+			TYPE=$APPLICATION
+			APPFILE=""
+			dir=$TARGET/$APPLICATION
+
+			rm "$APPLICATION"
+
+			echo $APPLICATION
 
 			if [[ "$num" -eq 0 ]]; then
-				PULL_RESULT $APP $APPVAL $j  $TARGET/$APPLICATION/$APPFILE $num "$APPLICATION"
-
-			else
-				PULL_RESULT $APP $APPVAL $j $TARGET/$APPLICATION/$APPFILE $num "$APPLICATION"
+				echo $APPVAL > $APPVAL.DATA
+				#paste num.tmp APP.DATA > $APPLICATION 
+			#else
+				#echo $APPVAL > APP.DATA
+				#paste APP.DATA > $APPLICATION
 			fi
+
+			#cat $APPLICATION.DATA
+			for APPLICATION in "${apparr[@]}"
+			do
+				APPFILE=$APPVAL".out"
+				PULL_RESULT $APP $APPVAL $j $TARGET/$APPLICATION/$THREAD/$APPFILE $num "$APPLICATION"
+			done
+			#cat $APPLICATION.DATA
 		done
-
-		let "num=num+1"
-
-		#done
+		#let "num=num+1"
 	done
+
 	j=$((j+$INCR_FULL_BAR_SPACE))
 
 	VAR=""
-	for APPLICATION in "${apparr[@]}"
+	for APPVAL in "${techarr[@]}"
 	do
-		  VAR+="${APPLICATION} "
+		  VAR+="${APPVAL}.DATA "
 	done
 
-	rm $APP".data"
+	echo $VAR
+	`paste "num.tmp" $VAR &>> $APP.DATA`
+
 	rm "num.tmp"
-
-	`paste $VAR &>> $APP.DATA`
-
-	for APPLICATION in "${apparr[@]}"
+	for APPVAL in "${techarr[@]}"
 	do
-		  rm $APPLICATION
+		  rm $APPVAL".DATA"
 	done
 
 }
@@ -191,7 +178,7 @@ APP='filebench'
 TARGET="$OUTPUTDIR/filebench/workloads"
 #echo $TARGET
 apparr=("${filesworkarr[@]}")     
-EXTRACT_RESULT "filebench"
+#EXTRACT_RESULT "filebench"
 
 
 

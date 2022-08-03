@@ -49,8 +49,8 @@ SIZE=1
 TESTOBJS=frontend.o bitarray.o thpool.o
 FLAGOBJ=-std=gnu++11 -Wno-unused-result -g -lpthread -lrt -ldl
 
-#all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA Vanilla_RA_IOOPT
-all: Cross_Pred_Budget_IOOPT TESTBENCH
+all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA Vanilla_RA_IOOPT
+#all: Cross_Pred_Budget_IOOPT TESTBENCH
 
 Vanilla_RA: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRA.so $^ $(LIBS) $(DEBUG) \

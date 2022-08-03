@@ -31,11 +31,11 @@ declare -a num_arr=("4000000")
 NUM=4000000
 
 
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
+#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-#declare -a workload_arr=("readwhilescanning")
+declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact")
 declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a thread_arr=("8" "16" "32")
+declare -a thread_arr=("4" "8" "16" "32")
 
 
 
