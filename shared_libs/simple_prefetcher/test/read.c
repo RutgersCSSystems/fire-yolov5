@@ -1,5 +1,4 @@
 #define _LARGEFILE64_SOURCE
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -126,8 +125,7 @@ int main() {
 	off_t chunk = 0;
 	lseek64(fd, 0, SEEK_SET);
 	bool prefetch = false;
-
-        struct read_ra_req ra_req;
+    struct read_ra_req ra_req;
 
 	while ( chunk < size ){
 

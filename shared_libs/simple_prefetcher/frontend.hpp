@@ -25,8 +25,8 @@ struct thread_args{
 	long file_size; //total filesize
 	long prefetch_size; //size of each prefetch req
 
-        //difference between the end of last access and start of this access in pages
-        size_t stride;
+	//difference between the end of last access and start of this access in pages
+	size_t stride;
 
 	/*
 	 * Share current and last fd with the prefetcher thread
@@ -34,10 +34,10 @@ struct thread_args{
 	int current_fd;
 	int last_fd; 
 
-        /*
-         * Send a pointer to the page cache state to be updated
-         */
-        bit_array_t *page_cache_state;
+	/*
+	 * Send a pointer to the page cache state to be updated
+	 */
+	bit_array_t *page_cache_state;
 };
 
 //returns filesize if fd is regular file
