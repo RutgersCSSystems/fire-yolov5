@@ -193,10 +193,10 @@ void prefetcher_th(void *arg) {
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-	printf(stderr, "%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	//printf(stderr, "%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
 	BitArrayClearAll(page_cache_state);
-	printf(stderr, "%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	//printf(stderr, "%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
 	page_cache_state = a->page_cache_state;
 #else

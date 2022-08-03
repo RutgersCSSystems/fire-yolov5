@@ -3,8 +3,6 @@ CC=gcc
 
 LIBS=-lpthread -lrt -ldl
 FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result -g
-FLAGOBJ=-std=gnu++11 -Wno-unused-result -g
-
 INCLUDE=
 
 KB=1024
@@ -44,48 +42,30 @@ PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREA
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS
 
-	    
-SIZE=1
-TESTOBJS=frontend.o bitarray.o thpool.o
-FLAGOBJ=-std=gnu++11 -Wno-unused-result -g -lpthread -lrt -ldl
-
 all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA Vanilla_RA_IOOPT
-#all: Cross_Pred_Budget_IOOPT TESTBENCH
+
 
 Vanilla_RA: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRA.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
-	$(CXX) $(INCLUDE) $(FLAGOBJ) -c $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
-	
+
 Vanilla_RA_IOOPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VRAI.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) \
 	    -DSET_READ_UNLIMITED
-	$(CXX) $(INCLUDE) $(FLAGOBJ) -c $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) \
-	    -DSET_READ_UNLIMITED
-	
 
 Cross_Naive_full: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CNF.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FULL_RA_INFO) $(DISABLE_FADV_DONTNEED)
-	$(CXX) $(INCLUDE) $(FLAGOBJ)-c $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_FULL_RA_INFO) $(DISABLE_FADV_DONTNEED)
 
 #CBNMB_info
 Cross_Naive: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Naive.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
-	$(CXX) $(INCLUDE) $(FLAGOBJ) -c $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
 
 
 Cross_Naive_IOOPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CNI.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_INFO) $(DISABLE_FADV_DONTNEED) \
-	    -DSET_READ_UNLIMITED
-	$(CXX) $(INCLUDE) $(FLAGOBJ) -c $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA_INFO) $(DISABLE_FADV_DONTNEED) \
 	    -DSET_READ_UNLIMITED
 
@@ -94,7 +74,6 @@ Cross_Naive_IOOPT: $(SOURCES)
 Cross_Pred_NoLimit: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPNV.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)
-
 
 Cross_Pred_NoLimit_IOOPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPNI.so $^ $(LIBS) $(DEBUG) \
@@ -108,9 +87,6 @@ Cross_Pred_Budget: $(SOURCES)
 
 Cross_Pred_Budget_IOOPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO) \
-	    -DSET_READ_UNLIMITED
-	$(CXX) $(INCLUDE) $(FLAGOBJ) -c $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO) \
 	    -DSET_READ_UNLIMITED
 
@@ -129,24 +105,10 @@ INTERCEPT: $(SOURCES)
 DISABLE_ADV: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_DISABLE_ADV.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_DONTNEED) $(DISABLE_MADV_DONTNEED)
-	    
 
-TESTBENCH: 
-	g++ test/read.c -DFILESZ=$(SIZE) $(FLAGOBJ) -DONLYOS -o test/read_onlyos $(TESTOBJS) 
-	g++ test/read.c -DFILESZ=$(SIZE) $(FLAGOBJ) -DAPP_NATIVE_RA -o test/read_nativera $(TESTOBJS)
-	g++ test/read.c -DFILESZ=$(SIZE) $(FLAGOBJ) -DREADRA -o test/read_readra $(TESTOBJS)
-	g++ test/read.c -DFILESZ=$(SIZE) $(FLAGOBJ) -DAPP_NATIVE_RA -DONLYAPP -o test/read_onlyapp_nativera $(TESTOBJS)
-	g++ test/read.c -DFILESZ=$(SIZE) $(FLAGOBJ) -DREADRA -DONLYAPP -o test/read_onlyapp_readra $(TESTOBJS)
-	g++ test/write.c -DFILESZ=$(SIZE) $(FLAGOBJ) -o test/write $(TESTOBJS)
-	g++ test/pread_ra_v_pread.c -DPREAD $(FLAGOBJ) -o test/pread $(TESTOBJS)
-	g++ test/pread_ra_v_pread.c $(FLAGOBJ) -o test/pread_ra $(TESTOBJS)
-	
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
 
 clean:
 	rm *.so
-	cd test
-	rm -rf read_onlyos read_nativera read_readra read_onlyapp_nativera read_onlyapp_readra write pread pread_ra a.out
-	cd ..
