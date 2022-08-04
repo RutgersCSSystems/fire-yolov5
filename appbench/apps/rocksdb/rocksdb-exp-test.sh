@@ -27,16 +27,23 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("4000000")
-NUM=4000000
+#declare -a num_arr=("4000000")
+#NUM=4000000
+
+declare -a num_arr=("100000")
+NUM=100000
+
 
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact")
-declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a thread_arr=("4" "8" "16" "32")
+#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact")
+#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+#declare -a thread_arr=("4" "8" "16" "32")
 
+declare -a workload_arr=("readseq")
+declare -a config_arr=("CPNV")
+declare -a thread_arr=("4")
 
 
 FlushDisk()
@@ -132,10 +139,10 @@ RUN() {
 
 					mkdir -p $RESULTS
 
-					echo "RUNNING $CONFIG and writing results to $RESULTS/$CONFIG.out"
+					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 					echo $RESULTFILE
 					export LD_PRELOAD=""
 					FlushDisk
