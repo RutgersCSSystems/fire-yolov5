@@ -240,8 +240,7 @@ void prefetcher_th(void *arg) {
 
 		pg_diff = zero_pg - start_pg;
 
-		printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
-
+		//printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
 		//debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
 
 		if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
