@@ -240,8 +240,7 @@ void prefetcher_th(void *arg) {
 
 		pg_diff = zero_pg - start_pg;
 
-		printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
-
+		//printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
 		//debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
 
 		if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
@@ -347,33 +346,39 @@ void inline prefetch_file(int fd)
 		//Allows the whole file to be prefetched at once
 		arg->prefetch_size = filesize;
 #elif PREDICTOR
-                /*
-                 * FULL_PREFETCH is never used with PREDICTOR
-                 * This means PREDICTOR and FULL_PREFETCH is off
-                 */
+		/*
+		 * FULL_PREFETCH is never used with PREDICTOR
+		 * This means PREDICTOR and FULL_PREFETCH is off
+		 */
 
-                /*
-                 * If the application is doing strided reads
-                 * doing large prefetches wastes the IO bandwidth
-                 * and also wastes cache memory. To mitigate that,
-                 * we shall decrease the prefetch range to the size
-                 * of each read done in strided access.
-                 */
-                if(stride){
-                    arg->prefetch_size = fp->read_size;
-                }
-                else{
-		        /*
-                         * The application is doing seq reads,
-                         * Whole file prefetched in NR_RA_PAGES bytes
-                         */
-                	arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-                }
+		/*
+		 * If the application is doing strided reads
+		 * doing large prefetches wastes the IO bandwidth
+		 * and also wastes cache memory. To mitigate that,
+		 * we shall decrease the prefetch range to the size
+		 * of each read done in strided access.
+		 */
+		if(stride){
+			arg->prefetch_size = fp->read_size;
+		}
+		else{
+			/*
+			 * The application is doing seq reads,
+			 * Whole file prefetched in NR_RA_PAGES bytes
+			 */
+			//FIXME: CHECK MEMORY AVAILABILITY TOO
+			if(fp->is_sequential() == DEFSEQ){
+				arg->prefetch_size = fp->read_size;
+				fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
+			}else {
+				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+			}
+		}
 #else
-                 /*
-                  * This is !PREDICTOR and !FULL_PREFETCH
-                  * which means prefetch blindly NR_RA_PAGES at a time
-                  */
+		/*
+		 * This is !PREDICTOR and !FULL_PREFETCH
+		 * which means prefetch blindly NR_RA_PAGES at a time
+		 */
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 #endif
 
