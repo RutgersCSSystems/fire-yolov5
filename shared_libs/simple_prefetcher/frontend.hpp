@@ -14,8 +14,8 @@
 #define POSSNSEQ 0 /*possibly not seq */
 #define MAYBESEQ 1 /*maybe seq */
 #define POSSSEQ 2 /* possibly seq? */
-#define LIKELYSEQ 8 /* likely seq? */
-#define DEFSEQ 64 /* definitely seq */
+#define LIKELYSEQ 4 /* likely seq? */
+#define DEFSEQ 8 /* definitely seq */
 
 
 //Used to send data to pthread or worker thread
@@ -25,8 +25,8 @@ struct thread_args{
 	long file_size; //total filesize
 	long prefetch_size; //size of each prefetch req
 
-        //difference between the end of last access and start of this access in pages
-        size_t stride;
+	//difference between the end of last access and start of this access in pages
+	size_t stride;
 
 	/*
 	 * Share current and last fd with the prefetcher thread
@@ -34,10 +34,10 @@ struct thread_args{
 	int current_fd;
 	int last_fd; 
 
-        /*
-         * Send a pointer to the page cache state to be updated
-         */
-        bit_array_t *page_cache_state;
+	/*
+	 * Send a pointer to the page cache state to be updated
+	 */
+	bit_array_t *page_cache_state;
 };
 
 //returns filesize if fd is regular file
@@ -215,28 +215,28 @@ err:
 
 
 class file_predictor{
-        public:
-                int fd;
-                size_t filesize;
+	public:
+		int fd;
+		size_t filesize;
 
-                /*
-                 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
-                 * Each such portions is represented with a bit in access_history
-                 * Accesses to an area represented by a set bit increases sequentiality
-                 * else increases Non sequentiality
-                 */
-                bit_array_t *access_history;
-                size_t nr_portions;
-                size_t portion_sz;
+		/*
+		 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
+		 * Each such portions is represented with a bit in access_history
+		 * Accesses to an area represented by a set bit increases sequentiality
+		 * else increases Non sequentiality
+		 */
+		bit_array_t *access_history;
+		size_t nr_portions;
+		size_t portion_sz;
 
-                /*
-                 * This is the difference between the last access
-                 * and this access.
-                 * XXX: ASSUMPTION for now: Stride doesnt change for a file
-                 * the read_size doesnt change either
-                 */
-                size_t stride; //in nr_portions
-                size_t read_size; //in bytes
+		/*
+		 * This is the difference between the last access
+		 * and this access.
+		 * XXX: ASSUMPTION for now: Stride doesnt change for a file
+		 * the read_size doesnt change either
+		 */
+		size_t stride; //in nr_portions
+		size_t read_size; //in bytes
 
 		/*
 		 * For each file doing readahead_info, the syscall
@@ -244,50 +244,52 @@ class file_predictor{
 		 * We will be using this to update the access_history
 		 * based on the PORTION_PAGES.
 		 */
-                bit_array_t *page_cache_state;
+		bit_array_t *page_cache_state;
 
-                /*
-                 * This variable summarizes if the file is reasonably
-                 * sequential/strided for prefetching to happen.
-                 */
-                long sequentiality;
-                
-                /*
-                 * Returns true if readahead has been issued 
-                 * for this file
-                 */
-                std::atomic_flag already_prefetched;
+		/*
+		 * This variable summarizes if the file is reasonably
+		 * sequential/strided for prefetching to happen.
+		 */
+		long sequentiality;
 
-                /*Constructor*/
-                file_predictor(int this_fd, size_t size){
-                        fd = this_fd;
-                        filesize = size;
+		/*
+		 * Returns true if readahead has been issued
+		 * for this file
+		 */
+		std::atomic_flag already_prefetched;
+
+		/*Constructor*/
+		file_predictor(int this_fd, size_t size){
 
 
-                        portion_sz = PAGESIZE * PORTION_PAGES;
-                        nr_portions = size/portion_sz;
+			fd = this_fd;
+			filesize = size;
 
-                        //Imperfect division of filesize with portion_sz
-                        //add one bit to accomodate for the last portion in file
-                        if(size % portion_sz){
-                                nr_portions += 1;
-                        }
 
-                        access_history = BitArrayCreate(nr_portions);
-                        BitArrayClearAll(access_history);
+			portion_sz = PAGESIZE * PORTION_PAGES;
+			nr_portions = size/portion_sz;
+
+			//Imperfect division of filesize with portion_sz
+			//add one bit to accomodate for the last portion in file
+			if(size % portion_sz){
+				nr_portions += 1;
+			}
+
+			access_history = BitArrayCreate(nr_portions);
+			BitArrayClearAll(access_history);
 
 #ifdef READAHEAD_INFO_PC_STATE
 			page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
-                        BitArrayClearAll(page_cache_state);
+			BitArrayClearAll(page_cache_state);
 #else
 			page_cache_state = NULL;
 #endif
 
-                        //Assume any opened file is probably not sequential
-                        sequentiality = POSSNSEQ;
-                        stride = 0;
-                        read_size = 0;
-                }
+			//Assume any opened file is probably not sequential
+			sequentiality = POSSNSEQ;
+			stride = 0;
+			read_size = 0;
+		}
 
 		/*Destructor*/
 		~file_predictor(){
@@ -298,91 +300,92 @@ class file_predictor{
 #endif
 		}
 
-                /*
-                 * If offset being accessed is from an Unset file portion, set it,
-                 * 1. Set that file portion in access_history
-                 * 2. reduce the sequentiality
-                 *
-                 * else increase the sequentiality
-                 *
-                 */
-                void predictor_update(off_t offset, size_t size){
+		/*
+		 * If offset being accessed is from an Unset file portion, set it,
+		 * 1. Set that file portion in access_history
+		 * 2. reduce the sequentiality
+		 *
+		 * else increase the sequentiality
+		 *
+		 */
+		void predictor_update(off_t offset, size_t size){
 
 #if 0
-                        /*
-                         * Once the file is sent for prefetching
-                         * there is no point in keeping the prefetcher running for this file
-                         * TODO: test only works for C++20
-                         */
-		        if(already_prefetched.test()){
-                                goto exit;
-                        }
+			/*
+			 * Once the file is sent for prefetching
+			 * there is no point in keeping the prefetcher running for this file
+			 * TODO: test only works for C++20
+			 */
+			if(already_prefetched.test()){
+				goto exit;
+			}
 #endif
 
 
-                        size_t portion_num = offset/portion_sz; //which portion
-                        size_t num_portions = size/portion_sz; //how many portions in this req
-                        size_t pn = 0; //used for adjacency check
+			size_t portion_num = offset/portion_sz; //which portion
+			size_t num_portions = size/portion_sz; //how many portions in this req
+			size_t pn = 0; //used for adjacency check
 
-                        if(portion_num > nr_portions){
-                                printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
-                                goto exit;
-                        }
+			if(portion_num > nr_portions){
+				printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
+				goto exit;
+			}
 
-                        /*
-                         * Go through the bit array, setting ones portions associated
-                         * with this read request
-                         */
-                        for(long i=0; i<=num_portions; i++)
-                                        BitArraySetBit(access_history, portion_num+i);
+			/*
+			 * Go through the bit array, setting ones portions associated
+			 * with this read request
+			 */
+			for(long i=0; i<=num_portions; i++)
+				BitArraySetBit(access_history, portion_num+i);
 
-                        /*
-                         * Determine if this sequential or strided
-                         * TODO: Convert this to a bit operation, this is heavy
-                         * Develop a bit mask and test the corresponding bits
-                         */
-                        for(long i = 1; i <= NR_ADJACENT_CHECK; i++){
+			/*
+			 * Determine if this sequential or strided
+			 * TODO: Convert this to a bit operation, this is heavy
+			 * Develop a bit mask and test the corresponding bits
+			 */
+			for(long i = 1; i <= NR_ADJACENT_CHECK; i++){
 
-                                pn = portion_num - i;
+				pn = portion_num - i;
 
-                                /*bounds check*/
-                                if((long)pn < 0){
-                                        goto exit;
-                                }
+				/*bounds check*/
+				if((long)pn < 0){
+					goto exit;
+				}
 
-                                if(BitArrayTestBit(access_history, pn)){
-                                        stride = portion_num - pn - 1;
-                                        if(stride > 0)
-                                                read_size = size;
-                                        //debug_printf("%s: stride=%ld\n", __func__, stride);
-                                        goto is_seq;
-                                }
+				if(BitArrayTestBit(access_history, pn)){
+					stride = portion_num - pn - 1;
+					if(stride > 0)
+						read_size = size;
+					//debug_printf("%s: stride=%ld\n", __func__, stride);
+					goto is_seq;
+				}
 
-                        }
+			}
 
 is_not_seq:
-                        sequentiality -= 1;
-                        sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
-                        goto exit;
+			sequentiality -= 1;
+			sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
+			goto exit;
 
 is_seq:
-                        sequentiality += 1;
-                        sequentiality %= (DEFSEQ+1); //Keeps from overflowing
+			sequentiality += 1;
+			sequentiality %= (DEFSEQ+1); //Keeps from overflowing
 
 exit:
-                        return;
-                }
+			return;
+		}
 
-                //Returns the current Sequentiality value
-                long is_sequential(){
-                        return sequentiality;
-                }
 
-                //returns the approximate stride in pages
-                //0 if not strided. doesnt mean its not sequential
-                long is_strided(){
-                        return stride*PORTION_PAGES;
-                }
+		//Returns the current Sequentiality value
+		long is_sequential(){
+			return sequentiality;
+		}
+
+		//returns the approximate stride in pages
+		//0 if not strided. doesnt mean its not sequential
+		long is_strided(){
+			return stride*PORTION_PAGES;
+		}
 
 };
 

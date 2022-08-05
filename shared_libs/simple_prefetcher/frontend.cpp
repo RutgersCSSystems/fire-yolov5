@@ -193,10 +193,10 @@ void prefetcher_th(void *arg) {
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR)
-	debug_printf("%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	//printf(stderr, "%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
 	BitArrayClearAll(page_cache_state);
-	debug_printf("%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
+	//printf(stderr, "%s: DONE defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
 	page_cache_state = a->page_cache_state;
 #else
@@ -229,6 +229,7 @@ void prefetcher_th(void *arg) {
 		page_cache_state->array = (unsigned long*)ra.data;
 		start_pg = file_pos >> PAGE_SHIFT;
 		zero_pg = start_pg;
+
 		while((zero_pg << PAGE_SHIFT) < a->file_size){
 			if(!BitArrayTestBit(page_cache_state, zero_pg))
 			{
@@ -236,8 +237,12 @@ void prefetcher_th(void *arg) {
 			}
 			zero_pg += 1;
 		}
+
 		pg_diff = zero_pg - start_pg;
+
+		//printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
 		//debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d \n", __func__, curr_pos, pg_diff, a->fd);
+
 		if(pg_diff > (a->prefetch_size >> PAGE_SHIFT))
 			curr_pos += pg_diff << PAGE_SHIFT;
 		else
@@ -298,7 +303,7 @@ void inline prefetch_file(int fd)
 {
 	struct thread_args *arg = NULL;
 	off_t filesize;
-        off_t stride;
+    off_t stride;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -311,14 +316,14 @@ void inline prefetch_file(int fd)
 	 */
 #ifdef PREDICTOR
 	filesize = fp->filesize;
-        stride = fp->is_strided() * fp->portion_sz;
-        if(stride < 0){
-                printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
-                stride = 0;
-        }
+    stride = fp->is_strided() * fp->portion_sz;
+    if(stride < 0){
+    	printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
+        stride = 0;
+     }
 #else
 	filesize = reg_fd(fd);
-        stride = 0;
+    stride = 0;
 #endif
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
@@ -327,7 +332,7 @@ void inline prefetch_file(int fd)
 		arg->fd = fd;
 		arg->offset = 0;
 		arg->file_size = filesize;
-                arg->stride = stride;
+        arg->stride = stride;
 
 #ifdef ENABLE_EVICTION
 		arg->current_fd = ptd.current_fd;
@@ -341,33 +346,39 @@ void inline prefetch_file(int fd)
 		//Allows the whole file to be prefetched at once
 		arg->prefetch_size = filesize;
 #elif PREDICTOR
-                /*
-                 * FULL_PREFETCH is never used with PREDICTOR
-                 * This means PREDICTOR and FULL_PREFETCH is off
-                 */
+		/*
+		 * FULL_PREFETCH is never used with PREDICTOR
+		 * This means PREDICTOR and FULL_PREFETCH is off
+		 */
 
-                /*
-                 * If the application is doing strided reads
-                 * doing large prefetches wastes the IO bandwidth
-                 * and also wastes cache memory. To mitigate that,
-                 * we shall decrease the prefetch range to the size
-                 * of each read done in strided access.
-                 */
-                if(stride){
-                        arg->prefetch_size = fp->read_size;
-                }
-                else{
-		        /*
-                         * The application is doing seq reads,
-                         * Whole file prefetched in NR_RA_PAGES bytes
-                         */
-		        arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-                }
+		/*
+		 * If the application is doing strided reads
+		 * doing large prefetches wastes the IO bandwidth
+		 * and also wastes cache memory. To mitigate that,
+		 * we shall decrease the prefetch range to the size
+		 * of each read done in strided access.
+		 */
+		if(stride){
+			arg->prefetch_size = fp->read_size;
+		}
+		else{
+			/*
+			 * The application is doing seq reads,
+			 * Whole file prefetched in NR_RA_PAGES bytes
+			 */
+			//FIXME: CHECK MEMORY AVAILABILITY TOO
+			if(fp->is_sequential() == DEFSEQ){
+				arg->prefetch_size = fp->read_size;
+				fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
+			}else {
+				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+			}
+		}
 #else
-                 /*
-                  * This is !PREDICTOR and !FULL_PREFETCH
-                  * which means prefetch blindly NR_RA_PAGES at a time
-                  */
+		/*
+		 * This is !PREDICTOR and !FULL_PREFETCH
+		 * which means prefetch blindly NR_RA_PAGES at a time
+		 */
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 #endif
 
@@ -686,7 +697,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 		fp->predictor_update(offset, size);
 		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
 			prefetch_file(fd, fp);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+			//debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+			//printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
 #endif
