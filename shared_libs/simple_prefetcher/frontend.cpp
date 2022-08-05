@@ -697,7 +697,8 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 		fp->predictor_update(offset, size);
 		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
 			prefetch_file(fd, fp);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+			//debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+			//printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
 #endif
