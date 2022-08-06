@@ -9,6 +9,8 @@ NUM=1000000
 DBDIR=$DBHOME/DATA
 #APPPREFIX="sudo /usr/bin/time -v"
 APP="filebench"
+APPOUTPUTNAME="filebench"
+
 
 #WORKLOAD="readseq"
 #WORKLOAD="workloads/fileserver.f"
@@ -21,12 +23,13 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 mkdir -p $RESULTS
 
-declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-#declare -a config_arr=("Vanilla" "CPNI")
+declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 #declare -a workload_arr=("filemicro_seqwrite.f" "mongo.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
-declare -a workload_arr=("oltp.f")
+declare -a workload_arr=("filemicro_seqread.f" "mongo.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
+declare -a thread_arr=("16")
 
 
 
@@ -92,6 +95,18 @@ print_results() {
 }
 
 
+GEN_RESULT_PATH() {
+	WORKLOAD=$1
+	CONFIG=$2
+	THREAD=$3
+	#WORKLOAD="DUMMY"
+	#RESULTFILE=""
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKLOAD/$THREAD
+	mkdir -p $RESULTS
+	RESULTFILE=$RESULTS/$CONFIG.out
+}
+
+
 RUN() {
 
 	for CONFIG in "${config_arr[@]}"
@@ -99,31 +114,36 @@ RUN() {
 
 		for WORKLOAD in "${workload_arr[@]}"
 		do
-			RESULTS=""
-			WORKLOAD="workloads/$WORKLOAD"
-			WRITEARGS="-f $WORKLOAD"
-			READARGS="-f $WORKLOAD"
-			RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
+			for THREAD in "${thread_arr[@]}"
+			do
 
-			mkdir -p $RESULTS
+				RESULTS=""
+				WORKLOAD="workloads/$WORKLOAD"
+				WRITEARGS="-f $WORKLOAD"
+				READARGS="-f $WORKLOAD"
+				RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
-			echo "For Workload $WORKLOAD, generating $RESULTS/$CONFIG.out"
+				GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD
+				mkdir -p $RESULTS
 
-			#echo "BEGINNING TO WARM UP ......."
-			CLEAN_AND_WRITE
-			#echo "FINISHING WARM UP ......."
-			echo "..................................................."
-			FlushDisk
+				echo "For Workload $WORKLOAD, generating $RESULTS/$CONFIG.out"
 
-			echo "RUNNING $CONFIG...................................."
-			echo "..................................................."
-			export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-			$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
-			export LD_PRELOAD=""
-			FlushDisk
-			echo ".......FINISHING $CONFIG......................"
-			CLEAR_DATA
-			FlushDisk
+				#echo "BEGINNING TO WARM UP ......."
+				CLEAN_AND_WRITE
+				#echo "FINISHING WARM UP ......."
+				echo "..................................................."
+				FlushDisk
+
+				echo "RUNNING $CONFIG...................................."
+				echo "..................................................."
+				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
+				export LD_PRELOAD=""
+				FlushDisk
+				echo ".......FINISHING $CONFIG......................"
+				CLEAR_DATA
+				FlushDisk
+			done
 		done
 	done
 }

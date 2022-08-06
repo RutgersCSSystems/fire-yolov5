@@ -59,7 +59,7 @@ declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting"
 
 
 #declare -a threadarr=("4" "8" "16" "32")
-declare -a threadarr=("8")
+declare -a threadarr=("16")
 
 
 PULL_RESULT() {
@@ -77,7 +77,7 @@ PULL_RESULT() {
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
 	#echo $resultfile
-	##echo "$APPFILE"
+	echo "$APPFILE"
 
 	if [ -f $APPFILE ]; then
 
@@ -86,6 +86,7 @@ PULL_RESULT() {
 			
 			val=`cat $APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+			echo $scaled_value
 			echo $scaled_value &>> $APPVAL".DATA"
 
 		elif [ "$APP" = 'ROCKSDB' ];
@@ -178,8 +179,8 @@ APP='filebench'
 TARGET="$OUTPUTDIR/filebench/workloads"
 #echo $TARGET
 apparr=("${filesworkarr[@]}")     
-#EXTRACT_RESULT "filebench"
-
+EXTRACT_RESULT "filebench"
+exit
 
 
 j=0
