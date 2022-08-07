@@ -121,7 +121,7 @@ void con(){
 	char a;
 
 #ifdef ENABLE_OS_STATS
-	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0)
+	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 #endif
 
 	debug_printf("CONSTRUCTOR GETTING CALLED \n");

@@ -18,6 +18,8 @@
 #define LIKELYSEQ 4 /* likely seq? */
 #define DEFSEQ 8 /* definitely seq */
 
+#define ENABLE_FILE_STATS 1
+
 
 //Used to send data to pthread or worker thread
 struct thread_args{
