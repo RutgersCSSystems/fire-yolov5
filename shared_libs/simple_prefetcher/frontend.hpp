@@ -8,6 +8,7 @@
 #define __PREAD_RA_SYSCALL 449
 #define __READ_RA_SYSCALL 450
 #define __READAHEAD_INFO 451
+#define __NR_start_crosslayer 448
 
 #define DEFNSEQ (-8) //Not seq or strided(since off_t is ulong)
 #define LIKELYNSEQ (-4) /*possibly not seq */
