@@ -1,0 +1,47 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: File-server Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.016: bigfileset populated: 20000 files, avg. dir. width = 20, avg. dir. depth = 3.3, 0 leafdirs, 248732.753MB total size
+0.016: Removing bigfileset tree (if exists)
+0.020: Pre-allocating directories in bigfileset tree
+1.975: Pre-allocating files in bigfileset tree
+104.698: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+104.698: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+104.887: Starting 1 filereader instances
+105.897: Running...
+120.467: Aborting...
+120.467: Before iterating through procflow
+120.467: Before procflow_sleep
+121.468: Before procflow_wait
+121.468: Before procflow_cleanup
+DESTRUCTOR GETTING CALLED 
+Command exited with non-zero status 1
+	Command being timed: "filebench -f workloads/fileserver.f"
+	User time (seconds): 0.41
+	System time (seconds): 94.92
+	Percent of CPU this job got: 77%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:03.08
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3693772
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 927746
+	Minor (reclaiming a frame) page faults: 8829
+	Voluntary context switches: 4569
+	Involuntary context switches: 764
+	Swaps: 0
+	File system inputs: 38064
+	File system outputs: 414051096
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+DESTRUCTOR GETTING CALLED 

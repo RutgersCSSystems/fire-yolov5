@@ -1,0 +1,55 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Video Server Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.004: passivevids populated: 12 files, avg. dir. width = 20, avg. dir. depth = 0.8, 0 leafdirs, 12288.000MB total size
+0.004: Removing passivevids tree (if exists)
+0.009: Pre-allocating directories in passivevids tree
+1.871: Pre-allocating files in passivevids tree
+5.971: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
+5.971: Removing activevids tree (if exists)
+5.976: Pre-allocating directories in activevids tree
+6.225: Pre-allocating files in activevids tree
+9.406: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+9.406: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+9.602: Starting 1 vidreaders instances
+9.602: Starting 1 vidwriter instances
+10.621: Running...
+50.624: Run took 40 seconds...
+50.624: Per-Operation Breakdown
+vidreader            7751269ops   193765ops/s 48429.4mb/s    0.082ms/op [0.001ms - 21.925ms]
+wrtclose             59ops        1ops/s   0.0mb/s    0.061ms/op [0.041ms - 0.116ms]
+newvid               59ops        1ops/s 1510.3mb/s  569.478ms/op [461.895ms - 643.648ms]
+wrtopen              60ops        1ops/s   0.0mb/s    0.070ms/op [0.028ms - 0.101ms]
+vidremover           60ops        1ops/s   0.0mb/s  104.412ms/op [0.666ms - 484.313ms]
+50.624: IO Summary: 7751507 ops 193771.166 ops/s 193765/1 rd/wr 49939.7mb/s 0.087ms/op
+50.624: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/videoserver.f"
+	User time (seconds): 0.33
+	System time (seconds): 11.72
+	Percent of CPU this job got: 23%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:52.32
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691896
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922162
+	Minor (reclaiming a frame) page faults: 16789
+	Voluntary context switches: 22084
+	Involuntary context switches: 70
+	Swaps: 0
+	File system inputs: 67136
+	File system outputs: 30444464
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

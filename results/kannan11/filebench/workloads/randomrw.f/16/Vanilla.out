@@ -1,0 +1,46 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Random RW Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.003: Removing largefile1 tree (if exists)
+0.007: Pre-allocating directories in largefile1 tree
+1.815: Pre-allocating files in largefile1 tree
+19.370: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+19.370: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+19.559: Starting 1 rand-rw instances
+20.564: Running...
+120.569: Run took 100 seconds...
+120.569: Per-Operation Breakdown
+rand-write1          16124268ops   161235ops/s 1259.6mb/s    0.094ms/op [0.001ms - 8.275ms]
+rand-read1           189744628ops  1897355ops/s 14823.1mb/s    0.004ms/op [0.001ms - 0.417ms]
+120.569: IO Summary: 205868896 ops 2058590.168 ops/s 1897355/161235 rd/wr 16082.7mb/s 0.011ms/op
+120.569: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/randomrw.f"
+	User time (seconds): 0.21
+	System time (seconds): 13.46
+	Percent of CPU this job got: 11%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:02.21
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691160
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921935
+	Minor (reclaiming a frame) page faults: 8421
+	Voluntary context switches: 9405
+	Involuntary context switches: 166
+	Swaps: 0
+	File system inputs: 37584
+	File system outputs: 49318464
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

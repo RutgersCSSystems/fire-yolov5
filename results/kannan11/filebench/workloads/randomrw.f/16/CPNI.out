@@ -1,0 +1,46 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: Random RW Version 3.0 personality successfully loaded
+0.004: Populating and pre-allocating filesets
+0.004: Removing largefile1 tree (if exists)
+0.009: Pre-allocating directories in largefile1 tree
+1.928: Pre-allocating files in largefile1 tree
+18.854: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+18.854: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+19.052: Starting 1 rand-rw instances
+20.069: Running...
+120.076: Run took 100 seconds...
+120.076: Per-Operation Breakdown
+rand-write1          15891918ops   158908ops/s 1241.5mb/s    0.096ms/op [0.001ms - 36.198ms]
+rand-read1           196780347ops  1967664ops/s 15372.4mb/s    0.004ms/op [0.001ms - 8.724ms]
+120.076: IO Summary: 212672265 ops 2126571.621 ops/s 1967664/158908 rd/wr 16613.8mb/s 0.011ms/op
+120.076: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/randomrw.f"
+	User time (seconds): 0.22
+	System time (seconds): 13.84
+	Percent of CPU this job got: 11%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:01.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691496
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921948
+	Minor (reclaiming a frame) page faults: 8676
+	Voluntary context switches: 10671
+	Involuntary context switches: 173
+	Swaps: 0
+	File system inputs: 38744
+	File system outputs: 49318464
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

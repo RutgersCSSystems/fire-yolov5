@@ -1,0 +1,47 @@
+RocksDB:    version 6.20
+Date:       Thu Aug  4 18:19:08 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    4000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    19439.7 MB (estimated)
+FileSize:   11627.2 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA]
+compact      : 139037177.000 micros/op 0 ops/sec;
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "./db_bench --db=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=4000000 --benchmarks=compact --use_existing_db=1 --mmap_read=0 --threads=4"
+	User time (seconds): 26.12
+	System time (seconds): 6.80
+	Percent of CPU this job got: 94%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:34.83
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 107468
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 74
+	Minor (reclaiming a frame) page faults: 93650
+	Voluntary context switches: 109949
+	Involuntary context switches: 46
+	Swaps: 0
+	File system inputs: 12274920
+	File system outputs: 14487856
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

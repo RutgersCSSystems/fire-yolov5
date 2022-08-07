@@ -1,0 +1,51 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: Mongo-like Version 2.3 personality successfully loaded
+0.004: Populating and pre-allocating filesets
+0.005: postsetdel populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+0.005: Removing postsetdel tree (if exists)
+0.010: Pre-allocating directories in postsetdel tree
+1.626: Pre-allocating files in postsetdel tree
+9.504: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+9.504: Removing postset tree (if exists)
+9.509: Pre-allocating directories in postset tree
+9.705: Pre-allocating files in postset tree
+17.781: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+17.781: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+17.978: Starting 1 filereader instances
+18.996: Running...
+20.269: Unexpected Process termination Code 2, Errno 0 around line 55
+20.269: Before iterating through procflow
+20.269: Before procflow_sleep
+20.996: Run took 2 seconds...
+20.996: NO VALID RESULTS! Filebench run terminated prematurely around line 55
+20.996: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/mongo.f"
+	User time (seconds): 0.46
+	System time (seconds): 41.77
+	Percent of CPU this job got: 182%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.17
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3692244
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922275
+	Minor (reclaiming a frame) page faults: 1014640
+	Voluntary context switches: 29891
+	Involuntary context switches: 294
+	Swaps: 0
+	File system inputs: 7451464
+	File system outputs: 59805840
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 

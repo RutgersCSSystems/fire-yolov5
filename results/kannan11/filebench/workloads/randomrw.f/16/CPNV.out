@@ -1,0 +1,46 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Random RW Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.003: Removing largefile1 tree (if exists)
+0.008: Pre-allocating directories in largefile1 tree
+1.912: Pre-allocating files in largefile1 tree
+16.675: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+16.675: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+16.875: Starting 1 rand-rw instances
+17.892: Running...
+18.973: Unexpected Process termination Code 2, Errno 0 around line 48
+18.973: Before iterating through procflow
+18.973: Before procflow_sleep
+19.892: Run took 2 seconds...
+19.892: NO VALID RESULTS! Filebench run terminated prematurely around line 48
+19.892: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/randomrw.f"
+	User time (seconds): 0.86
+	System time (seconds): 32.09
+	Percent of CPU this job got: 152%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:21.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 16586224
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921997
+	Minor (reclaiming a frame) page faults: 4162472
+	Voluntary context switches: 11018
+	Involuntary context switches: 303
+	Swaps: 0
+	File system inputs: 51080
+	File system outputs: 49474160
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
