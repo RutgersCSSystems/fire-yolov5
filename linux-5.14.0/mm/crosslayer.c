@@ -74,6 +74,8 @@
 #define CACHE_USAGE_RESET 8
 #define WALK_PAGECACHE 9
 
+#define CROSS_PRINT_JIFFY 2000
+
 struct file_pfetch_state global_counts; //global counters
 
 atomic_t setup_cross_procfs = ATOMIC_INIT(-1);
@@ -245,7 +247,8 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
                 unsigned long nr_pg_in_cache, unsigned long nr_misses, 
                 struct file *filp) 
 {
-
+	if(current->is_crosslayer == true)
+		printk(KERN_ALERT "update_read_cache_stats ....\n");
         /*
          * Update global counters
          */
@@ -266,8 +269,8 @@ void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads
         }
 
 
-        //prints global stats after 1000 msecs
-        if(jiffies_to_msecs(jiffies - global_counts.last_jiffies) >= 1000){
+        //prints global stats after CROSS_PRINT_JIFFY msecs
+        if(jiffies_to_msecs(jiffies - global_counts.last_jiffies) >= CROSS_PRINT_JIFFY){
                 global_counts.last_jiffies = jiffies;
 
                 global_counts.nr_pages_read += global_counts._nr_pages_read;
@@ -727,6 +730,10 @@ EXPORT_SYMBOL(setup_cross_interface);
 
 //Syscall Nr: 448
 SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
+
+
+        current->is_crosslayer = true;
+
 #ifdef CONFIG_ENABLE_CROSS_STATS
         switch(flag){
 

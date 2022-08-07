@@ -7,42 +7,42 @@ Filebench Version 1.5-alpha3
 0.004: Populating and pre-allocating filesets
 0.005: postsetdel populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
 0.005: Removing postsetdel tree (if exists)
-0.010: Pre-allocating directories in postsetdel tree
-1.870: Pre-allocating files in postsetdel tree
-9.455: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
-9.455: Removing postset tree (if exists)
-9.461: Pre-allocating directories in postset tree
-9.656: Pre-allocating files in postset tree
-17.186: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-17.187: Population and pre-allocation of filesets completed
+0.009: Pre-allocating directories in postsetdel tree
+2.047: Pre-allocating files in postsetdel tree
+9.522: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+9.522: Removing postset tree (if exists)
+9.528: Pre-allocating directories in postset tree
+9.730: Pre-allocating files in postset tree
+17.297: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+17.298: Population and pre-allocation of filesets completed
 FINISHED PREALLOCATION 
-17.383: Starting 1 filereader instances
-18.402: Running...
-18.555: Unexpected Process termination Code 2, Errno 0 around line 55
-18.555: Before iterating through procflow
-18.555: Before procflow_sleep
-19.402: Run took 1 seconds...
-19.402: NO VALID RESULTS! Filebench run terminated prematurely around line 55
-19.402: Shutting down processes and raising singal
+17.500: Starting 1 filereader instances
+18.519: Running...
+19.351: Unexpected Process termination Code 2, Errno 0 around line 55
+19.351: Before iterating through procflow
+19.351: Before procflow_sleep
+19.520: Run took 1 seconds...
+19.520: NO VALID RESULTS! Filebench run terminated prematurely around line 55
+19.520: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/mongo.f"
-	User time (seconds): 0.37
-	System time (seconds): 38.99
-	Percent of CPU this job got: 186%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:21.08
+	User time (seconds): 0.45
+	System time (seconds): 40.21
+	Percent of CPU this job got: 191%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:21.19
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
 	Maximum resident set size (kbytes): 3692204
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 922261
-	Minor (reclaiming a frame) page faults: 549117
-	Voluntary context switches: 12142
-	Involuntary context switches: 288
+	Major (requiring I/O) page faults: 922260
+	Minor (reclaiming a frame) page faults: 766685
+	Voluntary context switches: 28642
+	Involuntary context switches: 241
 	Swaps: 0
-	File system inputs: 69760
-	File system outputs: 59805024
+	File system inputs: 4263824
+	File system outputs: 59805424
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
