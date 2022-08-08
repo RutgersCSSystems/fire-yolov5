@@ -6,7 +6,7 @@ export CONCURRENCYLEVEL=40
 touch REPORTING-BUGS
 #mv .config .config_back
 #make distclean
-sudo make menuconfig
+#sudo make menuconfig
 #fakeroot make-kpkg clean
 sudo fakeroot make-kpkg -j`nproc` --initrd kernel-image kernel-headers
 sudo dpkg -i ../*image*.deb ../*header*.deb

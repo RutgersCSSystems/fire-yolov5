@@ -9,6 +9,9 @@ then
 	make menuconfig
 fi
 
+#Disable them
+scripts/config --disable SYSTEM_REVOCATION_KEYS
+scripts/config --disable SYSTEM_TRUSTED_KEYS
 
 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
@@ -21,7 +24,7 @@ grep -r "error:" compile.out &>> errors.out
 sudo make install &>> compile.out
 grep -r "error:" compile.out &>> errors.out
 
- y="5.14.0+"
+ y="5.14.0"
    if [[ x$ == x ]];
   then
       echo You have to say a version!
@@ -31,4 +34,6 @@ grep -r "error:" compile.out &>> errors.out
 sudo cp ./arch/x86/boot/bzImage /boot/vmlinuz-$y
 sudo cp System.map /boot/System.map-$y
 sudo cp .config /boot/config-$y
+
 sudo update-initramfs -c -k $y
+sudo update-grub
