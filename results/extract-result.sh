@@ -59,7 +59,7 @@ declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting"
 
 
 #declare -a threadarr=("4" "8" "16" "32")
-declare -a threadarr=("8")
+declare -a threadarr=("4")
 
 
 PULL_RESULT() {

@@ -36,9 +36,9 @@ NUM=1000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" )
+declare -a workload_arr=("overwrite" "readwhilewriting" "readwhilescanning")
 declare -a config_arr=("Vanilla")
-declare -a thread_arr=("8")
+declare -a thread_arr=("8" "4")
 
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a workload_arr=("readseq")
