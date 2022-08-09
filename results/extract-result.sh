@@ -59,7 +59,7 @@ declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting"
 
 
 #declare -a threadarr=("4" "8" "16" "32")
-declare -a threadarr=("16")
+declare -a threadarr=("8")
 
 
 PULL_RESULT() {
@@ -180,7 +180,6 @@ TARGET="$OUTPUTDIR/filebench/workloads"
 #echo $TARGET
 apparr=("${filesworkarr[@]}")     
 EXTRACT_RESULT "filebench"
-exit
 
 
 j=0

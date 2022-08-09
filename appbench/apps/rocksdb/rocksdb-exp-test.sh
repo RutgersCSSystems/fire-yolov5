@@ -27,24 +27,22 @@ mkdir -p $RESULTS
 
 
 
-#declare -a num_arr=("4000000")
-#NUM=4000000
+declare -a num_arr=("1000000")
+NUM=1000000
 
-declare -a num_arr=("100000")
-NUM=100000
-
-
+#declare -a num_arr=("100000")
+#NUM=100000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact")
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+
+declare -a workload_arr=("readwhilewriting" "readwhilescanning")
+declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+declare -a thread_arr=("4" "8")
+
 #declare -a thread_arr=("4" "8" "16" "32")
-
-declare -a workload_arr=("readseq")
-declare -a config_arr=("CPNV")
-declare -a thread_arr=("4")
-
+#declare -a workload_arr=("readseq")
+#declare -a config_arr=("CPNI")
 
 FlushDisk()
 {
@@ -52,7 +50,7 @@ FlushDisk()
         sudo sh -c "sync"
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
         sudo sh -c "sync"
-        sudo dmesg --clear
+        #sudo dmesg --clear
         sleep 5
 }
 
@@ -68,20 +66,6 @@ CLEAR_DATA()
 
 
 
-SETPRELOAD()
-{
-        if [[ "$1" == "VANILLA" ]]; then ##All three
-                printf "setting Vanilla\n"
-                #export LD_PRELOAD=/usr/lib/lib_Vanilla.so
-                export LD_PRELOAD=/usr/lib/lib_Vanilla.so
-        elif [[ "$1" == "OSONLY" ]]; then ##None
-                printf "setting OSonly\n"
-                export LD_PRELOAD=/usr/lib/lib_OSonly.so
-        elif [[ "$1" == "CPNI" ]]; then
-                export LD_PRELOAD=/usr/lib/lib_CPNI.so
-        fi
-}
-
 COMPILE_AND_WRITE()
 {
         export LD_PRELOAD=""
@@ -91,7 +75,7 @@ COMPILE_AND_WRITE()
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
-        #$DBHOME/db_bench $PARAMS $WRITEARGS &> $RESULTS/WARMUP-WRITE.out
+        $DBHOME/db_bench $PARAMS $WRITEARGS &> $RESULTS/WARMUP-WRITE.out
 
         ##Condition the DB to get Stable results
         $DBHOME/db_bench $PARAMS $READARGS  &> $RESULTS/WARMUP-READ1.out
@@ -122,6 +106,7 @@ RUN() {
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
+	sudo dmesg -c
 
 	for NUM in "${num_arr[@]}"
 	do
@@ -142,10 +127,9 @@ RUN() {
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
-					echo $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
-					FlushDisk
+					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
 					FlushDisk
 				done
@@ -157,38 +141,4 @@ RUN() {
 RUN
 #CLEAR_DATA
 exit
-
-
-
-#FIXME: This needs to be automated and looped instead of hardcoding similar to the RUN function
-print_results() {
-	echo "Vanilla Results"
-	cat $RESULTS/VANILLA.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPNI Results"
-	cat $RESULTS/CPNI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CNI Results"
-	cat $RESULTS/CNI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPBI Results"
-	cat $RESULTS/CPBI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPBV Results"
-	cat $RESULTS/CPBV.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPNV Results"
-	cat $RESULTS/CPNV.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CROSS-NAIVE Results"
-	cat $RESULTS/Cross_Naive.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-}
-
 

@@ -1,25 +1,106 @@
-Command terminated by signal 9
-	Command being timed: "./db_bench --db=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=4000000 --benchmarks=compact --use_existing_db=1 --mmap_read=0 --threads=8"
-	User time (seconds): 0.02
-	System time (seconds): 0.81
-	Percent of CPU this job got: 177%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.47
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+RocksDB:    version 6.20
+Date:       Mon Aug  8 16:49:17 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    1000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    4859.9 MB (estimated)
+FileSize:   2906.8 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA]
+compact      : 73737256.000 micros/op 0 ops/sec;
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+readahead_info: failed TID:12466 
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=compact --use_existing_db=1 --mmap_read=0 --threads=8"
+	User time (seconds): 7.16
+	System time (seconds): 3.13
+	Percent of CPU this job got: 106%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.68
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 22976
+	Maximum resident set size (kbytes): 294208
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 2287
-	Minor (reclaiming a frame) page faults: 20181
-	Voluntary context switches: 3074
-	Involuntary context switches: 194
+	Major (requiring I/O) page faults: 75
+	Minor (reclaiming a frame) page faults: 542092
+	Voluntary context switches: 32396
+	Involuntary context switches: 35
 	Swaps: 0
-	File system inputs: 106152
-	File system outputs: 48
+	File system inputs: 4019304
+	File system outputs: 4009224
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[ 1839.655889] sh (12438): drop_caches: 3
+[ 1839.684026] sh (12443): drop_caches: 3
+[ 1844.709136] Enabled file stats for time:12454
+[ 1844.709305] write_proc: Value of write = 1
+[ 1844.714323] Enabled file stats for db_bench:12463
+[ 1844.714519] write_proc: Value of write = 1
+[ 1852.575372] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.579398] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.583329] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.587397] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.591305] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.595773] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.600528] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.605441] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.611016] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.615314] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.619834] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.624925] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.630161] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1852.635706] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.640447] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.644789] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.649378] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1852.654343] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.659054] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.663992] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.668878] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.674568] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.679538] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1852.713295] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1852.717185] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1854.362457] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1854.366114] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1854.369891] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1854.373710] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1854.377700] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1854.382289] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1854.387082] write_proc: Value of write = 0
+[ 1854.387098] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 1854.387099] Final GlobalReport: nr_pages_read:487221342, nr_pages_hit:442761866, nr_do_read_fault:1141330, nr_pages_miss:13807283
+[ 1854.387164] __do_sys_readahead_info: unable to find struct file for this fd
+[ 1854.387271] FinalTaskReport: db_bench:12463 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1052, final_async_pages:1324
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:65
+                                        nr_pages_read:511, nr_pages_hit:206, nr_do_read_fault:162
+[ 1854.392154] write_proc: Value of write = 0
+[ 1854.392166] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 1854.392167] Final GlobalReport: nr_pages_read:487221342, nr_pages_hit:442761866, nr_do_read_fault:1141341, nr_pages_miss:13807283
+[ 1854.392210] FinalTaskReport: time:12454 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:85
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:3
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:21

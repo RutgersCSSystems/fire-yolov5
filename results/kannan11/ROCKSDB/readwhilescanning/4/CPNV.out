@@ -1,25 +1,50 @@
-Command terminated by signal 9
-	Command being timed: "./db_bench --db=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=4000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=4"
-	User time (seconds): 0.02
-	System time (seconds): 0.14
-	Percent of CPU this job got: 73%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.22
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+Received signal 11 (Segmentation fault)
+Command terminated by signal 11
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=4"
+	User time (seconds): 0.01
+	System time (seconds): 4.31
+	Percent of CPU this job got: 894%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.48
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 20612
+	Maximum resident set size (kbytes): 276668
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 3609
-	Minor (reclaiming a frame) page faults: 7319
-	Voluntary context switches: 3976
-	Involuntary context switches: 39
+	Major (requiring I/O) page faults: 2058
+	Minor (reclaiming a frame) page faults: 240021
+	Voluntary context switches: 10534
+	Involuntary context switches: 10271
 	Swaps: 0
-	File system inputs: 135728
-	File system outputs: 56
+	File system inputs: 40392
+	File system outputs: 48
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[ 7423.163550] sh (16202): drop_caches: 3
+[ 7423.192080] sh (16207): drop_caches: 3
+[ 7428.218231] Enabled file stats for time:16224
+[ 7428.218429] write_proc: Value of write = 0
+[ 7428.222913] Enabled file stats for db_bench:16233
+[ 7428.223126] write_proc: Value of write = 0
+[ 7428.663542] db_bench[16255]: segfault at 7ffa728d4478 ip 00007ffa728d4478 sp 00007ffa48ff99a8 error 15
+[ 7428.663552] Code: 00 00 00 00 00 00 00 00 00 00 c8 6d 21 00 00 00 00 00 38 02 00 00 00 00 00 00 0f 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <90> 44 8d 72 fa 7f 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00
+[ 7428.663680] FinalTaskReport: db_bench:16233 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1236, final_async_pages:1539
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:82
+                                        nr_pages_read:394, nr_pages_hit:366, nr_do_read_fault:186
+[ 7428.704935] write_proc: Value of write = 0
+[ 7428.704954] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 7428.704956] Final GlobalReport: nr_pages_read:1910512104, nr_pages_hit:1840760963, nr_do_read_fault:1361413, nr_pages_miss:23271184
+[ 7428.706495] FinalTaskReport: time:16224 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:128, final_async_pages:150
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:9
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:45

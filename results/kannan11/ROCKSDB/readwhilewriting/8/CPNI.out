@@ -1,25 +1,9 @@
-Command terminated by signal 9
-	Command being timed: "./db_bench --db=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=4000000 --benchmarks=readwhilewriting --use_existing_db=1 --mmap_read=0 --threads=8"
-	User time (seconds): 0.00
-	System time (seconds): 0.12
-	Percent of CPU this job got: 112%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.11
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 18036
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1074
-	Minor (reclaiming a frame) page faults: 4323
-	Voluntary context switches: 1439
-	Involuntary context switches: 31
-	Swaps: 0
-	File system inputs: 80808
-	File system outputs: 56
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
-DESTRUCTOR GETTING CALLED 
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+Received signal 11 (Segmentation fault)
+#0   /usr/lib/lib_CPNI.so(_ZNKSt8equal_toIiEclERKiS2_+0x1a) [0x7f3282720a84] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#1   /usr/lib/lib_CPNI.so(_ZNSt8__detail13_Equal_helperIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiEmLb0EE9_S_equalsERKS8_RKS6_RS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x50) [0x7f328272091f] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	double free or corruption (out)
+Received signal 6 (Aborted)
+#0   /lib/x86_64-linux-gnu/libc.so.6(gsignal+0xc7) [0x7f3280705e87] ??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	

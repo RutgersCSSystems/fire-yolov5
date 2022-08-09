@@ -121,6 +121,7 @@ void con(){
 	char a;
 
 #ifdef ENABLE_OS_STATS
+	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
 	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
 #endif
 
@@ -165,6 +166,12 @@ void dest(){
         set_read_limits(a);
         fprintf(stderr, "DESTRUCTOR GETTING CALLED \n");
         debug_printf("DESTRUCTOR GETTING CALLED \n");
+
+#ifdef ENABLE_OS_STATS
+	fprintf(stderr, "PRINT_GLOBAL_STATS in %s\n", __func__);
+	syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
+#endif
+
 }
 
 

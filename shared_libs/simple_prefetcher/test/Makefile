@@ -1,5 +1,5 @@
 SIZE=1
-OBJS=../frontend.o ../bitarray.o ../thpool.o
+#OBJS=../frontend.o ../bitarray.o ../thpool.o
 FLAGOBJ=-std=gnu++11 -Wno-unused-result -g -lpthread -lrt -ldl
 all:
 	gcc readahead_info_oslimit.c ../utils/bitarray.c
