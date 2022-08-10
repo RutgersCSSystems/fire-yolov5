@@ -138,6 +138,14 @@ source ./scripts/setvars.sh
 
 ## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
 
+To compile, assuming the environmental variables are set using set_vars.sh
+
+```
+./compile.sh
+```
+
+
+
 The following script runs multiple configurations of RocksDB by varying 
 Cross-prefetch configurations, thread counts, and workloads.
 
@@ -171,7 +179,7 @@ declare -a thread_arr=("4" "8" "16" "32")
 
 
 
-# [OLD: Shaleen Remove this if incorrect] 
+### [OLD: Shaleen Remove this if incorrect] 
 Run rocksdb with or without using the new pread_ra syscall
 
 To enable pread_ra syscall that is enabled for crossfs
