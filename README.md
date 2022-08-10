@@ -138,7 +138,41 @@ source ./scripts/setvars.sh
 
 ## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
 
-### Run rocksdb with or without using the new pread_ra syscall
+The following script runs multiple configurations of RocksDB by varying 
+Cross-prefetch configurations, thread counts, and workloads.
+
+```
+cd $APPS/rocksdb
+./rocksdb-exp-test.sh 
+
+```
+
+To vary either RocksDB parameters, workloads, or the technique used for prefetching, vary one of these parameters in the 
+rocksdb-exp-test.sh script
+
+```
+declare -a num_arr=("1000000")
+NUM=1000000
+
+declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
+declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
+declare -a workload_arr=("overwrite" "readwhilewriting" "readwhilescanning")
+declare -a thread_arr=("4" "8" "16" "32")
+```
+
+## Result extraction and Graph Generation (script under progress)
+
+
+
+
+
+
+
+
+
+
+# [OLD: Shaleen Remove this if incorrect] 
+Run rocksdb with or without using the new pread_ra syscall
 
 To enable pread_ra syscall that is enabled for crossfs
 ```
