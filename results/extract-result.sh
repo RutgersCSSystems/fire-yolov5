@@ -2,6 +2,9 @@
 #set -x
 
 TARGET=$OUTPUTDIR
+
+OUTPUTPATH=$PWD
+
 #APP="rocksdb"
 APP="redis"
 #TYPE="SSD"
@@ -112,7 +115,7 @@ EXTRACT_RESULT() {
 	for APPLICATION in "${apparr[@]}"
 	do
 		if [[ "$num" -eq 0 ]]; then
-			echo "# index" > num.tmp
+			echo "# reader" > num.tmp
 			echo $APPLICATION >> num.tmp
 			let "num=num+1"
 		else
@@ -185,9 +188,11 @@ EXTRACT_RESULT "filebench"
 j=0
 APP='ROCKSDB'
 TARGET="$OUTPUTDIR/ROCKSDB"
-#echo $TARGET
 apparr=("${rocksworkarr[@]}")
 EXTRACT_RESULT "ROCKSDB"
+
+
+python $SCRIPTS/graphs/rocksdb.py $OUTPUTPATH/$APP".DATA" $OUTPUTPATH/$APP
 
 
 
