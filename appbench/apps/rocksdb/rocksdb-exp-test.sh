@@ -34,12 +34,13 @@ NUM=1000000
 #NUM=100000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
+#declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
+
+declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
+declare -a config_arr=("Cross_Naive")
 declare -a thread_arr=("16")
 
-#declare -a thread_arr=("4" "8" "16" "32")
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
-declare -a config_arr=("CPBV" "CPBI" "CNI" "CPNV" "CPNI")
 
 FlushDisk()
 {
