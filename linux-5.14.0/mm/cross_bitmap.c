@@ -127,8 +127,8 @@ void free_cross_bitmap(struct inode *inode){
 
 	if(inode->bitmap) {
 
-		printk(KERN_ALERT "%s: releasing mem for inode with i_count "
-				"%d\n", __func__, atomic_read(&inode->i_count));
+		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
+		//		"%d\n", __func__, atomic_read(&inode->i_count));
 
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
