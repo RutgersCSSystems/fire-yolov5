@@ -1,24 +1,61 @@
 ENABLE_FILE_STATS in con
 ENABLE_FILE_STATS in con
-Command terminated by signal 9
+Received signal 11 (Segmentation fault)
+#0   /usr/lib/lib_CPNI.so(_ZNKSt8equal_toIiEclERKiS2_+0x1a) [0x7f2c187faa84] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#1   /usr/lib/lib_CPNI.so(_ZNSt8__detail13_Equal_helperIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiEmLb0EE9_S_equalsERKS8_RKS6_RS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x50) [0x7f2c187fa91f] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#2   /usr/lib/lib_CPNI.so(_ZNKSt8__detail15_Hashtable_baseIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiESt4hashIiENS_18_Mod_range_hashingENS_20_Default_ranged_hashENS_17_Hashtable_traitsILb0ELb0ELb1EEEE9_M_equalsERS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x54) [0x7f2c187fa4e2] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#3   /usr/lib/lib_CPNI.so(_ZNKSt10_HashtableIiSt4pairIKiP14file_predictorESaIS4_ENSt8__detail10_Select1stESt8equal_toIiESt4hashIiENS6_18_Mod_range_hashingENS6_20_Default_ranged_hashENS6_20_Prime_rehash_policyENS6_17_Hashtable_traitsILb0ELb0ELb1EEEE19_M_find_before_nodeEmRS1_m+0x65) [0x7f2c187f9ea5] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#4   /usr/lib/lib_CPNI.so(_ZNKSt10_HashtableIiSt4pairIKiP14file_predictorESaIS4_ENSt8__detail10_Select1stESt8equal_toIiESt4hashIiENS6_18_Mod_range_hashingENS6_20_Default_ranged_hashENS6_20_Prime_rehash_policyENS6_17_Hashtable_traitsILb0ELb0ELb1EEEE12_M_find_nodeEmRS1_m+0x30) [0x7f2c187f9786] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#5   /usr/lib/lib_CPNI.so(_ZNSt10_HashtableIiSt4pairIKiP14file_predictorESaIS4_ENSt8__detail10_Select1stESt8equal_toIiESt4hashIiENS6_18_Mod_range_hashingENS6_20_Default_ranged_hashENS6_20_Prime_rehash_policyENS6_17_Hashtable_traitsILb0ELb0ELb1EEEE10_M_emplaceIJS4_EEES0_INS6_14_Node_iteratorIS4_Lb0ELb0EEEbESt17integral_constantIbLb1EEDpOT_+0xb6) [0x7f2c187f9624] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#6   /usr/lib/lib_CPNI.so(_ZNSt8__detail7_InsertIiSt4pairIKiP14file_predictorESaIS5_ENS_10_Select1stESt8equal_toIiESt4hashIiENS_18_Mod_range_hashingENS_20_Default_ranged_hashENS_20_Prime_rehash_policyENS_17_Hashtable_traitsILb0ELb0ELb1EEELb0EE6insertIS5_vEES1_INS_14_Node_iteratorIS5_Lb0ELb0EEEbEOT_+0x53) [0x7f2c187f93fb] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#7   /usr/lib/lib_CPNI.so(_ZNSt13unordered_mapIiP14file_predictorSt4hashIiESt8equal_toIiESaISt4pairIKiS1_EEE6insertEOS8_+0x2c) [0x7f2c187f930c] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#8   /usr/lib/lib_CPNI.so(_Z11record_openi+0x97) [0x7f2c187f9211] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#9   /usr/lib/lib_CPNI.so(_Z11handle_openi+0x15) [0x7f2c187f808b] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#10  /usr/lib/lib_CPNI.so(open+0x14d) [0x7f2c187f84b2] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#11  ./db_bench(+0x20993a) [0x564c00e0993a] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#12  ./db_bench(+0x19dbad) [0x564c00d9dbad] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#13  ./db_bench(+0x19f328) [0x564c00d9f328] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#14  ./db_bench(+0x3f19c8) [0x564c00ff19c8] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#15  /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0xbd6df) [0x7f2c172056df] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#16  /lib/x86_64-linux-gnu/libpthread.so.0(+0x76db) [0x7f2c183d16db] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+#17  /lib/x86_64-linux-gnu/libc.so.6(clone+0x3f) [0x7f2c168c261f] ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
+Command terminated by signal 11
 	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=16"
-	User time (seconds): 0.00
-	System time (seconds): 0.77
-	Percent of CPU this job got: 24%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.14
+	User time (seconds): 0.12
+	System time (seconds): 2.69
+	Percent of CPU this job got: 330%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.85
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 77860
+	Maximum resident set size (kbytes): 2081444
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 104
-	Minor (reclaiming a frame) page faults: 41760
-	Voluntary context switches: 1781
-	Involuntary context switches: 1103
+	Major (requiring I/O) page faults: 97
+	Minor (reclaiming a frame) page faults: 546026
+	Voluntary context switches: 2289
+	Involuntary context switches: 19
 	Swaps: 0
-	File system inputs: 15328
-	File system outputs: 40
+	File system inputs: 61472
+	File system outputs: 48
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -26,201 +63,451 @@ Command terminated by signal 9
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
 PRINT_GLOBAL_STATS in dest
-[64002.020057] sh (7478): drop_caches: 3
-[64002.048551] sh (7483): drop_caches: 3
-[64007.085116] Enabled file stats for time:7490
-[64007.085338] write_proc: Value of write = 1
-[64007.091211] Enabled file stats for db_bench:7499
-[64007.091402] write_proc: Value of write = 1
-[64007.172096] db_bench invoked oom-killer: gfp_mask=0x1100dca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
-[64007.172107] CPU: 34 PID: 7510 Comm: db_bench Not tainted 5.14.0 #30
-[64007.172110] Hardware name: Dell Inc. PowerEdge C6525/04DK47, BIOS 2.0.3 01/15/2021
-[64007.172112] Call Trace:
-[64007.172116]  dump_stack_lvl+0x4a/0x5f
-[64007.172123]  dump_stack+0x10/0x12
-[64007.172125]  dump_header+0x4f/0x210
-[64007.172129]  oom_kill_process+0xec/0x140
-[64007.172131]  out_of_memory+0x117/0x590
-[64007.172133]  __alloc_pages_slowpath.constprop.122+0xa55/0xd70
-[64007.172138]  __alloc_pages+0x2db/0x320
-[64007.172140]  alloc_pages_vma+0x88/0x220
-[64007.172143]  __handle_mm_fault+0xa3f/0x1270
-[64007.172147]  handle_mm_fault+0xd9/0x2b0
-[64007.172148]  do_user_addr_fault+0x1e0/0x6e0
-[64007.172151]  exc_page_fault+0x76/0x150
-[64007.172154]  ? asm_exc_page_fault+0x8/0x30
-[64007.172157]  asm_exc_page_fault+0x1e/0x30
-[64007.172160] RIP: 0033:0x7ff35250dea7
-[64007.172162] Code: 47 20 c5 fe 7f 44 17 c0 c5 fe 7f 47 40 c5 fe 7f 44 17 a0 c5 fe 7f 47 60 c5 fe 7f 44 17 80 48 01 fa 48 83 e2 80 48 39 d1 74 ba <c5> fd 7f 01 c5 fd 7f 41 20 c5 fd 7f 41 40 c5 fd 7f 41 60 48 81 c1
-[64007.172164] RSP: 002b:00007ff34db74368 EFLAGS: 00010206
-[64007.172167] RAX: 00007ff31bffe010 RBX: 00007ff338000ca0 RCX: 00007ff31ca00000
-[64007.172168] RDX: 00007ff31dffe000 RSI: 0000000000000000 RDI: 00007ff31bffe010
-[64007.172169] RBP: 00007ff34db74380 R08: 00000000ffffffff R09: 0000000000000000
-[64007.172171] R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000080000
-[64007.172172] R13: 00007ff34db74730 R14: 00007ff34db74810 R15: fffffffffffffca0
-[64007.172176] Mem-Info:
-[64007.172179] active_anon:306 inactive_anon:19598 isolated_anon:30
-                active_file:551 inactive_file:219 isolated_file:0
-                unevictable:768 dirty:36 writeback:260
-                slab_reclaimable:14756 slab_unreclaimable:87580
-                mapped:998 shmem:773 pagetables:1106 bounce:0
-                free:148609 free_pcp:54 free_cma:0
-[64007.172184] Node 0 active_anon:1224kB inactive_anon:78392kB active_file:2204kB inactive_file:876kB unevictable:3072kB isolated(anon):120kB isolated(file):0kB mapped:3992kB dirty:144kB writeback:1040kB shmem:3092kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB kernel_stack:9504kB pagetables:4424kB all_unreclaimable? no
-[64007.172190] Node 0 DMA free:11264kB min:4kB low:16kB high:28kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-[64007.172196] lowmem_reserve[]: 0 776 127598 127598 127598
-[64007.172200] Node 0 DMA32 free:507620kB min:408kB low:1200kB high:1992kB reserved_highatomic:2048KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:1682240kB managed:1616700kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-[64007.172205] lowmem_reserve[]: 0 0 126822 126822 126822
-[64007.172208] Node 0 Normal free:75552kB min:249436kB low:379300kB high:509164kB reserved_highatomic:4096KB active_anon:1224kB inactive_anon:78392kB active_file:2204kB inactive_file:876kB unevictable:3072kB writepending:1680kB present:132106240kB managed:129874164kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-[64007.172212] lowmem_reserve[]: 0 0 0 0 0
-[64007.172215] Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024kB (U) 1*2048kB (M) 2*4096kB (M) = 11264kB
-[64007.172227] Node 0 DMA32: 8*4kB (UMEH) 7*8kB (UME) 9*16kB (UMEH) 6*32kB (ME) 7*64kB (UME) 5*128kB (UMEH) 3*256kB (ME) 5*512kB (MEH) 3*1024kB (ME) 4*2048kB (ME) 120*4096kB (ME) = 507624kB
-[64007.172241] Node 0 Normal: 9782*4kB (UME) 3501*8kB (UME) 929*16kB (UME) 4*32kB (U) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 82128kB
-[64007.172255] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
-[64007.172258] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
-[64007.172259] 2463 total pagecache pages
-[64007.172259] 1305 pages in swap cache
-[64007.172260] Swap cache stats: add 2117387, delete 2117009, find 187231/355472
-[64007.172262] Free swap  = 3011448kB
-[64007.172263] Total swap = 3145724kB
-[64007.172264] 33451118 pages RAM
-[64007.172264] 0 pages HighMem/MovableOnly
-[64007.172266] 574562 pages reserved
-[64007.172266] 0 pages cma reserved
-[64007.172267] 0 pages hwpoisoned
-[64007.172268] Unreclaimable slab info:
-[64007.172269] Name                      Used          Total
-[64007.172270] mlx5_fs_ftes             253KB        253KB
-[64007.172273] mlx5_fs_fgs               63KB         63KB
-[64007.172275] scsi_sense_cache          32KB         32KB
-[64007.172279] RAWv6                    123KB        123KB
-[64007.172281] UDPv6                   1417KB       1417KB
-[64007.172283] TCPv6                     92KB         92KB
-[64007.172285] mqueue_inode_cache         31KB         31KB
-[64007.172290] ext4_system_zone          39KB         39KB
-[64007.172296] PING                    1600KB       1600KB
-[64007.172297] RAW                       96KB         96KB
-[64007.172299] tw_sock_TCP              295KB        295KB
-[64007.172300] request_sock_TCP         739KB        739KB
-[64007.172301] TCP                     1439KB       1439KB
-[64007.172304] hugetlbfs_inode_cache         63KB         63KB
-[64007.172305] ep_head                  192KB        192KB
-[64007.172306] request_queue             62KB         62KB
-[64007.172308] biovec-max              4676KB       4708KB
-[64007.172309] biovec-128              1600KB       1600KB
-[64007.172310] biovec-64               1536KB       1536KB
-[64007.172312] dmaengine-unmap-256         30KB         30KB
-[64007.172314] dmaengine-unmap-128         31KB         31KB
-[64007.172315] dmaengine-unmap-16       4032KB       4032KB
-[64007.172317] skbuff_fclone_cache        768KB        768KB
-[64007.172319] skbuff_head_cache       1206KB       1224KB
-[64007.172321] file_lock_cache          359KB        359KB
-[64007.172322] file_lock_ctx            111KB        111KB
-[64007.172324] fsnotify_mark_connector        192KB        192KB
-[64007.172326] task_delay_info          111KB        111KB
-[64007.172328] taskstats                674KB        674KB
-[64007.172329] proc_dir_entry           732KB        732KB
-[64007.172331] pde_opener               191KB        191KB
-[64007.172332] seq_file                 191KB        191KB
-[64007.172335] shmem_inode_cache       2192KB       2192KB
-[64007.172336] kernfs_node_cache       8920KB       8920KB
-[64007.172338] mnt_cache                302KB        302KB
-[64007.172340] filp                    3779KB       3808KB
-[64007.172342] names_cache             1536KB       1536KB
-[64007.172345] lsm_file_cache           266KB        266KB
-[64007.172347] vm_area_struct          4515KB       4515KB
-[64007.172349] mm_struct               1657KB       1657KB
-[64007.172349] files_cache             1581KB       1581KB
-[64007.172351] signal_cache            2173KB       2173KB
-[64007.172352] sighand_cache           2877KB       2877KB
-[64007.172354] task_struct             6193KB       6193KB
-[64007.172355] cred_jar                 716KB        716KB
-[64007.172356] anon_vma_chain          2088KB       2088KB
-[64007.172357] anon_vma                1940KB       1940KB
-[64007.172359] pid                      308KB        308KB
-[64007.172360] irq_remap_cache          384KB        384KB
-[64007.172361] Acpi-Operand             811KB        811KB
-[64007.172363] Acpi-ParseExt             47KB         47KB
-[64007.172365] Acpi-State               191KB        191KB
-[64007.172366] numa_policy               15KB         15KB
-[64007.172367] perf_event              1508KB       1508KB
-[64007.172369] trace_event_file         316KB        316KB
-[64007.172370] ftrace_event_field        386KB        386KB
-[64007.172371] pool_workqueue           392KB        392KB
-[64007.172373] task_group               756KB        756KB
-[64007.172397] vmap_area              18955KB      19072KB
-[64007.172399] kmalloc-cg-8k            128KB        128KB
-[64007.172400] kmalloc-cg-4k           1536KB       1536KB
-[64007.172400] kmalloc-cg-2k           1344KB       1344KB
-[64007.172402] kmalloc-cg-1k           1600KB       1600KB
-[64007.172404] kmalloc-cg-512           832KB        832KB
-[64007.172404] kmalloc-cg-256           144KB        144KB
-[64007.172405] kmalloc-cg-192           378KB        378KB
-[64007.172407] kmalloc-cg-96            157KB        157KB
-[64007.172408] kmalloc-cg-64            192KB        192KB
-[64007.172409] kmalloc-cg-32            192KB        192KB
-[64007.172410] kmalloc-cg-16            192KB        192KB
-[64007.172411] kmalloc-cg-8             192KB        192KB
-[64007.172412] kmalloc-8k             65440KB      65440KB
-[64007.172415] kmalloc-4k              7236KB       7428KB
-[64007.172416] kmalloc-2k             87140KB      87160KB
-[64007.172417] kmalloc-1k              5888KB       5888KB
-[64007.172418] kmalloc-512            18096KB      18096KB
-[64007.172420] kmalloc-256             1280KB       1280KB
-[64007.172421] kmalloc-192              724KB        724KB
-[64007.172422] kmalloc-128              904KB        904KB
-[64007.172422] kmalloc-96             16407KB      16407KB
-[64007.172423] kmalloc-64              2452KB       2452KB
-[64007.172424] kmalloc-32              1488KB       1488KB
-[64007.172425] kmalloc-16               336KB        336KB
-[64007.172426] kmalloc-8                276KB        276KB
-[64007.172426] kmem_cache_node           24KB         24KB
-[64007.172427] kmem_cache                72KB         72KB
-[64007.172428] Tasks state (memory values in pages):
-[64007.172429] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-[64007.172437] [    744]     0   744    29652        8   249856      393             0 systemd-journal
-[64007.172440] [    750]     0   750    26479        0    98304       57             0 lvmetad
-[64007.172442] [    754]     0   754    10826        0   114688      449         -1000 systemd-udevd
-[64007.172445] [    996]     0   996    11903        1   131072      123             0 rpcbind
-[64007.172447] [    998]   101   998    17625        0   176128      152             0 systemd-resolve
-[64007.172449] [   1002]   103  1002    12517        1   147456      177          -900 dbus-daemon
-[64007.172452] [   1005]     0  1005    27759        0   122880      209             0 irqbalance
-[64007.172454] [   1006]     0  1006     7833        0   102400       91             0 cron
-[64007.172456] [   1010]     0  1010    17619        0   176128      187             0 systemd-logind
-[64007.172458] [   1012]     0  1012    71916        0   192512      261             0 accounts-daemon
-[64007.172459] [   1037]   102  1037    66819        4   167936      402             0 rsyslogd
-[64007.172462] [   1041]     0  1041    72223        0   208896      262             0 polkitd
-[64007.172465] [   1049]     0  1049     8709        1   106496     1775             0 ntpstart
-[64007.172467] [   1053]     0  1053    18078        0   184320      193         -1000 sshd
-[64007.172469] [   1107]   100  1107    20015        0   184320      195             0 systemd-network
-[64007.172473] [   1187]     0  1187     3992        0    81920       35             0 agetty
-[64007.172475] [   1212]     0  1212     2747        0    61440       65             0 slothd
-[64007.172479] [   1215]     0  1215     4048        0    77824       37             0 agetty
-[64007.172481] [   1237]     0  1237     5686        0    77824      113             0 pubsubd
-[64007.172483] [   1340]     0  1340     1136        0    53248       27             0 emulab-syncd
-[64007.172486] [   1347]  2002  1347     8882        1   114688      128             0 program-agent
-[64007.172488] [   1399]     0  1399     6200        0    86016      117             0 linktest
-[64007.172492] [   1414]   107  1414    26945        0   126976      165             0 ntpd
-[64007.172494] [   4689] 20002  4689    19131        0   192512      259             0 systemd
-[64007.172497] [   4690] 20002  4690    27870        0   245760      542             0 (sd-pam)
-[64007.172500] [   4742] 20002  4742    13273      104   143360      326             0 mosh-server
-[64007.172503] [   4743] 20002  4743     5334        1    90112      149             0 tcsh
-[64007.172506] [   4749] 20002  4749     5676        1    81920      427             0 bash
-[64007.172508] [   4791] 20002  4791     3257        6    69632       86             0 rocksdb-exp-tes
-[64007.172512] [   7490] 20002  7490    21487       29   114688       57             0 time
-[64007.172514] [   7499] 20002  7499   463117    18732   757760    22368             0 db_bench
-[64007.172516] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=db_bench,pid=7499,uid=20002
-[64007.172567] Out of memory: Killed process 7499 (db_bench) total-vm:1852468kB, anon-rss:74664kB, file-rss:216kB, shmem-rss:0kB, UID:20002 pgtables:740kB oom_score_adj:0
-[64007.203112] FinalTaskReport: db_bench:7499 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:1091, final_async_pages:1345
+[ 2006.426076] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.439874] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.452238] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.465097] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.477290] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.489548] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.501872] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.514712] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.527696] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.538217] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.550827] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.562542] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.575110] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.587464] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.599832] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.612651] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.625093] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.638339] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.651103] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.663948] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.676454] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.689020] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.701301] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.713683] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.726006] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.738338] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.751362] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.765061] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.774810] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.815502] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.853468] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.877924] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2006.893574] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.052461] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.059426] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.086205] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.104452] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.131345] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.152950] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.178199] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.196954] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.360348] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.384158] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.419999] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.447436] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.464071] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.612618] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.628559] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.654903] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.678303] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2007.901305] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.118550] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.142771] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.166961] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.360491] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.379621] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.406689] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.431974] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.468280] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2008.635218] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2009.268072] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2009.347316] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 2009.439089] sh (16604): drop_caches: 3
+[ 2009.534685] sh (16671): drop_caches: 3
+[ 2014.560571] Enabled file stats for time:16678
+[ 2014.560757] write_proc: Value of write = 1
+[ 2014.565712] Enabled file stats for db_bench:16687
+[ 2014.565926] write_proc: Value of write = 1
+[ 2014.612630] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.613064] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.613085] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.613207] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.614112] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.614133] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.614863] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.615082] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 2014.617902] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 2014.619957] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 2014.619994] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 2014.620779] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 2014.620826] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 2014.625089] Enabled file stats for sh:16713
+[ 2014.625286] write_proc: Value of write = 1
+[ 2014.628007] Enabled file stats for addr2line:16722
+[ 2014.628186] write_proc: Value of write = 1
+[ 2014.631766] write_proc: Value of write = 0
+[ 2014.631773] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.631774] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:555247, nr_pages_miss:47360431
+[ 2014.631809] FinalTaskReport: addr2line:16722 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:781, final_async_pages:421
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:64
-                                        nr_pages_read:144, nr_pages_hit:108, nr_do_read_fault:163
-[64007.209584] oom_reaper: reaped process 7499 (db_bench), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-[64010.235748] write_proc: Value of write = 0
-[64010.237452] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[64010.237453] Final GlobalReport: nr_pages_read:1347475993, nr_pages_hit:1333696823, nr_do_read_fault:800579, nr_pages_miss:5770431
-[64010.250303] FinalTaskReport: time:7490 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:384, final_async_pages:2167
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:16
+                                        nr_pages_read:242, nr_pages_hit:100, nr_do_read_fault:39
+[ 2014.632143] FinalTaskReport: sh:16713 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:92
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:227
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2014.650636] Enabled file stats for sh:16731
+[ 2014.650823] write_proc: Value of write = 1
+[ 2014.652122] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.652587] Enabled file stats for addr2line:16740
+[ 2014.652774] write_proc: Value of write = 1
+[ 2014.653604] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.655519] write_proc: Value of write = 0
+[ 2014.655535] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.655536] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:555485, nr_pages_miss:47360431
+[ 2014.655614] FinalTaskReport: addr2line:16740 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:35
+[ 2014.656203] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.656379] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.656462] FinalTaskReport: sh:16731 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
+[ 2014.656745] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.656775] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.657075] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.658711] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.659208] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.659619] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.662529] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.662691] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.663152] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.663205] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.677358] Enabled file stats for sh:16749
+[ 2014.677541] write_proc: Value of write = 1
+[ 2014.679278] Enabled file stats for addr2line:16758
+[ 2014.679494] write_proc: Value of write = 1
+[ 2014.681531] write_proc: Value of write = 0
+[ 2014.681537] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.681538] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:555715, nr_pages_miss:47360431
+[ 2014.681564] FinalTaskReport: addr2line:16758 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2014.682045] FinalTaskReport: sh:16749 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
+[ 2014.696885] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.698151] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.703953] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.705744] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.705896] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.705961] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.707676] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.707816] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.707849] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.708108] Enabled file stats for sh:16767
+[ 2014.708291] write_proc: Value of write = 1
+[ 2014.709979] Enabled file stats for addr2line:16776
+[ 2014.710157] write_proc: Value of write = 1
+[ 2014.712192] write_proc: Value of write = 0
+[ 2014.712200] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.712200] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:555952, nr_pages_miss:47360431
+[ 2014.712231] FinalTaskReport: addr2line:16776 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:38
+[ 2014.712505] FinalTaskReport: sh:16767 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
+[ 2014.713212] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.714818] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.714824] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.715430] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.715436] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.726897] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.728672] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.734514] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.735201] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 2014.735673] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.736519] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.736620] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 2014.742213] Enabled file stats for sh:16785
+[ 2014.742388] write_proc: Value of write = 1
+[ 2014.743961] Enabled file stats for addr2line:16794
+[ 2014.744166] write_proc: Value of write = 1
+[ 2014.746045] write_proc: Value of write = 0
+[ 2014.746051] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.746052] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:556179, nr_pages_miss:47360431
+[ 2014.746077] FinalTaskReport: addr2line:16794 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2014.746343] FinalTaskReport: sh:16785 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2014.792992] Enabled file stats for sh:16803
+[ 2014.793169] write_proc: Value of write = 1
+[ 2014.794687] Enabled file stats for addr2line:16812
+[ 2014.794853] write_proc: Value of write = 1
+[ 2014.796785] write_proc: Value of write = 0
+[ 2014.796792] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.796793] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:556410, nr_pages_miss:47360431
+[ 2014.796822] FinalTaskReport: addr2line:16812 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:35
+[ 2014.797216] FinalTaskReport: sh:16803 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2014.804603] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.804644] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.805025] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806310] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806386] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806745] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806752] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806758] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806783] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.806885] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.820192] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.820227] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 2014.827507] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 2014.836963] Enabled file stats for sh:16821
+[ 2014.837136] write_proc: Value of write = 1
+[ 2014.838702] Enabled file stats for addr2line:16830
+[ 2014.838874] write_proc: Value of write = 1
+[ 2014.840755] write_proc: Value of write = 0
+[ 2014.840761] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.840762] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:556646, nr_pages_miss:47360431
+[ 2014.840788] FinalTaskReport: addr2line:16830 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2014.841226] FinalTaskReport: sh:16821 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2014.879282] Enabled file stats for sh:16839
+[ 2014.879461] write_proc: Value of write = 1
+[ 2014.881017] Enabled file stats for addr2line:16848
+[ 2014.881181] write_proc: Value of write = 1
+[ 2014.883024] write_proc: Value of write = 0
+[ 2014.883030] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.883031] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:556881, nr_pages_miss:47360431
+[ 2014.883059] FinalTaskReport: addr2line:16848 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2014.883307] FinalTaskReport: sh:16839 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
+[ 2014.924282] Enabled file stats for sh:16857
+[ 2014.924481] write_proc: Value of write = 1
+[ 2014.926054] Enabled file stats for addr2line:16866
+[ 2014.926228] write_proc: Value of write = 1
+[ 2014.928089] write_proc: Value of write = 0
+[ 2014.928096] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.928097] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:557110, nr_pages_miss:47360431
+[ 2014.928123] FinalTaskReport: addr2line:16866 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2014.928379] FinalTaskReport: sh:16857 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
+[ 2014.968654] Enabled file stats for sh:16875
+[ 2014.968851] write_proc: Value of write = 1
+[ 2014.970133] Enabled file stats for addr2line:16884
+[ 2014.970290] write_proc: Value of write = 1
+[ 2014.972086] write_proc: Value of write = 0
+[ 2014.972092] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2014.972094] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:557333, nr_pages_miss:47360431
+[ 2014.972122] FinalTaskReport: addr2line:16884 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2014.972585] FinalTaskReport: sh:16875 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
+[ 2015.014121] Enabled file stats for sh:16893
+[ 2015.014372] write_proc: Value of write = 1
+[ 2015.015743] Enabled file stats for addr2line:16902
+[ 2015.015906] write_proc: Value of write = 1
+[ 2015.017849] write_proc: Value of write = 0
+[ 2015.017856] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.017857] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:557565, nr_pages_miss:47360431
+[ 2015.017885] FinalTaskReport: addr2line:16902 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2015.018409] FinalTaskReport: sh:16893 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2015.060586] Enabled file stats for sh:16911
+[ 2015.060799] write_proc: Value of write = 1
+[ 2015.062486] Enabled file stats for addr2line:16920
+[ 2015.062806] write_proc: Value of write = 1
+[ 2015.064635] write_proc: Value of write = 0
+[ 2015.064642] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.064643] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:557799, nr_pages_miss:47360431
+[ 2015.064669] FinalTaskReport: addr2line:16920 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2015.064927] FinalTaskReport: sh:16911 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
+[ 2015.106263] Enabled file stats for sh:16929
+[ 2015.106498] write_proc: Value of write = 1
+[ 2015.108096] Enabled file stats for addr2line:16938
+[ 2015.108265] write_proc: Value of write = 1
+[ 2015.110464] write_proc: Value of write = 0
+[ 2015.110470] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.110471] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:558031, nr_pages_miss:47360431
+[ 2015.110494] FinalTaskReport: addr2line:16938 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
+[ 2015.110910] FinalTaskReport: sh:16929 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[ 2015.152775] Enabled file stats for sh:16947
+[ 2015.152975] write_proc: Value of write = 1
+[ 2015.154563] Enabled file stats for addr2line:16956
+[ 2015.154896] write_proc: Value of write = 1
+[ 2015.156752] write_proc: Value of write = 0
+[ 2015.156759] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.156760] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:558262, nr_pages_miss:47360431
+[ 2015.156786] FinalTaskReport: addr2line:16956 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2015.157063] FinalTaskReport: sh:16947 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
+[ 2015.197568] Enabled file stats for sh:16965
+[ 2015.197822] write_proc: Value of write = 1
+[ 2015.199347] Enabled file stats for addr2line:16974
+[ 2015.199503] write_proc: Value of write = 1
+[ 2015.201371] write_proc: Value of write = 0
+[ 2015.201377] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.201378] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:558498, nr_pages_miss:47360431
+[ 2015.201405] FinalTaskReport: addr2line:16974 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2015.201969] FinalTaskReport: sh:16965 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:19
+[ 2015.243713] Enabled file stats for sh:16983
+[ 2015.244025] write_proc: Value of write = 1
+[ 2015.245850] Enabled file stats for addr2line:16992
+[ 2015.246055] write_proc: Value of write = 1
+[ 2015.248223] write_proc: Value of write = 0
+[ 2015.248232] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.248233] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:558739, nr_pages_miss:47360431
+[ 2015.248261] FinalTaskReport: addr2line:16992 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
+[ 2015.248519] FinalTaskReport: sh:16983 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:19
+[ 2015.289977] Enabled file stats for sh:17001
+[ 2015.290191] write_proc: Value of write = 1
+[ 2015.291619] Enabled file stats for addr2line:17010
+[ 2015.291805] write_proc: Value of write = 1
+[ 2015.293607] write_proc: Value of write = 0
+[ 2015.293613] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.293614] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:558981, nr_pages_miss:47360431
+[ 2015.293638] FinalTaskReport: addr2line:17010 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
+[ 2015.294120] FinalTaskReport: sh:17001 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
+[ 2015.334794] Enabled file stats for sh:17019
+[ 2015.334998] write_proc: Value of write = 1
+[ 2015.336371] Enabled file stats for addr2line:17028
+[ 2015.336540] write_proc: Value of write = 1
+[ 2015.338393] write_proc: Value of write = 0
+[ 2015.338399] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.338400] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:559208, nr_pages_miss:47360431
+[ 2015.338429] FinalTaskReport: addr2line:17028 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
+[ 2015.339020] FinalTaskReport: sh:17019 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
+[ 2015.339374] FinalTaskReport: db_bench:16687 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1214, final_async_pages:1752
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:77
+                                        nr_pages_read:846, nr_pages_hit:601, nr_do_read_fault:159
+[ 2015.416559] write_proc: Value of write = 0
+[ 2015.416573] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 2015.416574] Final GlobalReport: nr_pages_read:4315066027, nr_pages_hit:4202770085, nr_do_read_fault:559214, nr_pages_miss:47360431
+[ 2015.416617] FinalTaskReport: time:16678 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18

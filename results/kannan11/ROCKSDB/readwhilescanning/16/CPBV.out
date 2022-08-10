@@ -1,67 +1,49 @@
 ENABLE_FILE_STATS in con
 ENABLE_FILE_STATS in con
-Received signal 11 (Segmentation fault)
-#0   /usr/lib/lib_CPBV.so(_ZNKSt8equal_toIiEclERKiS2_+0x1a) [0x7f33cbda8ba0] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#1   /usr/lib/lib_CPBV.so(_ZNSt8__detail13_Equal_helperIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiEmLb0EE9_S_equalsERKS8_RKS6_RS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x50) [0x7f33cbda8a3b] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#2   /usr/lib/lib_CPBV.so(_ZNKSt8__detail15_Hashtable_baseIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiESt4hashIiENS_18_Mod_range_hashingENS_20_Default_ranged_hashENS_17_Hashtable_traitsILb0ELb0ELb1EEEE9_M_equalsERS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x54) [0x7f33cbda85fe] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#3   /usr/lib/lib_CPBV.so(_ZNKSt10_HashtableIiSt4pairIKiP14file_predictorESaIS4_ENSt8__detail10_Select1stESt8equal_toIiESt4hashIiENS6_18_Mod_range_hashingENS6_20_Default_ranged_hashENS6_20_Prime_rehash_policyENS6_17_Hashtable_traitsILb0ELb0ELb1EEEE19_M_find_before_nodeEmRS1_m+0x65) [0x7f33cbda7fc1] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#4   /usr/lib/lib_CPBV.so(_ZNKSt10_HashtableIiSt4pairIKiP14file_predictorESaIS4_ENSt8__detail10_Select1stESt8equal_toIiESt4hashIiENS6_18_Mod_range_hashingENS6_20_Default_ranged_hashENS6_20_Prime_rehash_policyENS6_17_Hashtable_traitsILb0ELb0ELb1EEEE12_M_find_nodeEmRS1_m+0x30) [0x7f33cbda78a2] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#5   /usr/lib/lib_CPBV.so(_ZNSt8__detail9_Map_baseIiSt4pairIKiP14file_predictorESaIS5_ENS_10_Select1stESt8equal_toIiESt4hashIiENS_18_Mod_range_hashingENS_20_Default_ranged_hashENS_20_Prime_rehash_policyENS_17_Hashtable_traitsILb0ELb0ELb1EEELb1EE2atERS2_+0x62) [0x7f33cbda7598] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#6   /usr/lib/lib_CPBV.so(_ZNSt13unordered_mapIiP14file_predictorSt4hashIiESt8equal_toIiESaISt4pairIKiS1_EEE2atERS7_+0x23) [0x7f33cbda7453] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#7   /usr/lib/lib_CPBV.so(pread+0x84) [0x7f33cbda66db] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#8   ./db_bench(+0x22c202) [0x55cff202c202] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#9   ./db_bench(+0x40d4c5) [0x55cff220d4c5] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#10  ./db_bench(+0x2de3ff) [0x55cff20de3ff] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#11  ./db_bench(+0x2ab8f2) [0x55cff20ab8f2] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#12  ./db_bench(+0x2abae0) [0x55cff20abae0] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#13  ./db_bench(+0x2b2e43) [0x55cff20b2e43] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#14  ./db_bench(+0x2a2fae) [0x55cff20a2fae] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#15  ./db_bench(+0x19e461) [0x55cff1f9e461] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#16  ./db_bench(+0x19f328) [0x55cff1f9f328] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#17  ./db_bench(+0x3f19c8) [0x55cff21f19c8] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#18  /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0xbd6df) [0x7f33ca7b36df] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#19  /lib/x86_64-linux-gnu/libpthread.so.0(+0x76db) [0x7f33cb97f6db] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#20  /lib/x86_64-linux-gnu/libc.so.6(clone+0x3f) [0x7f33c9e7061f] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-Command terminated by signal 11
+RocksDB:    version 6.20
+Date:       Wed Aug 10 16:15:53 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+num reads to do 1000000
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 7000 ops                              ... finished 100 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 15000 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 20000 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 25000 ops                              ... finished 1000 ops                              ... finished 30000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 35000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 40000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 45000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 50000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 60000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 70000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 80000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 90000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 100000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 150000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 200000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 250000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 300000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 350000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 400000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 450000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 500000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 600000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 700000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 800000 ops                              ... finished 900000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 1000000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    1000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    4859.9 MB (estimated)
+FileSize:   2906.8 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA]
+readwhilescanning :      33.059 micros/op 493284 ops/sec; 2256.3 MB/s (1000000 of 1000000 found)
+
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
 	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=16"
-	User time (seconds): 0.17
-	System time (seconds): 4.01
-	Percent of CPU this job got: 186%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.24
+	User time (seconds): 318.72
+	System time (seconds): 231.68
+	Percent of CPU this job got: 1575%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:34.93
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 2542800
+	Maximum resident set size (kbytes): 2810404
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 93
-	Minor (reclaiming a frame) page faults: 664243
-	Voluntary context switches: 3268
-	Involuntary context switches: 35
+	Major (requiring I/O) page faults: 81
+	Minor (reclaiming a frame) page faults: 1036601
+	Voluntary context switches: 10183315
+	Involuntary context switches: 342
 	Swaps: 0
-	File system inputs: 67808
-	File system outputs: 48
+	File system inputs: 8057936
+	File system outputs: 7461888
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -69,379 +51,289 @@ Command terminated by signal 11
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
 PRINT_GLOBAL_STATS in dest
-[ 1473.177270] sh (2804): drop_caches: 3
-[ 1473.217231] sh (2809): drop_caches: 3
-[ 1478.243273] Enabled file stats for time:2816
-[ 1478.243468] write_proc: Value of write = 0
-[ 1478.248811] Enabled file stats for db_bench:2825
-[ 1478.249007] write_proc: Value of write = 0
-[ 1478.312166] Enabled file stats for sh:2851
-[ 1478.312365] write_proc: Value of write = 0
-[ 1478.315022] Enabled file stats for addr2line:2860
-[ 1478.315203] write_proc: Value of write = 0
-[ 1478.319050] write_proc: Value of write = 0
-[ 1478.319059] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.319060] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:133789, nr_pages_miss:10981781
-[ 1478.319328] FinalTaskReport: addr2line:2860 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:845, final_async_pages:480
+[ 1034.348380] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.359032] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.369928] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.401023] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.414327] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.427048] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.439525] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.452360] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.464550] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.474372] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.487476] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.499858] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.512104] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.524430] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.536900] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.549454] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.562091] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.574314] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.586666] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.598900] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.611083] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.623781] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.636484] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.648757] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.661212] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.673532] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.686385] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.699685] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.709889] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.746874] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.771272] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.793251] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.817508] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.836159] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1034.996381] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.017578] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.041414] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.084616] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.241601] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.254418] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.280442] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.298827] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.326258] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.348605] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.372998] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.392280] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.579846] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.601332] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1035.837517] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.032783] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.220491] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.241895] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.266210] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.290787] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.508336] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.532758] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1036.551352] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.142401] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.175996] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.188236] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.210490] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.222647] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1037.387443] sh (6252): drop_caches: 3
+[ 1037.454870] sh (6319): drop_caches: 3
+[ 1042.479367] Enabled file stats for time:6326
+[ 1042.479550] write_proc: Value of write = 0
+[ 1042.484751] Enabled file stats for db_bench:6335
+[ 1042.484959] write_proc: Value of write = 0
+[ 1042.535137] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.536979] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.538501] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.539366] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.539414] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.539588] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.539985] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.540804] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.540830] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541039] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541098] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541188] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541237] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541262] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.541360] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.561550] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.568309] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.572258] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.572329] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.574903] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.576045] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.576741] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.578304] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.579248] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.579341] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.579354] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.579579] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.580045] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.580084] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.580146] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.580158] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.583370] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1042.591324] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1042.597845] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.598622] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.602941] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.606677] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.606783] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.610936] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.611238] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.612000] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.612234] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.612876] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.615043] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.615077] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.615115] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.615137] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.615914] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.665329] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.666567] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.666635] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.666662] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.667124] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.667470] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.667508] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 1042.667547] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.667593] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.667605] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 1042.668447] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.668549] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.668547] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.668569] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 1042.681571] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.852220] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1042.879747] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1043.997092] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1044.008601] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1045.097209] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1045.108393] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1046.128151] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1046.139419] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1047.140707] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1047.151931] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1048.143306] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1048.154662] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1049.168506] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1049.179786] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1050.158093] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1050.169274] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1051.106662] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1051.117870] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1051.120290] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1052.040292] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1052.051366] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1052.053933] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1053.005510] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1053.016462] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1053.018854] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1053.942768] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1053.953966] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1053.956376] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1054.881059] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1054.892129] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1054.894705] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.015302] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.023512] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.031967] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.040191] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.048599] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.056798] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.064872] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.072932] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.081028] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.089061] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.097139] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.105193] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.113255] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.121284] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.129408] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.137407] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.145413] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.153414] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.161444] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.169470] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.177567] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.185587] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.193794] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.201795] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.210100] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.218128] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.226242] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.234233] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.242241] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.250260] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.258268] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1055.831582] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1055.843201] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1056.778587] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1056.789869] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1056.792315] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1056.800595] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1056.809175] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1057.732023] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1057.743292] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1057.746083] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1057.754728] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1057.762978] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1059.446940] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1059.458181] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1059.460892] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1059.469461] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1059.477925] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1060.769351] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1060.780535] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1060.791592] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1060.793479] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1060.801994] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1060.810486] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1062.106766] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1062.117987] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1062.128897] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1062.131094] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1062.139370] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1062.147957] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1062.155966] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1065.006329] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.017499] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.028336] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.039278] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1065.050175] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.061181] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.071976] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1065.083010] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1065.084983] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1065.093153] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1065.101519] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1065.110130] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.512995] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1066.523584] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 1066.534073] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1066.535995] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.543990] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.551840] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.560251] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.568472] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.576904] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.585251] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.593743] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.602056] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.610377] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.618595] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.626754] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.634834] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1066.642902] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1068.457581] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1068.468233] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1068.478937] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1068.489544] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1068.491481] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1068.499603] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1068.507608] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1068.515705] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1068.523712] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1070.329598] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1070.340036] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1070.350487] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1070.361004] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 1070.363026] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1070.371320] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1070.379186] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1070.387185] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1070.395274] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 1077.413151] write_proc: Value of write = 0
+[ 1077.413169] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 1077.413170] Final GlobalReport: nr_pages_read:1254121213, nr_pages_hit:1209284803, nr_do_read_fault:193587, nr_pages_miss:19339083
+[ 1077.413218] FinalTaskReport: db_bench:6335 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:19480, final_async_pages:19839
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:20
-                                        nr_pages_read:242, nr_pages_hit:100, nr_do_read_fault:46
-[ 1478.319633] FinalTaskReport: sh:2851 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:648
+                                        nr_pages_read:21520, nr_pages_hit:21031, nr_do_read_fault:175
+[ 1077.418038] write_proc: Value of write = 0
+[ 1077.418055] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 1077.418056] Final GlobalReport: nr_pages_read:1254121213, nr_pages_hit:1209284803, nr_do_read_fault:193592, nr_pages_miss:19339083
+[ 1077.418094] FinalTaskReport: time:6326 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1478.354717] Enabled file stats for sh:2869
-[ 1478.354910] write_proc: Value of write = 0
-[ 1478.356744] Enabled file stats for addr2line:2878
-[ 1478.356944] write_proc: Value of write = 0
-[ 1478.359103] write_proc: Value of write = 0
-[ 1478.359110] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.359111] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:134045, nr_pages_miss:10981781
-[ 1478.359147] FinalTaskReport: addr2line:2878 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:35
-[ 1478.359507] FinalTaskReport: sh:2869 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
-[ 1478.416662] Enabled file stats for sh:2887
-[ 1478.416863] write_proc: Value of write = 0
-[ 1478.418707] Enabled file stats for addr2line:2896
-[ 1478.418910] write_proc: Value of write = 0
-[ 1478.421017] write_proc: Value of write = 0
-[ 1478.421024] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.421025] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:134279, nr_pages_miss:10981781
-[ 1478.421062] FinalTaskReport: addr2line:2896 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1478.421407] FinalTaskReport: sh:2887 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1478.523985] Enabled file stats for sh:2905
-[ 1478.524177] write_proc: Value of write = 0
-[ 1478.525952] Enabled file stats for addr2line:2914
-[ 1478.526124] write_proc: Value of write = 0
-[ 1478.528203] write_proc: Value of write = 0
-[ 1478.528209] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.528210] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:134517, nr_pages_miss:10981781
-[ 1478.528241] FinalTaskReport: addr2line:2914 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
-[ 1478.528555] FinalTaskReport: sh:2905 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
-[ 1478.631754] Enabled file stats for sh:2923
-[ 1478.631969] write_proc: Value of write = 0
-[ 1478.633649] Enabled file stats for addr2line:2932
-[ 1478.633841] write_proc: Value of write = 0
-[ 1478.635796] write_proc: Value of write = 0
-[ 1478.635802] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.635803] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:134760, nr_pages_miss:10981781
-[ 1478.635829] FinalTaskReport: addr2line:2932 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
-[ 1478.636082] FinalTaskReport: sh:2923 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
                                         nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
-[ 1478.736883] Enabled file stats for sh:2941
-[ 1478.737098] write_proc: Value of write = 0
-[ 1478.739100] Enabled file stats for addr2line:2950
-[ 1478.739671] write_proc: Value of write = 0
-[ 1478.741683] write_proc: Value of write = 0
-[ 1478.741689] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.741690] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:134987, nr_pages_miss:10981781
-[ 1478.741719] FinalTaskReport: addr2line:2950 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1478.742249] FinalTaskReport: sh:2941 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1478.845771] Enabled file stats for sh:2959
-[ 1478.846009] write_proc: Value of write = 0
-[ 1478.847808] Enabled file stats for addr2line:2968
-[ 1478.847995] write_proc: Value of write = 0
-[ 1478.850162] write_proc: Value of write = 0
-[ 1478.850168] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.850169] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:135227, nr_pages_miss:10981781
-[ 1478.850195] FinalTaskReport: addr2line:2968 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:35
-[ 1478.850698] FinalTaskReport: sh:2959 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
-[ 1478.953246] Enabled file stats for sh:2977
-[ 1478.953488] write_proc: Value of write = 0
-[ 1478.955443] Enabled file stats for addr2line:2986
-[ 1478.955640] write_proc: Value of write = 0
-[ 1478.957613] write_proc: Value of write = 0
-[ 1478.957620] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1478.957621] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:135465, nr_pages_miss:10981781
-[ 1478.957655] FinalTaskReport: addr2line:2986 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1478.958358] FinalTaskReport: sh:2977 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1479.061760] Enabled file stats for sh:2995
-[ 1479.062005] write_proc: Value of write = 0
-[ 1479.063905] Enabled file stats for addr2line:3004
-[ 1479.064104] write_proc: Value of write = 0
-[ 1479.066147] write_proc: Value of write = 0
-[ 1479.066153] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.066154] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:135706, nr_pages_miss:10981781
-[ 1479.066180] FinalTaskReport: addr2line:3004 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
-[ 1479.066852] FinalTaskReport: sh:2995 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
-[ 1479.168344] Enabled file stats for sh:3013
-[ 1479.168580] write_proc: Value of write = 0
-[ 1479.170064] Enabled file stats for addr2line:3022
-[ 1479.170240] write_proc: Value of write = 0
-[ 1479.172168] write_proc: Value of write = 0
-[ 1479.172175] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.172176] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:135952, nr_pages_miss:10981781
-[ 1479.172207] FinalTaskReport: addr2line:3022 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1479.172708] FinalTaskReport: sh:3013 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
-[ 1479.274140] Enabled file stats for sh:3031
-[ 1479.274348] write_proc: Value of write = 0
-[ 1479.276228] Enabled file stats for addr2line:3040
-[ 1479.276408] write_proc: Value of write = 0
-[ 1479.278429] write_proc: Value of write = 0
-[ 1479.278434] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.278436] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:136190, nr_pages_miss:10981781
-[ 1479.278461] FinalTaskReport: addr2line:3040 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1479.279114] FinalTaskReport: sh:3031 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1479.379243] Enabled file stats for sh:3049
-[ 1479.379476] write_proc: Value of write = 0
-[ 1479.380826] Enabled file stats for addr2line:3058
-[ 1479.380998] write_proc: Value of write = 0
-[ 1479.382915] write_proc: Value of write = 0
-[ 1479.382920] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.382921] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:136429, nr_pages_miss:10981781
-[ 1479.382949] FinalTaskReport: addr2line:3058 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1479.383715] FinalTaskReport: sh:3049 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
-[ 1479.485143] Enabled file stats for sh:3067
-[ 1479.485377] write_proc: Value of write = 0
-[ 1479.486739] Enabled file stats for addr2line:3076
-[ 1479.486893] write_proc: Value of write = 0
-[ 1479.488895] write_proc: Value of write = 0
-[ 1479.488901] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.488902] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:136673, nr_pages_miss:10981781
-[ 1479.488932] FinalTaskReport: addr2line:3076 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
-[ 1479.489646] FinalTaskReport: sh:3067 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1479.592994] Enabled file stats for sh:3085
-[ 1479.593203] write_proc: Value of write = 0
-[ 1479.594963] Enabled file stats for addr2line:3094
-[ 1479.595236] write_proc: Value of write = 0
-[ 1479.597219] write_proc: Value of write = 0
-[ 1479.597225] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.597226] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:136909, nr_pages_miss:10981781
-[ 1479.597255] FinalTaskReport: addr2line:3094 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1479.597899] FinalTaskReport: sh:3085 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
-[ 1479.697965] Enabled file stats for sh:3103
-[ 1479.698183] write_proc: Value of write = 0
-[ 1479.699543] Enabled file stats for addr2line:3112
-[ 1479.699697] write_proc: Value of write = 0
-[ 1479.701620] write_proc: Value of write = 0
-[ 1479.701626] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.701627] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:137140, nr_pages_miss:10981781
-[ 1479.701656] FinalTaskReport: addr2line:3112 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1479.702279] FinalTaskReport: sh:3103 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1479.803455] Enabled file stats for sh:3121
-[ 1479.803687] write_proc: Value of write = 0
-[ 1479.805102] Enabled file stats for addr2line:3130
-[ 1479.805296] write_proc: Value of write = 0
-[ 1479.807233] write_proc: Value of write = 0
-[ 1479.807240] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.807241] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:137379, nr_pages_miss:10981781
-[ 1479.807273] FinalTaskReport: addr2line:3130 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:38
-[ 1479.807985] FinalTaskReport: sh:3121 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
-[ 1479.912318] Enabled file stats for sh:3139
-[ 1479.912554] write_proc: Value of write = 0
-[ 1479.914295] Enabled file stats for addr2line:3148
-[ 1479.914522] write_proc: Value of write = 0
-[ 1479.916539] write_proc: Value of write = 0
-[ 1479.916546] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1479.916547] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:137618, nr_pages_miss:10981781
-[ 1479.916578] FinalTaskReport: addr2line:3148 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1479.917223] FinalTaskReport: sh:3139 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:16
-[ 1480.018379] Enabled file stats for sh:3157
-[ 1480.018600] write_proc: Value of write = 0
-[ 1480.020490] Enabled file stats for addr2line:3166
-[ 1480.020696] write_proc: Value of write = 0
-[ 1480.022616] write_proc: Value of write = 0
-[ 1480.022623] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1480.022624] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:137858, nr_pages_miss:10981781
-[ 1480.022657] FinalTaskReport: addr2line:3166 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:36
-[ 1480.023568] FinalTaskReport: sh:3157 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
-[ 1480.123664] Enabled file stats for sh:3175
-[ 1480.123886] write_proc: Value of write = 0
-[ 1480.125269] Enabled file stats for addr2line:3184
-[ 1480.125455] write_proc: Value of write = 0
-[ 1480.127345] write_proc: Value of write = 0
-[ 1480.127354] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1480.127355] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:138101, nr_pages_miss:10981781
-[ 1480.127388] FinalTaskReport: addr2line:3184 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:37
-[ 1480.127949] FinalTaskReport: sh:3175 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:19
-[ 1480.231064] Enabled file stats for sh:3193
-[ 1480.231277] write_proc: Value of write = 0
-[ 1480.233110] Enabled file stats for addr2line:3202
-[ 1480.233333] write_proc: Value of write = 0
-[ 1480.235518] write_proc: Value of write = 0
-[ 1480.235524] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1480.235525] Final GlobalReport: nr_pages_read:1177155963, nr_pages_hit:1151388590, nr_do_read_fault:138348, nr_pages_miss:10981781
-[ 1480.235555] FinalTaskReport: addr2line:3202 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1480.235833] FinalTaskReport: sh:3193 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
-[ 1480.337374] Enabled file stats for sh:3211
-[ 1480.337591] write_proc: Value of write = 0
-[ 1480.339333] Enabled file stats for addr2line:3220
-[ 1480.339504] write_proc: Value of write = 0
-[ 1480.341538] write_proc: Value of write = 0
-[ 1480.341543] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1480.341544] Final GlobalReport: nr_pages_read:1177175620, nr_pages_hit:1151402871, nr_do_read_fault:138571, nr_pages_miss:10981811
-[ 1480.341573] FinalTaskReport: addr2line:3220 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:370, nr_pages_hit:358, nr_do_read_fault:34
-[ 1480.342243] FinalTaskReport: sh:3211 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:0
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
-[ 1480.342630] FinalTaskReport: db_bench:2825 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:1108, final_async_pages:1908
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:84
-                                        nr_pages_read:1213, nr_pages_hit:805, nr_do_read_fault:160
-[ 1480.492452] write_proc: Value of write = 0
-[ 1480.492463] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 1480.492464] Final GlobalReport: nr_pages_read:1177175620, nr_pages_hit:1151402871, nr_do_read_fault:138576, nr_pages_miss:10981811
-[ 1480.492504] FinalTaskReport: time:2816 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:0, final_async_pages:89
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:4
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:22
