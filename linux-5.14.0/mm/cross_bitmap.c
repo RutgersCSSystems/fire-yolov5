@@ -123,10 +123,16 @@ EXPORT_SYMBOL(alloc_cross_bitmap);
  * TODO: Check if this works, and place it in relevant functions
  * something like destroy inode
  */
-void free_cross_bitmap(unsigned long **bitmap){
+void free_cross_bitmap(struct inode *inode){
 
-        vfree(*bitmap);
+	if(inode->bitmap) {
 
+		printk(KERN_ALERT "%s: releasing mem for inode with i_count "
+				"%d\n", __func__, atomic_read(&inode->i_count));
+
+        	vfree(inode->bitmap);
+		inode->bitmap = NULL;
+	}
         return;
 }
 EXPORT_SYMBOL(free_cross_bitmap);

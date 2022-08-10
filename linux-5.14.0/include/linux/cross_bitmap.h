@@ -5,7 +5,7 @@
 
 void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages);
 
-void free_cross_bitmap(unsigned long **bitmap);
+void free_cross_bitmap(struct inode *inode);
 
 void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index);
 
