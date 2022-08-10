@@ -1,0 +1,230 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+Command terminated by signal 9
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=16"
+	User time (seconds): 0.01
+	System time (seconds): 1.56
+	Percent of CPU this job got: 81%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 80876
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1973
+	Minor (reclaiming a frame) page faults: 127853
+	Voluntary context switches: 4964
+	Involuntary context switches: 3324
+	Swaps: 0
+	File system inputs: 175296
+	File system outputs: 40
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[63883.385562] sh (6417): drop_caches: 3
+[63883.414834] sh (6422): drop_caches: 3
+[63888.450416] Enabled file stats for time:6429
+[63888.450635] write_proc: Value of write = 1
+[63888.456504] Enabled file stats for db_bench:6438
+[63888.456711] write_proc: Value of write = 1
+[63890.370109] thread-pool-0 invoked oom-killer: gfp_mask=0x1100dca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
+[63890.370120] CPU: 18 PID: 6439 Comm: thread-pool-0 Not tainted 5.14.0 #30
+[63890.370123] Hardware name: Dell Inc. PowerEdge C6525/04DK47, BIOS 2.0.3 01/15/2021
+[63890.370124] Call Trace:
+[63890.370128]  dump_stack_lvl+0x4a/0x5f
+[63890.370133]  dump_stack+0x10/0x12
+[63890.370135]  dump_header+0x4f/0x210
+[63890.370138]  oom_kill_process+0xec/0x140
+[63890.370140]  out_of_memory+0x117/0x590
+[63890.370142]  __alloc_pages_slowpath.constprop.122+0xa55/0xd70
+[63890.370146]  __alloc_pages+0x2db/0x320
+[63890.370148]  alloc_pages_vma+0x88/0x220
+[63890.370150]  __handle_mm_fault+0xa3f/0x1270
+[63890.370152]  ? asm_sysvec_call_function+0x12/0x20
+[63890.370156]  handle_mm_fault+0xd9/0x2b0
+[63890.370158]  do_user_addr_fault+0x1e0/0x6e0
+[63890.370161]  exc_page_fault+0x76/0x150
+[63890.370164]  ? asm_exc_page_fault+0x8/0x30
+[63890.370165]  asm_exc_page_fault+0x1e/0x30
+[63890.370167] RIP: 0033:0x7f2222c35ea7
+[63890.370170] Code: 47 20 c5 fe 7f 44 17 c0 c5 fe 7f 47 40 c5 fe 7f 44 17 a0 c5 fe 7f 47 60 c5 fe 7f 44 17 80 48 01 fa 48 83 e2 80 48 39 d1 74 ba <c5> fd 7f 01 c5 fd 7f 41 20 c5 fd 7f 41 40 c5 fd 7f 41 60 48 81 c1
+[63890.370172] RSP: 002b:00007f2222aa5988 EFLAGS: 00010206
+[63890.370174] RAX: 00007f21c1fff010 RBX: 0000000000000000 RCX: 00007f21c3424000
+[63890.370175] RDX: 00007f21c3fff000 RSI: 0000000000000000 RDI: 00007f21c1fff010
+[63890.370176] RBP: 00007f2222aa59a0 R08: 00000000ffffffff R09: 0000000000000000
+[63890.370177] R10: 0000000000000022 R11: 0000000000000246 R12: 00007f2222aa5c40
+[63890.370178] R13: 0000000000000000 R14: 000055c5d1f07ed0 R15: 00007ffcdb526690
+[63890.370188] Mem-Info:
+[63890.370194] active_anon:49 inactive_anon:20294 isolated_anon:15
+                active_file:181 inactive_file:13 isolated_file:0
+                unevictable:768 dirty:0 writeback:221
+                slab_reclaimable:14454 slab_unreclaimable:87191
+                mapped:192 shmem:768 pagetables:1365 bounce:0
+                free:150362 free_pcp:36 free_cma:0
+[63890.370200] Node 0 active_anon:196kB inactive_anon:81176kB active_file:724kB inactive_file:52kB unevictable:3072kB isolated(anon):60kB isolated(file):0kB mapped:768kB dirty:0kB writeback:884kB shmem:3072kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB kernel_stack:9280kB pagetables:5460kB all_unreclaimable? no
+[63890.370205] Node 0 DMA free:11264kB min:4kB low:16kB high:28kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[63890.370211] lowmem_reserve[]: 0 776 127598 127598 127598
+[63890.370215] Node 0 DMA32 free:507696kB min:408kB low:1200kB high:1992kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:1682240kB managed:1616700kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
+[63890.370220] lowmem_reserve[]: 0 0 126822 126822 126822
+[63890.370223] Node 0 Normal free:82488kB min:196188kB low:326052kB high:455916kB reserved_highatomic:2048KB active_anon:196kB inactive_anon:81176kB active_file:724kB inactive_file:52kB unevictable:3072kB writepending:636kB present:132106240kB managed:129874164kB mlocked:0kB bounce:0kB free_pcp:144kB local_pcp:0kB free_cma:0kB
+[63890.370229] lowmem_reserve[]: 0 0 0 0 0
+[63890.370232] Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024kB (U) 1*2048kB (M) 2*4096kB (M) = 11264kB
+[63890.370241] Node 0 DMA32: 6*4kB (UME) 5*8kB (UME) 5*16kB (UME) 5*32kB (UME) 4*64kB (UME) 4*128kB (UME) 5*256kB (UME) 5*512kB (UME) 3*1024kB (ME) 4*2048kB (ME) 120*4096kB (ME) = 507696kB
+[63890.370251] Node 0 Normal: 10255*4kB (UME) 3485*8kB (UME) 942*16kB (UME) 18*32kB (UME) 0*64kB 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 84548kB
+[63890.370259] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
+[63890.370262] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
+[63890.370263] 1601 total pagecache pages
+[63890.370265] 668 pages in swap cache
+[63890.370266] Swap cache stats: add 1835812, delete 1836113, find 159647/285157
+[63890.370267] Free swap  = 2950264kB
+[63890.370269] Total swap = 3145724kB
+[63890.370269] 33451118 pages RAM
+[63890.370270] 0 pages HighMem/MovableOnly
+[63890.370270] 574562 pages reserved
+[63890.370272] 0 pages cma reserved
+[63890.370272] 0 pages hwpoisoned
+[63890.370273] Unreclaimable slab info:
+[63890.370273] Name                      Used          Total
+[63890.370276] mlx5_fs_ftes             253KB        253KB
+[63890.370278] mlx5_fs_fgs               63KB         63KB
+[63890.370280] scsi_sense_cache          32KB         32KB
+[63890.370283] RAWv6                    123KB        123KB
+[63890.370285] UDPv6                   1417KB       1417KB
+[63890.370287] TCPv6                     92KB         92KB
+[63890.370289] mqueue_inode_cache         31KB         31KB
+[63890.370294] ext4_system_zone          39KB         39KB
+[63890.370299] PING                    1600KB       1600KB
+[63890.370300] RAW                       96KB         96KB
+[63890.370302] tw_sock_TCP              295KB        295KB
+[63890.370303] request_sock_TCP         739KB        739KB
+[63890.370305] TCP                     1439KB       1439KB
+[63890.370306] hugetlbfs_inode_cache         63KB         63KB
+[63890.370307] ep_head                  192KB        192KB
+[63890.370309] request_queue             62KB         62KB
+[63890.370312] biovec-max              4580KB       4676KB
+[63890.370313] biovec-128              1600KB       1600KB
+[63890.370314] biovec-64               1536KB       1536KB
+[63890.370317] dmaengine-unmap-256         30KB         30KB
+[63890.370318] dmaengine-unmap-128         31KB         31KB
+[63890.370320] dmaengine-unmap-16       3984KB       3984KB
+[63890.370321] skbuff_fclone_cache        768KB        768KB
+[63890.370324] skbuff_head_cache       1214KB       1224KB
+[63890.370325] file_lock_cache          359KB        359KB
+[63890.370327] file_lock_ctx            103KB        103KB
+[63890.370328] fsnotify_mark_connector        192KB        192KB
+[63890.370330] task_delay_info          111KB        111KB
+[63890.370333] taskstats                616KB        616KB
+[63890.370334] proc_dir_entry           732KB        732KB
+[63890.370336] pde_opener               191KB        191KB
+[63890.370337] seq_file                 191KB        191KB
+[63890.370340] shmem_inode_cache       2192KB       2192KB
+[63890.370341] kernfs_node_cache       8920KB       8920KB
+[63890.370343] mnt_cache                302KB        302KB
+[63890.370344] filp                    3496KB       3496KB
+[63890.370347] names_cache             1536KB       1536KB
+[63890.370350] lsm_file_cache           266KB        266KB
+[63890.370351] vm_area_struct          4390KB       4390KB
+[63890.370353] mm_struct               1657KB       1657KB
+[63890.370354] files_cache             1581KB       1581KB
+[63890.370355] signal_cache            2173KB       2173KB
+[63890.370357] sighand_cache           2877KB       2877KB
+[63890.370360] task_struct             5859KB       5995KB
+[63890.370361] cred_jar                 630KB        630KB
+[63890.370364] anon_vma_chain          1872KB       1872KB
+[63890.370365] anon_vma                1767KB       1767KB
+[63890.370365] pid                      304KB        304KB
+[63890.370368] irq_remap_cache          384KB        384KB
+[63890.370369] Acpi-Operand             811KB        811KB
+[63890.370371] Acpi-ParseExt             47KB         47KB
+[63890.370372] Acpi-State               191KB        191KB
+[63890.370374] numa_policy               15KB         15KB
+[63890.370375] perf_event              1508KB       1508KB
+[63890.370377] trace_event_file         316KB        316KB
+[63890.370378] ftrace_event_field        386KB        386KB
+[63890.370379] pool_workqueue           392KB        392KB
+[63890.370381] task_group               756KB        756KB
+[63890.370407] vmap_area              18913KB      19072KB
+[63890.370409] kmalloc-cg-8k            128KB        128KB
+[63890.370411] kmalloc-cg-4k           1536KB       1536KB
+[63890.370411] kmalloc-cg-2k           1312KB       1312KB
+[63890.370412] kmalloc-cg-1k           1600KB       1600KB
+[63890.370413] kmalloc-cg-512           832KB        832KB
+[63890.370414] kmalloc-cg-256           144KB        144KB
+[63890.370414] kmalloc-cg-192           378KB        378KB
+[63890.370415] kmalloc-cg-96            153KB        153KB
+[63890.370416] kmalloc-cg-64            192KB        192KB
+[63890.370417] kmalloc-cg-32            192KB        192KB
+[63890.370418] kmalloc-cg-16            192KB        192KB
+[63890.370419] kmalloc-cg-8             192KB        192KB
+[63890.370420] kmalloc-8k             65440KB      65440KB
+[63890.370422] kmalloc-4k              7332KB       7428KB
+[63890.370425] kmalloc-2k             86832KB      87008KB
+[63890.370427] kmalloc-1k              5888KB       5888KB
+[63890.370427] kmalloc-512            18128KB      18128KB
+[63890.370428] kmalloc-256             1280KB       1280KB
+[63890.370429] kmalloc-192              724KB        724KB
+[63890.370430] kmalloc-128              904KB        904KB
+[63890.370430] kmalloc-96             16380KB      16380KB
+[63890.370432] kmalloc-64              2424KB       2424KB
+[63890.370433] kmalloc-32              1488KB       1488KB
+[63890.370435] kmalloc-16               336KB        336KB
+[63890.370436] kmalloc-8                276KB        276KB
+[63890.370437] kmem_cache_node           24KB         24KB
+[63890.370439] kmem_cache                72KB         72KB
+[63890.370439] Tasks state (memory values in pages):
+[63890.370440] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
+[63890.370452] [    744]     0   744    27577        1   233472      382             0 systemd-journal
+[63890.370456] [    750]     0   750    26479        0    98304       57             0 lvmetad
+[63890.370459] [    754]     0   754    10826        0   114688      459         -1000 systemd-udevd
+[63890.370463] [    996]     0   996    11903        0   131072      125             0 rpcbind
+[63890.370466] [    998]   101   998    17625        0   176128      136             0 systemd-resolve
+[63890.370469] [   1002]   103  1002    12517        1   147456      170          -900 dbus-daemon
+[63890.370472] [   1004]     0  1004    42595        1   233472     1941             0 networkd-dispat
+[63890.370476] [   1005]     0  1005    27759        0   122880      212             0 irqbalance
+[63890.370478] [   1006]     0  1006     7833        0   102400       90             0 cron
+[63890.370480] [   1010]     0  1010    17619        0   176128      174             0 systemd-logind
+[63890.370483] [   1012]     0  1012    71916        0   192512      264             0 accounts-daemon
+[63890.370486] [   1037]   102  1037    66819        0   167936      432             0 rsyslogd
+[63890.370488] [   1041]     0  1041    72223        0   208896      230             0 polkitd
+[63890.370491] [   1049]     0  1049     8709        1   106496     1775             0 ntpstart
+[63890.370492] [   1053]     0  1053    18078        0   184320      202         -1000 sshd
+[63890.370495] [   1107]   100  1107    20015        0   184320      185             0 systemd-network
+[63890.370498] [   1187]     0  1187     3992        0    81920       35             0 agetty
+[63890.370501] [   1212]     0  1212     2747        0    61440       63             0 slothd
+[63890.370504] [   1214]     0  1214    11399        0   122880     2396             0 watchdog
+[63890.370505] [   1215]     0  1215     4048        0    77824       37             0 agetty
+[63890.370508] [   1237]     0  1237     5686        0    77824      113             0 pubsubd
+[63890.370510] [   1340]     0  1340     1136        0    53248       27             0 emulab-syncd
+[63890.370512] [   1346]     0  1346    11274        0   118784     2245             0 rc.progagent
+[63890.370514] [   1347]  2002  1347     8882        0   114688      134             0 program-agent
+[63890.370515] [   1399]     0  1399     6200        0    86016      114             0 linktest
+[63890.370517] [   1414]   107  1414    26945        0   126976      158             0 ntpd
+[63890.370519] [   4689] 20002  4689    19131        0   192512      259             0 systemd
+[63890.370521] [   4690] 20002  4690    27870        0   245760      542             0 (sd-pam)
+[63890.370522] [   4742] 20002  4742    13273        0   143360      460             0 mosh-server
+[63890.370524] [   4743] 20002  4743     5334        1    90112      149             0 tcsh
+[63890.370526] [   4749] 20002  4749     5676        1    81920      427             0 bash
+[63890.370527] [   4791] 20002  4791     3257        1    69632       91             0 rocksdb-exp-tes
+[63890.370529] [   6429] 20002  6429    21477        0   114688       72             0 time
+[63890.370531] [   6438] 20002  6438   544386    19834   802816    31079             0 db_bench
+[63890.370533] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=db_bench,pid=6438,uid=20002
+[63890.370551] Out of memory: Killed process 6438 (db_bench) total-vm:2177544kB, anon-rss:79172kB, file-rss:160kB, shmem-rss:0kB, UID:20002 pgtables:784kB oom_score_adj:0
+[63890.395022] FinalTaskReport: db_bench:6438 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:899, final_async_pages:1866
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:95
+                                        nr_pages_read:620, nr_pages_hit:374, nr_do_read_fault:208
+[63890.403761] oom_reaper: reaped process 6438 (db_bench), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+[63890.411853] write_proc: Value of write = 0
+[63890.412562] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[63890.412566] Final GlobalReport: nr_pages_read:1347428873, nr_pages_hit:1333670727, nr_do_read_fault:571088, nr_pages_miss:5768346
+[63890.418056] FinalTaskReport: time:6429 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:1208
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:56
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:143
