@@ -6,7 +6,7 @@ cd $KERN_SRC
 
 if [[ $1 == "makemenu" ]];
 then
-	cp -v /boot/config-$(uname -r) $KERN_SRC/.config
+	sudo cp -v /boot/config-$(uname -r) $KERN_SRC/.config
 	make menuconfig
 fi
 
