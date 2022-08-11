@@ -3,6 +3,8 @@
 from zplot import *
 
 
+#change the parameters here
+
 color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red']
 
 legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', 'CPBI', 'CPBV']
@@ -15,21 +17,27 @@ clusterlen=len(legendtext)
 output='ROCKSDB.DATA' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='ROCKSDB' if len(sys.argv) < 2 else sys.argv[2]
 
+ymax=30
+yinterval=5
 
+
+# Font Sizes
+XTSIZE=4
+YTSIZE=4
 
 ctype = 'eps' if len(sys.argv) < 2 else sys.argv[1]
 #c = pdf('figure1.pdf')
 c = canvas('pdf', title=graptitle, dimensions=[130, 80])
 t = table(file=output)
 
-d = drawable(canvas=c, coord=[22,15], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, 2000000], dimensions=[100, 70])
+d = drawable(canvas=c, coord=[22,15], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[100, 70])
 
 
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
 axis(d, linewidth=0.5, xtitle='Workloads',
-        xtitlesize=4, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=3, ytitle='Throughput (OPS/sec)',
-        ytitlesize=5, ylabelfontsize=5, yauto=[0,2000000,300000], ticmajorsize=2, xlabelshift=[0,2], ylabelshift=[10,0], xtitleshift=[0,3])
+        xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=3, ytitle='Throughput (OPS/sec)',
+        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1,0], xtitleshift=[0,3])
 
 
 p = plotter()
