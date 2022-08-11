@@ -5,12 +5,11 @@ from zplot import *
 
 #change the parameters here
 
-color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red']
+color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red', 'green']
+legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
+legendtext=['Vanilla', 'CNaive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
 
-legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', 'CPBI', 'CPBV']
-legendtext=['Vanilla', 'CNaive', 'CNI', 'CPNI', 'CPBI', 'CPBV']
-
-filestyle=['hline', 'solid', 'dline1', 'dline2', 'solid', 'solid']
+filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
 
 clusterlen=len(legendtext)
 
