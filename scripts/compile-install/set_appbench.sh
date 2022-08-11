@@ -110,17 +110,9 @@ INSTALL_CASSANDRA() {
 }
 
 INSTALL_ROCKSDB() {
-	cd $APPBENCH/apps
-	git clone https://github.com/facebook/rocksdb
-	#cp $APPBENCH/apps/db_bench_tool.cc $APPBENCH/apps/rocksdb/tools/
+	cd $APPS
 	cd rocksdb
-	#mkdir build 
-	#cd build
-	#rm -rf CMakeCache.txt
-	#cmake ..
-	#git checkout a8975b62455cb73a8e23ff6be709df1b97859d2d
-	DEBUG_LEVEL=0 make shared_lib db_bench -j16
-	cp $APPBENCH/apps/rocks-script/run_rocksdb.sh $APPBENCH/apps/rocksdb/run.sh
+	./compile.sh
 }
 
 INSTALL_GFLAGS(){
@@ -145,12 +137,12 @@ GETAPPS(){
 }
 
 INSTALL_SYSTEM_LIBS
-#GETAPPS
-INSTALL_CMAKE
+$SCRIPTS/compile-install/compile_sharedlib.sh
 INSTALL_GFLAGS
-#INSTALL_ROCKSDB
-#INSTALL_CASSANDRA
+INSTALL_ROCKSDB
+$SCRIPTS/compile-install/compile_nokvm.sh makemenu
 exit
+
 
 
 #$SCRIPTS/set_spark.sh
