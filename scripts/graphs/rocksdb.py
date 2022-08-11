@@ -8,7 +8,6 @@ from zplot import *
 color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red', 'green']
 legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
 legendtext=['Vanilla', 'CNaive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
-
 filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
 
 clusterlen=len(legendtext)
@@ -59,7 +58,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+20, d.top()-10], width=10, height=4, fontsize=4, hspace=1, skipnext=2, skipspace=32)
+L.draw(c, coord=[d.left()+20, d.top()-10], width=4, height=4, fontsize=4, hspace=1, skipnext=2, skipspace=22)
 
 c.render()
 exit()

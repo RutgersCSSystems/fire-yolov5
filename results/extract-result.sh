@@ -125,10 +125,12 @@ EXTRACT_RESULT() {
 	let num=0;
 
 
-	#for APPLICATION in "${apparr[@]}"
-	for APPVAL in "${techarr[@]}"
+	for THREAD in "${threadarr[@]}"
 	do
-		for THREAD in "${threadarr[@]}"
+
+
+		#for APPLICATION in "${apparr[@]}"
+		for APPVAL in "${techarr[@]}"
 		do
 			TYPE=$APPLICATION
 			APPFILE=""
@@ -152,27 +154,28 @@ EXTRACT_RESULT() {
 				APPFILE=$APPVAL".out"
 				PULL_RESULT $APP $APPVAL $j $TARGET/$APPLICATION/$THREAD/$APPFILE $num "$APPLICATION"
 			done
-			#cat $APPLICATION.DATA
 		done
-		#let "num=num+1"
+
+		j=$((j+$INCR_FULL_BAR_SPACE))
+
+		VAR=""
+		for APPVAL in "${techarr[@]}"
+		do
+			  VAR+="${APPVAL}.DATA "
+		done
+
+		echo $VAR
+		`paste "num.tmp" $VAR &>> $APP"-THREADS-$THREAD".DATA`
+
+		python $SCRIPTS/graphs/rocksdb.py $OUTPUTPATH/$APP"-THREADS-$THREAD.DATA" $OUTPUTPATH/$APP"-$THREAD"
+
+		rm "num.tmp"
+		for APPVAL in "${techarr[@]}"
+		do
+			  rm $APPVAL".DATA"
+		done
 	done
 
-	j=$((j+$INCR_FULL_BAR_SPACE))
-
-	VAR=""
-	for APPVAL in "${techarr[@]}"
-	do
-		  VAR+="${APPVAL}.DATA "
-	done
-
-	echo $VAR
-	`paste "num.tmp" $VAR &>> $APP.DATA`
-
-	rm "num.tmp"
-	for APPVAL in "${techarr[@]}"
-	do
-		  rm $APPVAL".DATA"
-	done
 
 }
 
@@ -192,7 +195,6 @@ apparr=("${rocksworkarr[@]}")
 EXTRACT_RESULT "ROCKSDB"
 
 
-python $SCRIPTS/graphs/rocksdb.py $OUTPUTPATH/$APP".DATA" $OUTPUTPATH/$APP
 
 
 
