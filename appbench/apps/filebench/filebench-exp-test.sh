@@ -27,8 +27,8 @@ mkdir -p $RESULTS
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
-#declare -a workload_arr=("filemicro_seqwrite.f" "mongo.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
-declare -a workload_arr=("mongo.f" "oltp.f")
+declare -a workload_arr=("filemicro_seqwrite.f" "mongo.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
+#declare -a workload_arr=("mongo.f" "oltp.f")
 declare -a thread_arr=("16")
 
 
