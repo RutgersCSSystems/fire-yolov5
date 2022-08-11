@@ -1,24 +1,50 @@
 ENABLE_FILE_STATS in con
 ENABLE_FILE_STATS in con
-Command terminated by signal 9
-	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=8"
-	User time (seconds): 0.04
-	System time (seconds): 0.84
-	Percent of CPU this job got: 318%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.28
+RocksDB:    version 6.20
+Date:       Wed Aug 10 17:55:51 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+num reads to do 2000000
+... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 100 ops                              ... finished 2500 ops                              ... finished 100 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 4000 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 200 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 300 ops                              ... finished 6000 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 400 ops                              ... finished 7000 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 500 ops                              ... finished 8000 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 600 ops                              ... finished 9000 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 700 ops                              ... finished 10000 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 1000 ops                              ... finished 15000 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 1500 ops                              ... finished 20000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 2000 ops                              ... finished 25000 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 2500 ops                              ... finished 30000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 3000 ops                              ... finished 35000 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 3500 ops                              ... finished 40000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 45000 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 50000 ops                              ... finished 5000 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 6000 ops                              ... finished 60000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 7000 ops                              ... finished 70000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 8000 ops                              ... finished 80000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 9000 ops                              ... finished 90000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 10000 ops                              ... finished 100000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 15000 ops                              ... finished 150000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 20000 ops                              ... finished 200000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 30000 ops                              ... finished 250000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 35000 ops                              ... finished 300000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 45000 ops                              ... finished 350000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 50000 ops                              ... finished 400000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 60000 ops                              ... finished 450000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 70000 ops                              ... finished 500000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 90000 ops                              ... finished 600000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 100000 ops                              ... finished 700000 ops                              ... finished 800000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 150000 ops                              ... finished 900000 ops                              ... finished 1000000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 200000 ops                              ... finished 1100000 ops                              ... finished 200000 ops                              ... finished 1200000 ops                              ... finished 250000 ops                              ... finished 1300000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 250000 ops                              ... finished 1400000 ops                              ... finished 1500000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 300000 ops                              ... finished 1600000 ops                              ... finished 1700000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 350000 ops                              ... finished 1800000 ops                              ... finished 1900000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 2000000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 500000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 600000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 700000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 800000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 900000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1000000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1100000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1200000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1300000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1400000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1500000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1600000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1700000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1800000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 1900000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              ... finished 2000000 ops                              Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+readahead_info: failed TID:38157 
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    2000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    9719.8 MB (estimated)
+FileSize:   5813.6 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA]
+readwhilescanning :      27.844 micros/op 304350 ops/sec; 1289.9 MB/s (2000000 of 2000000 found)
+
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=2000000 --benchmarks=readwhilescanning --use_existing_db=1 --mmap_read=0 --threads=8"
+	User time (seconds): 404.28
+	System time (seconds): 132.34
+	Percent of CPU this job got: 877%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:01.13
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 263824
+	Maximum resident set size (kbytes): 331120
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 1217
-	Minor (reclaiming a frame) page faults: 130878
-	Voluntary context switches: 4527
-	Involuntary context switches: 1160
+	Major (requiring I/O) page faults: 78
+	Minor (reclaiming a frame) page faults: 2652464
+	Voluntary context switches: 3894013
+	Involuntary context switches: 484
 	Swaps: 0
-	File system inputs: 152168
-	File system outputs: 400
+	File system inputs: 21349896
+	File system outputs: 17647200
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -26,222 +52,699 @@ Command terminated by signal 9
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
 PRINT_GLOBAL_STATS in dest
-[ 7434.711957] sh (16312): drop_caches: 3
-[ 7434.739725] sh (16317): drop_caches: 3
-[ 7439.765318] Enabled file stats for time:16324
-[ 7439.765513] write_proc: Value of write = 0
-[ 7439.770903] Enabled file stats for db_bench:16333
-[ 7439.771123] write_proc: Value of write = 0
-[ 7440.019963] thread-pool-2 invoked oom-killer: gfp_mask=0x1100dca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
-[ 7440.019974] CPU: 32 PID: 16336 Comm: thread-pool-2 Tainted: G           OE     5.14.0 #30
-[ 7440.019977] Hardware name: Dell Inc. PowerEdge C6525/04DK47, BIOS 2.0.3 01/15/2021
-[ 7440.019979] Call Trace:
-[ 7440.019984]  dump_stack_lvl+0x4a/0x5f
-[ 7440.019990]  dump_stack+0x10/0x12
-[ 7440.019992]  dump_header+0x4f/0x210
-[ 7440.019997]  oom_kill_process+0xec/0x140
-[ 7440.019999]  out_of_memory+0x117/0x590
-[ 7440.020002]  __alloc_pages_slowpath.constprop.122+0xa55/0xd70
-[ 7440.020007]  __alloc_pages+0x2db/0x320
-[ 7440.020009]  alloc_pages_vma+0x88/0x220
-[ 7440.020012]  __handle_mm_fault+0xa3f/0x1270
-[ 7440.020016]  handle_mm_fault+0xd9/0x2b0
-[ 7440.020018]  do_user_addr_fault+0x1e0/0x6e0
-[ 7440.020022]  exc_page_fault+0x76/0x150
-[ 7440.020024]  ? asm_exc_page_fault+0x8/0x30
-[ 7440.020027]  asm_exc_page_fault+0x1e/0x30
-[ 7440.020030] RIP: 0033:0x7f338bdaaea7
-[ 7440.020033] Code: 47 20 c5 fe 7f 44 17 c0 c5 fe 7f 47 40 c5 fe 7f 44 17 a0 c5 fe 7f 47 60 c5 fe 7f 44 17 80 48 01 fa 48 83 e2 80 48 39 d1 74 ba <c5> fd 7f 01 c5 fd 7f 41 20 c5 fd 7f 41 40 c5 fd 7f 41 60 48 81 c1
-[ 7440.020035] RSP: 002b:00007f338ac18988 EFLAGS: 00010206
-[ 7440.020037] RAX: 00007f3361fff010 RBX: 0000000000000000 RCX: 00007f3363928000
-[ 7440.020039] RDX: 00007f3363fff000 RSI: 0000000000000000 RDI: 00007f3361fff010
-[ 7440.020039] RBP: 00007f338ac189a0 R08: 00000000ffffffff R09: 0000000000000000
-[ 7440.020040] R10: 0000000000000022 R11: 0000000000000246 R12: 00007f338ac18c40
-[ 7440.020041] R13: 0000000000000000 R14: 000055b28c1b51b0 R15: 00007ffe6d61a340
-[ 7440.020044] Mem-Info:
-[ 7440.020050] active_anon:764 inactive_anon:56581 isolated_anon:17
-                active_file:990 inactive_file:8458 isolated_file:0
-                unevictable:2122 dirty:27 writeback:39
-                slab_reclaimable:16599 slab_unreclaimable:92294
-                mapped:2043 shmem:774 pagetables:1891 bounce:0
-                free:200086 free_pcp:520 free_cma:0
-[ 7440.020055] Node 0 active_anon:3056kB inactive_anon:226324kB active_file:3960kB inactive_file:33832kB unevictable:8488kB isolated(anon):68kB isolated(file):0kB mapped:8172kB dirty:108kB writeback:156kB shmem:3096kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB kernel_stack:9824kB pagetables:7564kB all_unreclaimable? no
-[ 7440.020061] Node 0 DMA free:11264kB min:4kB low:16kB high:28kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-[ 7440.020067] lowmem_reserve[]: 0 776 127598 127598 127598
-[ 7440.020071] Node 0 DMA32 free:507496kB min:408kB low:1200kB high:1992kB reserved_highatomic:0KB active_anon:8kB inactive_anon:556kB active_file:32kB inactive_file:132kB unevictable:0kB writepending:4kB present:1682240kB managed:1616700kB mlocked:0kB bounce:0kB free_pcp:1136kB local_pcp:248kB free_cma:0kB
-[ 7440.020077] lowmem_reserve[]: 0 0 126822 126822 126822
-[ 7440.020081] Node 0 Normal free:281092kB min:557500kB low:687364kB high:817228kB reserved_highatomic:0KB active_anon:3048kB inactive_anon:225236kB active_file:3928kB inactive_file:33692kB unevictable:8488kB writepending:260kB present:132106240kB managed:129874164kB mlocked:5416kB bounce:0kB free_pcp:1404kB local_pcp:444kB free_cma:0kB
-[ 7440.020085] lowmem_reserve[]: 0 0 0 0 0
-[ 7440.020088] Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024kB (U) 1*2048kB (M) 2*4096kB (M) = 11264kB
-[ 7440.020097] Node 0 DMA32: 22*4kB (UME) 10*8kB (UE) 32*16kB (E) 41*32kB (UME) 33*64kB (UME) 35*128kB (UME) 15*256kB (ME) 5*512kB (UME) 7*1024kB (UME) 7*2048kB (UME) 115*4096kB (M) = 507528kB
-[ 7440.020110] Node 0 Normal: 24750*4kB (UME) 12977*8kB (UME) 4140*16kB (UME) 500*32kB (UME) 1*64kB (M) 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 285120kB
-[ 7440.020120] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
-[ 7440.020122] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
-[ 7440.020124] 12055 total pagecache pages
-[ 7440.020124] 731 pages in swap cache
-[ 7440.020125] Swap cache stats: add 1943380, delete 1943110, find 19396/28905
-[ 7440.020126] Free swap  = 3037840kB
-[ 7440.020128] Total swap = 3145724kB
-[ 7440.020129] 33451118 pages RAM
-[ 7440.020129] 0 pages HighMem/MovableOnly
-[ 7440.020130] 574562 pages reserved
-[ 7440.020130] 0 pages cma reserved
-[ 7440.020131] 0 pages hwpoisoned
-[ 7440.020132] Unreclaimable slab info:
-[ 7440.020132] Name                      Used          Total
-[ 7440.020134] nfs_read_data             95KB         95KB
-[ 7440.020139] mlx5_fs_ftes             253KB        253KB
-[ 7440.020140] mlx5_fs_fgs               63KB         63KB
-[ 7440.020142] scsi_sense_cache          32KB         32KB
-[ 7440.020145] RAWv6                    123KB        123KB
-[ 7440.020146] UDPv6                    787KB        787KB
-[ 7440.020148] TCPv6                    123KB        123KB
-[ 7440.020149] mqueue_inode_cache         31KB         31KB
-[ 7440.020153] ext4_system_zone          39KB         39KB
-[ 7440.020157] xfrm_state                31KB         31KB
-[ 7440.020158] PING                    1536KB       1536KB
-[ 7440.020159] RAW                       96KB         96KB
-[ 7440.020161] tw_sock_TCP              175KB        175KB
-[ 7440.020162] request_sock_TCP         566KB        566KB
-[ 7440.020164] TCP                     1133KB       1133KB
-[ 7440.020165] hugetlbfs_inode_cache         63KB         63KB
-[ 7440.020166] ep_head                  192KB        192KB
-[ 7440.020168] request_queue             62KB         62KB
-[ 7440.020169] biovec-max              4640KB       4768KB
-[ 7440.020171] biovec-128              2016KB       2016KB
-[ 7440.020172] biovec-64               1536KB       1536KB
-[ 7440.020173] dmaengine-unmap-256         30KB         30KB
-[ 7440.020175] dmaengine-unmap-128         31KB         31KB
-[ 7440.020177] dmaengine-unmap-16       8147KB       8186KB
-[ 7440.020179] skbuff_fclone_cache        768KB        768KB
-[ 7440.020180] skbuff_head_cache       1240KB       1240KB
-[ 7440.020182] file_lock_cache          359KB        359KB
-[ 7440.020183] file_lock_ctx            151KB        151KB
-[ 7440.020184] fsnotify_mark_connector        192KB        192KB
-[ 7440.020186] task_delay_info          127KB        127KB
-[ 7440.020188] taskstats                759KB        759KB
-[ 7440.020189] proc_dir_entry           763KB        763KB
-[ 7440.020190] pde_opener               191KB        191KB
-[ 7440.020192] seq_file                 191KB        191KB
-[ 7440.020193] shmem_inode_cache       2129KB       2129KB
-[ 7440.020195] kernfs_node_cache       9504KB       9504KB
-[ 7440.020196] mnt_cache                382KB        382KB
-[ 7440.020197] filp                    3696KB       3696KB
-[ 7440.020199] names_cache             1664KB       1664KB
-[ 7440.020200] lsm_file_cache           298KB        298KB
-[ 7440.020202] vm_area_struct          5179KB       5179KB
-[ 7440.020203] mm_struct               1689KB       1689KB
-[ 7440.020204] files_cache             1676KB       1676KB
-[ 7440.020205] signal_cache            2520KB       2520KB
-[ 7440.020206] sighand_cache           3557KB       3557KB
-[ 7440.020207] task_struct             6342KB       6342KB
-[ 7440.020209] cred_jar                1204KB       1204KB
-[ 7440.020210] anon_vma_chain          2724KB       2724KB
-[ 7440.020211] anon_vma                2549KB       2549KB
-[ 7440.020213] pid                      388KB        388KB
-[ 7440.020214] irq_remap_cache          416KB        416KB
-[ 7440.020216] Acpi-Operand             830KB        830KB
-[ 7440.020217] Acpi-ParseExt             71KB         71KB
-[ 7440.020218] Acpi-State               195KB        195KB
-[ 7440.020220] numa_policy               15KB         15KB
-[ 7440.020221] perf_event              1508KB       1508KB
-[ 7440.020222] trace_event_file         339KB        339KB
-[ 7440.020223] ftrace_event_field        458KB        458KB
-[ 7440.020224] pool_workqueue           424KB        424KB
-[ 7440.020225] task_group               661KB        661KB
-[ 7440.020266] vmap_area              18423KB      18620KB
-[ 7440.020268] kmalloc-cg-8k            224KB        224KB
-[ 7440.020269] kmalloc-cg-4k           1536KB       1536KB
-[ 7440.020270] kmalloc-cg-2k           1536KB       1536KB
-[ 7440.020271] kmalloc-cg-1k           1664KB       1664KB
-[ 7440.020272] kmalloc-cg-512           784KB        784KB
-[ 7440.020273] kmalloc-cg-256           128KB        128KB
-[ 7440.020273] kmalloc-cg-192           378KB        378KB
-[ 7440.020274] kmalloc-cg-96            189KB        189KB
-[ 7440.020275] kmalloc-cg-64            192KB        192KB
-[ 7440.020276] kmalloc-cg-32            192KB        192KB
-[ 7440.020276] kmalloc-cg-16            184KB        184KB
-[ 7440.020277] kmalloc-cg-8             192KB        192KB
-[ 7440.020278] kmalloc-8k             60928KB      60928KB
-[ 7440.020279] kmalloc-4k              8472KB       8544KB
-[ 7440.020285] kmalloc-2k             86534KB      87264KB
-[ 7440.020285] kmalloc-1k              6240KB       6240KB
-[ 7440.020287] kmalloc-512            18960KB      19040KB
-[ 7440.020288] kmalloc-256             1288KB       1288KB
-[ 7440.020289] kmalloc-192              748KB        748KB
-[ 7440.020290] kmalloc-128              916KB        916KB
-[ 7440.020290] kmalloc-96             16620KB      16620KB
-[ 7440.020291] kmalloc-64              2508KB       2508KB
-[ 7440.020292] kmalloc-32              1516KB       1516KB
-[ 7440.020293] kmalloc-16               352KB        352KB
-[ 7440.020294] kmalloc-8                268KB        268KB
-[ 7440.020295] kmem_cache_node           40KB         40KB
-[ 7440.020296] kmem_cache               104KB        104KB
-[ 7440.020296] Tasks state (memory values in pages):
-[ 7440.020297] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-[ 7440.020306] [    752]     0   752    25818      556   217088      240             0 systemd-journal
-[ 7440.020309] [    758]     0   758    26479      216    94208       57             0 lvmetad
-[ 7440.020312] [    771]     0   771    11541      496   118784      476         -1000 systemd-udevd
-[ 7440.020314] [   1020]     0  1020    11903      426   143360      141             0 rpcbind
-[ 7440.020317] [   1025]     0  1025     7833      510   114688       93             0 cron
-[ 7440.020319] [   1026]     0  1026    71916      455   200704      242             0 accounts-daemon
-[ 7440.020321] [   1030]   102  1030    66819      521   176128      340             0 rsyslogd
-[ 7440.020323] [   1038]     0  1038    27759      442   118784      210             0 irqbalance
-[ 7440.020325] [   1042]   103  1042    12518      528   143360      152          -900 dbus-daemon
-[ 7440.020327] [   1045]     0  1045    17618      306   184320      179             0 systemd-logind
-[ 7440.020329] [   1060]     0  1060    42595      598   237568     1942             0 networkd-dispat
-[ 7440.020331] [   1066]     0  1066    72223      558   196608      219             0 polkitd
-[ 7440.020333] [   1071]   101  1071    17625      286   184320      136             0 systemd-resolve
-[ 7440.020335] [   1076]     0  1076     8703      426   106496     1775             0 ntpstart
-[ 7440.020337] [   1080]     0  1080    18078      537   184320      187         -1000 sshd
-[ 7440.020339] [   1093]   107  1093    26945      416   118784      168             0 ntpd
-[ 7440.020342] [   1151]   100  1151    20015      535   176128      183             0 systemd-network
-[ 7440.020344] [   1195]     0  1195     6347      474    90112       58             0 iscsid
-[ 7440.020346] [   1196]     0  1196     6473     1301   102400        0           -17 iscsid
-[ 7440.020348] [   1205]     0  1205     3992      408    73728       36             0 agetty
-[ 7440.020349] [   1209]     0  1209     4048      372    77824       38             0 agetty
-[ 7440.020351] [   1269]     0  1269     2747        0    69632       64             0 slothd
-[ 7440.020353] [   1271]     0  1271    11393      340   122880     2401             0 watchdog
-[ 7440.020355] [   1293]     0  1293     5686        0    81920      111             0 pubsubd
-[ 7440.020357] [   1399]     0  1399     1136        0    57344       25             0 emulab-syncd
-[ 7440.020359] [   1405]     0  1405    11276      244   118784     2246             0 rc.progagent
-[ 7440.020361] [   1406]  2002  1406     8882      495   114688      133             0 program-agent
-[ 7440.020363] [   1453]     0  1453     6200      251    81920      110             0 linktest
-[ 7440.020365] [   1464]     0  1464    27000      578   258048      253             0 sshd
-[ 7440.020367] [   1466] 20002  1466    19133      582   188416      264             0 systemd
-[ 7440.020369] [   1467] 20002  1467    27877        0   249856      537             0 (sd-pam)
-[ 7440.020371] [   1517] 20002  1517    27123      411   253952      352             0 sshd
-[ 7440.020373] [   1518] 20002  1518     5335      454    86016      150             0 tcsh
-[ 7440.020375] [   1521] 20002  1521     5677      478    81920      418             0 bash
-[ 7440.020377] [   1535]     0  1535    27000      580   253952      253             0 sshd
-[ 7440.020379] [   1575] 20002  1575    27114      385   245760      343             0 sshd
-[ 7440.020380] [   1576] 20002  1576     5335      460    81920      150             0 tcsh
-[ 7440.020382] [   1579] 20002  1579     5677      449    81920      410             0 bash
-[ 7440.020385] [  13448] 20002 13448    13418      417   139264      597             0 mosh-server
-[ 7440.020387] [  13449] 20002 13449     5334      458    81920      149             0 tcsh
-[ 7440.020389] [  13455] 20002 13455     5676      481    94208      420             0 bash
-[ 7440.020391] [  13510] 20002 13510    13336      654   135168      403             0 mosh-server
-[ 7440.020393] [  13511] 20002 13511     5334      448    94208      148             0 tcsh
-[ 7440.020395] [  13562] 20002 13562    13075      471   139264      204             0 mosh-server
-[ 7440.020397] [  13563] 20002 13563     5334      440    90112      149             0 tcsh
-[ 7440.020399] [  13569] 20002 13569     5643      418    94208      381             0 bash
-[ 7440.020401] [  13601] 20002 13601     5676      478    90112      422             0 bash
-[ 7440.020403] [  14470] 20002 14470     3257      423    69632       92             0 rocksdb-exp-tes
-[ 7440.020405] [  16324] 20002 16324    21477      406   110592       72             0 time
-[ 7440.020407] [  16333] 20002 16333   525525    58525   860160     5205             0 db_bench
-[ 7440.020408] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=db_bench,pid=16333,uid=20002
-[ 7440.020425] Out of memory: Killed process 16333 (db_bench) total-vm:2102100kB, anon-rss:228608kB, file-rss:5492kB, shmem-rss:0kB, UID:20002 pgtables:840kB oom_score_adj:0
-[ 7440.020493] FinalTaskReport: db_bench:16333 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:1580, final_async_pages:2813
+[ 7027.271357] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.284487] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.294152] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.306208] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.318382] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.330477] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.342942] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.355279] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.367360] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.378552] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.391414] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.403519] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.415970] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.427967] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.440005] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.452133] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.464245] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.474150] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.486979] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.498986] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.508463] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.520891] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.532901] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.544939] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.557456] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.569541] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.581561] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.593655] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.605691] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.617773] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.630360] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.640694] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.652807] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.664955] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.672601] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.690214] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.699781] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.717546] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.727425] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.754459] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.775467] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.799564] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.823468] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.843076] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7027.861788] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.027552] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.040250] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.048398] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.067159] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.075609] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.094191] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.102084] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.126084] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.149816] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.174685] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.196176] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.224239] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.242726] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.412933] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.426051] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.436886] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.449941] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.463025] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.473316] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.492659] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.502898] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.519576] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.538244] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.562376] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.587274] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.613191] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.638032] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.649889] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.666744] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.839039] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.852312] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.862291] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.880999] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.899258] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.912797] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.931017] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.967164] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7028.991629] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.006963] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.026398] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.054053] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.073646] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.244908] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.258140] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.266672] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.306893] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.381390] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.409935] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.583479] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.596712] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.896262] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7029.926560] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7030.023129] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7030.258795] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.523336] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.536660] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.549517] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.563410] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.575956] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.589071] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.601837] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.614851] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.627392] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.640964] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.653486] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.666519] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.679336] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.693040] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.706117] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.719405] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.732432] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.745441] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.758378] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.771221] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.783845] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.796966] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.809605] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.822249] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.835699] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.848392] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.861022] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.874077] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.886794] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.899437] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.912230] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.925170] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.937813] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.950802] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.963459] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.976066] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7033.988720] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.001356] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.013909] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.026883] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.039555] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.052280] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.065136] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.077735] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.091276] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.104380] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.117105] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.129865] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.142443] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.155555] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.168315] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.181341] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.194028] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.206626] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.219311] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.232038] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.244605] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.257798] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.270487] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.283256] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.297046] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.309867] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.322765] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.335900] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.348486] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.355565] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.373911] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.385695] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.392753] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7034.404555] sh (37966): drop_caches: 3
+[ 7034.501782] sh (38139): drop_caches: 3
+[ 7039.528188] Enabled file stats for time:38146
+[ 7039.528383] write_proc: Value of write = 0
+[ 7039.533627] Enabled file stats for db_bench:38155
+[ 7039.533808] write_proc: Value of write = 0
+[ 7039.560977] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.561102] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.561266] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.561729] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.561988] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.562006] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.562237] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.562782] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.562796] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 7039.562970] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563038] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563043] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563081] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563292] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563428] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.563473] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.567342] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.567614] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.568313] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.568878] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.569678] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.569776] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.571523] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.571832] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.574298] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.574325] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.574711] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.575564] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.576596] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.576763] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.577974] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.580076] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.580118] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.584266] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.584569] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.585702] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.587104] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.587766] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.587808] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.589878] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.589900] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.591127] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.591127] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.591176] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.591762] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.592256] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.592332] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.592633] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.592642] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.593654] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.593660] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.594120] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.627462] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.628361] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.628862] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.628940] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.629911] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.629928] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.630201] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.630231] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.630479] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.630536] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.630598] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.630789] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.630826] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.630874] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 7039.651558] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.659096] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.659187] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.659262] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.659338] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.659728] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.661917] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.662413] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.664274] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.667140] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.672238] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.721412] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.727917] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.728023] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.728097] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.729144] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.730292] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.730371] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.732350] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.733055] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.733111] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.733571] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.735861] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.738456] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7039.792881] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.871804] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.873836] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.875901] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.876587] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.877027] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.877160] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.877858] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.878060] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.879305] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 7039.879838] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.880075] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.880365] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7039.881913] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7039.917272] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.022209] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.108648] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.121166] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.130532] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.173361] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.173450] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.173712] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.174417] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.174579] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.176013] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.176034] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.176045] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.176057] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.356491] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.356530] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.376212] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.422967] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.426745] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.428016] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.428799] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.450136] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.525441] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.584477] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.594096] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.594309] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.614571] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.614638] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.636421] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.643713] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.650637] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.661836] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.662040] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.662338] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.662717] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.662739] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 7040.703004] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.703451] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.716986] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.718930] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.722183] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.743157] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.743645] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.743673] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.757962] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.759085] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.772176] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.789118] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.793043] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.793839] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.795468] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.797030] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.836095] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.855592] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.857660] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.865193] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.885216] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.916049] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.920951] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.935186] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.942522] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7040.943577] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7040.946387] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7041.002839] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7041.103065] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7041.273005] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7041.279338] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7041.446930] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7041.449524] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7041.456486] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7041.461661] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7042.431587] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7042.435652] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7043.441088] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7043.444878] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7043.448677] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7044.584422] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7044.588194] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7044.591937] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7045.742754] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7045.746654] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7045.750367] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7046.348354] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7046.351963] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7047.579654] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7047.583239] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7047.586987] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7048.826240] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7048.830253] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7048.834032] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7050.254913] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7050.258453] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7050.262212] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7051.699166] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7051.702660] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7051.706326] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7053.087751] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7053.091432] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7053.095145] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7054.438449] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7054.442009] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7054.445757] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7055.826291] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7055.829971] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7055.833918] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7055.835830] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7057.188059] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7057.191792] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7057.195605] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7057.196785] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7058.495307] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7058.498917] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7058.502573] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7059.901515] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7059.905632] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7059.909368] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7059.913041] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7061.374790] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7061.378399] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7061.382062] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7061.385670] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7061.386680] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7061.393597] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7062.842273] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7062.846224] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7062.849798] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7062.853679] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7064.297438] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7064.301122] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7064.304843] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7064.308518] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7064.309517] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7065.864233] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7065.868275] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7065.871922] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7065.875750] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7065.876708] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7065.883646] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7067.398187] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7067.401864] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7067.405609] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7067.409231] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7067.410277] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7067.418400] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7068.982957] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7068.986873] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7068.990509] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7068.994365] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7068.995358] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7069.002298] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7069.489481] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7069.490599] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7069.497549] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.176984] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.183977] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.191429] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.198837] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.206272] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.213591] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.220884] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.228132] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.235402] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.242678] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.249876] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.257008] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.264130] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.271241] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.278379] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.285458] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.292627] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.299701] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.306793] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.313852] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.320920] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.327970] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.335078] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.342149] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.349204] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.356261] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.363275] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.370289] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.377362] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.384373] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.391443] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.398485] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.405498] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.414033] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.421167] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.428154] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.435204] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.443081] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.445523] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7070.450630] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.453503] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7070.457581] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.465042] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.472262] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.479256] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.486206] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.493360] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.500357] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.507431] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.514446] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.521464] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.528454] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.535451] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.542411] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.549479] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.556528] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.563507] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.570503] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.578589] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.586390] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.593465] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.600484] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.607411] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.614611] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.621706] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.628746] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.635824] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.642825] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.649826] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.656872] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.663944] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.670943] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.678035] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.685934] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.693032] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.700074] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.707123] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.714136] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.916179] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7070.918124] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.925073] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.932052] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7070.939040] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7072.476478] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7072.480519] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7072.484053] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7072.487860] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7072.488833] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7072.497891] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7073.426610] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7073.430539] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7073.431644] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7073.438900] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7073.446161] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7073.453168] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7073.460129] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7074.413340] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7074.417054] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7074.418094] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7074.425409] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7074.432606] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7075.344399] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7075.348290] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7075.349311] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7075.356257] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7075.363668] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7075.370625] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7078.350069] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7078.353905] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.357558] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.361191] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.364659] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.368235] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.371927] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.375709] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.379395] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7078.380451] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7078.389864] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7078.399351] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.107807] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7080.111522] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7080.114998] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7080.118570] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7080.119778] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.130942] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.137846] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.144841] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.152235] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.159519] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.166806] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.174003] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.181218] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.188462] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.195707] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.202786] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.209824] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.216932] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.223962] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.231046] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7080.237972] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.011982] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.015906] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.019650] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.023295] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.027187] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.028108] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.035157] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.042117] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.051453] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.058626] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7082.995829] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7082.999446] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7083.896246] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7083.900004] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7083.901058] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7083.908210] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7083.916026] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7083.922919] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7083.929866] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7083.936878] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7084.860509] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7084.864425] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7084.865477] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7084.872580] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7084.880025] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7086.213175] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7086.217087] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7086.220738] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7086.224383] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7086.225967] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7086.233064] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7086.240169] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7086.247493] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7087.156313] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7087.159994] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7088.098255] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7088.102177] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7088.103208] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7088.110389] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7088.117718] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7089.053981] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7089.057772] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7089.058839] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7089.066407] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7089.073604] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7089.984734] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7089.988336] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7089.989527] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7089.996778] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.004022] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.924331] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7090.927941] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7090.928974] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.935983] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.943197] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.950140] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.957072] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7090.964033] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7091.878061] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7091.881975] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7092.782305] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7092.786065] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7092.787095] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7092.794351] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7092.801597] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7092.808547] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7092.815484] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7092.822412] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7093.514975] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7093.518676] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7093.519643] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7093.527030] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7093.534119] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7094.444473] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7094.448239] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7094.449267] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7094.456573] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7094.463794] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7095.383127] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7095.387024] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7096.317211] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7096.321175] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7096.322265] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7096.329505] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7096.336585] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7096.344652] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7096.351668] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7096.358634] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7097.274646] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7097.278204] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7097.279400] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7097.286654] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7097.293848] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7098.226650] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7098.230345] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 7098.233991] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7098.242869] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7098.249793] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7099.283417] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7099.287281] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7099.290929] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7099.291858] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7099.299052] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7099.305958] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7100.216287] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7100.219939] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 7100.626519] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7100.633449] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7100.640374] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 7100.657532] write_proc: Value of write = 0
+[ 7100.657550] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 7100.657552] Final GlobalReport: nr_pages_read:9658400326, nr_pages_hit:9440598617, nr_do_read_fault:6844015, nr_pages_miss:79104823
+[ 7100.657597] FinalTaskReport: db_bench:38155 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:22312, final_async_pages:20529
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:144
-                                        nr_pages_read:1172, nr_pages_hit:817, nr_do_read_fault:285
-[ 7440.045749] oom_reaper: reaped process 16333 (db_bench), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-[ 7440.048402] write_proc: Value of write = 0
-[ 7440.048422] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 7440.048423] Final GlobalReport: nr_pages_read:1910532344, nr_pages_hit:1840774012, nr_do_read_fault:1368848, nr_pages_miss:23271510
-[ 7440.051076] FinalTaskReport: time:16324 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:64, final_async_pages:368
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:778
+                                        nr_pages_read:38474, nr_pages_hit:37090, nr_do_read_fault:166
+[ 7100.662373] write_proc: Value of write = 0
+[ 7100.662388] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 7100.662389] Final GlobalReport: nr_pages_read:9658400326, nr_pages_hit:9440598617, nr_do_read_fault:6844022, nr_pages_miss:79104823
+[ 7100.662432] FinalTaskReport: time:38146 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:16
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:50
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17

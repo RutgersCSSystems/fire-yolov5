@@ -1,30 +1,31 @@
 ENABLE_FILE_STATS in con
 ENABLE_FILE_STATS in con
-Received signal 11 (Segmentation fault)
-#0   /usr/lib/lib_CPNI.so(_ZNKSt8equal_toIiEclERKiS2_+0x1a) [0x7f3282720a84] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	
-#1   /usr/lib/lib_CPNI.so(_ZNSt8__detail13_Equal_helperIiSt4pairIKiP14file_predictorENS_10_Select1stESt8equal_toIiEmLb0EE9_S_equalsERKS8_RKS6_RS2_mPNS_10_Hash_nodeIS5_Lb0EEE+0x50) [0x7f328272091f] ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con	double free or corruption (out)
+RocksDB:    version 6.20
+Date:       Wed Aug 10 18:28:02 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+Get returned an error: Corruption: bad entry in block
 Received signal 6 (Aborted)
-#0   /lib/x86_64-linux-gnu/libc.so.6(gsignal+0xc7) [0x7f3280705e87] ??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_STATS in dest	Command terminated by signal 9
-	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=1000000 --benchmarks=readwhilewriting --use_existing_db=1 --mmap_read=0 --threads=8"
-	User time (seconds): 0.10
-	System time (seconds): 12.33
-	Percent of CPU this job got: 0%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:17:24
+Get returned an error: Corruption: bad entry in block
+Command terminated by signal 6
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=2000000 --benchmarks=readwhilewriting --use_existing_db=1 --mmap_read=0 --threads=8"
+	User time (seconds): 0.24
+	System time (seconds): 5.98
+	Percent of CPU this job got: 899%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.69
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 265716
+	Maximum resident set size (kbytes): 6206276
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 5449
-	Minor (reclaiming a frame) page faults: 648403
-	Voluntary context switches: 22229
-	Involuntary context switches: 27001
+	Major (requiring I/O) page faults: 78
+	Minor (reclaiming a frame) page faults: 1550294
+	Voluntary context switches: 4537
+	Involuntary context switches: 2
 	Swaps: 0
-	File system inputs: 173312
-	File system outputs: 64
+	File system inputs: 127480
+	File system outputs: 1656
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
@@ -32,275 +33,394 @@ Received signal 6 (Aborted)
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
 PRINT_GLOBAL_STATS in dest
-[ 7451.382581] sh (16463): drop_caches: 3
-[ 7451.410101] sh (16468): drop_caches: 3
-[ 7456.435638] Enabled file stats for time:16475
-[ 7456.435844] write_proc: Value of write = 1
-[ 7456.441089] Enabled file stats for db_bench:16484
-[ 7456.441302] write_proc: Value of write = 1
-[ 7457.322707] Enabled file stats for sh:16510
-[ 7457.322895] write_proc: Value of write = 1
-[ 7457.336388] Enabled file stats for addr2line:16519
-[ 7457.336568] write_proc: Value of write = 1
-[ 7457.344115] write_proc: Value of write = 0
-[ 7457.344122] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 7457.344123] Final GlobalReport: nr_pages_read:1910553827, nr_pages_hit:1840785573, nr_do_read_fault:1381648, nr_pages_miss:23271846
-[ 7457.344288] FinalTaskReport: addr2line:16519 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:865, final_async_pages:642
+[ 8965.082046] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.089240] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.096478] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.103438] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.110403] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.117936] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.124880] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.131824] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.138751] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.145741] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.152716] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.160043] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.166995] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.174122] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.181087] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.188318] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.195318] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.202794] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.209725] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.216726] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.223815] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.230929] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.237931] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.245253] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.252273] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.259195] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.266195] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.273362] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.280346] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.287405] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.294626] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.301932] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.309151] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.316090] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.323213] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.330783] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.337927] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.344903] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.351978] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.358949] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.365884] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.373608] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.380647] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.387579] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.394595] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.401555] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.408517] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.415825] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.422767] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.429772] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.436734] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.443723] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.450703] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.458150] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.465087] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.472045] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.479078] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.486102] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.493086] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.500487] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.507424] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.514435] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.521397] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.528322] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.535265] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.542674] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.549598] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.556529] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.563504] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.570440] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.577365] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.584832] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.591794] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.598742] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.605669] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.612576] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.619558] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.626842] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.633755] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.640744] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.647683] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.654638] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.661588] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.669032] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.676037] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.682976] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.689909] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.696875] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.703802] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.711052] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.717995] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.724923] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.731903] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.738870] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.745851] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.753167] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.760110] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.767069] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.773986] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.780963] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.787952] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.795140] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.802093] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.809052] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.816086] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.823098] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.830039] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.837371] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.844318] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.851299] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.858229] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.865165] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.872136] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.879387] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.886347] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.893317] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.900355] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.907340] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.914274] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.921579] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.928502] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.935462] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.942424] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.949316] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.956246] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.963584] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.970523] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.977464] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.984403] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.991342] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8965.998252] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.005909] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.012846] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.019786] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.026744] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.033648] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.040564] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.047793] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.054752] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.061688] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.068609] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.075510] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.082438] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.089705] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.096620] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.103522] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.110414] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.117305] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.124210] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.131572] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.138528] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.145432] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.152370] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.159280] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.166199] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.173513] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.180441] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.187314] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.194243] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.201154] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.208089] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.215386] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.222317] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.229259] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.236163] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.243068] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.249965] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.257128] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.264034] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.270931] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.277883] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.284856] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.291787] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.299062] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.305987] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.312871] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.319799] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.326704] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.333618] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.340879] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.347771] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.354673] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.361549] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.368457] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.375391] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.384487] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 8966.391741] sh (48292): drop_caches: 3
+[ 8966.424090] sh (48483): drop_caches: 3
+[ 8971.448943] Enabled file stats for time:48490
+[ 8971.449147] write_proc: Value of write = 1
+[ 8971.454283] Enabled file stats for db_bench:48499
+[ 8971.454480] write_proc: Value of write = 1
+[ 8971.507227] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.508894] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.509714] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.511278] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.511464] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.511522] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.511570] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.511796] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.512073] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.512214] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.512234] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.512252] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.512266] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.513416] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.513428] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.513661] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 8971.533291] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.535881] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.538162] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.540860] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.544284] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.545573] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.546294] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.546381] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.546478] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.546648] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.547523] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.549565] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.549706] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.549726] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.552629] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.554628] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.560069] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.571967] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.574467] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.577480] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.578482] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.578949] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.579652] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.580215] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.582525] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.583468] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.584028] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.584115] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.584190] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.584230] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.587489] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.587882] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.592049] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.593936] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.596253] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.597017] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.597580] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.645578] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.647887] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.649866] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.650171] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.650253] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.650966] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.651021] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.651329] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.651533] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.651645] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.652157] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.652178] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.653832] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.653922] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.653923] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.668916] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.674875] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.680385] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.680839] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.683386] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.683573] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.687218] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.687454] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.687711] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.688571] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.688623] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.688933] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.689166] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.691392] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.691528] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.691545] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.692186] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.696004] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.702654] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.705650] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.712270] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.717473] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.718613] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.718857] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.721801] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.721933] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.722022] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.723004] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.723574] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.725112] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.725462] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.725927] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.725998] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.726087] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.727251] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.740242] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.741346] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.742198] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.745978] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.748028] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.748593] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.748949] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.749904] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.750437] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.750650] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.750839] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.796091] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.798891] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.801333] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.801599] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.802535] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.802567] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.802832] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.803093] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.803298] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.803325] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.803592] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.803709] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.805318] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.805407] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.805453] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.817523] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.823682] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.831447] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.832231] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.834927] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.835156] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.837952] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.838863] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.839358] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.839818] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.840038] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.840177] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.840260] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.842249] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.842902] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.842964] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.842990] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 8971.845689] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.855102] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.858459] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.862808] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.862954] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.867552] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.872060] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.872702] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.874023] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.874306] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.874330] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.874446] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.875114] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.875876] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.877699] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.877820] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.877843] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.879782] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.883954] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.887220] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.887441] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.891514] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.898297] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.900015] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.903452] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.903513] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 8971.904217] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.904456] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.904641] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.905341] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.909166] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.909915] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 8971.913277] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.913364] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.915409] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.919898] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.919949] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.921090] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.921272] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.922401] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 8971.951362] FinalTaskReport: db_bench:48499 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1180, final_async_pages:2073
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:28
-                                        nr_pages_read:248, nr_pages_hit:99, nr_do_read_fault:51
-[ 7457.344837] FinalTaskReport: sh:16510 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:192, final_async_pages:56
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:93
+                                        nr_pages_read:1792, nr_pages_hit:931, nr_do_read_fault:163
+[ 8972.142588] write_proc: Value of write = 0
+[ 8972.142605] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 8972.142606] Final GlobalReport: nr_pages_read:13201670860, nr_pages_hit:12915976567, nr_do_read_fault:6913172, nr_pages_miss:103874960
+[ 8972.142659] FinalTaskReport: time:48490 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
                                         full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:3
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:28
-[ 7457.595471] Enabled file stats for sh:16528
-[ 7457.595669] write_proc: Value of write = 1
-[ 7457.609154] Enabled file stats for addr2line:16537
-[ 7457.609360] write_proc: Value of write = 1
-[ 7457.818475] write_proc: Value of write = 0
-[ 7457.819377] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[ 7457.819379] Final GlobalReport: nr_pages_read:1910553827, nr_pages_hit:1840785573, nr_do_read_fault:1383437, nr_pages_miss:23271846
-[ 7457.824245] FinalTaskReport: addr2line:16537 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:969, final_async_pages:1506
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:66
-                                        nr_pages_read:437, nr_pages_hit:190, nr_do_read_fault:149
-[ 7457.826948] FinalTaskReport: sh:16528 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:192, final_async_pages:123
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:5
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:46
-[15700.657044] git invoked oom-killer: gfp_mask=0x40cd0(GFP_KERNEL|__GFP_COMP|__GFP_RECLAIMABLE), order=0, oom_score_adj=0
-[15700.657053] CPU: 31 PID: 17701 Comm: git Tainted: G           OE     5.14.0 #30
-[15700.657056] Hardware name: Dell Inc. PowerEdge C6525/04DK47, BIOS 2.0.3 01/15/2021
-[15700.657058] Call Trace:
-[15700.657061]  dump_stack_lvl+0x4a/0x5f
-[15700.657066]  dump_stack+0x10/0x12
-[15700.657068]  dump_header+0x4f/0x210
-[15700.657071]  oom_kill_process+0xec/0x140
-[15700.657073]  out_of_memory+0x117/0x590
-[15700.657075]  __alloc_pages_slowpath.constprop.122+0xa55/0xd70
-[15700.657079]  __alloc_pages+0x2db/0x320
-[15700.657081]  alloc_pages+0x6a/0xe0
-[15700.657083]  allocate_slab+0x339/0x530
-[15700.657086]  ___slab_alloc+0x47b/0x660
-[15700.657088]  ? __d_alloc+0x27/0x1d0
-[15700.657091]  ? __d_alloc+0x27/0x1d0
-[15700.657092]  __slab_alloc+0x20/0x40
-[15700.657094]  ? __slab_alloc+0x20/0x40
-[15700.657096]  kmem_cache_alloc+0x374/0x3b0
-[15700.657099]  __d_alloc+0x27/0x1d0
-[15700.657100]  d_alloc+0x1a/0x80
-[15700.657102]  d_alloc_parallel+0x61/0x500
-[15700.657104]  __lookup_slow+0x67/0x140
-[15700.657107]  walk_component+0x12e/0x1a0
-[15700.657108]  ? tomoyo_init_request_info+0x80/0x90
-[15700.657111]  path_lookupat+0x69/0x140
-[15700.657113]  filename_lookup+0xe0/0x1c0
-[15700.657116]  ? __check_object_size+0xd8/0x1b0
-[15700.657118]  user_path_at_empty+0x36/0x40
-[15700.657120]  ? user_path_at_empty+0x36/0x40
-[15700.657122]  vfs_statx+0x73/0x110
-[15700.657124]  __do_sys_newlstat+0x3d/0x70
-[15700.657127]  ? exit_to_user_mode_prepare+0x32/0x190
-[15700.657130]  __x64_sys_newlstat+0x16/0x20
-[15700.657132]  do_syscall_64+0x3a/0xb0
-[15700.657134]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[15700.657137] RIP: 0033:0x7f4d24c527c5
-[15700.657139] Code: c9 b6 2d 00 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 83 ff 01 48 89 f0 77 30 48 89 c7 48 89 d6 b8 06 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 03 f3 c3 90 48 8b 15 91 b6 2d 00 f7 d8 64 89
-[15700.657141] RSP: 002b:00007f4d06ffcdd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000006
-[15700.657143] RAX: ffffffffffffffda RBX: 0000000000000408 RCX: 00007f4d24c527c5
-[15700.657145] RDX: 00007f4d06ffce20 RSI: 00007f4d06ffce20 RDI: 0000562bdf8ff468
-[15700.657145] RBP: 00007f4d258e2998 R08: 00007f4d06ffccdc R09: 0000000000000000
-[15700.657146] R10: 0000000000000028 R11: 0000000000000246 R12: 0000562bdf8ff410
-[15700.657147] R13: 00007f4d06ffcdf0 R14: 0000562bdf8ff468 R15: 0000562bdd480a60
-[15700.657149] Mem-Info:
-[15700.657152] active_anon:155 inactive_anon:964 isolated_anon:11
-                active_file:1007 inactive_file:455 isolated_file:42
-                unevictable:2122 dirty:12 writeback:4
-                slab_reclaimable:30663 slab_unreclaimable:92304
-                mapped:1250 shmem:776 pagetables:2931 bounce:0
-                free:247476 free_pcp:1026 free_cma:0
-[15700.657157] Node 0 active_anon:620kB inactive_anon:3856kB active_file:4028kB inactive_file:1820kB unevictable:8488kB isolated(anon):44kB isolated(file):168kB mapped:5000kB dirty:48kB writeback:16kB shmem:3104kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 0kB writeback_tmp:0kB kernel_stack:10032kB pagetables:11724kB all_unreclaimable? no
-[15700.657161] Node 0 DMA free:11264kB min:4kB low:16kB high:28kB reserved_highatomic:0KB active_anon:0kB inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:15992kB managed:15360kB mlocked:0kB bounce:0kB free_pcp:0kB local_pcp:0kB free_cma:0kB
-[15700.657165] lowmem_reserve[]: 0 776 127598 127598 127598
-[15700.657169] Node 0 DMA32 free:507636kB min:408kB low:1200kB high:1992kB reserved_highatomic:0KB active_anon:12kB inactive_anon:24kB active_file:0kB inactive_file:0kB unevictable:0kB writepending:0kB present:1682240kB managed:1616700kB mlocked:0kB bounce:0kB free_pcp:992kB local_pcp:0kB free_cma:0kB
-[15700.657173] lowmem_reserve[]: 0 0 126822 126822 126822
-[15700.657176] Node 0 Normal free:471004kB min:557500kB low:687364kB high:817228kB reserved_highatomic:0KB active_anon:640kB inactive_anon:3464kB active_file:5268kB inactive_file:2136kB unevictable:8488kB writepending:64kB present:132106240kB managed:129874164kB mlocked:5416kB bounce:0kB free_pcp:3192kB local_pcp:212kB free_cma:0kB
-[15700.657180] lowmem_reserve[]: 0 0 0 0 0
-[15700.657182] Node 0 DMA: 0*4kB 0*8kB 0*16kB 0*32kB 0*64kB 0*128kB 0*256kB 0*512kB 1*1024kB (U) 1*2048kB (M) 2*4096kB (M) = 11264kB
-[15700.657190] Node 0 DMA32: 13*4kB (UE) 15*8kB (UE) 16*16kB (UE) 13*32kB (UME) 17*64kB (UME) 26*128kB (UME) 13*256kB (UME) 7*512kB (ME) 6*1024kB (UME) 5*2048kB (UME) 117*4096kB (M) = 507788kB
-[15700.657200] Node 0 Normal: 33129*4kB (UME) 23387*8kB (UME) 9365*16kB (UME) 244*32kB (UME) 2*64kB (E) 0*128kB 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 477388kB
-[15700.657210] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=1048576kB
-[15700.657212] Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0 hugepages_size=2048kB
-[15700.657213] 4168 total pagecache pages
-[15700.657214] 576 pages in swap cache
-[15700.657214] Swap cache stats: add 3030645, delete 3030203, find 51624/73767
-[15700.657215] Free swap  = 477584kB
-[15700.657216] Total swap = 3145724kB
-[15700.657217] 33451118 pages RAM
-[15700.657217] 0 pages HighMem/MovableOnly
-[15700.657218] 574562 pages reserved
-[15700.657218] 0 pages cma reserved
-[15700.657219] 0 pages hwpoisoned
-[15700.657219] Unreclaimable slab info:
-[15700.657220] Name                      Used          Total
-[15700.657221] nfs_read_data             95KB         95KB
-[15700.657225] mlx5_fs_ftes             253KB        253KB
-[15700.657226] mlx5_fs_fgs               63KB         63KB
-[15700.657227] scsi_sense_cache          32KB         32KB
-[15700.657229] RAWv6                    123KB        123KB
-[15700.657231] UDPv6                   1165KB       1165KB
-[15700.657232] TCPv6                    123KB        123KB
-[15700.657233] mqueue_inode_cache         31KB         31KB
-[15700.657236] ext4_system_zone          39KB         39KB
-[15700.657239] xfrm_state                31KB         31KB
-[15700.657239] PING                    1568KB       1568KB
-[15700.657240] RAW                       96KB         96KB
-[15700.657241] tw_sock_TCP              239KB        239KB
-[15700.657242] request_sock_TCP         723KB        723KB
-[15700.657243] TCP                     1408KB       1408KB
-[15700.657244] hugetlbfs_inode_cache         63KB         63KB
-[15700.657246] ep_head                  192KB        192KB
-[15700.657247] request_queue             62KB         62KB
-[15700.657248] biovec-max              4736KB       4832KB
-[15700.657249] biovec-128              2016KB       2016KB
-[15700.657250] biovec-64               1536KB       1536KB
-[15700.657252] dmaengine-unmap-256         30KB         30KB
-[15700.657253] dmaengine-unmap-128         31KB         31KB
-[15700.657254] dmaengine-unmap-16       7233KB       7233KB
-[15700.657255] skbuff_fclone_cache        768KB        768KB
-[15700.657256] skbuff_head_cache       1351KB       1360KB
-[15700.657257] file_lock_cache          366KB        366KB
-[15700.657258] file_lock_ctx            151KB        151KB
-[15700.657259] fsnotify_mark_connector        192KB        192KB
-[15700.657260] task_delay_info          131KB        131KB
-[15700.657261] taskstats                759KB        759KB
-[15700.657262] proc_dir_entry           763KB        763KB
-[15700.657263] pde_opener               191KB        191KB
-[15700.657265] seq_file                 191KB        191KB
-[15700.657266] shmem_inode_cache       2129KB       2129KB
-[15700.657267] kernfs_node_cache       9504KB       9504KB
-[15700.657268] mnt_cache                382KB        382KB
-[15700.657271] filp                    4103KB       4176KB
-[15700.657272] names_cache             1664KB       1664KB
-[15700.657273] lsm_file_cache           334KB        334KB
-[15700.657274] vm_area_struct          4984KB       4984KB
-[15700.657275] mm_struct               1689KB       1689KB
-[15700.657276] files_cache             1676KB       1676KB
-[15700.657277] signal_cache            2520KB       2520KB
-[15700.657278] sighand_cache           3588KB       3588KB
-[15700.657279] task_struct             6156KB       6156KB
-[15700.657280] cred_jar                1228KB       1228KB
-[15700.657281] anon_vma_chain          2488KB       2508KB
-[15700.657284] anon_vma                2547KB       2581KB
-[15700.657285] pid                      392KB        392KB
-[15700.657286] irq_remap_cache          416KB        416KB
-[15700.657287] Acpi-Operand             830KB        830KB
-[15700.657288] Acpi-ParseExt             71KB         71KB
-[15700.657289] Acpi-State               195KB        195KB
-[15700.657290] numa_policy               15KB         15KB
-[15700.657291] perf_event              1508KB       1508KB
-[15700.657292] trace_event_file         339KB        339KB
-[15700.657292] ftrace_event_field        458KB        458KB
-[15700.657293] pool_workqueue           424KB        424KB
-[15700.657294] task_group               740KB        740KB
-[15700.657337] vmap_area              18392KB      18620KB
-[15700.657339] kmalloc-cg-8k            256KB        256KB
-[15700.657339] kmalloc-cg-4k           1536KB       1536KB
-[15700.657340] kmalloc-cg-2k           1536KB       1536KB
-[15700.657341] kmalloc-cg-1k           1696KB       1696KB
-[15700.657342] kmalloc-cg-512           784KB        784KB
-[15700.657342] kmalloc-cg-256           128KB        128KB
-[15700.657343] kmalloc-cg-192           378KB        378KB
-[15700.657344] kmalloc-cg-96            189KB        189KB
-[15700.657344] kmalloc-cg-64            192KB        192KB
-[15700.657345] kmalloc-cg-32            192KB        192KB
-[15700.657346] kmalloc-cg-16            184KB        184KB
-[15700.657346] kmalloc-cg-8             192KB        192KB
-[15700.657347] kmalloc-8k             60928KB      60928KB
-[15700.657349] kmalloc-4k              8428KB       8640KB
-[15700.657354] kmalloc-2k             86526KB      87104KB
-[15700.657354] kmalloc-1k              6272KB       6272KB
-[15700.657355] kmalloc-512            18672KB      18672KB
-[15700.657356] kmalloc-256             1288KB       1288KB
-[15700.657356] kmalloc-192              748KB        748KB
-[15700.657357] kmalloc-128              964KB        964KB
-[15700.657358] kmalloc-96             16624KB      16624KB
-[15700.657358] kmalloc-64              2576KB       2576KB
-[15700.657359] kmalloc-32              1520KB       1520KB
-[15700.657360] kmalloc-16               352KB        352KB
-[15700.657360] kmalloc-8                268KB        268KB
-[15700.657361] kmem_cache_node           40KB         40KB
-[15700.657362] kmem_cache               104KB        104KB
-[15700.657363] Tasks state (memory values in pages):
-[15700.657363] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-[15700.657372] [    752]     0   752    25843      480   221184      281             0 systemd-journal
-[15700.657375] [    758]     0   758    26479      216    94208       57             0 lvmetad
-[15700.657378] [    771]     0   771    11541      409   118784      494         -1000 systemd-udevd
-[15700.657380] [   1020]     0  1020    11903      464   143360      126             0 rpcbind
-[15700.657382] [   1025]     0  1025     7833      521   114688       78             0 cron
-[15700.657384] [   1026]     0  1026    71916      489   200704      305             0 accounts-daemon
-[15700.657386] [   1030]   102  1030    66819      370   176128      399             0 rsyslogd
-[15700.657388] [   1038]     0  1038    27759      437   118784      223             0 irqbalance
-[15700.657390] [   1042]   103  1042    12518      540   143360      173          -900 dbus-daemon
-[15700.657392] [   1045]     0  1045    17618      297   184320      180             0 systemd-logind
-[15700.657394] [   1060]     0  1060    42595      598   237568     1942             0 networkd-dispat
-[15700.657396] [   1066]     0  1066    72223      558   196608      238             0 polkitd
-[15700.657397] [   1071]   101  1071    17625      465   184320      142             0 systemd-resolve
-[15700.657400] [   1076]     0  1076     8703      426   106496     1775             0 ntpstart
-[15700.657401] [   1080]     0  1080    18078      537   184320      187         -1000 sshd
-[15700.657403] [   1093]   107  1093    26945      388   118784      184             0 ntpd
-[15700.657405] [   1151]   100  1151    20015      566   176128      185             0 systemd-network
-[15700.657407] [   1195]     0  1195     6347      483    90112       49             0 iscsid
-[15700.657409] [   1196]     0  1196     6473     1301   102400        0           -17 iscsid
-[15700.657411] [   1205]     0  1205     3992      408    73728       36             0 agetty
-[15700.657412] [   1209]     0  1209     4048      372    77824       38             0 agetty
-[15700.657414] [   1269]     0  1269     2747      376    69632       71             0 slothd
-[15700.657416] [   1271]     0  1271    11393      358   122880     2383             0 watchdog
-[15700.657417] [   1293]     0  1293     5686        0    81920      111             0 pubsubd
-[15700.657419] [   1399]     0  1399     1136        0    57344       25             0 emulab-syncd
-[15700.657421] [   1405]     0  1405    11276      244   118784     2246             0 rc.progagent
-[15700.657422] [   1406]  2002  1406     8882      522   114688      125             0 program-agent
-[15700.657424] [   1453]     0  1453     6200      218    81920      131             0 linktest
-[15700.657426] [   1466] 20002  1466    19133      582   188416      264             0 systemd
-[15700.657428] [   1467] 20002  1467    27877        0   249856      537             0 (sd-pam)
-[15700.657429] [  13448] 20002 13448    13418      454   139264      584             0 mosh-server
-[15700.657431] [  13449] 20002 13449     5334      458    81920      149             0 tcsh
-[15700.657433] [  13455] 20002 13455     5676      481    94208      420             0 bash
-[15700.657435] [  13510] 20002 13510    13336      459   135168      508             0 mosh-server
-[15700.657437] [  13511] 20002 13511     5334      448    94208      148             0 tcsh
-[15700.657439] [  13562] 20002 13562    13075      471   139264      204             0 mosh-server
-[15700.657441] [  13563] 20002 13563     5334      440    90112      149             0 tcsh
-[15700.657442] [  13569] 20002 13569     5643      418    94208      381             0 bash
-[15700.657444] [  13601] 20002 13601     5676      478    90112      422             0 bash
-[15700.657446] [  14470] 20002 14470     3257      423    69632       92             0 rocksdb-exp-tes
-[15700.657448] [  16475] 20002 16475    21487       52   114688       72             0 time
-[15700.657449] [  16484] 20002 16484   979893      404  5451776   641584             0 db_bench
-[15700.657452] [  17005] 20002 17005    13314      257   131072      471             0 mosh-server
-[15700.657453] [  17006] 20002 17006     5334      417    90112      149             0 tcsh
-[15700.657455] [  17012] 20002 17012     5709      451    86016      458             0 bash
-[15700.657456] [  17447] 20002 17447    13266      476   135168      426             0 mosh-server
-[15700.657458] [  17448] 20002 17448     5334      439    90112      148             0 tcsh
-[15700.657460] [  17454] 20002 17454     5643      421    90112      382             0 bash
-[15700.657461] [  17464] 20002 17464    10552      498   131072      295             0 top
-[15700.657463] [  17685] 20002 17685     3224      428    65536       47             0 git_configure.s
-[15700.657465] [  17690] 20002 17690   378473      611   282624     3655             0 git
-[15700.657466] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=db_bench,pid=16484,uid=20002
-[15700.657499] Out of memory: Killed process 16484 (db_bench) total-vm:3919572kB, anon-rss:0kB, file-rss:1616kB, shmem-rss:0kB, UID:20002 pgtables:5324kB oom_score_adj:0
-[15700.657501] FinalTaskReport: db_bench:16484 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:899, final_async_pages:1852
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:137
-                                        nr_pages_read:984, nr_pages_hit:549, nr_do_read_fault:322
-[15700.764188] oom_reaper: reaped process 16484 (db_bench), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-[15700.768049] write_proc: Value of write = 0
-[15700.768068] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[15700.768069] Final GlobalReport: nr_pages_read:1911091639, nr_pages_hit:1840984799, nr_do_read_fault:1531946, nr_pages_miss:23272465
-[15700.771230] FinalTaskReport: time:16475 - ra_orig_nr_pages:0, ra_final_nr_pages:0
-                                        async_pages:64, final_async_pages:463
-                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
-                                        failed_pfetches:0, total_pfetches:0, os_pfetches:17
-                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:51
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
