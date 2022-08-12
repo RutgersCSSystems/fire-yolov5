@@ -19,7 +19,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=1
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=100000
+let SCALE_ROCKSDB_GRAPH=10000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -62,7 +62,7 @@ declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting"
 
 
 #declare -a threadarr=("4" "8" "16" "32")
-declare -a threadarr=("16")
+declare -a threadarr=("8")
 
 
 PULL_RESULT() {
@@ -110,23 +110,27 @@ EXTRACT_RESULT() {
 	dir=0
 	let num=0;
 
-	rm "$APP.DATA"
-
-	for APPLICATION in "${apparr[@]}"
-	do
-		if [[ "$num" -eq 0 ]]; then
-			echo "# reader" > num.tmp
-			echo $APPLICATION >> num.tmp
-			let "num=num+1"
-		else
-			echo $APPLICATION >> num.tmp
-		fi
-	done 
-	let num=0;
 
 
 	for THREAD in "${threadarr[@]}"
 	do
+
+		rm "$APP.DATA"
+		rm -rf num.tmpa
+		rm -rf $APP"-THREADS-$THREAD".DATA
+
+		for APPLICATION in "${apparr[@]}"
+		do
+			if [[ "$num" -eq 0 ]]; then
+				echo "# reader" > num.tmp
+				echo $APPLICATION >> num.tmp
+				let "num=num+1"
+			else
+				echo $APPLICATION >> num.tmp
+			fi
+		done 
+		let num=0;
+
 
 
 		#for APPLICATION in "${apparr[@]}"

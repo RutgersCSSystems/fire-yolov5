@@ -1,0 +1,445 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+RocksDB:    version 6.20
+Date:       Wed Aug 10 18:33:42 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    2000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    9719.8 MB (estimated)
+FileSize:   5813.6 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: skip_list
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA]
+compact      :    2280.000 micros/op 2538 ops/sec;
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=2000000 --benchmarks=compact --use_existing_db=1 --mmap_read=0 --threads=32"
+	User time (seconds): 0.28
+	System time (seconds): 5.65
+	Percent of CPU this job got: 228%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.59
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 335196
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 72
+	Minor (reclaiming a frame) page faults: 1550292
+	Voluntary context switches: 3678
+	Involuntary context switches: 37
+	Swaps: 0
+	File system inputs: 10625232
+	File system outputs: 1664
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[ 9303.675010] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.682999] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.692140] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.700976] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.708574] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.717907] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.726761] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.734200] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.742991] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.750833] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.759718] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.768215] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.775688] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.783795] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.791611] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.799702] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.808568] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.817592] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.825414] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.833334] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.841349] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.850449] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.858338] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.866203] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.874071] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.881948] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.889844] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.898861] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.906852] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.915057] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.923281] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.932446] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.940622] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.948437] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.956571] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.965341] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.973473] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.982355] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9303.991707] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.000902] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.009735] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.019042] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.027472] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.036292] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.045181] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.054697] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.063573] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.072857] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.081622] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.090435] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.099255] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.107075] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.114901] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.124138] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.132997] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.142014] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.150916] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.159826] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.168607] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.178146] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.186057] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.195026] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.203863] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.212681] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.221592] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.229607] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.238461] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.247417] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.254883] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.263723] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.272586] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.281846] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.290676] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.299007] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.308441] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.316374] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.325221] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.334477] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.342063] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.350881] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.359778] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.368359] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.377157] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.386376] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.395209] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.402691] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.411493] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.420223] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.429036] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.438683] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.447588] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.456427] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.465308] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.474185] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.483014] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.492206] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.499732] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.508580] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.517532] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.526020] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.534856] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.544049] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.552746] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.562354] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.569875] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.578736] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.587640] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.596898] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.604540] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.613467] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.621047] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.629872] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.638663] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.646729] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.654375] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.663184] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.672048] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.680934] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.689667] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.699200] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.708036] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.716742] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.725525] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.734333] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.743119] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.752204] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.760986] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.769680] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.778483] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.787201] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.795923] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.805028] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.813717] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.822481] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.831233] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.839959] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.848683] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.857846] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.866586] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.875264] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.883979] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.892630] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.901298] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.910360] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.919022] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.927713] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.936847] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.945792] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.954437] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.963457] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.972118] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.980702] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.989581] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9304.998899] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.007563] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.016561] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.025252] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.033962] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.042534] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.051385] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.060362] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.069530] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.078711] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.087497] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.096176] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.104784] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.113663] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.123096] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.131784] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.140509] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.149307] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.158082] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.166772] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.176284] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.185370] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.194181] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.202841] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.211576] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.220681] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.230041] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.238907] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.247754] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.256618] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.265488] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.274149] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.283286] free_cross_bitmap: releasing mem for inode with i_count 2
+[ 9305.290512] sh (10765): drop_caches: 3
+[ 9305.325002] sh (10956): drop_caches: 3
+[ 9310.351788] Enabled file stats for time:10963
+[ 9310.352007] write_proc: Value of write = 0
+[ 9310.357864] Enabled file stats for db_bench:10972
+[ 9310.358040] write_proc: Value of write = 0
+[ 9310.384958] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.385471] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.385680] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.386316] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386357] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386361] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386436] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386636] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386704] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.386727] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.386761] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.386898] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.386963] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 20 millisec
+[ 9310.386995] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.387011] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.387079] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.392118] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.397340] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.399507] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.402467] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.403346] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.404155] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.404567] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.404757] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.404934] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.405150] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.405317] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.405365] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.405516] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.405550] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.405966] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.406343] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 16 millisec
+[ 9310.406983] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.408964] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.411540] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.411947] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.413516] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.417493] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.418098] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.419408] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.419742] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.419837] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.420304] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.420330] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.420534] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.420647] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.420824] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.420847] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.421363] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.445421] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.445667] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.447457] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.448547] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.470007] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.470036] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.470156] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.470813] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.470823] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.470862] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.470866] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.470913] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.470982] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.471854] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.471880] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.472035] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.472093] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.476834] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.477786] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.483176] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.485822] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.485973] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.486498] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.491625] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.492321] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.492504] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.492855] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.493280] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.493539] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.493622] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.494359] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.494509] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.494563] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.495080] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.495209] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.508911] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.512830] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.515696] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.518597] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.518730] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.519780] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.520565] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.521419] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.523719] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.524194] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.524654] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.524921] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.525181] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.525691] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.526427] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 12 millisec
+[ 9310.537110] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.541381] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.541541] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.541738] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.550676] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.557431] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.577764] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.578306] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.578712] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.579864] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.579869] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.584413] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.585565] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.586388] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.586464] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.622919] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.623020] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.623336] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.624578] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.624702] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.642768] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.653496] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.678575] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.679485] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.681717] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9310.686516] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.725550] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9310.728300] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.731231] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.785411] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.797412] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.798811] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.799922] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.800255] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.808688] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.873981] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9310.874022] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.915745] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.916343] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.916490] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 8 millisec
+[ 9310.916925] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.917819] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9310.985159] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.002297] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.037330] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.039628] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.040320] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.061786] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.064277] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.077503] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.133590] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.145847] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.158787] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.178526] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.179656] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.183590] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.185229] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.225417] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.280608] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.298416] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.316185] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.325923] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.423094] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.432725] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.441580] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.457991] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.526143] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.601002] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.638626] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.654604] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.660088] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.661510] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.661842] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.704061] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.719439] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.720112] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.721685] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.742678] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.744345] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.744486] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.757631] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 0 millisec
+[ 9311.768880] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.769751] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.774507] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.775107] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.777220] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9311.821150] alloc_cross_bitmap: preallocate 268435456 pg, nr_longs=4194304 in 4 millisec
+[ 9312.949803] write_proc: Value of write = 0
+[ 9312.949816] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 9312.949817] Final GlobalReport: nr_pages_read:13202841998, nr_pages_hit:12916631170, nr_do_read_fault:7008318, nr_pages_miss:103902195
+[ 9312.949859] FinalTaskReport: db_bench:10972 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:968, final_async_pages:2098
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:89
+                                        nr_pages_read:2140, nr_pages_hit:1143, nr_do_read_fault:159
+[ 9312.952326] write_proc: Value of write = 0
+[ 9312.952340] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 9312.952341] Final GlobalReport: nr_pages_read:13202841998, nr_pages_hit:12916631170, nr_do_read_fault:7008324, nr_pages_miss:103902195
+[ 9312.952379] FinalTaskReport: time:10963 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18

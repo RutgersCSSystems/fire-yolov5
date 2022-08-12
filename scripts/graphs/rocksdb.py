@@ -15,8 +15,8 @@ clusterlen=len(legendtext)
 output='ROCKSDB.DATA' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='ROCKSDB' if len(sys.argv) < 2 else sys.argv[2]
 
-ymax=30
-yinterval=5
+ymax=100
+yinterval=10
 
 
 # Font Sizes
