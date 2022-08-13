@@ -356,6 +356,8 @@ void inline prefetch_file(int fd)
 #ifdef FULL_PREFETCH
 		//Allows the whole file to be prefetched at once
 		arg->prefetch_size = filesize;
+		printf("%s: Doing a full prefetch %zu bytes\n", __func__, filesize);
+
 #elif PREDICTOR
 		/*
 		 * FULL_PREFETCH is never used with PREDICTOR

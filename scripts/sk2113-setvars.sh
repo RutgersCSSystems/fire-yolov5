@@ -18,7 +18,7 @@ export QEMUMEM="40" #In GB
 export KERNEL=$NVMBASE/KERNEL
 
 #BENCHMARKS AND LIBS
-export OUTPUT_FOLDER=$NVMBASE/results/kannan11/
+export OUTPUT_FOLDER=$NVMBASE/results/burger/
 export OUTPUTDIR=$OUTPUT_FOLDER
 export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
