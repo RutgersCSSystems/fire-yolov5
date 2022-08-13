@@ -22,6 +22,8 @@
 
 #include "thpool.h"
 
+//#define SET_AFFINITY_WORKER
+
 #ifdef DEBUG
 #define THPOOL_DEBUG 1
 #else
@@ -127,17 +129,18 @@ struct thpool_* thpool_init(int num_threads){
 		num_threads = 0;
 	}
 
-#ifdef PIN_ALL
+#ifdef SET_AFFINITY_WORKER
 	/*set affinity*/
-	pid_t proc_pid = getpid();
-	int core_id = proc_pid % 16;
+	//pid_t proc_pid = getpid();
+	//int core_id = proc_pid % 16;
+	int core_id = 44;
 	cpu_set_t proc_cpuset;
 	CPU_ZERO(&proc_cpuset);
 	CPU_SET(core_id, &proc_cpuset);
 	if (sched_setaffinity(getpid(), sizeof(cpu_set_t), &proc_cpuset) == -1){
 		err("thpool_init(): Could not set proc affinity\n");
 	}
-	core_id += 16; //ID for worker thread
+	//core_id += 16; //ID for worker thread
 	cpu_set_t th_cpuset;
 	CPU_ZERO(&th_cpuset);
 	CPU_SET(core_id, &th_cpuset);
@@ -180,7 +183,7 @@ struct thpool_* thpool_init(int num_threads){
 #if THPOOL_DEBUG
 			printf("THPOOL_DEBUG: Created thread %d in pool \n", n);
 #endif
-#ifdef PIN_ALL
+#ifdef SET_AFFINITY_WORKER
 		/*set thread affinity*/
 		if (pthread_setaffinity_np(thpool_p->threads[n]->pthread, sizeof(cpu_set_t), &th_cpuset) != 0){
 			err("thpool_init(): Could not set affinity for pthread\n");
