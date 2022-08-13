@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+
 DBHOME=$PWD
 THREAD=4
 VALUE_SIZE=4096
@@ -25,12 +27,13 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
-declare -a workload_arr=("filemicro_seqwrite.f" "mongo.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
-#declare -a workload_arr=("mongo.f" "oltp.f")
+declare -a workload_arr=("filemicro_seqread.f" "mongo.f" "webserver.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
+declare -a config_arr=("Vanilla")
 declare -a thread_arr=("16")
 
+
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
 
 FlushDisk()

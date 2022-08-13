@@ -17,7 +17,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
-let SCALE_FILEBENCH_GRAPH=1
+let SCALE_FILEBENCH_GRAPH=1000
 let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=10000
 let SCALE_CASSANDRA_GRAPH=100
@@ -55,14 +55,15 @@ let INCR_ONE_SPACE=1
 declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 #APPlication Array for file bench
-declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f" "oltp.f")
+#declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f")
+declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "randomread.f" "randomrw.f")
 
 #APPlication Array for file bench
 declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting" "readwhilescanning")
 
 
 #declare -a threadarr=("4" "8" "16" "32")
-declare -a threadarr=("8")
+declare -a threadarr=("16")
 
 
 PULL_RESULT() {
@@ -80,16 +81,16 @@ PULL_RESULT() {
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
 	#echo $resultfile
-	echo "$APPFILE"
+	#echo "$APPFILE"
 
 	if [ -f $APPFILE ]; then
 
 		if [ "$APP" = 'filebench' ]; 
 		then
 			
-			val=`cat $APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$6}; END {print SUM}'`
+			val=`cat $APPFILE | grep "IO Summary:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$10}; END {print SUM}'`
 			scaled_value=$(echo $val $SCALE_FILEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
-			echo $scaled_value
+			echo $scaled_value $APPVAL".DATA"
 			echo $scaled_value &>> $APPVAL".DATA"
 
 		elif [ "$APP" = 'ROCKSDB' ];
@@ -140,9 +141,8 @@ EXTRACT_RESULT() {
 			APPFILE=""
 			dir=$TARGET/$APPLICATION
 
-			rm "$APPLICATION"
-
-			echo $APPLICATION
+			rm -f "$APPLICATION"
+			#echo $APPLICATION
 
 			if [[ "$num" -eq 0 ]]; then
 				echo $APPVAL > $APPVAL.DATA
@@ -155,9 +155,12 @@ EXTRACT_RESULT() {
 			#cat $APPLICATION.DATA
 			for APPLICATION in "${apparr[@]}"
 			do
+				echo $APPLICATION
 				APPFILE=$APPVAL".out"
 				PULL_RESULT $APP $APPVAL $j $TARGET/$APPLICATION/$THREAD/$APPFILE $num "$APPLICATION"
 			done
+		echo "****************"
+
 		done
 
 		j=$((j+$INCR_FULL_BAR_SPACE))
@@ -171,13 +174,14 @@ EXTRACT_RESULT() {
 		echo $VAR
 		`paste "num.tmp" $VAR &>> $APP"-THREADS-$THREAD".DATA`
 
-		python $SCRIPTS/graphs/rocksdb.py $OUTPUTPATH/$APP"-THREADS-$THREAD.DATA" $OUTPUTPATH/$APP"-$THREAD"
+		echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$THREAD.DATA $OUTPUTPATH/$APP-$THREAD"
+		python $SCRIPTS/graphs/$APP".py" $OUTPUTPATH/$APP"-THREADS-$THREAD.DATA" $OUTPUTPATH/$APP"-$THREAD"
 
 		rm "num.tmp"
-		for APPVAL in "${techarr[@]}"
-		do
-			  rm $APPVAL".DATA"
-		done
+		#for APPVAL in "${techarr[@]}"
+		#do
+			  #rm $APPVAL".DATA"
+		#done
 	done
 
 
@@ -190,7 +194,7 @@ TARGET="$OUTPUTDIR/filebench/workloads"
 #echo $TARGET
 apparr=("${filesworkarr[@]}")     
 EXTRACT_RESULT "filebench"
-
+exit
 
 j=0
 APP='ROCKSDB'

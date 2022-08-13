@@ -734,6 +734,110 @@ exit:
 }
 
 
+
+void handle_file_close(int fd){
+
+	debug_printf("Entering %s\n", __func__);
+
+#ifdef PREDICTOR
+	init_global_ds();
+	file_predictor *fp;
+	try{
+		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		fp = fd_to_file_pred->at(fd);
+		fd_to_file_pred->erase(fd);
+	}
+	catch(const std::out_of_range){
+		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
+		goto exit;
+	}
+	if(fp){
+		delete(fp);
+	}
+#endif
+
+exit:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
+
+
+
+void read_predictor(FILE *stream, size_t data_size) {
+
+	size_t amount_read = 0;
+	int fd = fileno(stream);
+
+	debug_printf("%s: TID:%ld\n", __func__, gettid());
+
+#ifdef ONLY_INTERCEPT
+	goto skip_read_predictor;
+#endif
+
+	/*
+	 * Sanity check
+	 */
+	if(fd < 3){
+		goto skip_read_predictor;
+	}
+
+#ifdef ENABLE_EVICTION
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
+#endif
+
+#ifdef PREDICTOR
+	file_predictor *fp;
+	try{
+		fp = fd_to_file_pred->at(fd);
+	}
+	catch(const std::out_of_range &orr){
+		goto skip_read_predictor;
+	}
+
+	if(fp){
+		fp->predictor_update(ftell(stream), data_size);
+		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+			prefetch_file(fd, fp);
+			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+		}
+	}
+#endif
+
+skip_read_predictor:
+	return;
+}
+
+
+/*Several applications use fgets*/
+char *fgets( char *str, int num, FILE *stream ) {
+
+    debug_printf( "Exiting %s\n", __func__);
+
+    read_predictor(stream, (size_t)num);	
+
+    return real_fgets(str, num, stream);
+}
+
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
@@ -806,31 +910,7 @@ exit:
 
 
 
-void handle_file_close(int fd){
 
-	debug_printf("Entering %s\n", __func__);
-
-#ifdef PREDICTOR
-	init_global_ds();
-	file_predictor *fp;
-	try{
-		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		fp = fd_to_file_pred->at(fd);
-		fd_to_file_pred->erase(fd);
-	}
-	catch(const std::out_of_range){
-		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
-		goto exit;
-	}
-	if(fp){
-		delete(fp);
-	}
-#endif
-
-exit:
-	debug_printf("Exiting %s\n", __func__);
-	return;
-}
 
 
 int fclose(FILE *stream){

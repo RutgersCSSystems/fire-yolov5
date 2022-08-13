@@ -1,3 +1,5 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
@@ -7,45 +9,58 @@ Filebench Version 1.5-alpha3
 0.003: Populating and pre-allocating filesets
 0.004: postsetdel populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
 0.004: Removing postsetdel tree (if exists)
-0.009: Pre-allocating directories in postsetdel tree
-1.920: Pre-allocating files in postsetdel tree
-9.286: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
-9.286: Removing postset tree (if exists)
-9.292: Pre-allocating directories in postset tree
-9.496: Pre-allocating files in postset tree
-16.869: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-16.869: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.124: Pre-allocating directories in postsetdel tree
+ENABLE_FILE_STATS in con
+2.078: Pre-allocating files in postsetdel tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+10.150: postset populated: 100 files, avg. dir. width = 10, avg. dir. depth = 2.0, 0 leafdirs, 12800.000MB total size
+10.150: Removing postset tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+10.272: Pre-allocating directories in postset tree
+ENABLE_FILE_STATS in con
+10.517: Pre-allocating files in postset tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+18.614: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+18.615: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
 FINISHED PREALLOCATION 
-17.071: Starting 1 filereader instances
-18.090: Running...
-19.629: Unexpected Process termination Code 2, Errno 0 around line 55
-19.629: Before iterating through procflow
-19.629: Before procflow_sleep
-20.091: Run took 2 seconds...
-20.091: NO VALID RESULTS! Filebench run terminated prematurely around line 55
-20.091: Shutting down processes and raising singal
+18.860: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+19.896: Running...
+20.376: Unexpected Process termination Code 2, Errno 0 around line 55
+20.376: Before iterating through procflow
+20.376: Before procflow_sleep
+20.896: Run took 1 seconds...
+20.896: NO VALID RESULTS! Filebench run terminated prematurely around line 55
+20.896: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/mongo.f"
-	User time (seconds): 0.53
-	System time (seconds): 41.70
-	Percent of CPU this job got: 194%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:21.77
+	User time (seconds): 0.44
+	System time (seconds): 42.78
+	Percent of CPU this job got: 191%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:22.61
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3692216
+	Maximum resident set size (kbytes): 3692320
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 922258
-	Minor (reclaiming a frame) page faults: 1128752
-	Voluntary context switches: 41109
-	Involuntary context switches: 267
+	Major (requiring I/O) page faults: 922260
+	Minor (reclaiming a frame) page faults: 703628
+	Voluntary context switches: 9376
+	Involuntary context switches: 255
 	Swaps: 0
-	File system inputs: 8769880
-	File system outputs: 59805712
+	File system inputs: 139880
+	File system outputs: 59805344
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest

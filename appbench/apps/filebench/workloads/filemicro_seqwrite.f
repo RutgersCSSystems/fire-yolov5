@@ -28,14 +28,15 @@
 # a 1GB file.
 # Stops after 1 series of 1024 ($count) writes has been done.
 
-set $dir=/tmp
+set $dir=DATA/
 set $cached=false
 set $count=1024
 set $iosize=1m
-set $nthreads=1
+set $nthreads=16
 set $sync=false
 
-define file name=bigfile,path=$dir,size=0,prealloc,cached=$cached
+define file name=bigfile,path=$dir,size=0,prealloc
+#,cached=$cached
 
 define process name=filewriter,instances=1
 {
@@ -46,4 +47,4 @@ define process name=filewriter,instances=1
   }
 }
 
-echo  "FileMicro-SeqWrite Version 2.2 personality successfully loaded"
+run 30

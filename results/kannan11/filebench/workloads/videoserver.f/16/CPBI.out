@@ -1,3 +1,5 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
@@ -7,47 +9,63 @@ Filebench Version 1.5-alpha3
 0.004: Populating and pre-allocating filesets
 0.005: passivevids populated: 12 files, avg. dir. width = 20, avg. dir. depth = 0.8, 0 leafdirs, 12288.000MB total size
 0.005: Removing passivevids tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 0.010: Pre-allocating directories in passivevids tree
-1.904: Pre-allocating files in passivevids tree
-6.095: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
-6.095: Removing activevids tree (if exists)
-6.101: Pre-allocating directories in activevids tree
-6.335: Pre-allocating files in activevids tree
-9.582: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-9.582: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+2.046: Pre-allocating files in passivevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+6.531: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
+6.531: Removing activevids tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+6.537: Pre-allocating directories in activevids tree
+ENABLE_FILE_STATS in con
+6.770: Pre-allocating files in activevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+10.220: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+10.220: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
 FINISHED PREALLOCATION 
-9.777: Starting 1 vidreaders instances
-9.777: Starting 1 vidwriter instances
-10.796: Running...
-10.832: Unexpected Process termination Code 2, Errno 0 around line 77
-10.832: Before iterating through procflow
-10.832: Before procflow_sleep
-11.796: Run took 1 seconds...
-11.796: NO VALID RESULTS! Filebench run terminated prematurely around line 77
-11.796: Shutting down processes and raising singal
+10.424: Starting 1 vidreaders instances
+10.425: Starting 1 vidwriter instances
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+11.444: Running...
+51.448: Run took 40 seconds...
+51.448: Per-Operation Breakdown
+vidreader            7678419ops   191943ops/s 47973.9mb/s    0.083ms/op [0.001ms - 17.524ms]
+wrtclose             61ops        2ops/s   0.0mb/s    0.057ms/op [0.034ms - 0.116ms]
+newvid               61ops        2ops/s 1561.5mb/s  554.905ms/op [464.988ms - 575.479ms]
+wrtopen              61ops        2ops/s   0.0mb/s    0.064ms/op [0.022ms - 0.083ms]
+vidremover           61ops        2ops/s   0.0mb/s  100.605ms/op [0.785ms - 125.074ms]
+51.448: IO Summary: 7678663 ops 191948.810 ops/s 191943/2 rd/wr 49535.4mb/s 0.088ms/op
+51.448: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/videoserver.f"
-	User time (seconds): 0.27
-	System time (seconds): 11.86
-	Percent of CPU this job got: 89%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:13.49
+	User time (seconds): 0.30
+	System time (seconds): 11.74
+	Percent of CPU this job got: 22%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:53.16
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3691932
+	Maximum resident set size (kbytes): 3691904
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 922209
-	Minor (reclaiming a frame) page faults: 99030
-	Voluntary context switches: 18689
-	Involuntary context switches: 62
+	Major (requiring I/O) page faults: 922170
+	Minor (reclaiming a frame) page faults: 17032
+	Voluntary context switches: 23274
+	Involuntary context switches: 99
 	Swaps: 0
-	File system inputs: 68048
-	File system outputs: 30444584
+	File system inputs: 66032
+	File system outputs: 30444464
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
-DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest

@@ -9,6 +9,8 @@ typedef FILE *(*real_fopen_t)(const char *, const char *);
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef ssize_t (*real_pread_t)(int, void *, size_t, off_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
+
+typedef char *(*real_fgets_t)(char *, int, FILE *);
 typedef ssize_t (*real_write_t)(int, const void *, size_t);
 typedef size_t (*real_fwrite_t)(const void *, size_t, 
         size_t,FILE *);
@@ -29,6 +31,8 @@ real_openat_t openat_ptr = NULL;
 
 real_pread_t pread_ptr = NULL;
 real_read_t read_ptr = NULL;
+real_fgets_t fgets_ptr = NULL;
+
 
 real_write_t write_ptr = NULL;
 
@@ -55,6 +59,7 @@ void link_shim_functions(void){
 	madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
 	fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
 	fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
+	fgets_ptr = (real_fgets_t)dlsym(RTLD_NEXT, "fgets");
 	fwrite_ptr = (real_fwrite_t)dlsym(RTLD_NEXT, "fwrite");
 	pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
 	write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
@@ -114,6 +119,17 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
     return ((real_fread_t)fread_ptr)(ptr, size, nmemb, stream);
 }
+
+/*Several applications use fgets*/
+char *real_fgets( char *str, int num, FILE *stream ) {
+
+    if(!fgets_ptr)
+        fgets_ptr = (real_fgets_t)dlsym(RTLD_NEXT, "fgets");
+
+    return ((real_fgets_t)fgets_ptr)(str, num, stream);
+}
+
+
 
 size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 

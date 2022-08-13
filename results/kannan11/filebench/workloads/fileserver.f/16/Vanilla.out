@@ -1,3 +1,5 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
@@ -7,50 +9,58 @@ Filebench Version 1.5-alpha3
 0.003: Populating and pre-allocating filesets
 0.016: bigfileset populated: 20000 files, avg. dir. width = 20, avg. dir. depth = 3.3, 0 leafdirs, 248732.753MB total size
 0.016: Removing bigfileset tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 0.020: Pre-allocating directories in bigfileset tree
-1.936: Pre-allocating files in bigfileset tree
-106.060: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-106.060: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+1.939: Pre-allocating files in bigfileset tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+126.612: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+126.612: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
 FINISHED PREALLOCATION 
-106.251: Starting 1 filereader instances
-107.257: Running...
-157.260: Run took 50 seconds...
-157.260: Per-Operation Breakdown
-statfile1            9317ops      186ops/s   0.0mb/s    0.009ms/op [0.001ms - 5.129ms]
-deletefile1          9317ops      186ops/s   0.0mb/s    0.939ms/op [0.019ms - 121.584ms]
-closefile3           9317ops      186ops/s   0.0mb/s    0.002ms/op [0.000ms - 0.009ms]
-readfile1            9317ops      186ops/s 2311.0mb/s   30.958ms/op [0.012ms - 355.716ms]
-openfile2            9323ops      186ops/s   0.0mb/s    0.024ms/op [0.002ms - 36.705ms]
-closefile2           9323ops      186ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.009ms]
-appendfilerand1      9323ops      186ops/s   1.5mb/s    0.275ms/op [0.004ms - 100.502ms]
-openfile1            9323ops      186ops/s   0.0mb/s    0.080ms/op [0.003ms - 114.936ms]
-closefile1           9323ops      186ops/s   0.0mb/s    0.003ms/op [0.001ms - 0.012ms]
-wrtfile1             9323ops      186ops/s 2283.1mb/s   53.334ms/op [0.017ms - 881.534ms]
-createfile1          9333ops      187ops/s   0.0mb/s    0.072ms/op [0.009ms - 9.598ms]
-157.260: IO Summary: 102539 ops 2050.649 ops/s 186/373 rd/wr 4595.5mb/s 7.790ms/op
-157.260: Shutting down processes and raising singal
+126.839: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+127.844: Running...
+177.848: Run took 50 seconds...
+177.849: Per-Operation Breakdown
+statfile1            8937ops      179ops/s   0.0mb/s    0.010ms/op [0.001ms - 22.125ms]
+deletefile1          8937ops      179ops/s   0.0mb/s    1.195ms/op [0.019ms - 122.350ms]
+closefile3           8937ops      179ops/s   0.0mb/s    0.003ms/op [0.001ms - 0.086ms]
+readfile1            8937ops      179ops/s 2243.6mb/s   29.382ms/op [0.008ms - 343.892ms]
+openfile2            8940ops      179ops/s   0.0mb/s    0.018ms/op [0.001ms - 65.660ms]
+closefile2           8940ops      179ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.010ms]
+appendfilerand1      8940ops      179ops/s   1.4mb/s    0.290ms/op [0.005ms - 81.081ms]
+openfile1            8940ops      179ops/s   0.0mb/s    0.064ms/op [0.003ms - 80.923ms]
+closefile1           8940ops      179ops/s   0.0mb/s    0.003ms/op [0.001ms - 0.127ms]
+wrtfile1             8940ops      179ops/s 2196.6mb/s   58.322ms/op [0.017ms - 708.605ms]
+createfile1          8953ops      179ops/s   0.0mb/s    0.065ms/op [0.010ms - 3.199ms]
+177.849: IO Summary: 98341 ops 1966.658 ops/s 179/358 rd/wr 4441.6mb/s 8.122ms/op
+177.849: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/fileserver.f"
-	User time (seconds): 0.38
-	System time (seconds): 94.45
-	Percent of CPU this job got: 59%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:38.89
+	User time (seconds): 0.50
+	System time (seconds): 122.15
+	Percent of CPU this job got: 68%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:59.93
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3693860
+	Maximum resident set size (kbytes): 3693912
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 927831
-	Minor (reclaiming a frame) page faults: 8645
-	Voluntary context switches: 7636
-	Involuntary context switches: 713
+	Major (requiring I/O) page faults: 930227
+	Minor (reclaiming a frame) page faults: 8649
+	Voluntary context switches: 13526
+	Involuntary context switches: 1895
 	Swaps: 0
-	File system inputs: 42664
-	File system outputs: 414051600
+	File system inputs: 40600
+	File system outputs: 414070744
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest

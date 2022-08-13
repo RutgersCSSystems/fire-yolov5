@@ -1,3 +1,5 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
@@ -6,36 +8,43 @@ Filebench Version 1.5-alpha3
 0.003: Random Read Version 3.0 personality successfully loaded
 0.003: Populating and pre-allocating filesets
 0.003: Removing largefile1 tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 0.007: Pre-allocating directories in largefile1 tree
-1.956: Pre-allocating files in largefile1 tree
-26.950: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-26.950: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+1.896: Pre-allocating files in largefile1 tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+30.166: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+30.166: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
 FINISHED PREALLOCATION 
-27.147: Starting 1 rand-read instances
-28.153: Running...
-58.160: Run took 30 seconds...
-58.160: Per-Operation Breakdown
-rand-read1           3051782ops   101702ops/s 794.5mb/s    0.078ms/op [0.001ms - 1.055ms]
-58.160: IO Summary: 3051782 ops 101701.899 ops/s 101702/0 rd/wr 794.5mb/s 0.078ms/op
-58.160: Shutting down processes and raising singal
+30.393: Starting 1 rand-read instances
+ENABLE_FILE_STATS in con
+31.399: Running...
+61.404: Run took 30 seconds...
+61.404: Per-Operation Breakdown
+rand-read1           4248700ops   141598ops/s 1106.2mb/s    0.056ms/op [0.001ms - 0.433ms]
+61.404: IO Summary: 4248700 ops 141597.973 ops/s 141598/0 rd/wr 1106.2mb/s 0.056ms/op
+61.404: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/randomread.f"
-	User time (seconds): 0.26
-	System time (seconds): 21.44
-	Percent of CPU this job got: 36%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.83
+	User time (seconds): 0.23
+	System time (seconds): 29.67
+	Percent of CPU this job got: 47%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:03.56
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3691080
+	Maximum resident set size (kbytes): 3691136
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 921924
-	Minor (reclaiming a frame) page faults: 8426
-	Voluntary context switches: 13555
-	Involuntary context switches: 283
+	Major (requiring I/O) page faults: 921929
+	Minor (reclaiming a frame) page faults: 8427
+	Voluntary context switches: 18805
+	Involuntary context switches: 504
 	Swaps: 0
-	File system inputs: 37072
+	File system inputs: 36912
 	File system outputs: 74484272
 	Socket messages sent: 0
 	Socket messages received: 0
@@ -43,3 +52,4 @@ Command terminated by signal 12
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest

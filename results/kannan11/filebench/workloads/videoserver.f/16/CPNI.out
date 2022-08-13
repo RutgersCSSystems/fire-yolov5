@@ -1,3 +1,5 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
 WARNING: Could not open /proc/sys/kernel/shmmax file!
 It means that you probably ran Filebench not as a root. Filebench will not increase shared
 region limits in this case, which can lead to the failures on certain workloads.
@@ -7,45 +9,58 @@ Filebench Version 1.5-alpha3
 0.004: Populating and pre-allocating filesets
 0.005: passivevids populated: 12 files, avg. dir. width = 20, avg. dir. depth = 0.8, 0 leafdirs, 12288.000MB total size
 0.005: Removing passivevids tree (if exists)
-0.010: Pre-allocating directories in passivevids tree
-1.918: Pre-allocating files in passivevids tree
-6.104: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
-6.104: Removing activevids tree (if exists)
-6.111: Pre-allocating directories in activevids tree
-6.362: Pre-allocating files in activevids tree
-9.639: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
-9.640: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.009: Pre-allocating directories in passivevids tree
+ENABLE_FILE_STATS in con
+2.047: Pre-allocating files in passivevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+6.426: activevids populated: 4 files, avg. dir. width = 4, avg. dir. depth = 1.0, 0 leafdirs, 4096.000MB total size
+6.426: Removing activevids tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+6.434: Pre-allocating directories in activevids tree
+ENABLE_FILE_STATS in con
+6.682: Pre-allocating files in activevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+10.145: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+10.145: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
 FINISHED PREALLOCATION 
-9.832: Starting 1 vidreaders instances
-9.832: Starting 1 vidwriter instances
-10.852: Running...
-50.855: Run took 40 seconds...
-50.855: Per-Operation Breakdown
-vidreader            7764981ops   194108ops/s 48515.2mb/s    0.082ms/op [0.001ms - 16.262ms]
-wrtclose             60ops        1ops/s   0.0mb/s    0.060ms/op [0.041ms - 0.150ms]
-newvid               60ops        1ops/s 1535.9mb/s  559.825ms/op [469.225ms - 577.172ms]
-wrtopen              61ops        2ops/s   0.0mb/s    0.068ms/op [0.028ms - 0.168ms]
-vidremover           61ops        2ops/s   0.0mb/s   97.989ms/op [0.700ms - 123.693ms]
-50.855: IO Summary: 7765223 ops 194114.318 ops/s 194108/1 rd/wr 50051.0mb/s 0.087ms/op
-50.855: Shutting down processes and raising singal
+10.352: Starting 1 vidreaders instances
+10.353: Starting 1 vidwriter instances
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+11.372: Running...
+51.375: Run took 40 seconds...
+51.375: Per-Operation Breakdown
+vidreader            7738866ops   193460ops/s 48353.2mb/s    0.082ms/op [0.001ms - 17.942ms]
+wrtclose             59ops        1ops/s   0.0mb/s    0.063ms/op [0.041ms - 0.126ms]
+newvid               59ops        1ops/s 1510.3mb/s  574.427ms/op [466.371ms - 592.658ms]
+wrtopen              59ops        1ops/s   0.0mb/s    0.070ms/op [0.026ms - 0.109ms]
+vidremover           59ops        1ops/s   0.0mb/s  103.295ms/op [0.760ms - 130.062ms]
+51.375: IO Summary: 7739101 ops 193466.130 ops/s 193460/1 rd/wr 49863.5mb/s 0.087ms/op
+51.375: Shutting down processes and raising singal
 Command terminated by signal 12
 	Command being timed: "filebench -f workloads/videoserver.f"
-	User time (seconds): 0.23
-	System time (seconds): 11.78
+	User time (seconds): 0.25
+	System time (seconds): 11.75
 	Percent of CPU this job got: 22%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:52.54
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:53.08
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 3691928
+	Maximum resident set size (kbytes): 3691904
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 922169
-	Minor (reclaiming a frame) page faults: 16728
-	Voluntary context switches: 21011
-	Involuntary context switches: 51
+	Major (requiring I/O) page faults: 922175
+	Minor (reclaiming a frame) page faults: 17082
+	Voluntary context switches: 14542
+	Involuntary context switches: 58
 	Swaps: 0
-	File system inputs: 67680
+	File system inputs: 67336
 	File system outputs: 30444464
 	Socket messages sent: 0
 	Socket messages received: 0
@@ -53,3 +68,4 @@ Command terminated by signal 12
 	Page size (bytes): 4096
 	Exit status: 0
 DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
