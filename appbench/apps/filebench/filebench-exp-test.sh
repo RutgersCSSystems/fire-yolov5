@@ -28,8 +28,9 @@ mkdir -p $RESULTS
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
-declare -a workload_arr=("filemicro_seqread.f" "mongo.f" "webserver.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
-declare -a config_arr=("Vanilla")
+declare -a workload_arr=("filemicro_seqread.f" "webserver.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
+declare -a workload_arr=("filemicro_seqread.f")
+declare -a config_arr=("Vanilla" "Cross_Naive")
 declare -a thread_arr=("16")
 
 
@@ -144,6 +145,7 @@ RUN() {
 				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
 				export LD_PRELOAD=""
+				sudo dmesg -c &>> $RESULTS/$CONFIG.out
 				FlushDisk
 				echo ".......FINISHING $CONFIG......................"
 				CLEAR_DATA

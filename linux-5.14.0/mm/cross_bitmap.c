@@ -86,16 +86,22 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         prealloc_pg = 1UL << (CONFIG_CROSS_PREALLOC_SHIFT - PAGE_SHIFT);
 
+	//FIXME: 1TB per file is just too much. We need a better solution, 
+	//with some hints from the userspace
+	prealloc_pg = prealloc_pg/4;
+
         nr_longs = BITS_TO_LONGS(prealloc_pg);
 
-
-        if(!inode->bitmap)
+        if(!inode->bitmap) 
                 inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
 
         if(!inode->bitmap){
                 printk("ERR:%s unable to allocate bitmap\n", __func__);
                 return;
         }
+
+	//Set the flag that indicates bitmap is set
+	//atomic_set(&inode->i_bitmap_set, 1);
         
         inode->nr_bits_used = nr_pages;
         inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
@@ -130,6 +136,7 @@ void free_cross_bitmap(struct inode *inode){
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
 		//		"%d\n", __func__, atomic_read(&inode->i_count));
 
+		atomic_set(&inode->i_bitmap_set, 1);
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
@@ -159,6 +166,11 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 
         if(!inode->bitmap)
                 goto exit;
+
+	/*bitmap for the inode is not cleared */
+	if (atomic_read(&inode->i_bitmap_set) == 1)
+		goto exit;
+
 
         bitmap_set(inode->bitmap, index, 1);
 
