@@ -129,6 +129,11 @@ struct value *hash_get(struct hashtable *i_hash, int inode) {
 int hash_remove(struct hashtable *i_hash, int inode) {
 
 	struct value *found = NULL;
+
+	if(!i_hash)
+		return -1;
+
+
 	struct key *k = (struct key *)malloc(sizeof(struct key));
     if (NULL == k) {
         printf("ran out of memory allocating a key\n");
@@ -153,6 +158,9 @@ struct u_inode *get_uinode(struct hashtable *i_hash, int fd){
 	struct u_inode *uinode = NULL;
 	struct value *found = NULL;
 
+	if(!i_hash)
+		return NULL;
+
 	ret = fstat (fd, &file_stat);
 	inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
 
@@ -169,9 +177,9 @@ struct u_inode *get_uinode(struct hashtable *i_hash, int fd){
 
 
 #ifdef ENABLE_FNAME
-int add_fd_to_inode(struct hashtable *i_hash, int fd, char *fname){
+int add_fd_to_inode(struct hashtable *i_map, int fd, char *fname){
 #else
-int add_fd_to_inode(struct hashtable *i_hash, int fd){
+int add_fd_to_inode(struct hashtable *i_map, int fd){
 #endif
 
 	struct stat file_stat;
@@ -179,12 +187,15 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
 	struct u_inode *uinode = NULL;
 	struct value *found = NULL;
 
+	if(!i_map)
+		return -1;
+
 	ret = fstat (fd, &file_stat);
 	inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
 
 	m.lock();
 
-    found = hash_get(i_hash, inode);
+    found = hash_get(i_map, inode);
     if(found) {
     	uinode = (struct u_inode *)found->value;
     }
@@ -200,7 +211,7 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
 #ifdef ENABLE_FNAME
 		strcpy(uinode->filename, fname);
 #endif
-		hash_insert(i_hash, inode, (void *)uinode);
+		hash_insert(i_map, inode, (void *)uinode);
 	}
 	m.unlock();
 
@@ -216,7 +227,12 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
  */
 int inode_reduce_ref(struct hashtable *i_map, int fd) {
 
-	struct u_inode *uinode = get_uinode(i_map, fd);
+	struct u_inode *uinode = NULL;
+
+	if(!i_map)
+		return -1;
+
+	uinode = get_uinode(i_map, fd);
 	if(uinode && uinode->fdcount > 0) {
 		//printf("%s:%d Reducing current FDCOUNT %d\n",
 		//		__func__, __LINE__, uinode->fdcount);
@@ -235,6 +251,8 @@ int handle_close(struct hashtable *i_map, int fd){
 
 	int inode_fd_count = -1;
 
+	if(!i_map)
+		return -1;
 	/*
 	 * if the reference count is 0,
 	 * FIXME: also remove the software uinode? But that would
