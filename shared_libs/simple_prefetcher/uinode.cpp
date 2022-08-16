@@ -216,7 +216,7 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
  */
 int inode_reduce_ref(struct hashtable *i_map, int fd) {
 
-	struct u_inode *uinode = get_uinode(fd);
+	struct u_inode *uinode = get_uinode(i_map, fd);
 	if(uinode && uinode->fdcount) {
 		printf("%s:%d Reducing current FDCOUNT %d\n",
 				__func__, __LINE__, uinode->fdcount);
