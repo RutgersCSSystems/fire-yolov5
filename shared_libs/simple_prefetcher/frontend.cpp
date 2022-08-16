@@ -176,6 +176,53 @@ void dest(){
 }
 
 
+#ifdef ENABLE_EVICTION
+int set_thread_args_evict(struct thread_args *arg) {
+		arg->current_fd = ptd.current_fd;
+		arg->last_fd = ptd.last_fd;
+		return 0;
+}
+
+int set_curr_last_fd(int fd){
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
+	return 0;
+}
+
+int perform_eviction(struct thread_args *arg){
+	/*
+	 * when crunched with memory, remove cache pages for
+	 * last fd. Since the thread has moved on from it.
+	 */
+	if(arg->current_fd != arg->last_fd){
+		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
+		posix_fadvise(arg->last_fd, 0, 0, POSIX_FADV_DONTNEED);
+	}
+
+	return 0;
+}
+#endif
+
+
 /*
  * function run by the prefetcher thread
  */
@@ -271,14 +318,7 @@ void prefetcher_th(void *arg) {
 		{
 			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
 #ifdef ENABLE_EVICTION
-			/*
-			 * when crunched with memory, remove cache pages for
-			 * last fd. Since the thread has moved on from it.
-			 */
-			if(a->current_fd != a->last_fd){
-				debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
-				posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
-			}
+			perform_eviction(a);
 #else //ENABLE_EVICTION
 			goto exit;
 #endif //ENABLE_EVICTION
@@ -341,14 +381,16 @@ void inline prefetch_file(int fd)
 
 	if(filesize > MIN_FILE_SZ){
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+		if(!arg) {
+			goto prefetch_file_exit;
+		}
 		arg->fd = fd;
 		arg->offset = 0;
 		arg->file_size = filesize;
         arg->stride = stride;
 
 #ifdef ENABLE_EVICTION
-		arg->current_fd = ptd.current_fd;
-		arg->last_fd = ptd.last_fd;
+        set_thread_args_evict(arg);
 #else
 		arg->current_fd = 0;
 		arg->last_fd = 0;
@@ -404,7 +446,7 @@ void inline prefetch_file(int fd)
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-		goto exit;
+		goto prefetch_file_exit;
 	}
 
 #ifdef CONCURRENT_PREFETCH
@@ -420,7 +462,7 @@ void inline prefetch_file(int fd)
 	printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
 #endif
 
-exit:
+prefetch_file_exit:
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
@@ -673,27 +715,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
 
 #ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+	set_curr_last_fd(fd);
 #endif
 
 
@@ -785,27 +807,7 @@ void read_predictor(FILE *stream, size_t data_size) {
 	}
 
 #ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+	set_curr_last_fd(fd);
 #endif
 
 #ifdef PREDICTOR
@@ -861,27 +863,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	}
 
 #ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+	set_curr_last_fd(fd);
 #endif
 
 #ifdef PREDICTOR
