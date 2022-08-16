@@ -914,7 +914,12 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	//init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+
+		if(fd_to_file_pred_init.test_and_set()){
+			fp = fd_to_file_pred->at(fd);
+		}else {
+			goto skip_predictor;
+		}
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
