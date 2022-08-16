@@ -206,7 +206,7 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
 
 	uinode->fdlist[uinode->fdcount] = fd;
 	uinode->fdcount++;
-	printf("INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
+	fprintf(stderr, "ADDING INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
 	return 0;
 }
 
