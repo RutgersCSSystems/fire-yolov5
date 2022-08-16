@@ -526,7 +526,7 @@ void inline record_open(int fd){
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
 		ra.data = NULL;
-		readahead_info(fd, 0, 0, &ra);
+		//readahead_info(fd, 0, 0, &ra);
 
 		//clock_gettime(CLOCK_REALTIME, &end);
 		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
