@@ -373,8 +373,9 @@ is_not_seq:
 			goto exit;
 
 is_seq:
+			if(sequentiality < DEFSEQ)
 			sequentiality += 1;
-			sequentiality %= (DEFSEQ+1); //Keeps from overflowing
+			//sequentiality %= (DEFSEQ+1); //Keeps from overflowing
 
 exit:
 			return;

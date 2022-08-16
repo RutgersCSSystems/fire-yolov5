@@ -446,7 +446,7 @@ void inline prefetch_file(int fd)
 			 */
 			//FIXME: CHECK MEMORY AVAILABILITY TOO
 			if(fp->is_sequential() == DEFSEQ){
-				arg->prefetch_size = fp->read_size;
+				arg->prefetch_size = arg->file_size;
 				fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
 			}else {
 				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
