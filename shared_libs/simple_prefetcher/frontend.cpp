@@ -348,7 +348,7 @@ void prefetcher_th(void *arg) {
 
 #else //MODIFIED_RA
 		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0){
-			printf("error while readahead: TID:%ld \n", tid);
+			//printf("error while readahead: TID:%ld \n", tid);
 			goto exit;
 		}
 		curr_pos += a->prefetch_size;
