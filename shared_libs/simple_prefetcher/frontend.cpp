@@ -481,7 +481,8 @@ void inline prefetch_file(int fd)
 	else
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
 #else
-	printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
+	prefetcher_th((void*)arg);
+	//printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
 #endif
 
 prefetch_file_exit:
