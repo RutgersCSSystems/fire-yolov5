@@ -32,8 +32,8 @@
 #include <sys/wait.h>
 #include <sys/resource.h>
 
-#include "util.hpp"
-#include "frontend.hpp"
+//#include "util.hpp"
+//#include "frontend.hpp"
 
 #include "utils/hashtable.h"
 
@@ -81,11 +81,13 @@ equalkeys(void *k1, void *k2)
     return (0 == memcmp(k1,k2,sizeof(struct key)));
 }
 
+#ifdef ENABLE_FNAME
 char* get_filename(int fd) {
 
 	std::string str = fd_to_file_name.at(fd);
 	return (char *)str.c_str();
 }
+#endif
 
 
 int hahs_insert(int inode, void *value){
@@ -203,7 +205,7 @@ int add_fd_to_inode(int fd){
 
 	uinode->fdlist[uinode->fdcount] = fd;
 	uinode->fdcount++;
-	debug_printf(stderr, "INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
+	printf("INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
 	return 0;
 }
 
@@ -215,7 +217,7 @@ int inode_reduce_ref(int fd) {
 
 	struct u_inode *uinode = get_uinode(fd);
 	if(uinode && uinode->fdcount) {
-		debug_printf("%s:%d Reducing current FDCOUNT %d\n",
+		printf("%s:%d Reducing current FDCOUNT %d\n",
 				__func__, __LINE__, uinode->fdcount);
 		uinode->fdcount--;
 		return uinode->fdcount;

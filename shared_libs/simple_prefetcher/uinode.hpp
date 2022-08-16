@@ -2,7 +2,6 @@
 #define _UINODE_HPP
 
 
-#include "shim.hpp"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
 

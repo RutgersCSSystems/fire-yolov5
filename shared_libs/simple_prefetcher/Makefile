@@ -16,7 +16,7 @@ PORTION_PAGES=32
 NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(15MB)
 
-SOURCES = frontend.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
+SOURCES = frontend.cpp uinode.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
 
 
 #DEBUG=-DDEBUG
