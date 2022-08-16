@@ -514,7 +514,9 @@ void inline record_open(int fd){
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-		fd_to_file_pred->insert({fd, fp});
+		if(fd_to_file_pred_init.test_and_set()){
+			fd_to_file_pred->insert({fd, fp});
+		}
 #endif
 
 		/*
@@ -750,7 +752,10 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	//init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+
+		if(fd_to_file_pred_init.test_and_set()){
+			fp = fd_to_file_pred->at(fd);
+		}
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
@@ -806,8 +811,10 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		fp = fd_to_file_pred->at(fd);
-		fd_to_file_pred->erase(fd);
+		if(fd_to_file_pred_init.test_and_set()){
+			fp = fd_to_file_pred->at(fd);
+			fd_to_file_pred->erase(fd);
+		}
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
