@@ -447,7 +447,7 @@ void inline prefetch_file(int fd)
 			//FIXME: CHECK MEMORY AVAILABILITY TOO
 			if(fp->is_sequential() == DEFSEQ){
 				arg->prefetch_size = arg->file_size;
-				fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
+				//fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
 			}else {
 				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 			}
@@ -761,7 +761,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
 		if((fp->is_sequential() >= LIKELYSEQ)){
 			prefetch_file(fd, fp);
-			printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+			//printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
 #endif
