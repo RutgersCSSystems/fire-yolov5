@@ -133,7 +133,6 @@ int hash_remove(struct hashtable *i_hash, int inode) {
 	if(!i_hash)
 		return -1;
 
-
 	struct key *k = (struct key *)malloc(sizeof(struct key));
     if (NULL == k) {
         printf("ran out of memory allocating a key\n");
