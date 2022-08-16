@@ -42,7 +42,7 @@
 
 
 #include <mutex>
-#define MAXFILES 100000
+#define MAXFILES 10000
 
 //std::unordered_map<int, void *> inode_map;
 //robin_hood::unordered_map<int, void *> inode_map;
