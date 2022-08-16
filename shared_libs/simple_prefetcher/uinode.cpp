@@ -206,7 +206,7 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
 
 	uinode->fdlist[uinode->fdcount] = fd;
 	uinode->fdcount++;
-	fprintf(stderr, "ADDING INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
+	//printf("ADDING INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
 	return 0;
 }
 
@@ -218,8 +218,8 @@ int inode_reduce_ref(struct hashtable *i_map, int fd) {
 
 	struct u_inode *uinode = get_uinode(i_map, fd);
 	if(uinode && uinode->fdcount) {
-		printf("%s:%d Reducing current FDCOUNT %d\n",
-				__func__, __LINE__, uinode->fdcount);
+		//printf("%s:%d Reducing current FDCOUNT %d\n",
+		//		__func__, __LINE__, uinode->fdcount);
 		uinode->fdcount--;
 		return uinode->fdcount;
 	}
@@ -238,8 +238,8 @@ void handle_close(struct hashtable *i_map, int fd){
 	 * require protection
 	 */
 	int inode_fd_count = inode_reduce_ref(i_map, fd);
-	printf("%s:%d Reducing current FDCOUNT %d\n",
-			__func__, __LINE__, inode_fd_count);
+	//printf("%s:%d Reducing current FDCOUNT %d\n",
+		//	__func__, __LINE__, inode_fd_count);
 }
 #endif
 
