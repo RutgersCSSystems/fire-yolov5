@@ -48,7 +48,7 @@ std::atomic_flag i_map_init;
 #endif
 
 //Maps fd to its file_predictor, global ds
-std::unordered_map<int, file_predictor*> *fd_to_file_pred;
+std::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
 
 
@@ -107,7 +107,7 @@ void init_global_ds(void){
 
 	if(!fd_to_file_pred_init.test_and_set()){
 		debug_printf("%s:%d Allocating fd_to_file_pred\n", __func__, __LINE__);
-		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
+		//fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
 	}
 
 	if(!i_map_init.test_and_set()){
@@ -514,7 +514,7 @@ void inline record_open(int fd){
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-		fd_to_file_pred->insert({fd, fp});
+		fd_to_file_pred.insert({fd, fp});
 #endif
 
 		/*
@@ -750,7 +750,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
@@ -806,7 +806,7 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 		//fd_to_file_pred->erase(fd);
 	}
 	catch(const std::out_of_range){
@@ -850,7 +850,7 @@ void read_predictor(FILE *stream, size_t data_size) {
 #ifdef PREDICTOR
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_read_predictor;
@@ -907,7 +907,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	//init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
