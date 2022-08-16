@@ -30,7 +30,7 @@ struct u_inode {
 };
 
 struct hashtable *init_inode_fd_map(void);
-void handle_close(struct hashtable *, int);
+int handle_close(struct hashtable *, int);
 struct u_inode *get_uinode(struct hashtable *, int);
 
 #ifdef ENABLE_FNAME

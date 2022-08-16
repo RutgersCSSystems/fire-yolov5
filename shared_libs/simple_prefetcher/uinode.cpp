@@ -231,15 +231,19 @@ struct hashtable *init_inode_fd_map(void) {
 }
 
 
-void handle_close(struct hashtable *i_map, int fd){
+int handle_close(struct hashtable *i_map, int fd){
+
+	int inode_fd_count = -1;
+
 	/*
 	 * if the reference count is 0,
 	 * FIXME: also remove the software uinode? But that would
 	 * require protection
 	 */
-	int inode_fd_count = inode_reduce_ref(i_map, fd);
+	inode_fd_count = inode_reduce_ref(i_map, fd);
 	//printf("%s:%d Reducing current FDCOUNT %d\n",
 		//	__func__, __LINE__, inode_fd_count);
+	return inode_fd_count;
 }
 #endif
 

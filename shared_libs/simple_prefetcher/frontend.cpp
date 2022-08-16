@@ -224,6 +224,12 @@ int set_curr_last_fd(int fd){
 	return 0;
 }
 
+int evict_advise(int fd){
+
+	printf("%s:%d Evicting using fadvice fd:%d\n", __func__, __LINE__, fd);
+	return posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+}
+
 int perform_eviction(struct thread_args *arg){
 	/*
 	 * when crunched with memory, remove cache pages for
@@ -231,7 +237,7 @@ int perform_eviction(struct thread_args *arg){
 	 */
 	if(arg->current_fd != arg->last_fd){
 		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
-		posix_fadvise(arg->last_fd, 0, 0, POSIX_FADV_DONTNEED);
+		evict_advise(arg->last_fd);
 	}
 
 	return 0;
@@ -333,7 +339,7 @@ void prefetcher_th(void *arg) {
 		if(ra.nr_free < NR_REMAINING)
 		{
 			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_OLD
 			perform_eviction(a);
 #else //ENABLE_EVICTION
 			goto exit;
@@ -405,7 +411,7 @@ void inline prefetch_file(int fd)
 		arg->file_size = filesize;
         arg->stride = stride;
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_OLD
         set_thread_args_evict(arg);
 #else
 		arg->current_fd = 0;
@@ -734,7 +740,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	goto skip_predictor;
 #endif
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
 
@@ -785,7 +791,12 @@ void handle_file_close(int fd){
 	debug_printf("Entering %s\n", __func__);
 
 #ifdef MAINTAIN_UINODE
-	handle_close(i_map, fd);
+	int i_fd_cnt = handle_close(i_map, fd);
+#ifdef ENABLE_EVICTION
+	if(!i_fd_cnt){
+		evict_advise(fd);
+	}
+#endif
 #endif
 
 
@@ -831,7 +842,7 @@ void read_predictor(FILE *stream, size_t data_size) {
 		goto skip_read_predictor;
 	}
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
 
@@ -887,7 +898,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 		goto skip_predictor;
 	}
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
 
