@@ -749,7 +749,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
 
 
-#ifdef PREDICTOR
+#if 0 //def PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
 	try{
