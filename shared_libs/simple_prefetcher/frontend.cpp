@@ -804,9 +804,9 @@ void handle_file_close(int fd){
 #endif
 
 
-#ifdef PREDICTOR
-	//init_global_ds();
-	//file_predictor *fp;
+#if 0 //def PREDICTOR
+	init_global_ds();
+	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
 		//fp = fd_to_file_pred.at(fd);
@@ -816,8 +816,8 @@ void handle_file_close(int fd){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
 		goto exit;
 	}
-	//if(fp){
-		//delete(fp);
+	if(fp){
+		delete(fp);
 	}
 #endif
 
