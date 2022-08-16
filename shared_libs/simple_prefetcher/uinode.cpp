@@ -214,7 +214,7 @@ int add_fd_to_inode(struct hashtable *i_hash, int fd){
  * Reduce and remove inode refcount because a file descriptor
  * might have been close.
  */
-int inode_reduce_ref(int fd) {
+int inode_reduce_ref(struct hashtable *i_map, int fd) {
 
 	struct u_inode *uinode = get_uinode(fd);
 	if(uinode && uinode->fdcount) {
@@ -228,6 +228,18 @@ int inode_reduce_ref(int fd) {
 
 struct hashtable *init_inode_fd_map(void) {
 	 return create_hashtable(MAXFILES, hashfromkey, equalkeys);
+}
+
+
+void handle_close(struct hashtable *i_map, int fd){
+	/*
+	 * if the reference count is 0,
+	 * FIXME: also remove the software uinode? But that would
+	 * require protection
+	 */
+	int inode_fd_count = inode_reduce_ref(i_map, fd);
+	printf("%s:%d Reducing current FDCOUNT %d\n",
+			__func__, __LINE__, inode_fd_count);
 }
 #endif
 

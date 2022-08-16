@@ -784,6 +784,11 @@ void handle_file_close(int fd){
 
 	debug_printf("Entering %s\n", __func__);
 
+#ifdef MAINTAIN_UINODE
+	handle_close(i_map, fd);
+#endif
+
+
 #ifdef PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
