@@ -37,14 +37,13 @@ NUM=2000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("4" "8")
+declare -a thread_arr=("8")
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
 
 declare -a workload_arr=("readseq")
-declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-
-#declare -a config_arr=("CPNI")
+#declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
+declare -a config_arr=("Vanilla" "Cross_Naive")
 
 
 FlushDisk()
@@ -105,7 +104,7 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	#COMPILE_AND_WRITE
+	COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
