@@ -170,6 +170,7 @@ void dest(){
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "PRINT_GLOBAL_STATS in %s\n", __func__);
 	syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
+	syscall(__NR_start_crosslayer, CLEAR_GLOBAL_STATS, 0);
 #endif
 
 }

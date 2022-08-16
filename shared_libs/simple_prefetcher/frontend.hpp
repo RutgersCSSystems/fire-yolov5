@@ -19,6 +19,7 @@
 #define DEFSEQ 8 /* definitely seq */
 
 #define ENABLE_FILE_STATS 1
+#define CLEAR_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
 
 
