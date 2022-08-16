@@ -511,6 +511,9 @@ void inline record_open(int fd){
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize);
 
+		if(!fp)
+			goto exit;
+
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
@@ -534,7 +537,7 @@ void inline record_open(int fd){
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-		goto exit;
+//		goto exit;
 	}
 
 exit:
