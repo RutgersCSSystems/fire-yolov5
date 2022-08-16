@@ -806,7 +806,7 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		fp = fd_to_file_pred.at(fd);
+		//fp = fd_to_file_pred.at(fd);
 		//fd_to_file_pred->erase(fd);
 	}
 	catch(const std::out_of_range){
