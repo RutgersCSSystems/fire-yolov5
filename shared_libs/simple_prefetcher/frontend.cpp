@@ -40,6 +40,10 @@
 threadpool workerpool = NULL;
 #endif
 
+#ifdef MAINTAIN_UINODE
+#include "uinode.hpp"
+#endif
+
 //Maps fd to its file_predictor, global ds
 std::unordered_map<int, file_predictor*> *fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
@@ -541,6 +545,10 @@ void handle_open(int fd){
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
 	prefetch_file(fd);
+#endif
+
+#ifdef MAINTAIN_UINODE
+	add_fd_to_inode(fd);
 #endif
 
 	debug_printf("Exiting %s\n", __func__);
