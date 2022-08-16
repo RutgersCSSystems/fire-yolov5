@@ -1,7 +1,7 @@
 #ifndef _UINODE_HPP
 #define _UINODE_HPP
 
-
+#include "utils/hashtable.h"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
 
@@ -29,11 +29,12 @@ struct u_inode {
 	bit_array_t *page_cache_state;
 };
 
+struct hashtable *init_inode_fd_map(void);
 struct u_inode *get_uinode(int fd);
 #ifdef ENABLE_FNAME
-int add_fd_to_inode(int fd, char *fname);
+int add_fd_to_inode(struct hashtable *, int, char);
 #else
-int add_fd_to_inode(int fd);
+int add_fd_to_inode(struct hashtable *, int fd);
 #endif
 
 #endif

@@ -48,7 +48,6 @@
 //robin_hood::unordered_map<int, void *> inode_map;
 std::atomic_flag inode_map_init;
 std::mutex m;
-struct hashtable *inode_hash;
 
 
 /*****************************************************************************/
@@ -90,7 +89,7 @@ char* get_filename(int fd) {
 #endif
 
 
-int hahs_insert(int inode, void *value){
+int hash_insert(struct hashtable *i_hash, int inode, void *value) {
 
 	struct key *k = (struct key *)malloc(sizeof(struct key));
     if (NULL == k) {
@@ -102,13 +101,13 @@ int hahs_insert(int inode, void *value){
     struct value *v = (struct value *)malloc(sizeof(struct value));
     v->value = value;
 
-    if (!insert_some(inode_hash,k,v))
+    if (!insert_some(i_hash,k,v))
     	return -1;
 
     return 0;
 }
 
-struct value *hash_get(int inode) {
+struct value *hash_get(struct hashtable *i_hash, int inode) {
 
 	struct value *found = NULL;
 	struct key *k = (struct key *)malloc(sizeof(struct key));
@@ -118,7 +117,7 @@ struct value *hash_get(int inode) {
     }
     k->inode = inode;
 
-	if (NULL == (found = search_some(inode_hash,k))) {
+	if (NULL == (found = search_some(i_hash, k))) {
 		//printf("BUG: key not found\n");
 		return NULL;
 	}
@@ -127,7 +126,7 @@ struct value *hash_get(int inode) {
 	return found;
 }
 
-int hash_remove(int inode) {
+int hash_remove(struct hashtable *i_hash, int inode) {
 
 	struct value *found = NULL;
 	struct key *k = (struct key *)malloc(sizeof(struct key));
@@ -137,7 +136,7 @@ int hash_remove(int inode) {
     }
     k->inode = inode;
 
-	if (NULL == (found = remove_some(inode_hash,k))) {
+	if (NULL == (found = remove_some(i_hash,k))) {
 		//printf("BUG: key not found\n");
 		return -1;
 	}
@@ -146,7 +145,8 @@ int hash_remove(int inode) {
 	return 0;
 }
 
-struct u_inode *get_uinode(int fd){
+
+struct u_inode *get_uinode(struct hashtable *i_hash, int fd){
 
 	struct stat file_stat;
 	int inode, ret;
@@ -158,7 +158,7 @@ struct u_inode *get_uinode(int fd){
 
     //m.lock();
 	//uinode = (struct u_inode *)inode_map[inode];
-    found = hash_get(inode);
+    found = hash_get(i_hash, inode);
     if(!found) {
     	return NULL;
     }
@@ -167,10 +167,11 @@ struct u_inode *get_uinode(int fd){
 	return uinode;
 }
 
+
 #ifdef ENABLE_FNAME
-int add_fd_to_inode(int fd, char *fname){
+int add_fd_to_inode(struct hashtable *i_hash, int fd, char *fname){
 #else
-int add_fd_to_inode(int fd){
+int add_fd_to_inode(struct hashtable *i_hash, int fd){
 #endif
 
 	struct stat file_stat;
@@ -183,7 +184,7 @@ int add_fd_to_inode(int fd){
 
 	m.lock();
 
-    found = hash_get(inode);
+    found = hash_get(i_hash, inode);
     if(found) {
     	uinode = (struct u_inode *)found->value;
     }
@@ -199,7 +200,7 @@ int add_fd_to_inode(int fd){
 #ifdef ENABLE_FNAME
 		strcpy(uinode->filename, fname);
 #endif
-		hahs_insert(inode, (void *)uinode);
+		hash_insert(i_hash, inode, (void *)uinode);
 	}
 	m.unlock();
 
@@ -223,6 +224,10 @@ int inode_reduce_ref(int fd) {
 		return uinode->fdcount;
 	}
 	return -1;
+}
+
+struct hashtable *init_inode_fd_map(void) {
+	 return create_hashtable(MAXFILES, hashfromkey, equalkeys);
 }
 #endif
 

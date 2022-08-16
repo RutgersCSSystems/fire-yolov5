@@ -42,11 +42,15 @@ threadpool workerpool = NULL;
 
 #ifdef MAINTAIN_UINODE
 #include "uinode.hpp"
+#include "hashtable.h"
+struct hashtable *i_map;
+std::atomic_flag i_map_init;
 #endif
 
 //Maps fd to its file_predictor, global ds
 std::unordered_map<int, file_predictor*> *fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
+
 
 
 //enables per thread constructor and destructor
@@ -102,8 +106,16 @@ void reg_app_sig_handler(void){
 void init_global_ds(void){
 
 	if(!fd_to_file_pred_init.test_and_set()){
-		debug_printf("%s: Allocating fd_to_file_pred\n", __func__);
+		debug_printf("%s:%d Allocating fd_to_file_pred\n", __func__, __LINE__);
 		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
+	}
+
+	if(!i_map_init.test_and_set()){
+		debug_printf("%s:%d Allocating hashmap\n", __func__, __LINE__);
+		i_map = init_inode_fd_map();
+		if(!i_map){
+			fprintf(stderr, "%s:%d Hashmap alloc failed\n", __func__, __LINE__);
+		}
 	}
 }
 
@@ -548,7 +560,7 @@ void handle_open(int fd){
 #endif
 
 #ifdef MAINTAIN_UINODE
-	add_fd_to_inode(fd);
+	add_fd_to_inode(i_map, fd);
 #endif
 
 	debug_printf("Exiting %s\n", __func__);
