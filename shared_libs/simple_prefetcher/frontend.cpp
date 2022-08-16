@@ -749,7 +749,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 #endif
 
 
-#if 0 //def PREDICTOR
+#ifdef PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
 	try{
@@ -758,7 +758,9 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
 	}
+#endif
 
+#if 0
 	if(fp){
 		fp->predictor_update(offset, size);
 		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
