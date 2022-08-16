@@ -747,7 +747,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 
 #ifdef PREDICTOR
-	//init_global_ds();
+	init_global_ds();
 	file_predictor *fp;
 	try{
 		fp = fd_to_file_pred->at(fd);
