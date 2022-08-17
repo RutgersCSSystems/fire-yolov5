@@ -49,7 +49,7 @@ std::atomic_flag i_map_init;
 
 //Maps fd to its file_predictor, global ds
 //std::unordered_map<int, file_predictor*> fd_to_file_pred;
-robin_hood::unordered_map<int, void *> fd_to_file_pred;
+robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
 
 
@@ -755,10 +755,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	init_global_ds();
 	file_predictor *fp;
 	try{
-
-		m.lock();
 		fp = fd_to_file_pred.at(fd);
-		m.unlock();
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
