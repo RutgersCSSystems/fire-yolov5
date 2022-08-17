@@ -34,11 +34,11 @@
 #
 
 set $dir=DATA/
-set $eventrate=40
-set $filesize=1g
-set $nthreads=16
-set $numactivevids=4
-set $numpassivevids=12
+set $eventrate=20
+set $filesize=4g
+set $nthreads=32
+set $numactivevids=10
+set $numpassivevids=20
 set $reuseit=false
 set $readiosize=256k
 set $writeiosize=16k
@@ -66,7 +66,7 @@ define process name=vidwriter,instances=1
 
 define process name=vidreaders,instances=1
 {
-  thread name=vidreaders,memsize=10m,instances=$nthreads
+  thread name=vidreaders,memsize=100m,instances=$nthreads
   {
     flowop read name=vidreader,filesetname=$actvidsname,iosize=$readiosize
     #flowop bwlimit name=serverlimit, target=vidreader
@@ -74,6 +74,6 @@ define process name=vidreaders,instances=1
 }
 
 echo  "Video Server Version 3.0 personality successfully loaded"
-run 40
+run 60
 
 

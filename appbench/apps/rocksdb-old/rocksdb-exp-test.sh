@@ -12,7 +12,7 @@ DBDIR=$DBHOME/DATA
 #WORKLOAD="readreverse"
 
 WORKLOAD="readrandom"
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=2"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
@@ -27,8 +27,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
+declare -a num_arr=("1000000")
+NUM=10000000
 
 #declare -a num_arr=("100000")
 #NUM=100000
@@ -37,13 +37,14 @@ NUM=2000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("8")
+declare -a thread_arr=("16")
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
 
-declare -a workload_arr=("readseq")
+declare -a workload_arr=("readrandom")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a config_arr=("Vanilla" "Cross_Naive")
+#declare -a config_arr=("Vanillas" "Cross_Naive")
+declare -a config_arr=("CPBV")
 
 
 FlushDisk()
@@ -104,7 +105,7 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -129,7 +130,7 @@ RUN() {
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"

@@ -28,9 +28,10 @@ mkdir -p $RESULTS
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
-declare -a workload_arr=("filemicro_seqread.f" "webserver.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f")
-declare -a workload_arr=("filemicro_seqread.f")
-declare -a config_arr=("Vanilla" "Cross_Naive")
+declare -a workload_arr=("filemicro_seqread.f" "webserver.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
+declare -a workload_arr=("mongo.f")
+declare -a config_arr=("Cross_Naive")
+#declare -a config_arr=("CPBV" "Vanillas")
 declare -a thread_arr=("16")
 
 
@@ -138,18 +139,14 @@ RUN() {
 				CLEAN_AND_WRITE
 				#echo "FINISHING WARM UP ......."
 				echo "..................................................."
-				FlushDisk
-
 				echo "RUNNING $CONFIG...................................."
 				echo "..................................................."
 				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
 				export LD_PRELOAD=""
 				sudo dmesg -c &>> $RESULTS/$CONFIG.out
-				FlushDisk
 				echo ".......FINISHING $CONFIG......................"
-				CLEAR_DATA
-				FlushDisk
+				#CLEAR_DATA
 			done
 		done
 	done
@@ -157,4 +154,5 @@ RUN() {
 
 RUN
 #print_results
+#CLEAR_DATA
 exit

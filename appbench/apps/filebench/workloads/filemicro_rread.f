@@ -28,14 +28,16 @@
 # Stops after 128MB ($bytes) has been read.
 
 set $dir=DATA/
-set $bytes=128m
+set $bytes=16384m
 set $cached=false
-set $filesize=2g
+set $filesize=40g
 set $iosize=2k
 set $iters=1
+set $nfiles=40
 set $nthreads=16
 
-define file name=bigfile1,path=$dir,size=$filesize,prealloc,reuse 
+define file name=bigfile1,path=$dir,size=$filesize,prealloc
+#,reuse 
 #,cached=$cached
 
 define process name=filereader,instances=1
@@ -47,5 +49,5 @@ define process name=filereader,instances=1
   }
 }
 
-run 50
+run 18
 echo  "FileMicro-ReadRand Version 2.2 personality successfully loaded"
