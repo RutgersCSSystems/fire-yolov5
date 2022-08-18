@@ -51,6 +51,12 @@ PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_AP
 
 all: Vanilla OSonly INTERCEPT Cross_Naive Cross_Pred_NoLimit Cross_Pred_Budget Cross_Pred_NoLimit_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA Vanilla_RA_IOOPT
 
+
+
+Vanilla: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS)
+
 Cross_Naive: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Naive.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
@@ -101,10 +107,6 @@ Cross_Pred_Budget_IOOPT: $(SOURCES)
 OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY)
-
-Vanilla: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS)
 
 INTERCEPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_INTERCEPT.so $^ $(LIBS) $(DEBUG) \

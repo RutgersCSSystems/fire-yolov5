@@ -894,6 +894,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	int fd = fileno(stream);
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
+	printf("%s: TID:%ld\n", __func__, gettid());
+
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
