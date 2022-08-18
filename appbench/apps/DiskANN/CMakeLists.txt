@@ -131,8 +131,10 @@ if (MSVC)
         "${DISKANN_MKL_LIB_PATH}/mkl_intel_thread.lib")
 else()
 	# expected path for manual intel mkl installs
-	set(OMP_PATH /opt/intel/oneapi/compiler/2022.0.2/linux/compiler/lib/intel64_lin/ CACHE PATH "Intel OneAPI OpenMP library implementation path")
-	set(MKL_ROOT /opt/intel/oneapi/mkl/latest CACHE PATH "Intel OneAPI MKL library implementation path")
+	#set(OMP_PATH /opt/intel/oneapi/compiler/2022.0.2/linux/compiler/lib/intel64_lin/ CACHE PATH "Intel OneAPI OpenMP library implementation path")
+	#set(MKL_ROOT /opt/intel/oneapi/mkl/latest CACHE PATH "Intel OneAPI MKL library implementation path")
+	set(OMP_PATH /opt/intel/compilers_and_libraries_2018/linux/lib/intel64_lin CACHE PATH "Intel OneAPI OpenMP library implementation path")
+	set(MKL_ROOT /opt/intel/compilers_and_libraries_2018/linux/mkl CACHE PATH "Intel OneAPI MKL library implementation path")
 	link_directories(${OMP_PATH} ${MKL_ROOT}/lib/intel64)
 	include_directories(${MKL_ROOT}/include)
 
