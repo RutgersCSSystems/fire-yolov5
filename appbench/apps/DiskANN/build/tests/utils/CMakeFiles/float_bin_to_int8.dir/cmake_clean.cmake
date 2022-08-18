@@ -1,0 +1,10 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o"
+  "float_bin_to_int8"
+  "float_bin_to_int8.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/float_bin_to_int8.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
