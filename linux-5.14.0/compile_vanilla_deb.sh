@@ -7,7 +7,8 @@ export CONCURRENCYLEVEL=$PROC
 
 touch REPORTING-BUGS
 sudo make clean -j
-sudo cp original.config .config
+#sudo cp original.config .config
+make menuconfig
 sudo make prepare
 sudo make -j$PROC
 sudo fakeroot make-kpkg -j$PROC --initrd kernel-image kernel-headers

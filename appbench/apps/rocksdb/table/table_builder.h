@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "db/dbformat.h"
+#include "db/seqno_to_time_mapping.h"
 #include "db/table_properties_collector.h"
 #include "file/writable_file_writer.h"
 #include "options/cf_options.h"
@@ -30,30 +31,34 @@ class Status;
 
 struct TableReaderOptions {
   // @param skip_filters Disables loading/accessing the filter block
-  TableReaderOptions(const ImmutableCFOptions& _ioptions,
-                     const SliceTransform* _prefix_extractor,
-                     const EnvOptions& _env_options,
-                     const InternalKeyComparator& _internal_comparator,
-                     bool _skip_filters = false, bool _immortal = false,
-                     bool _force_direct_prefetch = false, int _level = -1,
-                     BlockCacheTracer* const _block_cache_tracer = nullptr,
-                     size_t _max_file_size_for_l0_meta_pin = 0)
-      : TableReaderOptions(_ioptions, _prefix_extractor, _env_options,
-                           _internal_comparator, _skip_filters, _immortal,
-                           _force_direct_prefetch, _level,
-                           0 /* _largest_seqno */, _block_cache_tracer,
-                           _max_file_size_for_l0_meta_pin) {}
+  TableReaderOptions(
+      const ImmutableOptions& _ioptions,
+      const std::shared_ptr<const SliceTransform>& _prefix_extractor,
+      const EnvOptions& _env_options,
+      const InternalKeyComparator& _internal_comparator,
+      bool _skip_filters = false, bool _immortal = false,
+      bool _force_direct_prefetch = false, int _level = -1,
+      BlockCacheTracer* const _block_cache_tracer = nullptr,
+      size_t _max_file_size_for_l0_meta_pin = 0,
+      const std::string& _cur_db_session_id = "", uint64_t _cur_file_num = 0)
+      : TableReaderOptions(
+            _ioptions, _prefix_extractor, _env_options, _internal_comparator,
+            _skip_filters, _immortal, _force_direct_prefetch, _level,
+            0 /* _largest_seqno */, _block_cache_tracer,
+            _max_file_size_for_l0_meta_pin, _cur_db_session_id, _cur_file_num) {
+  }
 
   // @param skip_filters Disables loading/accessing the filter block
-  TableReaderOptions(const ImmutableCFOptions& _ioptions,
-                     const SliceTransform* _prefix_extractor,
-                     const EnvOptions& _env_options,
-                     const InternalKeyComparator& _internal_comparator,
-                     bool _skip_filters, bool _immortal,
-                     bool _force_direct_prefetch, int _level,
-                     SequenceNumber _largest_seqno,
-                     BlockCacheTracer* const _block_cache_tracer,
-                     size_t _max_file_size_for_l0_meta_pin)
+  TableReaderOptions(
+      const ImmutableOptions& _ioptions,
+      const std::shared_ptr<const SliceTransform>& _prefix_extractor,
+      const EnvOptions& _env_options,
+      const InternalKeyComparator& _internal_comparator, bool _skip_filters,
+      bool _immortal, bool _force_direct_prefetch, int _level,
+      SequenceNumber _largest_seqno,
+      BlockCacheTracer* const _block_cache_tracer,
+      size_t _max_file_size_for_l0_meta_pin,
+      const std::string& _cur_db_session_id, uint64_t _cur_file_num)
       : ioptions(_ioptions),
         prefix_extractor(_prefix_extractor),
         env_options(_env_options),
@@ -64,10 +69,12 @@ struct TableReaderOptions {
         level(_level),
         largest_seqno(_largest_seqno),
         block_cache_tracer(_block_cache_tracer),
-        max_file_size_for_l0_meta_pin(_max_file_size_for_l0_meta_pin) {}
+        max_file_size_for_l0_meta_pin(_max_file_size_for_l0_meta_pin),
+        cur_db_session_id(_cur_db_session_id),
+        cur_file_num(_cur_file_num) {}
 
-  const ImmutableCFOptions& ioptions;
-  const SliceTransform* prefix_extractor;
+  const ImmutableOptions& ioptions;
+  const std::shared_ptr<const SliceTransform>& prefix_extractor;
   const EnvOptions& env_options;
   const InternalKeyComparator& internal_comparator;
   // This is only used for BlockBasedTable (reader)
@@ -87,23 +94,26 @@ struct TableReaderOptions {
   // Largest L0 file size whose meta-blocks may be pinned (can be zero when
   // unknown).
   const size_t max_file_size_for_l0_meta_pin;
+
+  std::string cur_db_session_id;
+
+  uint64_t cur_file_num;
 };
 
 struct TableBuilderOptions {
   TableBuilderOptions(
-      const ImmutableCFOptions& _ioptions, const MutableCFOptions& _moptions,
+      const ImmutableOptions& _ioptions, const MutableCFOptions& _moptions,
       const InternalKeyComparator& _internal_comparator,
-      const std::vector<std::unique_ptr<IntTblPropCollectorFactory>>*
-          _int_tbl_prop_collector_factories,
+      const IntTblPropCollectorFactories* _int_tbl_prop_collector_factories,
       CompressionType _compression_type,
       const CompressionOptions& _compression_opts, uint32_t _column_family_id,
       const std::string& _column_family_name, int _level,
       bool _is_bottommost = false,
       TableFileCreationReason _reason = TableFileCreationReason::kMisc,
-      const uint64_t _creation_time = 0, const int64_t _oldest_key_time = 0,
+      const int64_t _oldest_key_time = 0,
       const uint64_t _file_creation_time = 0, const std::string& _db_id = "",
       const std::string& _db_session_id = "",
-      const uint64_t _target_file_size = 0)
+      const uint64_t _target_file_size = 0, const uint64_t _cur_file_num = 0)
       : ioptions(_ioptions),
         moptions(_moptions),
         internal_comparator(_internal_comparator),
@@ -112,7 +122,6 @@ struct TableBuilderOptions {
         compression_opts(_compression_opts),
         column_family_id(_column_family_id),
         column_family_name(_column_family_name),
-        creation_time(_creation_time),
         oldest_key_time(_oldest_key_time),
         target_file_size(_target_file_size),
         file_creation_time(_file_creation_time),
@@ -120,18 +129,17 @@ struct TableBuilderOptions {
         db_session_id(_db_session_id),
         level_at_creation(_level),
         is_bottommost(_is_bottommost),
-        reason(_reason) {}
+        reason(_reason),
+        cur_file_num(_cur_file_num) {}
 
-  const ImmutableCFOptions& ioptions;
+  const ImmutableOptions& ioptions;
   const MutableCFOptions& moptions;
   const InternalKeyComparator& internal_comparator;
-  const std::vector<std::unique_ptr<IntTblPropCollectorFactory>>*
-      int_tbl_prop_collector_factories;
+  const IntTblPropCollectorFactories* int_tbl_prop_collector_factories;
   const CompressionType compression_type;
   const CompressionOptions& compression_opts;
   const uint32_t column_family_id;
   const std::string& column_family_name;
-  const uint64_t creation_time;
   const int64_t oldest_key_time;
   const uint64_t target_file_size;
   const uint64_t file_creation_time;
@@ -147,6 +155,7 @@ struct TableBuilderOptions {
   // want to skip filters, that should be (for example) null filter_policy
   // in the table options of the ioptions.table_factory
   bool skip_filters = false;
+  const uint64_t cur_file_num;
 };
 
 // TableBuilder provides the interface used to build a Table
@@ -212,6 +221,11 @@ class TableBuilder {
 
   // Return file checksum function name
   virtual const char* GetFileChecksumFuncName() const = 0;
+
+  // Set the sequence number to time mapping
+  virtual void SetSeqnoTimeTableProperties(
+      const std::string& /*encoded_seqno_to_time_mapping*/,
+      uint64_t /*oldest_ancestor_time*/){};
 };
 
 }  // namespace ROCKSDB_NAMESPACE

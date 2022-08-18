@@ -12,7 +12,7 @@ DBDIR=$DBHOME/DATA
 #WORKLOAD="readreverse"
 
 WORKLOAD="readrandom"
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=2"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
@@ -27,8 +27,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
+declare -a num_arr=("40000000")
+NUM=40000000
 
 #declare -a num_arr=("100000")
 #NUM=100000
@@ -37,13 +37,17 @@ NUM=2000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("8")
+declare -a thread_arr=("16" "8")
 
-#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
+declare -a workload_arr=("readrandom" "readseq" "readwhilescanning")
+#declare -a workload_arr=("readrandom" "readseq")
+#declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI" "OSonly")
+declare -a config_arr=("OSonly")
+#declare -a config_arr=("CPBV" "OSonly" "Vanilla" "Cross_Naive")
 
-declare -a workload_arr=("readseq")
-#declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a config_arr=("Vanilla" "Cross_Naive")
+
+#Require for large database
+ulimit -n 1000000 
 
 
 FlushDisk()

@@ -368,13 +368,16 @@ class file_predictor{
 			}
 
 is_not_seq:
-			sequentiality -= 1;
-			sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
+			//sequentiality -= 1;
+			//sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
+                        sequentiality = (std::max<long>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
 			goto exit;
 
 is_seq:
-			sequentiality += 1;
-			sequentiality %= (DEFSEQ+1); //Keeps from overflowing
+			//if(sequentiality < DEFSEQ)
+			//sequentiality += 1;
+			//sequentiality %= (DEFSEQ+1); //Keeps from overflowing
+                        sequentiality = (std::min<long>)(DEFSEQ, sequentiality+1); //keeps from overflowing
 
 exit:
 			return;

@@ -86,7 +86,7 @@ void TableReaderBenchmark(Options& opts, EnvOptions& env_options,
   TableBuilder* tb = nullptr;
   DB* db = nullptr;
   Status s;
-  const ImmutableCFOptions ioptions(opts);
+  const ImmutableOptions ioptions(opts);
   const ColumnFamilyOptions cfo(opts);
   const MutableCFOptions moptions(cfo);
   std::unique_ptr<WritableFileWriter> file_writer;
@@ -95,8 +95,7 @@ void TableReaderBenchmark(Options& opts, EnvOptions& env_options,
                                          FileOptions(env_options), &file_writer,
                                          nullptr));
 
-    std::vector<std::unique_ptr<IntTblPropCollectorFactory> >
-        int_tbl_prop_collector_factories;
+    IntTblPropCollectorFactories int_tbl_prop_collector_factories;
 
     int unknown_level = -1;
     tb = opts.table_factory->NewTableBuilder(
@@ -144,8 +143,8 @@ void TableReaderBenchmark(Options& opts, EnvOptions& env_options,
     std::unique_ptr<RandomAccessFileReader> file_reader(
         new RandomAccessFileReader(std::move(raf), file_name));
     s = opts.table_factory->NewTableReader(
-        TableReaderOptions(ioptions, moptions.prefix_extractor.get(),
-                           env_options, ikc),
+        TableReaderOptions(ioptions, moptions.prefix_extractor, env_options,
+                           ikc),
         std::move(file_reader), file_size, &table_reader);
     if (!s.ok()) {
       fprintf(stderr, "Open Table Error: %s\n", s.ToString().c_str());

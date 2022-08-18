@@ -88,7 +88,7 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
 	//FIXME: 1TB per file is just too much. We need a better solution, 
 	//with some hints from the userspace
-	prealloc_pg = prealloc_pg/4;
+	prealloc_pg = prealloc_pg/8;
 
         nr_longs = BITS_TO_LONGS(prealloc_pg);
 
@@ -111,10 +111,9 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         bitmap_zero(inode->bitmap, prealloc_pg);
 
-        end = jiffies;
-
-        printk("%s: preallocate %ld pg, nr_longs=%ld in %ld millisec\n", __func__, prealloc_pg, nr_longs,
-                        (((end-start)*1000)/HZ));
+        //end = jiffies;
+        //printk("%s: preallocate %ld pg, nr_longs=%ld in %ld millisec\n", __func__, prealloc_pg, nr_longs,
+        //                (((end-start)*1000)/HZ));
 
 
 

@@ -40,9 +40,19 @@
 threadpool workerpool = NULL;
 #endif
 
+#ifdef MAINTAIN_UINODE
+#include "uinode.hpp"
+#include "hashtable.h"
+struct hashtable *i_map;
+std::atomic_flag i_map_init;
+#endif
+
 //Maps fd to its file_predictor, global ds
-std::unordered_map<int, file_predictor*> *fd_to_file_pred;
+//std::unordered_map<int, file_predictor*> fd_to_file_pred;
+robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
+
+
 
 
 //enables per thread constructor and destructor
@@ -98,8 +108,16 @@ void reg_app_sig_handler(void){
 void init_global_ds(void){
 
 	if(!fd_to_file_pred_init.test_and_set()){
-		debug_printf("%s: Allocating fd_to_file_pred\n", __func__);
-		fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
+		debug_printf("%s:%d Allocating fd_to_file_pred\n", __func__, __LINE__);
+		//fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
+	}
+
+	if(!i_map_init.test_and_set()){
+		debug_printf("%s:%d Allocating hashmap\n", __func__, __LINE__);
+		i_map = init_inode_fd_map();
+		if(!i_map){
+			fprintf(stderr, "%s:%d Hashmap alloc failed\n", __func__, __LINE__);
+		}
 	}
 }
 
@@ -174,6 +192,59 @@ void dest(){
 #endif
 
 }
+
+
+#ifdef ENABLE_EVICTION
+int set_thread_args_evict(struct thread_args *arg) {
+		arg->current_fd = ptd.current_fd;
+		arg->last_fd = ptd.last_fd;
+		return 0;
+}
+
+int set_curr_last_fd(int fd){
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
+	return 0;
+}
+
+int evict_advise(int fd){
+
+	//printf("%s:%d Evicting using fadvice fd:%d\n", __func__, __LINE__, fd);
+	return posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+}
+
+int perform_eviction(struct thread_args *arg){
+	/*
+	 * when crunched with memory, remove cache pages for
+	 * last fd. Since the thread has moved on from it.
+	 */
+	if(arg->current_fd != arg->last_fd){
+		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
+		evict_advise(arg->last_fd);
+	}
+
+	return 0;
+}
+#endif
 
 
 /*
@@ -270,15 +341,8 @@ void prefetcher_th(void *arg) {
 		if(ra.nr_free < NR_REMAINING)
 		{
 			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
-#ifdef ENABLE_EVICTION
-			/*
-			 * when crunched with memory, remove cache pages for
-			 * last fd. Since the thread has moved on from it.
-			 */
-			if(a->current_fd != a->last_fd){
-				debug_printf("%s: Evicting fd:%d\n", __func__, a->last_fd);
-				posix_fadvise(a->last_fd, 0, 0, POSIX_FADV_DONTNEED);
-			}
+#ifdef ENABLE_EVICTION_OLD
+			perform_eviction(a);
 #else //ENABLE_EVICTION
 			goto exit;
 #endif //ENABLE_EVICTION
@@ -286,7 +350,7 @@ void prefetcher_th(void *arg) {
 
 #else //MODIFIED_RA
 		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0){
-			printf("error while readahead: TID:%ld \n", tid);
+			//printf("error while readahead: TID:%ld \n", tid);
 			goto exit;
 		}
 		curr_pos += a->prefetch_size;
@@ -341,14 +405,16 @@ void inline prefetch_file(int fd)
 
 	if(filesize > MIN_FILE_SZ){
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+		if(!arg) {
+			goto prefetch_file_exit;
+		}
 		arg->fd = fd;
 		arg->offset = 0;
 		arg->file_size = filesize;
         arg->stride = stride;
 
-#ifdef ENABLE_EVICTION
-		arg->current_fd = ptd.current_fd;
-		arg->last_fd = ptd.last_fd;
+#ifdef ENABLE_EVICTION_OLD
+        set_thread_args_evict(arg);
 #else
 		arg->current_fd = 0;
 		arg->last_fd = 0;
@@ -382,8 +448,8 @@ void inline prefetch_file(int fd)
 			 */
 			//FIXME: CHECK MEMORY AVAILABILITY TOO
 			if(fp->is_sequential() == DEFSEQ){
-				arg->prefetch_size = fp->read_size;
-				fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
+				arg->prefetch_size = arg->file_size;
+				//fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
 			}else {
 				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 			}
@@ -404,7 +470,7 @@ void inline prefetch_file(int fd)
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-		goto exit;
+		goto prefetch_file_exit;
 	}
 
 #ifdef CONCURRENT_PREFETCH
@@ -417,10 +483,11 @@ void inline prefetch_file(int fd)
 	else
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
 #else
-	printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
+	prefetcher_th((void*)arg);
+	//printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
 #endif
 
-exit:
+prefetch_file_exit:
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
@@ -446,10 +513,13 @@ void inline record_open(int fd){
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize);
 
+		if(!fp)
+			goto exit;
+
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
-		fd_to_file_pred->insert({fd, fp});
+		fd_to_file_pred.insert({fd, fp});
 #endif
 
 		/*
@@ -469,7 +539,7 @@ void inline record_open(int fd){
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-		goto exit;
+//		goto exit;
 	}
 
 exit:
@@ -499,6 +569,10 @@ void handle_open(int fd){
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
 	prefetch_file(fd);
+#endif
+
+#ifdef MAINTAIN_UINODE
+	add_fd_to_inode(i_map, fd);
 #endif
 
 	debug_printf("Exiting %s\n", __func__);
@@ -672,46 +746,28 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 	goto skip_predictor;
 #endif
 
-#ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+#ifdef ENABLE_EVICTION_OLD
+	set_curr_last_fd(fd);
 #endif
 
 
 #ifdef PREDICTOR
-	//init_global_ds();
+	init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;
 	}
+#endif
 
+#if 0
 	if(fp){
 		fp->predictor_update(offset, size);
-		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+		if((fp->is_sequential() >= LIKELYSEQ)){
 			prefetch_file(fd, fp);
-			//debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 			//printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
@@ -742,13 +798,23 @@ void handle_file_close(int fd){
 
 	debug_printf("Entering %s\n", __func__);
 
-#ifdef PREDICTOR
+#ifdef MAINTAIN_UINODE
+	int i_fd_cnt = handle_close(i_map, fd);
+#ifdef ENABLE_EVICTION
+	if(!i_fd_cnt){
+		evict_advise(fd);
+	}
+#endif
+#endif
+
+
+#if 0 //def PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		fp = fd_to_file_pred->at(fd);
-		fd_to_file_pred->erase(fd);
+		//fp = fd_to_file_pred.at(fd);
+		//fd_to_file_pred->erase(fd);
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
@@ -784,34 +850,14 @@ void read_predictor(FILE *stream, size_t data_size) {
 		goto skip_read_predictor;
 	}
 
-#ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+#ifdef ENABLE_EVICTION_OLD
+	set_curr_last_fd(fd);
 #endif
 
 #ifdef PREDICTOR
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_read_predictor;
@@ -848,6 +894,8 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	int fd = fileno(stream);
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
+	printf("%s: TID:%ld\n", __func__, gettid());
+
 
 #ifdef ONLY_INTERCEPT
 	goto skip_predictor;
@@ -860,35 +908,15 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 		goto skip_predictor;
 	}
 
-#ifdef ENABLE_EVICTION
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
+#ifdef ENABLE_EVICTION_OLD
+	set_curr_last_fd(fd);
 #endif
 
 #ifdef PREDICTOR
 	//init_global_ds();
 	file_predictor *fp;
 	try{
-		fp = fd_to_file_pred->at(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range &orr){
 		goto skip_predictor;

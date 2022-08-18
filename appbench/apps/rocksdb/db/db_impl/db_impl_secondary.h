@@ -9,7 +9,9 @@
 
 #include <string>
 #include <vector>
+
 #include "db/db_impl/db_impl.h"
+#include "logging/logging.h"
 
 namespace ROCKSDB_NAMESPACE {
 
@@ -79,25 +81,50 @@ class DBImplSecondary : public DBImpl {
   // and log_readers_ to facilitate future operations.
   Status Recover(const std::vector<ColumnFamilyDescriptor>& column_families,
                  bool read_only, bool error_if_wal_file_exists,
-                 bool error_if_data_exists_in_wals,
-                 uint64_t* = nullptr) override;
+                 bool error_if_data_exists_in_wals, uint64_t* = nullptr,
+                 RecoveryContext* recovery_ctx = nullptr) override;
 
-  // Implementations of the DB interface
+  // Implementations of the DB interface.
   using DB::Get;
+  // Can return IOError due to files being deleted by the primary. To avoid
+  // IOError in this case, application can coordinate between primary and
+  // secondaries so that primary will not delete files that are currently being
+  // used by the secondaries. The application can also provide a custom FS/Env
+  // implementation so that files will remain present until all primary and
+  // secondaries indicate that they can be deleted. As a partial hacky
+  // workaround, the secondaries can be opened with `max_open_files=-1` so that
+  // it eagerly keeps all talbe files open and is able to access the contents of
+  // deleted files via prior open fd.
   Status Get(const ReadOptions& options, ColumnFamilyHandle* column_family,
              const Slice& key, PinnableSlice* value) override;
 
+  Status Get(const ReadOptions& options, ColumnFamilyHandle* column_family,
+             const Slice& key, PinnableSlice* value,
+             std::string* timestamp) override;
+
   Status GetImpl(const ReadOptions& options, ColumnFamilyHandle* column_family,
-                 const Slice& key, PinnableSlice* value);
+                 const Slice& key, PinnableSlice* value,
+                 std::string* timestamp);
 
   using DBImpl::NewIterator;
+  // Operations on the created iterators can return IOError due to files being
+  // deleted by the primary. To avoid IOError in this case, application can
+  // coordinate between primary and secondaries so that primary will not delete
+  // files that are currently being used by the secondaries. The application can
+  // also provide a custom FS/Env implementation so that files will remain
+  // present until all primary and secondaries indicate that they can be
+  // deleted. As a partial hacky workaround, the secondaries can be opened with
+  // `max_open_files=-1` so that it eagerly keeps all talbe files open and is
+  // able to access the contents of deleted files via prior open fd.
   Iterator* NewIterator(const ReadOptions&,
                         ColumnFamilyHandle* column_family) override;
 
   ArenaWrappedDBIter* NewIteratorImpl(const ReadOptions& read_options,
                                       ColumnFamilyData* cfd,
                                       SequenceNumber snapshot,
-                                      ReadCallback* read_callback);
+                                      ReadCallback* read_callback,
+                                      bool expose_blob_index = false,
+                                      bool allow_refresh = true);
 
   Status NewIterators(const ReadOptions& options,
                       const std::vector<ColumnFamilyHandle*>& column_families,
@@ -107,6 +134,14 @@ class DBImplSecondary : public DBImpl {
   Status Put(const WriteOptions& /*options*/,
              ColumnFamilyHandle* /*column_family*/, const Slice& /*key*/,
              const Slice& /*value*/) override {
+    return Status::NotSupported("Not supported operation in secondary mode.");
+  }
+
+  using DBImpl::PutEntity;
+  Status PutEntity(const WriteOptions& /* options */,
+                   ColumnFamilyHandle* /* column_family */,
+                   const Slice& /* key */,
+                   const WideColumns& /* columns */) override {
     return Status::NotSupported("Not supported operation in secondary mode.");
   }
 
@@ -224,10 +259,11 @@ class DBImplSecondary : public DBImpl {
   Status CheckConsistency() override;
 
 #ifndef NDEBUG
-  Status TEST_CompactWithoutInstallation(ColumnFamilyHandle* cfh,
+  Status TEST_CompactWithoutInstallation(const OpenAndCompactOptions& options,
+                                         ColumnFamilyHandle* cfh,
                                          const CompactionServiceInput& input,
                                          CompactionServiceResult* result) {
-    return CompactWithoutInstallation(cfh, input, result);
+    return CompactWithoutInstallation(options, cfh, input, result);
   }
 #endif  // NDEBUG
 
@@ -277,6 +313,20 @@ class DBImplSecondary : public DBImpl {
                           const Slice&) override {
       return AddColumnFamilyId(column_family_id);
     }
+
+    Status MarkBeginPrepare(bool) override { return Status::OK(); }
+
+    Status MarkEndPrepare(const Slice&) override { return Status::OK(); }
+
+    Status MarkRollback(const Slice&) override { return Status::OK(); }
+
+    Status MarkCommit(const Slice&) override { return Status::OK(); }
+
+    Status MarkCommitWithTimestamp(const Slice&, const Slice&) override {
+      return Status::OK();
+    }
+
+    Status MarkNoop(bool) override { return Status::OK(); }
 
     const std::unordered_set<uint32_t>& column_families() const {
       return column_family_ids_;
@@ -328,7 +378,8 @@ class DBImplSecondary : public DBImpl {
   // Run compaction without installation, the output files will be placed in the
   // secondary DB path. The LSM tree won't be changed, the secondary DB is still
   // in read-only mode.
-  Status CompactWithoutInstallation(ColumnFamilyHandle* cfh,
+  Status CompactWithoutInstallation(const OpenAndCompactOptions& options,
+                                    ColumnFamilyHandle* cfh,
                                     const CompactionServiceInput& input,
                                     CompactionServiceResult* result);
 
