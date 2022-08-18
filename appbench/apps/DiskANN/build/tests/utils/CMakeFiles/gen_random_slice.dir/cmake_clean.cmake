@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/gen_random_slice.dir/gen_random_slice.cpp.o"
-  "gen_random_slice"
   "gen_random_slice.pdb"
+  "gen_random_slice"
 )
 
 # Per-language clean rules from dependency scanning.

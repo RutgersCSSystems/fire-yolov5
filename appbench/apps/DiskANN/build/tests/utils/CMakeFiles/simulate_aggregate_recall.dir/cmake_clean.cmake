@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/simulate_aggregate_recall.dir/simulate_aggregate_recall.cpp.o"
-  "simulate_aggregate_recall"
   "simulate_aggregate_recall.pdb"
+  "simulate_aggregate_recall"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/create_disk_layout.dir/create_disk_layout.cpp.o"
-  "create_disk_layout"
   "create_disk_layout.pdb"
+  "create_disk_layout"
 )
 
 # Per-language clean rules from dependency scanning.

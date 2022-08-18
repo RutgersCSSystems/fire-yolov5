@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/uint32_to_uint8.dir/uint32_to_uint8.cpp.o"
-  "uint32_to_uint8"
   "uint32_to_uint8.pdb"
+  "uint32_to_uint8"
 )
 
 # Per-language clean rules from dependency scanning.

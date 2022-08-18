@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/calculate_recall.dir/calculate_recall.cpp.o"
-  "calculate_recall"
   "calculate_recall.pdb"
+  "calculate_recall"
 )
 
 # Per-language clean rules from dependency scanning.
