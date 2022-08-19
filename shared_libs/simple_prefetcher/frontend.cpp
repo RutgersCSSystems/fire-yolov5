@@ -31,6 +31,8 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
+#include <mpi.h>
+
 
 #include "util.hpp"
 #include "frontend.hpp"
@@ -583,6 +585,28 @@ void handle_open(int fd){
 //Intercepted Functions
 //////////////////////////////////////////////////////////
 
+#ifdef ENABLE_MPI
+int MPI_File_read_at(MPI_File fh, MPI_Offset offset, void *buf,
+                     int count, MPI_Datatype datatype, MPI_Status * status) {
+
+	//fprintf(stderr, "Intercepting MPI_File_read_at");
+	return 0;
+}
+
+int MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status)
+{
+	//fprintf(stderr, "Intercepting MPI_File_read_at");
+	return real_MPI_File_read_at_all_end(fh, buf, status);
+}
+
+int MPI_File_open(MPI_Comm comm, char *filename, int amode, MPI_Info info, MPI_File *mpi_fh){
+
+	//return real_MPI_File_open(comm, filename, amode, info, mpi_fh);
+}
+#endif
+
+
+
 int openat(int dirfd, const char *pathname, int flags, ...){
 
 	int fd;
@@ -894,7 +918,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	int fd = fileno(stream);
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
-	printf("%s: TID:%ld\n", __func__, gettid());
+	//printf("%s: TID:%ld\n", __func__, gettid());
 
 
 #ifdef ONLY_INTERCEPT

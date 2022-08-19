@@ -1,7 +1,7 @@
-CXX=g++
+CXX=mpic++
 CC=gcc
 
-LIBS=-lpthread -lrt -ldl
+LIBS=-lpthread -lrt -ldl -lmpi
 FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result -g
 INCLUDE=
 
@@ -16,11 +16,11 @@ PORTION_PAGES=32
 NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(15MB)
 
-SOURCES = frontend.cpp uinode.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
+SOURCES = frontend.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
 
 
 #DEBUG=-DDEBUG
-OTHERFLAGS=-DENABLE_OS_STATS -DMAINTAIN_UINODE
+OTHERFLAGS=-DENABLE_OS_STATS -DMAINTAIN_UINODE -DENABLE_MPI
 VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PAGES) -DNR_WORKERS=$(NR_WORKERS) -DPORTION_PAGES=$(PORTION_PAGES) $(OTHERFLAGS)
 VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ)
 
