@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/merge_shards.dir/merge_shards.cpp.o"
-  "merge_shards"
   "merge_shards.pdb"
+  "merge_shards"
 )
 
 # Per-language clean rules from dependency scanning.

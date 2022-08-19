@@ -1,4 +1,4 @@
-# Install script for directory: /home/burger/code/DiskANN/tests/utils
+# Install script for directory: /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/utils
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

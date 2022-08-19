@@ -143,6 +143,7 @@ void con(){
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
 	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
+	syscall(__NR_start_crosslayer, CLEAR_GLOBAL_STATS, 0);
 #endif
 
 	debug_printf("CONSTRUCTOR GETTING CALLED \n");

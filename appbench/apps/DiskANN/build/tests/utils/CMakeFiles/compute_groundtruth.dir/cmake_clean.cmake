@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/compute_groundtruth.dir/compute_groundtruth.cpp.o"
-  "compute_groundtruth"
   "compute_groundtruth.pdb"
+  "compute_groundtruth"
 )
 
 # Per-language clean rules from dependency scanning.

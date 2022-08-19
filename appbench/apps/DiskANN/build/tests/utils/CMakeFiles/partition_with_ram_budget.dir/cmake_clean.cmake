@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/partition_with_ram_budget.dir/partition_with_ram_budget.cpp.o"
-  "partition_with_ram_budget"
   "partition_with_ram_budget.pdb"
+  "partition_with_ram_budget"
 )
 
 # Per-language clean rules from dependency scanning.

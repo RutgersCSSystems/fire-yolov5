@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/build_memory_index.dir/build_memory_index.cpp.o"
-  "build_memory_index"
   "build_memory_index.pdb"
+  "build_memory_index"
 )
 
 # Per-language clean rules from dependency scanning.

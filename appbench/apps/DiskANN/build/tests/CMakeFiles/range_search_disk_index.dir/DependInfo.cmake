@@ -4,27 +4,25 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/burger/code/DiskANN/tests/range_search_disk_index.cpp" "/home/burger/code/DiskANN/build/tests/CMakeFiles/range_search_disk_index.dir/range_search_disk_index.cpp.o"
+  "/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/range_search_disk_index.cpp" "/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/CMakeFiles/range_search_disk_index.dir/range_search_disk_index.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
-  "BOOST_ALL_NO_LIB"
-  "BOOST_PROGRAM_OPTIONS_DYN_LINK"
   "MKL_ILP64"
   )
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include"
-  "/opt/intel/oneapi/mkl/latest/include"
+  "/opt/intel/compilers_and_libraries_2018/linux/mkl/include"
   "/usr/include/mkl"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/burger/code/DiskANN/build/src/CMakeFiles/diskann.dir/DependInfo.cmake"
+  "/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/src/CMakeFiles/diskann.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

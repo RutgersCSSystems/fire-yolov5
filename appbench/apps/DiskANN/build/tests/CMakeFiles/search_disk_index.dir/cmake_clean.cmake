@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/search_disk_index.dir/search_disk_index.cpp.o"
-  "search_disk_index"
   "search_disk_index.pdb"
+  "search_disk_index"
 )
 
 # Per-language clean rules from dependency scanning.

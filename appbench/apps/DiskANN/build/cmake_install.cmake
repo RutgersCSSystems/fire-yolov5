@@ -1,4 +1,4 @@
-# Install script for directory: /home/burger/code/DiskANN
+# Install script for directory: /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,9 +39,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/burger/code/DiskANN/build/src/cmake_install.cmake")
-  include("/home/burger/code/DiskANN/build/tests/cmake_install.cmake")
-  include("/home/burger/code/DiskANN/build/tests/utils/cmake_install.cmake")
+  include("/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/src/cmake_install.cmake")
+  include("/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/cmake_install.cmake")
+  include("/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils/cmake_install.cmake")
 
 endif()
 
@@ -53,5 +53,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/burger/code/DiskANN/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

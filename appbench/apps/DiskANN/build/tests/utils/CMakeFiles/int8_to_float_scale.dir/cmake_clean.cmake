@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/int8_to_float_scale.dir/int8_to_float_scale.cpp.o"
-  "int8_to_float_scale"
   "int8_to_float_scale.pdb"
+  "int8_to_float_scale"
 )
 
 # Per-language clean rules from dependency scanning.
