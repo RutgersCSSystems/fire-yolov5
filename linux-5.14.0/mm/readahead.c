@@ -324,12 +324,14 @@ void force_page_cache_ra(struct readahead_control *ractl,
 	        nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
         }
 
-    //If PREFETCH LIMIT not defined, we will do all of it together
-    //else we do the typical 2 MB limit
-#ifndef CONFIG_PREFETCH_2MB_LIMIT
-     do_page_cache_ra(ractl, nr_to_read, 0);
-#else
-        printk("%s: CONFIG_PREFETCH_2MB_limit == True\n");
+    //If disable_2mb_limit == true, we will do all of the request together
+    //else we do the typical 2 MB chunks
+    if(disable_2mb_limit){
+        //printk("%s: disable_2mb_limit == True\n", __func__);
+        do_page_cache_ra(ractl, nr_to_read, 0);
+    }
+    else{
+        //printk("%s: disable_2mb_limit == False\n", __func__);
 	while (nr_to_read) {
 		unsigned long this_chunk = (2 * 1024 * 1024) / PAGE_SIZE;
 
@@ -341,7 +343,7 @@ void force_page_cache_ra(struct readahead_control *ractl,
 		index += this_chunk;
 		nr_to_read -= this_chunk;
 	}
-#endif
+    }
 }
 
 /*

@@ -94,7 +94,7 @@ typedef struct tuple_graph {
 				if (start_edge_index > (tg)->nglobaledges) start_edge_index = (tg)->nglobaledges; \
 				end_edge_index = start_edge_index + FILE_CHUNKSIZE; \
 				if (end_edge_index > (tg)->nglobaledges) end_edge_index = (tg)->nglobaledges; \
-				/* fprintf(stderr, "%d trying to read offset = %" PRId64 ", count = %" PRId64 "\n", rank, start_edge_index, edge_count_i); */ \
+				fprintf(stderr, "%d trying to read offset = %" PRId64 ", count = %" PRId64 "\n", rank, start_edge_index, edge_count_i); \
 				MPI_File_read_at_all_end((tg)->edgefile, edge_data_from_file, MPI_STATUS_IGNORE); \
 				MPI_File_read_at_all_end((tg)->weightfile, weight_data_from_file, MPI_STATUS_IGNORE); \
 			} else { \
@@ -141,7 +141,7 @@ typedef struct tuple_graph {
 								if (start_edge_index > (tg)->nglobaledges) start_edge_index = (tg)->nglobaledges; \
 								end_edge_index = start_edge_index + FILE_CHUNKSIZE; \
 								if (end_edge_index > (tg)->nglobaledges) end_edge_index = (tg)->nglobaledges; \
-								/* fprintf(stderr, "%d trying to read offset = %" PRId64 ", count = %" PRId64 "\n", rank, start_edge_index, edge_count_i); */ \
+								fprintf(stderr, "%d trying to read offset = %" PRId64 ", count = %" PRId64 "\n", rank, start_edge_index, edge_count_i);  \
 								MPI_File_read_at_all_end((tg)->edgefile, edge_data_from_file, MPI_STATUS_IGNORE); \
 							} else { \
 								start_edge_index = int64_min(FILE_CHUNKSIZE * block_idx, (tg)->edgememory_size); \

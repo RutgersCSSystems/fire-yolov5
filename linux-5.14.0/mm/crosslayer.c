@@ -87,6 +87,13 @@ atomic_t setup_cross_procfs = ATOMIC_INIT(-1);
  */
 int enable_unbounded = 0;
 
+/*
+ * This variable changes behaviour of readaheads (force_page_cache_ra)
+ * if 1 -> the whole readahead request is sent at once
+ * if 0 -> the readahead request is sent in 2MB chunks
+ */
+int disable_2mb_limit = 0; 
+
 #ifdef CONFIG_CACHE_LIMITING
 /*
  * This config counts nr of cache pages
@@ -662,7 +669,7 @@ void init_global_pfetch_state(void){
 /*
  * write procfs file for updating values in kernel
  */
-static ssize_t write_proc(struct file *filp, const char __user *buffer,
+static ssize_t write_proc_unbounded(struct file *filp, const char __user *buffer,
                 size_t len, loff_t * offset)
 {
         int length = 0;
@@ -687,7 +694,7 @@ static ssize_t write_proc(struct file *filp, const char __user *buffer,
 /*
  * read procfs file for showing to userspace
  */
-static ssize_t read_proc(struct file *filp, char __user *buffer,
+static ssize_t read_proc_unbounded(struct file *filp, char __user *buffer,
                 size_t len, loff_t * offset)
 {
         printk(KERN_INFO "%s: proc file read\n", __func__);
@@ -707,6 +714,53 @@ static ssize_t read_proc(struct file *filp, char __user *buffer,
         return len;
 }
 
+/*
+ * write procfs file for updating values in kernel
+ */
+static ssize_t write_proc_2mb_limit(struct file *filp, const char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        int length = 0;
+        char buf[BUFSIZE];
+
+        if(*offset > 0 || len > BUFSIZE){
+                return -EFAULT;
+        }
+
+        if(copy_from_user(buf, buffer, len)){
+                return -EFAULT;
+        }
+
+
+        sscanf(buf, "%d", &disable_2mb_limit);
+        printk("%s: Value of write = %d\n", __func__, disable_2mb_limit);
+
+        return len;
+}
+
+
+/*
+ * read procfs file for showing to userspace
+ */
+static ssize_t read_proc_2mb_limit(struct file *filp, char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        printk(KERN_INFO "%s: proc file read \n", __func__);
+
+        int length = 0;
+        char buf[BUFSIZE];
+        if(*offset > 0 || len < BUFSIZE){
+                return 0;
+        }
+
+        length += sprintf(buf, "%d\n", disable_2mb_limit);
+
+        if(copy_to_user(buffer, buf, length)){
+                return -EFAULT;
+        }
+        *offset = len;
+        return len;
+}
 
 /*
  * This procfs interface controls the limits inside the kernel
@@ -717,11 +771,17 @@ void setup_cross_interface(void){
 
         if(atomic_inc_and_test(&setup_cross_procfs)){
                 printk("%s : inside setup procfs\n", __func__);
-                static struct proc_ops proc_fops = {
-                        .proc_read = read_proc,
-                        .proc_write = write_proc,
+                static struct proc_ops proc_fops_unbounded = {
+                        .proc_read = read_proc_unbounded,
+                        .proc_write = write_proc_unbounded,
                 };
-                proc_create("unbounded_read", 0666, NULL, &proc_fops);
+                proc_create("unbounded_read", 0666, NULL, &proc_fops_unbounded);
+
+                static struct proc_ops proc_fops_2mb_limit= {
+                        .proc_read = read_proc_2mb_limit,
+                        .proc_write = write_proc_2mb_limit,
+                };
+                proc_create("disable_2mb_limit", 0666, NULL, &proc_fops_2mb_limit);
         }
         return;
 }
