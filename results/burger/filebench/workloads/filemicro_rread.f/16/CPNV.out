@@ -1,0 +1,128 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Populating and pre-allocating filesets
+0.003: Removing bigfile1 tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.008: Pre-allocating directories in bigfile1 tree
+ENABLE_FILE_STATS in con
+2.014: Pre-allocating files in bigfile1 tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+30.944: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+30.944: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+31.130: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+32.136: Running...
+50.137: Run took 18 seconds...
+50.137: Per-Operation Breakdown
+finish               5543582ops   307954ops/s   0.0mb/s    0.000ms/op [0.000ms - 0.048ms]
+write-file           5543601ops   307955ops/s 601.5mb/s    0.051ms/op [0.001ms - 1.950ms]
+50.137: IO Summary: 5543601 ops 307955.438 ops/s 307955/0 rd/wr 601.5mb/s 0.051ms/op
+50.137: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/filemicro_rread.f"
+	User time (seconds): 0.19
+	System time (seconds): 27.35
+	Percent of CPU this job got: 53%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:51.81
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691308
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921939
+	Minor (reclaiming a frame) page faults: 8717
+	Voluntary context switches: 12536
+	Involuntary context switches: 292
+	Swaps: 0
+	File system inputs: 39656
+	File system outputs: 91261472
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[  242.407307] Enabled file stats for time:1651
+[  242.407447] write_proc: Value of write = 0
+[  242.409750] Enabled file stats for filebench:1656
+[  242.409885] write_proc: Value of write = 0
+[  244.037078] Enabled file stats for sh:1662
+[  244.037208] write_proc: Value of write = 0
+[  244.039020] Enabled file stats for rm:1667
+[  244.039144] write_proc: Value of write = 0
+[  244.039496] write_proc: Value of write = 0
+[  244.039499] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[  244.039500] Final GlobalReport: nr_pages_read:449293, nr_pages_hit:394108, nr_do_read_fault:1035021, nr_pages_miss:398906
+[  244.039502] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[  244.039629] FinalTaskReport: rm:1667 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:17
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:5, nr_pages_hit:2, nr_do_read_fault:31
+[  244.039871] FinalTaskReport: sh:1662 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
+[  244.041702] Enabled file stats for sh:1672
+[  244.041827] write_proc: Value of write = 0
+[  244.119337] sh (1680): drop_caches: 3
+[  246.028432] sh (1685): drop_caches: 3
+[  246.045539] FinalTaskReport: sh:1672 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
+[  266.740824] Enabled file stats for sh:1690
+[  266.740986] write_proc: Value of write = 0
+[  266.742420] Enabled file stats for sh:1695
+[  266.742569] write_proc: Value of write = 0
+[  271.347228] sh (1701): drop_caches: 3
+[  274.958315] sh (1706): drop_caches: 3
+[  274.975365] FinalTaskReport: sh:1695 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:19
+[  274.975797] FinalTaskReport: sh:1690 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[  274.978433] Enabled file stats for sh:1710
+[  274.978582] write_proc: Value of write = 0
+[  275.056533] sh (1718): drop_caches: 3
+[  275.144993] sh (1723): drop_caches: 3
+[  275.162382] FinalTaskReport: sh:1710 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:15
+[  275.165376] Enabled file stats for filebench:1728
+[  275.165512] write_proc: Value of write = 0
+[  276.577825] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[  294.170000] FinalTaskReport: filebench:1656 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1843492, final_async_pages:922059
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:28831
+                                        nr_pages_read:41, nr_pages_hit:18, nr_do_read_fault:950514
+[  294.219651] write_proc: Value of write = 0
+[  294.219673] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[  294.219674] Final GlobalReport: nr_pages_read:12200155, nr_pages_hit:6260427, nr_do_read_fault:4423, nr_pages_miss:12153
+[  294.219677] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[  294.220013] FinalTaskReport: time:1651 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:57
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:3
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:21

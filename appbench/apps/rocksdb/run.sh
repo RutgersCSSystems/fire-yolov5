@@ -71,8 +71,9 @@ CLEAR_PWD()
 
 
 #Run write workload twice
-#CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+CLEAR_PWD
+$DBHOME/db_bench $PARAMS $WRITEARGS
+exit
 
 echo "RUNNING CROSSLAYER.................."
 FlushDisk

@@ -1,0 +1,192 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Populating and pre-allocating filesets
+0.003: Removing largefile tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.128: Pre-allocating directories in largefile tree
+ENABLE_FILE_STATS in con
+2.242: Pre-allocating files in largefile tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+3.746: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+3.746: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+4.010: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+5.024: Running...
+35.028: Run took 30 seconds...
+35.028: Per-Operation Breakdown
+seqread-file         1897654ops    63248ops/s 63186.3mb/s    0.252ms/op [0.001ms - 1.477ms]
+35.028: IO Summary: 1897653 ops 63248.370 ops/s 63248/0 rd/wr 63186.3mb/s 0.252ms/op
+35.028: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/filemicro_seqread.f"
+	User time (seconds): 0.21
+	System time (seconds): 3.38
+	Percent of CPU this job got: 9%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:36.81
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691040
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921929
+	Minor (reclaiming a frame) page faults: 8403
+	Voluntary context switches: 9388
+	Involuntary context switches: 8
+	Swaps: 0
+	File system inputs: 40224
+	File system outputs: 9472520
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[ 4467.463991] Enabled file stats for time:18047
+[ 4467.468380] write_proc: Value of write = 0
+[ 4467.474366] Enabled file stats for filebench:18048
+[ 4467.479186] write_proc: Value of write = 0
+[ 4469.158291] Enabled file stats for sh:18050
+[ 4469.162506] write_proc: Value of write = 0
+[ 4469.168387] Enabled file stats for rm:18051
+[ 4469.172599] write_proc: Value of write = 0
+[ 4469.176847] write_proc: Value of write = 0
+[ 4469.180945] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 4469.186517] Final GlobalReport: nr_pages_read:9351624588, nr_pages_hit:8864838469, nr_do_read_fault:14702858, nr_pages_miss:22863407
+[ 4469.198417] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[ 4469.204130] FinalTaskReport: rm:18051 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:16
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:26
+[ 4469.242855] FinalTaskReport: sh:18050 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[ 4469.283556] Enabled file stats for sh:18052
+[ 4469.287763] write_proc: Value of write = 0
+[ 4469.292199] update_read_cache_stats ....
+[ 4469.296138] FILE sudo, misses 0, hits 2 
+[ 4469.300069] update_read_cache_stats ....
+[ 4469.303998] FILE sudo, misses 0, hits 4 
+[ 4469.307923] update_read_cache_stats ....
+[ 4469.311847] FILE sudo, misses 0, hits 6 
+[ 4469.315794] update_read_cache_stats ....
+[ 4469.319716] FILE ld-2.27.so, misses 0, hits 2 
+[ 4469.324165] update_read_cache_stats ....
+[ 4469.328090] FILE ld-2.27.so, misses 0, hits 4 
+[ 4469.332691] update_read_cache_stats ....
+[ 4469.336618] FILE libaudit.so.1.0.0, misses 0, hits 2 
+[ 4469.341697] update_read_cache_stats ....
+[ 4469.345623] FILE libselinux.so.1, misses 0, hits 2 
+[ 4469.350526] update_read_cache_stats ....
+[ 4469.354463] FILE libutil-2.27.so, misses 0, hits 2 
+[ 4469.359357] update_read_cache_stats ....
+[ 4469.363287] FILE libsudo_util.so.0.0.0, misses 0, hits 2 
+[ 4469.368704] update_read_cache_stats ....
+[ 4469.372629] FILE libc-2.27.so, misses 0, hits 2 
+[ 4469.377282] update_read_cache_stats ....
+[ 4469.381209] FILE libcap-ng.so.0.0.0, misses 0, hits 2 
+[ 4469.386367] update_read_cache_stats ....
+[ 4469.390308] FILE libpcre.so.3.13.3, misses 0, hits 2 
+[ 4469.395385] update_read_cache_stats ....
+[ 4469.399314] FILE libdl-2.27.so, misses 0, hits 2 
+[ 4469.404050] update_read_cache_stats ....
+[ 4469.407974] FILE libpthread-2.27.so, misses 0, hits 2 
+[ 4469.413474] update_read_cache_stats ....
+[ 4469.417403] FILE localtime, misses 0, hits 1 
+[ 4469.421765] update_read_cache_stats ....
+[ 4469.425707] FILE localtime, misses 0, hits 2 
+[ 4469.518340] sh (18088): drop_caches: 3
+[ 4471.335359] sh (18094): drop_caches: 3
+[ 4471.356726] FinalTaskReport: sh:18052 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[ 4471.841930] Enabled file stats for sh:18098
+[ 4471.846140] write_proc: Value of write = 0
+[ 4471.851452] Enabled file stats for sh:18099
+[ 4471.855658] write_proc: Value of write = 0
+[ 4471.859853] update_read_cache_stats ....
+[ 4471.863782] FILE clearcache.sh, misses 0, hits 1 
+[ 4471.868689] update_read_cache_stats ....
+[ 4471.872615] FILE sudo, misses 0, hits 2 
+[ 4471.876545] update_read_cache_stats ....
+[ 4471.880489] FILE sudo, misses 0, hits 4 
+[ 4471.884417] update_read_cache_stats ....
+[ 4471.888343] FILE sudo, misses 0, hits 6 
+[ 4471.892274] update_read_cache_stats ....
+[ 4471.896205] FILE ld-2.27.so, misses 0, hits 2 
+[ 4471.900653] update_read_cache_stats ....
+[ 4471.904577] FILE ld-2.27.so, misses 0, hits 4 
+[ 4471.909201] update_read_cache_stats ....
+[ 4471.913131] FILE libaudit.so.1.0.0, misses 0, hits 2 
+[ 4471.918208] update_read_cache_stats ....
+[ 4471.922137] FILE libselinux.so.1, misses 0, hits 2 
+[ 4471.927039] update_read_cache_stats ....
+[ 4471.930968] FILE libutil-2.27.so, misses 0, hits 2 
+[ 4471.935876] update_read_cache_stats ....
+[ 4471.939800] FILE libsudo_util.so.0.0.0, misses 0, hits 2 
+[ 4471.945217] update_read_cache_stats ....
+[ 4471.949142] FILE libc-2.27.so, misses 0, hits 2 
+[ 4471.953789] update_read_cache_stats ....
+[ 4471.957725] FILE libcap-ng.so.0.0.0, misses 0, hits 2 
+[ 4471.962886] update_read_cache_stats ....
+[ 4471.966815] FILE libpcre.so.3.13.3, misses 0, hits 2 
+[ 4471.971888] update_read_cache_stats ....
+[ 4471.975819] FILE libdl-2.27.so, misses 0, hits 2 
+[ 4471.980545] update_read_cache_stats ....
+[ 4471.984468] FILE libpthread-2.27.so, misses 0, hits 2 
+[ 4471.989892] update_read_cache_stats ....
+[ 4471.993837] FILE localtime, misses 0, hits 1 
+[ 4471.998203] update_read_cache_stats ....
+[ 4472.002132] FILE localtime, misses 0, hits 2 
+[ 4472.121977] sh (18135): drop_caches: 3
+[ 4472.800428] sh (18140): drop_caches: 3
+[ 4472.822277] FinalTaskReport: sh:18099 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:13
+[ 4472.861007] FinalTaskReport: sh:18098 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:12
+[ 4472.901679] Enabled file stats for sh:18144
+[ 4472.905891] write_proc: Value of write = 0
+[ 4472.998438] sh (18148): drop_caches: 3
+[ 4473.104156] sh (18153): drop_caches: 3
+[ 4473.124909] FinalTaskReport: sh:18144 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[ 4473.166091] Enabled file stats for filebench:18158
+[ 4473.170918] write_proc: Value of write = 0
+[ 4504.181473] FinalTaskReport: filebench:18048 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1843428, final_async_pages:922010
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:28829
+                                        nr_pages_read:41, nr_pages_hit:18, nr_do_read_fault:950506
+[ 4504.286975] write_proc: Value of write = 0
+[ 4504.291109] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[ 4504.296685] Final GlobalReport: nr_pages_read:485205278, nr_pages_hit:484446318, nr_do_read_fault:4344, nr_pages_miss:1021206
+[ 4504.307983] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[ 4504.313742] FinalTaskReport: time:18047 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:46
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:3
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:20

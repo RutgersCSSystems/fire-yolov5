@@ -11,7 +11,7 @@ SHELL := $(shell which bash)
 include common.mk
 
 CLEAN_FILES = # deliberately empty, so we can append below.
-CFLAGS += ${EXTRA_CFLAGS}
+CFLAGS += ${EXTRA_CFLAGS} -Wno-error
 CXXFLAGS += ${EXTRA_CXXFLAGS}
 LDFLAGS += $(EXTRA_LDFLAGS)
 MACHINE ?= $(shell uname -m)

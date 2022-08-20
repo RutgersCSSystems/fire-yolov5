@@ -3,7 +3,7 @@
 
 TARGET=$OUTPUTDIR
 
-OUTPUTPATH=$PWD
+OUTPUTPATH=$OUTPUT_FOLDER
 
 #APP="rocksdb"
 APP="redis"
@@ -19,7 +19,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=1000
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=10000
+let SCALE_ROCKSDB_GRAPH=1000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -52,14 +52,17 @@ let INCR_ONE_SPACE=1
 ##use this for storing some state
 #let slowmemhists=0
 
-declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+#declare -a techarr=("Vanilla" "OSonly" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
+declare -a techarr=("OSonly" "Cross_Naive" "CNI")
+
 
 #APPlication Array for file bench
 #declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "fileserver.f" "randomread.f" "randomrw.f")
 declare -a filesworkarr=("videoserver.f" "filemicro_seqread.f" "mongo.f" "randomread.f" "randomrw.f")
 
 #APPlication Array for file bench
-declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting" "readwhilescanning")
+#declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting" "readwhilescanning")
+declare -a rocksworkarr=("readseq" "readrandom" "readwhilescanning")
 
 
 #declare -a threadarr=("4" "8" "16" "32")
@@ -172,7 +175,7 @@ EXTRACT_RESULT() {
 		done
 
 		echo $VAR
-		`paste "num.tmp" $VAR &>> $APP"-THREADS-$THREAD".DATA`
+		`paste "num.tmp" $VAR &> $OUTPUT_FOLDER/$APP"-THREADS-$THREAD".DATA`
 
 		echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$THREAD.DATA $OUTPUTPATH/$APP-$THREAD"
 		python $SCRIPTS/graphs/$APP".py" $OUTPUTPATH/$APP"-THREADS-$THREAD.DATA" $OUTPUTPATH/$APP"-$THREAD"
@@ -192,9 +195,8 @@ j=0
 APP='filebench'
 TARGET="$OUTPUTDIR/filebench/workloads"
 #echo $TARGET
-apparr=("${filesworkarr[@]}")     
-EXTRACT_RESULT "filebench"
-exit
+#apparr=("${filesworkarr[@]}")     
+#EXTRACT_RESULT "filebench"
 
 j=0
 APP='ROCKSDB'
