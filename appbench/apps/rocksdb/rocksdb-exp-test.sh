@@ -49,7 +49,7 @@ declare -a thread_arr=("16")
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
 #declare -a workload_arr=("readrandom" "readseq")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI" "OSonly")
-declare -a config_arr=("OSonly" "Cross_Naive" "CNI")
+declare -a config_arr=("CPBV" "CPNV" "CPNI" "Vanilla")
 #declare -a config_arr=("CPBV" "OSonly" "Vanilla" "Cross_Naive")
 
 
