@@ -109,7 +109,7 @@ int real_madvise(void *addr, size_t length, int advice){
 
 FILE *real_fopen(const char *filename, const char *mode){
 
-    fprintf(stderr, "%s\n", __func__);
+    //fprintf(stderr, "%s\n", __func__);
 
     if(!fopen_ptr)
         fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
@@ -119,7 +119,7 @@ FILE *real_fopen(const char *filename, const char *mode){
 
 size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-    fprintf(stderr, "%s %zu\n", __func__, size);
+    //fprintf(stderr, "%s %zu\n", __func__, size);
 
     if(!fread_ptr)
         fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
@@ -130,7 +130,7 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 /*Several applications use fgets*/
 char *real_fgets( char *str, int num, FILE *stream ) {
 
-    fprintf(stderr, "%s %d\n", __func__, num);
+    //fprintf(stderr, "%s %d\n", __func__, num);
 
     if(!fgets_ptr)
         fgets_ptr = (real_fgets_t)dlsym(RTLD_NEXT, "fgets");
@@ -150,7 +150,7 @@ size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
-    fprintf(stderr, "%s %zu\n", __func__, size);
+    //fprintf(stderr, "%s %zu\n", __func__, size);
 
     if(!pread_ptr)
         pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
@@ -161,7 +161,7 @@ ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
-    fprintf(stderr, "Using real write %zu\n", size);
+    //fprintf(stderr, "Using real write %zu\n", size);
 
     if(!write_ptr)
         write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
@@ -172,7 +172,7 @@ ssize_t real_write(int fd, const void *data, size_t size) {
 
 ssize_t real_read(int fd, void *data, size_t size) {
 
-    fprintf(stderr, "%s %zu\n", __func__, size);
+    //fprintf(stderr, "%s %zu\n", __func__, size);
 
     if(!read_ptr)
         read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
@@ -190,7 +190,7 @@ int real_openat(int dirfd, const char *pathname, int flags, mode_t mode){
 
 int real_open(const char *pathname, int flags, mode_t mode){
 
-    fprintf(stderr, "%s\n", __func__);
+    //fprintf(stderr, "%s\n", __func__);
 
     if(!open_ptr)
         open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
