@@ -911,8 +911,8 @@ config CROSS_PREALLOC_SHIFT
 
 # if this is enabled, force_page_cache_ra
 # will submit IO in 2MB chunks
-config PREFETCH_2MB_LIMIT
-    bool "2MB read limiting?"
+#config PREFETCH_2MB_LIMIT
+#    bool "2MB read limiting?"
 
 # if this is enabled, BLK_DEF_MAX_SECTORS= ~0UL
 # unlimited hardware sectors

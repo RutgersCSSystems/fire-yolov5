@@ -143,11 +143,23 @@ void init_global_ds(void){
 void set_read_limits(char a){
 
 	debug_printf("%s: Setting Read Limits to %c\n", __func__, a);
-	int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
+	int fd = real_open(UNBOUNDED_PROCFS_FILE, O_RDWR, 0);
 	pwrite(fd, &a, sizeof(char), 0);
 	real_close(fd);
 	debug_printf("Exiting %s\n", __func__);
 }
+
+/*
+ * Set disable_2mb_limits to 0 or 1
+ */
+void set_readahead_2mb_limit(char a){
+	debug_printf("%s: Setting Readahead 2MB Limit to %c\n", __func__, a);
+	int fd = real_open(RA_2MB_LIMIT_PROCFS_FILE, O_RDWR, 0);
+	pwrite(fd, &a, sizeof(char), 0);
+	real_close(fd);
+	debug_printf("Exiting %s\n", __func__);
+}
+
 
 
 void con(){
@@ -180,11 +192,18 @@ void con(){
 
 #ifdef SET_READ_UNLIMITED
 	a = '1';
-	set_read_limits(a);
 #else
 	a = '0';
-	set_read_limits(a);
 #endif
+	set_read_limits(a);
+
+#ifdef UNSET_2MB_RA_LIMIT
+	a = '1'; //disables 2mb limit in readahead
+#else
+	a = '0'; //enables 2mb limit in readahead
+#endif
+	set_readahead_2mb_limit(a);
+	
 	//print_affinity();
 
 	/* register application specific handler */
@@ -195,10 +214,13 @@ void con(){
 void dest(){
         /*
          * Reset the IO limits to normal
+	 * Reset readahead 2MB limit
          */
         char a;
         a = '0';
         set_read_limits(a);
+	set_readahead_2mb_limit(a);
+
         fprintf(stderr, "DESTRUCTOR GETTING CALLED \n");
         debug_printf("DESTRUCTOR GETTING CALLED \n");
 

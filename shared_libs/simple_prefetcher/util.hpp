@@ -17,7 +17,8 @@
  * Setting 1 -> no limits on reads and readaheads
  * Note: linux 5.14 doesnt prefetch more than 256 pg in vanilla
  */
-#define LIMITS_PROCFS_FILE "/proc/unbounded_read"
+#define UNBOUNDED_PROCFS_FILE "/proc/unbounded_read"
+#define RA_2MB_LIMIT_PROCFS_FILE "/proc/disable_2mb_limit"
 
 #ifdef DEBUG
 #define debug_printf(...) printf(__VA_ARGS__ )
