@@ -59,8 +59,7 @@ static inline bool HasJemalloc() { return true; }
 // Declare non-standard jemalloc APIs as weak symbols. We can null-check these
 // symbols to detect whether jemalloc is linked with the binary.
 extern "C" JEMALLOC_ALLOCATOR JEMALLOC_RESTRICT_RETURN void JEMALLOC_NOTHROW *
-mallocx(size_t, int) JEMALLOC_ATTR(malloc) JEMALLOC_ALLOC_SIZE(1)
-    __attribute__((__weak__));
+mallocx(size_t, int) JEMALLOC_ATTR(malloc) JEMALLOC_ALLOC_SIZE(1)    __attribute__((__weak__));
 extern "C" JEMALLOC_ALLOCATOR JEMALLOC_RESTRICT_RETURN void JEMALLOC_NOTHROW *
 rallocx(void *, size_t, int) JEMALLOC_ALLOC_SIZE(2) __attribute__((__weak__));
 extern "C" size_t JEMALLOC_NOTHROW xallocx(void *, size_t, size_t, int)
