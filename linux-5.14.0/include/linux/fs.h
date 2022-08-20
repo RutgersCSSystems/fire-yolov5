@@ -734,7 +734,7 @@ struct inode {
          */
 #ifdef CONFIG_CROSS_FILE_BITMAP
         unsigned long *bitmap;
-	atomic_t i_bitmap_set;
+	atomic_t i_bitmap_freed;
 
         unsigned long nr_bits_used; //how many relevant bits in the bitmap ?
         unsigned long nr_longs_used; //how many relevant longs in the bitmap ?

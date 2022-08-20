@@ -55,6 +55,20 @@ robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
 
 
+#ifdef ENABLE_MPI
+struct hashtable *mpi_map;
+#endif
+
+struct file_desc {
+int fd;
+#ifdef ENABLE_MPI
+MPI_File fh;
+#endif
+};
+
+#ifdef ENABLE_MPI
+robin_hood::unordered_map<MPI_File *, int> mpi_hadle_fd;
+#endif
 
 
 //enables per thread constructor and destructor
@@ -129,11 +143,23 @@ void init_global_ds(void){
 void set_read_limits(char a){
 
 	debug_printf("%s: Setting Read Limits to %c\n", __func__, a);
-	int fd = real_open(LIMITS_PROCFS_FILE, O_RDWR, 0);
+	int fd = real_open(UNBOUNDED_PROCFS_FILE, O_RDWR, 0);
 	pwrite(fd, &a, sizeof(char), 0);
 	real_close(fd);
 	debug_printf("Exiting %s\n", __func__);
 }
+
+/*
+ * Set disable_2mb_limits to 0 or 1
+ */
+void set_readahead_2mb_limit(char a){
+	debug_printf("%s: Setting Readahead 2MB Limit to %c\n", __func__, a);
+	int fd = real_open(RA_2MB_LIMIT_PROCFS_FILE, O_RDWR, 0);
+	pwrite(fd, &a, sizeof(char), 0);
+	real_close(fd);
+	debug_printf("Exiting %s\n", __func__);
+}
+
 
 
 void con(){
@@ -166,11 +192,18 @@ void con(){
 
 #ifdef SET_READ_UNLIMITED
 	a = '1';
-	set_read_limits(a);
 #else
 	a = '0';
-	set_read_limits(a);
 #endif
+	set_read_limits(a);
+
+#ifdef UNSET_2MB_RA_LIMIT
+	a = '1'; //disables 2mb limit in readahead
+#else
+	a = '0'; //enables 2mb limit in readahead
+#endif
+	set_readahead_2mb_limit(a);
+	
 	//print_affinity();
 
 	/* register application specific handler */
@@ -181,10 +214,13 @@ void con(){
 void dest(){
         /*
          * Reset the IO limits to normal
+	 * Reset readahead 2MB limit
          */
         char a;
         a = '0';
         set_read_limits(a);
+	set_readahead_2mb_limit(a);
+
         fprintf(stderr, "DESTRUCTOR GETTING CALLED \n");
         debug_printf("DESTRUCTOR GETTING CALLED \n");
 
@@ -503,8 +539,9 @@ prefetch_file_exit:
  *
  * and init the bitmap inside the kernel
  */
-void inline record_open(int fd){
+void inline record_open(struct file_desc desc){
 
+	int fd = desc.fd;
 	off_t filesize = reg_fd(fd);
 	struct read_ra_req ra;
 	struct timespec start, end;
@@ -555,7 +592,7 @@ exit:
  * Does all the extra computing at open
  * for all the open functions
  */
-void handle_open(int fd){
+void handle_open(struct file_desc desc){
 
 	debug_printf("Entering %s\n", __func__);
 
@@ -564,18 +601,18 @@ void handle_open(int fd){
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-	record_open(fd);
+	record_open(desc);
 #endif
 	/*
 	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
 	 */
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
-	prefetch_file(fd);
+	prefetch_file(desc.fd);
 #endif
 
 #ifdef MAINTAIN_UINODE
-	add_fd_to_inode(i_map, fd);
+	add_fd_to_inode(i_map, desc.fd);
 #endif
 
 	debug_printf("Exiting %s\n", __func__);
@@ -590,19 +627,35 @@ void handle_open(int fd){
 int MPI_File_read_at(MPI_File fh, MPI_Offset offset, void *buf,
                      int count, MPI_Datatype datatype, MPI_Status * status) {
 
-	//fprintf(stderr, "Intercepting MPI_File_read_at");
+	printf("%s:%d \n", __func__, __LINE__);
 	return 0;
 }
 
 int MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status)
 {
-	//fprintf(stderr, "Intercepting MPI_File_read_at");
+	printf("%s:%d \n", __func__, __LINE__);
 	return real_MPI_File_read_at_all_end(fh, buf, status);
 }
 
-int MPI_File_open(MPI_Comm comm, char *filename, int amode, MPI_Info info, MPI_File *mpi_fh){
+int MPI_File_read_at_all_begin(MPI_File fh, void *buf, MPI_Status *status)
+{
+	printf("%s:%d \n", __func__, __LINE__);
+	return real_MPI_File_read_at_all_begin(fh, buf, status);
+}
 
-	//return real_MPI_File_open(comm, filename, amode, info, mpi_fh);
+int MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh) {
+
+	int ret = 0;
+	int fd = real_open(filename, amode, 0);
+	ret = real_MPI_File_open(comm, filename, amode, info, fh);
+	printf("%s:%d, FD %d\n", __func__, __LINE__, fd);
+	mpi_hadle_fd[fh] = fd;
+
+	struct file_desc desc;
+	desc.fd = fd;
+	handle_open(desc);
+
+	return ret;
 }
 #endif
 
@@ -611,6 +664,8 @@ int MPI_File_open(MPI_Comm comm, char *filename, int amode, MPI_Info info, MPI_F
 int openat(int dirfd, const char *pathname, int flags, ...){
 
 	int fd;
+	struct file_desc desc;
+
 
 	debug_printf("Entering %s\n", pathname);
 
@@ -628,7 +683,8 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 	if(fd < 0)
 		goto exit;
 
-	handle_open(fd);
+	desc.fd = fd;
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -639,6 +695,8 @@ exit:
 int open64(const char *pathname, int flags, ...){
 
 	int fd;
+	struct file_desc desc;
+
 
 	debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
 
@@ -652,7 +710,9 @@ int open64(const char *pathname, int flags, ...){
 	else{
 		fd = real_open(pathname, flags, 0);
 	}
-	handle_open(fd);
+
+	desc.fd = fd;
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -663,6 +723,7 @@ exit:
 int open(const char *pathname, int flags, ...){
 
 	int fd;
+	struct file_desc desc;
 
 	debug_printf("%s: file %s\n", __func__,  pathname);
 
@@ -677,9 +738,11 @@ int open(const char *pathname, int flags, ...){
 		fd = real_open(pathname, flags, 0);
 	}
 
-	if(fd < 0)
+	desc.fd = fd;
+
+	if(desc.fd < 0)
 		goto exit;
-	handle_open(fd);
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -691,6 +754,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	int fd;
 	FILE *ret;
+	struct file_desc desc;
 
 	debug_printf("%s: file %s\n", __func__,  filename);
 	ret = real_fopen(filename, mode);
@@ -698,7 +762,8 @@ FILE *fopen(const char *filename, const char *mode){
 		return ret;
 
 	fd = fileno(ret);
-	handle_open(fd);
+	desc.fd = fd;
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);

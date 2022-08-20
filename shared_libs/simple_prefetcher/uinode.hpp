@@ -30,6 +30,11 @@ struct u_inode {
 };
 
 struct hashtable *init_inode_fd_map(void);
+
+#ifdef ENABLE_MPI
+struct hashtable *init_mpifile_fd_map(void) ;
+#endif
+
 int handle_close(struct hashtable *, int);
 struct u_inode *get_uinode(struct hashtable *, int);
 

@@ -1,12 +1,19 @@
 #!/bin/bash
 set -x
 DBHOME=$PWD
-THREAD=4
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
+
+if [ -z "$APPS" ]; then
+        echo "APPS environment variable is undefined."
+        echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
+        exit 1
+fi
+
 
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
@@ -37,12 +44,12 @@ NUM=40000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("16" "8")
+declare -a thread_arr=("16")
 
-declare -a workload_arr=("readrandom" "readseq" "readwhilescanning")
+declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
 #declare -a workload_arr=("readrandom" "readseq")
 #declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI" "OSonly")
-declare -a config_arr=("OSonly")
+declare -a config_arr=("OSonly" "Cross_Naive" "CNI")
 #declare -a config_arr=("CPBV" "OSonly" "Vanilla" "Cross_Naive")
 
 
@@ -108,7 +115,7 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
