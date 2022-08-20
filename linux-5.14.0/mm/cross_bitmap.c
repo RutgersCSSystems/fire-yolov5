@@ -101,7 +101,7 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
         }
 
 	//Set the flag that indicates bitmap is set
-	//atomic_set(&inode->i_bitmap_set, 1);
+	//atomic_set(&inode->i_bitmap_freed, 1);
         
         inode->nr_bits_used = nr_pages;
         inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
@@ -135,7 +135,7 @@ void free_cross_bitmap(struct inode *inode){
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
 		//		"%d\n", __func__, atomic_read(&inode->i_count));
 
-		atomic_set(&inode->i_bitmap_set, 1);
+		atomic_set(&inode->i_bitmap_freed, 1);
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
@@ -167,7 +167,7 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
                 goto exit;
 
 	/*bitmap for the inode is not cleared */
-	if (atomic_read(&inode->i_bitmap_set) == 1)
+	if (atomic_read(&inode->i_bitmap_freed) == 1)
 		goto exit;
 
 
