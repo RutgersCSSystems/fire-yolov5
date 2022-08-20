@@ -1,0 +1,223 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Video Server Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.004: passivevids populated: 200 files, avg. dir. width = 20, avg. dir. depth = 1.8, 0 leafdirs, 102400.000MB total size
+0.004: Removing passivevids tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.008: Pre-allocating directories in passivevids tree
+ENABLE_FILE_STATS in con
+1.927: Pre-allocating files in passivevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+30.570: activevids populated: 100 files, avg. dir. width = 4, avg. dir. depth = 3.3, 0 leafdirs, 51200.000MB total size
+30.570: Removing activevids tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+30.576: Pre-allocating directories in activevids tree
+ENABLE_FILE_STATS in con
+30.774: Pre-allocating files in activevids tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+Segmentation fault
+Segmentation fault
+55.143: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+55.143: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+57.403: Starting 1 vidreaders instances
+57.404: Starting 1 vidwriter instances
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+58.421: Running...
+118.427: Run took 60 seconds...
+118.427: Per-Operation Breakdown
+vidreader            8510874ops   141833ops/s 35440.8mb/s    0.223ms/op [0.001ms - 36.286ms]
+wrtclose             128ops        2ops/s   0.0mb/s    0.134ms/op [0.036ms - 0.187ms]
+newvid               128ops        2ops/s 1092.1mb/s  452.078ms/op [225.747ms - 710.961ms]
+wrtopen              128ops        2ops/s   0.0mb/s    0.120ms/op [0.024ms - 0.256ms]
+vidremover           128ops        2ops/s   0.0mb/s   16.181ms/op [0.727ms - 140.143ms]
+118.427: IO Summary: 8511386 ops 141841.268 ops/s 141833/2 rd/wr 36533.0mb/s 0.230ms/op
+118.427: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/videoserver.f"
+	User time (seconds): 0.34
+	System time (seconds): 111.48
+	Percent of CPU this job got: 93%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:00.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3693092
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922179
+	Minor (reclaiming a frame) page faults: 38973
+	Voluntary context switches: 30743
+	Involuntary context switches: 877
+	Swaps: 0
+	File system inputs: 60784
+	File system outputs: 226528632
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+[10453.614950] Enabled file stats for time:12199
+[10453.615138] write_proc: Value of write = 0
+[10453.617451] Enabled file stats for filebench:12204
+[10453.617626] write_proc: Value of write = 0
+[10455.233806] Enabled file stats for sh:12210
+[10455.233961] write_proc: Value of write = 0
+[10455.235875] Enabled file stats for rm:12215
+[10455.236040] write_proc: Value of write = 0
+[10455.236413] write_proc: Value of write = 0
+[10455.236416] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[10455.236417] Final GlobalReport: nr_pages_read:2453, nr_pages_hit:1505, nr_do_read_fault:953729, nr_pages_miss:10
+[10455.236419] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[10455.236573] FinalTaskReport: rm:12215 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:14
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:5, nr_pages_hit:2, nr_do_read_fault:31
+[10455.236777] FinalTaskReport: sh:12210 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[10455.238723] Enabled file stats for sh:12220
+[10455.238886] write_proc: Value of write = 0
+[10455.320933] sh (12228): drop_caches: 3
+[10457.136339] sh (12234): drop_caches: 3
+[10457.154849] FinalTaskReport: sh:12220 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[10469.625885] Enabled file stats for sh:12351
+[10469.626072] write_proc: Value of write = 0
+[10469.627778] Enabled file stats for sh:12356
+[10469.627930] write_proc: Value of write = 0
+[10472.985063] sh (12362): drop_caches: 3
+[10485.779671] sh (12368): drop_caches: 3
+[10485.797540] FinalTaskReport: sh:12356 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:14
+[10485.797941] FinalTaskReport: sh:12351 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[10485.801421] Enabled file stats for sh:12372
+[10485.801588] write_proc: Value of write = 0
+[10485.803419] Enabled file stats for rm:12377
+[10485.803580] write_proc: Value of write = 0
+[10485.803936] write_proc: Value of write = 0
+[10485.803939] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[10485.803940] Final GlobalReport: nr_pages_read:2693, nr_pages_hit:1538, nr_do_read_fault:3701, nr_pages_miss:16
+[10485.803942] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[10485.804058] FinalTaskReport: rm:12377 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:8
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:5, nr_pages_hit:2, nr_do_read_fault:31
+[10485.804272] FinalTaskReport: sh:12372 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[10485.806626] Enabled file stats for sh:12382
+[10485.806775] write_proc: Value of write = 0
+[10485.888704] sh (12390): drop_caches: 3
+[10485.982985] sh (12395): drop_caches: 3
+[10486.000773] FinalTaskReport: sh:12382 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[10497.746232] Enabled file stats for sh:12509
+[10497.746416] write_proc: Value of write = 0
+[10497.747866] Enabled file stats for sh:12514
+[10497.748016] write_proc: Value of write = 0
+[10501.054663] sh (12520): drop_caches: 3
+[10510.370687] sh[12754]: segfault at a146 ip 000000000000a146 sp 00007fffffffd838 error 14 in dash[555555400000+1c000]
+[10510.370705] Code: Unable to access opcode bytes at RIP 0xa11c.
+[10510.370997] sh[12755]: segfault at a146 ip 000000000000a146 sp 00007fffffffd858 error 14 in dash[555555400000+1c000]
+[10510.371006] Code: Unable to access opcode bytes at RIP 0xa11c.
+[10510.371236] FinalTaskReport: sh:12514 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:14
+[10510.371583] FinalTaskReport: sh:12509 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[10510.374141] Enabled file stats for sh:12756
+[10510.374303] write_proc: Value of write = 0
+[10512.517176] sh (12764): drop_caches: 3
+[10512.612672] sh (12769): drop_caches: 3
+[10512.630831] FinalTaskReport: sh:12756 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[10512.634531] Enabled file stats for filebench:12774
+[10512.634620] Enabled file stats for filebench:12775
+[10512.634697] write_proc: Value of write = 0
+[10512.634779] write_proc: Value of write = 0
+[10512.644481] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.774713] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.775270] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.776766] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.777023] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.779550] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.779969] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.781013] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.781441] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.782413] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.783898] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.783933] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.784190] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.784251] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.784261] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.785802] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.786830] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[10513.787094] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787240] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787319] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787409] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787820] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787929] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.787976] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.788093] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.788825] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.789252] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.789435] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.789507] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.790009] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.790037] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.790071] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10513.790097] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[10554.401129] perf: interrupt took too long (4981 > 4977), lowering kernel.perf_event_max_sample_rate to 40000
+[10573.655999] FinalTaskReport: filebench:12204 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1843556, final_async_pages:922235
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:28838
+                                        nr_pages_read:41, nr_pages_hit:18, nr_do_read_fault:950557
+[10573.708768] time[12199]: segfault at bb27 ip 000000000000bb27 sp 00007fffffffdae8 error 14 in time[555555400000+3000]
+[10573.708783] Code: Unable to access opcode bytes at RIP 0xbafd.
+[10573.708825] FinalTaskReport: time:12199 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:39
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:18
