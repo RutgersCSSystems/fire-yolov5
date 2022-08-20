@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
 			mode |= MPI_MODE_CREATE | MPI_MODE_DELETE_ON_CLOSE;
 		} else {
 			MPI_File_set_errhandler(MPI_FILE_NULL, MPI_ERRORS_RETURN);
+			fprintf(stderr, "MPI_File_open 1******\n");
 			if (MPI_File_open(MPI_COMM_WORLD, (char*)filename, mode,
 						MPI_INFO_NULL, &tg.edgefile)) {
 				if (0 == rank && getenv("VERBOSE"))
@@ -124,6 +125,7 @@ int main(int argc, char** argv) {
 				if (size == tg.nglobaledges * sizeof(packed_edge)) {
 #ifdef SSSP
 					wmode=mode;
+					fprintf(stderr, "MPI_File_open ******\n");
 					if(MPI_File_open(MPI_COMM_WORLD, (char*)wfilename, mode, MPI_INFO_NULL, &tg.weightfile))
 					{
 						wmode |= MPI_MODE_RDWR | MPI_MODE_CREATE;
@@ -142,11 +144,13 @@ int main(int argc, char** argv) {
 		}
 		MPI_File_set_errhandler(MPI_FILE_NULL, MPI_ERRORS_ARE_FATAL);
 		if (!is_opened) {
+			fprintf(stderr, "MPI_File_open ******\n");
 			MPI_File_open(MPI_COMM_WORLD, (char*)filename, mode, MPI_INFO_NULL, &tg.edgefile);
 			MPI_File_set_size(tg.edgefile, tg.nglobaledges * sizeof(packed_edge));
 		}
 #ifdef SSSP
 		if (!is_opened) {
+			fprintf(stderr, "MPI_File_open ******\n");
 			MPI_File_open(MPI_COMM_WORLD, (char*)wfilename, wmode, MPI_INFO_NULL, &tg.weightfile);
 			MPI_File_set_size(tg.weightfile, tg.nglobaledges * sizeof(float));
 		}    

@@ -264,3 +264,10 @@ int handle_close(struct hashtable *i_map, int fd){
 }
 #endif
 
+#ifdef ENABLE_MPI
+struct hashtable *init_mpifile_fd_map(void) {
+	 return create_hashtable(MAXFILES, hashfromkey, equalkeys);
+}
+#endif
+
+

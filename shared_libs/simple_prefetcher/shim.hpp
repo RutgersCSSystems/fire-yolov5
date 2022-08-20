@@ -57,11 +57,13 @@ real_madvise_t madvise_ptr = NULL;
 
 typedef int (*real_MPI_File_open_t)(MPI_Comm, const char *, int, MPI_Info, MPI_File *);
 typedef int (*real_MPI_File_read_at_all_end_t)(MPI_File, void *, MPI_Status *);
+typedef int (*real_MPI_File_read_at_all_begin_t)(MPI_File, void *, MPI_Status *);
 typedef int (*real_MPI_File_read_at_t)(MPI_File, MPI_Offset, void *, int, MPI_Datatype, MPI_Status *);
 
 
 real_MPI_File_open_t MPI_File_open_ptr = NULL;
 real_MPI_File_read_at_all_end_t MPI_File_read_at_all_end_ptr = NULL;
+real_MPI_File_read_at_all_begin_t MPI_File_read_at_all_begin_ptr = NULL;
 real_MPI_File_read_at_t MPI_File_read_at_ptr = NULL;
 #endif
 
@@ -88,6 +90,7 @@ void link_shim_functions(void){
 #ifdef ENABLE_MPI
 	MPI_File_open_ptr = ((real_MPI_File_open_t)dlsym(RTLD_NEXT, "MPI_File_open"));
 	MPI_File_read_at_all_end_ptr = ((real_MPI_File_read_at_all_end_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_end"));
+	MPI_File_read_at_all_begin_ptr = ((real_MPI_File_read_at_all_begin_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_begin"));
 	MPI_File_read_at_ptr = ((real_MPI_File_read_at_t)dlsym(RTLD_NEXT, "MPI_File_read_at"));;
 #endif
 
@@ -103,6 +106,15 @@ int real_MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status){
     return ((real_MPI_File_read_at_all_end_t)MPI_File_read_at_all_end_ptr)(fh, buf, status);
 
 }
+
+int real_MPI_File_read_at_all_begin(MPI_File fh, void *buf, MPI_Status *status){
+    if(!MPI_File_read_at_all_begin_ptr)
+    	MPI_File_read_at_all_begin_ptr = (real_MPI_File_read_at_all_begin_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_begin");
+
+    return ((real_MPI_File_read_at_all_begin_t)MPI_File_read_at_all_begin_ptr)(fh, buf, status);
+
+}
+
 
 int real_MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh) {
 
