@@ -567,7 +567,7 @@ void inline record_open(struct file_desc desc){
 		 * So no file cache data is lost from bitmap
 		 * This is very important todo before any app reads happen
 		 */
-#ifdef READAHEAD_INFO_PC_STATE
+#if defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
 		ra.data = NULL;
