@@ -45,9 +45,10 @@ NUM=40000000
 
 declare -a thread_arr=("16")
 
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
-declare -a config_arr=("OSonly" "Cross_Naive" "CNI" "CPNI")
-declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
+#declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
+declare -a workload_arr=("readrandom")
+declare -a config_arr=("OSonly")
+#declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
 
 
 #Require for large database
