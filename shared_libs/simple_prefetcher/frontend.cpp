@@ -160,6 +160,17 @@ void set_readahead_2mb_limit(char a){
 	debug_printf("Exiting %s\n", __func__);
 }
 
+/*
+ * Set cross_bitmap_shift
+ */
+void set_cross_bitmap_shift(char a){
+	debug_printf("%s: Setting cross_bitmap_shift to %c\n", __func__, a);
+	int fd = real_open(CROSS_BITMAP_SHIFT_FILE, O_RDWR, 0);
+	pwrite(fd, &a, sizeof(char), 0);
+	real_close(fd);
+	debug_printf("Exiting %s\n", __func__);
+}
+
 
 
 void con(){
@@ -203,6 +214,11 @@ void con(){
 	a = '0'; //enables 2mb limit in readahead
 #endif
 	set_readahead_2mb_limit(a);
+
+
+	//Set bitmap size inside the OS
+	a = CROSS_BITMAP_SHIFT;
+	set_cross_bitmap_shift(a);
 	
 	//print_affinity();
 

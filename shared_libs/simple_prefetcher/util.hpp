@@ -19,6 +19,7 @@
  */
 #define UNBOUNDED_PROCFS_FILE "/proc/unbounded_read"
 #define RA_2MB_LIMIT_PROCFS_FILE "/proc/disable_2mb_limit"
+#define CROSS_BITMAP_SHIFT_FILE "/proc/cross_bitmap_shift"
 
 #ifdef DEBUG
 #define debug_printf(...) printf(__VA_ARGS__ )
@@ -86,15 +87,21 @@
 #define NR_REMAINING ((700 * MB)/PAGESIZE)
 #endif
 
+/*
+ * bitshift for kernel bitmaps
+ */
+#ifndef CROSS_BITMAP_SHIFT
+#warning CROSS_BITMAP_SHIFT not defined. Assuming 24
+#define CROSS_BITMAP_SHIFT 24
+#endif
 
 /*
  * Inside the kernel, the Page cache bitmap 
  * is preallocated to this size. So we have 
- * todo the same. Defaulted to 1TB pages worth bits
+ * todo the same.
  */
 #ifndef NR_BITS_PREALLOC_PC_STATE
-#define NR_BITS_PREALLOC_PC_STATE  (1UL << (34-PAGE_SHIFT))
-//#define NR_BITS_PREALLOC_PC_STATE  (1UL << (35-PAGE_SHIFT))
+#define NR_BITS_PREALLOC_PC_STATE  (1UL << (CROSS_BITMAP_SHIFT - PAGE_SHIFT))
 #endif
 
 

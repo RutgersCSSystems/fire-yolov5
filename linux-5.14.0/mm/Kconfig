@@ -906,7 +906,7 @@ config CROSS_FILE_BITMAP
 
 config CROSS_PREALLOC_SHIFT
 	int "SHIFT to use to preallocate bits for bitmap"
-	default 34
+	default 24
 	depends on CROSS_FILE_BITMAP
 
 # if this is enabled, force_page_cache_ra
