@@ -93,7 +93,7 @@
  * todo the same. Defaulted to 1TB pages worth bits
  */
 #ifndef NR_BITS_PREALLOC_PC_STATE
-#define NR_BITS_PREALLOC_PC_STATE  (1UL << (40-PAGE_SHIFT))
+#define NR_BITS_PREALLOC_PC_STATE  (1UL << (34-PAGE_SHIFT))
 //#define NR_BITS_PREALLOC_PC_STATE  (1UL << (35-PAGE_SHIFT))
 #endif
 
