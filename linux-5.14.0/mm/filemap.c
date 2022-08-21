@@ -43,6 +43,7 @@
 #include <linux/ramfs.h>
 #include <linux/page_idle.h>
 #include <linux/crosslayer.h>
+#include <linux/cross_bitmap.h>
 #include <asm/pgalloc.h>
 #include <asm/tlbflush.h>
 #include "internal.h"
@@ -1920,6 +1921,10 @@ no_page:
 		if (page && (fgp_flags & FGP_FOR_MMAP))
 			unlock_page(page);
 	}
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        add_pg_cross_bitmap(mapping->host, index);
+#endif
 
 	return page;
 }
