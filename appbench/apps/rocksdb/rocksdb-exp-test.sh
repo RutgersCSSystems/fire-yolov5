@@ -6,7 +6,9 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-DBDIR=$DBHOME/DATA
+#DBDIR=$DBHOME/DATA
+DBDIR=/mnt/remote/DATA
+
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -34,11 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("40000000")
+declare -a num_arr=("20000000")
 NUM=40000000
-
-#declare -a num_arr=("100000")
-#NUM=100000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
@@ -47,11 +46,7 @@ NUM=40000000
 declare -a thread_arr=("16")
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
-#declare -a workload_arr=("readrandom" "readseq")
-#declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI" "OSonly")
-declare -a config_arr=("OSonly" "Cross_Naive" "CNI")
-#declare -a config_arr=("CPBV" "OSonly" "Vanilla" "Cross_Naive")
-
+declare -a config_arr=("OSonly" "Cross_Naive" "CNI" "CPNI")
 
 #Require for large database
 ulimit -n 1000000 

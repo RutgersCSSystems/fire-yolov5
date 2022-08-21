@@ -6,18 +6,18 @@ cd $KERN_SRC
 
 if [[ $1 == "makemenu" ]];
 then
-	sudo cp -v /boot/config-$(uname -r) $KERN_SRC/.config
+	#sudo cp -v /boot/config-$(uname -r) $KERN_SRC/.config
 	make menuconfig
 fi
 
 #Disable them
-scripts/config --disable SYSTEM_REVOCATION_KEYS
-scripts/config --disable SYSTEM_TRUSTED_KEYS
+#scripts/config --disable SYSTEM_REVOCATION_KEYS
+#scripts/config --disable SYSTEM_TRUSTED_KEYS
 
 
 #Compile the kernel with '-j' (denotes parallelism) in sudo mode
 sudo make $PARA #&> compile.out
-grep -r "error:" compile.out &> errors.out
+grep -r "error:" compile.out #&> errors.out
 sudo make modules $PARA &>> compile.out
 grep -r "error:" compile.out &>> errors.out
 sudo make modules_install $PARA &>> compile.out

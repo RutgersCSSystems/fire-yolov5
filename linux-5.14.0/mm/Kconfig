@@ -896,9 +896,9 @@ config ENABLE_CROSSLAYER_DEBUG
 
 
 # Crosslayer Stats and functionality
-config ENABLE_CROSS_STATS
-    	def_bool y	
-    	bool "enable crosslayer OS stats, reduces performance"
+#config ENABLE_CROSS_STATS
+#    	def_bool y	
+#    	bool "enable crosslayer OS stats, reduces performance"
 
 config CROSS_FILE_BITMAP
 	def_bool y
@@ -906,7 +906,7 @@ config CROSS_FILE_BITMAP
 
 config CROSS_PREALLOC_SHIFT
 	int "SHIFT to use to preallocate bits for bitmap"
-	default 40
+	default 24
 	depends on CROSS_FILE_BITMAP
 
 # if this is enabled, force_page_cache_ra

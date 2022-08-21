@@ -94,6 +94,13 @@ int enable_unbounded = 0;
  */
 int disable_2mb_limit = 0; 
 
+/*
+ * This variable changes the size of bitmaps being allocated.
+ * value == 0 means it has not been set.
+ * value == x means bitmap size will support 2^x filesize
+ */
+int cross_bitmap_shift = 0;
+
 #ifdef CONFIG_CACHE_LIMITING
 /*
  * This config counts nr of cache pages
@@ -762,6 +769,70 @@ static ssize_t read_proc_2mb_limit(struct file *filp, char __user *buffer,
         return len;
 }
 
+
+/*
+ * write procfs file for updating value of bitmap_shift in kernel
+ * Max value of cross_bitmap_shift can be set to 128 since chars are being used
+ */
+static ssize_t write_proc_bitmap_shift(struct file *filp, const char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        int length = 0;
+        char buf[BUFSIZE];
+
+        if(*offset > 0 || len > BUFSIZE){
+                return -EFAULT;
+        }
+
+        if(copy_from_user(buf, buffer, len)){
+                return -EFAULT;
+        }
+
+
+	/*
+	 * ignore this warning of type mismatch.
+	 */
+        sscanf(buf, "%c", &cross_bitmap_shift);
+
+	if(cross_bitmap_shift < 0)
+		cross_bitmap_shift = 0;
+
+        printk("%s: Value of write = %d\n", __func__, cross_bitmap_shift);
+
+        return len;
+}
+
+
+/*
+ * read procfs file for showing to userspace
+ */
+static ssize_t read_proc_bitmap_shift(struct file *filp, char __user *buffer,
+                size_t len, loff_t * offset)
+{
+        printk(KERN_INFO "%s: proc file read \n", __func__);
+
+	/*
+	 * Set default if cross_bitmap_shift is not set by userspace
+	 */
+	if(cross_bitmap_shift <= 0){
+		cross_bitmap_shift = CONFIG_CROSS_PREALLOC_SHIFT;
+	}
+
+        int length = 0;
+        char buf[BUFSIZE];
+        if(*offset > 0 || len < BUFSIZE){
+                return 0;
+        }
+
+        length += sprintf(buf, "%d\n", cross_bitmap_shift);
+
+        if(copy_to_user(buffer, buf, length)){
+                return -EFAULT;
+        }
+        *offset = len;
+        return len;
+}
+
 /*
  * This procfs interface controls the limits inside the kernel
  * right now it only enables and disables unbounded read/readaheads
@@ -782,6 +853,12 @@ void setup_cross_interface(void){
                         .proc_write = write_proc_2mb_limit,
                 };
                 proc_create("disable_2mb_limit", 0666, NULL, &proc_fops_2mb_limit);
+
+                static struct proc_ops proc_fops_bitmap_shift= {
+                        .proc_read = read_proc_bitmap_shift,
+                        .proc_write = write_proc_bitmap_shift,
+                };
+                proc_create("cross_bitmap_shift", 0666, NULL, &proc_fops_bitmap_shift);
         }
         return;
 }
