@@ -347,6 +347,13 @@ void delete_from_page_cache_batch(struct address_space *mapping,
 
 	xa_lock_irqsave(&mapping->i_pages, flags);
 	for (i = 0; i < pagevec_count(pvec); i++) {
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+                //printk("%s: page index truncated = %ld, app=%s\n", __func__, pvec->pages[i]->index, current->comm);
+                remove_pg_cross_bitmap(mapping->host, pvec->pages[i]->index);
+#endif
+
+
 		trace_mm_filemap_delete_from_page_cache(pvec->pages[i]);
 
 		unaccount_page_cache_page(mapping, pvec->pages[i]);
