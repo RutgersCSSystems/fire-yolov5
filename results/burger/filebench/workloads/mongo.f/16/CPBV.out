@@ -1,0 +1,757 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Mongo-like Version 2.3 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.004: postsetdel populated: 100 files, avg. dir. width = 2, avg. dir. depth = 6.6, 0 leafdirs, 12800.000MB total size
+0.004: Removing postsetdel tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.009: Pre-allocating directories in postsetdel tree
+ENABLE_FILE_STATS in con
+1.853: Pre-allocating files in postsetdel tree
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+ Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:15
+8.243: postset populated: 100 files, avg. dir. width = 2, avg. dir. depth = 6.6, 0 leafdirs, 12800.000MB total size
+8.244: Removing postset tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+8.250: Pre-allocating directories in postset tree
+ENABLE_FILE_STATS in con
+8.447: Pre-allocating files in postset tree
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:27
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:25
+evict_advise:229 Evicting using fadvice fd:28
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:34
+evict_advise:229 Evicting using fadvice fd:20
+evict_advise:229 Evicting using fadvice fd:21
+evict_advise:229 Evicting using fadvice fd:35
+evict_advise:229 Evicting using fadvice fd:36
+evict_advise:229 Evicting using fadvice fd:17
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:30
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:5
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:33
+evict_advise:229 Evicting using fadvice fd:31
+evict_advise:229 Evicting using fadvice fd:32
+evict_advise:229 Evicting using fadvice fd:18
+evict_advise:229 Evicting using fadvice fd:29
+evict_advise:229ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+ Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:22
+evict_advise:229 Evicting using fadvice fd:19
+evict_advise:229 Evicting using fadvice fd:23
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:26
+evict_advise:229 Evicting using fadvice fd:24
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:27
+14.745: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+14.745: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+14.942: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+15.959: Running...
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229 Evicting using fadvice fd:13
+evict_advise:229 Evicting using fadvice fd:11
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:15
+evict_advise:229 Evicting using fadvice fd:14
+evict_advise:229 Evicting using fadvice fd:16
+evict_advise:229 Evicting using fadvice fd:8
+evict_advise:229 Evicting using fadvice fd:6
+evict_advise:229 Evicting using fadvice fd:9
+evict_advise:229 Evicting using fadvice fd:7
+evict_advise:229 Evicting using fadvice fd:10
+evict_advise:229 Evicting using fadvice fd:12
+evict_advise:229malloc(): smallbin double linked list corrupted
+22.668: Unexpected Process termination Code 2, Errno 0 around line 55
+22.668: Before iterating through procflow
+22.668: Before procflow_sleep
+22.959: Run took 7 seconds...
+22.959: NO VALID RESULTS! Filebench run terminated prematurely around line 55
+22.959: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/mongo.f"
+	User time (seconds): 0.66
+	System time (seconds): 51.66
+	Percent of CPU this job got: 212%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.63
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3692892
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922228
+	Minor (reclaiming a frame) page faults: 2935481
+	Voluntary context switches: 167570
+	Involuntary context switches: 434
+	Swaps: 0
+	File system inputs: 38877656
+	File system outputs: 59808592
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[11304.440774] Enabled file stats for time:14388
+[11304.440966] write_proc: Value of write = 0
+[11304.443205] Enabled file stats for filebench:14393
+[11304.443370] write_proc: Value of write = 0
+[11306.062409] Enabled file stats for sh:14403
+[11306.062587] write_proc: Value of write = 0
+[11306.064268] Enabled file stats for rm:14408
+[11306.064409] write_proc: Value of write = 0
+[11306.064751] write_proc: Value of write = 0
+[11306.064755] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[11306.064755] Final GlobalReport: nr_pages_read:1506671299, nr_pages_hit:1485908487, nr_do_read_fault:1949872, nr_pages_miss:11331362
+[11306.064758] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[11306.064915] FinalTaskReport: rm:14408 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:14
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:5, nr_pages_hit:2, nr_do_read_fault:31
+[11306.065168] FinalTaskReport: sh:14403 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[11306.066922] Enabled file stats for sh:14413
+[11306.067073] write_proc: Value of write = 0
+[11306.149081] sh (14421): drop_caches: 3
+[11307.889742] sh (14432): drop_caches: 3
+[11307.907534] FinalTaskReport: sh:14413 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[11312.204486] Enabled file stats for sh:14548
+[11312.204617] write_proc: Value of write = 0
+[11312.205944] Enabled file stats for sh:14553
+[11312.206090] write_proc: Value of write = 0
+[11312.499499] sh (14559): drop_caches: 3
+[11314.280159] sh (14568): drop_caches: 3
+[11314.299104] FinalTaskReport: sh:14553 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:14
+[11314.299528] FinalTaskReport: sh:14548 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[11314.303103] Enabled file stats for sh:14574
+[11314.303266] write_proc: Value of write = 0
+[11314.305008] Enabled file stats for rm:14579
+[11314.305166] write_proc: Value of write = 0
+[11314.305620] write_proc: Value of write = 0
+[11314.305629] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[11314.305630] Final GlobalReport: nr_pages_read:2745, nr_pages_hit:1685, nr_do_read_fault:5137, nr_pages_miss:9
+[11314.305633] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[11314.305785] FinalTaskReport: rm:14579 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:64, final_async_pages:8
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:2
+                                        nr_pages_read:5, nr_pages_hit:2, nr_do_read_fault:31
+[11314.306444] FinalTaskReport: sh:14574 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[11314.308857] Enabled file stats for sh:14584
+[11314.309017] write_proc: Value of write = 0
+[11314.391503] sh (14592): drop_caches: 3
+[11314.484509] sh (14597): drop_caches: 3
+[11314.501968] FinalTaskReport: sh:14584 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[11319.653605] Enabled file stats for sh:14704
+[11319.653975] write_proc: Value of write = 0
+[11319.655840] Enabled file stats for sh:14709
+[11319.656008] write_proc: Value of write = 0
+[11320.063265] sh (14715): drop_caches: 3
+[11320.782662] sh (14723): drop_caches: 3
+[11320.801194] FinalTaskReport: sh:14709 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:8, final_async_pages:1
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:11, nr_pages_hit:2, nr_do_read_fault:14
+[11320.801618] FinalTaskReport: sh:14704 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:13
+[11320.804994] Enabled file stats for sh:14727
+[11320.805160] write_proc: Value of write = 0
+[11320.886901] sh (14735): drop_caches: 3
+[11320.980187] sh (14740): drop_caches: 3
+[11320.998186] FinalTaskReport: sh:14727 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:0
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:0
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:14
+[11321.001655] Enabled file stats for filebench:14745
+[11321.001885] write_proc: Value of write = 0
+[11321.010660] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.090360] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.091890] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.091897] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.092150] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.092413] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.092431] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.093856] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.093868] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.093868] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.093873] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.106054] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.121896] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.122850] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.123106] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.123408] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.123730] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.123819] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.124581] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.124583] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.124778] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.124780] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.125787] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.576653] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.577871] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.577892] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.587988] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.587994] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.588263] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.589239] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.589263] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.589553] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.589682] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.589686] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.612604] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.613713] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.613819] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.619502] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.619787] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.619810] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11322.620750] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.620753] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.620995] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.621133] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11322.621137] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.034052] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.038747] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.038799] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.075602] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.076537] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.076724] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.077095] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.077171] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.077272] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.077919] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.078167] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.078493] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.078551] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.078629] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.104414] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.104547] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.104751] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.105356] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.105540] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.105926] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.105975] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.105984] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.448697] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.452705] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.453660] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.462068] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.466407] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.466706] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.537454] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.538431] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.543973] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.544089] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.544811] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.545405] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.545430] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.545514] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.564654] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.565750] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.567708] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.567709] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.568187] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.568863] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.568871] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.568965] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.755245] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.762048] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.763675] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.769395] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11323.774824] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11323.774868] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 4 millisec
+[11324.009549] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11324.009694] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11324.009855] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11324.010028] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11324.010295] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11324.010348] alloc_cross_bitmap: preallocate 67108864 pg, nr_longs=1048576 in 0 millisec
+[11328.657191] FinalTaskReport: filebench:14745 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:161
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:9
+                                        nr_pages_read:16, nr_pages_hit:16, nr_do_read_fault:63
+[11329.016219] FinalTaskReport: filebench:14393 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:1843556, final_async_pages:922236
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:28838
+                                        nr_pages_read:41, nr_pages_hit:18, nr_do_read_fault:950556
+[11329.072586] write_proc: Value of write = 0
+[11329.072603] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[11329.072604] Final GlobalReport: nr_pages_read:5618624, nr_pages_hit:5614789, nr_do_read_fault:6693, nr_pages_miss:262087
+[11329.072606] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[11329.072762] FinalTaskReport: time:14388 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:46
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:3
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:20

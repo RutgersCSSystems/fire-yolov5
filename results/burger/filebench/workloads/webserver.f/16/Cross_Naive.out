@@ -1,0 +1,95 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.003: Web-server Version 3.1 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.004: logfiles populated: 1 files, avg. dir. width = 10, avg. dir. depth = 0.0, 0 leafdirs, 0.200MB total size
+0.004: Removing logfiles tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.009: Pre-allocating directories in logfiles tree
+ENABLE_FILE_STATS in con
+1.962: Pre-allocating files in logfiles tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+2.164: bigfileset populated: 10000 files, avg. dir. width = 10, avg. dir. depth = 4.0, 0 leafdirs, 15422.320MB total size
+2.164: Removing bigfileset tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+2.169: Pre-allocating directories in bigfileset tree
+ENABLE_FILE_STATS in con
+2.385: Pre-allocating files in bigfileset tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+16.629: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+16.629: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+16.826: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+17.833: Running...
+77.842: Run took 60 seconds...
+77.844: Per-Operation Breakdown
+appendlog            232337ops     3872ops/s  30.2mb/s    0.029ms/op [0.003ms - 4.776ms]
+closefile10          232321ops     3871ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.097ms]
+readfile10           232321ops     3871ops/s 5979.7mb/s    0.399ms/op [0.002ms - 36.170ms]
+openfile10           232321ops     3871ops/s   0.0mb/s    0.006ms/op [0.002ms - 3.379ms]
+closefile9           232321ops     3871ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.075ms]
+readfile9            232324ops     3871ops/s 5979.3mb/s    0.399ms/op [0.002ms - 37.902ms]
+openfile9            232324ops     3871ops/s   0.0mb/s    0.006ms/op [0.002ms - 2.957ms]
+closefile8           232324ops     3871ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.061ms]
+readfile8            232326ops     3872ops/s 5976.6mb/s    0.399ms/op [0.002ms - 30.296ms]
+openfile8            232326ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 2.688ms]
+closefile7           232326ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.069ms]
+readfile7            232327ops     3872ops/s 5968.2mb/s    0.398ms/op [0.002ms - 31.525ms]
+openfile7            232327ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 3.402ms]
+closefile6           232327ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.081ms]
+readfile6            232328ops     3872ops/s 5963.5mb/s    0.398ms/op [0.002ms - 28.806ms]
+openfile6            232328ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 3.958ms]
+closefile5           232328ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.086ms]
+readfile5            232331ops     3872ops/s 5962.8mb/s    0.398ms/op [0.002ms - 28.692ms]
+openfile5            232331ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 2.698ms]
+closefile4           232331ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.075ms]
+readfile4            232334ops     3872ops/s 5959.9mb/s    0.399ms/op [0.002ms - 39.400ms]
+openfile4            232334ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 2.625ms]
+closefile3           232334ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.087ms]
+readfile3            232335ops     3872ops/s 5971.2mb/s    0.399ms/op [0.002ms - 35.807ms]
+openfile3            232335ops     3872ops/s   0.0mb/s    0.006ms/op [0.002ms - 3.082ms]
+closefile2           232335ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.044ms]
+readfile2            232335ops     3872ops/s 5963.2mb/s    0.398ms/op [0.002ms - 28.983ms]
+openfile2            232336ops     3872ops/s   0.0mb/s    0.007ms/op [0.002ms - 4.033ms]
+closefile1           232336ops     3872ops/s   0.0mb/s    0.001ms/op [0.000ms - 0.070ms]
+readfile1            232336ops     3872ops/s 5982.9mb/s    0.401ms/op [0.002ms - 34.309ms]
+openfile1            232336ops     3872ops/s   0.0mb/s    0.007ms/op [0.003ms - 2.820ms]
+77.844: IO Summary: 7202215 ops 120019.316 ops/s 38716/3872 rd/wr 59737.6mb/s 0.132ms/op
+77.844: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/webserver.f"
+	User time (seconds): 0.30
+	System time (seconds): 10.45
+	Percent of CPU this job got: 13%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:19.53
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3693488
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 923121
+	Minor (reclaiming a frame) page faults: 14113
+	Voluntary context switches: 6553
+	Involuntary context switches: 165
+	Swaps: 0
+	File system inputs: 75208
+	File system outputs: 39007512
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest

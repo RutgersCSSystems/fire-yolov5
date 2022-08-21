@@ -1,0 +1,59 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+open error: IO error: While open a file for appending: /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/002174.dbtmp: Too many open files
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+Set seed to 1660750865633129 because --seed was 0
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Integrated BlobDB: blob cache disabled
+Command exited with non-zero status 1
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=40000000 --benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=8"
+	User time (seconds): 1.39
+	System time (seconds): 27.35
+	Percent of CPU this job got: 859%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.34
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 33645520
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 86
+	Minor (reclaiming a frame) page faults: 8427062
+	Voluntary context switches: 35796
+	Involuntary context switches: 61
+	Swaps: 0
+	File system inputs: 609928
+	File system outputs: 124888
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+[39307.082276] sh (7800): drop_caches: 3
+[39307.114401] sh (7805): drop_caches: 3
+[39312.140654] Enabled file stats for time:7812
+[39312.140804] write_proc: Value of write = 0
+[39312.146749] Enabled file stats for db_bench:7815
+[39312.146890] write_proc: Value of write = 0
+[39314.493527] write_proc: Value of write = 0
+[39314.493543] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[39314.493544] Final GlobalReport: nr_pages_read:96966, nr_pages_hit:49481, nr_do_read_fault:2313, nr_pages_miss:302
+[39314.493546] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[39314.493616] FinalTaskReport: db_bench:7815 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:36184, final_async_pages:38410
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1272
+                                        nr_pages_read:44956, nr_pages_hit:41652, nr_do_read_fault:175
+[39315.487610] write_proc: Value of write = 0
+[39315.487627] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[39315.487628] Final GlobalReport: nr_pages_read:2, nr_pages_hit:1, nr_do_read_fault:7, nr_pages_miss:0
+[39315.487630] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[39315.487672] FinalTaskReport: time:7812 - ra_orig_nr_pages:0, ra_final_nr_pages:0
+                                        async_pages:0, final_async_pages:25
+                                        full_pfetches:0, less256_pfetches:0, partial_pfetches:0
+                                        failed_pfetches:0, total_pfetches:0, os_pfetches:1
+                                        nr_pages_read:0, nr_pages_hit:0, nr_do_read_fault:17
