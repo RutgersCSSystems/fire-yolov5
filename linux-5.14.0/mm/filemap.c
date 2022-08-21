@@ -1930,7 +1930,8 @@ no_page:
 	}
 
 #ifdef CONFIG_CROSS_FILE_BITMAP
-        add_pg_cross_bitmap(mapping->host, index);
+	if(mapping && mapping->host)
+	        add_pg_cross_bitmap(mapping->host, index);
 #endif
 
 	return page;
