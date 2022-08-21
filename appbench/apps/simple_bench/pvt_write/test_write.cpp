@@ -70,13 +70,13 @@ struct read_ra_req{
 
 long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_req)
 {
-        return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
+	return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
 }
 
 int main(){
-        int fd;
-        char *buffer = (char*)malloc(sizeof(PAGESIZE));
-        fd = open(FILENAME, O_CREAT | O_RDWR, S_IWUSR | S_IRUSR | S_IXUSR);
+	int fd;
+	char *buffer = (char*)malloc(sizeof(PAGESIZE));
+	fd = open(FILENAME, O_CREAT | O_RDWR, S_IWUSR | S_IRUSR | S_IXUSR);
 
 	struct read_ra_req ra;
 
@@ -87,13 +87,13 @@ int main(){
 
 	ra.data = (unsigned long *) malloc(sizeof(unsigned long) * 10);
 
-        for(int i=0; i<PAGESIZE; i++){
-                buffer[i] = 'c';
-        }
+	for(int i=0; i<PAGESIZE; i++){
+		buffer[i] = 'c';
+	}
 
 
-        for(int i=0; i<NR_PAGES; i++){
-                pwrite(fd, buffer, PAGESIZE, i*PAGESIZE);
+	for(int i=0; i<NR_PAGES; i++){
+		pwrite(fd, buffer, PAGESIZE, i*PAGESIZE);
 
 		if(readahead_info(fd, 0, PAGESIZE, &ra) < 0)
 		{
@@ -101,8 +101,21 @@ int main(){
 			goto exit;
 		}
 		printf("%lu\n", ra.data[0]);
-        }
+	}
+
+	for(int i=NR_PAGES-1; i>=0; i--){
+		ftruncate(fd, i*PAGESIZE);
+
+		if(readahead_info(fd, 0, PAGESIZE, &ra) < 0)
+		{
+			printf("readahead_info: failed\n");
+			goto exit;
+		}
+		printf("%lu\n", ra.data[0]);
+	}
+
+	close(fd);
 
 exit:
-        return 0;
+	return 0;
 }
