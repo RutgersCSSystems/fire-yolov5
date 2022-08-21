@@ -10,12 +10,12 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 DBHOME=$PWD
-THREAD=4
+THREAD=8
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=1000000
+NUM=2000000
 DBDIR=$DBHOME/DATA
 
 #DEV=/dev/nvme0n1p1
@@ -73,8 +73,8 @@ CLEAR_PWD()
 #DISABLE_LOCK_STATS
 
 #Run write workload twice
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS
+#CLEAR_PWD
+#$DBHOME/db_bench $PARAMS $WRITEARGS
 #exit
 
 #LOCKDAT=$PWD/lockdat
@@ -82,7 +82,14 @@ $DBHOME/db_bench $PARAMS $WRITEARGS
 
 echo "RUNNING Vanilla................."
 FlushDisk
+SETPRELOAD "VANILLA"
+$DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
+FlushDisk
+
+echo "RUNNING OSONLY................"
+FlushDisk
+SETPRELOAD "OSONLY"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
@@ -93,6 +100,7 @@ SETPRELOAD "CNI"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
+exit
 
 echo "RUNNING CPNI................"
 FlushDisk

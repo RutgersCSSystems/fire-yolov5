@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 DBHOME=$PWD
-THREAD=4
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -10,11 +10,18 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=/mnt/remote/DATA
 
 
+if [ -z "$APPS" ]; then
+        echo "APPS environment variable is undefined."
+        echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
+        exit 1
+fi
+
+
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
 
 WORKLOAD="readrandom"
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
@@ -29,23 +36,20 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
-
-#declare -a num_arr=("100000")
-#NUM=100000
+declare -a num_arr=("20000000")
+NUM=40000000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("8")
+declare -a thread_arr=("16")
 
-#declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "readwhilewriting" "readwhilescanning")
+declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
+declare -a config_arr=("OSonly" "Cross_Naive" "CNI" "CPNI")
 
-declare -a workload_arr=("readseq")
-#declare -a config_arr=("Cross_Naive" "CPBI" "CNI")
-declare -a config_arr=("OSonly")
+#Require for large database
+ulimit -n 1000000 
 
 
 FlushDisk()
@@ -106,7 +110,7 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	#COMPILE_AND_WRITE
+	COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk

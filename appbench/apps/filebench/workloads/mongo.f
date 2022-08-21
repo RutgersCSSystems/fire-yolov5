@@ -26,9 +26,9 @@
 
 set $dir=DATA/
 set $nfiles=100
-set $dirwidth=10
+set $dirwidth=2
 set $filesize=128m
-set $nthreads=16
+set $nthreads=11
 set $meaniosize=16k
 set $readiosize=16k
 
@@ -52,4 +52,4 @@ define process name=filereader,instances=1
 }
 
 echo  "Mongo-like Version 2.3 personality successfully loaded"
-run 50
+run 10

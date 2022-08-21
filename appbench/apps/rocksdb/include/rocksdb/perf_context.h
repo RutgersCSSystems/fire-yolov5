@@ -74,12 +74,22 @@ struct PerfContext {
   uint64_t filter_block_read_count;       // total number of filter block reads
   uint64_t compression_dict_block_read_count;  // total number of compression
                                                // dictionary block reads
+
+  uint64_t secondary_cache_hit_count;  // total number of secondary cache hits
+
   uint64_t block_checksum_time;    // total nanos spent on block checksum
   uint64_t block_decompress_time;  // total nanos spent on block decompression
 
   uint64_t get_read_bytes;       // bytes for vals returned by Get
   uint64_t multiget_read_bytes;  // bytes for vals returned by MultiGet
   uint64_t iter_read_bytes;      // bytes for keys/vals decoded by iterator
+
+  uint64_t blob_cache_hit_count;  // total number of blob cache hits
+  uint64_t blob_read_count;       // total number of blob reads (with IO)
+  uint64_t blob_read_byte;        // total number of bytes from blob reads
+  uint64_t blob_read_time;        // total nanos spent on blob reads
+  uint64_t blob_checksum_time;    // total nanos spent on blob checksum
+  uint64_t blob_decompress_time;  // total nanos spent on blob decompression
 
   // total number of internal keys skipped over during iteration.
   // There are several reasons for it:
@@ -225,6 +235,8 @@ struct PerfContext {
   uint64_t encrypt_data_nanos;
   // Time spent in decrypting data. Populated when EncryptedEnv is used.
   uint64_t decrypt_data_nanos;
+
+  uint64_t number_async_seek;
 
   std::map<uint32_t, PerfContextByLevel>* level_to_perf_context = nullptr;
   bool per_level_perf_context_enabled = false;

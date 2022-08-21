@@ -23,6 +23,8 @@
 namespace ROCKSDB_NAMESPACE {
 
 class MergeContext;
+class WBWIIteratorImpl;
+class WriteBatchWithIndexInternal;
 struct Options;
 
 // when direction == forward
@@ -33,7 +35,8 @@ struct Options;
 // * equal_keys_ <=> base_iterator == delta_iterator
 class BaseDeltaIterator : public Iterator {
  public:
-  BaseDeltaIterator(Iterator* base_iterator, WBWIIterator* delta_iterator,
+  BaseDeltaIterator(ColumnFamilyHandle* column_family, Iterator* base_iterator,
+                    WBWIIteratorImpl* delta_iterator,
                     const Comparator* comparator,
                     const ReadOptions* read_options = nullptr);
 
@@ -60,14 +63,16 @@ class BaseDeltaIterator : public Iterator {
   bool DeltaValid() const;
   void UpdateCurrent();
 
+  std::unique_ptr<WriteBatchWithIndexInternal> wbwii_;
   bool forward_;
   bool current_at_base_;
   bool equal_keys_;
-  Status status_;
+  mutable Status status_;
   std::unique_ptr<Iterator> base_iterator_;
-  std::unique_ptr<WBWIIterator> delta_iterator_;
+  std::unique_ptr<WBWIIteratorImpl> delta_iterator_;
   const Comparator* comparator_;  // not owned
   const Slice* iterate_upper_bound_;
+  mutable PinnableSlice merge_result_;
 };
 
 // Key used by skip list, as the binary searchable index of WriteBatchWithIndex.
@@ -90,7 +95,7 @@ struct WriteBatchIndexEntry {
                        bool is_forward_direction, bool is_seek_to_first)
       // For SeekForPrev(), we need to make the dummy entry larger than any
       // entry who has the same search key. Otherwise, we'll miss those entries.
-      : offset(is_forward_direction ? 0 : port::kMaxSizet),
+      : offset(is_forward_direction ? 0 : std::numeric_limits<size_t>::max()),
         column_family(_column_family),
         key_offset(0),
         key_size(is_seek_to_first ? kFlagMinInCf : 0),
@@ -100,7 +105,7 @@ struct WriteBatchIndexEntry {
 
   // If this flag appears in the key_size, it indicates a
   // key that is smaller than any other entry for the same column family.
-  static const size_t kFlagMinInCf = port::kMaxSizet;
+  static const size_t kFlagMinInCf = std::numeric_limits<size_t>::max();
 
   bool is_min_in_cf() const {
     assert(key_size != kFlagMinInCf ||
@@ -117,7 +122,7 @@ struct WriteBatchIndexEntry {
   // make the entry just larger than all entries with the search key so
   // SeekForPrev() will see all the keys with the same key.
   size_t offset;
-  uint32_t column_family;  // c1olumn family of the entry.
+  uint32_t column_family;  // column family of the entry.
   size_t key_offset;       // offset of the key in write batch's string buffer.
   size_t key_size;         // size of the key. kFlagMinInCf indicates
                            // that this is a dummy look up entry for
@@ -132,8 +137,11 @@ struct WriteBatchIndexEntry {
 
 class ReadableWriteBatch : public WriteBatch {
  public:
-  explicit ReadableWriteBatch(size_t reserved_bytes = 0, size_t max_bytes = 0)
-      : WriteBatch(reserved_bytes, max_bytes) {}
+  explicit ReadableWriteBatch(size_t reserved_bytes = 0, size_t max_bytes = 0,
+                              size_t protection_bytes_per_key = 0,
+                              size_t default_cf_ts_sz = 0)
+      : WriteBatch(reserved_bytes, max_bytes, protection_bytes_per_key,
+                   default_cf_ts_sz) {}
   // Retrieve some information from a write entry in the write batch, given
   // the start offset of the write entry.
   Status GetEntryFromDataOffset(size_t data_offset, WriteType* type, Slice* Key,
@@ -163,17 +171,29 @@ class WriteBatchEntryComparator {
 
   const Comparator* default_comparator() { return default_comparator_; }
 
+  const Comparator* GetComparator(
+      const ColumnFamilyHandle* column_family) const;
+
+  const Comparator* GetComparator(uint32_t column_family) const;
+
  private:
-  const Comparator* default_comparator_;
+  const Comparator* const default_comparator_;
   std::vector<const Comparator*> cf_comparators_;
-  const ReadableWriteBatch* write_batch_;
+  const ReadableWriteBatch* const write_batch_;
 };
 
-typedef SkipList<WriteBatchIndexEntry*, const WriteBatchEntryComparator&>
-    WriteBatchEntrySkipList;
+using WriteBatchEntrySkipList =
+    SkipList<WriteBatchIndexEntry*, const WriteBatchEntryComparator&>;
 
 class WBWIIteratorImpl : public WBWIIterator {
  public:
+  enum Result : uint8_t {
+    kFound,
+    kDeleted,
+    kNotFound,
+    kMergeInProgress,
+    kError
+  };
   WBWIIteratorImpl(uint32_t column_family_id,
                    WriteBatchEntrySkipList* skip_list,
                    const ReadableWriteBatch* write_batch,
@@ -245,6 +265,26 @@ class WBWIIteratorImpl : public WBWIIterator {
 
   bool MatchesKey(uint32_t cf_id, const Slice& key);
 
+  // Moves the iterator to first entry of the previous key.
+  void PrevKey();
+  // Moves the iterator to first entry of the next key.
+  void NextKey();
+
+  // Moves the iterator to the Update (Put or Delete) for the current key
+  // If there are no Put/Delete, the Iterator will point to the first entry for
+  // this key
+  // @return kFound if a Put was found for the key
+  // @return kDeleted if a delete was found for the key
+  // @return kMergeInProgress if only merges were fouund for the key
+  // @return kError if an unsupported operation was found for the key
+  // @return kNotFound if no operations were found for this key
+  //
+  Result FindLatestUpdate(const Slice& key, MergeContext* merge_context);
+  Result FindLatestUpdate(MergeContext* merge_context);
+
+ protected:
+  void AdvanceKey(bool forward);
+
  private:
   uint32_t column_family_id_;
   WriteBatchEntrySkipList::Iterator skip_list_iter_;
@@ -254,14 +294,17 @@ class WBWIIteratorImpl : public WBWIIterator {
 
 class WriteBatchWithIndexInternal {
  public:
+  static const Comparator* GetUserComparator(const WriteBatchWithIndex& wbwi,
+                                             uint32_t cf_id);
+
   // For GetFromBatchAndDB or similar
   explicit WriteBatchWithIndexInternal(DB* db,
                                        ColumnFamilyHandle* column_family);
+  // For GetFromBatchAndDB or similar
+  explicit WriteBatchWithIndexInternal(ColumnFamilyHandle* column_family);
   // For GetFromBatch or similar
   explicit WriteBatchWithIndexInternal(const DBOptions* db_options,
                                        ColumnFamilyHandle* column_family);
-
-  enum Result { kFound, kDeleted, kNotFound, kMergeInProgress, kError };
 
   // If batch contains a value for key, store it in *value and return kFound.
   // If batch contains a deletion for key, return Deleted.
@@ -271,19 +314,24 @@ class WriteBatchWithIndexInternal {
   //   and return kMergeInProgress
   // If batch does not contain this key, return kNotFound
   // Else, return kError on error with error Status stored in *s.
-  Result GetFromBatch(WriteBatchWithIndex* batch, const Slice& key,
-                      std::string* value, bool overwrite_key, Status* s) {
-    return GetFromBatch(batch, key, &merge_context_, value, overwrite_key, s);
+  WBWIIteratorImpl::Result GetFromBatch(WriteBatchWithIndex* batch,
+                                        const Slice& key, std::string* value,
+                                        Status* s) {
+    return GetFromBatch(batch, key, &merge_context_, value, s);
   }
-  Result GetFromBatch(WriteBatchWithIndex* batch, const Slice& key,
-                      MergeContext* merge_context, std::string* value,
-                      bool overwrite_key, Status* s);
-  Status MergeKey(const Slice& key, const Slice* value, std::string* result,
-                  Slice* result_operand = nullptr) {
-    return MergeKey(key, value, merge_context_, result, result_operand);
+  WBWIIteratorImpl::Result GetFromBatch(WriteBatchWithIndex* batch,
+                                        const Slice& key,
+                                        MergeContext* merge_context,
+                                        std::string* value, Status* s);
+  Status MergeKey(const Slice& key, const Slice* value,
+                  std::string* result) const {
+    return MergeKey(key, value, merge_context_, result);
   }
-  Status MergeKey(const Slice& key, const Slice* value, MergeContext& context,
-                  std::string* result, Slice* result_operand = nullptr);
+  Status MergeKey(const Slice& key, const Slice* value,
+                  const MergeContext& context, std::string* result) const;
+  size_t GetNumOperands() const { return merge_context_.GetNumOperands(); }
+  MergeContext* GetMergeContext() { return &merge_context_; }
+  Slice GetOperand(int index) const { return merge_context_.GetOperand(index); }
 
  private:
   DB* db_;

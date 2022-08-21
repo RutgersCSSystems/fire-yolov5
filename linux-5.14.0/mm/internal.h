@@ -15,8 +15,10 @@
 /*
  * from mm/crosslayer.c
  * used for enabling/disabling unbounded reads/readahead
+ * and disabling 2MB limit in force_page_cache_ra
  */
 extern int enable_unbounded;
+extern int disable_2mb_limit;
 
 /*
  * The set of flags that only affect watermark checking and reclaim

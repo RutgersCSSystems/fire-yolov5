@@ -45,10 +45,28 @@ real_close_t close_ptr = NULL;
 real_clone_t clone_ptr = NULL;
 
 /*Advise calls*/
-
 real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 real_madvise_t madvise_ptr = NULL;
+
+
+
+/*MPI operations */
+#ifdef ENABLE_MPI
+#include <mpi.h>
+
+typedef int (*real_MPI_File_open_t)(MPI_Comm, const char *, int, MPI_Info, MPI_File *);
+typedef int (*real_MPI_File_read_at_all_end_t)(MPI_File, void *, MPI_Status *);
+typedef int (*real_MPI_File_read_at_all_begin_t)(MPI_File, void *, MPI_Status *);
+typedef int (*real_MPI_File_read_at_t)(MPI_File, MPI_Offset, void *, int, MPI_Datatype, MPI_Status *);
+
+
+real_MPI_File_open_t MPI_File_open_ptr = NULL;
+real_MPI_File_read_at_all_end_t MPI_File_read_at_all_end_ptr = NULL;
+real_MPI_File_read_at_all_begin_t MPI_File_read_at_all_begin_ptr = NULL;
+real_MPI_File_read_at_t MPI_File_read_at_ptr = NULL;
+#endif
+
 
 
 void link_shim_functions(void){
@@ -69,9 +87,44 @@ void link_shim_functions(void){
 	fclose_ptr = ((real_fclose_t)dlsym(RTLD_NEXT, "fclose"));
 	close_ptr = ((real_close_t)dlsym(RTLD_NEXT, "close"));
 
+#ifdef ENABLE_MPI
+	MPI_File_open_ptr = ((real_MPI_File_open_t)dlsym(RTLD_NEXT, "MPI_File_open"));
+	MPI_File_read_at_all_end_ptr = ((real_MPI_File_read_at_all_end_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_end"));
+	MPI_File_read_at_all_begin_ptr = ((real_MPI_File_read_at_all_begin_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_begin"));
+	MPI_File_read_at_ptr = ((real_MPI_File_read_at_t)dlsym(RTLD_NEXT, "MPI_File_read_at"));;
+#endif
+
 	debug_printf("done with %s\n", __func__);
 	return;
 }
+
+#ifdef ENABLE_MPI
+int real_MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status){
+    if(!MPI_File_read_at_all_end_ptr)
+    	MPI_File_read_at_all_end_ptr = (real_MPI_File_read_at_all_end_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_end");
+
+    return ((real_MPI_File_read_at_all_end_t)MPI_File_read_at_all_end_ptr)(fh, buf, status);
+
+}
+
+int real_MPI_File_read_at_all_begin(MPI_File fh, void *buf, MPI_Status *status){
+    if(!MPI_File_read_at_all_begin_ptr)
+    	MPI_File_read_at_all_begin_ptr = (real_MPI_File_read_at_all_begin_t)dlsym(RTLD_NEXT, "MPI_File_read_at_all_begin");
+
+    return ((real_MPI_File_read_at_all_begin_t)MPI_File_read_at_all_begin_ptr)(fh, buf, status);
+
+}
+
+
+int real_MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh) {
+
+    if(!MPI_File_open_ptr)
+    	MPI_File_open_ptr = (real_MPI_File_open_t)dlsym(RTLD_NEXT, "MPI_File_open");
+
+    return ((real_MPI_File_open_t)MPI_File_open_ptr)(comm, filename, amode, info, fh);
+
+}
+#endif
 
 
 int real_clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
@@ -84,6 +137,9 @@ int real_clone(int (*fn)(void *), void *child_stack, int flags, void *arg,
 }
 
 int real_posix_fadvise(int fd, off_t offset, off_t len, int advice){
+
+	debug_printf("%s\n", __func__);
+
     if(!posix_fadvise_ptr)
         posix_fadvise_ptr = (real_posix_fadvise_t)dlsym(RTLD_NEXT, "posix_fadvise");
 
@@ -106,6 +162,8 @@ int real_madvise(void *addr, size_t length, int advice){
 
 FILE *real_fopen(const char *filename, const char *mode){
 
+	debug_printf("%s:%d filen: %s\n", __func__, __LINE__, filename);
+
     if(!fopen_ptr)
         fopen_ptr = (real_fopen_t)dlsym(RTLD_NEXT, "fopen");
 
@@ -113,6 +171,8 @@ FILE *real_fopen(const char *filename, const char *mode){
 }
 
 size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+
+	debug_printf("%s %zu\n", __func__, size);
 
     if(!fread_ptr)
         fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");
@@ -122,6 +182,8 @@ size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 /*Several applications use fgets*/
 char *real_fgets( char *str, int num, FILE *stream ) {
+
+	debug_printf("%s %d\n", __func__, num);
 
     if(!fgets_ptr)
         fgets_ptr = (real_fgets_t)dlsym(RTLD_NEXT, "fgets");
@@ -141,25 +203,34 @@ size_t real_fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
+    debug_printf("%s %zu\n", __func__, size);
+
     if(!pread_ptr)
         pread_ptr = (real_pread_t)dlsym(RTLD_NEXT, "pread");
+
 
     return ((real_pread_t)pread_ptr)(fd, data, size, offset);
 }
 
 ssize_t real_write(int fd, const void *data, size_t size) {
 
+	debug_printf("Using real write %zu\n", size);
+
     if(!write_ptr)
         write_ptr = ((real_write_t)dlsym(RTLD_NEXT, "write"));
+
 
     return ((real_write_t)write_ptr)(fd, data, size);
 }
 
 ssize_t real_read(int fd, void *data, size_t size) {
 
+	debug_printf("%s %zu\n", __func__, size);
+
     if(!read_ptr)
         read_ptr = (real_read_t)dlsym(RTLD_NEXT, "read");
 
+    
     return ((real_read_t)read_ptr)(fd, data, size);
 }
 
@@ -171,6 +242,9 @@ int real_openat(int dirfd, const char *pathname, int flags, mode_t mode){
 }
 
 int real_open(const char *pathname, int flags, mode_t mode){
+
+	debug_printf("%s\n", __func__);
+
     if(!open_ptr)
         open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
 
