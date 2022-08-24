@@ -5,8 +5,8 @@ TARGET=$OUTPUTDIR
 
 OUTPUTPATH=$OUTPUT_FOLDER
 
-#APP="rocksdb"
-APP="redis"
+APP="rocksdb"
+#APP="redis"
 #TYPE="SSD"
 #TYPE="NVM"
 TYPE=""
@@ -53,7 +53,7 @@ let INCR_ONE_SPACE=1
 #let slowmemhists=0
 
 #declare -a techarr=("Vanilla" "OSonly" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-declare -a techarr=("OSonly" "Cross_Naive" "CNI")
+declare -a techarr=("Vanilla" "OSonly" "Cross_Blind" "Cross_Info" "CII" "CIP" "CIPI")
 
 
 #APPlication Array for file bench
@@ -99,6 +99,7 @@ PULL_RESULT() {
 		elif [ "$APP" = 'ROCKSDB' ];
 		then
                         val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+			echo $val
                         scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
                         echo $scaled_value &>> $APPVAL".DATA"
 		fi
@@ -120,7 +121,7 @@ EXTRACT_RESULT() {
 	do
 
 		rm "$APP.DATA"
-		rm -rf num.tmpa
+		rm -rf num.tmp
 		rm -rf $APP"-THREADS-$THREAD".DATA
 
 		for APPLICATION in "${apparr[@]}"
