@@ -2418,7 +2418,7 @@ struct page* filemap_get_read_batch(struct address_space *mapping,
 		if (xas_retry(&xas, head))
 			continue;
 		if (xas.xa_index > max || xa_is_value(head))
-               goto ret_null;
+                        goto ret_null;
 			//break;
 		if (!page_cache_get_speculative(head))
 			goto retry;
@@ -2628,13 +2628,16 @@ retry:
 
      	page = NULL; 
 
+#if 0
 #ifdef CONFIG_ENABLE_CROSS_STATS
         nr_misses = filemap_check_pagecache(mapping, index, orig_last_index);
+#endif
 #endif
 
      	page = filemap_get_read_batch(mapping, index, last_index, pvec, false);
 	//page = filemap_get_read_batch(mapping, index, last_index, pvec, iocb->ki_do_ra);
 
+#if 0
 #ifdef CONFIG_ENABLE_CROSS_STATS
      	//update the number of pg cache hits
      	if(read_stats){
@@ -2649,6 +2652,7 @@ retry:
 
 	         update_read_cache_stats(current, nr_pg_reads, nr_pg_in_cache, nr_misses, filp);
      	}
+#endif
 #endif
 
 	if (!pagevec_count(pvec)) { //No pages found in PageCache
@@ -2731,6 +2735,10 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
 
 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
 	pagevec_init(&pvec);
+
+#ifdef CONFIG_ENABLE_CROSS_STATS
+        //TODO
+#endif
 
 	do {
 		cond_resched();

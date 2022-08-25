@@ -113,9 +113,11 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         bitmap_zero(inode->bitmap, prealloc_pg);
 
+#if 0
         end = jiffies;
         printk("%s: preallocate %ld pg, nr_longs=%ld in %ld millisec\n", __func__, prealloc_pg, nr_longs,
                         (((end-start)*1000)/HZ));
+#endif
 
 exit:
         return;

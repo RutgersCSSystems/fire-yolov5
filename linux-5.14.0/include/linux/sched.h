@@ -715,7 +715,6 @@ struct task_struct {
 	struct sched_rt_entity		rt;
 	struct sched_dl_entity		dl;
 
-    	struct file_pfetch_state pfetch_state; /*thread level prefetch stats*/
 
 #ifdef CONFIG_SCHED_CORE
 	struct rb_node			core_node;
@@ -1001,13 +1000,9 @@ struct task_struct {
 	/* Open file information: */
 	struct files_struct		*files;
 
-//#ifdef CONFIG_ENABLE_CROSS_STATS
-/*XXX: Commented the config since it interferes with compile
- * when it is not enabled.
- */
-	int is_crosslayer;
-//#endif
-
+        /* this handles per-thread stats*/
+        int                             cross_stats_enabled;
+        struct file_pfetch_state        pfetch_state; /*thread level prefetch stats*/
 
 #ifdef CONFIG_IO_URING
 	struct io_uring_task		*io_uring;

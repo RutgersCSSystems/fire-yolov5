@@ -45,6 +45,7 @@
 
 #include <linux/btree.h>
 #include <linux/radix-tree.h>
+#include <linux/bitmap.h>
 
 #include <linux/buffer_head.h>
 #include <linux/jbd2.h>
@@ -197,8 +198,9 @@ void init_file_pfetch_state(struct file_pfetch_state *pfetch_state){
         spin_lock(&pfetch_state->spinlock);
 
         //disable cross layer flag for this process
-        current->is_crosslayer = 0;
+        current->cross_stats_enabled = 0;
 
+#if 0
         pfetch_state->enable_f_stats = 0;
         pfetch_state->is_app_readahead = 0;
 
@@ -214,10 +216,13 @@ void init_file_pfetch_state(struct file_pfetch_state *pfetch_state){
         pfetch_state->failed_pfetches = 0;
         pfetch_state->total_pfetches = 0;
         pfetch_state->os_pfetches = 0; // nr of pfetches done by the OS
+#endif
 
         pfetch_state->nr_pages_read = 0;
         pfetch_state->nr_pages_hit = 0;
         pfetch_state->nr_pages_miss = 0;
+
+#if 0
         pfetch_state->nr_do_read_fault = 0;
 
         pfetch_state->last_jiffies = 0;
@@ -225,15 +230,16 @@ void init_file_pfetch_state(struct file_pfetch_state *pfetch_state){
         pfetch_state->_nr_pages_hit = 0;
         pfetch_state->_nr_pages_miss = 0;
         pfetch_state->_nr_do_read_fault = 0;
+#endif
 
         spin_unlock(&pfetch_state->spinlock);
 
 }
 EXPORT_SYMBOL(init_file_pfetch_state);
 
-
 void add_nr_read_fault(struct task_struct *task){
 
+#if 0
         /*
          * Update global counters
          */
@@ -252,74 +258,49 @@ void add_nr_read_fault(struct task_struct *task){
         spin_unlock(&task->pfetch_state.spinlock);
 
 err:
+#endif
         return;
 }
 EXPORT_SYMBOL(add_nr_read_fault);
 
 
-void update_read_cache_stats(struct task_struct *task, unsigned long nr_pg_reads,
-                unsigned long nr_pg_in_cache, unsigned long nr_misses, 
-                struct file *filp) 
+/*TODO*/
+void update_read_cache_stats(struct inode *inode, unsigned long nr_pg_reads,
+                unsigned long nr_pg_in_cache, unsigned long nr_misses)
 {
-	if(current->is_crosslayer == true)
-		printk(KERN_ALERT "update_read_cache_stats ....\n");
+
+        if(!current->mm)
+                goto err;
+
         /*
          * Update global counters
          */
         spin_lock(&global_counts.spinlock);
 
-        global_counts._nr_pages_read += nr_pg_reads;
-        global_counts._nr_pages_hit += nr_pg_in_cache;
-        global_counts._nr_pages_miss += nr_misses;
-
-
-        if(filp && current->is_crosslayer) {
-                filp->nr_cache_miss +=  nr_misses;
-                filp->nr_cache_hits +=  nr_pg_in_cache;
-                printk(KERN_ALERT "FILE %s, misses %lu, hits %lu \n",
-                                filp->f_path.dentry->d_iname, 
-                                filp->nr_cache_miss, 
-                                filp->nr_cache_hits);
-        }
-
-
-        //prints global stats after CROSS_PRINT_JIFFY msecs
-        if(jiffies_to_msecs(jiffies - global_counts.last_jiffies) >= CROSS_PRINT_JIFFY){
-                global_counts.last_jiffies = jiffies;
-
-                global_counts.nr_pages_read += global_counts._nr_pages_read;
-                global_counts.nr_pages_hit += global_counts._nr_pages_hit;
-                global_counts.nr_pages_miss += global_counts._nr_pages_miss;
-
-                /* 
-                 * BUG FIX: Doesn't make sense to simply print stats without 
-                 * checking which process it is 
-                 */
-                if(current->is_crosslayer)
-                        print_inter_global_stats();
-
-                global_counts._nr_pages_read = 0;
-                global_counts._nr_pages_hit = 0;
-                global_counts._nr_pages_miss = 0;
-
-        }
+        global_counts.nr_pages_read += nr_pg_reads;
+        global_counts.nr_pages_hit += nr_pg_in_cache;
+        global_counts.nr_pages_miss += nr_misses;
 
         spin_unlock(&global_counts.spinlock);
 
-        if(!task->mm || !task->pfetch_state.enable_f_stats)
+
+	if(current->cross_stats_enabled)
+		printk(KERN_ALERT "update_read_cache_stats ....\n");
+
+        if(!current->pfetch_state.enable_f_stats)
                 goto err;
 
         //A page being in Page Cache doesnt mean it is usable.
         //It isnt usable if that page is just allocated by is not populated
         //In such a case, the task has to wait for page to be populated by do_read_fault()
 
-        spin_lock(&task->pfetch_state.spinlock);
+        spin_lock(&current->pfetch_state.spinlock);
 
-        task->pfetch_state.nr_pages_read += nr_pg_reads;
-        task->pfetch_state.nr_pages_hit += nr_pg_in_cache;
-        task->pfetch_state.nr_pages_miss += nr_misses;
+        current->pfetch_state.nr_pages_read += nr_pg_reads;
+        current->pfetch_state.nr_pages_hit += nr_pg_in_cache;
+        current->pfetch_state.nr_pages_miss += nr_misses;
 
-        spin_unlock(&task->pfetch_state.spinlock);
+        spin_unlock(&current->pfetch_state.spinlock);
 
 err:
         return;
@@ -330,6 +311,7 @@ EXPORT_SYMBOL(update_read_cache_stats);
 void update_ra_final_nr_pages(struct task_struct *task, struct inode *inode, 
                 struct readahead_control *ractl, unsigned long nr_pages)
 {
+#if 0
         if(!ractl || !task || !inode)
                 goto err;
 
@@ -353,6 +335,7 @@ void update_ra_final_nr_pages(struct task_struct *task, struct inode *inode,
         }
 
 err:
+#endif 
         return;
 }
 EXPORT_SYMBOL(update_ra_final_nr_pages);
@@ -361,6 +344,7 @@ EXPORT_SYMBOL(update_ra_final_nr_pages);
 void update_ra_orig_nr_pages(struct task_struct *task, struct inode *inode, 
                 struct readahead_control *ractl, unsigned long nr_pages)
 {
+#if 0
         if(!ractl || !task || !inode)
                 goto err;
 
@@ -385,6 +369,7 @@ void update_ra_orig_nr_pages(struct task_struct *task, struct inode *inode,
         }
 
 err:
+#endif
         return;
 }
 EXPORT_SYMBOL(update_ra_orig_nr_pages);
@@ -400,6 +385,7 @@ EXPORT_SYMBOL(update_ra_orig_nr_pages);
 void update_async_pages(struct task_struct *task, struct inode *inode, 
                 struct readahead_control *ractl, unsigned long nr_pages)
 {
+#if 0
         if(!ractl || !task || !inode)
                 goto err;
 
@@ -424,6 +410,7 @@ void update_async_pages(struct task_struct *task, struct inode *inode,
         }
 
 err:
+#endif
         return;
 }
 EXPORT_SYMBOL(update_async_pages);
@@ -432,6 +419,7 @@ EXPORT_SYMBOL(update_async_pages);
 void update_final_async_pages(struct task_struct *task, struct inode *inode, 
                 struct readahead_control *ractl, unsigned long nr_pages)
 {
+#if 0
         if(!ractl || !task || !inode)
                 goto err;
 
@@ -456,6 +444,7 @@ void update_final_async_pages(struct task_struct *task, struct inode *inode,
         }
 
 err:
+#endif
         return;
 }
 EXPORT_SYMBOL(update_final_async_pages);
@@ -470,6 +459,7 @@ EXPORT_SYMBOL(update_final_async_pages);
 void update_pfetch_success(struct task_struct *task, struct inode *inode,
                 struct readahead_control *ractl, unsigned long final_nr_pages){
 
+#if 0
         if(!ractl || !task || !inode)
                 goto err;
 
@@ -536,12 +526,13 @@ void update_pfetch_success(struct task_struct *task, struct inode *inode,
         }
 
 err:
+#endif
         return;
 }
 
 
 void print_ractl_stats(struct readahead_control *ractl){
-        return;
+#if 0
         if(!ractl)
                 goto err;
 
@@ -579,14 +570,16 @@ void print_ractl_stats(struct readahead_control *ractl){
         kfree(f_name);
 
 err:
+#endif
         return;
 }
 EXPORT_SYMBOL(print_ractl_stats);
 
 
+/*TODO*/
 void print_inode_stats(struct inode *inode){
         return;
-        if(!inode)
+        if(!inode || !inode->pfetch_state)
                 goto err;
 
         if(!inode->pfetch_state.enable_f_stats)
@@ -600,6 +593,7 @@ void print_inode_stats(struct inode *inode){
         char *f_name = kmalloc(NAME_MAX+1, GFP_KERNEL);
         char *name = dentry_path_raw(inode->i_sb->s_root, f_name, NAME_MAX);
 
+        /*
         printk("FinalFileReport: %s - ra_orig_nr_pages:%lu, ra_final_nr_pages:%lu\n \
                         async_pages:%lu, final_async_pages:%lu\n \
                         full_pfetches:%lu, less256_pfetches:%lu, partial_pfetches:%lu\n \
@@ -608,6 +602,7 @@ void print_inode_stats(struct inode *inode){
                         pfstate->async_pages, pfstate->final_async_pages, pfstate->full_pfetches,
                         pfstate->less256_pfetches, pfstate->partial_pfetches, 
                         pfstate->failed_pfetches, pfstate->os_pfetches);
+        */
 
         kfree(f_name);
 err:
@@ -616,6 +611,7 @@ err:
 EXPORT_SYMBOL(print_inode_stats);
 
 
+/*TODO*/
 void print_task_stats(struct task_struct *task){
         if(!task)
                 goto err;
@@ -626,6 +622,7 @@ void print_task_stats(struct task_struct *task){
 
         struct file_pfetch_state *pfstate = &task->pfetch_state; 
 
+        /*
         printk("FinalTaskReport: %s:%d - ra_orig_nr_pages:%lu, ra_final_nr_pages:%lu\n \
                         async_pages:%lu, final_async_pages:%lu\n \
                         full_pfetches:%lu, less256_pfetches:%lu, partial_pfetches:%lu\n \
@@ -636,6 +633,7 @@ void print_task_stats(struct task_struct *task){
                         pfstate->less256_pfetches, pfstate->partial_pfetches,
                         pfstate->failed_pfetches, pfstate->total_pfetches, pfstate->os_pfetches,
                         pfstate->nr_pages_read, pfstate->nr_pages_hit, pfstate->nr_do_read_fault);
+        */
 
 err:
         return;
@@ -647,9 +645,9 @@ EXPORT_SYMBOL(print_task_stats);
  * Prints the final total global stats; at the end of the app run
  */
 void print_final_global_stats(void){
-        printk("Final GlobalReport: nr_pages_read:%lu, nr_pages_hit:%lu, nr_do_read_fault:%lu, nr_pages_miss:%lu\n", 
+        printk("Final GlobalReport: nr_pages_read:%lu, nr_pages_hit:%lu, nr_pages_miss:%lu\n", 
                         global_counts.nr_pages_read, global_counts.nr_pages_hit, 
-                        global_counts.nr_do_read_fault, global_counts.nr_pages_miss);
+                        global_counts.nr_pages_miss);
 
         return;
 }
@@ -661,8 +659,10 @@ EXPORT_SYMBOL(print_final_global_stats);
  * Prints stats from last_jiffies timestamp
  */
 void print_inter_global_stats(void){
+#if 0
         printk("Intermediate GlobalReport: nr_pages_read:%lu, nr_pages_hit:%lu, nr_pages_miss:%lu\n", 
                         global_counts._nr_pages_read, global_counts._nr_pages_hit, global_counts._nr_pages_miss);
+#endif
         return;
 }
 EXPORT_SYMBOL(print_inter_global_stats);
@@ -868,16 +868,13 @@ EXPORT_SYMBOL(setup_cross_interface);
 //Syscall Nr: 448
 SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
 
-
-        current->is_crosslayer = true;
-
 #ifdef CONFIG_ENABLE_CROSS_STATS
         switch(flag){
-
                 case ENABLE_FILE_STATS:
                         current->pfetch_state.enable_f_stats = true;
                         /* Enable per-process cross-layer flag */
                         current->is_crosslayer = true;
+                        current->cross_stats_enabled = true;
                         printk("Enabled file stats for %s:%d\n", current->comm, current->pid);
                         break;
                 case DISABLE_FILE_STATS:
@@ -885,13 +882,12 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
                         printk("Disabled file stats for %s:%d\n", current->comm, current->pid);
                         break;
                 case RESET_GLOBAL_STATS:
-                        //init_file_pfetch_state(&global_counts);
-                        printk("%s: RESET_GLOBAL_STATS \n", __func__);
                         init_global_pfetch_state();
+                        printk("%s: RESET_GLOBAL_STATS \n", __func__);
                         break;
                 case PRINT_GLOBAL_STATS:
-                        printk("%s: PRINT_GLOBAL_STATS \n", __func__);
                         print_final_global_stats();
+                        printk("%s: PRINT_GLOBAL_STATS \n", __func__);
                         break; 
 #ifdef CONFIG_CACHE_LIMITING
                 case CACHE_USAGE_CONS:
