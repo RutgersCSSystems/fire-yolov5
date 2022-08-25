@@ -2737,7 +2737,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
 	pagevec_init(&pvec);
 
 #ifdef CONFIG_ENABLE_CROSS_STATS
-        //TODO
+	//pgoff_t nr_pages = DIV_ROUND_UP(iter->count, PAGE_SIZE);
+	isize = i_size_read(inode);
+	end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
+        loff_t end_pg = DIV_ROUND_UP(end_offset, PAGE_SIZE);
+        update_read_cache_stats(mapping->host, filp, iocb->ki_pos >> PAGE_SHIFT, end_pg);
 #endif
 
 	do {

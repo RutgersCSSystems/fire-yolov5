@@ -265,13 +265,21 @@ EXPORT_SYMBOL(add_nr_read_fault);
 
 
 /*TODO*/
-void update_read_cache_stats(struct inode *inode, unsigned long nr_pg_reads,
-                unsigned long nr_pg_in_cache, unsigned long nr_misses)
+void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned long index, 
+                unsigned long nr_pages)
 {
 
-        if(!current->mm)
+        if(!current->mm || !inode)
                 goto err;
 
+
+        printk("%s:%s:%s index=%ld, nr_pages=%ld\n", __func__, current->comm, 
+                        filp->f_path.dentry->d_iname, index, nr_pages);
+
+        goto err;
+
+
+#if 0
         /*
          * Update global counters
          */
@@ -283,9 +291,14 @@ void update_read_cache_stats(struct inode *inode, unsigned long nr_pg_reads,
 
         spin_unlock(&global_counts.spinlock);
 
+#endif
 
+#if 0
 	if(current->cross_stats_enabled)
 		printk(KERN_ALERT "update_read_cache_stats ....\n");
+
+
+
 
         if(!current->pfetch_state.enable_f_stats)
                 goto err;
@@ -301,6 +314,7 @@ void update_read_cache_stats(struct inode *inode, unsigned long nr_pg_reads,
         current->pfetch_state.nr_pages_miss += nr_misses;
 
         spin_unlock(&current->pfetch_state.spinlock);
+#endif
 
 err:
         return;
@@ -579,6 +593,7 @@ EXPORT_SYMBOL(print_ractl_stats);
 /*TODO*/
 void print_inode_stats(struct inode *inode){
         return;
+#if 0
         if(!inode || !inode->pfetch_state)
                 goto err;
 
@@ -605,6 +620,7 @@ void print_inode_stats(struct inode *inode){
         */
 
         kfree(f_name);
+#endif
 err:
         return;
 }
@@ -873,7 +889,6 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
                 case ENABLE_FILE_STATS:
                         current->pfetch_state.enable_f_stats = true;
                         /* Enable per-process cross-layer flag */
-                        current->is_crosslayer = true;
                         current->cross_stats_enabled = true;
                         printk("Enabled file stats for %s:%d\n", current->comm, current->pid);
                         break;
@@ -914,7 +929,7 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
 #endif
                 default:
                         /* Enable per-process cross-layer flag */
-                        current->is_crosslayer = true;
+                        current->cross_stats_enabled = true;
                         printk("Flag value undefined %d\n", flag);
                         /* 
                          * BUG FIX: We cannot return and break!!!

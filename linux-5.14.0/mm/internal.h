@@ -69,15 +69,19 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
 {
      DEFINE_READAHEAD(ractl, file, &file->f_ra, mapping, index);
 
+#if 0
 #ifdef CONFIG_ENABLE_CROSS_STATS
      ractl.pfetch_state.is_app_readahead = true;
      update_ra_orig_nr_pages(current, file->f_inode, &ractl, nr_to_read); 
 #endif
+#endif
     
      force_page_cache_ra(&ractl, nr_to_read);
 
+#if 0
 #ifdef CONFIG_ENABLE_CROSS_STATS
     print_ractl_stats(&ractl);
+#endif
 #endif
 }
 

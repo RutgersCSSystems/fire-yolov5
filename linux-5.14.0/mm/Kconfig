@@ -896,9 +896,9 @@ config ENABLE_CROSSLAYER_DEBUG
 
 
 # Crosslayer Stats and functionality
-#config ENABLE_CROSS_STATS
-#    	def_bool y	
-#    	bool "enable crosslayer OS stats, reduces performance"
+config ENABLE_CROSS_STATS
+        def_bool y
+        bool "enable crosslayer OS stats, reduces performance"
 
 config CROSS_FILE_BITMAP
 	def_bool y
