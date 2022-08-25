@@ -62,6 +62,8 @@
 #include <linux/time64.h>
 #include <linux/fs.h>
 
+#include <linux/cross_bitmap.h>
+
 
 #include "internal.h"
 
@@ -272,11 +274,23 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
         if(!current->mm || !inode)
                 goto err;
 
+        if(!inode->bitmap)
+                goto err;
 
-        printk("%s:%s:%s index=%ld, nr_pages=%ld\n", __func__, current->comm, 
-                        filp->f_path.dentry->d_iname, index, nr_pages);
+        unsigned long nr_misses;
+        unsigned long i;
 
-        goto err;
+        nr_misses = 0;
+
+        for(i=0; i<nr_pages; i++){
+                if(!is_set_cross_bitmap(inode, index+i))
+                        nr_misses += 1;
+        }
+
+
+        printk("%s: %s:%s:%ld index=%ld, nr_reads=%ld, nr_misses=%ld\n", 
+                        __func__, current->comm, filp->f_path.dentry->d_iname,
+                        inode->i_ino, index, nr_pages, nr_misses);
 
 
 #if 0
@@ -291,13 +305,8 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
 
         spin_unlock(&global_counts.spinlock);
 
-#endif
-
-#if 0
 	if(current->cross_stats_enabled)
 		printk(KERN_ALERT "update_read_cache_stats ....\n");
-
-
 
 
         if(!current->pfetch_state.enable_f_stats)

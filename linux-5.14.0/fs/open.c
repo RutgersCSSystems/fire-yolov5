@@ -33,6 +33,8 @@
 #include <linux/dnotify.h>
 #include <linux/compat.h>
 
+#include <linux/cross_bitmap.h>
+
 #include "internal.h"
 
 int do_truncate(struct user_namespace *mnt_userns, struct dentry *dentry,
@@ -1208,6 +1210,13 @@ static long do_sys_openat2(int dfd, const char __user *filename,
 		} else {
 			fsnotify_open(f);
 			fd_install(fd, f);
+
+                
+                        /*TODO:second argument is incorrect right now
+                         * it should be the sizeof */
+                        if(current->mm)
+                                alloc_cross_bitmap(f->f_inode, 10);
+
 #if 0
 #ifdef CONFIG_ENABLE_CROSS_STATS
                 if(current->enable_f_stats){

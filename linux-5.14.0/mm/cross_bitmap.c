@@ -103,7 +103,7 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
         }
 
 	//Set the flag that indicates bitmap is set
-	//atomic_set(&inode->i_bitmap_freed, 1);
+	atomic_set(&inode->i_bitmap_freed, 0);
         
         inode->nr_bits_used = nr_pages;
         inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
@@ -112,6 +112,9 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
         inode->nr_longs_tot = nr_longs;
 
         bitmap_zero(inode->bitmap, prealloc_pg);
+
+
+        //bitmap_set(inode->bitmap, 0, 1);
 
 #if 0
         end = jiffies;
@@ -132,6 +135,9 @@ EXPORT_SYMBOL(alloc_cross_bitmap);
  */
 void free_cross_bitmap(struct inode *inode){
 
+        if(!inode || !inode->bitmap)
+                goto exit;
+
 	if(inode->bitmap) {
 
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
@@ -141,6 +147,7 @@ void free_cross_bitmap(struct inode *inode){
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
+exit:
         return;
 }
 EXPORT_SYMBOL(free_cross_bitmap);
@@ -150,11 +157,16 @@ EXPORT_SYMBOL(free_cross_bitmap);
  */
 void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 
-        if(!inode->bitmap)
+        if(!inode || !inode->bitmap)
                 goto exit;
+
+	/*bitmap for the inode is not cleared */
+	if (atomic_read(&inode->i_bitmap_freed) == 1)
+		goto exit;
 
         bitmap_clear(inode->bitmap, index, 1);
 
+        printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 exit:
         return;
 }
@@ -165,13 +177,17 @@ EXPORT_SYMBOL(remove_pg_cross_bitmap);
  */
 void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 
-        if(!inode->bitmap)
+        if(!inode || !inode->bitmap)
                 goto exit;
 
 	/*bitmap for the inode is not cleared */
-	if (atomic_read(&inode->i_bitmap_freed) == 1)
+	if (atomic_read(&inode->i_bitmap_freed) == 1){
+                printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
 		goto exit;
+        }
 
+
+        //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 
         bitmap_set(inode->bitmap, index, 1);
 
@@ -179,6 +195,27 @@ exit:
         return;
 }
 EXPORT_SYMBOL(add_pg_cross_bitmap);
+
+
+/*
+ * Returns true if that that index is set in bitmap
+ */
+bool is_set_cross_bitmap(struct inode *inode, pgoff_t index){
+
+        if(!inode)
+                goto exit;
+
+        if(!inode->bitmap)
+        {
+                printk("%s: no inode bitmap for i_ino=%ld\n", __func__, inode->i_ino);
+                goto exit;
+        }
+
+        return test_bit(index, inode->bitmap);
+exit:
+        return false;
+}
+EXPORT_SYMBOL(is_set_cross_bitmap);
 
 #if 0
 void *cross_test(void){
