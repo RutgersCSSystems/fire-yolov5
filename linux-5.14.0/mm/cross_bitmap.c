@@ -180,14 +180,16 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
         if(!inode || !inode->bitmap)
                 goto exit;
 
+#if 0
 	/*bitmap for the inode is not cleared */
 	if (atomic_read(&inode->i_bitmap_freed) == 1){
                 printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
 		goto exit;
         }
+#endif
 
 
-        //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
+        printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 
         bitmap_set(inode->bitmap, index, 1);
 

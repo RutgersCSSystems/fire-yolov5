@@ -266,7 +266,10 @@ err:
 EXPORT_SYMBOL(add_nr_read_fault);
 
 
-/*TODO*/
+/*
+ * update_read_cache_stats uses the per inode bitmap
+ *
+ */
 void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned long index, 
                 unsigned long nr_pages)
 {
@@ -288,10 +291,11 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
         }
 
 
+        /*
         printk("%s: %s:%s:%ld index=%ld, nr_reads=%ld, nr_misses=%ld\n", 
                         __func__, current->comm, filp->f_path.dentry->d_iname,
                         inode->i_ino, index, nr_pages, nr_misses);
-
+        */
 
 #if 0
         /*
@@ -299,11 +303,39 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
          */
         spin_lock(&global_counts.spinlock);
 
-        global_counts.nr_pages_read += nr_pg_reads;
-        global_counts.nr_pages_hit += nr_pg_in_cache;
+        global_counts.nr_pages_read += nr_pages;
+        global_counts.nr_pages_hit += nr_pages - nr_misses;
         global_counts.nr_pages_miss += nr_misses;
 
         spin_unlock(&global_counts.spinlock);
+#endif
+
+        /*
+         * Update per-proc counters
+         */
+
+        if(!current->cross_stats_enabled)
+                goto err;
+
+        spin_lock(&current->pfetch_state.spinlock);
+
+        current->pfetch_state.nr_pages_read += nr_pages;
+        current->pfetch_state.nr_pages_hit += nr_pages - nr_misses;
+        current->pfetch_state.nr_pages_miss += nr_misses;
+
+        spin_unlock(&current->pfetch_state.spinlock);
+
+        /*
+         * Update per-inode data structures
+         */
+        spin_lock(&inode->pfetch_state.spinlock);
+        inode->pfetch_state.nr_pages_read += nr_pages;
+        inode->pfetch_state.nr_pages_hit += nr_pages - nr_misses;
+        inode->pfetch_state.nr_pages_miss += nr_misses;
+        spin_unlock(&inode->pfetch_state.spinlock);
+
+
+#if 0
 
 	if(current->cross_stats_enabled)
 		printk(KERN_ALERT "update_read_cache_stats ....\n");
@@ -896,13 +928,12 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
 #ifdef CONFIG_ENABLE_CROSS_STATS
         switch(flag){
                 case ENABLE_FILE_STATS:
-                        current->pfetch_state.enable_f_stats = true;
                         /* Enable per-process cross-layer flag */
                         current->cross_stats_enabled = true;
                         printk("Enabled file stats for %s:%d\n", current->comm, current->pid);
                         break;
                 case DISABLE_FILE_STATS:
-                        current->pfetch_state.enable_f_stats = false;
+                        current->cross_stats_enabled = false;
                         printk("Disabled file stats for %s:%d\n", current->comm, current->pid);
                         break;
                 case RESET_GLOBAL_STATS:
