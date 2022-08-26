@@ -166,7 +166,7 @@ void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 
         bitmap_clear(inode->bitmap, index, 1);
 
-        printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
+        //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 exit:
         return;
 }
@@ -189,7 +189,7 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 #endif
 
 
-        printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
+        //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 
         bitmap_set(inode->bitmap, index, 1);
 
@@ -208,10 +208,7 @@ bool is_set_cross_bitmap(struct inode *inode, pgoff_t index){
                 goto exit;
 
         if(!inode->bitmap)
-        {
-                printk("%s: no inode bitmap for i_ino=%ld\n", __func__, inode->i_ino);
                 goto exit;
-        }
 
         return test_bit(index, inode->bitmap);
 exit:
