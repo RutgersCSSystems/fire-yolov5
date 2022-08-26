@@ -295,7 +295,6 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
                         inode->i_ino, index, nr_pages, nr_misses);
         */
 
-#if 0
         /*
          * Update global counters
          */
@@ -306,7 +305,6 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
         global_counts.nr_pages_miss += nr_misses;
 
         spin_unlock(&global_counts.spinlock);
-#endif
 
         /*
          * Update per-proc counters
@@ -922,8 +920,8 @@ SYSCALL_DEFINE2(start_cross_trace, int, flag, int, val){
                         printk("%s: RESET_GLOBAL_STATS \n", __func__);
                         break;
                 case PRINT_GLOBAL_STATS:
-                        print_final_global_stats();
                         printk("%s: PRINT_GLOBAL_STATS \n", __func__);
+                        print_final_global_stats();
                         break; 
 #ifdef CONFIG_CACHE_LIMITING
                 case CACHE_USAGE_CONS:
