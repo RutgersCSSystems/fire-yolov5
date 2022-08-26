@@ -199,11 +199,9 @@ void init_file_pfetch_state(struct file_pfetch_state *pfetch_state){
 
         spin_lock(&pfetch_state->spinlock);
 
-        //disable cross layer flag for this process
-        current->cross_stats_enabled = 0;
+        pfetch_state->enable_f_stats = 0;
 
 #if 0
-        pfetch_state->enable_f_stats = 0;
         pfetch_state->is_app_readahead = 0;
 
         pfetch_state->ra_final_nr_pages = 0;
@@ -329,6 +327,7 @@ void update_read_cache_stats(struct inode *inode, struct file *filp, unsigned lo
          * Update per-inode data structures
          */
         spin_lock(&inode->pfetch_state.spinlock);
+        inode->pfetch_state.enable_f_stats = true;
         inode->pfetch_state.nr_pages_read += nr_pages;
         inode->pfetch_state.nr_pages_hit += nr_pages - nr_misses;
         inode->pfetch_state.nr_pages_miss += nr_misses;
@@ -633,35 +632,28 @@ EXPORT_SYMBOL(print_ractl_stats);
 
 /*TODO*/
 void print_inode_stats(struct inode *inode){
-        return;
-#if 0
-        if(!inode || !inode->pfetch_state)
+
+        if(!inode)
                 goto err;
 
-        if(!inode->pfetch_state.enable_f_stats)
+        struct file_pfetch_state *pfstate = &inode->pfetch_state;
+
+        if(!pfstate || !pfstate->enable_f_stats)
                 goto err;
 
-        if(!current->mm || !current->pfetch_state.enable_f_stats)
+        if(!current->mm || !current->cross_stats_enabled)
                 goto err;
 
-        struct file_pfetch_state *pfstate = &inode->pfetch_state; 
 
         char *f_name = kmalloc(NAME_MAX+1, GFP_KERNEL);
         char *name = dentry_path_raw(inode->i_sb->s_root, f_name, NAME_MAX);
 
-        /*
-        printk("FinalFileReport: %s - ra_orig_nr_pages:%lu, ra_final_nr_pages:%lu\n \
-                        async_pages:%lu, final_async_pages:%lu\n \
-                        full_pfetches:%lu, less256_pfetches:%lu, partial_pfetches:%lu\n \
-                        failed_pfetches:%lu, os_pfetches:%lu\n", 
-                        name, pfstate->ra_orig_nr_pages, pfstate->ra_final_nr_pages,
-                        pfstate->async_pages, pfstate->final_async_pages, pfstate->full_pfetches,
-                        pfstate->less256_pfetches, pfstate->partial_pfetches, 
-                        pfstate->failed_pfetches, pfstate->os_pfetches);
-        */
+        printk("FinalFileReport: %s - nr_pages_read:%lu, nr_pages_hit:%lu \
+                        nr_pages_miss:%lu\n",
+                        name, pfstate->nr_pages_read,
+                        pfstate->nr_pages_hit, pfstate->nr_pages_miss);
 
         kfree(f_name);
-#endif
 err:
         return;
 }
@@ -670,27 +662,16 @@ EXPORT_SYMBOL(print_inode_stats);
 
 /*TODO*/
 void print_task_stats(struct task_struct *task){
-        if(!task)
-                goto err;
 
-        if(!task->mm || !task->pfetch_state.enable_f_stats)
+        if(!task || !task->mm || !task->cross_stats_enabled)
                 goto err;
 
 
         struct file_pfetch_state *pfstate = &task->pfetch_state; 
 
-        /*
-        printk("FinalTaskReport: %s:%d - ra_orig_nr_pages:%lu, ra_final_nr_pages:%lu\n \
-                        async_pages:%lu, final_async_pages:%lu\n \
-                        full_pfetches:%lu, less256_pfetches:%lu, partial_pfetches:%lu\n \
-                        failed_pfetches:%lu, total_pfetches:%lu, os_pfetches:%lu\n \
-                        nr_pages_read:%lu, nr_pages_hit:%lu, nr_do_read_fault:%lu\n", 
-                        task->comm, task->pid, pfstate->ra_orig_nr_pages, pfstate->ra_final_nr_pages,
-                        pfstate->async_pages, pfstate->final_async_pages, pfstate->full_pfetches,
-                        pfstate->less256_pfetches, pfstate->partial_pfetches,
-                        pfstate->failed_pfetches, pfstate->total_pfetches, pfstate->os_pfetches,
-                        pfstate->nr_pages_read, pfstate->nr_pages_hit, pfstate->nr_do_read_fault);
-        */
+        printk("FinalTaskReport:%s:%d nr_pages_read:%lu, nr_pages_hit:%lu, nr_pages_miss:%lu\n",
+                        task->comm, task->pid, pfstate->nr_pages_read,
+                        pfstate->nr_pages_hit, pfstate->nr_pages_miss);
 
 err:
         return;

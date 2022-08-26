@@ -960,11 +960,12 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 #endif
 
 #ifdef CONFIG_CACHE_LIMITING
-     tsk->do_cache_acct = false;
+        tsk->do_cache_acct = false;
 #endif
 
 #ifdef CONFIG_ENABLE_CROSS_STATS
-    init_file_pfetch_state(&tsk->pfetch_state);
+        tsk->cross_stats_enabled = false;
+        init_file_pfetch_state(&tsk->pfetch_state);
 #endif
 	return tsk;
 
