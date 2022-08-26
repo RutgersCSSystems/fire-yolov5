@@ -2741,7 +2741,8 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
 	isize = i_size_read(inode);
 	end_offset = min_t(loff_t, isize, iocb->ki_pos + iter->count);
         loff_t end_pg = DIV_ROUND_UP(end_offset, PAGE_SIZE);
-        update_read_cache_stats(mapping->host, filp, iocb->ki_pos >> PAGE_SHIFT, end_pg);
+        loff_t start_pg = iocb->ki_pos >> PAGE_SHIFT;
+        update_read_cache_stats(mapping->host, filp, start_pg, end_pg-start_pg);
 #endif
 
 	do {
