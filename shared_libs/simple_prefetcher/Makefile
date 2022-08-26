@@ -59,18 +59,18 @@ Vanilla: $(SOURCES)
 
 OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY)
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY) -DENABLE_OS_STATS
 
 
 #Just blind prefetch, all app readahead disabled, readahead syscall
 Cross_Blind: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Blind.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) -DENABLE_OS_STATS
 
 #Cross-Blind + readahead_info syscall + bitmap checking
 Cross_Info: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Info.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO) -DENABLE_OS_STATS
 
 #Cross-Info + IOOPT
 Cross_Info_IOOPT: $(SOURCES)
