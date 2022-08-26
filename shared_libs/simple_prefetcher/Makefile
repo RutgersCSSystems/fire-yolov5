@@ -52,11 +52,10 @@ PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_AP
 
 all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Cross_Info_IOOPT
 
-#App Readahead + readahead syscall
+#App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS)
-
+	    $(VAR_FLAGS) -DENABLE_OS_STATS
 
 OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
@@ -122,7 +121,7 @@ Cross_Pred_Budget_IOOPT: $(SOURCES)
 
 INTERCEPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_INTERCEPT.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(ONLY_INTERCEPT)
+	    $(VAR_FLAGS) $(ONLY_INTERCEPT) -DENABLE_OS_STATS
 
 DISABLE_ADV: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_DISABLE_ADV.so $^ $(LIBS) $(DEBUG) \

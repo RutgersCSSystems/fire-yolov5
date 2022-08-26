@@ -179,8 +179,9 @@ void con(){
 
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
-	syscall(__NR_start_crosslayer, ENABLE_FILE_STATS, 0);
-	syscall(__NR_start_crosslayer, CLEAR_GLOBAL_STATS, 0);
+        start_cross_trace(ENABLE_FILE_STATS, 0);
+	fprintf(stderr, "CLEAR_GLOBAL_STATS in %s\n", __func__);
+        start_cross_trace(CLEAR_GLOBAL_STATS, 0);
 #endif
 
 	debug_printf("CONSTRUCTOR GETTING CALLED \n");
@@ -242,8 +243,8 @@ void dest(){
 
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "PRINT_GLOBAL_STATS in %s\n", __func__);
-	syscall(__NR_start_crosslayer, PRINT_GLOBAL_STATS, 0);
-	syscall(__NR_start_crosslayer, CLEAR_GLOBAL_STATS, 0);
+        start_cross_trace(PRINT_GLOBAL_STATS, 0);
+        start_cross_trace(CLEAR_GLOBAL_STATS, 0);
 #endif
 
 }
@@ -611,6 +612,18 @@ exit:
 void handle_open(struct file_desc desc){
 
 	debug_printf("Entering %s\n", __func__);
+
+#ifdef ENABLE_OS_STATS
+		ptd.touchme = true; //enable per-thread filestats
+
+		/*
+		 * Allocates the bitmaps for this file
+		 */
+		struct read_ra_req ra;
+		ra.data = NULL;
+		readahead_info(desc.fd, 0, 0, &ra);
+#endif
+
 
 #ifdef ONLY_INTERCEPT
 	return;

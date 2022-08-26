@@ -19,6 +19,7 @@
 #define DEFSEQ 8 /* definitely seq */
 
 #define ENABLE_FILE_STATS 1
+#define DISABLE_FILE_STATS 2
 #define CLEAR_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
 
@@ -111,6 +112,12 @@ long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_
         return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
 }
 
+long start_cross_trace(int flag, int val)
+{
+        return syscall(__NR_start_crosslayer, flag, val);
+}
+
+
 /*
  * Does both fread and readahead in one syscall
  */
@@ -158,9 +165,15 @@ class per_thread_ds{
 
         unsigned long nr_readaheads; //Counts the nr of readaheads done by apps
 
+	int touchme; //just touch this variable if you want to call the constructor
+
         //constructor
         per_thread_ds(){
                 mytid = gettid();
+#ifdef ENABLE_OS_STATS
+		fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
+                start_cross_trace(ENABLE_FILE_STATS, 0);
+#endif
         }
 
         ~per_thread_ds(){}
