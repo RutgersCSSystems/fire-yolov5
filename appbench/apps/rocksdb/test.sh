@@ -9,6 +9,8 @@ fi
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
+ulimit -n 1000000
+
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
@@ -76,12 +78,14 @@ CLEAR_PWD()
 #DISABLE_LOCK_STATS
 
 #Run write workload twice
-#CLEAR_PWD
-#$DBHOME/db_bench $PARAMS $WRITEARGS
+CLEAR_PWD
+$DBHOME/db_bench $PARAMS $WRITEARGS
+FlushDisk
 #exit
 
 #LOCKDAT=$PWD/lockdat
 #mkdir $LOCKDAT
+sudo dmesg --clear
 
 echo "RUNNING Vanilla................."
 FlushDisk
@@ -89,6 +93,8 @@ SETPRELOAD "VANILLA"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
+dmesg
+sudo dmesg --clear
 
 echo "RUNNING OSONLY................"
 FlushDisk
@@ -96,21 +102,30 @@ SETPRELOAD "OSONLY"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
+dmesg
+sudo dmesg --clear
 
-echo "RUNNING CNI................"
+echo "RUNNING Cross_Info................"
 FlushDisk
-SETPRELOAD "CNI"
+#SETPRELOAD "CNI"
+export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 FlushDisk
+dmesg
+sudo dmesg --clear
+
+echo "RUNNING Cross Info IOOPT................"
+FlushDisk
+#SETPRELOAD "CPNI"
+export LD_PRELOAD="/usr/lib/lib_CII.so"
+$DBHOME/db_bench $PARAMS $READARGS 
+export LD_PRELOAD=""
+FlushDisk
+dmesg
+sudo dmesg --clear
+
 exit
-
-echo "RUNNING CPNI................"
-FlushDisk
-SETPRELOAD "CPNI"
-$DBHOME/db_bench $PARAMS $READARGS 
-export LD_PRELOAD=""
-FlushDisk
 
 echo "RUNNING CPBI................"
 FlushDisk

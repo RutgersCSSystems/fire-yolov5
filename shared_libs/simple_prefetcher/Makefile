@@ -21,7 +21,8 @@ SOURCES = frontend.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c util
 
 
 #DEBUG=-DDEBUG
-OTHERFLAGS=-DENABLE_OS_STATS -DMAINTAIN_UINODE -DENABLE_MPI
+ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
+OTHERFLAGS=-DMAINTAIN_UINODE -DENABLE_MPI $(ENABLE_OS_STATS)
 VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PAGES) -DNR_WORKERS=$(NR_WORKERS) -DPORTION_PAGES=$(PORTION_PAGES) $(OTHERFLAGS)
 VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ) -DCROSS_BITMAP_SHIFT=$(CROSS_BITMAP_SHIFT)
 
@@ -55,22 +56,22 @@ all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Pr
 #App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) -DENABLE_OS_STATS
+	    $(VAR_FLAGS)
 
 OSonly: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY) -DENABLE_OS_STATS
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY)
 
 
 #Just blind prefetch, all app readahead disabled, readahead syscall
 Cross_Blind: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Blind.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED) -DENABLE_OS_STATS
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(THPOOL_BLOCK_RA) $(DISABLE_FADV_DONTNEED)
 
 #Cross-Blind + readahead_info syscall + bitmap checking
 Cross_Info: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Info.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO) -DENABLE_OS_STATS
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
 
 #Cross-Info + IOOPT
 Cross_Info_IOOPT: $(SOURCES)
@@ -121,7 +122,7 @@ Cross_Pred_Budget_IOOPT: $(SOURCES)
 
 INTERCEPT: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_INTERCEPT.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(ONLY_INTERCEPT) -DENABLE_OS_STATS
+	    $(VAR_FLAGS) $(ONLY_INTERCEPT)
 
 DISABLE_ADV: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_DISABLE_ADV.so $^ $(LIBS) $(DEBUG) \
