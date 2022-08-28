@@ -247,12 +247,6 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 	}
 
 
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-     update_pfetch_success(current, ractl->file->f_inode, ractl, ractl->_nr_pages);
-#endif
-#endif
-
 	/*
 	 * Now start the IO.  We ignore I/O errors - if the page is not
 	 * uptodate then the caller will launch readpage again, and
@@ -603,13 +597,6 @@ readit:
 		}
 	}
 
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-     //Async reads going to happen
-    update_async_pages(current, ractl->file->f_inode, ractl, ra->size);
-#endif
-#endif
-
 	ractl->_index = ra->start;
 	do_page_cache_ra(ractl, ra->size, ra->async_size);
 }
@@ -658,11 +645,6 @@ void page_cache_async_ra(struct readahead_control *ractl,
 		return;
 
 	ClearPageReadahead(page);
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-        update_async_pages(current, ractl->mapping->host, ractl, req_count);
-#endif
-#endif
 
 	/*
 	 * Defer asynchronous read-ahead on IO congestion.
@@ -676,12 +658,6 @@ void page_cache_async_ra(struct readahead_control *ractl,
 
 	/* do read-ahead */
 	ondemand_readahead(ractl, true, req_count);
-
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-        print_ractl_stats(ractl);
-#endif
-#endif
 }
 EXPORT_SYMBOL_GPL(page_cache_async_ra);
 

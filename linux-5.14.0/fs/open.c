@@ -1210,19 +1210,6 @@ static long do_sys_openat2(int dfd, const char __user *filename,
 		} else {
 			fsnotify_open(f);
 			fd_install(fd, f);
-
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-                if(current->enable_f_stats){
-                    f->enable_read_stats = true;
-                    f->nr_reads = 0UL;
-                    f->nr_disk_reads = 0UL;
-#ifdef CONFIG_ENABLE_CROSSLAYER_DEBUG
-                    printk("enabled heter_f_stats for %s\n", filename);
-#endif
-                }
-#endif
-#endif
 		}
 	}
 	putname(tmp);

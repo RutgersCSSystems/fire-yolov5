@@ -259,13 +259,6 @@ int ext4_mpage_readpages(struct inode *inode,
 
 		if (page_has_buffers(page))
 			goto confused;
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-               //printk("%s: RA_final_nr_pages: prog:%s\n", __func__, current->comm);
-               update_ra_final_nr_pages(current, inode, rac, 1);
-               update_final_async_pages(current, inode, rac, 1);
-#endif
-#endif
 
 		block_in_file = next_block =
 			(sector_t)page->index << (PAGE_SHIFT - blkbits);

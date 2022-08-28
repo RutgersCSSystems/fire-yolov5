@@ -414,20 +414,6 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
      	kiocb.ki_do_ra = false;
 	iov_iter_init(&iter, READ, &iov, 1, len);
 
-#if 0
-#ifdef CONFIG_ENABLE_CROSS_STATS
-     char *f_name = kmalloc(NAME_MAX+1, GFP_KERNEL);
-	pgoff_t index = kiocb.ki_pos >> PAGE_SHIFT;
-     pgoff_t last_index = DIV_ROUND_UP(kiocb.ki_pos + iter.count, PAGE_SIZE);
-     char *name = dentry_path_raw(filp->f_path.dentry, f_name, NAME_MAX);
-#ifdef CONFIG_ENABLE_CROSSLAYER_DEBUG
-     printk("%s: File being read = %s : nr_pages: %d\n", __func__, name,
-#endif
-             last_index-index);
-     kfree(f_name);
-#endif
-#endif
-
 	ret = call_read_iter(filp, &kiocb, &iter);
 	BUG_ON(ret == -EIOCBQUEUED);
 	if (ppos)
