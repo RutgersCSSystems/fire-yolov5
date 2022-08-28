@@ -71,6 +71,13 @@ robin_hood::unordered_map<MPI_File *, int> mpi_hadle_fd;
 #endif
 
 
+#ifdef ENABLE_LIB_STATS
+// Initializing global stats
+std::atomic<long> total_nr_ra(0);
+std::atomic<long> total_bytes_ra(0);
+#endif
+
+
 //enables per thread constructor and destructor
 thread_local per_thread_ds ptd;
 
@@ -247,6 +254,12 @@ void dest(){
         start_cross_trace(CLEAR_GLOBAL_STATS, 0);
 #endif
 
+#ifdef ENABLE_LIB_STATS
+	fprintf(stderr, "PRINT_GLOBAL_LIB_STATS in %s\n", __func__);
+	fprintf(stdout, "Total nr_ra = %ld\n", total_nr_ra.load());
+	fprintf(stdout, "Total nr_bytes_ra = %ld\n", total_bytes_ra.load());
+#endif
+
 }
 
 
@@ -315,6 +328,13 @@ void prefetcher_th(void *arg) {
 	long tid = gettid();
 	struct thread_args *a = (struct thread_args*)arg;
 
+#ifdef ENABLE_LIB_STATS
+        // per_thread counter for nr of readaheads done
+        // and nr of bytes requested for readahead
+        long nr_ra_done = 0;
+        long nr_bytes_ra_done = 0;
+#endif
+
 	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, rasize = %ld, stride = %ld bytes\n",
 			tid, a->offset, a->file_size, a->fd, a->prefetch_size, a->stride);
 
@@ -359,6 +379,12 @@ void prefetcher_th(void *arg) {
 			printf("readahead_info: failed TID:%ld \n", tid);
 			goto exit;
 		}
+#ifdef ENABLE_LIB_STATS
+                else{
+                        nr_ra_done += 1;
+                        nr_bytes_ra_done += a->prefetch_size;
+                }
+#endif
                 /*
                 else {
 			printf(" readahead_info: TID:%ld succeeded \n", tid);
@@ -409,6 +435,12 @@ void prefetcher_th(void *arg) {
 			//printf("error while readahead: TID:%ld \n", tid);
 			goto exit;
 		}
+#ifdef ENABLE_LIB_STATS
+                else{
+                        nr_ra_done += 1;
+                        nr_bytes_ra_done += a->prefetch_size;
+                }
+#endif
 		curr_pos += a->prefetch_size;
 #endif //MODIFIED_RA
 	        file_pos = curr_pos + a->stride;
@@ -420,7 +452,13 @@ exit:
 #endif
 	free(arg);
 
+#ifdef ENABLE_LIB_STATS
+        total_nr_ra += nr_ra_done;
+        total_bytes_ra += nr_bytes_ra_done;
+#endif
+
 	debug_printf("Exiting %s\n", __func__);
+
 }
 
 
