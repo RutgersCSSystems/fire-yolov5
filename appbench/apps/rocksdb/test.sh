@@ -10,13 +10,16 @@ fi
 source $RUN_SCRIPTS/generic_funcs.sh
 
 DBHOME=$PWD
-THREAD=8
+THREAD=16
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=2000000
+NUM=40000000
 DBDIR=$DBHOME/DATA
+
+#Require for large database
+ulimit -n 1000000 
 
 #DEV=/dev/nvme0n1p1
 
@@ -31,10 +34,10 @@ GB=`echo "1024*$MB" | bc`
 
 #sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
-WORKLOAD="readseq"
-#WORKLOAD="readrandom"
+#WORKLOAD="readseq"
+WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
