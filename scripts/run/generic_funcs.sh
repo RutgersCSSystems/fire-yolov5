@@ -50,7 +50,7 @@ SETPRELOAD()
 {
         if [[ "$1" == "VANILLA" ]]; then ##No library involvement
                 printf "Running Vanilla\n"
-                export LD_PRELOAD=""
+                export LD_PRELOAD=/usr/lib/lib_Vanilla.so
         elif [[ "$1" == "OSONLY" ]]; then ##Only OS prefetching enabled
                 printf "Only OS prefetching enabled\n"
                 export LD_PRELOAD=/usr/lib/lib_OSonly.so
