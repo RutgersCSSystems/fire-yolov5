@@ -39,6 +39,7 @@ struct thread_args{
         long nr_read_pg; //nr of pages to read each req
         size_t offset; //Offset of file where RA to start from
         unsigned long read_time; //Return value, time taken to read the file in microsec
+        char filename[FILENAMEMAX]; //filename for opening that file
 };
 
 
@@ -74,10 +75,18 @@ void reader_th(void *arg){
 
         size_t readnow, bytes_read, offset;
 
+        long tid = gettid();
+
+#if SHARED_FILE
+        a->fd = open(a->filename, O_RDWR);
+        if (a->fd == -1){
+                printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
+                exit(0);
+        }
+#endif
 
 #ifdef DEBUG
         //Report about the thread
-        long tid = gettid();
         printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
 #endif //DEBUG
@@ -145,11 +154,12 @@ int main(int argc, char **argv)
          */
         vector<int> fd_list;
         char filename[FILENAMEMAX];
-        int fd;
+        int fd = -1;
 
         for(int i=0; i<NR_THREADS; i++){
 #ifdef SHARED_FILE
                 file_name(i, filename, 1);
+                goto skip_open;
 #else
                 file_name(i, filename, NR_THREADS);
 #endif
@@ -167,10 +177,11 @@ int main(int argc, char **argv)
         }
 
         //Done opening all files
+skip_open:
 
 
 //Disables OS pred
-#ifdef ONLYAPP
+#if defined(ONLYAPP) && !defined(SHARED_FILE)
         for(int i=0; i<NR_THREADS; i++){
                 posix_fadvise(fd_list[i], 0, 0, POSIX_FADV_RANDOM);
         }
@@ -197,7 +208,9 @@ int main(int argc, char **argv)
                 req[i].read_time = 0UL;
 
 #ifdef SHARED_FILE
-                req[i].fd = fd_list[0];
+                //req[i].fd = fd_list[0];
+                req[i].fd = -1;
+                strcpy(req[i].filename, filename);
                 req[i].offset = req[i].size*i; //Start at different position
 #else
                 req[i].fd = fd_list[i]; //assign one file to each worker thread
