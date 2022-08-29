@@ -11,6 +11,6 @@ FlushDisk()
 
 
 FlushDisk
-export LD_PRELOAD="/usr/lib/lib_CFPMB.so"
-./bin/read_seq
+export LD_PRELOAD="/usr/lib/lib_CII.so"
+./bin/read_shared_seq
 export LD_PRELOAD=""
