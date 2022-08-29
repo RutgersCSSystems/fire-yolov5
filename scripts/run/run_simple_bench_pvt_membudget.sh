@@ -13,7 +13,7 @@ source $RUN_SCRIPTS/generic_funcs.sh
 experiment=$1 #which preload library to call
 out_base=$2 #base output folder
 
-base=$APPS/simple_bench/pvt_multi_thread_read
+base=$APPS/simple_bench/multi_thread_read
 
 declare -a nproc=("16")
 declare -a filesize=("40") ##GB
