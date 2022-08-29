@@ -455,6 +455,9 @@ exit:
 #ifdef ENABLE_LIB_STATS
         total_nr_ra += nr_ra_done;
         total_bytes_ra += nr_bytes_ra_done;
+
+        printf("%s:%ld: total_nr_ra=%ld, tot_bytes_ra=%ld\n", __func__, tid,
+                        nr_ra_done, nr_bytes_ra_done);
 #endif
 
 	debug_printf("Exiting %s\n", __func__);
@@ -473,7 +476,7 @@ void inline prefetch_file(int fd)
 {
 	struct thread_args *arg = NULL;
 	off_t filesize;
-    off_t stride;
+        off_t stride;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -486,14 +489,14 @@ void inline prefetch_file(int fd)
 	 */
 #ifdef PREDICTOR
 	filesize = fp->filesize;
-    stride = fp->is_strided() * fp->portion_sz;
-    if(stride < 0){
-    	printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
-        stride = 0;
+        stride = fp->is_strided() * fp->portion_sz;
+        if(stride < 0){
+                printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
+                stride = 0;
      }
 #else
 	filesize = reg_fd(fd);
-    stride = 0;
+        stride = 0;
 #endif
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
@@ -505,7 +508,7 @@ void inline prefetch_file(int fd)
 		arg->fd = fd;
 		arg->offset = 0;
 		arg->file_size = filesize;
-        arg->stride = stride;
+                arg->stride = stride;
 
 #ifdef ENABLE_EVICTION_OLD
         set_thread_args_evict(arg);
