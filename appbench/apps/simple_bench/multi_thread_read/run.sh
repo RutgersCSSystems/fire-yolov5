@@ -14,7 +14,8 @@ FlushDisk()
 FlushDisk
 
 #export LD_PRELOAD="/usr/lib/lib_CII.so"
-export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
+export LD_PRELOAD="/usr/lib/lib_VRA.so"
+#export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
 ./bin/read_shared_seq
 export LD_PRELOAD=""
 
