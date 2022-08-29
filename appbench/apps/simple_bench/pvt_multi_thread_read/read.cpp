@@ -72,7 +72,7 @@ void reader_th(void *arg){
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
 
-        size_t readnow, bytes_read;
+        size_t readnow, bytes_read, offset;
 
 
 #ifdef DEBUG
@@ -80,29 +80,32 @@ void reader_th(void *arg){
         long tid = gettid();
         printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
-#endif
+#endif //DEBUG
 
 #ifdef READ_SEQUENTIAL
         gettimeofday(&start, NULL);
         bytes_read = 0UL;
+        offset = a->offset;
         while(bytes_read < a->size){
 
 #ifdef DEBUG
-                printf("%s: fd=%d bytes_read=%ld, size=%ld\n", __func__, a->fd, bytes_read, buff_sz);
-#endif
+                printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
+#endif //DEBUG
 
                 readnow = pread(a->fd, ((char *)buffer),
-                                        buff_sz, bytes_read);
+                                        buff_sz, offset);
                 if(readnow < 0){
                         printf("\nRead Unsuccessful\n");
                         free(buffer);
                         goto exit;
                 }
                 bytes_read += readnow;
+
+                offset += readnow;
 #ifdef STRIDED_READ
-                bytes_read += NR_STRIDE * PG_SZ;
-#endif
-                usleep(1);
+                offset += NR_STRIDE * PG_SZ;
+#endif //STRIDED_READ
+                //usleep(1);
         }
         gettimeofday(&end, NULL);
 
@@ -120,7 +123,7 @@ void reader_th(void *arg){
 
         for(long i=0; i<nr_file_portions; i++){
                 readnow = pread(a->fd, ((char *)buffer),
-                                        buff_sz, read_sequence[i]*buff_sz);
+                                        buff_sz, (read_sequence[i]*buff_sz)+a->offset);
         }
 
         gettimeofday(&end, NULL);
@@ -145,7 +148,11 @@ int main(int argc, char **argv)
         int fd;
 
         for(int i=0; i<NR_THREADS; i++){
+#ifdef SHARED_FILE
+                file_name(i, filename, 1);
+#else
                 file_name(i, filename, NR_THREADS);
+#endif
                 fd = open(filename, O_RDWR);
                 if (fd == -1){
                         printf("\nFile %s Open Unsuccessful\n", filename);
