@@ -344,14 +344,14 @@ void prefetcher_th(void *arg) {
 	struct read_ra_req ra;
 
 	off_t start_pg; //start from here in page_cache_state
-	off_t zero_pg; //first zero bit found here
+	off_t zero_pg; //end of bitmap search
+	off_t check_pg; //checking the bitmap a bit further
 	off_t pg_diff;
 
 	bit_array_t *page_cache_state = NULL;
 	/*
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
-
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
 	//printf(stderr, "%s: defining bitarray in worker %ld\n", __func__, NR_BITS_PREALLOC_PC_STATE);
 	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
@@ -378,11 +378,12 @@ void prefetcher_th(void *arg) {
 			ra.data = NULL;
 		}
 
+                if(!ra.data)
+                        printf("%s: no ra.data\n", __func__);
+
                 if(a->uinode)
                         a->uinode->bitmap_lock.lock();
 
-                if(!ra.data)
-                        printf("%s: no ra.data\n", __func__);
 		if(readahead_info(a->fd, file_pos,
 				a->prefetch_size, &ra) < 0)
 		{
@@ -409,16 +410,30 @@ void prefetcher_th(void *arg) {
                 //page_cache_state->array = (unsigned long*)ra.data;
 		start_pg = file_pos >> PAGE_SHIFT;
 		zero_pg = start_pg;
+                check_pg = start_pg;
+
+                if(start_pg > page_cache_state->numBits){
+                        printf("ERR: %s Using small bitmap; unable to support large file\n", __func__);
+                        goto exit;
+                }
 
                 if(a->uinode)
                         a->uinode->bitmap_lock.lock();
 
-		while((zero_pg << PAGE_SHIFT) < a->file_size){
-			if(!BitArrayTestBit(page_cache_state, zero_pg))
-			{
-				break;
-			}
-			zero_pg += 1;
+		while((check_pg << PAGE_SHIFT) < a->file_size){
+
+                        if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP){
+                                printf("ERR: %s: No bits are set - giving up\n", __func__);
+                                break;
+                        }
+
+			if(BitArrayTestBit(page_cache_state, check_pg)){
+                                check_pg += 1;
+                                zero_pg = check_pg;
+                        }else if(zero_pg == start_pg){
+                                check_pg += 1;
+                        }else
+                                break;
 		}
 
                 if(a->uinode)
@@ -427,11 +442,12 @@ void prefetcher_th(void *arg) {
 		pg_diff = zero_pg - start_pg;
 
 		//printf("%s: We have %d pages in the page cache \n", __func__, zero_pg);
-		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p\n", __func__, file_pos, pg_diff, a->fd, ra.data);
+                debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, tot_bits=%ld, start_pg=%ld\n",
+                                __func__, file_pos, pg_diff, a->fd, ra.data, page_cache_state->numBits, start_pg);
 
                 if(pg_diff == 0){
                         printf("ERR:%s, pg_diff==0\n", __func__);
-                        break;
+                        goto exit;
                 }
 
                 file_pos += pg_diff << PAGE_SHIFT;

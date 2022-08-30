@@ -106,6 +106,15 @@
 
 
 /*
+ * This parameter specifes the number of bits will be checked in
+ * the bitmap before saying that no more pages were fetched.
+ */
+#ifndef NR_BITS_BEFORE_GIVEUP
+#define NR_BITS_BEFORE_GIVEUP std::min(NR_RA_PAGES, 64)
+#endif
+
+
+/*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
  * the current readahead with the typical read
