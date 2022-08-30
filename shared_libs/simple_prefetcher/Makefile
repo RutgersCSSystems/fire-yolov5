@@ -20,7 +20,7 @@ CROSS_BITMAP_SHIFT=24
 SOURCES = frontend.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
 
 
-DEBUG=-DDEBUG
+#DEBUG=-DDEBUG
 ENABLE_LIB_STATS=-DENABLE_LIB_STATS ##Comment if dont need lib stats
 ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP -DENABLE_MPI $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
@@ -54,7 +54,7 @@ PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREA
 
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_APP_READAHEADS -DENABLE_EVICTION # -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE  
 
-all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync
+all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync
 
 #App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCES)
@@ -87,6 +87,11 @@ Cross_Info_IOOPT: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO) \
 	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
 
+#Cross-Info + IOOPT - Thpool
+Cross_Info_IOOPT_sync: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CII_sync.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(BLOCK_RA_INFO) \
+	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
 
 #Cross_Info + Predictor
 Cross_Info_Predict: $(SOURCES)
