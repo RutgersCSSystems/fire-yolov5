@@ -44,6 +44,8 @@ struct thread_args{
 	 * Send a pointer to the page cache state to be updated
 	 */
 	bit_array_t *page_cache_state;
+
+        struct u_inode *uinode;
 };
 
 //returns filesize if fd is regular file
@@ -296,7 +298,7 @@ class file_predictor{
 			access_history = BitArrayCreate(nr_portions);
 			BitArrayClearAll(access_history);
 
-#ifdef READAHEAD_INFO_PC_STATE
+#if defined(READAHEAD_INFO_PC_STATE) && !defined(PER_INODE_BITMAP)
 			page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
 			BitArrayClearAll(page_cache_state);
 #else

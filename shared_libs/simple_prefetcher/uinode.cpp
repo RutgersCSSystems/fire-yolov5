@@ -41,7 +41,6 @@
 #include "uinode.hpp"
 
 
-#include <mutex>
 #define MAXFILES 10000
 
 //std::unordered_map<int, void *> inode_map;
@@ -207,6 +206,18 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 		uinode->ino = inode;
 		uinode->fdcount = 0;
 		uinode->full_prefetched = 0;
+
+#if defined(READAHEAD_INFO_PC_STATE) && defined(PER_INODE_BITMAP)
+                /*
+                 * Allocate per inode bitmaps if adding new inode
+                 */
+		uinode->page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+                BitArrayClearAll(uinode->page_cache_state);
+                printf("%s: adding page cache to uinode \n", __func__);
+#else
+                uinode->page_cache_state = NULL;
+#endif
+
 #ifdef ENABLE_FNAME
 		strcpy(uinode->filename, fname);
 #endif
@@ -269,5 +280,3 @@ struct hashtable *init_mpifile_fd_map(void) {
 	 return create_hashtable(MAXFILES, hashfromkey, equalkeys);
 }
 #endif
-
-

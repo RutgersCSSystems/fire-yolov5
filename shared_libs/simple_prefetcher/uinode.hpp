@@ -1,6 +1,8 @@
 #ifndef _UINODE_HPP
 #define _UINODE_HPP
 
+#include <mutex>
+#include "util.hpp"
 #include "utils/hashtable.h"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
@@ -23,10 +25,12 @@ struct u_inode {
 	size_t stride;
 	//helps debugging
 	int last_fd;
+
 	/*
 	 * Send a pointer to the page cache state to be updated
 	 */
 	bit_array_t *page_cache_state;
+        std::mutex bitmap_lock;
 };
 
 struct hashtable *init_inode_fd_map(void);
