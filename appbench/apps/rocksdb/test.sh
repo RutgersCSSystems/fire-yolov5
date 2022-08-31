@@ -17,7 +17,7 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-NUM=40000000
+NUM=5000000
 DBDIR=$DBHOME/DATA
 
 #Require for large database
@@ -36,8 +36,8 @@ GB=`echo "1024*$MB" | bc`
 
 #sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
-#WORKLOAD="readseq"
-WORKLOAD="readrandom"
+WORKLOAD="readseq"
+#WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
@@ -60,7 +60,7 @@ FlushDisk()
 ENABLE_LOCK_STATS()
 {
 	sudo sh -c "echo 0 > /proc/lock_stat"
-	#sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
+	sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
 }
 
 DISABLE_LOCK_STATS()
@@ -78,9 +78,9 @@ CLEAR_PWD()
 #DISABLE_LOCK_STATS
 
 #Run write workload twice
-CLEAR_PWD
-$DBHOME/db_bench $PARAMS $WRITEARGS
-FlushDisk
+#CLEAR_PWD
+#$DBHOME/db_bench $PARAMS $WRITEARGS
+#FlushDisk
 #exit
 
 #LOCKDAT=$PWD/lockdat
@@ -89,12 +89,20 @@ sudo dmesg --clear
 
 echo "RUNNING Vanilla................."
 FlushDisk
-SETPRELOAD "VANILLA"
+
+#ENABLE_LOCK_STATS
+#export LD_PRELOAD=""
+#SETPRELOAD "OSONLY"
+export LD_PRELOAD="/usr/lib/lib_Cross_Info_sync.so"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
+#DISABLE_LOCK_STATS
 FlushDisk
 dmesg
 sudo dmesg --clear
+#sudo cat /proc/lock_stat
+
+exit
 
 echo "RUNNING OSONLY................"
 FlushDisk
