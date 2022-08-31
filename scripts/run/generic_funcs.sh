@@ -28,7 +28,7 @@ SLEEPNOW() {
 ENABLE_LOCK_STATS()
 {
         sudo sh -c "echo 0 > /proc/lock_stat"
-        #sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
+        sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
 }
 
 DISABLE_LOCK_STATS()
