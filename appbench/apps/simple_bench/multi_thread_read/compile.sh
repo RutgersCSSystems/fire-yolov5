@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FILESIZE=10 #GB
-NR_READ_PAGES=20 #nr_pages
+NR_READ_PAGES=32 #nr_pages
 NR_THREADS=2
 NR_STRIDE=64 #nr_pages
 

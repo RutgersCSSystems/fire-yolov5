@@ -9,15 +9,18 @@ BIN_DIR=./bin
 
 
 #DEBUG=-DDEBUG
-FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREADS) -DNR_STRIDE=$(NR_STRIDE)
+FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREADS) -DNR_STRIDE=$(NR_STRIDE) $(DEBUG)
 SHARED_FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) 
 
 all: read_pvt write_pvt write_shared read_shared
 
 read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq_vanilla $(LIBS)
+	$(CXX) $^ $(FLAGS) $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq_vanilla_opt $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DSTRIDED_READ -o $(BIN_DIR)/read_pvt_strided $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_pvt_rand $(LIBS)
+
 
 write_pvt: write.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -o $(BIN_DIR)/write_pvt $(LIBS)

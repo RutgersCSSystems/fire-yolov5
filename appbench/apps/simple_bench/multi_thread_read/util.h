@@ -2,6 +2,7 @@
 #define _UTIL_HPP
 
 #define PG_SZ 4096L
+#define PAGESHIFT 12L
 
 #ifndef NR_THREADS //Nr of BG readahead threads
 #define NR_THREADS 1
@@ -26,6 +27,10 @@
 //Number of pages to read in one pread syscall
 #ifndef NR_PAGES_READ
 #define NR_PAGES_READ 10
+#endif
+
+#ifndef NR_RA_PAGES
+#define NR_RA_PAGES 256L
 #endif
 
 #define FILEBASE "bigfakefile"

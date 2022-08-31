@@ -73,7 +73,7 @@ void reader_th(void *arg){
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
 
-        size_t readnow, bytes_read, offset;
+        size_t readnow, bytes_read, offset, ra_offset;
 
         long tid = gettid();
 
@@ -92,14 +92,39 @@ void reader_th(void *arg){
 #endif //DEBUG
 
 #ifdef READ_SEQUENTIAL
+
         gettimeofday(&start, NULL);
         bytes_read = 0UL;
         offset = a->offset;
+
+#ifdef APP_SINGLE_PREFETCH
+	readahead(a->fd, offset, a->size);
+#ifdef DEBUG
+			printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+					__func__, a->fd, offset, a->size);
+#endif
+#elif defined(APP_OPT_PREFETCH)
+	ra_offset = a->offset;
+#endif
+
         while(bytes_read < a->size){
+
 
 #ifdef DEBUG
                 printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
 #endif //DEBUG
+
+#ifdef APP_OPT_PREFETCH
+		if(offset >= ra_offset){
+			ra_offset = offset;
+			readahead(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
+			ra_offset += NR_RA_PAGES << PAGESHIFT;
+#ifdef DEBUG
+			printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
+#endif
+		}
+#endif
 
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, offset);
