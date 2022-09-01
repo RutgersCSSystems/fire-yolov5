@@ -1203,6 +1203,12 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 #ifdef DISABLE_APP_READAHEADS
 	goto exit;
 #endif
+
+#ifdef ENABLE_LIB_STATS
+        total_nr_ra += 1;
+        total_bytes_ra += count;
+#endif
+
 	ret = real_readahead(fd, offset, count);
 
 exit:
