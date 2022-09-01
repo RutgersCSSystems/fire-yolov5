@@ -124,9 +124,9 @@ CII() {
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        VanillaRA
-        VanillaOPT
-        OSonly
-        CrossInfo
-        CII
+        VanillaRA &> VanillaRA_perf_pvt_seq_2Mr_10Mra_$NPROC
+        VanillaOPT &> VanillaOPT_perf_pvt_seq_2Mr_10Mra_$NPROC
+        OSonly &> OSonly_perf_pvt_seq_2Mr_10Mra_$NPROC
+        CrossInfo &> CrossInfo_perf_pvt_seq_2Mr_10Mra_$NPROC
+        CII &> CII_perf_pvt_seq_2Mr_10Mra_$NPROC
 done
