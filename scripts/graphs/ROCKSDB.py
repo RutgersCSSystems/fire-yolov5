@@ -6,23 +6,21 @@ from zplot import *
 #change the parameters here
 
 color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red', 'green']
-
-legends=['Vanilla', 'OSonly', 'Cross_Blind', 'Cross_Info', 'CII', 'CIP', 'CIPI']
-legendtext=['Vanilla', 'OSonly', 'Cross-Blind', 'Cross-Info', 'Cross-Info-IOOPT', 'Cross-info-predict', 'Cross-info-predict-IOOPT']
-
-
-#legends=['OSonly', 'Cross_Naive', 'CNI']
-#legendtext=['OSonly', 'Cross_Naive', 'CNI']
-
 filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
+
+#legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
+#legendtext=['Vanilla', 'CNaive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
+
+legends=['OSonly', 'Cross_Naive', 'CPBI']
+legendtext=['OSonly', 'CNaive', 'CPBI']
 
 clusterlen=len(legendtext)
 
 output='ROCKSDB.DATA' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='ROCKSDB' if len(sys.argv) < 2 else sys.argv[2]
 
-ymax=2500
-yinterval=500
+ymax=250
+yinterval=50
 
 
 # Font Sizes
