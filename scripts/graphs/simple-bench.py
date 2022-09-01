@@ -17,6 +17,10 @@ clusterlen=len(legendtext)
 output='SIMPLE_BENCH.data' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='SIMPLE_BENCH' if len(sys.argv) < 2 else sys.argv[2]
 
+
+ymax=70
+yinterval=5
+
 # Font Sizes
 XTSIZE=4
 YTSIZE=4
