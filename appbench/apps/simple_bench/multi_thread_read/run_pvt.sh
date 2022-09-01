@@ -39,7 +39,10 @@ NR_READ_PAGES=512
 
 declare -a nproc=("1" "4" "8" "16")
 
-echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READ_SIZE"
+#deletes all the Read files
+CLEAR_FILES() {
+        rm -rf ./threads_*/
+}
 
 #Compiles the application
 COMPILE_APP() {
@@ -124,6 +127,8 @@ CII() {
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
+        CLEAN_AND_WRITE
+
         VanillaRA &> VanillaRA_perf_pvt_seq_2Mr_10Mra_$NPROC
         VanillaOPT &> VanillaOPT_perf_pvt_seq_2Mr_10Mra_$NPROC
         OSonly &> OSonly_perf_pvt_seq_2Mr_10Mra_$NPROC
