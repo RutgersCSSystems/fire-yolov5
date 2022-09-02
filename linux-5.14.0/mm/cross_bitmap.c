@@ -94,16 +94,25 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         nr_longs = BITS_TO_LONGS(prealloc_pg);
 
-        if(!inode->bitmap) 
+        //printk("%s: Bitmap being allocated of size=%ld\n", __func__, sizeof(unsigned long)*nr_longs);
+
+        spin_lock(&inode->bitmap_spinlock);
+
+        if(!inode->bitmap){
+                printk("%s: curr=%d, inode=%ld bitmap allocated\n", __func__, current->pid, inode->i_ino);
                 inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
+        }
 
         if(!inode->bitmap){
                 printk("ERR:%s unable to allocate bitmap\n", __func__);
+                spin_unlock(&inode->bitmap_spinlock);
                 return;
         }
 
 	//Set the flag that indicates bitmap is set
 	atomic_set(&inode->i_bitmap_freed, 0);
+
+        spin_unlock(&inode->bitmap_spinlock);
         
         inode->nr_bits_used = nr_pages;
         inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
@@ -138,6 +147,7 @@ void free_cross_bitmap(struct inode *inode){
         if(!inode || !inode->bitmap)
                 goto exit;
 
+        spin_lock(&inode->bitmap_spinlock);
 	if(inode->bitmap) {
 
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
@@ -147,6 +157,7 @@ void free_cross_bitmap(struct inode *inode){
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
+        spin_unlock(&inode->bitmap_spinlock);
 exit:
         return;
 }
@@ -215,6 +226,26 @@ exit:
         return false;
 }
 EXPORT_SYMBOL(is_set_cross_bitmap);
+
+
+
+/*
+ * Initializes cross data for inode
+ */
+void init_inode_cross(struct inode *inode){
+        if(!inode)
+                goto exit;
+
+        spin_lock_init(&inode->bitmap_spinlock);
+
+        inode->nr_bits_used = 0;
+        inode->nr_longs_used = 0;
+        inode->nr_bits_tot = 0;
+        inode->nr_longs_tot = 0;
+
+exit:
+        return;
+}
 
 #if 0
 void *cross_test(void){

@@ -12,4 +12,6 @@ void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index);
 void add_pg_cross_bitmap(struct inode *inode, pgoff_t index);
 
 bool is_set_cross_bitmap(struct inode *inode, pgoff_t index);
+
+void init_inode_cross(struct inode *inode);
 #endif
