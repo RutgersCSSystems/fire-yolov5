@@ -28,6 +28,8 @@ write_pvt: write.cpp utils/thpool.c
 
 read_shared: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_opt $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DSTRIDED_READ -o $(BIN_DIR)/read_shared_strided $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_shared_rand $(LIBS)
 
