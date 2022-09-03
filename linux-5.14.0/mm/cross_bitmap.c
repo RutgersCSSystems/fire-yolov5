@@ -106,7 +106,7 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         if(!inode->bitmap){
                 printk("ERR:%s unable to allocate bitmap\n", __func__);
-                spin_unlock(&inode->bitmap_spinlock);
+                up_write(&inode->bitmap_rw_sem);
                 return;
         }
 
