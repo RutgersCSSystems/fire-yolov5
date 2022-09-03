@@ -150,11 +150,13 @@ void free_cross_bitmap(struct inode *inode){
 
         down_write(&inode->bitmap_rw_sem);
 	if(inode->bitmap) {
-
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
 		//		"%d\n", __func__, atomic_read(&inode->i_count));
 
+		
+		
 		atomic_set(&inode->i_bitmap_freed, 1);
+
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
@@ -200,7 +202,6 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 
 
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
-
         bitmap_set(inode->bitmap, index, 1);
 
 exit:

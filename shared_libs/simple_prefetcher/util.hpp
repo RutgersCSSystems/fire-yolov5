@@ -92,7 +92,7 @@
  */
 #ifndef CROSS_BITMAP_SHIFT
 #warning CROSS_BITMAP_SHIFT not defined. Assuming 24
-#define CROSS_BITMAP_SHIFT 24
+#define CROSS_BITMAP_SHIFT 34
 #endif
 
 /*
