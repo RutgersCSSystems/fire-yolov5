@@ -174,11 +174,16 @@ void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
         if(!inode || !inode->bitmap)
                 goto exit;
 
+
 	/*bitmap for the inode is not cleared */
 	if (atomic_read(&inode->i_bitmap_freed) == 1)
 		goto exit;
 
+        down_write(&inode->bitmap_rw_sem);
+
         bitmap_clear(inode->bitmap, index, 1);
+
+        up_write(&inode->bitmap_rw_sem);
 
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 exit:
@@ -189,9 +194,9 @@ EXPORT_SYMBOL(remove_pg_cross_bitmap);
 
 /*
  */
-void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
+void add_pg_cross_bitmap(struct inode *inode, pgoff_t start_index, unsigned long nr_pages){
 
-        if(!inode || !inode->bitmap)
+        if(!inode || !inode->bitmap || !nr_pages)
                 goto exit;
 
 	/*bitmap for the inode is not cleared */
@@ -200,9 +205,12 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 		goto exit;
         }
 
-
+        down_write(&inode->bitmap_rw_sem);
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
-        bitmap_set(inode->bitmap, index, 1);
+
+        bitmap_set(inode->bitmap, start_index, nr_pages);
+
+        up_write(&inode->bitmap_rw_sem);
 
 exit:
         return;
@@ -220,6 +228,9 @@ bool is_set_cross_bitmap(struct inode *inode, pgoff_t index){
 
         if(!inode->bitmap)
                 goto exit;
+
+        //XXX: Doesnt use a read lock because it is used
+        //by only a stats; even if it is off by some, doesnt matter
 
         return test_bit(index, inode->bitmap);
 exit:
