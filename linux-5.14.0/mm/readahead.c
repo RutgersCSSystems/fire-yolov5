@@ -237,14 +237,24 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
 
 		ractl->_nr_pages++;
 
+#if 0
 #ifdef CONFIG_CROSS_FILE_BITMAP
                 add_pg_cross_bitmap(mapping->host, index+i);
+#endif
 #endif
 
                 /*update read_req from user*/
                 if(ractl->ra_req)
                         ractl->ra_req->bio_req_nr += 1;
 	}
+
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        /*
+         * If LRU is unable to accept pages - that is a much bigger problem
+         * since this is unbounded, read for all pages will happen
+         */
+                add_pg_cross_bitmap(mapping->host, index, i+1);
+#endif
 
 
 	/*
@@ -802,15 +812,22 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 unsigned long start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
                 unsigned long size_ul = (nr_pg >> 6) + 1;
 
+                /*
 		printk_once("%s: order_ul=%d\n", __func__,
 				get_count_order_long(sizeof(unsigned long)*8));
+                */
+
+                down_read(&inode->bitmap_rw_sem);
 
                 if (unlikely(copy_to_user(to+start_ul, from+start_ul, 
                                 sizeof(unsigned long)*size_ul)))
                 {
                         ret = -1;
+                        up_read(&inode->bitmap_rw_sem);
                         printk("%s: couldnt copy data back to user\n", __func__);
                 }
+
+                up_read(&inode->bitmap_rw_sem);
         }
 
 #endif
