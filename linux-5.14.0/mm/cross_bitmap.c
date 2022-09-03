@@ -97,7 +97,6 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         //printk("%s: Bitmap being allocated of size=%ld\n", __func__, sizeof(unsigned long)*nr_longs);
 
-        //spin_lock(&inode->bitmap_spinlock);
         down_write(&inode->bitmap_rw_sem);
 
         if(!inode->bitmap){
@@ -114,7 +113,6 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 	//Set the flag that indicates bitmap is set
 	atomic_set(&inode->i_bitmap_freed, 0);
 
-        //spin_unlock(&inode->bitmap_spinlock);
         up_write(&inode->bitmap_rw_sem);
         
         inode->nr_bits_used = nr_pages;
@@ -150,7 +148,6 @@ void free_cross_bitmap(struct inode *inode){
         if(!inode || !inode->bitmap)
                 goto exit;
 
-        //spin_lock(&inode->bitmap_spinlock);
         down_write(&inode->bitmap_rw_sem);
 	if(inode->bitmap) {
 
@@ -161,7 +158,6 @@ void free_cross_bitmap(struct inode *inode){
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
-        //spin_unlock(&inode->bitmap_spinlock);
         up_write(&inode->bitmap_rw_sem);
 exit:
         return;
@@ -239,7 +235,6 @@ void init_inode_cross(struct inode *inode){
         if(!inode)
                 goto exit;
 
-        //spin_lock_init(&inode->bitmap_spinlock);
         init_rwsem(&inode->bitmap_rw_sem);
 
         /*
