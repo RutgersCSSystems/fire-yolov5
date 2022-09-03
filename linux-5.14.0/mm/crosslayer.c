@@ -494,6 +494,7 @@ static ssize_t read_proc_bitmap_shift(struct file *filp, char __user *buffer,
 	 */
 	if(cross_bitmap_shift <= 0){
 		cross_bitmap_shift = CONFIG_CROSS_PREALLOC_SHIFT;
+                printk("%s: cross_bitmap_shift = %d\n", __func__, cross_bitmap_shift);
 	}
 
         int length = 0;

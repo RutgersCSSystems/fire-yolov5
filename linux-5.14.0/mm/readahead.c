@@ -757,6 +757,7 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
          * This way no RA is done but atleast cross bitmap is created
          */
         if(!inode->bitmap){
+                //printk("%s: curr=%d, inode=%ld no bitmap\n", __func__, current->pid, inode->i_ino);
                 unsigned long end_index = ((i_size_read(inode) - 1) >> PAGE_SHIFT);
                 alloc_cross_bitmap(inode, end_index);
 
