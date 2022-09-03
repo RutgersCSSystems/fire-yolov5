@@ -362,7 +362,7 @@ void prefetcher_th(void *arg) {
 	page_cache_state = NULL;
 #endif
 
-	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
+	printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
 			"rasize = %ld, stride = %ld bytes, ptr=%p\n", tid,
 			a->offset, a->file_size, a->fd, a->prefetch_size,
 			a->stride, page_cache_state->array);
@@ -383,7 +383,7 @@ void prefetcher_th(void *arg) {
 
 
 		uinode_bitmap_lock(a->uinode);
-
+		fprintf(stderr, "Calling uinode_bitmap_lock \n");
 		if(readahead_info(a->fd, file_pos,
 				a->prefetch_size, &ra) < 0) {
 
@@ -626,8 +626,6 @@ void inline prefetch_file(int fd)
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
 		goto prefetch_file_exit;
 	}
-
-	return; 
 
 #ifdef CONCURRENT_PREFETCH
 	pthread_t thread;
