@@ -196,13 +196,11 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
         if(!inode || !inode->bitmap)
                 goto exit;
 
-#if 0
 	/*bitmap for the inode is not cleared */
 	if (atomic_read(&inode->i_bitmap_freed) == 1){
-                printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
+                //printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
 		goto exit;
         }
-#endif
 
 
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
@@ -243,6 +241,12 @@ void init_inode_cross(struct inode *inode){
 
         //spin_lock_init(&inode->bitmap_spinlock);
         init_rwsem(&inode->bitmap_rw_sem);
+
+        /*
+         * Set it to 1 to make sure no one tries to access
+         * the bitmap without allocation
+         */
+	atomic_set(&inode->i_bitmap_freed, 1);
 
         inode->nr_bits_used = 0;
         inode->nr_longs_used = 0;
