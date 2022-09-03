@@ -172,7 +172,7 @@ FILE *real_fopen(const char *filename, const char *mode){
 
 size_t real_fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-	debug_printf("%s %zu\n", __func__, size);
+    debug_printf("%s %zu\n", __func__, size);
 
     if(!fread_ptr)
         fread_ptr = (real_fread_t)dlsym(RTLD_NEXT, "fread");

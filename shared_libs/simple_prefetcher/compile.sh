@@ -8,7 +8,7 @@
 #there will be duplicate copy_to_user in readahead_info and
 # performance will go down.
 
-sudo apt update; sudo apt install mpich -y
+#sudo apt update; sudo apt install mpich -y
 
 PREFETCH_SIZE=4096 ##in nr of pages
 NR_WORKERS=2

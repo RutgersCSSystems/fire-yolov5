@@ -48,5 +48,8 @@ int add_fd_to_inode(struct hashtable *, int, char);
 int add_fd_to_inode(struct hashtable *, int fd);
 #endif
 
+void uinode_bitmap_lock(struct u_inode *inode);
+void uinode_bitmap_unlock(struct u_inode *inode);
+
 #endif
 
