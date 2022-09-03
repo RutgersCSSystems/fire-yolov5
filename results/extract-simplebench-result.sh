@@ -3,7 +3,7 @@ FILESIZE=100 ##GB
 NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=512
 
-declare -a nproc=("1" "4" "8" "16")
+declare -a nproc=("1" "4" "8" "16" "32")
 declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII")
 
 READSIZE=2M
@@ -12,8 +12,8 @@ RASIZE=10M
 
 TARGETDIR=$OUTPUTDIR
 
-DATA_FOLDER=$OUTPUT_FOLDER/SIMPLE_BENCH_PVT/STATS
-BASENAME=stats_pvt_seq
+DATA_FOLDER=$OUTPUT_FOLDER/SIMPLE_BENCH_SHARED/STATS
+BASENAME=stats_shared_seq
 
 #Checks if the OUTFILE exists, 
 TOUCH_OUTFILE(){
@@ -66,7 +66,7 @@ EXTRACT_MISS_RATIO() {
         
         line=`cat $1 | grep "GlobalReport"`
 
-        total_read_pg=`echo $line | awk -F'[\ :,]' '{print $6}'`
+        total_read_pg=`echo $line | awk -F'[\ :,]' '{print $7}'`
         total_miss_pg=`echo $line | awk -F'[\ :,]' '{print $NF}'`
 
         miss_ratio=`echo "scale=3; $total_miss_pg/$total_read_pg" | bc -l`
