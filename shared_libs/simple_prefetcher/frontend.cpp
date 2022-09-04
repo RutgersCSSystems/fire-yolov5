@@ -363,9 +363,9 @@ void prefetcher_th(void *arg) {
 #endif
 
 	printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
-			"rasize = %ld, stride = %ld bytes, ptr=%p\n", tid,
+			"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
 			a->offset, a->file_size, a->fd, a->prefetch_size,
-			a->stride, page_cache_state->array);
+			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
 	file_pos = a->offset;
 
@@ -383,7 +383,6 @@ void prefetcher_th(void *arg) {
 
 
 		uinode_bitmap_lock(a->uinode);
-		fprintf(stderr, "Calling uinode_bitmap_lock \n");
 		if(readahead_info(a->fd, file_pos,
 				a->prefetch_size, &ra) < 0) {
 
@@ -437,7 +436,7 @@ void prefetcher_th(void *arg) {
 		pg_diff = zero_pg - start_pg;
 
 		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
-				"tot_bits=%ld, start_pg=%ld pages in cache %d\n", __func__,
+				"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
 				file_pos, pg_diff, a->fd, ra.data,
 				page_cache_state->numBits, start_pg, zero_pg);
 
@@ -539,6 +538,8 @@ void inline prefetch_file(int fd)
 
 #ifdef MAINTAIN_UINODE
         uinode = get_uinode(i_map, fd);
+#else
+        uinode = NULL;
 #endif
 
 	if(filesize > MIN_FILE_SZ){
@@ -611,6 +612,7 @@ void inline prefetch_file(int fd)
 			arg->page_cache_state = uinode->page_cache_state;
                         
 			//uinode_bitmap_unlock(uinode);
+
                         arg->uinode = uinode;
 
                 }else{
@@ -638,7 +640,6 @@ void inline prefetch_file(int fd)
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
 #else
 	prefetcher_th((void*)arg);
-	//printf("ERR: in %s; undefined state in CONCURRENT_PREFETCH\n", __func__);
 #endif
 
 prefetch_file_exit:
@@ -688,7 +689,8 @@ void inline record_open(struct file_desc desc){
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 		//clock_gettime(CLOCK_REALTIME, &end);
-		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+		debug_printf("%s: DONE first READAHEAD: %ld\n", __func__, ptd.mytid);
 #endif
 	}
 	else{
@@ -709,6 +711,7 @@ exit:
 void handle_open(struct file_desc desc){
 
 	debug_printf("Entering %s\n", __func__);
+
 
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
@@ -731,7 +734,9 @@ void handle_open(struct file_desc desc){
 #endif
 
 #ifdef MAINTAIN_UINODE
-	add_fd_to_inode(i_map, desc.fd);
+	if(add_fd_to_inode(i_map, desc.fd) < 0){
+                printf("ERR:%s unable to add to uinode\n", __func__);
+        }
 #endif
 
 	/*

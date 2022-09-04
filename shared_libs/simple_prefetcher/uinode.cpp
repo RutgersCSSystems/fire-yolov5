@@ -153,15 +153,14 @@ void uinode_bitmap_lock(struct u_inode *uinode) {
 
 	if(uinode != NULL)
 		uinode->bitmap_lock.lock();
-
 }
+
 
 void uinode_bitmap_unlock(struct u_inode *uinode) {
 
 	if(uinode != NULL)
 		uinode->bitmap_lock.unlock();
 }
-
 
 
 struct u_inode *get_uinode(struct hashtable *i_hash, int fd){
@@ -213,7 +212,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
     	uinode = (struct u_inode *)found->value;
     }
 	if(uinode == NULL){
-		uinode = (struct u_inode *)malloc(sizeof(struct u_inode));
+                uinode = new struct u_inode;
 		if(!uinode){
 			m.unlock();
 			return -1;
@@ -242,7 +241,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 
 	uinode->fdlist[uinode->fdcount] = fd;
 	uinode->fdcount++;
-	debug_printf("ADDING INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
+	debug_printf("ADDING INODE %d, FDCOUNT %d, uinode=%p \n", inode, uinode->fdcount, uinode);
 	return 0;
 }
 
