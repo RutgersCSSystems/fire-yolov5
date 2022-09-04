@@ -362,7 +362,7 @@ void prefetcher_th(void *arg) {
 	page_cache_state = NULL;
 #endif
 
-	printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
+	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
 			"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
 			a->offset, a->file_size, a->fd, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
@@ -492,7 +492,7 @@ exit:
         total_nr_ra += nr_ra_done;
         total_bytes_ra += nr_bytes_ra_done;
 
-        printf("%s:%ld: total_nr_ra=%ld, tot_bytes_ra=%ld\n", __func__, tid,
+        debug_printf("%s:%ld: total_nr_ra=%ld, tot_bytes_ra=%ld\n", __func__, tid,
                         nr_ra_done, nr_bytes_ra_done);
 #endif
 	debug_printf("Exiting %s\n", __func__);
