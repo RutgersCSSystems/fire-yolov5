@@ -36,7 +36,7 @@
 set $dir=DATA/
 set $eventrate=20
 set $filesize=4g
-set $nthreads=32
+set $nthreads=16
 set $numactivevids=10
 set $numpassivevids=20
 set $reuseit=false
