@@ -47,7 +47,7 @@ declare -a thread_arr=("32")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
 declare -a workload_arr=("readrandom")
-declare -a config_arr=("Cross_Info")
+declare -a config_arr=("Cross_Info" "OSonly")
 #declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
 
 

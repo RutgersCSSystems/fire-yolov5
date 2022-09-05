@@ -25,7 +25,7 @@ mkdir -p $RESULTS
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("16" "8")
+declare -a thread_arr=("16")
 
 #Number of files to compress
 declare -a workload_arr=("250")
@@ -35,15 +35,8 @@ declare -a filesize_arr=("30000")
 FILESIZE=1000
 
 
-<<<<<<< HEAD
-declare -a config_arr=("Cross_Naive" "CNI" "OSonly" "CPBI" "Vanilla")
-declare -a config_arr=("Cross_Info")
-=======
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
-#declare -a config_arr=("CPNI")
->>>>>>> 240e399ae7c1a0dba7cb0208c4cdf9ad34c23cd9
-
-
+declare -a config_arr=("Cross_Info")
 
 FlushDisk()
 {
@@ -159,7 +152,6 @@ RUN() {
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
 					FlushDisk
-					CLEAR_DATA
 				done
 			done
 		done
