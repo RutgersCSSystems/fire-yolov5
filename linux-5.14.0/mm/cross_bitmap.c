@@ -40,6 +40,7 @@
 #include <linux/oom.h>
 #include <linux/jiffies.h>
 #include <linux/vmalloc.h>
+#include <linux/rwsem.h>
 
 #include <linux/btree.h>
 #include <linux/radix-tree.h>
@@ -94,16 +95,25 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 
         nr_longs = BITS_TO_LONGS(prealloc_pg);
 
-        if(!inode->bitmap) 
+        //printk("%s: Bitmap being allocated of size=%ld\n", __func__, sizeof(unsigned long)*nr_longs);
+
+        down_write(&inode->bitmap_rw_sem);
+
+        if(!inode->bitmap){
+                //printk("%s: curr=%d, inode=%ld bitmap allocated\n", __func__, current->pid, inode->i_ino);
                 inode->bitmap = vmalloc(sizeof(unsigned long)*nr_longs);
+        }
 
         if(!inode->bitmap){
                 printk("ERR:%s unable to allocate bitmap\n", __func__);
+                up_write(&inode->bitmap_rw_sem);
                 return;
         }
 
 	//Set the flag that indicates bitmap is set
 	atomic_set(&inode->i_bitmap_freed, 0);
+
+        up_write(&inode->bitmap_rw_sem);
         
         inode->nr_bits_used = nr_pages;
         inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
@@ -138,6 +148,7 @@ void free_cross_bitmap(struct inode *inode){
         if(!inode || !inode->bitmap)
                 goto exit;
 
+        down_write(&inode->bitmap_rw_sem);
 	if(inode->bitmap) {
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
 		//		"%d\n", __func__, atomic_read(&inode->i_count));
@@ -149,6 +160,7 @@ void free_cross_bitmap(struct inode *inode){
         	vfree(inode->bitmap);
 		inode->bitmap = NULL;
 	}
+        up_write(&inode->bitmap_rw_sem);
 exit:
         return;
 }
@@ -162,11 +174,16 @@ void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
         if(!inode || !inode->bitmap)
                 goto exit;
 
+
 	/*bitmap for the inode is not cleared */
 	if (atomic_read(&inode->i_bitmap_freed) == 1)
 		goto exit;
 
+        down_write(&inode->bitmap_rw_sem);
+
         bitmap_clear(inode->bitmap, index, 1);
+
+        up_write(&inode->bitmap_rw_sem);
 
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
 exit:
@@ -177,22 +194,23 @@ EXPORT_SYMBOL(remove_pg_cross_bitmap);
 
 /*
  */
-void add_pg_cross_bitmap(struct inode *inode, pgoff_t index){
+void add_pg_cross_bitmap(struct inode *inode, pgoff_t start_index, unsigned long nr_pages){
 
-        if(!inode || !inode->bitmap)
+        if(!inode || !inode->bitmap || !nr_pages)
                 goto exit;
 
-#if 0
 	/*bitmap for the inode is not cleared */
 	if (atomic_read(&inode->i_bitmap_freed) == 1){
-                printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
+                //printk("%s: bitmap_freed inode=%ld\n", __func__, inode->i_ino);
 		goto exit;
         }
-#endif
 
-
+        down_write(&inode->bitmap_rw_sem);
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
-        bitmap_set(inode->bitmap, index, 1);
+
+        bitmap_set(inode->bitmap, start_index, nr_pages);
+
+        up_write(&inode->bitmap_rw_sem);
 
 exit:
         return;
@@ -211,11 +229,40 @@ bool is_set_cross_bitmap(struct inode *inode, pgoff_t index){
         if(!inode->bitmap)
                 goto exit;
 
+        //XXX: Doesnt use a read lock because it is used
+        //by only a stats; even if it is off by some, doesnt matter
+
         return test_bit(index, inode->bitmap);
 exit:
         return false;
 }
 EXPORT_SYMBOL(is_set_cross_bitmap);
+
+
+
+/*
+ * Initializes cross data for inode
+ */
+void init_inode_cross(struct inode *inode){
+        if(!inode)
+                goto exit;
+
+        init_rwsem(&inode->bitmap_rw_sem);
+
+        /*
+         * Set it to 1 to make sure no one tries to access
+         * the bitmap without allocation
+         */
+	atomic_set(&inode->i_bitmap_freed, 1);
+
+        inode->nr_bits_used = 0;
+        inode->nr_longs_used = 0;
+        inode->nr_bits_tot = 0;
+        inode->nr_longs_tot = 0;
+
+exit:
+        return;
+}
 
 #if 0
 void *cross_test(void){

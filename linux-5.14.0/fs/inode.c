@@ -261,6 +261,10 @@ static struct inode *alloc_inode(struct super_block *sb)
 		return NULL;
 	}
 
+#ifdef CONFIG_CROSS_FILE_BITMAP
+        init_inode_cross(inode);
+#endif
+
 	return inode;
 }
 

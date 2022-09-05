@@ -37,7 +37,7 @@ SETPRELOAD()
         elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
                 #uses read_ra
                 echo "setting CROSSLAYER pred"
-                export LD_PRELOAD=/usr/lib/libcrosslayer.so
+                export LD_PRELOAD=/usr/lib/lib_Cross_Info.so
         elif [[ "$PREDICT" == "OSONLY" ]]; then
                 #does not use read_ra and disables all application read-ahead
                 echo "setting OS pred"
@@ -60,11 +60,11 @@ KILLCACHESTAT()
 }
 
 RUNEXP() {
-	$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  $FLUSHAFTERWRITES &> $OUTPUTDIR/$PREDICT".out"
+	$APPPREFIX mpiexec -n $NPROC ./MADbench2_io $WORKLOAD $GANG 1 8 8 $RMOD $WMOD  $FLUSHAFTERWRITES #&> $OUTPUTDIR/$PREDICT".out"
 }
 
 
-RUNCACHESTAT
+#RUNCACHESTAT
 export PREDICT="CROSSLAYER"
 RUNEXP
 export LD_PRELOAD=""

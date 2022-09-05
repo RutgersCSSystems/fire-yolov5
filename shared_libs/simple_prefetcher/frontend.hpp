@@ -23,7 +23,6 @@
 #define CLEAR_GLOBAL_STATS 3
 #define PRINT_GLOBAL_STATS 4
 
-
 //Used to send data to pthread or worker thread
 struct thread_args{
 	int fd; //opened file fd
@@ -172,10 +171,12 @@ class per_thread_ds{
         //constructor
         per_thread_ds(){
                 mytid = gettid();
+
 #ifdef ENABLE_OS_STATS
 		fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
                 start_cross_trace(ENABLE_FILE_STATS, 0);
 #endif
+
         }
 
         ~per_thread_ds(){}

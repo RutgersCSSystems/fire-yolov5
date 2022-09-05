@@ -149,6 +149,20 @@ int hash_remove(struct hashtable *i_hash, int inode) {
 }
 
 
+void uinode_bitmap_lock(struct u_inode *uinode) {
+
+	if(uinode != NULL)
+		uinode->bitmap_lock.lock();
+}
+
+
+void uinode_bitmap_unlock(struct u_inode *uinode) {
+
+	if(uinode != NULL)
+		uinode->bitmap_lock.unlock();
+}
+
+
 struct u_inode *get_uinode(struct hashtable *i_hash, int fd){
 
 	struct stat file_stat;
@@ -180,25 +194,25 @@ int add_fd_to_inode(struct hashtable *i_map, int fd, char *fname){
 int add_fd_to_inode(struct hashtable *i_map, int fd){
 #endif
 
-	struct stat file_stat;
-	int inode, ret;
-	struct u_inode *uinode = NULL;
-	struct value *found = NULL;
+   struct stat file_stat;
+   int inode, ret;
+   struct u_inode *uinode = NULL;
+   struct value *found = NULL;
 
-	if(!i_map)
-		return -1;
+   if(!i_map)
+	return -1;
 
-	ret = fstat (fd, &file_stat);
-	inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
+    ret = fstat (fd, &file_stat);
+    inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
 
-	m.lock();
+    m.lock();
 
     found = hash_get(i_map, inode);
     if(found) {
     	uinode = (struct u_inode *)found->value;
     }
 	if(uinode == NULL){
-		uinode = (struct u_inode *)malloc(sizeof(struct u_inode));
+                uinode = new struct u_inode;
 		if(!uinode){
 			m.unlock();
 			return -1;
@@ -213,7 +227,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
                  */
 		uinode->page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
                 BitArrayClearAll(uinode->page_cache_state);
-                printf("%s: adding page cache to uinode \n", __func__);
+                debug_printf("%s: adding page cache to uinode %d\n", __func__, inode);
 #else
                 uinode->page_cache_state = NULL;
 #endif
@@ -227,7 +241,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 
 	uinode->fdlist[uinode->fdcount] = fd;
 	uinode->fdcount++;
-	//printf("ADDING INODE %d, FDCOUNT %d \n", inode, uinode->fdcount);
+	debug_printf("ADDING INODE %d, FDCOUNT %d, uinode=%p \n", inode, uinode->fdcount, uinode);
 	return 0;
 }
 
