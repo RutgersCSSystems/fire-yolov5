@@ -300,7 +300,7 @@ int set_curr_last_fd(int fd){
 
 int evict_advise(int fd){
 
-	printf("%s:%d Evicting using fadvice fd:%d\n", __func__, __LINE__, fd);
+	//printf("%s:%d Evicting using fadvice fd:%d\n", __func__, __LINE__, fd);
 	return posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 }
 
