@@ -8,7 +8,7 @@ from zplot import *
 color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red', 'green']
 
 legends=['VanillaRA', 'VanillaOPT', 'OSonly', 'CrossInfo', 'CII']
-legendtext=['VanillaRA', 'VanillaRA_OPT', 'OSonly', 'Cross-Info', 'Cross-Info-IOOPT']
+legendtext=['Vanilla[+RA]', 'Vanilla[+RA+OPT]', 'OSonly', 'Cross-Info', 'Cross-Info[+OPT]']
 
 filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
 
@@ -18,12 +18,12 @@ output='SIMPLE_BENCH.data' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='SIMPLE_BENCH' if len(sys.argv) < 2 else sys.argv[2]
 
 
-ymax=0.6
+ymax=1.0
 yinterval=0.1
 
 # Font Sizes
-XTSIZE=4
-YTSIZE=4
+XTSIZE=5
+YTSIZE=5
 
 ctype = 'eps' if len(sys.argv) < 2 else sys.argv[1]
 #c = pdf('figure1.pdf')
@@ -34,9 +34,9 @@ d = drawable(canvas=c, coord=[25,18], xrange=[-0.5,t.getmax('rownumber')+0.5], y
 
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
-axis(d, linewidth=0.5, xtitle='Threads',
-        xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=3, ytitle='Miss Ratio',
-        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1,0], xtitleshift=[0,3])
+axis(d, linewidth=0.5, xtitle='Number of App Threads',
+        xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=6, ytitle='Cache Miss-Ratio',
+        ytitlesize=YTSIZE, ylabelfontsize=6, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1,0], xtitleshift=[0,3])
 
 
 p = plotter()
@@ -59,7 +59,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+10, d.top()-10], width=3, height=3, fontsize=3, hspace=1, skipnext=2, skipspace=25)
+L.draw(c, coord=[d.left()+10, d.top()-10], width=3, height=3, fontsize=4, hspace=1, skipnext=3, skipspace=38)
 
 c.render()
 exit()
