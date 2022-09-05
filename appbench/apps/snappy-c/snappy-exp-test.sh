@@ -36,7 +36,7 @@ FILESIZE=1000
 
 
 declare -a config_arr=("Cross_Naive" "CNI" "OSonly" "CPBI" "Vanilla")
-#declare -a config_arr=("CPNI")
+declare -a config_arr=("Cross_Info")
 
 
 
