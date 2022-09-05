@@ -9,7 +9,7 @@ RESULTS_FOLDER=results-sensitivity-sudarsun
 mkdir -p $RESULTS_FOLDER
 cd $APPDIR
 declare -a apparr=("MADbench")
-declare -a predict=("1")
+declare -a predict=("0")
 #declare -a workarr=("4096" "8192" "16384")
 declare -a workarr=("8192")
 declare -a thrdarr=("16")

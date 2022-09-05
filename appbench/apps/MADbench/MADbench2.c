@@ -1126,7 +1126,7 @@ void io_distmatrix(double *data, GANG gang, MATRIX matrix, int rank, char *rw)
       }
     } else {
       if (strcmp(IOMODE, "SYNC")==0 && !fileexists){ 
-          printf("MAD: write\n");
+          //printf("MAD: write\n");
           error_check("fwrite", filename, 
                   fwrite(data, sizeof(double), matrix.my_no_elm, df)==matrix.my_no_elm);
       if(flushit)
