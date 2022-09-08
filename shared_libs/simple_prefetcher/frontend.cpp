@@ -1008,18 +1008,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 skip_predictor:
 
-#ifdef SEQ_PREFETCH
-        struct read_ra_req ra_req;
-        ra_req.ra_pos = 0;
-        ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
-
-        ra_req.full_file_ra = false;
-        ra_req.cache_limit = -1; //disables cache limiting in kernel
-
-        amount_read = pread_ra(fd, data, size, offset, &ra_req);
-#else
         amount_read = real_pread(fd, data, size, offset);
-#endif
 
 exit_pread:
 	return amount_read;

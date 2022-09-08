@@ -5,8 +5,6 @@
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
 
-#define __PREAD_RA_SYSCALL 449
-#define __READ_RA_SYSCALL 450
 #define __READAHEAD_INFO 451
 #define __NR_start_crosslayer 448
 
@@ -92,14 +90,6 @@ off_t reg_file(FILE *stream){
     return reg_fd(fileno(stream));
 }
 
-
-//wrapper for pread_ra
-ssize_t pread_ra(int fd, void *data, size_t size, off_t offset, 
-        struct read_ra_req *ra_req)
-{
-    return syscall(__PREAD_RA_SYSCALL, fd, data, size, offset, ra_req);
-}
-
 long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_req)
 {
         return syscall(__READAHEAD_INFO, fd, offset, count, ra_req);
@@ -108,39 +98,6 @@ long readahead_info(int fd, loff_t offset, size_t count, struct read_ra_req *ra_
 long start_cross_trace(int flag, int val)
 {
         return syscall(__NR_start_crosslayer, flag, val);
-}
-
-
-/*
- * Does both fread and readahead in one syscall
- */
-size_t fread_ra(void *ptr, size_t size, size_t nmemb, FILE *stream, size_t ra_size){
-
-    ssize_t ret;
-    int fd;
-    fd = fileno(stream);
-
-    struct read_ra_req ra_req;
-    ra_req.ra_pos = 0;
-    ra_req.ra_count = ra_size;
-
-    /*
-     * XXX: Since fread is a library call, I cannot implement fread_ra without changing
-     * glibc. So instead, we convert fread_ra to pread_ra syscall as a hack
-     *
-     * NOTE: Here the pread_ra syscall assumes that ra_pos = read_pos + read_bytes; ie.
-     * It will only readahead from the end of read request. reads and readaheads in diff
-     * positions is not implemented yet in the modified kernel 5.14.
-     */
-    ret = pread_ra(fd, ptr, nmemb*size, ftell(stream), &ra_req);
-    if(ret <=0){
-        printf("%s: Error %s\n", __func__, strerror(errno));
-        return 0;
-    }
-
-    fseek(stream, 0L, SEEK_END);
-
-    return ret/size; //should return nr of items read
 }
 
 
