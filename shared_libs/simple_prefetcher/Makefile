@@ -1,7 +1,7 @@
-CXX=mpic++
+CXX=g++
 CC=gcc
 
-LIBS=-lpthread -lrt -ldl -lmpi
+LIBS=-lpthread -lrt -ldl #-lmpi
 FLAGS=-fPIC -shared -std=gnu++11 -Wno-unused-result -g
 INCLUDE=
 
@@ -22,7 +22,8 @@ SOURCES = frontend.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c util
 DEBUG=-DDEBUG
 ENABLE_LIB_STATS=-DENABLE_LIB_STATS ##Comment if dont need lib stats
 ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
-OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP -DENABLE_MPI $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
+#ENABLE_MPI=-DENABLE_MPI
+OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP $(ENABLE_MPI) $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
 VAR_FLAGS=-DNR_RA_PAGES=$(NR_RA_PAGES) -DNR_WORKERS=$(NR_WORKERS) -DPORTION_PAGES=$(PORTION_PAGES) $(OTHERFLAGS)
 VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ) -DCROSS_BITMAP_SHIFT=$(CROSS_BITMAP_SHIFT)
 
@@ -151,6 +152,7 @@ CLEAR_STATS: clear-stats.c
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
+	sudo cp clear_os_stats /usr/bin
 
 clean:
 	rm *.so

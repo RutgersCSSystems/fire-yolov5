@@ -31,7 +31,10 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
+
+#ifdef ENABLE_MPI
 #include <mpi.h>
+#endif
 
 #ifdef MAINTAIN_UINODE
 #include "uinode.hpp"
