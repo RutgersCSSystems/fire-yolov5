@@ -9,6 +9,8 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
+source $RUN_SCRIPTS/generic_funcs.sh
+
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -85,7 +87,7 @@ READARGS="--benchmarks=readrandom \
 APPPREFIX="/usr/bin/time -v"
 
 APP=db_bench
-APPOUTPUTNAME="ROCKSDB-intel"
+APPOUTPUTNAME="ROCKSDB-intel-40GB"
 
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
@@ -166,6 +168,7 @@ GEN_RESULT_PATH() {
 }
 
 
+
 RUN() {
 
         #CLEAR_DATA
@@ -190,6 +193,7 @@ RUN() {
 
 					mkdir -p $RESULTS
 
+                                        SETUPEXTRAM_1 `echo "scale=0; 40*$GB" | bc --mathlib`
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
@@ -197,6 +201,7 @@ RUN() {
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
+                                        umount_ext4ramdisk
 					FlushDisk
 				done
 			done
@@ -204,6 +209,8 @@ RUN() {
 	done
 }
 
+umount_ext4ramdisk
 RUN
+umount_ext4ramdisk
 #CLEAR_DATA
 exit
