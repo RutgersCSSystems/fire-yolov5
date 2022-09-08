@@ -68,3 +68,8 @@ export LD_PRELOAD=""
 3. PORTION_PAGES : Number of pages each bit in the bitarray represents.
 4. MIN_FILE_SZ : Files smaller than these bytes will not be considered for prediction/prefetching
 5. NR_ADJACENT_CHECK : Number of adjacent bits to check in bitarray to determine sequentiality
+
+
+### Q4. How to reset Global OS stats?
+clear-stats.c clears the OS stats.
+binary name : clear_os_stats installed in /usr/bin
