@@ -64,7 +64,6 @@ READARGS="--benchmarks=readrandom \
 --key_size=20 \
 --value_size=400 \
 --num=240000000 \
---duration=480 \
 --threads=40 \
 --block_size=4096 \
 --cache_size=17179869184 \
