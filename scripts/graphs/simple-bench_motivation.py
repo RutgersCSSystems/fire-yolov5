@@ -7,8 +7,8 @@ from zplot import *
 
 color=['dimgray', 'darkorange', 'dimgray', 'black', 'bisque', 'red', 'green']
 
-legends=['VanillaRA', 'VanillaOPT', 'OSonly', 'CrossInfo', 'CII']
-legendtext=['Vanilla[+RA]', 'Vanilla[+RA+OPT]', 'OSonly', 'Cross-Info', 'Cross-Info[+OPT]']
+legends=['Vanilla', 'OSonly', 'CrossInfo']
+legendtext=['Vanilla', 'OSonly', 'Cross-Info']
 
 filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
 
@@ -18,8 +18,8 @@ output='SIMPLE_BENCH.data' if len(sys.argv) < 2 else sys.argv[1]
 graptitle='SIMPLE_BENCH' if len(sys.argv) < 2 else sys.argv[2]
 
 
-ymax=1.0
-yinterval=0.1
+ymax=1
+yinterval=0.2
 
 # Font Sizes
 XTSIZE=5
@@ -30,11 +30,11 @@ ctype = 'eps' if len(sys.argv) < 2 else sys.argv[1]
 c = canvas('pdf', title=graptitle, dimensions=[130, 90])
 t = table(file=output)
 
-d = drawable(canvas=c, coord=[25,18], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[100, 70])
+d = drawable(canvas=c, coord=[28,16], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[100, 70])
 
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
-axis(d, linewidth=0.5, xtitle='Number of App Threads',
+axis(d, linewidth=0.5, xtitle='Workloads',
         xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=6, ytitle='Cache Miss-Ratio',
         ytitlesize=YTSIZE, ylabelfontsize=6, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1,0], xtitleshift=[0,3])
 
@@ -59,7 +59,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+10, d.top()-10], width=3, height=3, fontsize=4, hspace=1, skipnext=3, skipspace=38)
+L.draw(c, coord=[d.left()+2, d.top()-5], width=3, height=3, fontsize=5, hspace=1, skipnext=1, skipspace=25)
 
 c.render()
 exit()
