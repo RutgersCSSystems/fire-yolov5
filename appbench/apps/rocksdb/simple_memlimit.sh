@@ -19,6 +19,7 @@ KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 NUM=40000000
 DBDIR=$DBHOME/DATA
+base=$PWD
 
 slack_MB=1024
 MEM_BUDGET_PER='0.5'
@@ -57,9 +58,9 @@ CLEAN_AND_WRITE()
         FlushDisk
 
         ##Condition the DB to get Stable results
-	$base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
+	$DBHOME/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
         FlushDisk
-	$base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
+	$DBHOME/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16
         FlushDisk
 }
 
@@ -74,12 +75,15 @@ do
         #SETPRELOAD "VANILLA"
         export LD_PRELOAD=/usr/lib/lib_memusage.so
         #$DBHOME/db_bench $PARAMS $READARGS
-	$base/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> out_memusage
+	$DBHOME/db_bench $PARAMS $ORI_READARGS --benchmarks=readseq --threads=16 &> out_memusage
         export LD_PRELOAD=""
         FlushDisk
 
 	total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
 	total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
+
+        echo "total_anon_MB = $total_anon_MB"
+        echo "total_cache_MB = $total_cache_MB"
 
         free -h
         SETUPEXTRAM_1 `echo "scale=0; (($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))+$slack_MB)/1" | bc --mathlib`
