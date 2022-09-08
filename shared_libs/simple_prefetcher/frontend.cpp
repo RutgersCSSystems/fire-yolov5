@@ -190,8 +190,11 @@ void con(){
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
         start_cross_trace(ENABLE_FILE_STATS, 0);
+
+        /* look at Makefile:CLEAR_STATS
 	fprintf(stderr, "CLEAR_GLOBAL_STATS in %s\n", __func__);
         start_cross_trace(CLEAR_GLOBAL_STATS, 0);
+        */
 #endif
 
 	debug_printf("CONSTRUCTOR GETTING CALLED \n");
