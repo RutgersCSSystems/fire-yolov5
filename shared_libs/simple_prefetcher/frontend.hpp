@@ -10,7 +10,6 @@
 #define __READAHEAD_INFO 451
 #define __NR_start_crosslayer 448
 
-
 #define ENABLE_FILE_STATS 1
 #define DISABLE_FILE_STATS 2
 #define CLEAR_GLOBAL_STATS 3

@@ -195,10 +195,6 @@ void con(){
 
 	char a;
 
-#ifdef PREDICTOR
-        hello_predictor();
-#endif
-
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
         start_cross_trace(ENABLE_FILE_STATS, 0);
@@ -931,7 +927,6 @@ int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
 
 int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
-
 	int ret = 0;
 	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
 
@@ -1014,19 +1009,19 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 skip_predictor:
 
 #ifdef SEQ_PREFETCH
-	struct read_ra_req ra_req;
-	ra_req.ra_pos = 0;
-	ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
+        struct read_ra_req ra_req;
+        ra_req.ra_pos = 0;
+        ra_req.ra_count = NR_RA_PAGES * PAGESIZE;
 
-	ra_req.full_file_ra = false;
-	ra_req.cache_limit = -1; //disables cache limiting in kernel
+        ra_req.full_file_ra = false;
+        ra_req.cache_limit = -1; //disables cache limiting in kernel
 
-	amount_read = pread_ra(fd, data, size, offset, &ra_req);
+        amount_read = pread_ra(fd, data, size, offset, &ra_req);
 #else
-	amount_read = real_pread(fd, data, size, offset);
+        amount_read = real_pread(fd, data, size, offset);
 #endif
 
-exit:
+exit_pread:
 	return amount_read;
 }
 
@@ -1056,14 +1051,14 @@ void handle_file_close(int fd){
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
-		goto exit;
+		goto exit_handle_file_close;
 	}
 	if(fp){
 		delete(fp);
 	}
 #endif
 
-exit:
+exit_handle_file_close:
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
@@ -1172,7 +1167,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 skip_predictor:
     amount_read = real_fread(ptr, size, nmemb, stream);
 
-exit:
+exit_fread:
 	debug_printf( "Exiting %s\n", __func__);
 	return amount_read;
 }
@@ -1189,12 +1184,12 @@ int fclose(FILE *stream){
 	debug_printf( "Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
-	goto exit;
+	goto exit_fclose;
 #endif
 	debug_printf("%s: closing %d\n", __func__, fd);
 	handle_file_close(fd);
 
-exit:
+exit_fclose:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_fclose(stream);
 }
@@ -1205,11 +1200,11 @@ int close(int fd){
 	debug_printf("Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
-	goto exit;
+	goto exit_close;
 #endif
 
 	handle_file_close(fd);
-exit:
+exit_close:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
 }
@@ -1222,7 +1217,7 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 
 	debug_printf("Entering %s\n", __func__);
 #ifdef DISABLE_APP_READAHEADS
-	goto exit;
+	goto exit_readahead;
 #endif
 
 #ifdef ENABLE_LIB_STATS
@@ -1232,7 +1227,7 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 
 	ret = real_readahead(fd, offset, count);
 
-exit:
+exit_readahead:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
