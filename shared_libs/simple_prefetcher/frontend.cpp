@@ -763,6 +763,88 @@ void handle_open(struct file_desc desc){
 }
 
 
+void handle_file_close(int fd){
+
+	debug_printf("Entering %s\n", __func__);
+
+#ifdef MAINTAIN_UINODE
+	int i_fd_cnt = handle_close(i_map, fd);
+#ifdef ENABLE_EVICTION
+	if(!i_fd_cnt){
+		evict_advise(fd);
+	}
+#endif
+#endif
+
+
+#if 0 //def PREDICTOR
+	init_global_ds();
+	file_predictor *fp;
+	try{
+		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		//fp = fd_to_file_pred.at(fd);
+		//fd_to_file_pred->erase(fd);
+	}
+	catch(const std::out_of_range){
+		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
+		goto exit_handle_file_close;
+	}
+	if(fp){
+		delete(fp);
+	}
+#endif
+
+exit_handle_file_close:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
+
+
+void read_predictor(FILE *stream, size_t data_size) {
+
+	size_t amount_read = 0;
+	int fd = fileno(stream);
+
+	debug_printf("%s: TID:%ld\n", __func__, gettid());
+
+#ifdef ONLY_INTERCEPT
+	goto skip_read_predictor;
+#endif
+
+	/*
+	 * Sanity check
+	 */
+	if(fd < 3){
+		goto skip_read_predictor;
+	}
+
+#ifdef ENABLE_EVICTION_OLD
+	set_curr_last_fd(fd);
+#endif
+
+#ifdef PREDICTOR
+	file_predictor *fp;
+	try{
+		fp = fd_to_file_pred.at(fd);
+	}
+	catch(const std::out_of_range &orr){
+		goto skip_read_predictor;
+	}
+
+	if(fp){
+		fp->predictor_update(ftell(stream), data_size);
+		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+			prefetch_file(fd, fp);
+			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+		}
+	}
+#endif
+
+skip_read_predictor:
+	return;
+}
+
+
 //////////////////////////////////////////////////////////
 //Intercepted Functions
 //////////////////////////////////////////////////////////
@@ -804,6 +886,7 @@ int MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info,
 #endif
 
 
+//OPEN SYSCALLS
 
 int openat(int dirfd, const char *pathname, int flags, ...){
 
@@ -915,54 +998,7 @@ exit:
 }
 
 
-int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
-
-	int ret = -1;
-	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
-	ret = posix_fadvise(fd, offset, len, advice);
-	debug_printf( "Exiting %s\n", __func__);
-	return ret;
-}
-
-
-int posix_fadvise(int fd, off_t offset, off_t len, int advice){
-
-	int ret = 0;
-	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
-
-#ifdef DISABLE_FADV_RANDOM
-	if(advice == POSIX_FADV_RANDOM)
-		goto exit;
-#endif
-
-#ifdef DISABLE_FADV_DONTNEED
-	if(advice == POSIX_FADV_DONTNEED)
-		goto exit;
-#endif
-
-	ret = real_posix_fadvise(fd, offset, len, advice);
-exit:
-	debug_printf( "Exiting %s\n", __func__);
-	return ret;
-}
-
-
-int madvise(void *addr, size_t length, int advice){
-	int ret = 0;
-
-	debug_printf("%s: called ADV=%d\n", __func__, advice);
-
-#ifdef DISABLE_MADV_DONTNEED
-	if(advice == MADV_DONTNEED)
-		goto exit;
-#endif
-
-	ret = real_madvise(addr, length, advice);
-exit:
-    debug_printf( "Exiting %s\n", __func__);
-	return ret;
-}
-
+//READ SYSCALLS
 
 ssize_t pread64(int fd, void *data, size_t size, off_t offset){
         return pread(fd, data, size, offset);
@@ -1014,89 +1050,6 @@ exit_pread:
 	return amount_read;
 }
 
-
-
-void handle_file_close(int fd){
-
-	debug_printf("Entering %s\n", __func__);
-
-#ifdef MAINTAIN_UINODE
-	int i_fd_cnt = handle_close(i_map, fd);
-#ifdef ENABLE_EVICTION
-	if(!i_fd_cnt){
-		evict_advise(fd);
-	}
-#endif
-#endif
-
-
-#if 0 //def PREDICTOR
-	init_global_ds();
-	file_predictor *fp;
-	try{
-		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		//fp = fd_to_file_pred.at(fd);
-		//fd_to_file_pred->erase(fd);
-	}
-	catch(const std::out_of_range){
-		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
-		goto exit_handle_file_close;
-	}
-	if(fp){
-		delete(fp);
-	}
-#endif
-
-exit_handle_file_close:
-	debug_printf("Exiting %s\n", __func__);
-	return;
-}
-
-
-
-void read_predictor(FILE *stream, size_t data_size) {
-
-	size_t amount_read = 0;
-	int fd = fileno(stream);
-
-	debug_printf("%s: TID:%ld\n", __func__, gettid());
-
-#ifdef ONLY_INTERCEPT
-	goto skip_read_predictor;
-#endif
-
-	/*
-	 * Sanity check
-	 */
-	if(fd < 3){
-		goto skip_read_predictor;
-	}
-
-#ifdef ENABLE_EVICTION_OLD
-	set_curr_last_fd(fd);
-#endif
-
-#ifdef PREDICTOR
-	file_predictor *fp;
-	try{
-		fp = fd_to_file_pred.at(fd);
-	}
-	catch(const std::out_of_range &orr){
-		goto skip_read_predictor;
-	}
-
-	if(fp){
-		fp->predictor_update(ftell(stream), data_size);
-		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
-			prefetch_file(fd, fp);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
-		}
-	}
-#endif
-
-skip_read_predictor:
-	return;
-}
 
 
 /*Several applications use fgets*/
@@ -1163,8 +1116,7 @@ exit_fread:
 
 
 
-
-
+//CLOSE SYSCALLS
 
 int fclose(FILE *stream){
 
@@ -1199,8 +1151,9 @@ exit_close:
 }
 
 
-ssize_t readahead(int fd, off_t offset, size_t count){
+//PREFETCH SYSCALLS
 
+ssize_t readahead(int fd, off_t offset, size_t count){
 
 	ssize_t ret = 0;
 
@@ -1218,5 +1171,54 @@ ssize_t readahead(int fd, off_t offset, size_t count){
 
 exit_readahead:
 	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
+
+
+int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
+
+	int ret = -1;
+	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+	ret = posix_fadvise(fd, offset, len, advice);
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
+
+
+int posix_fadvise(int fd, off_t offset, off_t len, int advice){
+
+	int ret = 0;
+	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+
+#ifdef DISABLE_FADV_RANDOM
+	if(advice == POSIX_FADV_RANDOM)
+		goto exit;
+#endif
+
+#ifdef DISABLE_FADV_DONTNEED
+	if(advice == POSIX_FADV_DONTNEED)
+		goto exit;
+#endif
+
+	ret = real_posix_fadvise(fd, offset, len, advice);
+exit:
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
+
+
+int madvise(void *addr, size_t length, int advice){
+	int ret = 0;
+
+	debug_printf("%s: called ADV=%d\n", __func__, advice);
+
+#ifdef DISABLE_MADV_DONTNEED
+	if(advice == MADV_DONTNEED)
+		goto exit;
+#endif
+
+	ret = real_madvise(addr, length, advice);
+exit:
+    debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
