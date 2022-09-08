@@ -27,10 +27,10 @@ WRITEARGS="
 --benchmarks=fillseq \
 --use_existing_db=0 \
 --db=$DBDIR \
---wal_dir=$WAL_DIR \
+--wal_dir=$DBDIR/WAL_LOG\
 --key_size=20 \
 --value_size=400 \
---num=120000000 \
+--num=240000000 \
 --threads=1 \
 --max_background_jobs=12 \
 --block_size=4096 \
@@ -55,16 +55,15 @@ WRITEARGS="
 --stats_per_interval=1 --stats_interval_seconds=60 --histogram=1"
 
 
-
 READARGS="--benchmarks=readrandom \
 --mmap_read=0 
 --disable_auto_compactions=1 \
 --use_existing_db=1 \
---db=$DB_DIR \
---wal_dir=$WAL_DIR \
+--db=$DBDIR \
+--wal_dir=$DBDIR/WAL_LOG\
 --key_size=20 \
 --value_size=400 \
---num=120000000 \
+--num=240000000 \
 --duration=480 \
 --threads=40 \
 --block_size=4096 \
@@ -88,7 +87,7 @@ READARGS="--benchmarks=readrandom \
 APPPREFIX="/usr/bin/time -v"
 
 APP=db_bench
-APPOUTPUTNAME="ROCKSDB"
+APPOUTPUTNAME="ROCKSDB-intel"
 
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
@@ -104,11 +103,11 @@ NUM=2000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("32")
+declare -a thread_arr=("40")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
 declare -a workload_arr=("readrandom")
-declare -a config_arr=("Cross_Info" "OSonly")
+declare -a config_arr=("OSonly")
 #declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
 
 
@@ -141,17 +140,17 @@ CLEAR_DATA()
 COMPILE_AND_WRITE()
 {
         export LD_PRELOAD=""
-	PARAMS="--db=$DBDIR"
+	#PARAMS="--db=$DBDIR"
 	mkdir -p $RESULTS
 
-	cd $PREDICT_LIB_DIR
-	$PREDICT_LIB_DIR/compile.sh &> compile.out
+	#cd $PREDICT_LIB_DIR
+	#$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
-        $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
+        $DBHOME/db_bench $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
 
         ##Condition the DB to get Stable results
-        $DBHOME/db_bench $PARAMS $READARGS  #&> $RESULTS/WARMUP-READ1.out
-        FlushDisk
+        #$DBHOME/db_bench $READARGS  #&> $RESULTS/WARMUP-READ1.out
+        #FlushDisk
         #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
 }
 
@@ -184,14 +183,11 @@ RUN() {
 	do
 		for THREAD in "${thread_arr[@]}"
 		do
-			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
-
 			for CONFIG in "${config_arr[@]}"
 			do
 				for WORKLOAD in "${workload_arr[@]}"
 				do
 					RESULTS=""
-					READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD
 
 					mkdir -p $RESULTS
@@ -199,7 +195,7 @@ RUN() {
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					$APPPREFIX "./"$APP $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
@@ -213,4 +209,3 @@ RUN() {
 RUN
 #CLEAR_DATA
 exit
-
