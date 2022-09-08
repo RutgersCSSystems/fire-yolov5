@@ -17,7 +17,7 @@ NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(15MB)
 CROSS_BITMAP_SHIFT=24
 
-SOURCES = frontend.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c
+SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c 
 
 DEBUG=-DDEBUG
 ENABLE_LIB_STATS=-DENABLE_LIB_STATS ##Comment if dont need lib stats

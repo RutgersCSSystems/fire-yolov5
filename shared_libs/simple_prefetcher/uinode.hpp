@@ -52,4 +52,3 @@ void uinode_bitmap_lock(struct u_inode *inode);
 void uinode_bitmap_unlock(struct u_inode *inode);
 
 #endif
-

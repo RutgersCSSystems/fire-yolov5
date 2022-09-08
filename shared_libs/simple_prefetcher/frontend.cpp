@@ -55,10 +55,13 @@ threadpool workerpool = NULL;
 #endif
 
 
+#ifdef PREDICTOR
 //Maps fd to its file_predictor, global ds
 //std::unordered_map<int, file_predictor*> fd_to_file_pred;
+#include "predictor.hpp"
 robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
+#endif
 
 
 #ifdef ENABLE_MPI
@@ -136,10 +139,12 @@ void reg_app_sig_handler(void){
  */
 void init_global_ds(void){
 
+#ifdef PREDICTOR
 	if(!fd_to_file_pred_init.test_and_set()){
 		debug_printf("%s:%d Allocating fd_to_file_pred\n", __func__, __LINE__);
 		//fd_to_file_pred = new std::unordered_map<int, file_predictor*>;
 	}
+#endif
 
 	if(!i_map_init.test_and_set()){
 		debug_printf("%s:%d Allocating hashmap\n", __func__, __LINE__);
@@ -189,6 +194,10 @@ void set_cross_bitmap_shift(char a){
 void con(){
 
 	char a;
+
+#ifdef PREDICTOR
+        hello_predictor();
+#endif
 
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
