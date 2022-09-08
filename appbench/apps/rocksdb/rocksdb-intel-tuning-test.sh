@@ -68,7 +68,6 @@ READARGS="--benchmarks=readrandom \
 --block_size=4096 \
 --cache_size=17179869184 \
 --cache_numshardbits=10 \
---compression_type=snappy \
 --arena_block_size=16777216 \
 --memtablerep=skip_list \
 --bloom_bits=10 \
@@ -172,7 +171,7 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
