@@ -40,6 +40,7 @@ void hello_predictor(){
         return;
 }
 
+
 file_predictor::file_predictor(int this_fd, size_t size){
 
         fd = this_fd;
@@ -71,6 +72,10 @@ file_predictor::file_predictor(int this_fd, size_t size){
         read_size = 0;
 }
 
+
+/*
+ * file_predictor's destructor
+ */
 file_predictor::~file_predictor(){
         BitArrayDestroy(access_history);
 
@@ -78,6 +83,7 @@ file_predictor::~file_predictor(){
         BitArrayDestroy(page_cache_state);
 #endif
 }
+
 
 /*
  * If offset being accessed is from an Unset file portion, set it,
@@ -157,16 +163,17 @@ exit:
         return;
 }
 
+
 //Returns the current Sequentiality value
 long file_predictor::is_sequential(){
         return sequentiality;
 }
+
 
 //returns the approximate stride in pages
 //0 if not strided. doesnt mean its not sequential
 long file_predictor::is_strided(){
         return stride*PORTION_PAGES;
 }
-
 
 #endif //PREDICTOR
