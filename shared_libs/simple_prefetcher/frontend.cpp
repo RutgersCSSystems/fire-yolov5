@@ -69,9 +69,9 @@ struct hashtable *mpi_map;
 #endif
 
 struct file_desc {
-int fd;
+        int fd;
 #ifdef ENABLE_MPI
-MPI_File fh;
+        MPI_File fh;
 #endif
 };
 
@@ -763,6 +763,14 @@ void handle_open(struct file_desc desc){
 }
 
 
+void handle_file_read(){
+
+exit_handle_file_read:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
+
+
 void handle_file_close(int fd){
 
 	debug_printf("Entering %s\n", __func__);
@@ -800,12 +808,24 @@ exit_handle_file_close:
 }
 
 
-void read_predictor(FILE *stream, size_t data_size) {
+void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
 
 	size_t amount_read = 0;
-	int fd = fileno(stream);
+	int fd = -1;
+        off_t offset;
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
+
+        if(file_fd < 3 && !stream){
+                goto skip_read_predictor;
+        }else if(file_fd > 3){
+	        fd = file_fd;
+                offset = file_offset;
+        }else if(stream){
+	        fd = fileno(stream);
+                offset = ftell(stream);
+        }
+
 
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
@@ -832,7 +852,7 @@ void read_predictor(FILE *stream, size_t data_size) {
 	}
 
 	if(fp){
-		fp->predictor_update(ftell(stream), data_size);
+		fp->predictor_update(offset, data_size);
 		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
 			prefetch_file(fd, fp);
 			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
@@ -1011,36 +1031,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	//debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
-#ifdef ONLY_INTERCEPT
-	goto skip_predictor;
-#endif
-
-#ifdef ENABLE_EVICTION_OLD
-	set_curr_last_fd(fd);
-#endif
-
-
-#ifdef PREDICTOR
-	init_global_ds();
-	file_predictor *fp;
-	try{
-		fp = fd_to_file_pred.at(fd);
-	}
-	catch(const std::out_of_range &orr){
-		goto skip_predictor;
-	}
-#endif
-
-#if 0
-	if(fp){
-		fp->predictor_update(offset, size);
-		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
-		if((fp->is_sequential() >= LIKELYSEQ)){
-			prefetch_file(fd, fp);
-			//printf("%s: seq:%ld\n", __func__, fp->is_sequential());
-		}
-	}
-#endif
+        read_predictor(NULL, size, fd, offset);
 
 skip_predictor:
 
@@ -1051,69 +1042,34 @@ exit_pread:
 }
 
 
-
 /*Several applications use fgets*/
 char *fgets( char *str, int num, FILE *stream ) {
 
-    debug_printf( "Exiting %s\n", __func__);
+        debug_printf( "Start %s\n", __func__);
 
-    read_predictor(stream, (size_t)num);	
+        read_predictor(stream, num, 0, 0);
 
-    return real_fgets(str, num, stream);
+        return real_fgets(str, num, stream);
 }
+
 
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 
 	size_t amount_read = 0;
-	int fd = fileno(stream);
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
 	//printf("%s: TID:%ld\n", __func__, gettid());
 
-
-#ifdef ONLY_INTERCEPT
-	goto skip_predictor;
-#endif
-
-	/*
-	 * Sanity check
-	 */
-	if(fd < 3){
-		goto skip_predictor;
-	}
-
-#ifdef ENABLE_EVICTION_OLD
-	set_curr_last_fd(fd);
-#endif
-
-#ifdef PREDICTOR
-	//init_global_ds();
-	file_predictor *fp;
-	try{
-		fp = fd_to_file_pred.at(fd);
-	}
-	catch(const std::out_of_range &orr){
-		goto skip_predictor;
-	}
-
-	if(fp){
-		fp->predictor_update(ftell(stream), size*nmemb);
-		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
-			prefetch_file(fd, fp);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
-		}
-	}
-#endif
+        read_predictor(stream, size*nmemb, 0, 0);
 
 skip_predictor:
-    amount_read = real_fread(ptr, size, nmemb, stream);
+        amount_read = real_fread(ptr, size, nmemb, stream);
 
 exit_fread:
 	debug_printf( "Exiting %s\n", __func__);
 	return amount_read;
 }
-
 
 
 //CLOSE SYSCALLS
