@@ -763,51 +763,6 @@ void handle_open(struct file_desc desc){
 }
 
 
-void handle_file_read(){
-
-exit_handle_file_read:
-	debug_printf("Exiting %s\n", __func__);
-	return;
-}
-
-
-void handle_file_close(int fd){
-
-	debug_printf("Entering %s\n", __func__);
-
-#ifdef MAINTAIN_UINODE
-	int i_fd_cnt = handle_close(i_map, fd);
-#ifdef ENABLE_EVICTION
-	if(!i_fd_cnt){
-		evict_advise(fd);
-	}
-#endif
-#endif
-
-
-#if 0 //def PREDICTOR
-	init_global_ds();
-	file_predictor *fp;
-	try{
-		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		//fp = fd_to_file_pred.at(fd);
-		//fd_to_file_pred->erase(fd);
-	}
-	catch(const std::out_of_range){
-		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
-		goto exit_handle_file_close;
-	}
-	if(fp){
-		delete(fp);
-	}
-#endif
-
-exit_handle_file_close:
-	debug_printf("Exiting %s\n", __func__);
-	return;
-}
-
-
 void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
 
 	size_t amount_read = 0;
@@ -861,6 +816,43 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 #endif
 
 skip_read_predictor:
+	return;
+}
+
+
+void handle_file_close(int fd){
+
+	debug_printf("Entering %s\n", __func__);
+
+#ifdef MAINTAIN_UINODE
+	int i_fd_cnt = handle_close(i_map, fd);
+#ifdef ENABLE_EVICTION
+	if(!i_fd_cnt){
+		evict_advise(fd);
+	}
+#endif
+#endif
+
+
+#if 0 //def PREDICTOR
+	init_global_ds();
+	file_predictor *fp;
+	try{
+		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		//fp = fd_to_file_pred.at(fd);
+		//fd_to_file_pred->erase(fd);
+	}
+	catch(const std::out_of_range){
+		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
+		goto exit_handle_file_close;
+	}
+	if(fp){
+		delete(fp);
+	}
+#endif
+
+exit_handle_file_close:
+	debug_printf("Exiting %s\n", __func__);
 	return;
 }
 
@@ -1034,7 +1026,6 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
         read_predictor(NULL, size, fd, offset);
 
 skip_predictor:
-
         amount_read = real_pread(fd, data, size, offset);
 
 exit_pread:
