@@ -670,23 +670,32 @@ void inline record_open(struct file_desc desc){
 
 	int fd = desc.fd;
 	off_t filesize = reg_fd(fd);
-	struct read_ra_req ra;
 	struct timespec start, end;
 
 	debug_printf("Entering %s\n", __func__);
 
+        /*
+         * TODO BUG: This would only work for workloads that already have their
+         * files setup.
+         *
+         * In pure write workloads, the file could be very small initially
+         */
 	if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize);
 
-		if(!fp)
+		if(!fp){
+                        printk("%s ERR: Could not allocate new file_predictor\n", __func__);
 			goto exit;
+                }
 
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
 		fd_to_file_pred.insert({fd, fp});
+
+                //TODO: Add Bonus Prefetching
 #endif
 
 		/*
@@ -697,12 +706,21 @@ void inline record_open(struct file_desc desc){
 #if defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
+
+#ifndef ENABLE_OS_STATS
+                /*
+                 * If OS stats are enabled, the first RA has already happened
+                 */
+	        struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
+#endif //ENABLE_OS_STATS
 		//clock_gettime(CLOCK_REALTIME, &end);
 		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 		debug_printf("%s: DONE first READAHEAD: %ld\n", __func__, ptd.mytid);
-#endif
+
+#endif //defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
+
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
@@ -1002,6 +1020,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	fd = fileno(ret);
 	desc.fd = fd;
+
 	handle_open(desc);
 
 exit:

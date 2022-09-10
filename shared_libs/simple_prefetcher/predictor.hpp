@@ -49,6 +49,7 @@ class file_predictor{
 		 * returns the page cache state in its return struct
 		 * We will be using this to update the access_history
 		 * based on the PORTION_PAGES.
+                 * TODO: Remove it since this is done for per-uinode stuff
 		 */
 		bit_array_t *page_cache_state;
 
