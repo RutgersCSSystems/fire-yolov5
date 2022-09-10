@@ -53,6 +53,15 @@ class file_predictor{
 		 */
 		bit_array_t *page_cache_state;
 
+                /*
+                 * Records the last read done on this fd
+                 * Also records the last RA done using this fd
+                 * Since the file can be large and be opened with multiple
+                 * fds; there can be multiple RAs on the same file (multiple fds)
+                 */
+                size_t last_ra_offset;
+                size_t last_read_offset;
+
 		/*
 		 * This variable summarizes if the file is reasonably
 		 * sequential/strided for prefetching to happen.
@@ -78,6 +87,13 @@ class file_predictor{
 		//returns the approximate stride in pages
 		//0 if not strided. doesnt mean its not sequential
 		long is_strided();
+
+
+                /*
+                 * Returns true if it is time to prefetch for
+                 * the given access pattern etc on this fd
+                 */
+                bool should_prefetch_now();
 };
 
 #endif //_PREDICTOR_HPP

@@ -686,7 +686,7 @@ void inline record_open(struct file_desc desc){
 		file_predictor *fp = new file_predictor(fd, filesize);
 
 		if(!fp){
-                        printk("%s ERR: Could not allocate new file_predictor\n", __func__);
+                        printf("%s ERR: Could not allocate new file_predictor\n", __func__);
 			goto exit;
                 }
 
@@ -696,26 +696,26 @@ void inline record_open(struct file_desc desc){
 		fd_to_file_pred.insert({fd, fp});
 
                 //TODO: Add Bonus Prefetching
+                if(fp->should_prefetch_now()){
+                        prefetch_file(fd, fp);
+                }
 #endif
 
 		/*
 		 * This allocates the file's bitmap inside the kernel
 		 * So no file cache data is lost from bitmap
 		 * This is very important todo before any app reads happen
+                 *
+                 * If OS stats are enabled, the first RA has already happened
 		 */
-#if defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(ENABLE_OS_STATS)
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
 
-#ifndef ENABLE_OS_STATS
-                /*
-                 * If OS stats are enabled, the first RA has already happened
-                 */
 	        struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
-#endif //ENABLE_OS_STATS
-		//clock_gettime(CLOCK_REALTIME, &end);
+
 		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 		debug_printf("%s: DONE first READAHEAD: %ld\n", __func__, ptd.mytid);
 
@@ -724,7 +724,6 @@ void inline record_open(struct file_desc desc){
 	}
 	else{
 		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-//		goto exit;
 	}
 
 exit:

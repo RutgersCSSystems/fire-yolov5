@@ -36,6 +36,15 @@
 #define NR_RA_PAGES 40
 #endif
 
+
+/*
+ * Used by predictor to prefetch if
+ * the read is almost getting to last RA position
+ */
+#ifndef NR_EARLY_FETCH_PAGES
+#define NR_EARLY_FETCH_PAGES 256
+#endif
+
 /* 
  * Nr of pages to read while
  * doing readahead using pread_ra

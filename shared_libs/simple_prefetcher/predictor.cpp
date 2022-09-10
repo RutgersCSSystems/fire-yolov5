@@ -70,6 +70,9 @@ file_predictor::file_predictor(int this_fd, size_t size){
         sequentiality = POSSNSEQ;
         stride = 0;
         read_size = 0;
+
+        last_ra_offset = 0;
+        last_read_offset = 0;
 }
 
 
@@ -174,6 +177,19 @@ long file_predictor::is_sequential(){
 //0 if not strided. doesnt mean its not sequential
 long file_predictor::is_strided(){
         return stride*PORTION_PAGES;
+}
+
+
+
+bool file_predictor::should_prefetch_now(){
+
+        off_t early_fetch = NR_EARLY_FETCH_PAGES * PAGESIZE;
+
+        if (last_read_offset <= (last_ra_offset - early_fetch)){
+                return true;
+        }
+
+        return false;
 }
 
 #endif //PREDICTOR
