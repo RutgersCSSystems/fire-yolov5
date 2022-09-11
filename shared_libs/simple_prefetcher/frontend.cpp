@@ -569,7 +569,6 @@ void inline prefetch_file(int fd)
 			goto prefetch_file_exit;
 		}
 		arg->fd = fd;
-                arg->offset = 0;
 		arg->file_size = filesize;
                 arg->stride = stride;
 
@@ -617,15 +616,21 @@ void inline prefetch_file(int fd)
 
                 arg->prefetch_limit = fp->prefetch_limit;
 
+                arg->offset = fp->last_read_offset;
+
                 /*
                  * Update the last ra_offset
                  */
                 fp->last_ra_offset = arg->offset + arg->prefetch_limit;
+
+                //printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
 #else
 		/*
 		 * This is !PREDICTOR and !FULL_PREFETCH
 		 * which means prefetch blindly NR_RA_PAGES at a time
 		 */
+
+                arg->offset = 0;
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 
                 arg->prefetch_limit = filesize;
@@ -852,11 +857,17 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 
 	if(fp){
 		fp->predictor_update(offset, data_size);
-		if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+                fp->last_read_offset = offset+data_size;
+
+		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
+                if(fp->should_prefetch_now()){
 			prefetch_file(fd, fp);
 			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
+        else{
+                printf("%s: No file_predictor\n", __func__);
+        }
 #endif
 
 skip_read_predictor:
