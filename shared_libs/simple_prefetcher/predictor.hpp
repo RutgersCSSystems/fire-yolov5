@@ -62,6 +62,12 @@ class file_predictor{
                 size_t last_ra_offset;
                 size_t last_read_offset;
 
+                /*
+                 * It is the limit of bytes to prefetch in a file
+                 * from last_ra_offset before exiting prefetcher_th
+                 */
+                size_t prefetch_limit;
+
 		/*
 		 * This variable summarizes if the file is reasonably
 		 * sequential/strided for prefetching to happen.

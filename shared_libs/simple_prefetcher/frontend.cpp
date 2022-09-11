@@ -358,6 +358,7 @@ void prefetcher_th(void *arg) {
 
 	bit_array_t *page_cache_state = NULL;
 
+
 	/*
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
@@ -373,8 +374,8 @@ void prefetcher_th(void *arg) {
 	page_cache_state = NULL;
 #endif
 
-	debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
-			"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
+        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
+                        "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
 			a->offset, a->file_size, a->fd, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
@@ -604,23 +605,30 @@ void inline prefetch_file(int fd)
 				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 			}
 		}
+
+                arg->prefetch_limit = fp->prefetch_limit;
 #else
 		/*
 		 * This is !PREDICTOR and !FULL_PREFETCH
 		 * which means prefetch blindly NR_RA_PAGES at a time
 		 */
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+
+                arg->prefetch_limit = filesize;
 #endif
 
-#if defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR)
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
 		arg->page_cache_state = fp->page_cache_state;
-#elif defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
+#elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
                 if(uinode){
                         
 			//FIXME: @Shaleen Why do we need a lock here?
 			//uinode_bitmap_lock(uinode);
 		        
 			arg->page_cache_state = uinode->page_cache_state;
+
+                        if(arg->page_cache_state == NULL)
+                                printf("%s: pagecache NULL\n", __func__);
                         
 			//uinode_bitmap_unlock(uinode);
 
@@ -695,7 +703,11 @@ void inline record_open(struct file_desc desc){
 
 		fd_to_file_pred.insert({fd, fp});
 
-                //TODO: Add Bonus Prefetching
+                /*
+                 * When a file is opened.
+                 * We give it a signin bonus. Prefetch a small portion of the start
+                 * of the file
+                 */
                 if(fp->should_prefetch_now()){
                         prefetch_file(fd, fp);
                 }
@@ -740,7 +752,6 @@ void handle_open(struct file_desc desc){
 
 	debug_printf("Entering %s\n", __func__);
 
-
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
 
@@ -757,15 +768,16 @@ void handle_open(struct file_desc desc){
 	return;
 #endif
 
-#if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-	record_open(desc);
-#endif
-
 #ifdef MAINTAIN_UINODE
 	if(add_fd_to_inode(i_map, desc.fd) < 0){
                 printf("ERR:%s unable to add to uinode\n", __func__);
         }
 #endif
+
+#if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
+	record_open(desc);
+#endif
+
 
 	/*
 	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH

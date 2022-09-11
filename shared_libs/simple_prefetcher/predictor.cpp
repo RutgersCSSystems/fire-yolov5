@@ -67,7 +67,7 @@ file_predictor::file_predictor(int this_fd, size_t size){
 #endif
 
         //Assume any opened file is probably not sequential
-        sequentiality = POSSNSEQ;
+        sequentiality = MAYBESEQ;
         stride = 0;
         read_size = 0;
 
@@ -185,7 +185,11 @@ bool file_predictor::should_prefetch_now(){
 
         off_t early_fetch = NR_EARLY_FETCH_PAGES * PAGESIZE;
 
-        if (last_read_offset <= (last_ra_offset - early_fetch)){
+        printf("%s: entered\n", __func__);
+
+        prefetch_limit = std::max(0L, early_fetch * sequentiality);
+
+        if ((last_read_offset <= (last_ra_offset - early_fetch)) && prefetch_limit > 0){
                 return true;
         }
 

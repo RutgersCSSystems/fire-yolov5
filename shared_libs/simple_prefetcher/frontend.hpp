@@ -19,6 +19,7 @@ struct thread_args{
 	long offset; //where to start
 	long file_size; //total filesize
 	long prefetch_size; //size of each prefetch req
+        long prefetch_limit; //total prefetch todo
 
 	//difference between the end of last access and start of this access in pages
 	size_t stride;
