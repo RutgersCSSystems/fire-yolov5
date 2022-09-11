@@ -376,12 +376,20 @@ void prefetcher_th(void *arg) {
 
         debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
-			a->offset, a->file_size, a->fd, a->prefetch_size,
+			a->offset, a->prefetch_limit, a->fd, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
 	file_pos = a->offset;
 
 	while (file_pos < a->file_size){
+
+                /*
+                 * Stop prefetching if the prefetch limit is reached
+                 */
+                if((file_pos - a->offset) >= a->prefetch_limit){
+                        printf("%s: offset > prefetch_limit\n", __func__);
+                        goto exit_prefetcher_th;
+                }
 
 #ifdef MODIFIED_RA
 		if(page_cache_state) {
@@ -390,9 +398,10 @@ void prefetcher_th(void *arg) {
 			ra.data = NULL;
 		}
 
-                if(!ra.data)
+                if(!ra.data){
                         printf("%s: no ra.data\n", __func__);
-
+                        goto exit_prefetcher_th;
+                }
 
 		uinode_bitmap_lock(a->uinode);
 		if(readahead_info(a->fd, file_pos,
@@ -401,7 +410,7 @@ void prefetcher_th(void *arg) {
 			uinode_bitmap_unlock(a->uinode);
 
 			printf("readahead_info: failed TID:%ld \n", tid);
-			goto exit;
+                        goto exit_prefetcher_th;
 		}
 #ifdef ENABLE_LIB_STATS
                 else{
@@ -422,7 +431,7 @@ void prefetcher_th(void *arg) {
                 if(start_pg > page_cache_state->numBits){
 			printf("ERR: %s Using small bitmap; unable to support "
 					"large file\n", __func__);
-                        goto exit;
+			goto exit_prefetcher_th;
                 }
 
 
@@ -454,7 +463,7 @@ void prefetcher_th(void *arg) {
 
                 if(pg_diff == 0){
                         printf("ERR:%s, pg_diff==0\n", __func__);
-                        goto exit;
+			goto exit_prefetcher_th;
                 }
 
                 file_pos += pg_diff << PAGE_SHIFT;
@@ -472,14 +481,14 @@ void prefetcher_th(void *arg) {
 #ifdef ENABLE_EVICTION_OLD
 			perform_eviction(a);
 #else //ENABLE_EVICTION
-			goto exit;
+			goto exit_prefetcher_th;
 #endif //ENABLE_EVICTION
 		}
 
 #else //MODIFIED_RA
 		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
 			//printf("error while readahead: TID:%ld \n", tid);
-			goto exit;
+			goto exit_prefetcher_th;
 		}
 #ifdef ENABLE_LIB_STATS
                 else{
@@ -492,7 +501,7 @@ void prefetcher_th(void *arg) {
 	}
 
 
-exit:
+exit_prefetcher_th:
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
         debug_printf("%s: destroying the page cache\n", __func__);
 
@@ -607,6 +616,11 @@ void inline prefetch_file(int fd)
 		}
 
                 arg->prefetch_limit = fp->prefetch_limit;
+
+                /*
+                 * Update the last ra_offset
+                 */
+                fp->last_ra_offset = arg->offset + arg->prefetch_limit;
 #else
 		/*
 		 * This is !PREDICTOR and !FULL_PREFETCH
@@ -615,6 +629,7 @@ void inline prefetch_file(int fd)
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
 
                 arg->prefetch_limit = filesize;
+
 #endif
 
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
@@ -798,7 +813,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
         off_t offset;
 
-	debug_printf("%s: TID:%ld\n", __func__, gettid());
+	//debug_printf("%s: TID:%ld\n", __func__, gettid());
 
         if(file_fd < 3 && !stream){
                 goto skip_read_predictor;
