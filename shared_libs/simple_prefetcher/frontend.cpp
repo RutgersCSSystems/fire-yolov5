@@ -374,9 +374,9 @@ void prefetcher_th(void *arg) {
 	page_cache_state = NULL;
 #endif
 
-        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d,"
-                        "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", tid,
-			a->offset, a->prefetch_limit, a->fd, a->prefetch_size,
+        debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+                        "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
+			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
 	file_pos = a->offset;
@@ -387,7 +387,7 @@ void prefetcher_th(void *arg) {
                  * Stop prefetching if the prefetch limit is reached
                  */
                 if((file_pos - a->offset) >= a->prefetch_limit){
-                        printf("%s: offset > prefetch_limit\n", __func__);
+                        //printf("%s: offset > prefetch_limit\n", __func__);
                         goto exit_prefetcher_th;
                 }
 
@@ -547,6 +547,7 @@ void inline prefetch_file(int fd)
 #ifdef PREDICTOR
 	filesize = fp->filesize;
         stride = fp->is_strided() * fp->portion_sz;
+        stride = 0; //XXX: TEMP fix Need to change stride detection based on all access patterns
         if(stride < 0){
                 printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
                 stride = 0;
