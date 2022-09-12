@@ -643,16 +643,11 @@ void inline prefetch_file(int fd)
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
                 if(uinode){
                         
-			//FIXME: @Shaleen Why do we need a lock here?
-			//uinode_bitmap_lock(uinode);
-		        
 			arg->page_cache_state = uinode->page_cache_state;
 
                         if(arg->page_cache_state == NULL)
                                 printf("%s: pagecache NULL\n", __func__);
                         
-			//uinode_bitmap_unlock(uinode);
-
                         arg->uinode = uinode;
 
                 }else{
