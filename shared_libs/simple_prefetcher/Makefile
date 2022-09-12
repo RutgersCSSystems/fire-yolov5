@@ -19,7 +19,7 @@ CROSS_BITMAP_SHIFT=24
 
 SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c 
 
-DEBUG=-DDEBUG
+#DEBUG=-DDEBUG
 ENABLE_LIB_STATS=-DENABLE_LIB_STATS ##Comment if dont need lib stats
 ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 #ENABLE_MPI=-DENABLE_MPI
@@ -51,10 +51,12 @@ PREDICTOR_THPOOL_BLOCK_RA=-DTHPOOL_PREFETCH -DPREDICTOR
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION
 
 PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS
+CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DCONCURRENT_PREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS
 
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_APP_READAHEADS -DENABLE_EVICTION # -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE  
 
-all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync CLEAR_STATS
+all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Concurrent_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync CLEAR_STATS
+
 
 #App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCES)
@@ -97,6 +99,11 @@ Cross_Info_IOOPT_sync: $(SOURCES)
 Cross_Info_Predict: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)
+
+#Cross_Info + Concurrent Predictor
+Cross_Info_Concurrent_Predict: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CICP.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO)
 
 
 #Cross_Info_Predict + IOOPT

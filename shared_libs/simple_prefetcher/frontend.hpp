@@ -36,6 +36,15 @@ struct thread_args{
 	bit_array_t *page_cache_state;
 
         struct u_inode *uinode;
+
+        /*
+         * Some offsets used exclusively by read_predictor
+         */
+        size_t data_size;
+
+#ifdef PREDICTOR
+        file_predictor *fp;
+#endif
 };
 
 //returns filesize if fd is regular file

@@ -47,7 +47,6 @@ std::atomic_flag i_map_init;
 #include "util.hpp"
 #endif
 
-#include "frontend.hpp"
 #include "utils/robin_hood.h"
 
 #ifdef THPOOL_PREFETCH
@@ -63,6 +62,7 @@ robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
 #endif
 
+#include "frontend.hpp"
 
 #ifdef ENABLE_MPI
 struct hashtable *mpi_map;
@@ -507,7 +507,10 @@ exit_prefetcher_th:
 
 	BitArrayDestroy(page_cache_state);
 #endif
+
+#ifndef CONCURRENT_PREDICTOR
 	free(arg);
+#endif
 
 #ifdef ENABLE_LIB_STATS
         total_nr_ra += nr_ra_done;
@@ -524,12 +527,16 @@ exit_prefetcher_th:
 /*
  * Spawns or enqueues a request for file prefetching
  */
-#ifdef PREDICTOR
-void inline prefetch_file(int fd, file_predictor *fp)
+#ifndef PREDICTOR
+void inline prefetch_file(int fd){
 #else
-void inline prefetch_file(int fd)
+//void inline prefetch_file(int fd, file_predictor *fp){
+void inline prefetch_file(void *args){
+	struct thread_args *a = (struct thread_args*)args;
+        int fd = a->fd;
+        file_predictor *fp = a->fp;
 #endif
-{
+
 	struct thread_args *arg = NULL;
 	off_t filesize;
         off_t stride;
@@ -565,7 +572,11 @@ void inline prefetch_file(int fd)
 #endif
 
 	if(filesize > MIN_FILE_SZ){
+#ifdef CONCURRENT_PREDICTOR
+                arg = (struct thread_args*)args;
+#else
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+#endif
 		if(!arg) {
 			goto prefetch_file_exit;
 		}
@@ -664,10 +675,12 @@ void inline prefetch_file(int fd)
 		goto prefetch_file_exit;
 	}
 
-#ifdef CONCURRENT_PREFETCH
+#ifdef CONCURRENT_PREDICTOR
+	prefetcher_th((void*)arg);
+#elif defined(CONCURRENT_PREFETCH)
 	pthread_t thread;
 	pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
-#elif THPOOL_PREFETCH
+#elif defined(THPOOL_PREFETCH)
 	//Enlists the prefetching request using the thpool
 	if(!workerpool)
 		printf("ERR: %s: No workerpool ? \n", __func__);
@@ -725,7 +738,10 @@ void inline record_open(struct file_desc desc){
                  * of the file
                  */
                 if(fp->should_prefetch_now()){
-                        prefetch_file(fd, fp);
+	                struct thread_args arg;
+                        arg.fd = fd;
+                        arg.fp = fp;
+                        prefetch_file(&arg);
                 }
 #endif
 
@@ -808,6 +824,37 @@ void handle_open(struct file_desc desc){
 }
 
 
+#ifdef PREDICTOR
+void update_file_predictor_and_prefetch(void *arg){
+	struct thread_args *a = (struct thread_args*)arg;
+
+	file_predictor *fp;
+	try{
+		fp = fd_to_file_pred.at(a->fd);
+	}
+	catch(const std::out_of_range &orr){
+                return;
+	}
+
+	if(fp){
+		fp->predictor_update(a->offset, a->data_size);
+                fp->last_read_offset = a->offset + a->data_size;
+
+                if(fp->should_prefetch_now()){
+                        a->fp = fp;
+			prefetch_file(arg);
+			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
+		}
+	}
+        else{
+                printf("%s: No file_predictor\n", __func__);
+        }
+
+        return;
+}
+#endif //PREDICTOR
+
+
 void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
 
 	size_t amount_read = 0;
@@ -842,28 +889,28 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	set_curr_last_fd(fd);
 #endif
 
+
 #ifdef PREDICTOR
-	file_predictor *fp;
-	try{
-		fp = fd_to_file_pred.at(fd);
-	}
-	catch(const std::out_of_range &orr){
-		goto skip_read_predictor;
-	}
+#ifdef CONCURRENT_PREDICTOR
+	struct thread_args *arg;
+	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 
-	if(fp){
-		fp->predictor_update(offset, data_size);
-                fp->last_read_offset = offset+data_size;
+        arg->fd = fd;
+        arg->offset = offset;
+        arg->data_size = data_size;
 
-		//if((fp->is_sequential() >= LIKELYSEQ) && (!fp->already_prefetched.test_and_set())){
-                if(fp->should_prefetch_now()){
-			prefetch_file(fd, fp);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
-		}
-	}
-        else{
-                printf("%s: No file_predictor\n", __func__);
-        }
+        update_file_predictor_and_prefetch(arg);
+	//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+
+        free(arg);
+#else
+	struct thread_args arg;
+        arg.fd = fd;
+        arg.offset = offset;
+        arg.data_size = data_size;
+
+        update_file_predictor_and_prefetch(&arg);
+#endif
 #endif
 
 skip_read_predictor:
