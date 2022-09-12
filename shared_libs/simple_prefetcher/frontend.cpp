@@ -900,7 +900,11 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
         arg->data_size = data_size;
 
         update_file_predictor_and_prefetch(arg);
-	//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+        
+        /*
+         * XXX: Thpool is not working right now
+         */
+	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
 
         free(arg);
 #else
