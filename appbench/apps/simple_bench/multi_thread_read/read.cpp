@@ -17,6 +17,8 @@
 #include <signal.h>
 #include <math.h>
 #include <time.h>
+#include <sys/sysinfo.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
 #include <sys/time.h>
@@ -32,6 +34,33 @@
 
 using namespace std;
 
+
+void os_constructors(){
+
+        start_cross_trace(ENABLE_FILE_STATS, 0);
+
+        char a;
+#ifdef SET_READ_UNLIMITED
+	a = '1';
+#else
+	a = '0';
+#endif
+	set_read_limits(a);
+
+#ifdef UNSET_2MB_RA_LIMIT
+	a = '1'; //disables 2mb limit in readahead
+#else
+	a = '0'; //enables 2mb limit in readahead
+#endif
+	set_readahead_2mb_limit(a);
+
+
+	//Set bitmap size inside the OS
+	a = CROSS_BITMAP_SHIFT;
+	set_cross_bitmap_shift(a);
+
+
+}
 
 struct thread_args{
         int fd; //fd of opened file
@@ -83,7 +112,14 @@ void reader_th(void *arg){
                 printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
                 exit(0);
         }
-#endif
+#ifdef MODIFIED_RA
+        printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
+        struct read_ra_req ra;
+	ra.data = NULL;
+	readahead_info(a->fd, 0, 0, &ra);
+#endif //MODIFIED_RA
+
+#endif //SHARED_FILE
 
 #ifdef DEBUG
         //Report about the thread
@@ -98,17 +134,24 @@ void reader_th(void *arg){
         offset = a->offset;
 
 #ifdef APP_SINGLE_PREFETCH
+
+#ifdef MODIFIED_RA
+	ra.data = NULL;
+	readahead_info(a->fd, 0, NR_RA_PAGES << PAGESHIFT, &ra);
+#else
 	readahead(a->fd, offset, a->size);
+#endif //MODIFIED_RA
+
 #ifdef DEBUG
-			printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
-					__func__, a->fd, offset, a->size);
-#endif
+	printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+                        __func__, a->fd, offset, a->size);
+#endif //DEBUG
+
 #elif defined(APP_OPT_PREFETCH)
 	ra_offset = a->offset;
-#endif
+#endif //APP_SINGLE_PREFETCH
 
         while(bytes_read < a->size){
-
 
 #ifdef DEBUG
                 printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
@@ -117,7 +160,12 @@ void reader_th(void *arg){
 #ifdef APP_OPT_PREFETCH
 		if(offset >= ra_offset){
 			ra_offset = offset;
+#ifdef MODIFIED_RA
+	                ra.data = NULL;
+			readahead_info(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT, &ra);
+#else
 			readahead(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
+#endif //MODIFIED_RA
 			ra_offset += NR_RA_PAGES << PAGESHIFT;
 #ifdef DEBUG
 			printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
@@ -172,6 +220,9 @@ exit:
 
 int main(int argc, char **argv)
 {
+
+        os_constructors();
+
         long size = FILESIZE;
 
         /*
