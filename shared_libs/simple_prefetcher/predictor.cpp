@@ -157,8 +157,8 @@ is_seq:
 exit_success:
 
 #ifdef ENABLE_PRED_STATS
-        //new_seq = sequentiality;
-        update_seq_stats(old_seq, sequentiality);
+        new_seq = sequentiality;
+        update_seq_stats(old_seq, new_seq);
 #endif
 
 exit_fail:
@@ -199,19 +199,12 @@ bool file_predictor::should_prefetch_now(){
 }
 
 
-/*
-void memset_seq_stats(){
-        memset(seq_stats, 0, sizeof(long)*18);
-}
-*/
+//PREDICTOR STATS FUNCTIONS
 
 void init_seq_stats(int seq){
         stats.lock();
         seq_stats[seq+8] += 1;
-        tot_fds += 1;
         stats.unlock();
-
-        //printf("total_fd = %ld\n", tot_fds);
 }
 
 void update_seq_stats(int old_seq, int new_seq){
