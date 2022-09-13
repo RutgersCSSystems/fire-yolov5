@@ -70,6 +70,7 @@ struct hashtable *mpi_map;
 
 struct file_desc {
         int fd;
+        const char *filename;
 #ifdef ENABLE_MPI
         MPI_File fh;
 #endif
@@ -725,7 +726,7 @@ void inline record_open(struct file_desc desc){
 	if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
-		file_predictor *fp = new file_predictor(fd, filesize);
+		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
 
 		if(!fp){
                         printf("%s ERR: Could not allocate new file_predictor\n", __func__);
@@ -1030,6 +1031,7 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 		goto exit;
 
 	desc.fd = fd;
+        desc.filename = pathname;
 	handle_open(desc);
 
 exit:
@@ -1058,6 +1060,7 @@ int open64(const char *pathname, int flags, ...){
 	}
 
 	desc.fd = fd;
+        desc.filename = pathname;
 	handle_open(desc);
 
 exit:
@@ -1084,10 +1087,12 @@ int open(const char *pathname, int flags, ...){
 		fd = real_open(pathname, flags, 0);
 	}
 
-	desc.fd = fd;
-
-	if(desc.fd < 0)
+	if(fd < 0)
 		goto exit;
+
+	desc.fd = fd;
+        desc.filename = pathname;
+
 	handle_open(desc);
 
 exit:
@@ -1109,6 +1114,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	fd = fileno(ret);
 	desc.fd = fd;
+        desc.filename = filename;
 
 	handle_open(desc);
 

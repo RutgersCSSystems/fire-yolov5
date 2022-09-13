@@ -72,7 +72,7 @@ class file_predictor{
 		 * This variable summarizes if the file is reasonably
 		 * sequential/strided for prefetching to happen.
 		 */
-		long sequentiality;
+		int sequentiality;
 
 		/*
 		 * Returns true if readahead has been issued
@@ -80,7 +80,7 @@ class file_predictor{
 		 */
 		std::atomic_flag already_prefetched;
 
-		file_predictor(int this_fd, size_t size);
+		file_predictor(int this_fd, size_t size, const char *filename);
 
 		/*Destructor*/
 		~file_predictor();

@@ -36,13 +36,13 @@
 #ifdef PREDICTOR
 #include "predictor.hpp"
 
-long seq_stats[18];
+long seq_stats[17];
 std::mutex stats;
-void init_seq_stats(long seq);
-void update_seq_stats(long old_seq, long new_seq);
+void init_seq_stats(int seq);
+void update_seq_stats(int old_seq, int new_seq);
 
 
-file_predictor::file_predictor(int this_fd, size_t size){
+file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
 
         fd = this_fd;
         filesize = size;
@@ -71,6 +71,7 @@ file_predictor::file_predictor(int this_fd, size_t size){
         sequentiality = MAYBESEQ;
 #ifdef ENABLE_PRED_STATS
         init_seq_stats(sequentiality);
+        //printf("%s: Opened fd=%d, filename=%s\n", __func__, this_fd, filename);
 #endif
         stride = 0;
         read_size = 0;
@@ -105,11 +106,11 @@ void file_predictor::predictor_update(off_t offset, size_t size){
         size_t portion_num = offset/portion_sz; //which portion
         size_t num_portions = size/portion_sz; //how many portions in this req
         size_t pn = 0; //used for adjacency check
-        long old_seq;
+        int old_seq, new_seq;
 
         if(portion_num > nr_portions){
                 printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
-                goto exit;
+                goto exit_fail;
         }
 
         /*
@@ -130,7 +131,7 @@ void file_predictor::predictor_update(off_t offset, size_t size){
 
                 /*bounds check*/
                 if((long)pn < 0){
-                        goto exit;
+                        goto exit_fail;
                 }
 
                 if(BitArrayTestBit(access_history, pn)){
@@ -145,19 +146,22 @@ void file_predictor::predictor_update(off_t offset, size_t size){
 
 is_not_seq:
         old_seq = sequentiality;
-        sequentiality = (std::max<long>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
+        sequentiality = (std::max<int>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
 
-        goto exit;
+        goto exit_success;
 
 is_seq:
         old_seq = sequentiality;
-        sequentiality = (std::min<long>)(DEFSEQ, sequentiality+1); //keeps from overflowing
+        sequentiality = (std::min<int>)(DEFSEQ, sequentiality+1); //keeps from overflowing
+
+exit_success:
 
 #ifdef ENABLE_PRED_STATS
+        //new_seq = sequentiality;
         update_seq_stats(old_seq, sequentiality);
 #endif
 
-exit:
+exit_fail:
         return;
 }
 
@@ -195,18 +199,29 @@ bool file_predictor::should_prefetch_now(){
 }
 
 
-void init_seq_stats(long seq){
+/*
+void memset_seq_stats(){
+        memset(seq_stats, 0, sizeof(long)*18);
+}
+*/
+
+void init_seq_stats(int seq){
+        stats.lock();
         seq_stats[seq+8] += 1;
+        tot_fds += 1;
+        stats.unlock();
+
+        //printf("total_fd = %ld\n", tot_fds);
 }
 
-void update_seq_stats(long old_seq, long new_seq){
+void update_seq_stats(int old_seq, int new_seq){
 
         stats.lock();
 
-        if(seq_stats[old_seq+8] > 0)
-                seq_stats[old_seq+8] -= 1;
-
         seq_stats[new_seq+8] += 1;
+        
+        seq_stats[old_seq+8] -= 1;
+
         stats.unlock();
 }
 
