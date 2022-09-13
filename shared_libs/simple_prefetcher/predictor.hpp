@@ -5,13 +5,13 @@
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
 
-#define DEFNSEQ (-8) //Not seq or strided(since off_t is ulong)
-#define LIKELYNSEQ (-4) /*possibly not seq */
-#define POSSNSEQ 0 /*possibly not seq */
-#define MAYBESEQ 1 /*maybe seq */
-#define POSSSEQ 2 /* possibly seq? */
-#define LIKELYSEQ 4 /* likely seq? */
-#define DEFSEQ 8 /* definitely seq */
+#define DEFNSEQ (0) //Not seq or strided(since off_t is ulong)
+#define LIKELYNSEQ (1) /*possibly not seq */
+#define POSSNSEQ 2 /*possibly not seq */
+#define MAYBESEQ 4 /*maybe seq */
+#define POSSSEQ 32 /* possibly seq? */
+#define LIKELYSEQ 64 /* likely seq? */
+#define DEFSEQ 128 /* definitely seq */
 
 void hello_predictor();
 

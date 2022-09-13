@@ -36,18 +36,23 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
+declare -a num_arr=("5000000")
+NUM=5000000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
 declare -a workload_arr=("readrandom")
-declare -a config_arr=("Cross_Info" "OSonly")
+declare -a config_arr=("Cross_Info" "OSonly" "CICP")
+declare -a config_arr=("OSonly")
+declare -a config_arr=("Cross_Info")
+declare -a config_arr=("CICP")
+
+
 #declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
 
 
@@ -80,7 +85,7 @@ CLEAR_DATA()
 COMPILE_AND_WRITE()
 {
         export LD_PRELOAD=""
-	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200"
 	mkdir -p $RESULTS
 
 	cd $PREDICT_LIB_DIR
@@ -89,8 +94,8 @@ COMPILE_AND_WRITE()
         $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
 
         ##Condition the DB to get Stable results
-        $DBHOME/db_bench $PARAMS $READARGS  #&> $RESULTS/WARMUP-READ1.out
-        FlushDisk
+        #$DBHOME/db_bench $PARAMS $READARGS  #&> $RESULTS/WARMUP-READ1.out
+        #FlushDisk
         #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
 }
 
@@ -113,7 +118,10 @@ RUN() {
         #CLEAR_DATA
 
 	echo "BEGINNING TO WARM UP ......."
-	COMPILE_AND_WRITE
+	cd $PREDICT_LIB_DIR
+	$PREDICT_LIB_DIR/compile.sh
+	cd $DBHOME
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -123,7 +131,7 @@ RUN() {
 	do
 		for THREAD in "${thread_arr[@]}"
 		do
-			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
 
 			for CONFIG in "${config_arr[@]}"
 			do
@@ -142,6 +150,7 @@ RUN() {
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
+					cat $RESULTS/$CONFIG.out | grep "MB/s"
 					FlushDisk
 				done
 			done
