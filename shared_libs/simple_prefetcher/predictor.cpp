@@ -105,7 +105,9 @@ file_predictor::~file_predictor(){
  */
 void file_predictor::predictor_update(off_t offset, size_t size){
 
-        size_t portion_num = offset/portion_sz; //which portion
+        last_read_offset = offset + size;
+
+        size_t portion_num = (offset+size)/portion_sz; //which portion
         size_t num_portions = size/portion_sz; //how many portions in this req
         size_t pn = 0; //used for adjacency check
         int old_seq, new_seq;
@@ -197,11 +199,12 @@ bool file_predictor::should_prefetch_now(){
         prefetch_limit = std::max(0L, early_fetch * sequentiality);
 
         /*
-        printf("%s: last_read_offset=%ld, last_ra_offset=%ld, prefetch_limit=%ld\n",
-                        __func__, last_read_offset, last_ra_offset, prefetch_limit);
-        */
+        printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
+                        __func__, fd, last_read_offset, last_ra_offset, (last_ra_offset-last_read_offset), prefetch_limit);
+                        */
 
         if (((last_read_offset + early_fetch) >= last_ra_offset) && prefetch_limit > 0){
+                //printf("%s: true\n", __func__);
                 return true;
         }
 

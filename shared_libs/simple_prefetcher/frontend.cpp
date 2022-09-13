@@ -846,7 +846,6 @@ void update_file_predictor_and_prefetch(void *arg){
 
 	if(fp){
 		fp->predictor_update(a->offset, a->data_size);
-                fp->last_read_offset = a->offset + a->data_size;
 
                 if(fp->should_prefetch_now()){
                         a->fp = fp;
@@ -873,7 +872,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 
         if(file_fd < 3 && !stream){
                 goto skip_read_predictor;
-        }else if(file_fd > 3){
+        }else if(file_fd >= 3){
 	        fd = file_fd;
                 offset = file_offset;
         }else if(stream){
@@ -893,12 +892,14 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		goto skip_read_predictor;
 	}
 
+
 #ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
 
 
 #ifdef PREDICTOR
+
 #ifdef CONCURRENT_PREDICTOR
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
@@ -922,8 +923,9 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
         arg.data_size = data_size;
 
         update_file_predictor_and_prefetch(&arg);
-#endif
-#endif
+#endif //CONCURRENT_PREDICTOR
+
+#endif //PREDICTOR
 
 skip_read_predictor:
 	return;

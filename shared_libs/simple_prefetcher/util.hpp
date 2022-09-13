@@ -42,7 +42,7 @@
  * the read is almost getting to last RA position
  */
 #ifndef NR_EARLY_FETCH_PAGES
-#define NR_EARLY_FETCH_PAGES 256
+#define NR_EARLY_FETCH_PAGES NR_RA_PAGES*2
 #endif
 
 /* 
