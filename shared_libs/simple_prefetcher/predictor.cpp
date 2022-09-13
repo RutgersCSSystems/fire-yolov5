@@ -22,6 +22,7 @@
 #include <string>
 #include <iterator>
 #include <atomic>
+#include <mutex>
 
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
@@ -35,10 +36,10 @@
 #ifdef PREDICTOR
 #include "predictor.hpp"
 
-void hello_predictor(){
-        printf("hello predictor\n");
-        return;
-}
+long seq_stats[18];
+std::mutex stats;
+void init_seq_stats(long seq);
+void update_seq_stats(long old_seq, long new_seq);
 
 
 file_predictor::file_predictor(int this_fd, size_t size){
@@ -68,6 +69,9 @@ file_predictor::file_predictor(int this_fd, size_t size){
 
         //Assume any opened file is probably not sequential
         sequentiality = MAYBESEQ;
+#ifdef ENABLE_PRED_STATS
+        init_seq_stats(sequentiality);
+#endif
         stride = 0;
         read_size = 0;
 
@@ -101,6 +105,7 @@ void file_predictor::predictor_update(off_t offset, size_t size){
         size_t portion_num = offset/portion_sz; //which portion
         size_t num_portions = size/portion_sz; //how many portions in this req
         size_t pn = 0; //used for adjacency check
+        long old_seq;
 
         if(portion_num > nr_portions){
                 printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
@@ -139,16 +144,18 @@ void file_predictor::predictor_update(off_t offset, size_t size){
         }
 
 is_not_seq:
-        //sequentiality -= 1;
-        //sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
+        old_seq = sequentiality;
         sequentiality = (std::max<long>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
+
         goto exit;
 
 is_seq:
-        //if(sequentiality < DEFSEQ)
-        //sequentiality += 1;
-        //sequentiality %= (DEFSEQ+1); //Keeps from overflowing
+        old_seq = sequentiality;
         sequentiality = (std::min<long>)(DEFSEQ, sequentiality+1); //keeps from overflowing
+
+#ifdef ENABLE_PRED_STATS
+        update_seq_stats(old_seq, sequentiality);
+#endif
 
 exit:
         return;
@@ -185,6 +192,33 @@ bool file_predictor::should_prefetch_now(){
         }
 
         return false;
+}
+
+
+void init_seq_stats(long seq){
+        seq_stats[seq+8] += 1;
+}
+
+void update_seq_stats(long old_seq, long new_seq){
+
+        stats.lock();
+
+        if(seq_stats[old_seq+8] > 0)
+                seq_stats[old_seq+8] -= 1;
+
+        seq_stats[new_seq+8] += 1;
+        stats.unlock();
+}
+
+void print_seq_stats(){
+        printf("PREDICTOR STATS\n");
+        stats.lock();
+
+        for(int i=-8; i<=8; i++){
+                printf("SEQ[%d]=%ld ", i, seq_stats[i+8]);
+        }
+        printf("\n");
+        stats.unlock();
 }
 
 #endif //PREDICTOR

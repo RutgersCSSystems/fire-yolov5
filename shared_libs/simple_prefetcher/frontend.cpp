@@ -272,6 +272,11 @@ void dest(){
 	fprintf(stderr, "PRINT_GLOBAL_LIB_STATS in %s\n", __func__);
 	fprintf(stdout, "Total nr_ra = %ld\n", total_nr_ra.load());
 	fprintf(stdout, "Total nr_bytes_ra = %ld\n", total_bytes_ra.load());
+
+#if defined(PREDICTOR) && defined(ENABLE_PRED_STATS)
+        print_seq_stats();
+#endif
+
 #endif
 
 }

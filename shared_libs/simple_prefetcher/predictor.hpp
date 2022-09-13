@@ -13,12 +13,12 @@
 #define LIKELYSEQ 4 /* likely seq? */
 #define DEFSEQ 8 /* definitely seq */
 
-void hello_predictor();
+
+void print_seq_stats();
 
 ///////////////////////////////////////////////////////////////
 //This portion is used to keep track of per file prefetching
 ///////////////////////////////////////////////////////////////
-
 
 class file_predictor{
 	public:
