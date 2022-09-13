@@ -24,17 +24,20 @@ DISABLE_LOCK_STATS()
 
 FlushDisk
 
-ENABLE_LOCK_STATS
+clear_os_stats
+
+#ENABLE_LOCK_STATS
 #export LD_PRELOAD="/usr/lib/lib_CII.so"
 #export LD_PRELOAD="/usr/lib/lib_VRA.so"
 #export LD_PRELOAD="/usr/lib/lib_CII_sync.so"
 #export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
 #export LD_PRELOAD="/usr/lib/lib_Cross_Info_sync.so"
-#export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-export LD_PRELOAD="/usr/lib/lib_CII.so"
+export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
+#export LD_PRELOAD="/usr/lib/lib_OSonly.so"
+#export LD_PRELOAD="/usr/lib/lib_CIP.so"
 ./bin/read_shared_seq
 export LD_PRELOAD=""
-DISABLE_LOCK_STATS
+#DISABLE_LOCK_STATS
 
 dmesg
-sudo cat /proc/lock_stat
+#sudo cat /proc/lock_stat
