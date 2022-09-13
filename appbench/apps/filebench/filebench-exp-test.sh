@@ -29,9 +29,9 @@ mkdir -p $RESULTS
 #declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
 
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
-#declare -a workload_arr=("mongo.f")
+declare -a workload_arr=("filemicro_seqread.f" "fileserver.f" "randomread.f")
 #declare -a config_arr=("Cross_Info" "Cross_Blind" "OSonly")
-declare -a config_arr=("OSonly")
+declare -a config_arr=("CIPI")
 declare -a thread_arr=("16")
 
 
