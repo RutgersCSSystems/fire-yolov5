@@ -22,6 +22,7 @@
 #include <string>
 #include <iterator>
 #include <atomic>
+#include <mutex>
 
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
@@ -35,16 +36,18 @@
 #ifdef PREDICTOR
 #include "predictor.hpp"
 
-void hello_predictor(){
-        printf("hello predictor\n");
-        return;
-}
+long seq_stats[17];
+std::mutex stats;
+void init_seq_stats(int seq);
+void update_seq_stats(int old_seq, int new_seq);
 
 
-file_predictor::file_predictor(int this_fd, size_t size){
+file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
 
         fd = this_fd;
         filesize = size;
+
+        nr_reads_done = 0;
 
 
         portion_sz = PAGESIZE * PORTION_PAGES;
@@ -68,6 +71,10 @@ file_predictor::file_predictor(int this_fd, size_t size){
 
         //Assume any opened file is probably not sequential
         sequentiality = MAYBESEQ;
+#ifdef ENABLE_PRED_STATS
+        init_seq_stats(sequentiality);
+        //printf("%s: Opened fd=%d, filename=%s\n", __func__, this_fd, filename);
+#endif
         stride = 0;
         read_size = 0;
 
@@ -98,13 +105,16 @@ file_predictor::~file_predictor(){
  */
 void file_predictor::predictor_update(off_t offset, size_t size){
 
-        size_t portion_num = offset/portion_sz; //which portion
+        last_read_offset = offset + size;
+
+        size_t portion_num = (offset+size)/portion_sz; //which portion
         size_t num_portions = size/portion_sz; //how many portions in this req
         size_t pn = 0; //used for adjacency check
+        int old_seq, new_seq;
 
         if(portion_num > nr_portions){
                 printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
-                goto exit;
+                goto exit_fail;
         }
 
         /*
@@ -125,7 +135,7 @@ void file_predictor::predictor_update(off_t offset, size_t size){
 
                 /*bounds check*/
                 if((long)pn < 0){
-                        goto exit;
+                        goto exit_fail;
                 }
 
                 if(BitArrayTestBit(access_history, pn)){
@@ -139,18 +149,31 @@ void file_predictor::predictor_update(off_t offset, size_t size){
         }
 
 is_not_seq:
-        //sequentiality -= 1;
-        //sequentiality %= (DEFNSEQ-1); //Keeps from underflowing
-        sequentiality = (std::max<long>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
-        goto exit;
+        old_seq = sequentiality;
+        sequentiality = (std::max<int>)(DEFNSEQ, sequentiality-1); //keeps from underflowing
+
+        goto exit_success;
 
 is_seq:
-        //if(sequentiality < DEFSEQ)
-        //sequentiality += 1;
-        //sequentiality %= (DEFSEQ+1); //Keeps from overflowing
-        sequentiality = (std::min<long>)(DEFSEQ, sequentiality+1); //keeps from overflowing
+        old_seq = sequentiality;
+        sequentiality = (std::min<int>)(DEFSEQ, sequentiality+1); //keeps from overflowing
 
-exit:
+exit_success:
+
+#ifdef ENABLE_PRED_STATS
+        new_seq = sequentiality;
+
+        struct stat file_stat;
+        fstat (fd, &file_stat);
+
+        if(nr_reads_done > NR_READS_BEFORE_STATS && old_seq != new_seq){
+                printf("%s: fd=%d, offset=%ld, size=%ld, inode_nr=%ld old_seq=%d, new_seq=%d\n", __func__, fd, offset, size, file_stat.st_ino, old_seq, new_seq);
+        }
+
+        update_seq_stats(old_seq, new_seq);
+#endif
+
+exit_fail:
         return;
 }
 
@@ -176,15 +199,48 @@ bool file_predictor::should_prefetch_now(){
         prefetch_limit = std::max(0L, early_fetch * sequentiality);
 
         /*
-        printf("%s: last_read_offset=%ld, last_ra_offset=%ld, prefetch_limit=%ld\n",
-                        __func__, last_read_offset, last_ra_offset, prefetch_limit);
-        */
+        printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
+                        __func__, fd, last_read_offset, last_ra_offset, (last_ra_offset-last_read_offset), prefetch_limit);
+                        */
 
         if (((last_read_offset + early_fetch) >= last_ra_offset) && prefetch_limit > 0){
+                //printf("%s: true\n", __func__);
                 return true;
         }
 
         return false;
+}
+
+
+//PREDICTOR STATS FUNCTIONS
+
+void init_seq_stats(int seq){
+        stats.lock();
+        seq_stats[seq+8] += 1;
+        stats.unlock();
+}
+
+void update_seq_stats(int old_seq, int new_seq){
+
+        stats.lock();
+
+        seq_stats[new_seq+8] += 1;
+        
+        seq_stats[old_seq+8] -= 1;
+
+        stats.unlock();
+}
+
+void print_seq_stats(){
+        printf("PREDICTOR STATS\n");
+        stats.lock();
+
+        for(int i=-8; i<=8; i++){
+                if(seq_stats[i+8] !=0)
+                        printf("SEQ[%d]=%ld ", i, seq_stats[i+8]);
+        }
+        printf("\n");
+        stats.unlock();
 }
 
 #endif //PREDICTOR

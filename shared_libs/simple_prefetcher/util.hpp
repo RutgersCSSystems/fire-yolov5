@@ -42,7 +42,7 @@
  * the read is almost getting to last RA position
  */
 #ifndef NR_EARLY_FETCH_PAGES
-#define NR_EARLY_FETCH_PAGES 256
+#define NR_EARLY_FETCH_PAGES NR_RA_PAGES*2
 #endif
 
 /* 
@@ -120,6 +120,15 @@
  */
 #ifndef NR_BITS_BEFORE_GIVEUP
 #define NR_BITS_BEFORE_GIVEUP std::min(NR_RA_PAGES, 64)
+#endif
+
+
+/*
+ * This is the number of reads we should let happen
+ * before checking if the fd is being read in changing patterns
+ */
+#ifndef NR_READS_BEFORE_STATS
+#define NR_READS_BEFORE_STATS 20
 #endif
 
 

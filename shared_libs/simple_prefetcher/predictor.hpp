@@ -13,17 +13,19 @@
 #define LIKELYSEQ 64 /* likely seq? */
 #define DEFSEQ 128 /* definitely seq */
 
-void hello_predictor();
+
+void print_seq_stats();
 
 ///////////////////////////////////////////////////////////////
 //This portion is used to keep track of per file prefetching
 ///////////////////////////////////////////////////////////////
 
-
 class file_predictor{
 	public:
 		int fd;
 		size_t filesize;
+
+                long nr_reads_done;
 
 		/*
 		 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
@@ -72,7 +74,7 @@ class file_predictor{
 		 * This variable summarizes if the file is reasonably
 		 * sequential/strided for prefetching to happen.
 		 */
-		long sequentiality;
+		int sequentiality;
 
 		/*
 		 * Returns true if readahead has been issued
@@ -80,7 +82,7 @@ class file_predictor{
 		 */
 		std::atomic_flag already_prefetched;
 
-		file_predictor(int this_fd, size_t size);
+		file_predictor(int this_fd, size_t size, const char *filename);
 
 		/*Destructor*/
 		~file_predictor();

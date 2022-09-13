@@ -70,6 +70,7 @@ struct hashtable *mpi_map;
 
 struct file_desc {
         int fd;
+        const char *filename;
 #ifdef ENABLE_MPI
         MPI_File fh;
 #endif
@@ -272,6 +273,11 @@ void dest(){
 	fprintf(stderr, "PRINT_GLOBAL_LIB_STATS in %s\n", __func__);
 	fprintf(stdout, "Total nr_ra = %ld\n", total_nr_ra.load());
 	fprintf(stdout, "Total nr_bytes_ra = %ld\n", total_bytes_ra.load());
+
+#if defined(PREDICTOR) && defined(ENABLE_PRED_STATS)
+        print_seq_stats();
+#endif
+
 #endif
 
 }
@@ -720,7 +726,7 @@ void inline record_open(struct file_desc desc){
 	if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
-		file_predictor *fp = new file_predictor(fd, filesize);
+		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
 
 		if(!fp){
                         printf("%s ERR: Could not allocate new file_predictor\n", __func__);
@@ -836,9 +842,10 @@ void update_file_predictor_and_prefetch(void *arg){
                 return;
 	}
 
+        fp->nr_reads_done += 1L;
+
 	if(fp){
 		fp->predictor_update(a->offset, a->data_size);
-                fp->last_read_offset = a->offset + a->data_size;
 
                 if(fp->should_prefetch_now()){
                         a->fp = fp;
@@ -865,7 +872,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 
         if(file_fd < 3 && !stream){
                 goto skip_read_predictor;
-        }else if(file_fd > 3){
+        }else if(file_fd >= 3){
 	        fd = file_fd;
                 offset = file_offset;
         }else if(stream){
@@ -885,12 +892,14 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		goto skip_read_predictor;
 	}
 
+
 #ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
 
 
 #ifdef PREDICTOR
+
 #ifdef CONCURRENT_PREDICTOR
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
@@ -900,7 +909,11 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
         arg->data_size = data_size;
 
         update_file_predictor_and_prefetch(arg);
-	//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+        
+        /*
+         * XXX: Thpool is not working right now
+         */
+	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
 
         free(arg);
 #else
@@ -910,8 +923,9 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
         arg.data_size = data_size;
 
         update_file_predictor_and_prefetch(&arg);
-#endif
-#endif
+#endif //CONCURRENT_PREDICTOR
+
+#endif //PREDICTOR
 
 skip_read_predictor:
 	return;
@@ -1021,6 +1035,7 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 		goto exit;
 
 	desc.fd = fd;
+        desc.filename = pathname;
 	handle_open(desc);
 
 exit:
@@ -1049,6 +1064,7 @@ int open64(const char *pathname, int flags, ...){
 	}
 
 	desc.fd = fd;
+        desc.filename = pathname;
 	handle_open(desc);
 
 exit:
@@ -1075,10 +1091,12 @@ int open(const char *pathname, int flags, ...){
 		fd = real_open(pathname, flags, 0);
 	}
 
-	desc.fd = fd;
-
-	if(desc.fd < 0)
+	if(fd < 0)
 		goto exit;
+
+	desc.fd = fd;
+        desc.filename = pathname;
+
 	handle_open(desc);
 
 exit:
@@ -1100,6 +1118,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	fd = fileno(ret);
 	desc.fd = fd;
+        desc.filename = filename;
 
 	handle_open(desc);
 
