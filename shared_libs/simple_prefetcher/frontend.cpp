@@ -842,6 +842,8 @@ void update_file_predictor_and_prefetch(void *arg){
                 return;
 	}
 
+        fp->nr_reads_done += 1L;
+
 	if(fp){
 		fp->predictor_update(a->offset, a->data_size);
                 fp->last_read_offset = a->offset + a->data_size;

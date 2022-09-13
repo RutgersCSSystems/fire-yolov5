@@ -25,6 +25,8 @@ class file_predictor{
 		int fd;
 		size_t filesize;
 
+                long nr_reads_done;
+
 		/*
 		 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
 		 * Each such portions is represented with a bit in access_history

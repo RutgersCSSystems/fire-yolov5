@@ -47,6 +47,8 @@ file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
         fd = this_fd;
         filesize = size;
 
+        nr_reads_done = 0;
+
 
         portion_sz = PAGESIZE * PORTION_PAGES;
         nr_portions = size/portion_sz;
@@ -158,6 +160,14 @@ exit_success:
 
 #ifdef ENABLE_PRED_STATS
         new_seq = sequentiality;
+
+        struct stat file_stat;
+        fstat (fd, &file_stat);
+
+        if(nr_reads_done > NR_READS_BEFORE_STATS && old_seq != new_seq){
+                printf("%s: fd=%d, offset=%ld, size=%ld, inode_nr=%ld old_seq=%d, new_seq=%d\n", __func__, fd, offset, size, file_stat.st_ino, old_seq, new_seq);
+        }
+
         update_seq_stats(old_seq, new_seq);
 #endif
 
@@ -223,7 +233,7 @@ void print_seq_stats(){
         stats.lock();
 
         for(int i=-8; i<=8; i++){
-                if(seq_stats[i=8] !=0)
+                if(seq_stats[i+8] !=0)
                         printf("SEQ[%d]=%ld ", i, seq_stats[i+8]);
         }
         printf("\n");

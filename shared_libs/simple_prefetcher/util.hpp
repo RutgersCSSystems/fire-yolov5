@@ -124,6 +124,15 @@
 
 
 /*
+ * This is the number of reads we should let happen
+ * before checking if the fd is being read in changing patterns
+ */
+#ifndef NR_READS_BEFORE_STATS
+#define NR_READS_BEFORE_STATS 20
+#endif
+
+
+/*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
  * the current readahead with the typical read
