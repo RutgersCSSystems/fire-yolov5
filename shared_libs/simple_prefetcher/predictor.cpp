@@ -223,7 +223,8 @@ void print_seq_stats(){
         stats.lock();
 
         for(int i=-8; i<=8; i++){
-                printf("SEQ[%d]=%ld ", i, seq_stats[i+8]);
+                if(seq_stats[i=8] !=0)
+                        printf("SEQ[%d]=%ld ", i, seq_stats[i+8]);
         }
         printf("\n");
         stats.unlock();
