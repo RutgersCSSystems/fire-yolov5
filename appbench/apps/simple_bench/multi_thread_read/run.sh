@@ -36,7 +36,7 @@ clear_os_stats
 export LD_PRELOAD="/usr/lib/lib_OSonly.so"
 #export LD_PRELOAD="/usr/lib/lib_CICP.so"
 #export LD_PRELOAD="/usr/lib/lib_CIPI.so"
-./bin/read_shared_seq
+#./bin/read_shared_seq
 export LD_PRELOAD=""
 #DISABLE_LOCK_STATS
 dmesg
