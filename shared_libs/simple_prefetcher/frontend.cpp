@@ -520,6 +520,7 @@ void prefetcher_th(void *arg) {
     	else{
     		nr_ra_done += 1;
     		nr_bytes_ra_done += a->prefetch_size;
+    		fprintf(stderr, "File Size %zu, Bytes prefetched %zu\n", a->file_size, nr_bytes_ra_done);
     	}
 #endif
     	uinode_bitmap_unlock(a->uinode);
@@ -776,7 +777,6 @@ void inline prefetch_file(void *args){
 	prefetcher_th((void*)arg);
 #endif
 
-
 prefetch_file_exit:
 	debug_printf("Exiting %s\n", __func__);
 	return;
@@ -808,44 +808,42 @@ void inline record_open(struct file_desc desc){
 
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
-
 		if(!fp){
-                        printf("%s ERR: Could not allocate new file_predictor\n", __func__);
-			goto exit;
-                }
+			   printf("%s ERR: Could not allocate new file_predictor\n", __func__);
+           	   goto exit;
+        }
 
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
 		fd_to_file_pred.insert({fd, fp});
 
-                /*
-                 * When a file is opened.
-                 * We give it a signin bonus. Prefetch a small portion of the start
-                 * of the file
-                 */
-                if(fp->should_prefetch_now()){
-	                struct thread_args arg;
-                        arg.fd = fd;
-                        arg.fp = fp;
-                        prefetch_file(&arg);
-                }
+         /*
+         * When a file is opened.
+         * We give it a signin bonus. Prefetch a small portion of the start
+         * of the file
+         */
+         if(fp->should_prefetch_now()){
+        	 struct thread_args arg;
+             arg.fd = fd;
+             arg.fp = fp;
+             prefetch_file(&arg);
+          }
 #endif
 
 		/*
 		 * This allocates the file's bitmap inside the kernel
 		 * So no file cache data is lost from bitmap
 		 * This is very important todo before any app reads happen
-                 *
-                 * If OS stats are enabled, the first RA has already happened
+         *
+         * If OS stats are enabled, the first RA has already happened
 		 */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(ENABLE_OS_STATS)
-
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
 
 #if defined(PREFETCH_BOOST)
-	        struct read_ra_req ra;
+	    struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
@@ -874,7 +872,6 @@ void handle_open(struct file_desc desc){
 
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
-
 	/*
 	 * Allocates the bitmaps for this file
 	 */
