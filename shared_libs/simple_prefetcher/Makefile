@@ -20,7 +20,7 @@ CROSS_BITMAP_SHIFT=24
 SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c 
 
 #DEBUG=-DDEBUG
-ENABLE_LIB_STATS=#-DENABLE_LIB_STATS -DENABLE_PRED_STATS ##Comment if dont need lib stats
+ENABLE_LIB_STATS=-DENABLE_LIB_STATS -DENABLE_PRED_STATS ##Comment if dont need lib stats
 ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 #ENABLE_MPI=-DENABLE_MPI
 OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP $(ENABLE_MPI) $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
