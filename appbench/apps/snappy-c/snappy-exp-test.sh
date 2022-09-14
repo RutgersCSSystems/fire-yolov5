@@ -31,11 +31,14 @@ declare -a thread_arr=("16")
 declare -a workload_arr=("250")
 
 # Size of each file in KB
-declare -a filesize_arr=("30000")
+declare -a filesize_arr=("30000" "20000" "10000")
+declare -a filesize_arr=("10000")
+
 FILESIZE=1000
 
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
+declare -a config_arr=("Cross_Info" "OSonly")
 declare -a config_arr=("Cross_Info")
 
 FlushDisk()
@@ -131,7 +134,7 @@ RUN() {
 			do
 				PARAMS="$DBDIR $THREAD"
 
-				COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
+				#COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
 
 				for CONFIG in "${config_arr[@]}"
 				do

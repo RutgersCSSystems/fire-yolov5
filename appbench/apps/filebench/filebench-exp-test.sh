@@ -32,6 +32,7 @@ declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "r
 declare -a workload_arr=("filemicro_seqread.f" "fileserver.f" "randomread.f")
 #declare -a config_arr=("Cross_Info" "Cross_Blind" "OSonly")
 declare -a config_arr=("CIPI")
+declare -a config_arr=("OSonly")
 declare -a thread_arr=("16")
 
 
