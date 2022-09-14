@@ -4,6 +4,13 @@
 #define PG_SZ 4096L
 #define PAGESHIFT 12L
 
+#ifdef DEBUG
+#define debug_printf(...) printf(__VA_ARGS__ )
+//#define debug_print(...) fprintf( stderr, __VA_ARGS__ )
+#else
+#define debug_printf(...) do{ }while(0)
+#endif
+
 #ifndef NR_THREADS //Nr of BG readahead threads
 #define NR_THREADS 1
 #endif

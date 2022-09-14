@@ -106,6 +106,7 @@ void reader_th(void *arg){
 
         long tid = gettid();
 
+
 #if SHARED_FILE
         a->fd = open(a->filename, O_RDWR);
         if (a->fd == -1){
@@ -121,11 +122,9 @@ void reader_th(void *arg){
 
 #endif //SHARED_FILE
 
-#ifdef DEBUG
         //Report about the thread
-        printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
+        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
-#endif //DEBUG
 
 #ifdef READ_SEQUENTIAL
 
@@ -138,14 +137,12 @@ void reader_th(void *arg){
 #ifdef MODIFIED_RA
 	ra.data = NULL;
 	readahead_info(a->fd, 0, NR_RA_PAGES << PAGESHIFT, &ra);
-#else
+#else //NORMAL_RA
 	readahead(a->fd, offset, a->size);
 #endif //MODIFIED_RA
 
-#ifdef DEBUG
-	printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+	debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
                         __func__, a->fd, offset, a->size);
-#endif //DEBUG
 
 #elif defined(APP_OPT_PREFETCH)
 	ra_offset = a->offset;
@@ -153,9 +150,7 @@ void reader_th(void *arg){
 
         while(bytes_read < a->size){
 
-#ifdef DEBUG
-                printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
-#endif //DEBUG
+                debug_printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
 
 #ifdef APP_OPT_PREFETCH
 		if(offset >= ra_offset){
@@ -163,14 +158,13 @@ void reader_th(void *arg){
 #ifdef MODIFIED_RA
 	                ra.data = NULL;
 			readahead_info(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT, &ra);
-#else
+#else //NORMAL_RA
 			readahead(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
 #endif //MODIFIED_RA
 			ra_offset += NR_RA_PAGES << PAGESHIFT;
-#ifdef DEBUG
-			printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+
+			debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
 					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
-#endif
 		}
 #endif
 
