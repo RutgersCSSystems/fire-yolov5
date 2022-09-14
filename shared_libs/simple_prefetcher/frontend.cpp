@@ -854,7 +854,7 @@ exit:
  */
 void handle_open(struct file_desc desc){
 
-	printf("%s : fd=%d\n", __func__, desc.fd);
+	//printf("%s : fd=%d\n", __func__, desc.fd);
 
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
