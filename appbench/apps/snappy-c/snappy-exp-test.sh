@@ -41,7 +41,7 @@ FILESIZE=1000
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
 declare -a config_arr=("Cross_Info" "OSonly")
-#declare -a config_arr=("Cross_Info")
+declare -a config_arr=("Cross_Info")
 #declare -a config_arr=("OSonly")
 
 FlushDisk()
@@ -142,12 +142,11 @@ RUN() {
 			do
 				PARAMS="$DBDIR $THREAD"
 
-				if [ $gen_data -gt 1 ]
+				if [ $gen_data -gt 0 ]
 				then
 				    echo "GENERATING NEW DATA"
 				    COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
 				fi
-
 
 				for CONFIG in "${config_arr[@]}"
 				do
@@ -157,8 +156,6 @@ RUN() {
 					GEN_RESULT_PATH "fsize-"$FILESIZE $CONFIG $THREAD
 
 					mkdir -p $RESULTS
-					#echo $RESULTFILE
-					#continue
 
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
