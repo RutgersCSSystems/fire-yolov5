@@ -107,7 +107,8 @@ void file_predictor::predictor_update(off_t offset, size_t size){
 
         last_read_offset = offset + size;
 
-        size_t portion_num = (offset+size)/portion_sz; //which portion
+        //size_t portion_num = (offset+size)/portion_sz; //which portion
+        size_t portion_num = offset/portion_sz; //which portion
         size_t num_portions = size/portion_sz; //how many portions in this req
         size_t pn = 0; //used for adjacency check
         int old_seq, new_seq;
