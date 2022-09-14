@@ -20,6 +20,8 @@ DBDIR=$SHARED_DATA/snappy
 RESULTDIR=$SHARED_DATA/$APP/
 FILECOUNT=100
 
+let gen_data=$1
+
 mkdir -p $RESULTS
 
 #declare -a thread_arr=("4" "8" "16" "32")
@@ -39,7 +41,8 @@ FILESIZE=1000
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
 declare -a config_arr=("Cross_Info" "OSonly")
-declare -a config_arr=("Cross_Info")
+#declare -a config_arr=("Cross_Info")
+#declare -a config_arr=("OSonly")
 
 FlushDisk()
 {
@@ -85,6 +88,11 @@ GENDATA() {
 }
 
 
+COMPILE_SHAREDLIB() {
+        cd $PREDICT_LIB_DIR
+        $PREDICT_LIB_DIR/compile.sh &> compile.out
+        cd $DBHOME 
+}
 
 COMPILE_AND_WRITE()
 {
@@ -97,9 +105,7 @@ COMPILE_AND_WRITE()
 	numfiles=$2
         threads=$3
 
-	cd $PREDICT_LIB_DIR
-	$PREDICT_LIB_DIR/compile.sh &> compile.out
-	cd $DBHOME
+	COMPILE_SHAREDLIB
 
 	#Generate data
 	GENDATA $filesize $numfiles $threads
@@ -124,6 +130,8 @@ GEN_RESULT_PATH() {
 
 RUN() {
 
+	COMPILE_SHAREDLIB
+
 	#NUMFILES
 	for WORKLOAD in "${workload_arr[@]}"
 	do
@@ -134,10 +142,17 @@ RUN() {
 			do
 				PARAMS="$DBDIR $THREAD"
 
-				#COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
+				if [ $gen_data -gt 1 ]
+				then
+				    echo "GENERATING NEW DATA"
+				    COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
+				fi
+
 
 				for CONFIG in "${config_arr[@]}"
 				do
+					FlushDisk
+
 					RESULTS=""
 					GEN_RESULT_PATH "fsize-"$FILESIZE $CONFIG $THREAD
 
