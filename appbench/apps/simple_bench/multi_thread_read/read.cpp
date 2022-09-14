@@ -99,6 +99,8 @@ void reader_th(void *arg){
         struct thread_args *a = (struct thread_args*)arg;
 
         struct timeval start, end;
+        struct timeval open_start, open_end;
+
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
 
@@ -107,6 +109,7 @@ void reader_th(void *arg){
         long tid = gettid();
 
 
+        gettimeofday(&open_start, NULL);
 #if SHARED_FILE
         a->fd = open(a->filename, O_RDWR);
         if (a->fd == -1){
@@ -121,6 +124,7 @@ void reader_th(void *arg){
 #endif //MODIFIED_RA
 
 #endif //SHARED_FILE
+        gettimeofday(&open_end, NULL);
 
         //Report about the thread
         debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
@@ -205,7 +209,7 @@ void reader_th(void *arg){
         gettimeofday(&end, NULL);
 #endif
 
-        a->read_time = usec_diff(&start, &end);
+        a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
 exit:
         return;
 }
