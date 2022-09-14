@@ -351,50 +351,94 @@ int perform_eviction(struct thread_args *arg){
 #endif
 
 
+bit_array_t *allocate_bitmap(struct thread_args *a) {
+
+	bit_array_t *page_cache_state = NULL;
+
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
+	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+	BitArrayClearAll(page_cache_state);
+#elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && (defined(PREDICTOR) || defined(PER_INODE_BITMAP))
+	page_cache_state = a->page_cache_state;
+#else
+	page_cache_state = NULL;
+#endif
+	return page_cache_state;
+}
+
+
+void release_bitmap(bit_array_t *page_cache_state) {
+
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
+    debug_printf("%s: destroying the page cache\n", __func__);
+    if(page_cache_state != NULL)
+    	BitArrayDestroy(page_cache_state);
+#endif
+
+}
+
+
+
+void update_ra_stats_if_enabled(long nr_ra_done, long nr_bytes_ra_done) {
+#ifdef ENABLE_LIB_STATS
+        total_nr_ra += nr_ra_done;
+        total_bytes_ra += nr_bytes_ra_done;
+
+        debug_printf("%s:%ld: total_nr_ra=%ld, tot_bytes_ra=%ld\n", __func__, tid,
+                        nr_ra_done, nr_bytes_ra_done);
+#endif
+}
+
+
+
+
 /*
  * Checks and updates the request before prefetching
  * based on the pc bitmap
  */
 void check_pc_bitmap(void *arg){
-        if(!arg)
-                return;
+
+    if(!arg)
+          return;
 
 	struct thread_args *a = (struct thread_args*)arg;
 
 	bit_array_t *page_cache_state = NULL;
+
 #if (defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE)) && (defined(PREDICTOR) || defined(PER_INODE_BITMAP))
 	page_cache_state = a->page_cache_state;
 #else
 	page_cache_state = NULL;
 #endif
 
-        if(!page_cache_state){
-                printf("No pcbitmap\n");
-                return;
-        }
+    if(!page_cache_state){
+    	printf("No pcbitmap\n");
+        return;
+    }
 
 	off_t start_pg = a->offset >> PAGE_SHIFT;
-        off_t curr_pg = start_pg;
-        off_t prefetch_limit_pg = a->prefetch_limit >> PAGE_SHIFT;
+    off_t curr_pg = start_pg;
+    off_t prefetch_limit_pg = a->prefetch_limit >> PAGE_SHIFT;
 
-        if(prefetch_limit_pg == 0)
-                prefetch_limit_pg = 1;
+    if(prefetch_limit_pg == 0)
+    	prefetch_limit_pg = 1;
 
 
 	uinode_bitmap_lock(a->uinode);
-        while(curr_pg < (start_pg + prefetch_limit_pg)){
-		if(BitArrayTestBit(page_cache_state, curr_pg)){
+
+    while(curr_pg < (start_pg + prefetch_limit_pg)){
+
+    	if(BitArrayTestBit(page_cache_state, curr_pg)){
                         curr_pg += 1;
-                }else{
+         }else{
                         break;
-                }
-        }
+         }
+    }
 	uinode_bitmap_unlock(a->uinode);
-
-        a->offset = curr_pg << PAGE_SHIFT;
-
-        //printf("%s: changing offset from pg %ld to %ld\n", __func__, start_pg, curr_pg);
+    a->offset = curr_pg << PAGE_SHIFT;
+    //printf("%s: changing offset from pg %ld to %ld\n", __func__, start_pg, curr_pg);
 }
+
 
 
 /*
@@ -410,11 +454,13 @@ void prefetcher_th(void *arg) {
 	struct thread_args *a = (struct thread_args*)arg;
 
 #ifdef ENABLE_LIB_STATS
-        // per_thread counter for nr of readaheads done
-        // and nr of bytes requested for readahead
-        long nr_ra_done = 0;
-        long nr_bytes_ra_done = 0;
+    /* per_thread counter for nr of readaheads done
+     * and nr of bytes requested for readahead
+     */
+    long nr_ra_done = 0;
+    long nr_bytes_ra_done = 0;
 #endif
+
 	off_t file_pos; //actual file position where readahead will be done
 	size_t readnow;
 	struct read_ra_req ra;
@@ -429,166 +475,143 @@ void prefetcher_th(void *arg) {
 	/*
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
-#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
-	page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
-	BitArrayClearAll(page_cache_state);
-	//printf(stderr, "%s: DONE defining bitarray in worker %ld\n",
-		//__func__, NR_BITS_PREALLOC_PC_STATE);
-	
-#elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && (defined(PREDICTOR) || defined(PER_INODE_BITMAP))
-	page_cache_state = a->page_cache_state;
-#else
-	page_cache_state = NULL;
-#endif
+	page_cache_state = allocate_bitmap(a);
 
+    check_pc_bitmap(arg);
 
-        check_pc_bitmap(arg);
-
-        debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+    debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
-	file_pos = a->offset;
+    file_pos = a->offset;
 
-	while (file_pos < a->file_size){
-
-                /*
-                 * Stop prefetching if the prefetch limit is reached
-                 */
-                if((file_pos - a->offset) >= a->prefetch_limit){
-                        //printf("%s: offset > prefetch_limit\n", __func__);
-                        goto exit_prefetcher_th;
-                }
+    while (file_pos < a->file_size){
+    	/*
+    	 * Stop prefetching if the prefetch limit is reached
+    	 */
+    	if((file_pos - a->offset) >= a->prefetch_limit){
+    		debug_printf("%s: offset > prefetch_limit\n", __func__);
+    		goto exit_prefetcher_th;
+    	}
 
 #ifdef MODIFIED_RA
-		if(page_cache_state) {
-			ra.data = page_cache_state->array;
-		}else{
-			ra.data = NULL;
-		}
+    	if(page_cache_state) {
+    		ra.data = page_cache_state->array;
+    	}else{
+    		ra.data = NULL;
+    	}
 
-                if(!ra.data){
-                        printf("%s: no ra.data\n", __func__);
-                        goto exit_prefetcher_th;
-                }
+    	if(!ra.data){
+    		printf("%s: no ra.data\n", __func__);
+    		goto exit_prefetcher_th;
+    	}
 
-		uinode_bitmap_lock(a->uinode);
-		if(readahead_info(a->fd, file_pos,
-				a->prefetch_size, &ra) < 0) {
+    	uinode_bitmap_lock(a->uinode);
+    	if(readahead_info(a->fd, file_pos,
+    			a->prefetch_size, &ra) < 0) {
 
-			uinode_bitmap_unlock(a->uinode);
+    		uinode_bitmap_unlock(a->uinode);
 
-			printf("readahead_info: failed TID:%ld \n", tid);
-                        goto exit_prefetcher_th;
-		}
+    		printf("readahead_info: failed TID:%ld \n", tid);
+    		goto exit_prefetcher_th;
+    	}
 #ifdef ENABLE_LIB_STATS
-                else{
-                        nr_ra_done += 1;
-                        nr_bytes_ra_done += a->prefetch_size;
-                }
+    	else{
+    		nr_ra_done += 1;
+    		nr_bytes_ra_done += a->prefetch_size;
+    	}
 #endif
-
-		uinode_bitmap_unlock(a->uinode);
+    	uinode_bitmap_unlock(a->uinode);
 
 #ifdef READAHEAD_INFO_PC_STATE
-                //We dont need this line probably. will have to check
-                //page_cache_state->array = (unsigned long*)ra.data;
-		start_pg = file_pos >> PAGE_SHIFT;
-		zero_pg = start_pg;
-                check_pg = start_pg;
+    	//We dont need this line probably. will have to check
+    	//page_cache_state->array = (unsigned long*)ra.data;
+    	start_pg = file_pos >> PAGE_SHIFT;
+    	zero_pg = start_pg;
+    	check_pg = start_pg;
 
-                if(start_pg > page_cache_state->numBits){
-			printf("ERR: %s Using small bitmap; unable to support "
-					"large file\n", __func__);
-			goto exit_prefetcher_th;
-                }
+    	if(start_pg > page_cache_state->numBits){
+    		printf("ERR: %s Using small bitmap; unable to support "
+    				"large file\n", __func__);
+    		goto exit_prefetcher_th;
+    	}
 
+    	uinode_bitmap_lock(a->uinode);
 
-		uinode_bitmap_lock(a->uinode);
+    	while((check_pg << PAGE_SHIFT) < a->file_size) {
 
-		while((check_pg << PAGE_SHIFT) < a->file_size) {
+    		if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP) {
+    			printf("ERR: %s: No bits are set - giving up\n", __func__);
+    			break;
+    		}
 
-                        if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP) {
-                                printf("ERR: %s: No bits are set - giving up\n", __func__);
-                                break;
-                        }
+    		if(BitArrayTestBit(page_cache_state, check_pg)){
+    			check_pg += 1;
+    			zero_pg = check_pg;
+    		}else if(zero_pg == start_pg){
+    			check_pg += 1;
+    		}else {
+    			break;
+    		}
+    	}
 
-			if(BitArrayTestBit(page_cache_state, check_pg)){
-                                check_pg += 1;
-                                zero_pg = check_pg;
-                        }else if(zero_pg == start_pg){
-                                check_pg += 1;
-                        }else
-                                break;
-		}
+    	uinode_bitmap_unlock(a->uinode);
+    	pg_diff = zero_pg - start_pg;
 
-      		uinode_bitmap_unlock(a->uinode);
-		pg_diff = zero_pg - start_pg;
-
-		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
-				"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
+    	debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
+    			"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
 				file_pos, pg_diff, a->fd, ra.data,
 				page_cache_state->numBits, start_pg, zero_pg);
 
-                if(pg_diff == 0){
-                        printf("ERR:%s, pg_diff==0\n", __func__);
-			goto exit_prefetcher_th;
-                }
+    	if(pg_diff == 0){
+    		printf("ERR:%s, pg_diff==0\n", __func__);
+    		goto exit_prefetcher_th;
+    	}
 
-                file_pos += pg_diff << PAGE_SHIFT;
+    	file_pos += pg_diff << PAGE_SHIFT;
+
 #else //READAHEAD_INFO_PC_STATE
-		file_pos += a->prefetch_size;
+    	file_pos += a->prefetch_size;
 #endif //READAHEAD_INFO_PC_STATE
 
-		/*
-		 * if the memory is less NR_REMAINING
-		 * the prefetcher stops
-		 */
-		if(ra.nr_free < NR_REMAINING)
-		{
-			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
-#ifdef ENABLE_EVICTION_OLD
-			perform_eviction(a);
-#else //ENABLE_EVICTION
-			goto exit_prefetcher_th;
-#endif //ENABLE_EVICTION
-		}
-
+    	/*
+    	 * if the memory is less NR_REMAINING
+    	 * the prefetcher stops
+    	 */
+    	if(ra.nr_free < NR_REMAINING)
+    	{
+    		debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+    		goto exit_prefetcher_th;
+    	}
 #else //MODIFIED_RA
-		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
-			//printf("error while readahead: TID:%ld \n", tid);
-			goto exit_prefetcher_th;
-		}
+    	if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
+    		//printf("error while readahead: TID:%ld \n", tid);
+    		goto exit_prefetcher_th;
+    	}
 #ifdef ENABLE_LIB_STATS
-                else{
-                        nr_ra_done += 1;
-                        nr_bytes_ra_done += a->prefetch_size;
-                }
+    	else{
+    		nr_ra_done += 1;
+    		nr_bytes_ra_done += a->prefetch_size;
+    	}
 #endif
-		file_pos += a->prefetch_size;
+    	file_pos += a->prefetch_size;
 #endif //MODIFIED_RA
-	}
+    }
 
 
 exit_prefetcher_th:
-#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
-        debug_printf("%s: destroying the page cache\n", __func__);
-
-	BitArrayDestroy(page_cache_state);
-#endif
+	release_bitmap(page_cache_state);
 
 #ifndef CONCURRENT_PREDICTOR
 	free(arg);
 #endif
 
-#ifdef ENABLE_LIB_STATS
-        total_nr_ra += nr_ra_done;
-        total_bytes_ra += nr_bytes_ra_done;
 
-        debug_printf("%s:%ld: total_nr_ra=%ld, tot_bytes_ra=%ld\n", __func__, tid,
-                        nr_ra_done, nr_bytes_ra_done);
+#ifdef ENABLE_LIB_STATS
+	update_ra_stats_if_enabled(nr_ra_done, nr_bytes_ra_done);
 #endif
+
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
@@ -609,8 +632,8 @@ void inline prefetch_file(void *args){
 
 	struct thread_args *arg = NULL;
 	off_t filesize;
-        off_t stride;
-        struct u_inode *uinode;
+    off_t stride;
+    struct u_inode *uinode;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -631,7 +654,7 @@ void inline prefetch_file(void *args){
      }
 #else
 	filesize = reg_fd(fd);
-        stride = 0;
+    stride = 0;
 #endif
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
@@ -643,7 +666,7 @@ void inline prefetch_file(void *args){
 
 	if(filesize > MIN_FILE_SZ){
 #ifdef CONCURRENT_PREDICTOR
-                arg = (struct thread_args*)args;
+        arg = (struct thread_args*)args;
 #else
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 #endif
@@ -696,46 +719,39 @@ void inline prefetch_file(void *args){
 			}
 		}
 
-                arg->prefetch_limit = fp->prefetch_limit;
+        arg->prefetch_limit = fp->prefetch_limit;
+        arg->offset = fp->last_read_offset;
 
-                arg->offset = fp->last_read_offset;
-
-                /*
-                 * Update the last ra_offset
-                 */
-                fp->last_ra_offset = arg->offset + arg->prefetch_limit;
-
-                //printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
+        /*
+        * Update the last ra_offset
+        */
+        fp->last_ra_offset = arg->offset + arg->prefetch_limit;
+         //printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
 #else
 		/*
 		 * This is !PREDICTOR and !FULL_PREFETCH
 		 * which means prefetch blindly NR_RA_PAGES at a time
 		 */
-
-                arg->offset = 0;
+        arg->offset = 0;
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-
-                arg->prefetch_limit = filesize;
-
+        arg->prefetch_limit = filesize;
 #endif
 
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
 		arg->page_cache_state = fp->page_cache_state;
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
-                if(uinode){
+         if(uinode){
                         
-			arg->page_cache_state = uinode->page_cache_state;
+        	 arg->page_cache_state = uinode->page_cache_state;
 
-                        if(arg->page_cache_state == NULL)
-                                printf("%s: pagecache NULL\n", __func__);
-                        
-                        arg->uinode = uinode;
-
-                }else{
-                        printf("%s: No Uinode!! fd:%d \n", __func__, fd);
-		        arg->page_cache_state = NULL;
+             if(arg->page_cache_state == NULL)
+            	 printf("%s: pagecache NULL\n", __func__);
+                 arg->uinode = uinode;
+             }else{
+                 printf("%s: No Uinode!! fd:%d \n", __func__, fd);
+                 	 	arg->page_cache_state = NULL;
                         arg->uinode = NULL;
-                }
+              }
 #else
 		arg->page_cache_state = NULL;
 #endif
@@ -751,7 +767,6 @@ void inline prefetch_file(void *args){
 	pthread_t thread;
 	pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
-	//Enlists the prefetching request using the thpool
 	if(!workerpool)
 		printf("ERR: %s: No workerpool ? \n", __func__);
 	else
@@ -760,6 +775,7 @@ void inline prefetch_file(void *args){
 #else
 	prefetcher_th((void*)arg);
 #endif
+
 
 prefetch_file_exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -829,7 +845,7 @@ void inline record_open(struct file_desc desc){
 		//clock_gettime(CLOCK_REALTIME, &start);
 
 #if defined(PREFETCH_BOOST)
-	    struct read_ra_req ra;
+	        struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
