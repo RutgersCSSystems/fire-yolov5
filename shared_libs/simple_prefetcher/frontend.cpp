@@ -50,6 +50,7 @@ std::atomic_flag i_map_init;
 #include "utils/robin_hood.h"
 
 #ifdef THPOOL_PREFETCH
+//threadpool workerpool[8];
 threadpool workerpool = NULL;
 #endif
 
@@ -109,6 +110,7 @@ void print_affinity() {
     printf("\n");
 }
 
+#if 0
 /*
  * Handle signals from application to wind-up a
  * bunch of things. For example, filebench does
@@ -133,6 +135,8 @@ void reg_app_sig_handler(void){
 	//fprintf(stderr, "Regsitering signal handler \n");
 	//signal(SIGUSR2,handle_app_sig_handler);
 }
+
+#endif
 
 
 /*
@@ -216,11 +220,22 @@ void con(){
 #ifdef THPOOL_PREFETCH
 	workerpool = thpool_init(NR_WORKERS);
 	if(!workerpool){
-		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
-	}
-	else{
+                printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
+	}else{
 		debug_printf("Created %d bg_threads\n", NR_WORKERS);
 	}
+
+        /*
+        for(int i=0; i<8; i++){
+	        workerpool[i] = thpool_init(1);
+	        if(!workerpool[i]){
+		        printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
+	        }
+	        else{
+		        debug_printf("Created %d bg_threads\n", NR_WORKERS);
+	        }
+        }
+        */
 #endif
 	init_global_ds();
 
@@ -246,7 +261,7 @@ void con(){
 	//print_affinity();
 
 	/* register application specific handler */
-	reg_app_sig_handler();
+	//reg_app_sig_handler();
 }
 
 
@@ -378,6 +393,55 @@ void update_ra_stats_if_enabled(long nr_ra_done, long nr_bytes_ra_done) {
 
 
 /*
+ * Checks and updates the request before prefetching
+ * based on the pc bitmap
+ */
+void check_pc_bitmap(void *arg){
+
+    if(!arg)
+          return;
+
+	struct thread_args *a = (struct thread_args*)arg;
+
+	bit_array_t *page_cache_state = NULL;
+
+#if (defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE)) && (defined(PREDICTOR) || defined(PER_INODE_BITMAP))
+	page_cache_state = a->page_cache_state;
+#else
+	page_cache_state = NULL;
+#endif
+
+    if(!page_cache_state){
+    	printf("No pcbitmap\n");
+        return;
+    }
+
+	off_t start_pg = a->offset >> PAGE_SHIFT;
+    off_t curr_pg = start_pg;
+    off_t prefetch_limit_pg = a->prefetch_limit >> PAGE_SHIFT;
+
+    if(prefetch_limit_pg == 0)
+    	prefetch_limit_pg = 1;
+
+
+	uinode_bitmap_lock(a->uinode);
+
+    while(curr_pg < (start_pg + prefetch_limit_pg)){
+
+    	if(BitArrayTestBit(page_cache_state, curr_pg)){
+                        curr_pg += 1;
+         }else{
+                        break;
+         }
+    }
+	uinode_bitmap_unlock(a->uinode);
+    a->offset = curr_pg << PAGE_SHIFT;
+    //printf("%s: changing offset from pg %ld to %ld\n", __func__, start_pg, curr_pg);
+}
+
+
+
+/*
  * function run by the prefetcher thread
  */
 #ifdef CONCURRENT_PREFETCH
@@ -413,17 +477,16 @@ void prefetcher_th(void *arg) {
 	 */
 	page_cache_state = allocate_bitmap(a);
 
-	if(page_cache_state)
-		debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
-                      "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
-					  a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
-					  a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
+    check_pc_bitmap(arg);
+
+    debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+                        "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
+			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
+			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
     file_pos = a->offset;
 
     while (file_pos < a->file_size){
-
-
     	/*
     	 * Stop prefetching if the prefetch limit is reached
     	 */
@@ -569,8 +632,8 @@ void inline prefetch_file(void *args){
 
 	struct thread_args *arg = NULL;
 	off_t filesize;
-        off_t stride;
-        struct u_inode *uinode;
+    off_t stride;
+    struct u_inode *uinode;
 
 	debug_printf("Entering %s\n", __func__);
 	/*
@@ -591,7 +654,7 @@ void inline prefetch_file(void *args){
      }
 #else
 	filesize = reg_fd(fd);
-        stride = 0;
+    stride = 0;
 #endif
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
@@ -603,7 +666,7 @@ void inline prefetch_file(void *args){
 
 	if(filesize > MIN_FILE_SZ){
 #ifdef CONCURRENT_PREDICTOR
-                arg = (struct thread_args*)args;
+        arg = (struct thread_args*)args;
 #else
 		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 #endif
@@ -656,46 +719,39 @@ void inline prefetch_file(void *args){
 			}
 		}
 
-                arg->prefetch_limit = fp->prefetch_limit;
+        arg->prefetch_limit = fp->prefetch_limit;
+        arg->offset = fp->last_read_offset;
 
-                arg->offset = fp->last_read_offset;
-
-                /*
-                 * Update the last ra_offset
-                 */
-                fp->last_ra_offset = arg->offset + arg->prefetch_limit;
-
-                //printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
+        /*
+        * Update the last ra_offset
+        */
+        fp->last_ra_offset = arg->offset + arg->prefetch_limit;
+         //printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
 #else
 		/*
 		 * This is !PREDICTOR and !FULL_PREFETCH
 		 * which means prefetch blindly NR_RA_PAGES at a time
 		 */
-
-                arg->offset = 0;
+        arg->offset = 0;
 		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-
-                arg->prefetch_limit = filesize;
-
+        arg->prefetch_limit = filesize;
 #endif
 
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
 		arg->page_cache_state = fp->page_cache_state;
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
-                if(uinode){
+         if(uinode){
                         
-			arg->page_cache_state = uinode->page_cache_state;
+        	 arg->page_cache_state = uinode->page_cache_state;
 
-                        if(arg->page_cache_state == NULL)
-                                printf("%s: pagecache NULL\n", __func__);
-                        
-                        arg->uinode = uinode;
-
-                }else{
-                        printf("%s: No Uinode!! fd:%d \n", __func__, fd);
-		        arg->page_cache_state = NULL;
+             if(arg->page_cache_state == NULL)
+            	 printf("%s: pagecache NULL\n", __func__);
+                 arg->uinode = uinode;
+             }else{
+                 printf("%s: No Uinode!! fd:%d \n", __func__, fd);
+                 	 	arg->page_cache_state = NULL;
                         arg->uinode = NULL;
-                }
+              }
 #else
 		arg->page_cache_state = NULL;
 #endif
@@ -711,14 +767,15 @@ void inline prefetch_file(void *args){
 	pthread_t thread;
 	pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
-	//Enlists the prefetching request using the thpool
 	if(!workerpool)
 		printf("ERR: %s: No workerpool ? \n", __func__);
 	else
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 #else
 	prefetcher_th((void*)arg);
 #endif
+
 
 prefetch_file_exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -788,7 +845,7 @@ void inline record_open(struct file_desc desc){
 		//clock_gettime(CLOCK_REALTIME, &start);
 
 #if defined(PREFETCH_BOOST)
-	    struct read_ra_req ra;
+	        struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
@@ -813,7 +870,7 @@ exit:
  */
 void handle_open(struct file_desc desc){
 
-	debug_printf("Entering %s\n", __func__);
+	printf("%s : fd=%d\n", __func__, desc.fd);
 
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats

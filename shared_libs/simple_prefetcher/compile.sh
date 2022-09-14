@@ -10,9 +10,9 @@
 
 #sudo apt update; sudo apt install mpich -y
 
-PREFETCH_SIZE=64 ##in nr of pages
-NR_WORKERS=4
-CROSS_BITMAP_SHIFT=28
+PREFETCH_SIZE=512 ##in nr of pages
+NR_WORKERS=2
+CROSS_BITMAP_SHIFT=37
 
 make -j NR_RA_PAGES=$PREFETCH_SIZE NR_WORKERS=$NR_WORKERS CROSS_BITMAP_SHIFT=$CROSS_BITMAP_SHIFT
 make install
