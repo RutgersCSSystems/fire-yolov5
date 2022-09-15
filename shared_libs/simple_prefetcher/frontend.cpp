@@ -520,8 +520,8 @@ void prefetcher_th(void *arg) {
     	else{
     		nr_ra_done += 1;
     		nr_bytes_ra_done += a->prefetch_size;
-    		fprintf(stderr, "File Size %zu, Bytes prefetched %zu Inode %d\n",
-    				a->file_size, nr_bytes_ra_done, a->uinode->ino);
+    		//fprintf(stderr, "File Size %zu, Bytes prefetched %zu Inode %d\n",
+    		//		a->file_size, nr_bytes_ra_done, a->uinode->ino);
     	}
 #endif
     	uinode_bitmap_unlock(a->uinode);

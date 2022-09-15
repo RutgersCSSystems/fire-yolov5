@@ -86,7 +86,7 @@ def get_ytile():
     ytitledef = str(os.getenv('ytitledef'))
     global xtitledef
     xtitledef = str(os.getenv('xtitledef'))
-    #print ytitledef
+    print ytitledef
 
 
 

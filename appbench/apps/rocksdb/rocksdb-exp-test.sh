@@ -43,14 +43,14 @@ NUM=5000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("16")
+declare -a thread_arr=("1" "4" "8")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning")
-declare -a workload_arr=("readrandom")
-declare -a config_arr=("Cross_Info" "OSonly" "CICP")
-declare -a config_arr=("OSonly")
-declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CICP")
+declare -a workload_arr=("multireadrandom")
+declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII")
+#declare -a config_arr=("OSonly")
+#declare -a config_arr=("Cross_Info")
+#declare -a config_arr=("CII")
 
 
 #declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
