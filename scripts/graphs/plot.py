@@ -20,7 +20,7 @@ clusterlen=len(legendtext)
 
 #Graph x and y-axis dimension
 graphxdim=120
-graphydim=80
+graphydim=70
 
 #graph plotting x and y dimension
 plotxdim=100
@@ -97,8 +97,6 @@ get_ytile()
 
 ctype = 'eps'
 c = canvas('pdf', title=graptitle, dimensions=[graphxdim, graphydim])
-
-
 
 d = drawable(canvas=c, coord=[22,10], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
 
