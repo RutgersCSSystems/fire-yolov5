@@ -477,9 +477,9 @@ void prefetcher_th(void *arg) {
 	 */
 	page_cache_state = allocate_bitmap(a);
 
-    check_pc_bitmap(arg);
+        check_pc_bitmap(arg);
 
-    debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+        printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
