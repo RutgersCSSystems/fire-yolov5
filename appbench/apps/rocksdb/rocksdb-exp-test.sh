@@ -46,7 +46,7 @@ NUM=5000000
 declare -a thread_arr=("1" "4" "8" "16")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "multireadrandom")
-declare -a workload_arr=("readwhilescanning" "readseq")
+declare -a workload_arr=("readreverse" "readwhilewriting" "fillseq" "fillrandom")
 declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII")
 #declare -a config_arr=("OSonly")
 #declare -a config_arr=("Cross_Info")

@@ -1,0 +1,89 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+RocksDB:    version 7.6.0
+Date:       Thu Sep 15 18:13:21 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+ERR:handle_open unable to add to uinode
+ERR:handle_open unable to add to uinode
+ERR:handle_open unable to add to uinode
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Integrated BlobDB: blob cache disabled
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    5000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    24299.6 MB (estimated)
+FileSize:   14534.0 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: SkipListFactory
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA]
+readreverse  :     557.000 micros/op 4830 ops/sec 0.000 seconds 1 operations;
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=5000000 --seed=1576170874 --benchmarks=readreverse --use_existing_db=1 --mmap_read=0 --threads=4"
+	User time (seconds): 0.13
+	System time (seconds): 0.14
+	Percent of CPU this job got: 23%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.19
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 207956
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 96
+	Minor (reclaiming a frame) page faults: 50684
+	Voluntary context switches: 3227
+	Involuntary context switches: 3
+	Swaps: 0
+	File system inputs: 242136
+	File system outputs: 2232
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[102680.925029] sh (8082): drop_caches: 3
+[102680.955828] sh (8087): drop_caches: 3
+[102685.981044] write_proc_unbounded: Value of write = 0
+[102685.981051] write_proc_2mb_limit: Value of write = 0
+[102685.981055] write_proc_bitmap_shift: Value of write = 28
+[102685.987926] write_proc_unbounded: Value of write = 0
+[102685.987932] write_proc_2mb_limit: Value of write = 0
+[102685.987935] write_proc_bitmap_shift: Value of write = 28
+[102687.169950] write_proc_unbounded: Value of write = 0
+[102687.169957] write_proc_2mb_limit: Value of write = 0
+[102687.177163] write_proc_unbounded: Value of write = 0
+[102687.177173] write_proc_2mb_limit: Value of write = 0

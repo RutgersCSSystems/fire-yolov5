@@ -1,0 +1,93 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+RocksDB:    version 7.6.0
+Date:       Thu Sep 15 18:13:39 2022
+CPU:        48 * AMD EPYC 7402P 24-Core Processor
+CPUCache:   512 KB
+open error: IO error: lock hold by current process, acquire time 1663287219 acquiring thread 140672084003648: /users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/LOCK: No locks available
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+ERR:handle_open unable to add to uinode
+ERR:handle_open unable to add to uinode
+ERR:handle_open unable to add to uinode
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Integrated BlobDB: blob cache disabled
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    5000000
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    24299.6 MB (estimated)
+FileSize:   14534.0 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: SkipListFactory
+Perf Level: 1
+------------------------------------------------
+fillrandom   : skipped (--use_existing_db is true)
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Integrated BlobDB: blob cache disabled
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+Command exited with non-zero status 1
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=5000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=1 --mmap_read=0 --threads=4"
+	User time (seconds): 0.08
+	System time (seconds): 0.18
+	Percent of CPU this job got: 23%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.15
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 207676
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 99
+	Minor (reclaiming a frame) page faults: 50627
+	Voluntary context switches: 3109
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 242160
+	File system outputs: 2248
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[102698.758958] sh (8202): drop_caches: 3
+[102698.791319] sh (8207): drop_caches: 3
+[102703.816786] write_proc_unbounded: Value of write = 0
+[102703.816793] write_proc_2mb_limit: Value of write = 0
+[102703.816798] write_proc_bitmap_shift: Value of write = 28
+[102703.823835] write_proc_unbounded: Value of write = 0
+[102703.823842] write_proc_2mb_limit: Value of write = 0
+[102703.823846] write_proc_bitmap_shift: Value of write = 28
+[102704.962233] write_proc_unbounded: Value of write = 0
+[102704.962246] write_proc_2mb_limit: Value of write = 0
+[102704.975960] write_proc_unbounded: Value of write = 0
+[102704.975969] write_proc_2mb_limit: Value of write = 0
