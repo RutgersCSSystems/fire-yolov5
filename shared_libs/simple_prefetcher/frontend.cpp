@@ -478,8 +478,8 @@ void prefetcher_th(void *arg) {
 	page_cache_state = allocate_bitmap(a);
 
         check_pc_bitmap(arg);
-
-        printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+	
+	printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
@@ -694,35 +694,7 @@ void inline prefetch_file(void *args){
 		debug_printf("%s: Doing a full prefetch %zu bytes\n", __func__, filesize);
 
 #elif PREDICTOR
-		/*
-		 * FULL_PREFETCH is never used with PREDICTOR
-		 * This means PREDICTOR and FULL_PREFETCH is off
-		 */
-
-		/*
-		 * If the application is doing strided reads
-		 * doing large prefetches wastes the IO bandwidth
-		 * and also wastes cache memory. To mitigate that,
-		 * we shall decrease the prefetch range to the size
-		 * of each read done in strided access.
-		 */
-		if(stride){
-			arg->prefetch_size = fp->read_size;
-		}
-		else{
-			/*
-			 * The application is doing seq reads,
-			 * Whole file prefetched in NR_RA_PAGES bytes
-			 */
-			//FIXME: CHECK MEMORY AVAILABILITY TOO
-			if(fp->is_sequential() == DEFSEQ){
-				arg->prefetch_size = arg->file_size;
-				//fprintf(stderr, "Fetch the entire file predicted as DEF SEQUENTIALITY \n");
-			}else {
-				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-			}
-		}
-
+	arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
         arg->prefetch_limit = fp->prefetch_limit;
         arg->offset = fp->last_read_offset;
 
