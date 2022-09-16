@@ -113,18 +113,12 @@ void alloc_cross_bitmap(struct inode *inode, unsigned long nr_pages){
 	//Set the flag that indicates bitmap is set
 	atomic_set(&inode->i_bitmap_freed, 0);
 
-        up_write(&inode->bitmap_rw_sem);
-        
-        inode->nr_bits_used = nr_pages;
-        inode->nr_longs_used = BITS_TO_LONGS(nr_pages);
-
         inode->nr_bits_tot = prealloc_pg;
         inode->nr_longs_tot = nr_longs;
 
         bitmap_zero(inode->bitmap, prealloc_pg);
 
-
-        //bitmap_set(inode->bitmap, 0, 1);
+        up_write(&inode->bitmap_rw_sem);
 
 #if 0
         end = jiffies;
@@ -179,6 +173,14 @@ void remove_pg_cross_bitmap(struct inode *inode, pgoff_t index){
 	if (atomic_read(&inode->i_bitmap_freed) == 1)
 		goto exit;
 
+#if 0
+        if(unlikely(index > inode->nr_bits_tot)){
+                printk("%s:ERR Increase bitmap size: can handle %ld pages, request pg nr = %ld\n",
+                                __func__, inode->nr_bits_tot, index);
+                goto exit;
+        }
+#endif
+
         down_write(&inode->bitmap_rw_sem);
 
         bitmap_clear(inode->bitmap, index, 1);
@@ -205,8 +207,17 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t start_index, unsigned long
 		goto exit;
         }
 
+#if 0
+        if(unlikely((start_index + nr_pages -1) > inode->nr_bits_tot)){
+                printk("%s:ERR Increase bitmap size: can handle %ld pages, request pg nr = %ld\n",
+                                __func__, inode->nr_bits_tot, (start_index+nr_pages-1));
+                goto exit;
+        }
+#endif
+
         down_write(&inode->bitmap_rw_sem);
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
+
 
         bitmap_set(inode->bitmap, start_index, nr_pages);
 
