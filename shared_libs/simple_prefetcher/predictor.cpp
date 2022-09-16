@@ -168,7 +168,7 @@ exit_success:
         fstat (fd, &file_stat);
 
         if(nr_reads_done > NR_READS_BEFORE_STATS && old_seq != new_seq){
-                printf("%s: fd=%d, offset=%ld, size=%ld, inode_nr=%ld old_seq=%d, new_seq=%d\n", __func__, fd, offset, size, file_stat.st_ino, old_seq, new_seq);
+                debug_printf("%s: fd=%d, offset=%ld, size=%ld, inode_nr=%ld old_seq=%d, new_seq=%d\n", __func__, fd, offset, size, file_stat.st_ino, old_seq, new_seq);
         }
 
         update_seq_stats(old_seq, new_seq);
