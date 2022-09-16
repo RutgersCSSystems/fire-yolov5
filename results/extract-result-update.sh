@@ -43,8 +43,8 @@ let XTITLE='#. of threads'
 #declare -a rocksworkarr=("readseq" "readrandom" "readwhilescanning" "multireadrandom")
 #declare -a rocksworkproxyarr=("readseq" "readrandom" "readwhilescanning" "multireadrandom")
 
-declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq")
-declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq")
+declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
 declare -a threadarr=("1" "4" "8" "16")
 #declare -a threadarr=("16")
