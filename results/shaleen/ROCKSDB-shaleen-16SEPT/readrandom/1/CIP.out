@@ -1,0 +1,69 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+Received signal 11 (Segmentation fault)
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+Command terminated by signal 11
+	Command being timed: "./db_bench --db=/users/shaleen/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=5000000 --seed=1576170874 --benchmarks=readrandom --use_existing_db=1 --mmap_read=0 --threads=1"
+	User time (seconds): 0.00
+	System time (seconds): 0.01
+	Percent of CPU this job got: 68%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.02
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 12644
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 74
+	Minor (reclaiming a frame) page faults: 1309
+	Voluntary context switches: 129
+	Involuntary context switches: 0
+	Swaps: 0
+	File system inputs: 18088
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+PREDICTOR STATS
+
+[89271.275736] sh (3300): drop_caches: 3
+[89271.317616] sh (3305): drop_caches: 3
+[89276.349652] Enabled file stats for time:3312
+[89276.349906] write_proc_unbounded: Value of write = 0
+[89276.349914] write_proc_2mb_limit: Value of write = 0
+[89276.349921] write_proc_bitmap_shift: Value of write = 27
+[89276.356369] Enabled file stats for db_bench:3317
+[89276.356628] write_proc_unbounded: Value of write = 0
+[89276.356638] write_proc_2mb_limit: Value of write = 0
+[89276.356645] write_proc_bitmap_shift: Value of write = 27
+[89276.365760] Enabled file stats for db_bench:3317
+[89276.371668] Enabled file stats for db_bench:3325
+[89276.371697] Enabled file stats for db_bench:3324
+[89276.371753] Enabled file stats for db_bench:3326
+[89276.371827] traps: db_bench[3326] general protection fault ip:7f9453038a78 sp:7f944d7d8060 error:0
+[89276.371843] Enabled file stats for db_bench:3327
+[89276.371859] Enabled file stats for db_bench:3328
+[89276.371865] FinalTaskReport:db_bench:3317 nr_pages_read:197, nr_pages_hit:189, nr_pages_miss:8
+[89276.371866] FinalTaskReport:db_bench:3328 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[89276.371866] FinalTaskReport:db_bench:3327 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[89276.371986] FinalTaskReport:db_bench:3324 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[89276.371993] FinalTaskReport:db_bench:3325 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[89276.372390] FinalTaskReport:db_bench:3326 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[89276.374615] write_proc_unbounded: Value of write = 0
+[89276.374623] write_proc_2mb_limit: Value of write = 0
+[89276.374632] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[89276.374633] Final GlobalReport: nr_pages_read:197, nr_pages_hit:189, nr_pages_miss:8
+[89276.374635] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[89276.374682] FinalTaskReport:time:3312 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
