@@ -443,7 +443,6 @@ void check_pc_bitmap(void *arg){
 }
 
 
-
 /*
  * function run by the prefetcher thread
  */
@@ -495,6 +494,7 @@ void prefetcher_th(void *arg) {
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
 
+
     while (file_pos < a->file_size){
     	/*
     	 * Stop prefetching if the prefetch limit is reached
@@ -503,6 +503,15 @@ void prefetcher_th(void *arg) {
     		debug_printf("%s: offset > prefetch_limit\n", __func__);
     		goto exit_prefetcher_th;
     	}
+
+	/*
+	 * If the file is closed, dont do any prefetching
+	 */
+	if(is_file_closed(a->uinode, a->fd)){
+	    	printf("%s: fd=%d has been closed\n", __func__, a->fd);
+    		goto exit_prefetcher_th;
+	}
+
 
 #ifdef MODIFIED_RA
     	if(page_cache_state) {
@@ -522,7 +531,7 @@ void prefetcher_th(void *arg) {
 
     		uinode_bitmap_unlock(a->uinode);
 
-    		printf("readahead_info: failed TID:%ld \n", tid);
+    		printf("readahead_info: failed fd:%d TID:%ld \n", a->fd, tid);
     		goto exit_prefetcher_th;
     	}
 #ifdef ENABLE_LIB_STATS
@@ -1001,7 +1010,10 @@ skip_read_predictor:
 
 void handle_file_close(int fd){
 
-	debug_printf("Entering %s\n", __func__);
+#ifdef PREDICTOR
+	printf("Entering %s, nr_queue=%d\n", __func__, thpool_queue_len(workerpool));
+#endif
+
 
 #ifdef MAINTAIN_UINODE
 	int i_fd_cnt = handle_close(i_map, fd);
@@ -1013,13 +1025,13 @@ void handle_file_close(int fd){
 #endif
 
 
-#if 0
 #ifdef PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
 		fp = fd_to_file_pred.at(fd);
+		fd_to_file_pred.erase(fd);
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
@@ -1028,9 +1040,7 @@ void handle_file_close(int fd){
 
 	if(fp){
 		delete(fp);
-		//fd_to_file_pred.insert({fd, NULL});
 	}
-#endif
 #endif
 
 exit_handle_file_close:
