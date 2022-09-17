@@ -289,8 +289,10 @@ void dest(){
 	fprintf(stdout, "Total nr_ra = %ld\n", total_nr_ra.load());
 	fprintf(stdout, "Total nr_bytes_ra = %ld\n", total_bytes_ra.load());
 
+#if 0
 #if defined(PREDICTOR) && defined(ENABLE_PRED_STATS)
         print_seq_stats();
+#endif
 #endif
 
 #endif
@@ -415,16 +417,16 @@ void check_pc_bitmap(void *arg){
     	printf("No pcbitmap\n");
         return;
     }
-
-	off_t start_pg = a->offset >> PAGE_SHIFT;
+    
+    off_t start_pg = a->offset >> PAGE_SHIFT;
     off_t curr_pg = start_pg;
     off_t prefetch_limit_pg = a->prefetch_limit >> PAGE_SHIFT;
 
     if(prefetch_limit_pg == 0)
-    	prefetch_limit_pg = 1;
+	prefetch_limit_pg = 1;
 
-
-	uinode_bitmap_lock(a->uinode);
+    
+    uinode_bitmap_lock(a->uinode);
 
     while(curr_pg < (start_pg + prefetch_limit_pg)){
 
@@ -434,9 +436,10 @@ void check_pc_bitmap(void *arg){
                         break;
          }
     }
-	uinode_bitmap_unlock(a->uinode);
+    uinode_bitmap_unlock(a->uinode);
+
     a->offset = curr_pg << PAGE_SHIFT;
-    //printf("%s: changing offset from pg %ld to %ld\n", __func__, start_pg, curr_pg);
+    debug_printf("%s: changing offset from pg %ld to %ld fd:%d\n", __func__, start_pg, curr_pg, a->fd);
 }
 
 
@@ -454,11 +457,12 @@ void prefetcher_th(void *arg) {
 	struct thread_args *a = (struct thread_args*)arg;
 
 #ifdef ENABLE_LIB_STATS
-    /* per_thread counter for nr of readaheads done
-     * and nr of bytes requested for readahead
-     */
-    long nr_ra_done = 0;
-    long nr_bytes_ra_done = 0;
+    	/* 
+     	* per_thread counter for nr of readaheads done
+     	* and nr of bytes requested for readahead
+     	*/
+    	long nr_ra_done = 0;
+    	long nr_bytes_ra_done = 0;
 #endif
 
 	off_t file_pos; //actual file position where readahead will be done
@@ -481,15 +485,15 @@ void prefetcher_th(void *arg) {
 
     file_pos = a->offset;
 
-    if((file_pos + a->prefetch_limit) > a->file_size){
-	goto exit_prefetcher_th;
+
+    if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
+	    goto exit_prefetcher_th;
     }
 
     debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
-
 
     while (file_pos < a->file_size){
     	/*
@@ -639,10 +643,9 @@ void inline prefetch_file(void *args){
 
 	struct thread_args *arg = NULL;
 	off_t filesize;
-    off_t stride;
-    struct u_inode *uinode;
+    	off_t stride;
+    	struct u_inode *uinode;
 
-	debug_printf("Entering %s\n", __func__);
 	/*
 	 * When PREDICTOR is enabled, file sanity checks are not required
 	 * This is because the file has already been screened for
@@ -774,7 +777,7 @@ void inline record_open(struct file_desc desc){
 	off_t filesize = reg_fd(fd);
 	struct timespec start, end;
 
-	debug_printf("Entering %s\n", __func__);
+	debug_printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
 
         /*
          * TODO BUG: This would only work for workloads that already have their
@@ -789,7 +792,7 @@ void inline record_open(struct file_desc desc){
 		if(!fp){
 			   printf("%s ERR: Could not allocate new file_predictor\n", __func__);
            	   goto exit;
-        }
+        	}
 
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
@@ -801,12 +804,14 @@ void inline record_open(struct file_desc desc){
          * We give it a signin bonus. Prefetch a small portion of the start
          * of the file
          */
-         if(fp->should_prefetch_now()){
-        	 struct thread_args arg;
-             arg.fd = fd;
-             arg.fp = fp;
-             prefetch_file(&arg);
-          }
+         	if(fp->should_prefetch_now()){
+        	 	struct thread_args arg;
+             		arg.fd = fd;
+             		arg.fp = fp;
+
+	     		//printf("%s: Doing a Bonus Prefetch\n", __func__);
+             		prefetch_file(&arg);
+          	}
 #endif
 
 		/*
@@ -831,7 +836,7 @@ void inline record_open(struct file_desc desc){
 
 	}
 	else{
-		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
+		printf("%s: fd=%d filesize=%ld is smaller than %d bytes\n", __func__, fd, filesize, MIN_FILE_SZ);
 	}
 
 exit:
@@ -846,7 +851,7 @@ exit:
  */
 void handle_open(struct file_desc desc){
 
-	//printf("%s : fd=%d\n", __func__, desc.fd);
+	debug_printf("%s: fd:%d, TID:%ld\n", __func__, desc.fd, gettid());
 
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
@@ -896,18 +901,21 @@ void update_file_predictor_and_prefetch(void *arg){
 		fp = fd_to_file_pred.at(a->fd);
 	}
 	catch(const std::out_of_range &orr){
+		debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
                 return;
 	}
 
-        fp->nr_reads_done += 1L;
 
 	if(fp){
+		/*
+		printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
+		*/
+        	fp->nr_reads_done += 1L;
 		fp->predictor_update(a->offset, a->data_size);
 
                 if(fp->should_prefetch_now()){
                         a->fp = fp;
 			prefetch_file(arg);
-			debug_printf("%s: seq:%ld\n", __func__, fp->is_sequential());
 		}
 	}
         else{
@@ -953,6 +961,8 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 #ifdef ENABLE_EVICTION_OLD
 	set_curr_last_fd(fd);
 #endif
+
+	//printf("%s: TID:%ld fd:%d, offset=%ld\n", __func__, gettid(), fd, offset);
 
 
 #ifdef PREDICTOR
@@ -1003,21 +1013,24 @@ void handle_file_close(int fd){
 #endif
 
 
-#if 0 //def PREDICTOR
+#if 0
+#ifdef PREDICTOR
 	init_global_ds();
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-		//fp = fd_to_file_pred.at(fd);
-		//fd_to_file_pred->erase(fd);
+		fp = fd_to_file_pred.at(fd);
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
 		goto exit_handle_file_close;
 	}
+
 	if(fp){
 		delete(fp);
+		//fd_to_file_pred.insert({fd, NULL});
 	}
+#endif
 #endif
 
 exit_handle_file_close:
@@ -1093,6 +1106,9 @@ int openat(int dirfd, const char *pathname, int flags, ...){
 
 	desc.fd = fd;
         desc.filename = pathname;
+
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+
 	handle_open(desc);
 
 exit:
@@ -1107,7 +1123,7 @@ int open64(const char *pathname, int flags, ...){
 	struct file_desc desc;
 
 
-	printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
+	debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
 
 	if(flags & O_CREAT){
 		va_list valist;
@@ -1122,6 +1138,9 @@ int open64(const char *pathname, int flags, ...){
 
 	desc.fd = fd;
         desc.filename = pathname;
+
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+
 	handle_open(desc);
 
 exit:
@@ -1154,7 +1173,10 @@ int open(const char *pathname, int flags, ...){
 	desc.fd = fd;
         desc.filename = pathname;
 
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+
 	handle_open(desc);
+
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -1177,6 +1199,8 @@ FILE *fopen(const char *filename, const char *mode){
 	desc.fd = fd;
         desc.filename = filename;
 
+	debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
+
 	handle_open(desc);
 
 exit:
@@ -1196,7 +1220,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	ssize_t amount_read;
 
-	//debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
+	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
         read_predictor(NULL, size, fd, offset);
 
@@ -1225,7 +1249,6 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 	size_t amount_read = 0;
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
-	//printf("%s: TID:%ld\n", __func__, gettid());
 
         read_predictor(stream, size*nmemb, 0, 0);
 
@@ -1249,7 +1272,7 @@ int fclose(FILE *stream){
 #ifdef ONLY_INTERCEPT
 	goto exit_fclose;
 #endif
-	debug_printf("%s: closing %d\n", __func__, fd);
+
 	handle_file_close(fd);
 
 exit_fclose:

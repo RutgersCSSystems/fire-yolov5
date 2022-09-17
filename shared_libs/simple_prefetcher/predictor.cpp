@@ -72,8 +72,7 @@ file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
         //Assume any opened file is probably not sequential
         sequentiality = MAYBESEQ;
 #ifdef ENABLE_PRED_STATS
-        init_seq_stats(sequentiality);
-        //printf("%s: Opened fd=%d, filename=%s\n", __func__, this_fd, filename);
+        //init_seq_stats(sequentiality);
 #endif
         stride = 0;
         read_size = 0;
@@ -171,7 +170,7 @@ exit_success:
                 debug_printf("%s: fd=%d, offset=%ld, size=%ld, inode_nr=%ld old_seq=%d, new_seq=%d\n", __func__, fd, offset, size, file_stat.st_ino, old_seq, new_seq);
         }
 
-        update_seq_stats(old_seq, new_seq);
+        //update_seq_stats(old_seq, new_seq);
 #endif
 
 exit_fail:
@@ -199,12 +198,12 @@ bool file_predictor::should_prefetch_now(){
 
         prefetch_limit = std::max(0L, early_fetch * sequentiality);
 
-        /*
+	/*
         printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
                         __func__, fd, last_read_offset, last_ra_offset, (last_ra_offset-last_read_offset), prefetch_limit);
-                        */
+	*/
 
-        if (((last_read_offset + early_fetch) >= last_ra_offset) && prefetch_limit > 0){
+        if(prefetch_limit > 0){
                 //printf("%s: true\n", __func__);
                 return true;
         }
@@ -215,6 +214,7 @@ bool file_predictor::should_prefetch_now(){
 
 //PREDICTOR STATS FUNCTIONS
 
+/*
 void init_seq_stats(int seq){
         stats.lock();
         seq_stats[seq+8] += 1;
@@ -243,5 +243,7 @@ void print_seq_stats(){
         printf("\n");
         stats.unlock();
 }
+
+*/
 
 #endif //PREDICTOR
