@@ -128,7 +128,7 @@
  * before checking if the fd is being read in changing patterns
  */
 #ifndef NR_READS_BEFORE_STATS
-#define NR_READS_BEFORE_STATS 20
+#define NR_READS_BEFORE_STATS 10
 #endif
 
 
