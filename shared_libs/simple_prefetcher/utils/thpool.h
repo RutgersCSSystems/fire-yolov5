@@ -192,6 +192,12 @@ void forced_thpool_destroy(threadpool);
 int thpool_num_threads_working(threadpool);
 
 
+/*
+ * Returns the number of items in the queue
+ */
+int thpool_queue_len(threadpool);
+
+
 #ifdef __cplusplus
 }
 #endif

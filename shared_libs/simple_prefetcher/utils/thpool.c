@@ -320,6 +320,14 @@ int thpool_num_threads_working(thpool_* thpool_p){
 }
 
 
+int thpool_queue_len(thpool_* threadpool){
+	if(!threadpool)
+		return 0;
+
+	return threadpool->jqueue.len;
+}
+
+
 
 
 
