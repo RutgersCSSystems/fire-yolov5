@@ -15,6 +15,7 @@
 #define DEFSEQ 128 /* definitely seq */
 #endif
 
+#if 0
 #define DEFNSEQ (-8) //Not seq or strided(since off_t is ulong)
 #define LIKELYNSEQ (-4) /*possibly not seq */
 #define POSSNSEQ 0 /*possibly not seq */
@@ -22,6 +23,15 @@
 #define POSSSEQ 2 /* possibly seq? */
 #define LIKELYSEQ 4 /* likely seq? */
 #define DEFSEQ 8 /* definitely seq */
+#endif
+
+#define DEFNSEQ 0 //Not seq or strided(since off_t is ulong)
+#define LIKELYNSEQ 1 /*possibly not seq */
+#define POSSNSEQ 2 /*possibly not seq */
+#define MAYBESEQ 4 /*maybe seq */
+#define POSSSEQ 8 /* possibly seq? */
+#define LIKELYSEQ 16 /* likely seq? */
+#define DEFSEQ 32 /* definitely seq */
 
 
 void print_seq_stats();

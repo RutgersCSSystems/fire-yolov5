@@ -9,18 +9,19 @@ KB=1024
 MB=`echo "$(KB)*1024" | bc`
 25MB=`echo "$(KB)*1024*25" | bc`
 15MB=`echo "$(KB)*1024*15" | bc`
+5MB=`echo "$(KB)*1024*5" | bc`
 
 NR_RA_PAGES=40
 NR_WORKERS=2
 PORTION_PAGES=32
 NR_ADJACENT_CHECK=10
-MIN_FILE_SZ=$(15MB)
+MIN_FILE_SZ=$(5MB)
 CROSS_BITMAP_SHIFT=24
 
 SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c 
 
 #DEBUG=-DDEBUG
-ENABLE_LIB_STATS=-DENABLE_LIB_STATS -DENABLE_PRED_STATS ##Comment if dont need lib stats
+ENABLE_LIB_STATS=-DENABLE_LIB_STATS #-DENABLE_PRED_STATS ##Comment if dont need lib stats
 ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 #ENABLE_MPI=-DENABLE_MPI
 OTHERFLAGS=-DMAINTAIN_UINODE -DPER_INODE_BITMAP $(ENABLE_MPI) $(ENABLE_OS_STATS) $(ENABLE_LIB_STATS)
