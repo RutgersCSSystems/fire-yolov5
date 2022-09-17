@@ -133,6 +133,16 @@
 
 
 /*
+ * Maximum number of fds a file
+ * can possibly open for uinode bookeeping
+ * uinode fdlist
+ */
+#ifndef MAX_FD_PER_INODE
+#define MAX_FD_PER_INODE 64
+#endif
+
+
+/*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
  * the current readahead with the typical read

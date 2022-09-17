@@ -245,6 +245,42 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 	return 0;
 }
 
+
+void remove_fd_from_uinode(struct u_inode *uinode, int fd){
+
+	int newfdlist[MAX_FD_PER_INODE];
+	int new_i = 0;
+
+	for(int i=0; i<MAX_FD_PER_INODE; i++){
+		if(uinode->fdlist[i] == fd){
+			uinode->fdlist[i] = 0;
+		}
+
+		if(uinode->fdlist[i] >= 3){
+			newfdlist[new_i] = uinode->fdlist[i];
+			new_i += 1;
+		}
+	}
+
+	for(int i=0; i<MAX_FD_PER_INODE; i++){
+		uinode->fdlist[i] = newfdlist[i];
+	}
+}
+
+
+bool is_file_closed(struct u_inode *uinode, int fd){
+	if(!uinode)
+		return false;
+
+	for(int i=0; i<MAX_FD_PER_INODE; i++){
+		if(uinode->fdlist[i] == fd){
+			return false;
+		}
+	}
+	return true;
+}
+
+
 /*
  * Reduce and remove inode refcount because a file descriptor
  * might have been close.
@@ -258,8 +294,8 @@ int inode_reduce_ref(struct hashtable *i_map, int fd) {
 
 	uinode = get_uinode(i_map, fd);
 	if(uinode && uinode->fdcount > 0) {
-		//printf("%s:%d Reducing current FDCOUNT %d\n",
-		//		__func__, __LINE__, uinode->fdcount);
+		remove_fd_from_uinode(uinode, fd);
+
 		uinode->fdcount--;
 		return uinode->fdcount;
 	}

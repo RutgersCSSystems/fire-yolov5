@@ -11,7 +11,7 @@
 struct u_inode {
 	int ino; //opened file fd
 	long file_size; //total filesize
-	int fdlist[64]; //array of file descriptors for this inode
+	int fdlist[MAX_FD_PER_INODE]; //array of file descriptors for this inode
 	int fdcount; //total fd's opened for this file
 
 	int full_prefetched; //has the file been already fully prefetched?
@@ -50,5 +50,7 @@ int add_fd_to_inode(struct hashtable *, int fd);
 
 void uinode_bitmap_lock(struct u_inode *inode);
 void uinode_bitmap_unlock(struct u_inode *inode);
+
+bool is_file_closed(struct u_inode *uinode, int fd);
 
 #endif
