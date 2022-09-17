@@ -747,7 +747,11 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
         if(likely(this_fd.file))
                 inode = file_inode(this_fd.file);
         else{
-                printk("%s: unable to find struct file for this fd\n", __func__);
+                //printk("%s: unable to find struct file for this fd\n", __func__);
+                /*
+                 * This means unable to find struct file for this fd
+                 */
+                ret = -10;
                 goto exit;
         }
 
