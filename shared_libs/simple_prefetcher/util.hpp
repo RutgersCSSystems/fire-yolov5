@@ -143,6 +143,14 @@
 
 
 /*
+ * Number of files to handle in i_map
+ * for uinodes
+ */
+#ifndef MAXFILES
+#define MAXFILES 10000
+#endif
+
+/*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
  * the current readahead with the typical read
