@@ -72,6 +72,8 @@ struct hashtable *mpi_map;
 struct file_desc {
         int fd;
         const char *filename;
+	struct u_inode *uinode;
+
 #ifdef ENABLE_MPI
         MPI_File fh;
 #endif
@@ -455,6 +457,7 @@ void prefetcher_th(void *arg) {
 	long tid = gettid();
 	struct thread_args *a = (struct thread_args*)arg;
 
+
 #ifdef ENABLE_LIB_STATS
     	/* 
      	* per_thread counter for nr of readaheads done
@@ -471,25 +474,38 @@ void prefetcher_th(void *arg) {
 	off_t zero_pg; //end of bitmap search
 	off_t check_pg; //checking the bitmap a bit further
 	off_t pg_diff;
+	long err;
 
 	bit_array_t *page_cache_state = NULL;
 
+
+	/*
+	 * If the file is completely prefetched, dont prefetch
+	 */
+	if(a->uinode && a->uinode->fully_prefetched.load()){
+		//printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
+		goto exit_prefetcher_th;
+	}
 
 	/*
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
 	page_cache_state = allocate_bitmap(a);
 
-    check_pc_bitmap(arg);
+    	check_pc_bitmap(arg);
 
-    file_pos = a->offset;
+    	file_pos = a->offset;
 
 
-    if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
-	    goto exit_prefetcher_th;
-    }
+    	/*
+     	* If the file prefetch offset is almost towards the end of file
+     	* dont prefetch
+     	*/
+    	if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
+		goto exit_prefetcher_th;
+    	}
 
-    debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+    	debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
                         "rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
 			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
 			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
@@ -508,10 +524,8 @@ void prefetcher_th(void *arg) {
 	 * If the file is closed, dont do any prefetching
 	 */
 	if(is_file_closed(a->uinode, a->fd)){
-	    	printf("%s: fd=%d has been closed\n", __func__, a->fd);
     		goto exit_prefetcher_th;
 	}
-
 
 #ifdef MODIFIED_RA
     	if(page_cache_state) {
@@ -525,15 +539,21 @@ void prefetcher_th(void *arg) {
     		goto exit_prefetcher_th;
     	}
 
+
     	uinode_bitmap_lock(a->uinode);
-    	if(readahead_info(a->fd, file_pos,
-    			a->prefetch_size, &ra) < 0) {
 
+	err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+
+    	if(err < -10){
     		uinode_bitmap_unlock(a->uinode);
-
-    		printf("readahead_info: failed fd:%d TID:%ld \n", a->fd, tid);
+		goto exit_prefetcher_th;
+	}
+	else if(err < 0){
+		uinode_bitmap_unlock(a->uinode);
+		printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
     		goto exit_prefetcher_th;
-    	}
+	}
+
 #ifdef ENABLE_LIB_STATS
     	else{
     		nr_ra_done += 1;
@@ -576,8 +596,20 @@ void prefetcher_th(void *arg) {
     		}
     	}
 
-    	uinode_bitmap_unlock(a->uinode);
     	pg_diff = zero_pg - start_pg;
+
+	a->uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
+
+	if(a->uinode->prefetched_bytes > a->file_size){
+		a->uinode->fully_prefetched.store(true);
+	}
+
+	/*
+	printf("fd:%d, pg_diff:%ld, total bytes=%ld, fully_prefetched=%d\n",
+			a->fd, pg_diff, a->uinode->prefetched_bytes, a->uinode->fully_prefetched.load());
+	*/
+
+	uinode_bitmap_unlock(a->uinode);
 
     	debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
     			"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
@@ -588,6 +620,7 @@ void prefetcher_th(void *arg) {
     		printf("ERR:%s, pg_diff==0\n", __func__);
     		goto exit_prefetcher_th;
     	}
+
 
     	file_pos += pg_diff << PAGE_SHIFT;
 
@@ -760,8 +793,11 @@ void inline prefetch_file(void *args){
 #elif defined(THPOOL_PREFETCH)
 	if(!workerpool)
 		printf("ERR: %s: No workerpool ? \n", __func__);
-	else
+	else{
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+		printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
+				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
+	}
 		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 #else
 	prefetcher_th((void*)arg);
@@ -799,9 +835,11 @@ void inline record_open(struct file_desc desc){
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
 		if(!fp){
-			   printf("%s ERR: Could not allocate new file_predictor\n", __func__);
-           	   goto exit;
+			printf("%s ERR: Could not allocate new file_predictor\n", __func__);
+			goto exit;
         	}
+		fp->uinode = desc.uinode;
+
 
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
@@ -862,6 +900,8 @@ void handle_open(struct file_desc desc){
 
 	debug_printf("%s: fd:%d, TID:%ld\n", __func__, desc.fd, gettid());
 
+	desc.uinode = NULL;
+
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
 	/*
@@ -881,12 +921,12 @@ void handle_open(struct file_desc desc){
 	if(add_fd_to_inode(i_map, desc.fd) < 0){
                 printf("ERR:%s unable to add to uinode\n", __func__);
         }
+	desc.uinode = get_uinode(i_map, desc.fd);
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
 	record_open(desc);
 #endif
-
 
 	/*
 	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
@@ -971,8 +1011,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	set_curr_last_fd(fd);
 #endif
 
-	//printf("%s: TID:%ld fd:%d, offset=%ld\n", __func__, gettid(), fd, offset);
-
 
 #ifdef PREDICTOR
 
@@ -1009,11 +1047,6 @@ skip_read_predictor:
 
 
 void handle_file_close(int fd){
-
-#ifdef PREDICTOR
-	printf("Entering %s, nr_queue=%d\n", __func__, thpool_queue_len(workerpool));
-#endif
-
 
 #ifdef MAINTAIN_UINODE
 	int i_fd_cnt = handle_close(i_map, fd);

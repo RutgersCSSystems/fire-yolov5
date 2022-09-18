@@ -69,8 +69,8 @@ file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
         page_cache_state = NULL;
 #endif
 
-        //Assume any opened file is probably not sequential
-        sequentiality = MAYBESEQ;
+        //Assume any opened file is mostly sequential
+        sequentiality = DEFSEQ;
 #ifdef ENABLE_PRED_STATS
         //init_seq_stats(sequentiality);
 #endif
@@ -198,13 +198,10 @@ bool file_predictor::should_prefetch_now(){
 
         prefetch_limit = std::max(0L, early_fetch * sequentiality);
 
-	/*
-        printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
+        debug_printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
                         __func__, fd, last_read_offset, last_ra_offset, (last_ra_offset-last_read_offset), prefetch_limit);
-	*/
 
-        if(prefetch_limit > 0){
-                //printf("%s: true\n", __func__);
+        if(prefetch_limit > 0 && !uinode->fully_prefetched.load()){
                 return true;
         }
 

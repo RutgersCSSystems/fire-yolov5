@@ -4,6 +4,7 @@
 #include "util.hpp"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
+#include "uinode.hpp"
 
 #if 0
 #define DEFNSEQ (0) //Not seq or strided(since off_t is ulong)
@@ -96,11 +97,12 @@ class file_predictor{
 		 */
 		int sequentiality;
 
+
 		/*
-		 * Returns true if readahead has been issued
-		 * for this file
+		 * Connect with the corresponding UINODE if available
 		 */
-		std::atomic_flag already_prefetched;
+		struct u_inode *uinode;
+
 
 		file_predictor(int this_fd, size_t size, const char *filename);
 

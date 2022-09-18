@@ -31,6 +31,22 @@ struct u_inode {
 	 */
 	bit_array_t *page_cache_state;
         std::mutex bitmap_lock;
+
+	/*
+	* Returns true if file has been prefetched completely
+	* for this file
+	*/
+	std::atomic<bool> fully_prefetched;
+	size_t prefetched_bytes;
+
+	u_inode(){
+		ino = 0;
+		file_size = 0;
+		page_cache_state = NULL;
+
+		fully_prefetched.store(false);
+		prefetched_bytes = 0;
+	}
 };
 
 struct hashtable *init_inode_fd_map(void);
