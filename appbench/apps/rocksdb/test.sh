@@ -12,7 +12,7 @@ source $RUN_SCRIPTS/generic_funcs.sh
 ulimit -n 1000000
 
 DBHOME=$PWD
-THREAD=16
+THREAD=4
 VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
@@ -36,8 +36,8 @@ GB=`echo "1024*$MB" | bc`
 
 #sudo blockdev --setra $NR_RA_BLOCKS $DEV
 
-WORKLOAD="readseq"
-#WORKLOAD="readrandom"
+#WORKLOAD="readseq"
+WORKLOAD="readrandom"
 #WORKLOAD="readreverse"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
@@ -87,13 +87,13 @@ CLEAR_PWD()
 #mkdir $LOCKDAT
 sudo dmesg --clear
 
+
+<< 'MULTILINE-COMMENT'
 echo "RUNNING Vanilla................."
 FlushDisk
-
+clear_os_stats
 #ENABLE_LOCK_STATS
-#export LD_PRELOAD=""
-#SETPRELOAD "OSONLY"
-export LD_PRELOAD="/usr/lib/lib_Cross_Info_sync.so"
+export LD_PRELOAD=""
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
 #DISABLE_LOCK_STATS
@@ -102,10 +102,9 @@ dmesg
 sudo dmesg --clear
 #sudo cat /proc/lock_stat
 
-exit
-
 echo "RUNNING OSONLY................"
 FlushDisk
+clear_os_stats
 SETPRELOAD "OSONLY"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
@@ -115,7 +114,7 @@ sudo dmesg --clear
 
 echo "RUNNING Cross_Info................"
 FlushDisk
-#SETPRELOAD "CNI"
+clear_os_stats
 export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
 $DBHOME/db_bench $PARAMS $READARGS 
 export LD_PRELOAD=""
@@ -123,23 +122,17 @@ FlushDisk
 dmesg
 sudo dmesg --clear
 
-echo "RUNNING Cross Info IOOPT................"
+MULTILINE-COMMENT
+
+echo "RUNNING Cross Info Predict................"
 FlushDisk
+clear_os_stats
 #SETPRELOAD "CPNI"
-export LD_PRELOAD="/usr/lib/lib_CII.so"
-$DBHOME/db_bench $PARAMS $READARGS 
+export LD_PRELOAD="/usr/lib/lib_CIP.so"
+$DBHOME/db_bench $PARAMS $READARGS
 export LD_PRELOAD=""
 FlushDisk
 dmesg
 sudo dmesg --clear
-
-exit
-
-echo "RUNNING CPBI................"
-FlushDisk
-SETPRELOAD "CPBI"
-$DBHOME/db_bench $PARAMS $READARGS 
-export LD_PRELOAD=""
-FlushDisk
 
 #/users/shaleen/ssd/ltrace/ltrace -w 5 -rfSC -l /usr/lib/libnopred.so $DBHOME/db_bench $PARAMS $READARGS
