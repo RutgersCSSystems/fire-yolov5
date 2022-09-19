@@ -446,6 +446,106 @@ void check_pc_bitmap(void *arg){
 
 
 /*
+ * Updates the offset for the next RA
+ * Takes uinode lock
+ * TODO: Make sure this works even without UINODE enabled
+ */
+long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_state, long file_pos, off_t prefetch_size){
+
+	off_t start_pg; //start from here in page_cache_state
+	off_t zero_pg; //end of bitmap search
+	off_t check_pg; //checking the bitmap a bit further
+
+	off_t pg_diff = 0;
+        off_t ulong_nr = 0;
+
+        unsigned long *pc_array;
+
+        if(!page_cache_state || !uinode){
+                goto exit;
+        }
+
+        start_pg = file_pos >> PAGE_SHIFT;
+	zero_pg = start_pg;
+        check_pg = start_pg;
+        
+        if(start_pg > page_cache_state->numBits){
+	        printf("ERR: %s Using small bitmap; unable to support "
+			"large file\n", __func__);
+		goto exit;
+        }
+
+        uinode_bitmap_lock(uinode);
+
+        pc_array = page_cache_state->array;
+
+
+        while((check_pg << PAGE_SHIFT) < uinode->file_size) {
+                ulong_nr = check_pg >> 6;
+
+                if(pc_array[ulong_nr] == 0){
+                        break;
+                }
+                check_pg += 1 << 6;
+        }
+        pg_diff = check_pg - start_pg;
+
+        //printf("pg_diff = %ld\n", pg_diff);
+
+#if 0
+        while((check_pg << PAGE_SHIFT) < uinode->file_size) {
+
+                if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP) {
+                        printf("ERR: %s: No bits are set - giving up\n", __func__);
+                        break;
+                }
+
+	        if(BitArrayTestBit(page_cache_state, check_pg)){
+                        check_pg += 1;
+                        zero_pg = check_pg;
+                }else if(zero_pg == start_pg){
+                        check_pg += 1;
+                }else
+                        break;
+	}
+        pg_diff = zero_pg - start_pg;
+#endif
+        
+
+        //pg_diff = prefetch_size >> PAGE_SHIFT;
+
+	uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
+
+	if(uinode->prefetched_bytes > uinode->file_size){
+		uinode->fully_prefetched.store(true);
+	}
+
+        uinode_bitmap_unlock(uinode);
+
+        //gettimeofday(&start, NULL);
+
+        //pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos);
+
+        //gettimeofday(&end, NULL);
+
+        //printf("update offset time = %ld\n", usec_diff(&start, &end));
+
+exit:
+        return pg_diff;
+}
+
+//returns microsecond time difference
+unsigned long usec_diff(struct timeval *a, struct timeval *b)
+{
+    unsigned long usec;
+
+    usec = (b->tv_sec - a->tv_sec)*1000000;
+    usec += b->tv_usec - a->tv_usec;
+    return usec;
+}
+
+
+/*
  * function run by the prefetcher thread
  */
 #ifdef CONCURRENT_PREFETCH
@@ -539,10 +639,13 @@ void prefetcher_th(void *arg) {
     		goto exit_prefetcher_th;
     	}
 
+        //struct timeval start, end;
+        //gettimeofday(&start, NULL);
 
     	uinode_bitmap_lock(a->uinode);
 
-	err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+        err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+	//err = readahead(a->fd, file_pos, a->prefetch_size);
 
     	if(err < -10){
     		uinode_bitmap_unlock(a->uinode);
@@ -564,52 +667,18 @@ void prefetcher_th(void *arg) {
 #endif
     	uinode_bitmap_unlock(a->uinode);
 
+        //gettimeofday(&end, NULL);
+        //printf("ra time = %ld\n", usec_diff(&start, &end));
+
 #ifdef READAHEAD_INFO_PC_STATE
-    	//We dont need this line probably. will have to check
-    	//page_cache_state->array = (unsigned long*)ra.data;
-    	start_pg = file_pos >> PAGE_SHIFT;
-    	zero_pg = start_pg;
-    	check_pg = start_pg;
 
-    	if(start_pg > page_cache_state->numBits){
-    		printf("ERR: %s Using small bitmap; unable to support "
-    				"large file\n", __func__);
-    		goto exit_prefetcher_th;
-    	}
+        //gettimeofday(&start, NULL);
 
-    	uinode_bitmap_lock(a->uinode);
+        pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
 
-    	while((check_pg << PAGE_SHIFT) < a->file_size) {
+        //gettimeofday(&end, NULL);
 
-    		if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP) {
-    			printf("ERR: %s: No bits are set - giving up\n", __func__);
-    			break;
-    		}
-
-    		if(BitArrayTestBit(page_cache_state, check_pg)){
-    			check_pg += 1;
-    			zero_pg = check_pg;
-    		}else if(zero_pg == start_pg){
-    			check_pg += 1;
-    		}else {
-    			break;
-    		}
-    	}
-
-    	pg_diff = zero_pg - start_pg;
-
-	a->uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
-
-	if(a->uinode->prefetched_bytes > a->file_size){
-		a->uinode->fully_prefetched.store(true);
-	}
-
-	/*
-	printf("fd:%d, pg_diff:%ld, total bytes=%ld, fully_prefetched=%d\n",
-			a->fd, pg_diff, a->uinode->prefetched_bytes, a->uinode->fully_prefetched.load());
-	*/
-
-	uinode_bitmap_unlock(a->uinode);
+        //printf("update offset time = %ld\n", usec_diff(&start, &end));
 
     	debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
     			"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
@@ -706,7 +775,7 @@ void inline prefetch_file(void *args){
      }
 #else
 	filesize = reg_fd(fd);
-    stride = 0;
+        stride = 0;
 #endif
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
