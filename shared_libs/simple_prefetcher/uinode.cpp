@@ -211,6 +211,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
     	uinode = (struct u_inode *)found->value;
     }
 	if(uinode == NULL){
+
                 uinode = new struct u_inode;
 		if(!uinode){
 			m.unlock();
@@ -219,6 +220,8 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 		uinode->ino = inode;
 		uinode->fdcount = 0;
 		uinode->full_prefetched = 0;
+
+                uinode->file_size = file_stat.st_size;
 
 #if defined(READAHEAD_INFO_PC_STATE) && defined(PER_INODE_BITMAP)
                 /*
