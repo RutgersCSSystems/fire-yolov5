@@ -1041,12 +1041,12 @@ void update_file_predictor_and_prefetch(void *arg){
         	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
         		return;
 
-			/*fp->predictor_update(a->offset, a->data_size);
+			fp->predictor_update(a->offset, a->data_size);
 
         	if(fp->should_prefetch_now()){
             	a->fp = fp;
 				prefetch_file(arg);
-			}*/
+			}
 		}
         else{
                 printf("%s: No file_predictor\n", __func__);
@@ -1142,6 +1142,7 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(fd);
 		fd_to_file_pred.erase(fd);
 	}
