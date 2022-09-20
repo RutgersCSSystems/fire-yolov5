@@ -1013,7 +1013,6 @@ void handle_open(struct file_desc desc){
 #ifdef PREDICTOR
 void update_file_predictor_and_prefetch(void *arg){
 
-}
 	struct thread_args *a = (struct thread_args*)arg;
 
 	file_predictor *fp = NULL;
