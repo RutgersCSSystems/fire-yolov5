@@ -1016,15 +1016,14 @@ void handle_open(struct file_desc desc){
 void update_file_predictor_and_prefetch(void *arg){
 
 	struct thread_args *a = (struct thread_args*)arg;
-
 	file_predictor *fp = NULL;
 
 	if (a->fd < 1)
 		return;
 
 	try{
-
-		std::lock_guard<std::mutex> guard(fp_mutex);
+		/* We don't need a guard here. Do we? */
+		//std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(a->fd);
 	}
 	catch(const std::out_of_range &orr){
@@ -1037,11 +1036,10 @@ void update_file_predictor_and_prefetch(void *arg){
 			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 			 */
         	fp->nr_reads_done += 1L;
+			fp->predictor_update(a->offset, a->data_size);
 
         	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
         		return;
-
-			fp->predictor_update(a->offset, a->data_size);
 
         	if(fp->should_prefetch_now()){
             	a->fp = fp;
