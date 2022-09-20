@@ -864,8 +864,8 @@ void inline prefetch_file(void *args){
 		printf("ERR: %s: No workerpool ? \n", __func__);
 	else{
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-		printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
+		//printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
+		//		arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 	}
 		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 #else
