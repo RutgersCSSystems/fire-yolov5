@@ -914,6 +914,7 @@ void inline record_open(struct file_desc desc){
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fd_to_file_pred.insert({fd, fp});
 
          /*
