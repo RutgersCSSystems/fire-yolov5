@@ -1025,22 +1025,22 @@ void update_file_predictor_and_prefetch(void *arg){
                 return;
 	}
 
-	if(fp){
-		/*
-		printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
-		*/
-        fp->nr_reads_done += 1L;
+	if(fp && !(fd < 1)){
+			/*
+			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
+			 */
+        	fp->nr_reads_done += 1L;
 
-        if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
-        	return;
+        	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
+        		return;
 
-		fp->predictor_update(a->offset, a->data_size);
+			fp->predictor_update(a->offset, a->data_size);
 
-        if(fp->should_prefetch_now()){
-            a->fp = fp;
-			prefetch_file(arg);
+        	if(fp->should_prefetch_now()){
+            	a->fp = fp;
+				prefetch_file(arg);
+			}
 		}
-	}
         else{
                 printf("%s: No file_predictor\n", __func__);
         }
