@@ -61,6 +61,7 @@ threadpool workerpool = NULL;
 #include "predictor.hpp"
 robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
+std::mutex fp_mutex;
 #endif
 
 #include "frontend.hpp"
@@ -1017,15 +1018,21 @@ void update_file_predictor_and_prefetch(void *arg){
 
 	file_predictor *fp = NULL;
 
+	if (a->fd < 1)
+		return;
+
 	try{
+
+		fp_mutex.lock();
 		fp = fd_to_file_pred.at(a->fd);
+		fp_mutex.unlock();
 	}
 	catch(const std::out_of_range &orr){
 		debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
                 return;
 	}
 
-	if(fp && !(a->fd < 1)){
+	if(fp){
 			/*
 			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 			 */
@@ -1101,8 +1108,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
          * XXX: Thpool is not working right now
          */
 	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
-
-        free(arg);
+    free(arg);
 #else
 	struct thread_args arg;
         arg.fd = fd;

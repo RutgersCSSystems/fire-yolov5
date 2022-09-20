@@ -30,7 +30,7 @@ struct u_inode {
 	 * Send a pointer to the page cache state to be updated
 	 */
 	bit_array_t *page_cache_state;
-        std::mutex bitmap_lock;
+    std::mutex bitmap_lock;
 
 	/*
 	* Returns true if file has been prefetched completely
