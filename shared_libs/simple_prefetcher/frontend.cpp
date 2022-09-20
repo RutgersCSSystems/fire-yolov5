@@ -1028,11 +1028,11 @@ void update_file_predictor_and_prefetch(void *arg){
 		/*
 		printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 		*/
-        	fp->nr_reads_done += 1L;
+        fp->nr_reads_done += 1L;
 		fp->predictor_update(a->offset, a->data_size);
 
-                if(fp->should_prefetch_now()){
-                        a->fp = fp;
+        if(fp->should_prefetch_now()){
+            a->fp = fp;
 			prefetch_file(arg);
 		}
 	}

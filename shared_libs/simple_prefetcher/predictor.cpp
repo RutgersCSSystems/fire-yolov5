@@ -79,6 +79,8 @@ file_predictor::file_predictor(int this_fd, size_t size, const char *filename){
 
         last_ra_offset = 0;
         last_read_offset = 0;
+
+        uinode = NULL;
 }
 
 
