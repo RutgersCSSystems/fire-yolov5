@@ -1023,9 +1023,8 @@ void update_file_predictor_and_prefetch(void *arg){
 
 	try{
 
-		fp_mutex.lock();
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(a->fd);
-		fp_mutex.unlock();
 	}
 	catch(const std::out_of_range &orr){
 		debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
