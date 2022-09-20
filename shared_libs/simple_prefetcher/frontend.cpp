@@ -1023,7 +1023,7 @@ void update_file_predictor_and_prefetch(void *arg){
 
 	try{
 		/* We don't need a guard here. Do we? */
-		//std::lock_guard<std::mutex> guard(fp_mutex);
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(a->fd);
 	}
 	catch(const std::out_of_range &orr){
