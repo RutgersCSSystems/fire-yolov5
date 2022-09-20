@@ -1029,6 +1029,10 @@ void update_file_predictor_and_prefetch(void *arg){
 		printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 		*/
         fp->nr_reads_done += 1L;
+
+        if(fp->nr_reads_done % 3 > 0)
+        	return;
+
 		fp->predictor_update(a->offset, a->data_size);
 
         if(fp->should_prefetch_now()){
@@ -1087,11 +1091,11 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 
-        arg->fd = fd;
-        arg->offset = offset;
-        arg->data_size = data_size;
+    arg->fd = fd;
+    arg->offset = offset;
+    arg->data_size = data_size;
 
-        update_file_predictor_and_prefetch(arg);
+    update_file_predictor_and_prefetch(arg);
         
         /*
          * XXX: Thpool is not working right now
