@@ -1025,7 +1025,7 @@ void update_file_predictor_and_prefetch(void *arg){
                 return;
 	}
 
-	if(fp && !(fd < 1)){
+	if(fp && !(a->fd < 1)){
 			/*
 			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 			 */
