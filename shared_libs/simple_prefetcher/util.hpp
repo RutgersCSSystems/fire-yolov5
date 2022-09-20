@@ -189,6 +189,13 @@
 #define FILE_EVICTED 100
 
 /*
+ * Predictor frequency. Note, this should not be 0
+  */
+#ifndef NR_PREDICT_SAMPLE_FREQ
+#define NR_PREDICT_SAMPLE_FREQ 1
+#endif
+
+/*
  * pread_ra read_ra_req struct
  * this struct is used to send and receive info from kernel about
  * the current readahead with the typical read

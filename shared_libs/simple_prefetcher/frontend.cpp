@@ -65,6 +65,7 @@ threadpool evict_pool = NULL;
 #include "predictor.hpp"
 robin_hood::unordered_map<int, file_predictor*> fd_to_file_pred;
 std::atomic_flag fd_to_file_pred_init;
+std::mutex fp_mutex;
 #endif
 
 #include "frontend.hpp"
@@ -892,6 +893,7 @@ void inline prefetch_file(void *args){
 		printf("ERR: %s: No workerpool ? \n", __func__);
 	else{
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+
 		debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
 				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 	}
@@ -942,6 +944,7 @@ void inline record_open(struct file_desc desc){
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fd_to_file_pred.insert({fd, fp});
 
          /*
@@ -1041,10 +1044,16 @@ void handle_open(struct file_desc desc){
 
 #ifdef PREDICTOR
 void update_file_predictor_and_prefetch(void *arg){
-	struct thread_args *a = (struct thread_args*)arg;
 
-	file_predictor *fp;
+	struct thread_args *a = (struct thread_args*)arg;
+	file_predictor *fp = NULL;
+
+	if (a->fd < 1)
+		return;
+
 	try{
+		/* We don't need a guard here. Do we? */
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(a->fd);
 	}
 	catch(const std::out_of_range &orr){
@@ -1052,23 +1061,24 @@ void update_file_predictor_and_prefetch(void *arg){
                 return;
 	}
 
-
 	if(fp){
-		/*
-		printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
-		*/
+			/*
+			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
+			 */
         	fp->nr_reads_done += 1L;
-		fp->predictor_update(a->offset, a->data_size);
+			fp->predictor_update(a->offset, a->data_size);
 
-                if(fp->should_prefetch_now()){
-                        a->fp = fp;
-			prefetch_file(arg);
+        	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
+        		return;
+
+        	if(fp->should_prefetch_now()){
+            	a->fp = fp;
+				prefetch_file(arg);
+			}
 		}
-	}
         else{
                 printf("%s: No file_predictor\n", __func__);
         }
-
         return;
 }
 #endif //PREDICTOR
@@ -1116,18 +1126,17 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 
-        arg->fd = fd;
-        arg->offset = offset;
-        arg->data_size = data_size;
+    arg->fd = fd;
+    arg->offset = offset;
+    arg->data_size = data_size;
 
-        update_file_predictor_and_prefetch(arg);
+    update_file_predictor_and_prefetch(arg);
         
         /*
          * XXX: Thpool is not working right now
          */
 	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
-
-        free(arg);
+    free(arg);
 #else
 	struct thread_args arg;
         arg.fd = fd;
@@ -1161,6 +1170,7 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		std::lock_guard<std::mutex> guard(fp_mutex);
 		fp = fd_to_file_pred.at(fd);
 		fd_to_file_pred.erase(fd);
 	}
