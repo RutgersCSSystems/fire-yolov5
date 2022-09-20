@@ -60,6 +60,14 @@
 #define NR_WORKERS 2
 #endif
 
+
+//NR of eviction workers
+#ifndef NR_EVICT_WORKERS
+//#warning NR_EVICT_WORKERS not defined. Assuming 1 workers
+#define NR_EVICT_WORKERS 1
+#endif
+
+
 // Files smaller than this should
 // not be considered for prefetching
 #ifndef MIN_FILE_SZ
@@ -94,6 +102,25 @@
  */
 #ifndef NR_REMAINING
 #define NR_REMAINING ((700 * MB)/PAGESIZE)
+#endif
+
+
+/*
+ * Minimum available memory after which we should
+ * start doing eviction
+ */
+#ifndef MEM_LOW_WATERMARK
+//#define MEM_LOW_WATERMARK (240L * GB)
+#define MEM_LOW_WATERMARK (5L * GB)
+#endif
+
+/*
+ * Minimum available memory after which we should
+ * stop doing eviction
+ */
+#ifndef MEM_HIGH_WATERMARK
+//#define MEM_HIGH_WATERMARK (245L * GB)
+#define MEM_HIGH_WATERMARK (10L * GB)
 #endif
 
 /*
@@ -149,6 +176,17 @@
 #ifndef MAXFILES
 #define MAXFILES 10000
 #endif
+
+
+/*
+ * Time eviction thread will sleep
+ * for in seconds
+ */
+#ifndef SLEEP_TIME
+#define SLEEP_TIME 1
+#endif
+
+#define FILE_EVICTED 100
 
 /*
  * pread_ra read_ra_req struct

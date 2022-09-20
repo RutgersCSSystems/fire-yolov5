@@ -39,13 +39,22 @@ struct u_inode {
 	std::atomic<bool> fully_prefetched;
 	size_t prefetched_bytes;
 
+
+        /*
+         * Used by Eviction
+         */
+        int evicted; //set to FILE_EVICTED if evicted
+
 	u_inode(){
 		ino = 0;
 		file_size = 0;
+                fdcount = 0;
 		page_cache_state = NULL;
 
 		fully_prefetched.store(false);
 		prefetched_bytes = 0;
+
+                evicted = 0;
 	}
 };
 
@@ -69,4 +78,13 @@ void uinode_bitmap_unlock(struct u_inode *inode);
 
 bool is_file_closed(struct u_inode *uinode, int fd);
 
+
+void update_nr_free_pg(unsigned long nr_free);
+void increase_free_pg(unsigned long increased_pg);
+void add_to_lru(struct u_inode *uinode);
+void update_lru(struct u_inode *uinode);
+long curr_available_free_mem_pg();
+
+int evict_inode_from_mem(struct u_inode *uinode);
+void evict_inactive_inodes(void *arg);
 #endif
