@@ -1044,7 +1044,6 @@ void update_file_predictor_and_prefetch(void *arg){
         else{
                 printf("%s: No file_predictor\n", __func__);
         }
-
         return;
 }
 #endif //PREDICTOR
