@@ -57,8 +57,7 @@ CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR  -DMODIF
 
 PREDICTOR_THPOOL_BLOCK_RA_BUDGET_INFO=-DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_APP_READAHEADS -DENABLE_EVICTION # -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE  
 
-all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Concurrent_Predict Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync CLEAR_STATS
-
+all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Predict_sync Cross_Pred_Budget Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync CLEAR_STATS
 
 #App Readahead + readahead syscall (Only constructor and destructor)
 Vanilla: $(SOURCES)
@@ -103,13 +102,11 @@ Cross_Info_Predict: $(SOURCES)
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO)
 	    
 #Cross_Info + Predictor + No thread pool
-Cross_Info_Predict: $(SOURCES)
-	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP_syc.so $^ $(LIBS) $(DEBUG) \
+Cross_Info_Predict_sync: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP_sync.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO_SYNC)
 	    
 	    
-
-
 Vanilla_Predict: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VP.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA)
