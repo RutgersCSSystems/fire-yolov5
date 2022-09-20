@@ -1030,7 +1030,7 @@ void update_file_predictor_and_prefetch(void *arg){
 		*/
         fp->nr_reads_done += 1L;
 
-        if(fp->nr_reads_done % 3 > 0)
+        if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
         	return;
 
 		fp->predictor_update(a->offset, a->data_size);
