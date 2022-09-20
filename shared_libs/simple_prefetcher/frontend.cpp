@@ -1012,9 +1012,12 @@ void handle_open(struct file_desc desc){
 
 #ifdef PREDICTOR
 void update_file_predictor_and_prefetch(void *arg){
+
+}
 	struct thread_args *a = (struct thread_args*)arg;
 
-	file_predictor *fp;
+	file_predictor *fp = NULL;
+
 	try{
 		fp = fd_to_file_pred.at(a->fd);
 	}
@@ -1022,7 +1025,6 @@ void update_file_predictor_and_prefetch(void *arg){
 		debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
                 return;
 	}
-
 
 	if(fp){
 		/*
