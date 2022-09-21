@@ -1,0 +1,518 @@
++ '[' -z /users/kannan11/ssd/prefetching ']'
++ PREDICT=0
++ DATA=com-orkut.ungraph.txt
++ DATA=com-friendster.ungraph.txt
++ INPUT=/users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt
++ APPBASE=/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps
++ APP=/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps/pagerank
++ APPPREFIX='/usr/bin/time -v'
++ export GRAPHCHI_ROOT=/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp
++ GRAPHCHI_ROOT=/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp
++ cd /users/kannan11/ssd/prefetching/appbench/apps/graphchi
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ rm -rf 'com-friendster.ungraph.txt.*'
++ export LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
++ LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
++ echo edgelist
++ /usr/bin/time -v /users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps/pagerank file /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt niters 5
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     chifilenames.hpp(find_shards:265): Detected number of shards: 8
+[0mINFO:     chifilenames.hpp(find_shards:266): To specify a different number of shards, use command-line parameter 'nshards'
+[0mINFO:     conversions.hpp(convert_if_notexists:759): Found preprocessed files for /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt, num shards=8
+[0m[1;33mERR:prefetcher_th, pg_diff==0
+DEBUG:    stripedio.hpp(stripedio:271): Start io-manager with 8 threads.
+[0mINFO:     graphchi_engine.hpp(graphchi_engine:154): Initializing graphchi_engine. This engine expects 4-byte edge data. 
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 0 - 17209751
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 17209752 - 32643034
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 32643035 - 44490062
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 44490063 - 56663196
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 56663197 - 69867700
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 69867701 - 85587528
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 85587529 - 101961017
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 101961018 - 124836179
+[0mINFO:     pagerank.cpp(main:168): Running Pagerank by holding vertices in-memory mode!
+[0mINFO:     graphchi_engine.hpp(run:744): GraphChi starting
+[0mINFO:     graphchi_engine.hpp(run:745): Licensed under the Apache License 2.0
+[0mINFO:     graphchi_engine.hpp(run:746): Copyright Aapo Kyrola et al., Carnegie Mellon University (2012)
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(print_config:132): Engine configuration: 
+[0mINFO:     graphchi_engine.hpp(print_config:133):  exec_threads = 64
+[0mINFO:     graphchi_engine.hpp(print_config:134):  load_threads = 8
+[0mINFO:     graphchi_engine.hpp(print_config:135):  membudget_mb = 8000
+[0mINFO:     graphchi_engine.hpp(print_config:136):  blocksize = 1048576
+[0mINFO:     graphchi_engine.hpp(print_config:137):  scheduler = 0
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 0
+[0mINFO:     graphchi_engine.hpp(run:859): 0.560247s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 3.06649s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 5.62632s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 8.06895s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 10.5743s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 13.0271s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 15.569s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 18.1239s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/4, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 1
+[0mINFO:     graphchi_engine.hpp(run:859): 20.8843s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 24.6041s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 30.3451s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 36.3868s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 41.7315s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 48.3306s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 54.0383s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 60.3342s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 1/4, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 2
+[0mINFO:     graphchi_engine.hpp(run:859): 67.4949s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 71.2949s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 77.2076s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 83.0942s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 88.4125s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 94.961s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 101.279s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 107.845s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 2/4, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 3
+[0mINFO:     graphchi_engine.hpp(run:859): 114.489s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 118.375s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 123.003s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 129.196s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 135.464s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 141.803s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 148.062s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 153.864s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 3/4, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 4
+[0mINFO:     graphchi_engine.hpp(run:859): 160.387s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 164.469s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 170.876s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 177.045s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 183.278s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 189.194s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+ERR:prefetcher_th, pg_diff==0
+INFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 196.002s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 202.748s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 4/4, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0m[1;33mDEBUG:    stripedio.hpp(stripedio:271): Start io-manager with 8 threads.
+[0mPrint top 20 vertices:
+1. 124511661	1356.73
+2. 124242676	951.524
+3. 124545342	872.933
+4. 117927534	825.977
+5. 117735467	796.009
+6. 124439113	790.008
+7. 117757131	750.429
+8. 117643203	734.435
+9. 124397694	729.21
+10. 124378151	725.991
+11. 124407215	721.767
+12. 117449876	700.14
+13. 117937121	698.092
+14. 117732971	696.278
+15. 117809905	694.804
+16. 117170447	684.677
+17. 117795445	662.965
+18. 117662377	648.285
+19. 117867541	637.098
+20. 117547055	633.244
+
+ === REPORT FOR pagerank() ===
+[Numeric]
+cachesize_mb:		4000
+compression:		0
+execthreads:		64
+loadthreads:		8
+membudget_mb:		8000
+niothreads:		8
+niters:		5
+nshards:		8
+nvertices:		1.24836e+08
+scheduler:		0
+serialized-updates:		2.5122e+08	(count: 40, min: 5.30982e+06, max: 9.4962e+06, avg: 6.2805e+06)
+stripesize:		1.07374e+09
+updates:		6.24181e+08
+work:		9.03034e+09
+[Timings]
+execute-updates:		113.62s	 (count: 40, min: 0.143926s, max: 4.42932, avg: 2.84049s)
+iomgr_init:		0.00023 s
+memoryshard_create_edges:		68.1482s	 (count: 40, min: 1.58116s, max: 2.15724, avg: 1.70371s)
+preada_now:		23.0954s	 (count: 2335, min: 0.002088s, max: 0.049662, avg: 0.00989096s)
+pwritea_now:		0.098991s	 (count: 8, min: 0.009687s, max: 0.017106, avg: 0.0123739s)
+runtime:		209.196 s
+stripedio_wait_for_reads:		0.000138s	 (count: 40, min: 1e-06s, max: 6e-06, avg: 3.45e-06s)
+stripedio_wait_for_writes:		8.6e-05s	 (count: 46, min: 0s, max: 3e-06, avg: 1.86957e-06s)
+[Other]
+app:	pagerank
+engine:	default
+file:	/users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps/pagerank file /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt niters 5"
+	User time (seconds): 710.86
+	System time (seconds): 93.08
+	Percent of CPU this job got: 361%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:42.08
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5839176
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 11
+	Minor (reclaiming a frame) page faults: 51802213
+	Voluntary context switches: 52126
+	Involuntary context switches: 6302
+	Swaps: 0
+	File system inputs: 80813936
+	File system outputs: 975456
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ set +x

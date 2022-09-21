@@ -1,0 +1,59 @@
+9. 173 1
+20. 175 1
+
+ === REPORT FOR pagerank() ===
+[Numeric]
+cachesize_mb:           4000
+compression:            0
+execthreads:            16
+loadthreads:            8
+membudget_mb:           8000
+niothreads:             8
+niters:         1
+nshards:                8
+nvertices:              1.24836e+08
+scheduler:              0
+serialized-updates:             5.0244e+07      (count: 8, min: 5.30982e+06, max: 9.4962e+06, avg: 6.2805e+06)
+stripesize:             1.07374e+09
+updates:                1.24836e+08
+work:           1.80607e+09
+[Timings]
+execute-updates:                1.16547s         (count: 8, min: 0.121888s, max: 0.18905, avg: 0.145684s)
+iomgr_init:             0.00016 s
+memoryshard_create_edges:               13.3828s         (count: 8, min: 1.60319s, max: 1.7313, avg: 1.67286s)
+preada_now:             37.2293s         (count: 467, min: 0.008635s, max: 0.109015, avg: 0.0797201s)
+pwritea_now:            0.093286s        (count: 8, min: 0.008953s, max: 0.017113, avg: 0.0116607s)
+runtime:                24.1025 s
+stripedio_wait_for_reads:               1.3e-05s         (count: 8, min: 1e-06s, max: 4e-06, avg: 1.625e-06s)
+stripedio_wait_for_writes:              1.5e-05s         (count: 10, min: 0s, max: 3e-06, avg: 1.5e-06s)
+[Other]
+app:    pagerank
+engine: default
+file:   /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt
+        Command being timed: "/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps/pagerank file /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt niters 1"
+        User time (seconds): 102.63
+        System time (seconds): 19.00
+        Percent of CPU this job got: 498%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.38
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 5764888
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 17
+        Minor (reclaiming a frame) page faults: 10203511
+        Voluntary context switches: 11440
+        Involuntary context switches: 275
+        Swaps: 0
+        File system inputs: 17602024
+        File system outputs: 975328
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ set +x
+
