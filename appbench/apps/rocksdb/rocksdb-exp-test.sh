@@ -44,18 +44,25 @@ NUM=20000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("16" "32" "8")
-#declare -a thread_arr=("16")
+#declare -a thread_arr=("16" "32" "8")
+declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse")
-#declare -a workload_arr=("readreverse" "readwhilewriting" "fillseq" "fillrandom")
-declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII")
+
+USEDB=0
+echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
+echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+declare -a workload_arr=("fillseq" "fillrandom")
+
+declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync")
 #declare -a workload_arr=("multireadrandom")
 
 #declare -a config_arr=("OSonly")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CIP" "CIP_sync")
+#declare -a config_arr=("CIP" "CIP_sync")
 #declare -a config_arr=("Cross_Info_sync")
 
 
@@ -111,10 +118,10 @@ GEN_RESULT_PATH() {
 	WORKLOAD=$1
 	CONFIG=$2
 	THREAD=$3
-	NUM=$4
+	let NUM=$4/1000000
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$NUM"M-KEYS"$WORKLOAD/$THREAD
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$NUM"M-KEYS"/$WORKLOAD/$THREAD
 	mkdir -p $RESULTS
 	RESULTFILE=$RESULTS/$CONFIG.out
 }
@@ -145,7 +152,7 @@ RUN() {
 				for WORKLOAD in "${workload_arr[@]}"
 				do
 					RESULTS=""
-					READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
+					READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
 					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
 
 					mkdir -p $RESULTS
