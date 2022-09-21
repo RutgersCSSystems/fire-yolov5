@@ -48,15 +48,16 @@ NUM=20000000
 declare -a thread_arr=("16")
 
 
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse")
+declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+
+#USEDB=0
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#declare -a workload_arr=("fillseq" "fillrandom")
 
 USEDB=0
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-declare -a workload_arr=("fillseq" "fillrandom")
-
 declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync")
 #declare -a workload_arr=("multireadrandom")
 
@@ -64,6 +65,8 @@ declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_
 #declare -a config_arr=("Cross_Info")
 #declare -a config_arr=("CIP" "CIP_sync")
 #declare -a config_arr=("Cross_Info_sync")
+USEDB=1
+declare -a config_arr=("CIPI_sync")
 
 
 #declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
@@ -135,7 +138,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	#COMPILE_AND_WRITE
+	COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
