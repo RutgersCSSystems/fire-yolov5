@@ -9,7 +9,7 @@ DBDIR=$DBHOME/checkpoint
 
 APP="hacc_io_read"
 APPNAME="hacc-io"
-APPOUTPUTNAME="hacc-CR"
+APPOUTPUTNAME="hacc-CR-shared"
 
 APPREAD="mpiexec -n $THREAD ./hacc_io_read"
 APPGEN="mpiexec -n $THREAD ./hacc_io_write"
@@ -22,11 +22,11 @@ mkdir -p $DBDIR
 #indicates numiterations
 declare -a num_arr=("20000000" "40000000" "10000000")
 declare -a num_arr=("80000000")
-declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 declare -a workload_arr=("HACC-restart")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI" "CIPI_sync")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
+declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
 
 
 #Require for large database
