@@ -24,7 +24,9 @@ base=$PWD
 
 slack_MB=1024
 
-MEM_BUDGET_PER='0.5'
+MEM_BUDGET_PER='0.7'
+
+declare -a mem_bud=("1" "0.7" "0.5" "0.2")
 
 declare -a num_arr=("20000000")
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info_sync" "CIPB")
@@ -41,7 +43,7 @@ ORI_READARGS="--use_existing_db=1 --mmap_read=0"
 APPPREFIX="/usr/bin/time -v"
 
 
-umount_ext4ramdisk
+umount_2ext4ramdisk
 
 CLEAR_PWD()
 {
@@ -80,30 +82,32 @@ do
         export LD_PRELOAD=""
         FlushDisk
 
-        total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
-        total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
-
-        echo "total_anon_MB = $total_anon_MB"
-        echo "total_cache_MB = $total_cache_MB"
-
-        free -h
-        SETUPEXTRAM_1 `echo "scale=0; (($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))+$slack_MB)/1" | bc --mathlib`
-        free -h
-
-        for CONFIG in "${config_arr[@]}"
+        for MEM_BUDGET_PER in "${mem_bud[@]}"
         do
-                printf "\nrunning $CONFIG MEM=$MEM_BUDGET_PER WORKLOAD=$WORKLOAD NUM=$NUM THREADS=$THREAD....\n"
+                total_anon_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $2}'`
+                total_cache_MB=`cat out_memusage | grep "total_anon_used" | awk '{print $5}'`
 
-                READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$THREAD"
+                echo "total_anon_MB = $total_anon_MB"
+                echo "total_cache_MB = $total_cache_MB"
 
-                RESULTFILE="mb_${WORKLOAD}_${CONFIG}_${THREAD}_${NUM}_${MEM_BUDGET_PER}"
+                free -h
+                SETUPEXTRAM_2 `echo "scale=0; (($total_anon_MB + ($total_cache_MB*$MEM_BUDGET_PER))+$slack_MB)/1" | bc --mathlib`
+                free -h
 
-		export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-                $APPPREFIX $DBHOME/db_bench $PARAMS $READARGS &> $RESULTFILE
-                export LD_PRELOAD=""
-                sudo dmesg -c &>> $RESULTFILE
-                FlushDisk
+                for CONFIG in "${config_arr[@]}"
+                do
+                        printf "\nrunning $CONFIG MEM=$MEM_BUDGET_PER WORKLOAD=$WORKLOAD NUM=$NUM THREADS=$THREAD....\n"
+
+                        READARGS="$ORI_READARGS --benchmarks=$WORKLOAD --threads=$THREAD"
+
+                        RESULTFILE="mb_${WORKLOAD}_${CONFIG}_${THREAD}_${NUM}_${MEM_BUDGET_PER}"
+
+                        export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+                        $APPPREFIX $DBHOME/db_bench $PARAMS $READARGS &> $RESULTFILE
+                        export LD_PRELOAD=""
+                        sudo dmesg -c &>> $RESULTFILE
+                        FlushDisk
+                done
+                umount_2ext4ramdisk
         done
-
-        umount_ext4ramdisk
 done
