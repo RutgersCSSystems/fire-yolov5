@@ -147,6 +147,39 @@ mount_ext4ramdisk() {
         #sudo ln -s /mnt/ext4ramdisk $APPBENCH/shared_data
 }
 
+umount_2ext4ramdisk() {
+        sudo umount /mnt/ext4ramdisk0
+        sudo umount /mnt/ext4ramdisk1
+
+        sudo rm -rf /mnt/ramdisk/ext4-0.image
+        sudo rm -rf /mnt/ramdisk/ext4-1.image
+        sudo umount /mnt/ramdisk
+}
+
+mount_2ext4ramdisk() {
+        DISKSZ0=$1 #Input in MB
+        DISKSZ1=$2 #Input in MB
+
+        umount_2ext4ramdisk
+
+        sudo mkdir /mnt/ramdisk
+        sudo mount -t ramfs ramfs /mnt/ramdisk
+
+        sudo dd if=/dev/zero of=/mnt/ramdisk/ext4-0.image bs=1M count=$DISKSZ0
+        sudo mkfs.ext4 -F /mnt/ramdisk/ext4-0.image
+        sudo mkdir /mnt/ext4ramdisk0
+        sudo mount -o loop /mnt/ramdisk/ext4-0.image /mnt/ext4ramdisk0
+        sudo chown -R $USER /mnt/ext4ramdisk0
+
+        sudo dd if=/dev/zero of=/mnt/ramdisk/ext4-1.image bs=1M count=$DISKSZ1
+        sudo mkfs.ext4 -F /mnt/ramdisk/ext4-1.image
+        sudo mkdir /mnt/ext4ramdisk1
+        sudo mount -o loop /mnt/ramdisk/ext4-1.image /mnt/ext4ramdisk1
+        sudo chown -R $USER /mnt/ext4ramdisk1
+
+        #sudo ln -s /mnt/ext4ramdisk $APPBENCH/shared_data
+}
+
 ##Reduces size of ram if needed
 ##1 numa node
 SETUPEXTRAM_1() {
@@ -175,20 +208,20 @@ SETUPEXTRAM_1() {
 }
 
 ##Reduces size of ram if needed
-##NOT WORKING RIGHT NOW
 ##2 numa nodes
 SETUPEXTRAM_2() {
 
         let CAPACITY=$1
 
-        let SPLIT=$CAPACITY/2
+        let SPLIT=` echo "$CAPACITY/2" | bc`
         echo "SPLIT" $SPLIT
 
         sudo rm -rf  /mnt/ext4ramdisk0/*
         sudo rm -rf  /mnt/ext4ramdisk1/*
 
-        $NVMBASE/scripts/mount/umount_ext4ramdisk.sh 0
-        $NVMBASE/scripts/mount/umount_ext4ramdisk.sh 1
+        umount_2ext4ramdisk
+        #$NVMBASE/scripts/mount/umount_ext4ramdisk.sh 0
+        #$NVMBASE/scripts/mount/umount_ext4ramdisk.sh 1
 
         SLEEPNOW
 
@@ -200,8 +233,10 @@ SETUPEXTRAM_2() {
 
         echo "NODE 0 $DISKSZ NODE 1 $ALLOCSZ"
 
-        $NVMBASE/scripts/mount/mount_ext4ramdisk.sh $DISKSZ 0
-        $NVMBASE/scripts/mount/mount_ext4ramdisk.sh $ALLOCSZ 1
+        mount_2ext4ramdisk $DISKSZ $ALLOCSZ
+
+        ##$NVMBASE/scripts/mount/mount_ext4ramdisk.sh $DISKSZ 0
+        ##$NVMBASE/scripts/mount/mount_ext4ramdisk.sh $ALLOCSZ 1
 
         SLEEPNOW
 }
