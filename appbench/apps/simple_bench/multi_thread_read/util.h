@@ -17,7 +17,7 @@
 
 
 #ifndef MINCORE_THREADS
-#define MINCORE_THREADS 2
+#define MINCORE_THREADS 4
 #endif
 
 /*
