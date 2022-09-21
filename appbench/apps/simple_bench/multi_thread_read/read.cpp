@@ -95,6 +95,91 @@ void shuffle(long int array[], size_t n) {
 }
 
 
+off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off_t filesize){
+
+        off_t pg_ra_offset = ra_offset >> PAGESHIFT;
+        off_t pg_filesize = filesize >> PAGESHIFT;
+
+        off_t uchar_nr;
+
+        while(pg_ra_offset < pg_filesize){
+
+                uchar_nr = pg_ra_offset >> 3;
+                if(mincore_arr[uchar_nr] == 0)
+                        break;
+
+                pg_ra_offset += 1 << 3;
+        }
+
+        return pg_ra_offset << PAGESHIFT;
+}
+
+/*
+ * Reads through one file's page cache while prefetching
+ */
+void mincore_th(void *arg){
+
+        struct thread_args *a = (struct thread_args*)arg;
+        struct stat st;
+        off_t filesize;
+        off_t bytes_bitmap;
+        void *mem = NULL;
+        unsigned char *mincore_array = NULL;
+        off_t ra_offset = 0;
+
+        long tid = gettid();
+
+
+        int fd = open(a->filename, O_RDWR);
+        if(fd < 3){
+                printf("\n Mincore_th File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
+                exit(0);
+        }
+
+
+        if(fstat(fd, &st) != 0){
+                printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
+                exit(0);
+        }
+
+        filesize = st.st_size;
+        printf("%s: File:%s size:%ld\n", __func__, a->filename, filesize);
+
+        mem = mmap(NULL, filesize, PROT_READ, MAP_SHARED, fd, 0);
+        if (mem == MAP_FAILED) {
+                printf("unable to mmap file %s (%s), skipping", a->filename, strerror(errno));
+                exit(0);
+        }
+
+        bytes_bitmap = filesize >> PAGESHIFT;
+
+        mincore_array = (unsigned char *)malloc(bytes_bitmap);
+        if(!mincore_array){
+                printf("%s:unable to allocate mincore array\n", __func__);
+                exit(0);
+        }
+
+
+        while(ra_offset < filesize){
+
+                printf("%s: fd:%d, ra_offset = %ld\n", __func__, fd, ra_offset);
+
+                if(readahead(fd, ra_offset, NR_RA_PAGES << PAGESHIFT) < 0){
+                        printf("%s:unable to readahead fd:%d\n", __func__, fd);
+                        exit(0);
+                }
+
+                if (mincore(mem, filesize, mincore_array) == -1){
+                        printf("%s: mincore error %s\n", __func__, strerror(errno));
+                        exit(0);
+                }
+                ra_offset = check_cache_update_offset(mincore_array, ra_offset, filesize);
+        }
+
+        return;
+}
+
+
 //Will be reading one pvt file per thread
 void reader_th(void *arg){
 
@@ -263,19 +348,23 @@ skip_open:
         }
 #endif
 
-
         threadpool thpool;
         thpool = thpool_init(NR_THREADS); //spawns a set of worker threads
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
 
+#ifdef ENABLE_MINCORE_RA
+        threadpool mincorepool;
+        mincorepool = thpool_init(MINCORE_THREADS); //spawns a set of worker threads
+        if(!mincorepool){
+                printf("FAILED: creating mincorepool with %d threads\n", NR_THREADS);
+        }
+#endif
 
         //Preallocating all the thread_args to remove overheads
         struct thread_args *req = (struct thread_args*)
                                 malloc(sizeof(struct thread_args)*NR_THREADS);
-
-
 
         for(int i=0; i<NR_THREADS; i++){
 
@@ -295,6 +384,28 @@ skip_open:
 
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
         }
+
+
+#ifdef ENABLE_MINCORE_RA
+
+        struct thread_args *req_mincore = (struct thread_args*)
+#ifdef SHARED_FILE
+                                malloc(sizeof(struct thread_args)*1);
+#else //PVT_FILE
+                                malloc(sizeof(struct thread_args)*NR_THREADS);
+#endif //SHARED_FILE
+
+#ifdef SHARED_FILE
+        for(int i=0; i<1; i++)
+#else
+        for(int i=0; i<NR_THREADS; i++)
+#endif
+        {
+                strcpy(req_mincore[i].filename, filename);
+                thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
+        }
+
+#endif //ENABLE_MINCORE_RA
 
         thpool_wait(thpool);
 

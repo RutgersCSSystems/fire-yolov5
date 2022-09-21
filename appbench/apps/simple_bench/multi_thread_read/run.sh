@@ -40,7 +40,7 @@ OSONLY_RUN()
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         dmesg
-        sudo cat /proc/lock_stat
+        #sudo cat /proc/lock_stat
 }
 
 CROSS_INFO_RUN()
@@ -52,11 +52,25 @@ CROSS_INFO_RUN()
         #export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         echo "CrossInfo"
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-        #./bin/read_shared_seq
+        ./bin/read_shared_seq
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         dmesg
-        sudo cat /proc/lock_stat
+        #sudo cat /proc/lock_stat
+}
+
+MINCORE_RUN()
+{
+        FlushDisk
+        clear_os_stats
+
+        ENABLE_LOCK_STATS
+        echo "MINCORE"
+        export LD_PRELOAD=""
+        ./bin/read_shared_seq_mincore
+        DISABLE_LOCK_STATS
+        dmesg
+        #sudo cat /proc/lock_stat
 }
 
 CROSS_PREFETCH_RUN()
@@ -76,7 +90,8 @@ CROSS_PREFETCH_RUN()
 }
 
 
-#OSONLY_RUN
+OSONLY_RUN
+MINCORE_RUN
 CROSS_INFO_RUN
-exit
-CROSS_PREFETCH_RUN
+#exit
+#CROSS_PREFETCH_RUN
