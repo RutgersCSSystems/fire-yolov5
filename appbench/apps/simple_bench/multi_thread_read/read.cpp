@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <math.h>
 #include <time.h>
+
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -28,9 +29,14 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <atomic>
 
 #include "util.h"
 #include "utils/thpool.h"
+
+
+std::atomic<long> total_nr_syscalls(0);
+std::atomic<long> total_bytes_ra(0);
 
 using namespace std;
 
@@ -127,7 +133,6 @@ void mincore_th(void *arg){
 
         long tid = gettid();
 
-
         int fd = open(a->filename, O_RDWR);
         if(fd < 3){
                 printf("\n Mincore_th File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
@@ -160,7 +165,10 @@ void mincore_th(void *arg){
 
         while(ra_offset < filesize){
 
-                printf("%s: fd:%d, ra_offset = %ld\n", __func__, fd, ra_offset);
+                /*
+                printf("%s: fd:%d, ra_offset = %ld\n", __func__,
+                                fd, ra_offset);
+                */
 
                 if(readahead(fd, ra_offset, NR_RA_PAGES << PAGESHIFT) < 0){
                         printf("%s:unable to readahead fd:%d\n", __func__, fd);
@@ -172,7 +180,19 @@ void mincore_th(void *arg){
                         exit(0);
                 }
                 ra_offset = check_cache_update_offset(mincore_array, ra_offset, filesize);
+
+                total_nr_syscalls.store(total_nr_syscalls.load() + 2);
+                total_bytes_ra.store(total_bytes_ra.load() + (NR_RA_PAGES << PAGESHIFT));
         }
+
+#if 0
+        printf("Exiting fd=%d\n", fd);
+        /*Update the stats*/
+        total_nr_syscalls.store(total_nr_syscalls.load() + nr_syscalls_done);
+        total_bytes_ra.store(total_bytes_ra.load() + total_bytes_ra_done);
+
+        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+#endif
 
         return;
 }
@@ -432,6 +452,10 @@ skip_open:
         printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif READ_RANDOM
         printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#endif
+
+#ifdef ENABLE_MINCORE_RA
+        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
 #endif
         return 0;
 }
