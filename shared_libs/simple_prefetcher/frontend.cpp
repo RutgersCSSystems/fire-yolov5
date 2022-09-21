@@ -693,7 +693,7 @@ void prefetcher_th(void *arg) {
 
 #ifdef ENABLE_EVICTION
         update_lru(a->uinode);
-        update_nr_free_pg(ra.nr_free);
+        //update_nr_free_pg(ra.nr_free);
 #endif
 
         //gettimeofday(&end, NULL);
@@ -1062,6 +1062,7 @@ void update_file_predictor_and_prefetch(void *arg){
 	}
 
 	if(fp){
+
 			/*
 			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 			 */
@@ -1071,10 +1072,17 @@ void update_file_predictor_and_prefetch(void *arg){
         	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
         		return;
 
+#if 0
+                /*update lru if file is fully prefetched*/
+                if(fp->uinode->fully_prefetched.load()){
+                        update_lru(fp->uinode);
+                }
+#endif
+
         	if(fp->should_prefetch_now()){
-            	a->fp = fp;
+            	                a->fp = fp;
 				prefetch_file(arg);
-			}
+		        }
 		}
         else{
                 printf("%s: No file_predictor\n", __func__);

@@ -81,7 +81,7 @@ bool is_file_closed(struct u_inode *uinode, int fd);
 
 void update_nr_free_pg(unsigned long nr_free);
 void increase_free_pg(unsigned long increased_pg);
-void add_to_lru(struct u_inode *uinode);
+//void add_to_lru(struct u_inode *uinode);
 void update_lru(struct u_inode *uinode);
 long curr_available_free_mem_pg();
 
