@@ -30,7 +30,8 @@ TOUCH_OUTFILE(){
 }
 
 EXTRACT_PERF() {
-        cat $1 | grep "READ_SEQUENTIAL Bandwidth" | awk '{print $4}'
+        #cat $1 | grep "READ_SEQUENTIAL Bandwidth" | awk '{print $4}'
+        cat $1 | grep "READ_RANDOM Bandwidth" | awk '{print $4}'
 }
 
 GET_PERF() {
@@ -47,7 +48,7 @@ GET_PERF() {
                         echo "$FILENAME"
 
                         perf=`EXTRACT_PERF $DATA_FOLDER/$FILENAME`
-                        #echo "perf = $perf"
+                        echo "perf = $perf"
                         printf " $perf" >> $resultfile
                 done
                         printf "\n" >> $resultfile

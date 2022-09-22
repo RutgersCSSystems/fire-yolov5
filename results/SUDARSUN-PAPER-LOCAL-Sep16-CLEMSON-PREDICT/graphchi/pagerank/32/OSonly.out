@@ -1,0 +1,151 @@
+INFO:     chifilenames.hpp(find_shards:265): Detected number of shards: 8
+[0mINFO:     chifilenames.hpp(find_shards:266): To specify a different number of shards, use command-line parameter 'nshards'
+[0mINFO:     conversions.hpp(convert_if_notexists:759): Found preprocessed files for /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt, num shards=8
+[0m[1;33mDEBUG:    stripedio.hpp(stripedio:271): Start io-manager with 24 threads.
+[0mINFO:     graphchi_engine.hpp(graphchi_engine:154): Initializing graphchi_engine. This engine expects 4-byte edge data. 
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 0 - 17209751
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 17209752 - 32643034
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 32643035 - 44490062
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 44490063 - 56663196
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 56663197 - 69867700
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 69867701 - 85587528
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 85587529 - 101961017
+[0mINFO:     chifilenames.hpp(load_vertex_intervals:400): shard: 101961018 - 124836179
+[0mINFO:     pagerank.cpp(main:168): Running Pagerank by holding vertices in-memory mode!
+[0mINFO:     graphchi_engine.hpp(run:744): GraphChi starting
+[0mINFO:     graphchi_engine.hpp(run:745): Licensed under the Apache License 2.0
+[0mINFO:     graphchi_engine.hpp(run:746): Copyright Aapo Kyrola et al., Carnegie Mellon University (2012)
+[0mINFO:     graphchi_engine.hpp(print_config:132): Engine configuration: 
+[0mINFO:     graphchi_engine.hpp(print_config:133):  exec_threads = 64
+[0mINFO:     graphchi_engine.hpp(print_config:134):  load_threads = 8
+[0mINFO:     graphchi_engine.hpp(print_config:135):  membudget_mb = 8000
+[0mINFO:     graphchi_engine.hpp(print_config:136):  blocksize = 1048576
+[0mINFO:     graphchi_engine.hpp(print_config:137):  scheduler = 0
+[0mINFO:     graphchi_engine.hpp(run:780): Start iteration: 0
+[0mINFO:     graphchi_engine.hpp(run:859): 0.134695s: Starting: 0 -- 17209751
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 0 - 17209751
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 17209752 vertices, sizeof:64 total:1101424128
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 3.60418s: Starting: 17209752 -- 32643034
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 17209752 - 32643034
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15433283 vertices, sizeof:64 total:987730112
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 6.43569s: Starting: 32643035 -- 44490062
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 32643035 - 44490062
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 11847028 vertices, sizeof:64 total:758209792
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 9.36267s: Starting: 44490063 -- 56663196
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 44490063 - 56663196
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 12173134 vertices, sizeof:64 total:779080576
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 12.2514s: Starting: 56663197 -- 69867700
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 56663197 - 69867700
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 13204504 vertices, sizeof:64 total:845088256
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 15.2539s: Starting: 69867701 -- 85587528
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 69867701 - 85587528
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 15719828 vertices, sizeof:64 total:1006068992
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 18.1408s: Starting: 85587529 -- 101961017
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 85587529 - 101961017
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 16373489 vertices, sizeof:64 total:1047903296
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0mINFO:     graphchi_engine.hpp(run:859): 21.3686s: Starting: 101961018 -- 124836179
+[0mINFO:     graphchi_engine.hpp(run:872): Iteration 0/0, subinterval: 101961018 - 124836179
+[0m[1;33mDEBUG:    graphchi_engine.hpp(run:887): Allocation 22875162 vertices, sizeof:64 total:1464010368
+[0mINFO:     graphchi_engine.hpp(run:896): Start updates
+[0mINFO:     graphchi_engine.hpp(run:906): Finished updates
+[0m[1;33mDEBUG:    stripedio.hpp(stripedio:271): Start io-manager with 24 threads.
+[0mPrint top 20 vertices:
+1. 101	1
+2. 102	1
+3. 104	1
+4. 107	1
+5. 114	1
+6. 1048572	1
+7. 125	1
+8. 134	1
+9. 146	1
+10. 147	1
+11. 151	1
+12. 161	1
+13. 163	1
+14. 165	1
+15. 1048571	1
+16. 168	1
+17. 169	1
+18. 170	1
+19. 173	1
+20. 175	1
+
+ === REPORT FOR pagerank() ===
+[Numeric]
+cachesize_mb:		4000
+compression:		0
+execthreads:		64
+loadthreads:		8
+membudget_mb:		8000
+niothreads:		24
+niters:		1
+nshards:		8
+nvertices:		1.24836e+08
+scheduler:		0
+serialized-updates:		5.0244e+07	(count: 8, min: 5.30982e+06, max: 9.4962e+06, avg: 6.2805e+06)
+stripesize:		1.07374e+09
+updates:		1.24836e+08
+work:		1.80607e+09
+[Timings]
+execute-updates:		1.58857s	 (count: 8, min: 0.139435s, max: 0.462076, avg: 0.198571s)
+iomgr_init:		0.000436 s
+memoryshard_create_edges:		13.5206s	 (count: 8, min: 1.64248s, max: 1.75911, avg: 1.69008s)
+preada_now:		34.6274s	 (count: 467, min: 0.006832s, max: 0.11668, avg: 0.0741487s)
+pwritea_now:		0.102659s	 (count: 8, min: 0.01059s, max: 0.017282, avg: 0.0128324s)
+runtime:		24.5783 s
+stripedio_wait_for_reads:		2.7e-05s	 (count: 8, min: 2e-06s, max: 5e-06, avg: 3.375e-06s)
+stripedio_wait_for_writes:		1.6e-05s	 (count: 10, min: 0s, max: 2e-06, avg: 1.6e-06s)
+[Other]
+app:	pagerank
+engine:	default
+file:	/users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt
+DESTRUCTOR GETTING CALLED 
+	Command being timed: "/users/kannan11/ssd/prefetching/appbench/apps/graphchi/graphchi-cpp/bin/example_apps/pagerank file /users/kannan11/ssd/prefetching/dataset/com-friendster.ungraph.txt niters 1"
+	User time (seconds): 115.18
+	System time (seconds): 20.29
+	Percent of CPU this job got: 543%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.94
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5771772
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 9
+	Minor (reclaiming a frame) page faults: 10552689
+	Voluntary context switches: 21625
+	Involuntary context switches: 739
+	Swaps: 0
+	File system inputs: 17601920
+	File system outputs: 975336
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[18790.785231] write_proc_unbounded: Value of write = 0
+[18790.785240] write_proc_2mb_limit: Value of write = 0
+[18790.785244] write_proc_bitmap_shift: Value of write = 36
+[18790.790146] write_proc_unbounded: Value of write = 0
+[18790.790156] write_proc_2mb_limit: Value of write = 0
+[18790.790160] write_proc_bitmap_shift: Value of write = 36
+[18815.726145] write_proc_unbounded: Value of write = 0
+[18815.726157] write_proc_2mb_limit: Value of write = 0
+[18815.732059] write_proc_unbounded: Value of write = 0
+[18815.732073] write_proc_2mb_limit: Value of write = 0

@@ -113,6 +113,12 @@ Cross_Info_Predict_sync: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIP_sync.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO_SYNC)
 	    
+#Cross_Info + IOOPT_+ Predictor + No thread pool
+Cross_Info_Predict_IOOPT_sync: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_sync.so $^ $(LIBS) $(DEBUG) \
+	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO_SYNC) -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT	    
+	    
+	    
 	    
 Vanilla_Predict: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_VP.so $^ $(LIBS) $(DEBUG) \

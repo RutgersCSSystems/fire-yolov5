@@ -23,7 +23,7 @@
 # Use is subject to license terms.
 #
 
-set $dir=/users/skannan/ssd/NVM/appbench/shared_data/filebench
+set $dir=DATA/
 set $nfiles=1000
 set $meandirwidth=1000000
 set $filesize=cvar(type=cvar-gamma,parameters=mean:16384;gamma:1.5)
@@ -55,4 +55,5 @@ define process name=filereader,instances=1
 
 echo  "Varmail Version 3.0 personality successfully loaded"
 
-run 60
+run 30
+

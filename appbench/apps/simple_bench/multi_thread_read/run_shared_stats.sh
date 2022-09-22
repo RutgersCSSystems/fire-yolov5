@@ -35,6 +35,7 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
+<<<<<<< HEAD
 FILESIZE=80 ##GB
 NR_RA_PAGES=2048L #nr_pages
 NR_READ_PAGES=128
@@ -42,6 +43,20 @@ NR_READ_PAGES=128
 
 #declare -a nproc=("16" "4" "8" "1" "32")
 declare -a nproc=("16")
+=======
+FILESIZE=50 ##GB
+
+NR_RA_PAGES=2560L #nr_pages
+NR_READ_PAGES=512
+
+##These need to be equivalent of the above
+RA_SIZE=10M ##MB
+READ_SIZE=2M ##MB
+
+APP="./bin/read_shared_seq"
+
+declare -a nproc=("16" "4" "8" "1" "32")
+>>>>>>> bf5654878635c5a8733add583442004b5282bd9e
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -85,7 +100,6 @@ VanillaOPT() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        #./bin/read_shared_seq_vanilla_opt
         $APPPREFIX ${APP}_vanilla_opt
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
@@ -111,7 +125,6 @@ CrossInfo() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-        #./bin/read_shared_seq
         $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
@@ -124,7 +137,6 @@ CII() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_CII.so"
-        #./bin/read_shared_seq
         $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
@@ -133,6 +145,7 @@ CII() {
 }
 
 CIP() {
+<<<<<<< HEAD
         echo "Cross Info Predict"
         FlushDisk
         ENABLE_LOCK_STATS
@@ -157,6 +170,7 @@ MINCORE() {
         sudo dmesg -c
         sudo cat /proc/lock_stat
 }
+
 
 COMPILE_APP 1
 #CLEAN_AND_WRITE

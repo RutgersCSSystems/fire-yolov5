@@ -423,7 +423,6 @@ skip_open:
                 thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
         }
 #endif //ENABLE_MINCORE_RA
-
         thpool_wait(thpool);
 
         //Print the Throughput
@@ -454,7 +453,12 @@ skip_open:
 #endif
 
 #ifdef ENABLE_MINCORE_RA
+<<<<<<< HEAD
         printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+=======
+        printf("Total nr_ra = %ld mincore\n", total_nr_syscalls.load());
+        printf("Total nr_bytes_ra= %ld mincore\n", total_bytes_ra.load());
+>>>>>>> bf5654878635c5a8733add583442004b5282bd9e
         start_cross_trace(PRINT_GLOBAL_STATS, 0);
 #endif
         return 0;

@@ -1,0 +1,43 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Command terminated by signal 7
+	Command being timed: "filebench -f workloads/fileserver.f"
+	User time (seconds): 0.11
+	System time (seconds): 1.46
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3688808
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 920748
+	Minor (reclaiming a frame) page faults: 945
+	Voluntary context switches: 7
+	Involuntary context switches: 2
+	Swaps: 0
+	File system inputs: 760
+	File system outputs: 7368016
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[61610.277152] write_proc_unbounded: Value of write = 1
+[61610.277160] write_proc_2mb_limit: Value of write = 1
+[61610.277164] write_proc_bitmap_shift: Value of write = 36
+[61610.280675] write_proc_unbounded: Value of write = 1
+[61610.280684] write_proc_2mb_limit: Value of write = 1
+[61610.280688] write_proc_bitmap_shift: Value of write = 36
+[61611.855622] write_proc_unbounded: Value of write = 0
+[61611.855631] write_proc_2mb_limit: Value of write = 0
