@@ -21,23 +21,22 @@ FlushDisk()
 
 ENABLE_LOCK_STATS()
 {
-        return
         sudo sh -c "echo 0 > /proc/lock_stat"
         sudo sh -c "echo 1 > /proc/sys/kernel/lock_stat"
 }
 
 DISABLE_LOCK_STATS()
 {
-        return
         sudo sh -c "echo 0 > /proc/sys/kernel/lock_stat"
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=100 ##GB
+FILESIZE=80 ##GB
 NR_RA_PAGES=2560L #nr_pages
-NR_READ_PAGES=512
+NR_READ_PAGES=128
+#NR_READ_PAGES=512
 
-declare -a nproc=("1" "4" "8" "16")
+declare -a nproc=("16" "4" "8" "1" "32")
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -71,8 +70,8 @@ VanillaRA() {
         ./bin/read_pvt_seq_vanilla
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
-        #dmesg
-        #sudo cat /proc/lock_stat
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
 }
 
 VanillaOPT() {
@@ -83,8 +82,8 @@ VanillaOPT() {
         ./bin/read_pvt_seq_vanilla_opt
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
-        #dmesg
-        #sudo cat /proc/lock_stat
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
 }
 
 OSonly() {
@@ -92,11 +91,11 @@ OSonly() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
-        ./bin/read_pvt_seq_vanilla_opt
+        ./bin/read_pvt_seq
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
-        #dmesg
-        #sudo cat /proc/lock_stat
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
 }
 
 CrossInfo() {
@@ -107,8 +106,8 @@ CrossInfo() {
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
-        #dmesg
-        #sudo cat /proc/lock_stat
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
 }
 
 CII() {
@@ -119,19 +118,46 @@ CII() {
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
-        #dmesg
-        #sudo cat /proc/lock_stat
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
 }
 
+CIP() {
+        echo "Cross Info Predict"
+        FlushDisk
+        ENABLE_LOCK_STATS
+        export LD_PRELOAD="/usr/lib/lib_CIP.so"
+        ./bin/read_pvt_seq
+        export LD_PRELOAD=""
+        DISABLE_LOCK_STATS
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
+}
+
+MINCORE() {
+        echo "Mincore"
+        FlushDisk
+        ENABLE_LOCK_STATS
+        export LD_PRELOAD=""
+        ./bin/read_pvt_seq_mincore
+        export LD_PRELOAD=""
+        DISABLE_LOCK_STATS
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
+}
 
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
         CLEAN_AND_WRITE
 
-        VanillaRA &> VanillaRA_perf_pvt_seq_2Mr_10Mra_$NPROC
-        VanillaOPT &> VanillaOPT_perf_pvt_seq_2Mr_10Mra_$NPROC
-        OSonly &> OSonly_perf_pvt_seq_2Mr_10Mra_$NPROC
-        CrossInfo &> CrossInfo_perf_pvt_seq_2Mr_10Mra_$NPROC
-        CII &> CII_perf_pvt_seq_2Mr_10Mra_$NPROC
+        FILENAMEBASE="stats_pvt_seq_${NR_READ_PAGES}pgr_${NR_RA_PAGES}pgra_$NPROC"
+
+        VanillaRA &> VanillaRA_${FILENAMEBASE}
+        VanillaOPT &> VanillaOPT_${FILENAMEBASE}
+        OSonly &> OSonly_${FILENAMEBASE}
+        CrossInfo &> CrossInfo_${FILENAMEBASE}
+        CII &> CII_${FILENAMEBASE}
+        CIP &> CIP_${FILENAMEBASE}
+        MINCORE &> MINCORE_${FILENAMEBASE}
 done

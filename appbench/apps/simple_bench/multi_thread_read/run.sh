@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#APP=./bin/read_shared_seq
+#APPNAME="shared_seq"
+
+APP=./bin/read_pvt_seq
+APPNAME="pvt_seq"
+
+CACHE_STAT=$NVMBASE/scripts/helperscripts/cache-stat.sh
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -33,14 +41,21 @@ OSONLY_RUN()
         #export LD_PRELOAD="/usr/lib/lib_Cross_Info_sync.so"
         #export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
         #export LD_PRELOAD="/usr/lib/lib_CIP.so"
-        export LD_PRELOAD="/usr/lib/lib_OSonly.so"
+
+        #$CACHE_STAT OSONLY_${APPNAME}_cachestat &
+
+        #export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         #export LD_PRELOAD="/usr/lib/lib_CICP.so"
         #export LD_PRELOAD="/usr/lib/lib_CIPI.so"
-        ./bin/read_shared_seq
+        #$APP &> OSONLY_$APPNAME
+        ./bin/read_pvt_seq_vanilla_opt
         export LD_PRELOAD=""
+
+        #kill $(ps -s $$ -o pid=)
+
         DISABLE_LOCK_STATS
-        dmesg
-        #sudo cat /proc/lock_stat
+        dmesg &>> OSONLY_$APPNAME
+        sudo cat /proc/lock_stat &>> OSONLY_$APPNAMEt
 }
 
 CROSS_INFO_RUN()
@@ -52,11 +67,11 @@ CROSS_INFO_RUN()
         #export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         echo "CrossInfo"
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-        ./bin/read_shared_seq
+        ${APP} &> CROSS_INFO_$APPNAME
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         dmesg
-        #sudo cat /proc/lock_stat
+        sudo cat /proc/lock_stat
 }
 
 MINCORE_RUN()
@@ -67,10 +82,11 @@ MINCORE_RUN()
         ENABLE_LOCK_STATS
         echo "MINCORE"
         export LD_PRELOAD=""
-        ./bin/read_shared_seq_mincore
+        #${APP}_mincore &> MINCORE_$APPNAME
+        ${APP}_mincore
         DISABLE_LOCK_STATS
         dmesg
-        #sudo cat /proc/lock_stat
+        sudo cat /proc/lock_stat
 }
 
 CROSS_PREFETCH_RUN()
@@ -81,7 +97,7 @@ CROSS_PREFETCH_RUN()
         #export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         echo "Cross Predict"
         export LD_PRELOAD="/usr/lib/lib_CIP.so"
-        ./bin/read_shared_seq
+        ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
 
@@ -90,8 +106,10 @@ CROSS_PREFETCH_RUN()
 }
 
 
-OSONLY_RUN
+#sudo ./utils/perf-tools/bin/cachestat
+#OSONLY_RUN
 MINCORE_RUN
-CROSS_INFO_RUN
+#CROSS_INFO_RUN
+#CROSS_INFO_RUN
 #exit
 #CROSS_PREFETCH_RUN
