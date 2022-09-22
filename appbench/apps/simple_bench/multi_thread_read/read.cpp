@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <math.h>
 #include <time.h>
+
 #include <sys/sysinfo.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -28,9 +29,14 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <atomic>
 
 #include "util.h"
 #include "utils/thpool.h"
+
+
+std::atomic<long> total_nr_syscalls(0);
+std::atomic<long> total_bytes_ra(0);
 
 using namespace std;
 
@@ -95,6 +101,104 @@ void shuffle(long int array[], size_t n) {
 }
 
 
+off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off_t filesize){
+
+        off_t pg_ra_offset = ra_offset >> PAGESHIFT;
+        off_t pg_filesize = filesize >> PAGESHIFT;
+
+        off_t uchar_nr;
+
+        while(pg_ra_offset < pg_filesize){
+
+                uchar_nr = pg_ra_offset >> 3;
+                if(mincore_arr[uchar_nr] == 0)
+                        break;
+
+                pg_ra_offset += 1 << 3;
+        }
+
+        return pg_ra_offset << PAGESHIFT;
+}
+
+/*
+ * Reads through one file's page cache while prefetching
+ */
+void mincore_th(void *arg){
+
+        struct thread_args *a = (struct thread_args*)arg;
+        struct stat st;
+        off_t filesize;
+        off_t bytes_bitmap;
+        void *mem = NULL;
+        unsigned char *mincore_array = NULL;
+        off_t ra_offset = 0;
+
+        long tid = gettid();
+
+        int fd = open(a->filename, O_RDWR);
+        if(fd < 3){
+                printf("\n Mincore_th File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
+                exit(0);
+        }
+
+        if(fstat(fd, &st) != 0){
+                printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
+                exit(0);
+        }
+
+        filesize = st.st_size;
+        printf("%s: File:%s size:%ld\n", __func__, a->filename, filesize);
+
+        mem = mmap(NULL, filesize, PROT_READ, MAP_SHARED, fd, 0);
+        if (mem == MAP_FAILED) {
+                printf("unable to mmap file %s (%s), skipping", a->filename, strerror(errno));
+                exit(0);
+        }
+
+        bytes_bitmap = filesize >> PAGESHIFT;
+
+        mincore_array = (unsigned char *)malloc(bytes_bitmap);
+        if(!mincore_array){
+                printf("%s:unable to allocate mincore array\n", __func__);
+                exit(0);
+        }
+
+
+        while(ra_offset < filesize){
+
+                /*
+                printf("%s: fd:%d, ra_offset = %ld\n", __func__,
+                                fd, ra_offset);
+                */
+
+                if(readahead(fd, ra_offset, NR_RA_PAGES << PAGESHIFT) < 0){
+                        printf("%s:unable to readahead fd:%d\n", __func__, fd);
+                        exit(0);
+                }
+
+                if (mincore(mem, filesize, mincore_array) == -1){
+                        printf("%s: mincore error %s\n", __func__, strerror(errno));
+                        exit(0);
+                }
+                ra_offset = check_cache_update_offset(mincore_array, ra_offset, filesize);
+
+                total_nr_syscalls.store(total_nr_syscalls.load() + 2);
+                total_bytes_ra.store(total_bytes_ra.load() + (NR_RA_PAGES << PAGESHIFT));
+        }
+
+#if 0
+        printf("Exiting fd=%d\n", fd);
+        /*Update the stats*/
+        total_nr_syscalls.store(total_nr_syscalls.load() + nr_syscalls_done);
+        total_bytes_ra.store(total_bytes_ra.load() + total_bytes_ra_done);
+
+        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+#endif
+
+        return;
+}
+
+
 //Will be reading one pvt file per thread
 void reader_th(void *arg){
 
@@ -118,14 +222,16 @@ void reader_th(void *arg){
                 printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
                 exit(0);
         }
-#ifdef MODIFIED_RA
+#endif //SHARED_FILE
+
+#if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
         struct read_ra_req ra;
 	ra.data = NULL;
 	readahead_info(a->fd, 0, 0, &ra);
-#endif //MODIFIED_RA
+        start_cross_trace(ENABLE_FILE_STATS, 0);
+#endif //MODIFIED_RA or ENABLE_MINCORE_RA
 
-#endif //SHARED_FILE
         gettimeofday(&open_end, NULL);
 
         //Report about the thread
@@ -263,19 +369,23 @@ skip_open:
         }
 #endif
 
-
         threadpool thpool;
         thpool = thpool_init(NR_THREADS); //spawns a set of worker threads
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
 
+#ifdef ENABLE_MINCORE_RA
+        threadpool mincorepool;
+        mincorepool = thpool_init(MINCORE_THREADS); //spawns a set of worker threads
+        if(!mincorepool){
+                printf("FAILED: creating mincorepool with %d threads\n", NR_THREADS);
+        }
+#endif
 
         //Preallocating all the thread_args to remove overheads
         struct thread_args *req = (struct thread_args*)
                                 malloc(sizeof(struct thread_args)*NR_THREADS);
-
-
 
         for(int i=0; i<NR_THREADS; i++){
 
@@ -295,6 +405,27 @@ skip_open:
 
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
         }
+
+
+#ifdef ENABLE_MINCORE_RA
+        struct thread_args *req_mincore = (struct thread_args*)
+#ifdef SHARED_FILE
+                                malloc(sizeof(struct thread_args)*1);
+#else //PVT_FILE
+                                malloc(sizeof(struct thread_args)*NR_THREADS);
+#endif //SHARED_FILE
+
+#ifdef SHARED_FILE
+        for(int i=0; i<1; i++){
+                file_name(i, filename, 1);
+#else
+        for(int i=0; i<NR_THREADS; i++){
+                file_name(i, filename, NR_THREADS);
+#endif
+                strcpy(req_mincore[i].filename, filename);
+                thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
+        }
+#endif //ENABLE_MINCORE_RA
 
         thpool_wait(thpool);
 
@@ -323,6 +454,12 @@ skip_open:
         printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif READ_RANDOM
         printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#endif
+
+#ifdef ENABLE_MINCORE_RA
+        printf("Total nr_ra = %ld mincore\n", total_nr_syscalls.load());
+        printf("Total nr_bytes_ra= %ld mincore\n", total_bytes_ra.load());
+        start_cross_trace(PRINT_GLOBAL_STATS, 0);
 #endif
         return 0;
 }

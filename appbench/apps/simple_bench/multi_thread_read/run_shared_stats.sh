@@ -31,11 +31,18 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=100 ##GB
+FILESIZE=50 ##GB
+
 NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=512
 
-declare -a nproc=("1" "4" "8" "16" "32")
+##These need to be equivalent of the above
+RA_SIZE=10M ##MB
+READ_SIZE=2M ##MB
+
+APP="./bin/read_shared_seq"
+
+declare -a nproc=("16" "4" "8" "1" "32")
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -67,7 +74,8 @@ VanillaRA() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        ./bin/read_shared_seq_vanilla
+        #./bin/read_shared_seq_vanilla
+	${APP}_vanilla
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -79,7 +87,8 @@ VanillaOPT() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-        ./bin/read_shared_seq_vanilla_opt
+	${APP}_vanilla_opt
+        #./bin/read_shared_seq_vanilla_opt
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -91,7 +100,8 @@ OSonly() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
-        ./bin/read_shared_seq
+        #./bin/read_shared_seq
+	${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -103,7 +113,7 @@ CrossInfo() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-        ./bin/read_shared_seq
+	${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -115,7 +125,32 @@ CII() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_CII.so"
-        ./bin/read_shared_seq
+	${APP}
+        export LD_PRELOAD=""
+        DISABLE_LOCK_STATS
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
+}
+
+CIP() {
+        echo "Cross Info IOOPT"
+        FlushDisk
+        ENABLE_LOCK_STATS
+        export LD_PRELOAD="/usr/lib/lib_CIP.so"
+	${APP}
+        export LD_PRELOAD=""
+        DISABLE_LOCK_STATS
+        sudo dmesg -c
+        sudo cat /proc/lock_stat
+}
+
+MINCORE() {
+        echo "Mincore"
+        FlushDisk
+        ENABLE_LOCK_STATS
+        export LD_PRELOAD=""
+        #./bin/read_shared_seq_mincore
+        ${APP}_mincore
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -123,16 +158,21 @@ CII() {
 }
 
 
+
 COMPILE_APP 1
-CLEAN_AND_WRITE
+#CLEAN_AND_WRITE
 
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
 
-        VanillaRA &> VanillaRA_stats_shared_seq_2Mr_10Mra_$NPROC
-        VanillaOPT &> VanillaOPT_stats_shared_seq_2Mr_10Mra_$NPROC
-        OSonly &> OSonly_stats_shared_seq_2Mr_10Mra_$NPROC
-        CrossInfo &> CrossInfo_stats_shared_seq_2Mr_10Mra_$NPROC
-        CII &> CII_stats_shared_seq_2Mr_10Mra_$NPROC
+        FILENAMEBASE="stats_shared_seq_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
+
+        VanillaRA &> VanillaRA_${FILENAMEBASE}
+        VanillaOPT &> VanillaOPT_${FILENAMEBASE}
+        OSonly &> OSonly_${FILENAMEBASE}
+        CrossInfo &> CrossInfo_${FILENAMEBASE}
+        CII &> CII_${FILENAMEBASE}
+        CIP &> CIP_${FILENAMEBASE}
+        MINCORE &> MINCORE_${FILENAMEBASE}
 done

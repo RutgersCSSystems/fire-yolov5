@@ -15,6 +15,11 @@
 #define NR_THREADS 1
 #endif
 
+
+#ifndef MINCORE_THREADS
+#define MINCORE_THREADS 4
+#endif
+
 /*
  * NR of pages to skip after each read
  */

@@ -1,0 +1,846 @@
+OS Only
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+set_cross_bitmap_shift: Setting cross_bitmap_shift to %
+Exiting set_cross_bitmap_shift
+Total File size = 51200 MB
+READ_RANDOM Bandwidth = 2061.58 MB/sec
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[17362.390627] Enabled file stats for read_shared_ran:33511
+[17362.390707] write_proc_unbounded: Value of write = 0
+[17362.390716] write_proc_2mb_limit: Value of write = 0
+[17362.390725] write_proc_bitmap_shift: Value of write = 37
+[17362.392364] Enabled file stats for read_shared_ran:33511
+[17362.392391] Enabled file stats for read_shared_ran:33511
+[17362.392407] write_proc_bitmap_shift: Value of write = 37
+[17362.393269] Enabled file stats for thread-pool-3:33515
+[17362.393368] Enabled file stats for thread-pool-0:33512
+[17362.393452] Enabled file stats for thread-pool-4:33516
+[17362.393734] Enabled file stats for thread-pool-1:33513
+[17362.393761] Enabled file stats for thread-pool-11:33523
+[17362.393843] Enabled file stats for thread-pool-9:33521
+[17362.393865] Enabled file stats for thread-pool-7:33519
+[17362.393927] Enabled file stats for thread-pool-13:33525
+[17362.393954] Enabled file stats for thread-pool-8:33520
+[17362.393978] Enabled file stats for thread-pool-15:33527
+[17362.394006] Enabled file stats for thread-pool-6:33518
+[17362.394031] Enabled file stats for thread-pool-2:33514
+[17362.394075] Enabled file stats for thread-pool-5:33517
+[17362.394097] Enabled file stats for thread-pool-10:33522
+[17362.394152] Enabled file stats for thread-pool-12:33524
+[17362.394172] Enabled file stats for thread-pool-14:33526
+[17387.229620] write_proc_unbounded: Value of write = 0
+[17387.229648] write_proc_2mb_limit: Value of write = 0
+[17387.229736] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
+[17387.229739] Final GlobalReport: nr_pages_read:13107200, nr_pages_hit:3577151, nr_pages_miss:9530049
+[17387.229742] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
+[17387.230399] FinalTaskReport:read_shared_ran:33511 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
+[17387.230401] FinalTaskReport:thread-pool-1:33513 nr_pages_read:819200, nr_pages_hit:228432, nr_pages_miss:590768
+[17387.230404] FinalTaskReport:thread-pool-2:33514 nr_pages_read:819200, nr_pages_hit:219573, nr_pages_miss:599627
+[17387.230403] FinalTaskReport:thread-pool-0:33512 nr_pages_read:819200, nr_pages_hit:226055, nr_pages_miss:593145
+[17387.230407] FinalTaskReport:thread-pool-3:33515 nr_pages_read:819200, nr_pages_hit:223485, nr_pages_miss:595715
+[17387.230411] FinalTaskReport:thread-pool-5:33517 nr_pages_read:819200, nr_pages_hit:225547, nr_pages_miss:593653
+[17387.230410] FinalTaskReport:thread-pool-4:33516 nr_pages_read:819200, nr_pages_hit:217200, nr_pages_miss:602000
+[17387.230424] FinalTaskReport:thread-pool-10:33522 nr_pages_read:819200, nr_pages_hit:220182, nr_pages_miss:599018
+[17387.230423] FinalTaskReport:thread-pool-8:33520 nr_pages_read:819200, nr_pages_hit:220473, nr_pages_miss:598727
+[17387.230417] FinalTaskReport:thread-pool-6:33518 nr_pages_read:819200, nr_pages_hit:232222, nr_pages_miss:586978
+[17387.230425] FinalTaskReport:thread-pool-9:33521 nr_pages_read:819200, nr_pages_hit:227663, nr_pages_miss:591537
+[17387.230421] FinalTaskReport:thread-pool-7:33519 nr_pages_read:819200, nr_pages_hit:222431, nr_pages_miss:596769
+[17387.230426] FinalTaskReport:thread-pool-11:33523 nr_pages_read:819200, nr_pages_hit:221594, nr_pages_miss:597606
+[17387.230428] FinalTaskReport:thread-pool-13:33525 nr_pages_read:819200, nr_pages_hit:220768, nr_pages_miss:598432
+[17387.230431] FinalTaskReport:thread-pool-12:33524 nr_pages_read:819200, nr_pages_hit:223394, nr_pages_miss:595806
+[17387.230437] FinalTaskReport:thread-pool-15:33527 nr_pages_read:819200, nr_pages_hit:227699, nr_pages_miss:591501
+[17387.230442] FinalTaskReport:thread-pool-14:33526 nr_pages_read:819200, nr_pages_hit:220433, nr_pages_miss:598767
+lock_stat version 0.4
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                              class name    con-bounces    contentions   waittime-min   waittime-max waittime-total   waittime-avg    acq-bounces   acquisitions   holdtime-min   holdtime-max holdtime-total   holdtime-avg
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+                          &xa->xa_lock#3:      12224113       12644135           0.02         229.51   249000910.92          19.69       12755451       13106982           0.04         208.32    10316387.14           0.79
+                          --------------
+                          &xa->xa_lock#3       12644135          [<000000005c21d789>] __add_to_page_cache_locked+0xde/0x370
+                          --------------
+                          &xa->xa_lock#3       12644135          [<000000005c21d789>] __add_to_page_cache_locked+0xde/0x370
+
+.............................................................................................................................................................................................................................
+
+                &iovad->iova_rbtree_lock:         15842          20271           0.06       20043.54    17446387.03         860.66          62725         144788           0.02        7638.81     3642004.58          25.15
+                ------------------------
+                &iovad->iova_rbtree_lock          19269          [<0000000056593d26>] alloc_iova+0x7a/0x200
+                &iovad->iova_rbtree_lock           1002          [<000000004b7e2bdc>] free_iova+0x19/0x70
+                ------------------------
+                &iovad->iova_rbtree_lock          19481          [<0000000056593d26>] alloc_iova+0x7a/0x200
+                &iovad->iova_rbtree_lock            790          [<000000004b7e2bdc>] free_iova+0x19/0x70
+
+.............................................................................................................................................................................................................................
+
+                       &lruvec->lru_lock:          9141           9142           0.09          27.18       47881.02           5.24         202930         213589           0.03         206.62     1884399.27           8.82
+                       -----------------
+                       &lruvec->lru_lock           8956          [<000000007c988d06>] lock_page_lruvec_irqsave+0x60/0x90
+                       &lruvec->lru_lock            186          [<000000007d055d24>] lock_page_lruvec_irq+0x5b/0x90
+                       -----------------
+                       &lruvec->lru_lock           9060          [<000000007c988d06>] lock_page_lruvec_irqsave+0x60/0x90
+                       &lruvec->lru_lock             82          [<000000007d055d24>] lock_page_lruvec_irq+0x5b/0x90
+
+.............................................................................................................................................................................................................................
+
+                             &zone->lock:          2730           2730           0.09          10.04        3796.44           1.39         201837         208607           0.49         204.52      463766.53           2.22
+                             -----------
+                             &zone->lock           2729          [<00000000aa3a759d>] rmqueue_bulk+0x60/0x7d0
+                             &zone->lock              1          [<00000000cbe0cd23>] free_pcppages_bulk+0x1ef/0x7c0
+                             -----------
+                             &zone->lock           2730          [<00000000aa3a759d>] rmqueue_bulk+0x60/0x7d0
+
+.............................................................................................................................................................................................................................
+
+                            jiffies_lock:          1694           1695           0.13           6.42        3114.04           1.84           5497           7921           0.02          33.80       10659.62           1.35
+                            ------------
+                            jiffies_lock           1695          [<000000001c7f6400>] tick_do_update_jiffies64+0x2b/0x160
+                            ------------
+                            jiffies_lock           1695          [<000000001c7f6400>] tick_do_update_jiffies64+0x2b/0x160
+
+.............................................................................................................................................................................................................................
+
+                           &pool->lock/1:           573            573           0.04           3.30         451.95           0.79           3125           4383           0.02           7.58        3246.23           0.74
+                           -------------
+                           &pool->lock/1            139          [<00000000521bf45d>] worker_thread+0xba/0x400
+                           &pool->lock/1            267          [<00000000902ff48d>] process_one_work+0x33e/0x540
+                           &pool->lock/1             65          [<000000001e5c7b3e>] __flush_work+0x91/0x320
+                           &pool->lock/1            102          [<00000000e34625bd>] __queue_work+0xf4/0x440
+                           -------------
+                           &pool->lock/1            298          [<00000000e34625bd>] __queue_work+0xf4/0x440
+                           &pool->lock/1            117          [<00000000521bf45d>] worker_thread+0xba/0x400
+                           &pool->lock/1             67          [<00000000902ff48d>] process_one_work+0x33e/0x540
+                           &pool->lock/1             91          [<000000001e5c7b3e>] __flush_work+0x91/0x320
+
+.............................................................................................................................................................................................................................
+
+                             &rq->__lock:           292            313           0.13          11.05         623.96           1.99          38519         876455           0.04          17.91      472692.16           0.54
+                             -----------
+                             &rq->__lock             36          [<000000008eaa8c9f>] __schedule+0xa7/0x980
+                             &rq->__lock              2          [<000000002020cf69>] __task_rq_lock+0x49/0x110
+                             &rq->__lock            258          [<0000000040141d88>] raw_spin_rq_lock_nested+0xe/0x10
+                             &rq->__lock             17          [<00000000e1bb838b>] try_to_wake_up+0x459/0x550
+                             -----------
+                             &rq->__lock              3          [<000000002020cf69>] __task_rq_lock+0x49/0x110
+                             &rq->__lock             38          [<000000008eaa8c9f>] __schedule+0xa7/0x980
+                             &rq->__lock            249          [<0000000040141d88>] raw_spin_rq_lock_nested+0xe/0x10
+                             &rq->__lock             21          [<00000000e1bb838b>] try_to_wake_up+0x459/0x550
+
+.............................................................................................................................................................................................................................
+
+                      ptlock_ptr(page)#2:           210            219           0.14          59.34         295.19           1.35           2376          66357           0.04         146.01       30989.97           0.47
+                      ------------------
+                      ptlock_ptr(page)#2              3          [<0000000079a4f2ca>] __handle_mm_fault+0xad0/0x1250
+                      ptlock_ptr(page)#2            213          [<00000000d2710431>] __handle_mm_fault+0xe04/0x1250
+                      ptlock_ptr(page)#2              3          [<00000000a06e58e4>] page_vma_mapped_walk+0x436/0x990
+                      ------------------
+                      ptlock_ptr(page)#2              3          [<0000000079a4f2ca>] __handle_mm_fault+0xad0/0x1250
+                      ptlock_ptr(page)#2              1          [<00000000a06e58e4>] page_vma_mapped_walk+0x436/0x990
+                      ptlock_ptr(page)#2            212          [<00000000d2710431>] __handle_mm_fault+0xe04/0x1250
+                      ptlock_ptr(page)#2              3          [<00000000fcc1ef7e>] change_protection+0x5b9/0xd20
+
+.............................................................................................................................................................................................................................
+
+                        &tty->write_wait:           136            145           0.19           1.50          98.44           0.68            979           4808           0.02           2.17         582.40           0.12
+                        ----------------
+                        &tty->write_wait             71          [<000000003407a31c>] remove_wait_queue+0x17/0x60
+                        &tty->write_wait             46          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+                        &tty->write_wait             28          [<00000000db2b3e3c>] add_wait_queue+0x1a/0x90
+                        ----------------
+                        &tty->write_wait            115          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+                        &tty->write_wait             16          [<000000003407a31c>] remove_wait_queue+0x17/0x60
+                        &tty->write_wait             14          [<00000000db2b3e3c>] add_wait_queue+0x1a/0x90
+
+.............................................................................................................................................................................................................................
+
+                      &mm->mmap_lock#2-W:            42             50           0.18         363.37        2069.49          41.39             47            323           0.07         179.76        1287.14           3.98
+                      &mm->mmap_lock#2-R:            49             71           0.17         275.42        4370.51          61.56             77          59294           0.10        4305.10       83389.24           1.41
+                      ------------------
+                        &mm->mmap_lock#2             71          [<000000002ed1ea4d>] do_user_addr_fault+0x3db/0x6e0
+                        &mm->mmap_lock#2             29          [<0000000009505de5>] vm_mmap_pgoff+0xa6/0x170
+                        &mm->mmap_lock#2              6          [<000000006e8d857e>] __vm_munmap+0x60/0x130
+                        &mm->mmap_lock#2             15          [<000000007aa44b99>] do_mprotect_pkey+0xbb/0x390
+                      ------------------
+                        &mm->mmap_lock#2             38          [<0000000009505de5>] vm_mmap_pgoff+0xa6/0x170
+                        &mm->mmap_lock#2             54          [<000000002ed1ea4d>] do_user_addr_fault+0x3db/0x6e0
+                        &mm->mmap_lock#2             20          [<000000007aa44b99>] do_mprotect_pkey+0xbb/0x390
+                        &mm->mmap_lock#2              9          [<000000006e8d857e>] __vm_munmap+0x60/0x130
+
+.............................................................................................................................................................................................................................
+
+                           &retval->lock:            69             69           0.31          14.95         319.50           4.63           1113           1788           0.04           6.09         957.27           0.54
+                           -------------
+                           &retval->lock             67          [<00000000e1464310>] dma_pool_alloc+0x4a/0x1f0
+                           &retval->lock              2          [<00000000935c546f>] dma_pool_free+0x2c/0x110
+                           -------------
+                           &retval->lock             65          [<00000000e1464310>] dma_pool_alloc+0x4a/0x1f0
+                           &retval->lock              4          [<00000000935c546f>] dma_pool_free+0x2c/0x110
+
+.............................................................................................................................................................................................................................
+
+                   &inode->bitmap_rw_sem:            67             67           0.04         394.69         522.03           7.79          65580          73182           0.04         477.61       25031.27           0.34
+                   ---------------------
+                   &inode->bitmap_rw_sem              1          [<00000000a1e6663d>] alloc_cross_bitmap+0x58/0x100
+                   &inode->bitmap_rw_sem             66          [<00000000c6f9c9a1>] add_pg_cross_bitmap+0x47/0x70
+                   ---------------------
+                   &inode->bitmap_rw_sem              2          [<00000000a1e6663d>] alloc_cross_bitmap+0x58/0x100
+                   &inode->bitmap_rw_sem             65          [<00000000c6f9c9a1>] add_pg_cross_bitmap+0x47/0x70
+
+.............................................................................................................................................................................................................................
+
+                              rcu_node_1:            59             62           0.09           6.57         103.70           1.67           1351           4894           0.04           8.91        3302.90           0.67
+                              ----------
+                              rcu_node_1             48          [<0000000015025a96>] rcu_core+0x20c/0x6b0
+                              rcu_node_1             11          [<00000000e4193d7d>] force_qs_rnp+0x6b/0x1d0
+                              rcu_node_1              2          [<0000000015983775>] rcu_gp_kthread+0x379/0x7e0
+                              rcu_node_1              1          [<000000008799bc6b>] rcu_gp_kthread+0x236/0x7e0
+                              ----------
+                              rcu_node_1              4          [<0000000015983775>] rcu_gp_kthread+0x379/0x7e0
+                              rcu_node_1             40          [<0000000015025a96>] rcu_core+0x20c/0x6b0
+                              rcu_node_1             12          [<00000000e4193d7d>] force_qs_rnp+0x6b/0x1d0
+                              rcu_node_1              2          [<000000008799bc6b>] rcu_gp_kthread+0x236/0x7e0
+
+.............................................................................................................................................................................................................................
+
+                       &sighand->siglock:            51             55           0.42          42.54        1208.20          21.97           1307          20513           0.04          60.77       18651.80           0.91
+                       -----------------
+                       &sighand->siglock              1          [<000000002ea26325>] copy_process+0x12c3/0x1d90
+                       &sighand->siglock             16          [<00000000948ff140>] get_signal+0x82/0x900
+                       &sighand->siglock             16          [<000000000f2934a9>] acct_collect+0x18f/0x1e0
+                       &sighand->siglock              4          [<0000000080857739>] taskstats_exit+0x26f/0x3b0
+                       -----------------
+                       &sighand->siglock              1          [<000000007d688d89>] calculate_sigpending+0x1f/0x40
+                       &sighand->siglock             12          [<000000002fd0b09c>] do_group_exit+0x74/0xc0
+                       &sighand->siglock              9          [<00000000948ff140>] get_signal+0x82/0x900
+                       &sighand->siglock             15          [<000000000f2934a9>] acct_collect+0x18f/0x1e0
+
+.............................................................................................................................................................................................................................
+
+                         &tty->read_wait:            43             43           0.08           1.15          18.13           0.42           1160           2017           0.03           7.06         342.27           0.17
+                         ---------------
+                         &tty->read_wait             13          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+                         &tty->read_wait             24          [<000000003407a31c>] remove_wait_queue+0x17/0x60
+                         &tty->read_wait              6          [<00000000db2b3e3c>] add_wait_queue+0x1a/0x90
+                         ---------------
+                         &tty->read_wait              6          [<000000003407a31c>] remove_wait_queue+0x17/0x60
+                         &tty->read_wait             30          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+                         &tty->read_wait              7          [<00000000db2b3e3c>] add_wait_queue+0x1a/0x90
+
+.............................................................................................................................................................................................................................
+
+                               &fq->lock:            38             38           1.00        5944.22       31233.98         821.95         164383         249064           0.03       21348.69      749172.41           3.01
+                               ---------
+                               &fq->lock             17          [<000000009c3eec4a>] fq_flush_timeout+0x60/0xb0
+                               &fq->lock             21          [<00000000bd6be9aa>] queue_iova+0x41/0x140
+                               ---------
+                               &fq->lock             17          [<00000000bd6be9aa>] queue_iova+0x41/0x140
+                               &fq->lock             21          [<000000009c3eec4a>] fq_flush_timeout+0x60/0xb0
+
+.............................................................................................................................................................................................................................
+
+                           log_wait.lock:            34             34           7.63          78.40        1421.37          41.80             37             43           0.06          16.95         161.61           3.76
+                           -------------
+                           log_wait.lock             31          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+                           log_wait.lock              3          [<00000000248b3d6e>] prepare_to_wait_event+0x1b/0x140
+                           -------------
+                           log_wait.lock             34          [<0000000023deb353>] __wake_up_common_lock+0x63/0xc0
+
+.............................................................................................................................................................................................................................
+
+                         tasklist_lock-W:            32             32          44.63         374.91        7097.30         221.79             34             57           0.17          14.35         224.27           3.93
+                         tasklist_lock-R:             0              0           0.00           0.00           0.00           0.00              6             20           0.08         382.66         403.55          20.18
+                         ---------------
+                           tasklist_lock             16          [<00000000a8ebad72>] do_exit+0x40b/0xbe0
+                           tasklist_lock             16          [<00000000800c8619>] release_task+0xb8/0x550
+                         ---------------
+                           tasklist_lock             16          [<0000000008179839>] mm_update_next_owner+0x52/0x2b0
+                           tasklist_lock             14          [<00000000a8ebad72>] do_exit+0x40b/0xbe0
+                           tasklist_lock              2          [<00000000800c8619>] release_task+0xb8/0x550
+
+.............................................................................................................................................................................................................................
+
+                 &pfetch_state->spinlock:            30             30           0.09           1.86          30.69           1.02          51229         150134           0.03          13.66       30873.47           0.21
+                 -----------------------
+                 &pfetch_state->spinlock             28          [<0000000093ab784d>] update_read_cache_stats+0x85/0x150
+                 &pfetch_state->spinlock              2          [<000000004e073512>] update_read_cache_stats+0x10b/0x150
+                 -----------------------
+                 &pfetch_state->spinlock             28          [<0000000093ab784d>] update_read_cache_stats+0x85/0x150
+                 &pfetch_state->spinlock              2          [<000000004e073512>] update_read_cache_stats+0x10b/0x150
+
+.............................................................................................................................................................................................................................
+
+                           slock-AF_INET:            24             24           0.43          33.89         220.68           9.19            177           1080           0.02          41.53         488.36           0.45
+                           -------------
+                           slock-AF_INET             23          [<00000000fcdda26e>] lock_sock_nested+0x28/0x90
+                           slock-AF_INET              1          [<00000000e011b827>] tcp_tsq_handler+0x1e/0xe0
+                           -------------
+                           slock-AF_INET             23          [<00000000e011b827>] tcp_tsq_handler+0x1e/0xe0
+                           slock-AF_INET              1          [<00000000ff67993c>] release_sock+0x1e/0xb0
+
+.............................................................................................................................................................................................................................
+
+                          vmap_area_lock:            16             20           0.47          13.97         146.97           7.35             33             91           0.04           9.82         104.81           1.15
+                          --------------
+                          vmap_area_lock              7          [<00000000e1953ea6>] free_vmap_area_noflush+0x2a/0x300
+                          vmap_area_lock              8          [<00000000c4b94a8a>] remove_vm_area+0x22/0xa0
+                          vmap_area_lock              5          [<00000000771b616f>] find_vmap_area+0x19/0x60
+                          --------------
+                          vmap_area_lock             14          [<00000000771b616f>] find_vmap_area+0x19/0x60
+                          vmap_area_lock              3          [<00000000c4b94a8a>] remove_vm_area+0x22/0xa0
+                          vmap_area_lock              3          [<00000000e1953ea6>] free_vmap_area_noflush+0x2a/0x300
+
+.............................................................................................................................................................................................................................
+
+                   &futex_queues[i].lock:            19             19           0.11           1.29          13.87           0.73            187            207           0.05           3.49         177.48           0.86
+                   ---------------------
+                   &futex_queues[i].lock             13          [<000000002eff0409>] futex_wake+0xb9/0x170
+                   &futex_queues[i].lock              4          [<00000000e33e1a6c>] futex_wait_setup+0x5c/0xf0
+                   &futex_queues[i].lock              2          [<00000000a2f8e367>] futex_wait+0x10a/0x240
+                   ---------------------
+                   &futex_queues[i].lock             16          [<00000000e33e1a6c>] futex_wait_setup+0x5c/0xf0
+                   &futex_queues[i].lock              1          [<000000002eff0409>] futex_wake+0xb9/0x170
+                   &futex_queues[i].lock              2          [<00000000a2f8e367>] futex_wait+0x10a/0x240
+
+.............................................................................................................................................................................................................................
+
+                         &sem->wait_lock:            15             15           0.15           2.73          12.79           0.85            116            192           0.03           5.93          83.20           0.43
+                         ---------------
+                         &sem->wait_lock              4          [<0000000070ade71b>] rwsem_wake.isra.11+0x42/0xa0
+                         &sem->wait_lock              6          [<00000000f64245bd>] rwsem_down_read_slowpath+0x2db/0x340
+                         &sem->wait_lock              1          [<00000000d96d8704>] down_write_killable+0x32b/0x640
+                         &sem->wait_lock              4          [<000000007acf8ba9>] rwsem_down_read_slowpath+0xf6/0x340
+                         ---------------
+                         &sem->wait_lock              3          [<00000000a6000016>] down_write_killable+0x1a4/0x640
+                         &sem->wait_lock              8          [<0000000070ade71b>] rwsem_wake.isra.11+0x42/0xa0
+                         &sem->wait_lock              4          [<000000007acf8ba9>] rwsem_down_read_slowpath+0xf6/0x340
+
+.............................................................................................................................................................................................................................
+
+                         &dentry->d_lock:            13             13           0.15           1.48           7.31           0.56           5948         677252           0.03         200.93       57250.33           0.08
+                         ---------------
+                         &dentry->d_lock              3          [<00000000adf9b08e>] __d_lookup+0x7b/0x180
+                         &dentry->d_lock              2          [<00000000368c85d8>] lockref_get+0xd/0x20
+                         &dentry->d_lock              6          [<0000000041015dce>] dput+0x151/0x3b0
+                         &dentry->d_lock              1          [<000000007256bd60>] __lock_parent+0x58/0xb0
+                         ---------------
+                         &dentry->d_lock              4          [<00000000adf9b08e>] __d_lookup+0x7b/0x180
+                         &dentry->d_lock              1          [<00000000368c85d8>] lockref_get+0xd/0x20
+                         &dentry->d_lock              4          [<0000000041015dce>] dput+0x151/0x3b0
+                         &dentry->d_lock              2          [<0000000058f9d77e>] lockref_get_not_dead+0x12/0x40
+
+.............................................................................................................................................................................................................................
+
+                            css_set_lock:            12             12           0.95           8.30          51.79           4.32             41             78           0.04          41.93         106.71           1.37
+                            ------------
+                            css_set_lock             10          [<0000000051399cab>] cgroup_exit+0x29/0x160
+                            css_set_lock              2          [<000000006676390b>] cgroup_release+0x7e/0xf0
+                            ------------
+                            css_set_lock             10          [<0000000051399cab>] cgroup_exit+0x29/0x160
+                            css_set_lock              2          [<000000006676390b>] cgroup_release+0x7e/0xf0
+
+.............................................................................................................................................................................................................................
+
+                   &s->s_inode_list_lock:            11             11           0.12           2.04           9.04           0.82             66            204           0.04           5.42         113.47           0.56
+                   ---------------------
+                   &s->s_inode_list_lock             11          [<00000000a3cf5b97>] evict+0x78/0x170
+                   ---------------------
+                   &s->s_inode_list_lock             11          [<00000000a3cf5b97>] evict+0x78/0x170
+
+.............................................................................................................................................................................................................................
+
+                              rcu_node_0:            11             11           0.43           3.68          22.16           2.01            273            738           0.05           2.10         231.67           0.31
+                              ----------
+                              rcu_node_0             10          [<0000000034c6e73a>] rcu_report_qs_rnp+0x9c/0x1a0
+                              rcu_node_0              1          [<00000000e63d6b5e>] rcu_gp_kthread+0x7d/0x7e0
+                              ----------
+                              rcu_node_0             10          [<0000000034c6e73a>] rcu_report_qs_rnp+0x9c/0x1a0
+                              rcu_node_0              1          [<0000000011b3be43>] rcu_start_this_gp+0x60/0x180
+
+.............................................................................................................................................................................................................................
+
+                      &lru->node[i].lock:             9              9           0.51           2.05           9.51           1.06             52            173           0.04           3.36          62.42           0.36
+                      ------------------
+                      &lru->node[i].lock              9          [<000000005cac046a>] list_lru_del+0x55/0xf0
+                      ------------------
+                      &lru->node[i].lock              9          [<000000005cac046a>] list_lru_del+0x55/0xf0
+
+.............................................................................................................................................................................................................................
+
+                      (console_sem).lock:             8              8           0.63           7.53          25.11           3.14             48            325           0.04           1.80          57.22           0.18
+                      ------------------
+                      (console_sem).lock              7          [<000000002a6ce3e0>] down_trylock+0x14/0x40
+                      (console_sem).lock              1          [<0000000054067ad2>] up+0x16/0x50
+                      ------------------
+                      (console_sem).lock              8          [<000000002a6ce3e0>] down_trylock+0x14/0x40
+
+.............................................................................................................................................................................................................................
+
+                             &base->lock:             6              6           0.69           3.20          10.48           1.75           4252          58126           0.04          12.07        8272.11           0.14
+                             -----------
+                             &base->lock              6          [<0000000087c452d7>] run_timer_softirq+0x425/0x480
+                             -----------
+                             &base->lock              6          [<00000000ed47f184>] lock_timer_base+0x6b/0x90
+
+.............................................................................................................................................................................................................................
+
+                      console_owner_lock:             5              5           2.08           5.82          16.27           3.25             11             11           0.18           2.47          11.04           1.00
+                      ------------------
+                      console_owner_lock              5          [<00000000c4329ce4>] vprintk_emit+0x194/0x2d0
+                      ------------------
+                      console_owner_lock              5          [<00000000c4329ce4>] vprintk_emit+0x194/0x2d0
+
+.............................................................................................................................................................................................................................
+
+                             &p->pi_lock:             5              5           0.82           2.48           7.63           1.53           1146          94815           0.04          21.06       77889.57           0.82
+                             -----------
+                             &p->pi_lock              5          [<00000000f829dc3f>] try_to_wake_up+0x4b/0x550
+                             -----------
+                             &p->pi_lock              5          [<00000000f829dc3f>] try_to_wake_up+0x4b/0x550
+
+.............................................................................................................................................................................................................................
+
+                               &fs->lock:             4              4           0.58           1.08           3.13           0.78             22             41           0.04           4.22          22.51           0.55
+                               ---------
+                               &fs->lock              4          [<000000009d1d36a7>] exit_fs+0x3b/0x80
+                               ---------
+                               &fs->lock              4          [<000000009d1d36a7>] exit_fs+0x3b/0x80
+
+.............................................................................................................................................................................................................................
+
+                        &newf->file_lock:             4              4           0.65           1.35           3.64           0.91             38         115303           0.04           9.84        6766.21           0.06
+                        ----------------
+                        &newf->file_lock              1          [<000000006adf8aee>] pick_file+0x25/0x90
+                        &newf->file_lock              3          [<000000003ad7d840>] alloc_fd+0x43/0x1c0
+                        ----------------
+                        &newf->file_lock              2          [<000000006adf8aee>] pick_file+0x25/0x90
+                        &newf->file_lock              2          [<000000003ad7d840>] alloc_fd+0x43/0x1c0
+
+.............................................................................................................................................................................................................................
+
+                    purge_vmap_area_lock:             3              3           0.57           1.38           3.16           1.05             13             14           0.59           4.59          35.90           2.56
+                    --------------------
+                    purge_vmap_area_lock              3          [<00000000d807321d>] free_vmap_area_noflush+0xa6/0x300
+                    --------------------
+                    purge_vmap_area_lock              3          [<00000000d807321d>] free_vmap_area_noflush+0xa6/0x300
+
+.............................................................................................................................................................................................................................
+
+                          &p->alloc_lock:             2              2           0.70           5.66           6.36           3.18           1199          68322           0.04         196.66       17681.94           0.26
+                          --------------
+                          &p->alloc_lock              1          [<0000000078ad0213>] ptrace_may_access+0x23/0x50
+                          &p->alloc_lock              1          [<0000000061375d89>] get_task_exe_file+0x1e/0x60
+                          --------------
+                          &p->alloc_lock              1          [<0000000078ad0213>] ptrace_may_access+0x23/0x50
+                          &p->alloc_lock              1          [<0000000061375d89>] get_task_exe_file+0x1e/0x60
+
+.............................................................................................................................................................................................................................
+
+                        &rcu_state.gp_wq:             2              2           0.52           0.98           1.50           0.75             95            668           0.04           7.90         440.51           0.66
+                        ----------------
+                        &rcu_state.gp_wq              1          [<00000000f61e7276>] swake_up_one+0x14/0x40
+                        &rcu_state.gp_wq              1          [<000000001f2b53b5>] prepare_to_swait_event+0x1b/0xe0
+                        ----------------
+                        &rcu_state.gp_wq              1          [<000000001f2b53b5>] prepare_to_swait_event+0x1b/0xe0
+                        &rcu_state.gp_wq              1          [<00000000f61e7276>] swake_up_one+0x14/0x40
+
+.............................................................................................................................................................................................................................
+
+                             &ep->lock-W:             1              2           1.24           1.57           2.82           1.41             16            136           0.04           0.95          16.89           0.12
+                             &ep->lock-R:             0              0           0.00           0.00           0.00           0.00             40             42           0.08           9.18         114.44           2.72
+                             -----------
+                               &ep->lock              1          [<00000000fa0c8e24>] do_epoll_wait+0x1e1/0x720
+                               &ep->lock              1          [<000000008d382f25>] ep_done_scan+0x3e/0x140
+                             -----------
+                               &ep->lock              1          [<00000000854759bd>] ep_poll_callback+0x33/0x330
+                               &ep->lock              1          [<00000000fa0c8e24>] do_epoll_wait+0x1e1/0x720
+
+.............................................................................................................................................................................................................................
+
+                     &page_wait_table[i]:             1              1           3.83           3.83           3.83           3.83          32592          67434           0.04          12.47       97212.69           1.44
+                     -------------------
+                     &page_wait_table[i]              1          [<000000001821ef48>] put_and_wait_on_page_locked+0xb7/0x2c0
+                     -------------------
+                     &page_wait_table[i]              1          [<000000000846562c>] wake_up_page_bit+0x97/0x100
+
+.............................................................................................................................................................................................................................
+
+               &group->notification_lock:             1              1           0.49           0.49           0.49           0.49             21             56           0.05           1.21          11.31           0.20
+               -------------------------
+               &group->notification_lock              1          [<000000008ed5e02a>] inotify_poll+0x3e/0x70
+               -------------------------
+               &group->notification_lock              1          [<000000003c06d1b3>] fsnotify_add_event+0x3b/0x180
+
+.............................................................................................................................................................................................................................
+
+                           &n->list_lock:             0              0           0.00           0.00           0.00           0.00            928           1605           0.06           1.45         412.07           0.26
+                batched_entropy_u64.lock:             0              0           0.00           0.00           0.00           0.00              0            290           0.04           1.67          46.56           0.16
+                                pgd_lock:             0              0           0.00           0.00           0.00           0.00             24             29           0.06           1.96          24.48           0.84
+                                  lock#2:             0              0           0.00           0.00           0.00           0.00              0       13335788           0.02         204.77     1151182.71           0.09
+                     free_vmap_area_lock:             0              0           0.00           0.00           0.00           0.00              2             17           0.26           9.14          34.27           2.02
+                   mount_lock.seqcount-R:             0              0           0.00           0.00           0.00           0.00              0             95           0.02           0.14           3.18           0.03
+                    &irq_desc_lock_class:             0              0           0.00           0.00           0.00           0.00            204         129626           0.04           4.08       32831.79           0.25
+                         timekeeper_lock:             0              0           0.00           0.00           0.00           0.00           4157           6210           0.12           8.64       16821.79           2.71
+                   &cfs_rq->removed.lock:             0              0           0.00           0.00           0.00           0.00             25             84           0.04           1.12          29.17           0.35
+                            kernfs_mutex:             0              0           0.00           0.00           0.00           0.00             53             76           0.06          13.72         200.95           2.64
+                         resource_lock-R:             0              0           0.00           0.00           0.00           0.00              2              2          26.49          30.22          56.71          28.35
+                      cpu_hotplug_lock-R:             0              0           0.00           0.00           0.00           0.00              0             25          30.98          75.72        1349.61          53.98
+                            console_lock:             0              0           0.00           0.00           0.00           0.00              0            156           0.09          16.63         462.13           2.96
+                             &pool->lock:             0              0           0.00           0.00           0.00           0.00           1101          10909           0.04           9.41       10450.28           0.96
+                         input_pool.lock:             0              0           0.00           0.00           0.00           0.00             19           1127           0.16         195.83        1874.31           1.66
+                      hrtimer_bases.lock:             0              0           0.00           0.00           0.00           0.00              3         318247           0.04           7.78       99861.87           0.31
+                           watchdog_lock:             0              0           0.00           0.00           0.00           0.00             50             50           4.54          10.66         349.30           6.99
+                  jiffies_seq.seqcount-W:             0              0           0.00           0.00           0.00           0.00              0           6210           0.02           1.95        1871.98           0.30
+                  jiffies_seq.seqcount-R:             0              0           0.00           0.00           0.00           0.00              0          49178           0.02           2.45        4039.49           0.08
+                            &iommu->lock:             0              0           0.00           0.00           0.00           0.00           1086           2922           0.05          40.22       17269.84           5.91
+                   (wq_completion)events:             0              0           0.00           0.00           0.00           0.00              0            198           2.04         122.39        7556.47          38.16
+                             sysctl_lock:             0              0           0.00           0.00           0.00           0.00              3             33           0.04           0.81           6.26           0.19
+                                  lock#3:             0              0           0.00           0.00           0.00           0.00              0             19           0.16           3.32          12.20           0.64
+                         aa_buffers_lock:             0              0           0.00           0.00           0.00           0.00              3              6           0.04           1.09           2.32           0.39
+                     file_systems_lock-R:             0              0           0.00           0.00           0.00           0.00              1              1          24.58          24.58          24.58          24.58
+                      &sbinfo->stat_lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.06           0.96           1.02           0.51
+                 &sb->s_type->i_lock_key:             0              0           0.00           0.00           0.00           0.00              0              7           0.05           0.82           1.43           0.20
+                             rename_lock:             0              0           0.00           0.00           0.00           0.00              0              1           5.49           5.49           5.49           5.49
+                            ucounts_lock:             0              0           0.00           0.00           0.00           0.00              1              1           0.99           0.99           0.99           0.99
+               &sb->s_type->i_lock_key#3:             0              0           0.00           0.00           0.00           0.00              5             22           0.05           0.84           6.11           0.28
+                      proc_subdir_lock-R:             0              0           0.00           0.00           0.00           0.00              5           1095           0.04           4.17         202.58           0.19
+                             pidmap_lock:             0              0           0.00           0.00           0.00           0.00             21             57           0.06           4.20          56.47           0.99
+              cgroup_threadgroup_rwsem-R:             0              0           0.00           0.00           0.00           0.00              0             38           0.07          11.76          70.71           1.86
+                              fs_reclaim:             0              0           0.00           0.00           0.00           0.00              0         304003           0.08          14.47       28326.10           0.09
+     mmu_notifier_invalidate_range_start:             0              0           0.00           0.00           0.00           0.00              0       13414165           0.02          69.32      438567.01           0.03
+                    wq_pool_attach_mutex:             0              0           0.00           0.00           0.00           0.00              1          10727           0.04          12.88        8458.92           0.79
+                      rcu_state.ofl_lock:             0              0           0.00           0.00           0.00           0.00              1            416           0.11           2.08         179.33           0.43
+               &(&sig->stats_lock)->lock:             0              0           0.00           0.00           0.00           0.00             19             22           0.75           8.37         101.91           4.63
+                           &stop_pi_lock:             0              0           0.00           0.00           0.00           0.00             49            910           0.71           8.66        1950.79           2.14
+                          &stopper->lock:             0              0           0.00           0.00           0.00           0.00             52           4547           0.04           2.28         451.64           0.10
+                              &x->wait#3:             0              0           0.00           0.00           0.00           0.00              0           1756           0.04           1.22         191.78           0.11
+                          (&timer.timer):             0              0           0.00           0.00           0.00           0.00              0            607           0.03           6.94         512.34           0.84
+                          rcu_callback-R:             0              0           0.00           0.00           0.00           0.00              0          58598           0.06           5.71       11360.91           0.19
+                         (shepherd).work:             0              0           0.00           0.00           0.00           0.00              0             25          31.65          76.57        1373.67          54.95
+                  &rt_b->rt_runtime_lock:             0              0           0.00           0.00           0.00           0.00              0              5           0.32           1.74           4.33           0.87
+                 &rt_rq->rt_runtime_lock:             0              0           0.00           0.00           0.00           0.00              0            258           0.08           0.92          83.03           0.32
+                       (&watchdog_timer):             0              0           0.00           0.00           0.00           0.00              0             50           4.75          11.66         379.56           7.59
+                              &x->wait#6:             0              0           0.00           0.00           0.00           0.00              5             10           0.08           2.14           6.85           0.69
+                               balancing:             0              0           0.00           0.00           0.00           0.00              0         496777           0.02          19.96       33758.04           0.07
+                    &____s->seqcount#2-R:             0              0           0.00           0.00           0.00           0.00              0          57800           0.02           1.22        1806.74           0.03
+               &sb->s_type->i_lock_key#1:             0              0           0.00           0.00           0.00           0.00              2             16           0.03           0.65           2.91           0.18
+                  rename_lock.seqcount-W:             0              0           0.00           0.00           0.00           0.00              0              1           4.69           4.69           4.69           4.69
+                  rename_lock.seqcount-R:             0              0           0.00           0.00           0.00           0.00              0          38940           0.02           0.75        1251.25           0.03
+                    &____s->seqcount#3-W:             0              0           0.00           0.00           0.00           0.00              0              1           1.87           1.87           1.87           1.87
+                    &____s->seqcount#3-R:             0              0           0.00           0.00           0.00           0.00              0          57584           0.02           1.53        1811.55           0.03
+                              rtnl_mutex:             0              0           0.00           0.00           0.00           0.00              1              9           0.08         219.35         327.42          36.38
+                                krc.lock:             0              0           0.00           0.00           0.00           0.00              0             12           0.04           2.18          10.81           0.90
+                           binfmt_lock-R:             0              0           0.00           0.00           0.00           0.00              3             12           0.06           1.61           4.64           0.39
+                                     &wq:             0              0           0.00           0.00           0.00           0.00              0             89           0.05           0.93          10.87           0.12
+                             syslog_lock:             0              0           0.00           0.00           0.00           0.00              0             57           0.05           3.26          34.08           0.60
+                        ptlock_ptr(page):             0              0           0.00           0.00           0.00           0.00             38            188           0.04           2.59          41.33           0.22
+                         rcu_read_lock-R:             0              0           0.00           0.00           0.00           0.00              0       86399402           0.02       21960.84    31313973.79           0.36
+                    &mm->page_table_lock:             0              0           0.00           0.00           0.00           0.00             16            143           0.04           1.28          22.47           0.16
+                        &mm->mmap_lock/1:             0              0           0.00           0.00           0.00           0.00              0              3          83.68         178.82         367.49         122.50
+                          dup_mmap_sem-R:             0              0           0.00           0.00           0.00           0.00              0              3          85.54         180.28         372.13         124.04
+                         nl_table_lock-W:             0              0           0.00           0.00           0.00           0.00              0              6           0.06           0.35           0.78           0.13
+                         nl_table_lock-R:             0              0           0.00           0.00           0.00           0.00              4             10           0.06           0.96           2.99           0.30
+                      nl_table_wait.lock:             0              0           0.00           0.00           0.00           0.00              4             16           0.05           0.90           3.40           0.21
+                       rhashtable_bucket:             0              0           0.00           0.00           0.00           0.00              0             12           0.03           0.55           1.20           0.10
+                              &x->wait#8:             0              0           0.00           0.00           0.00           0.00            302            453           0.05           3.38         282.65           0.62
+          (work_completion)(&barr->work):             0              0           0.00           0.00           0.00           0.00              0            151           0.92           4.03         272.92           1.81
+                            uidhash_lock:             0              0           0.00           0.00           0.00           0.00              1              5           0.07           1.18           3.08           0.62
+                  &pgdat->kcompactd_wait:             0              0           0.00           0.00           0.00           0.00              4            288           0.05           1.09          36.76           0.13
+                  &tsk->futex_exit_mutex:             0              0           0.00           0.00           0.00           0.00             21             22           0.28           5.58          40.95           1.86
+                &child->perf_event_mutex:             0              0           0.00           0.00           0.00           0.00             20             20           0.07           1.26          10.93           0.55
+                        &pid->wait_pidfd:             0              0           0.00           0.00           0.00           0.00              3              3           0.15           0.87           1.53           0.51
+                     &sig->wait_chldexit:             0              0           0.00           0.00           0.00           0.00              6             13           0.05           2.50           5.88           0.45
+                    &____s->seqcount#4-W:             0              0           0.00           0.00           0.00           0.00              0             22           0.25           6.92          78.93           3.59
+                    &____s->seqcount#4-R:             0              0           0.00           0.00           0.00           0.00              0          18636           0.02           0.64         575.81           0.03
+               (work_completion)(&p->wq):             0              0           0.00           0.00           0.00           0.00              0             14           9.88          54.21         417.31          29.81
+                        mm/vmstat.c:1945:             0              0           0.00           0.00           0.00           0.00              0             25           0.50           5.52         100.58           4.02
+                        &tty->files_lock:             0              0           0.00           0.00           0.00           0.00              1              4           0.05           0.67           0.83           0.21
+             (wq_completion)mm_percpu_wq:             0              0           0.00           0.00           0.00           0.00              0            474           0.79          37.12        2230.33           4.71
+   (work_completion)(&(({ do { const voi:             0              0           0.00           0.00           0.00           0.00              0            474           0.61          36.93        1922.97           4.06
+   &(({ do { const void *__vpp_verify = :             0              0           0.00           0.00           0.00           0.00              0            430           1.02          13.39        2312.07           5.38
+                &mapping->i_mmap_rwsem-W:             0              0           0.00           0.00           0.00           0.00            133            814           0.04           4.12         384.57           0.47
+                &mapping->i_mmap_rwsem-R:             0              0           0.00           0.00           0.00           0.00              1            167           0.25          10.99         194.46           1.16
+                     delayed_uprobe_lock:             0              0           0.00           0.00           0.00           0.00              5              6           0.16           1.05           4.12           0.69
+                             tomoyo_ss-R:             0              0           0.00           0.00           0.00           0.00              0          57097           0.03          10.40        2646.65           0.05
+                         &nvmeq->sq_lock:             0              0           0.00           0.00           0.00           0.00              0          60670           0.04           4.93        5838.49           0.10
+                              &tbl->lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.75           0.96           1.71           0.86
+   (wq_completion)events_power_efficient:             0              0           0.00           0.00           0.00           0.00              0            125           1.06          13.39         495.92           3.97
+   (work_completion)(&(&krcp->page_cache:             0              0           0.00           0.00           0.00           0.00              0              3           2.66           5.29          10.72           3.57
+           &(&krcp->monitor_work)->timer:             0              0           0.00           0.00           0.00           0.00              0              3           7.14           7.85          22.18           7.39
+   (work_completion)(&(&krcp->monitor_wo:             0              0           0.00           0.00           0.00           0.00              0              3           1.44           2.65           6.65           2.22
+   (work_completion)(&(&krcp->krw_arr[i]:             0              0           0.00           0.00           0.00           0.00              0              3           1.91           3.02           7.81           2.60
+                       semaphore->lock#2:             0              0           0.00           0.00           0.00           0.00             80             80           0.05           1.19          28.60           0.36
+           (wq_completion)events_unbound:             0              0           0.00           0.00           0.00           0.00              0           1135           0.23          17.53        1707.73           1.50
+                                   &wq#2:             0              0           0.00           0.00           0.00           0.00              0            510           0.05           0.93          42.26           0.08
+                                  lock#6:             0              0           0.00           0.00           0.00           0.00              0       13138199           0.02         953.86     7107781.94           0.54
+                           &domain->lock:             0              0           0.00           0.00           0.00           0.00           1086           1461           3.64          43.79       19654.45          13.45
+               &sb->s_type->i_lock_key#8:             0              0           0.00           0.00           0.00           0.00              0             90           0.03           0.81           9.06           0.10
+                        &ei->xattr_sem-R:             0              0           0.00           0.00           0.00           0.00              4              4           0.10           0.92           2.04           0.51
+                         inode_hash_lock:             0              0           0.00           0.00           0.00           0.00              0             10           0.05           1.83           4.98           0.50
+                       &cpu_rcache->lock:             0              0           0.00           0.00           0.00           0.00              0          22595           0.04           4.27        4167.84           0.18
+                           &rcache->lock:             0              0           0.00           0.00           0.00           0.00             47            117           0.04           2.77          65.60           0.56
+                      rcu_read_lock_bh-R:             0              0           0.00           0.00           0.00           0.00              0           5324           0.05          29.99        2220.26           0.42
+                      &anon_vma->rwsem-W:             0              0           0.00           0.00           0.00           0.00            219            676           0.04           2.22         212.94           0.31
+                      &anon_vma->rwsem-R:             0              0           0.00           0.00           0.00           0.00            734           5202           0.22          26.43        2464.53           0.47
+                  &sig->cred_guard_mutex:             0              0           0.00           0.00           0.00           0.00              3              3         245.51         570.88        1202.47         400.82
+                &sig->exec_update_lock-W:             0              0           0.00           0.00           0.00           0.00              3              3          91.84         286.93         510.83         170.28
+                &sig->exec_update_lock-R:             0              0           0.00           0.00           0.00           0.00              1              2           1.51           2.74           4.25           2.12
+                    ptlock_ptr(page)#2/1:             0              0           0.00           0.00           0.00           0.00              1            109           0.05           5.78          34.04           0.31
+                   rcu_read_lock_sched-R:             0              0           0.00           0.00           0.00           0.00              0          57103           0.02          10.39        1818.51           0.03
+                               uts_sem-R:             0              0           0.00           0.00           0.00           0.00              1              1           1.16           1.16           1.16           1.16
+                       &dentry->d_lock/1:             0              0           0.00           0.00           0.00           0.00             66             67           0.06           6.47         120.08           1.79
+                   &fsnotify_mark_srcu-R:             0              0           0.00           0.00           0.00           0.00              0          18774           0.02          26.01         674.26           0.04
+                             &prev->lock:             0              0           0.00           0.00           0.00           0.00           1142          19078           0.04           1.23         925.16           0.05
+                          entries_lock-R:             0              0           0.00           0.00           0.00           0.00              3              3           0.27           2.22           4.50           1.50
+                      (&iovad->fq_timer):             0              0           0.00           0.00           0.00           0.00              0           1456          17.45       21423.49      395598.60         271.70
+                               swap_lock:             0              0           0.00           0.00           0.00           0.00              1             17           0.31           1.21          13.31           0.78
+                         sk_lock-AF_INET:             0              0           0.00           0.00           0.00           0.00              0            494           0.23          62.99        1388.58           2.81
+                               cdev_lock:             0              0           0.00           0.00           0.00           0.00              1              1           1.22           1.22           1.22           1.22
+                   &eq->tasklet_ctx.lock:             0              0           0.00           0.00           0.00           0.00              0           3320           0.04           1.03         217.34           0.07
+              (wq_completion)edac-poller:             0              0           0.00           0.00           0.00           0.00              0             23           0.42           3.25          30.75           1.34
+                       &tty->ldisc_sem-R:             0              0           0.00           0.00           0.00           0.00           1219           3575           0.12          59.42        6997.71           1.96
+                   &tty->termios_rwsem-R:             0              0           0.00           0.00           0.00           0.00           1102           1430           0.18           8.79        1115.70           0.78
+                             &port->lock:             0              0           0.00           0.00           0.00           0.00              2           1407           0.05           2.44         327.17           0.23
+                       &mm->context.lock:             0              0           0.00           0.00           0.00           0.00              0              3           0.08           0.52           0.95           0.32
+               &sb->s_type->i_lock_key#2:             0              0           0.00           0.00           0.00           0.00             90            660           0.03           3.26         228.88           0.35
+            &sb->s_type->i_mutex_key#9-W:             0              0           0.00           0.00           0.00           0.00              2              2           3.22           4.66           7.88           3.94
+            &sb->s_type->i_mutex_key#9-R:             0              0           0.00           0.00           0.00           0.00           1129          37834           0.12        1662.86       58947.80           1.56
+                          &pipe->mutex/1:             0              0           0.00           0.00           0.00           0.00              2              8           0.07           5.56           8.66           1.08
+                          &pipe->rd_wait:             0              0           0.00           0.00           0.00           0.00              2             71           0.04           3.64          11.85           0.17
+                              &pid->lock:             0              0           0.00           0.00           0.00           0.00             37             70           0.04           1.93          23.70           0.34
+                   &ent->pde_unload_lock:             0              0           0.00           0.00           0.00           0.00              4            336           0.04           0.46          25.48           0.08
+                                &p->lock:             0              0           0.00           0.00           0.00           0.00              1          78243           0.06         683.12       97769.48           1.25
+                          sb_writers#3-R:             0              0           0.00           0.00           0.00           0.00              0              1           0.37           0.37           0.37           0.37
+                          &pipe->wr_wait:             0              0           0.00           0.00           0.00           0.00              1              2           0.15           0.34           0.49           0.25
+                 &tty->atomic_write_lock:             0              0           0.00           0.00           0.00           0.00              0           1407           0.52          59.11        3205.12           2.28
+                     &ldata->output_lock:             0              0           0.00           0.00           0.00           0.00              2           1407           0.17          10.98        2361.42           1.68
+                          sb_writers#4-R:             0              0           0.00           0.00           0.00           0.00              0              9           0.94          15.32          44.09           4.90
+                          sb_writers#5-R:             0              0           0.00           0.00           0.00           0.00              0              4           5.88          52.19         113.87          28.47
+              &type->i_mutex_dir_key#3/1:             0              0           0.00           0.00           0.00           0.00              0              1          51.24          51.24          51.24          51.24
+              &type->i_mutex_dir_key#4-W:             0              0           0.00           0.00           0.00           0.00              0              1          30.12          30.12          30.12          30.12
+              &type->i_mutex_dir_key#4-R:             0              0           0.00           0.00           0.00           0.00              1             59           0.72           9.61          92.00           1.56
+              &type->i_mutex_dir_key#5-R:             0              0           0.00           0.00           0.00           0.00              1              1           8.52           8.52           8.52           8.52
+                  kernfs_open_file_mutex:             0              0           0.00           0.00           0.00           0.00             17             20           0.20           9.89          44.97           2.25
+                   kernfs_open_node_lock:             0              0           0.00           0.00           0.00           0.00             17             20           0.06           1.48           9.56           0.48
+                              &of->mutex:             0              0           0.00           0.00           0.00           0.00              0              8           9.17          13.99          88.94          11.12
+                           &mm->arg_lock:             0              0           0.00           0.00           0.00           0.00              2             38           0.04           0.72           3.66           0.10
+                         unix_table_lock:             0              0           0.00           0.00           0.00           0.00              3             33           0.04           1.17           9.84           0.30
+                                &u->lock:             0              0           0.00           0.00           0.00           0.00              2             25           0.05           3.21          17.77           0.71
+                        slock-AF_NETLINK:             0              0           0.00           0.00           0.00           0.00              0             12           0.04           1.16           1.75           0.15
+                      sk_lock-AF_NETLINK:             0              0           0.00           0.00           0.00           0.00              0              6           0.23           2.12           3.77           0.63
+                                &ep->mtx:             0              0           0.00           0.00           0.00           0.00              0             62           0.29           8.76          78.47           1.27
+                              &f->f_lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.38           0.83           1.21           0.61
+                     &ei->socket.wq.wait:             0              0           0.00           0.00           0.00           0.00             25           1504           0.04          10.70         166.78           0.11
+              &group->notification_waitq:             0              0           0.00           0.00           0.00           0.00              7             35           0.05           6.49          31.30           0.89
+                          &wb->list_lock:             0              0           0.00           0.00           0.00           0.00             12             32           0.09           7.71          56.94           1.78
+                        rlock-AF_NETLINK:             0              0           0.00           0.00           0.00           0.00              0             44           0.04           1.05           5.38           0.12
+                                 &ep->wq:             0              0           0.00           0.00           0.00           0.00             10             11           2.81           7.12          51.49           4.68
+                       &ctx->cancel_lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.57           1.01           1.58           0.79
+                              &nlk->wait:             0              0           0.00           0.00           0.00           0.00              0             23           0.05           0.68           2.40           0.10
+              &sb->s_type->i_mutex_key#1:             0              0           0.00           0.00           0.00           0.00              0              3           5.62          22.61          37.55          12.52
+                               &ctx->wqh:             0              0           0.00           0.00           0.00           0.00              0              6           0.05           8.39          12.74           2.12
+                           rlock-AF_UNIX:             0              0           0.00           0.00           0.00           0.00             13             43           0.04           0.79           6.86           0.16
+                              &u->iolock:             0              0           0.00           0.00           0.00           0.00              0              6           1.51          27.59          48.97           8.16
+                             &info->lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.14           0.76           0.90           0.45
+              &sb->s_type->i_mutex_key#1:             0              0           0.00           0.00           0.00           0.00              0             15           0.77           5.20          28.12           1.87
+                        clock-AF_NETLINK:             0              0           0.00           0.00           0.00           0.00              0              6           0.05           0.76           1.45           0.24
+                        wlock-AF_NETLINK:             0              0           0.00           0.00           0.00           0.00              0              6           0.04           0.73           1.60           0.27
+                           &xattrs->lock:             0              0           0.00           0.00           0.00           0.00              0              1           0.12           0.12           0.12           0.12
+            &sb->s_type->i_mutex_key#1/4:             0              0           0.00           0.00           0.00           0.00              0              1           8.36           8.36           8.36           8.36
+                       &dentry->d_lock/2:             0              0           0.00           0.00           0.00           0.00              0              1           0.33           0.33           0.33           0.33
+                       &dentry->d_lock/3:             0              0           0.00           0.00           0.00           0.00              0              1           0.07           0.07           0.07           0.07
+                    &____s->seqcount#3/1:             0              0           0.00           0.00           0.00           0.00              0              1           0.78           0.78           0.78           0.78
+                              &u->lock/1:             0              0           0.00           0.00           0.00           0.00              0              2           0.10           0.87           0.97           0.49
+                            file_rwsem-R:             0              0           0.00           0.00           0.00           0.00              0              2           0.35           2.27           2.63           1.31
+                          &ctx->flc_lock:             0              0           0.00           0.00           0.00           0.00              1              3           0.07           1.60           1.94           0.65
+                              &fll->lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.06           0.35           0.41           0.21
+                           &u->peer_wait:             0              0           0.00           0.00           0.00           0.00              2             16           0.05           0.43           2.33           0.15
+                           clock-AF_UNIX:             0              0           0.00           0.00           0.00           0.00              0             14           0.04           0.82           1.85           0.13
+                             &hctx->lock:             0              0           0.00           0.00           0.00           0.00              0              4           0.05           0.35           0.62           0.16
+                  &mapping->private_lock:             0              0           0.00           0.00           0.00           0.00             21            561           0.04           1.23          64.61           0.12
+                           &head->srcu-R:             0              0           0.00           0.00           0.00           0.00              0          60689           0.35          21.06       37628.35           0.62
+                batched_entropy_u32.lock:             0              0           0.00           0.00           0.00           0.00              0           2951           0.04           2.75         568.58           0.19
+                   &ret->b_uptodate_lock:             0              0           0.00           0.00           0.00           0.00            151            156           0.04           1.01          69.86           0.45
+                  (wq_completion)kblockd:             0              0           0.00           0.00           0.00           0.00              0             34           3.82         168.64        1258.38          37.01
+                        &cmd->token_lock:             0              0           0.00           0.00           0.00           0.00             24             40           0.05           0.95          14.91           0.37
+                              &x->wait#2:             0              0           0.00           0.00           0.00           0.00            136            227           0.04           5.42         249.28           1.10
+    (wq_completion)mlx5_cmd_0000:63:00.0:             0              0           0.00           0.00           0.00           0.00              0             28           2.50          10.36         182.31           6.51
+           (work_completion)(&ent->work):             0              0           0.00           0.00           0.00           0.00              0             28           2.42           9.81         174.14           6.22
+                        &cmd->alloc_lock:             0              0           0.00           0.00           0.00           0.00             57             80           0.05           1.18          45.41           0.57
+                     &cmd->stats[i].lock:             0              0           0.00           0.00           0.00           0.00              7             40           0.06           1.48          24.72           0.62
+             &dev->mode_config.idr_mutex:             0              0           0.00           0.00           0.00           0.00              8            244           0.06           1.02          39.08           0.16
+                   crtc_ww_class_acquire:             0              0           0.00           0.00           0.00           0.00              0            122          18.27          51.12        2752.90          22.56
+                     crtc_ww_class_mutex:             0              0           0.00           0.00           0.00           0.00              8            122          16.99          42.04        2500.93          20.50
+                               &ch->lock:             0              0           0.00           0.00           0.00           0.00              8             68           0.04           1.38          34.19           0.50
+             &dev->mode_config.blob_lock:             0              0           0.00           0.00           0.00           0.00              8            244           0.05           0.56          20.98           0.09
+                           &helper->lock:             0              0           0.00           0.00           0.00           0.00              8            122           0.55           4.11         102.62           0.84
+                      &crtc->commit_lock:             0              0           0.00           0.00           0.00           0.00              8            366           0.05           0.63          26.03           0.07
+                       &shmem->vmap_lock:             0              0           0.00           0.00           0.00           0.00              8            488           0.05           0.46          38.76           0.08
+                    (&ops->cursor_timer):             0              0           0.00           0.00           0.00           0.00              0            122           2.97           7.39         568.73           4.66
+         (work_completion)(&info->queue):             0              0           0.00           0.00           0.00           0.00              0            122           2.07          12.50         475.11           3.89
+                        &dev->event_lock:             0              0           0.00           0.00           0.00           0.00              8            122           0.31           3.87         210.32           1.72
+                              &x->wait#2:             0              0           0.00           0.00           0.00           0.00             18           1220           0.05           0.91          89.47           0.07
+                    &helper->damage_lock:             0              0           0.00           0.00           0.00           0.00              8            244           0.05           0.72          26.90           0.11
+   (work_completion)(&helper->damage_wor:             0              0           0.00           0.00           0.00           0.00              0            122          19.94          59.58        3028.03          24.82
+                           (&q->timeout):             0              0           0.00           0.00           0.00           0.00              0              6           4.11          10.00          42.70           7.12
+                             &tags->lock:             0              0           0.00           0.00           0.00           0.00             46             52           0.06           1.81          37.73           0.73
+                               &dd->lock:             0              0           0.00           0.00           0.00           0.00              7            381           0.06          13.85         381.53           1.00
+   (work_completion)(&(&hctx->run_work)-:             0              0           0.00           0.00           0.00           0.00              0             26           4.16          64.86         477.08          18.35
+      &(&instance->fw_fault_work)->timer:             0              0           0.00           0.00           0.00           0.00              0             24           0.48           8.40          77.49           3.23
+     (wq_completion)poll_megasas0_status:             0              0           0.00           0.00           0.00           0.00              0             24           1.02           3.88          41.88           1.75
+   (work_completion)(&(&instance->fw_fau:             0              0           0.00           0.00           0.00           0.00              0             24           0.91           3.60          35.90           1.50
+      (wq_completion)mlx5_page_allocator:             0              0           0.00           0.00           0.00           0.00              0             12         407.45        1334.57       12972.75        1081.06
+           (work_completion)(&req->work):             0              0           0.00           0.00           0.00           0.00              0             12         407.35        1334.34       12969.74        1080.81
+                           &ndev->lock-R:             0              0           0.00           0.00           0.00           0.00              5             10           0.04           2.15           5.44           0.54
+                        (&health->timer):             0              0           0.00           0.00           0.00           0.00              0             36          25.83          36.80        1089.96          30.28
+                      kernfs_rename_lock:             0              0           0.00           0.00           0.00           0.00              0             26           0.09           2.72          12.57           0.48
+                             &crng->lock:             0              0           0.00           0.00           0.00           0.00            217            297           0.05           2.45         243.45           0.82
+                      lib/random32.c:495:             0              0           0.00           0.00           0.00           0.00              0              1          71.93          71.93          71.93          71.93
+                                   key#2:             0              0           0.00           0.00           0.00           0.00              1             17           2.61           4.00          55.93           3.29
+                         clock-AF_INET-W:             0              0           0.00           0.00           0.00           0.00              0              1           0.16           0.16           0.16           0.16
+                         clock-AF_INET-R:             0              0           0.00           0.00           0.00           0.00              0              1           0.85           0.85           0.85           0.85
+                              &ioc->lock:             0              0           0.00           0.00           0.00           0.00             15             34           0.06           1.42          11.04           0.32
+                          &f->f_pos_lock:             0              0           0.00           0.00           0.00           0.00             18           1795           0.06    24835849.52    29945246.57       16682.59
+                          &wb->work_lock:             0              0           0.00           0.00           0.00           0.00              8             11           0.37           2.07          14.08           1.28
+                 &s->s_inode_wblist_lock:             0              0           0.00           0.00           0.00           0.00              4             18           0.04           1.05           4.23           0.23
+                      &fq->mq_flush_lock:             0              0           0.00           0.00           0.00           0.00              0              3           1.38           4.23           7.67           2.56
+                        &q->requeue_lock:             0              0           0.00           0.00           0.00           0.00              0              4           0.06           0.35           0.65           0.16
+   (work_completion)(&(&q->requeue_work):             0              0           0.00           0.00           0.00           0.00              0              2           3.71           5.76           9.47           4.73
+                      bit_wait_table + i:             0              0           0.00           0.00           0.00           0.00             13             26           0.13           1.97          20.98           0.81
+                     &bgl->locks[i].lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.62           0.66           1.28           0.64
+               &sb->s_type->i_lock_key#2:             0              0           0.00           0.00           0.00           0.00             10             52           0.04           1.04          13.88           0.27
+                        &ei->i_es_lock-W:             0              0           0.00           0.00           0.00           0.00              0             12           0.13           1.90           7.40           0.62
+                        &ei->i_es_lock-R:             0              0           0.00           0.00           0.00           0.00          59762          60538           0.05          11.03       20766.13           0.34
+                       &ei->i_data_sem-W:             0              0           0.00           0.00           0.00           0.00             18             40           0.05          21.04          50.55           1.26
+                       &ei->i_data_sem-R:             0              0           0.00           0.00           0.00           0.00              2              9           0.28         171.36         182.84          20.32
+                         &sbi->s_es_lock:             0              0           0.00           0.00           0.00           0.00              0              5           0.04           0.64           1.13           0.23
+                &journal->j_state_lock-W:             0              0           0.00           0.00           0.00           0.00              2             34           0.05           1.90          15.31           0.45
+                &journal->j_state_lock-R:             0              0           0.00           0.00           0.00           0.00             32             87           0.04           2.08          38.02           0.44
+            &journal->j_wait_done_commit:             0              0           0.00           0.00           0.00           0.00              0              4           0.06           0.80           1.38           0.35
+                 &journal->j_wait_commit:             0              0           0.00           0.00           0.00           0.00              0              4           0.05           0.42           0.90           0.23
+              &type->i_mutex_dir_key#6-R:             0              0           0.00           0.00           0.00           0.00              2              7           0.51         671.53        1286.69         183.81
+                             fasync_lock:             0              0           0.00           0.00           0.00           0.00              1              1           0.70           0.70           0.70           0.70
+                       &ei->i_mmap_sem-W:             0              0           0.00           0.00           0.00           0.00              0              1          32.78          32.78          32.78          32.78
+                       &ei->i_mmap_sem-R:             0              0           0.00           0.00           0.00           0.00             38            255           0.05         436.14        3389.35          13.29
+                            (&cb->timer):             0              0           0.00           0.00           0.00           0.00              0             37           1.70          30.53         325.79           8.81
+                              &buf->lock:             0              0           0.00           0.00           0.00           0.00            383            984           0.05          15.54        1151.45           1.17
+                                   &wq#3:             0              0           0.00           0.00           0.00           0.00              0             23           0.05           0.75           2.92           0.13
+                          sb_writers#8-R:             0              0           0.00           0.00           0.00           0.00              0             14           6.10          77.72         293.34          20.95
+                   &in_dev->mc_tomb_lock:             0              0           0.00           0.00           0.00           0.00              0              1           0.44           0.44           0.44           0.44
+                               &im->lock:             0              0           0.00           0.00           0.00           0.00              0              1           0.59           0.59           0.59           0.59
+                                   key#4:             0              0           0.00           0.00           0.00           0.00            233            233           0.07           1.56         163.00           0.70
+                   &audit_cmd_mutex.lock:             0              0           0.00           0.00           0.00           0.00              2              5           1.06           4.30           9.68           1.94
+                 &type->s_umount_key#3-R:             0              0           0.00           0.00           0.00           0.00              0              2           5.67        3234.78        3240.45        1620.23
+              &sb->s_type->i_mutex_key#1:             0              0           0.00           0.00           0.00           0.00              1             15           0.51          68.67         226.30          15.09
+                                   key#6:             0              0           0.00           0.00           0.00           0.00              0              1          10.68          10.68          10.68          10.68
+                                   key#7:             0              0           0.00           0.00           0.00           0.00              0              1           1.92           1.92           1.92           1.92
+                           jbd2_handle-R:             0              0           0.00           0.00           0.00           0.00              0             66           0.88          44.79         634.45           9.61
+                      &ret->b_state_lock:             0              0           0.00           0.00           0.00           0.00             11             49           0.17           7.67          59.41           1.21
+                   &journal->j_list_lock:             0              0           0.00           0.00           0.00           0.00              7             65           0.05           1.50          23.29           0.36
+                 &journal->j_revoke_lock:             0              0           0.00           0.00           0.00           0.00              1              1           0.86           0.86           0.86           0.86
+                         &ei->i_raw_lock:             0              0           0.00           0.00           0.00           0.00             18             81           0.09           8.08          74.24           0.92
+                &journal->j_wait_updates:             0              0           0.00           0.00           0.00           0.00             27             62           0.06           1.39          25.77           0.42
+                         cache_list_lock:             0              0           0.00           0.00           0.00           0.00              0              1           0.76           0.76           0.76           0.76
+   (work_completion)(&(&cache_cleaner)->:             0              0           0.00           0.00           0.00           0.00              0              1           1.91           1.91           1.91           1.91
+                             &user->lock:             0              0           0.00           0.00           0.00           0.00              0             45           0.43           8.34          43.99           0.98
+                    &ei->i_prealloc_lock:             0              0           0.00           0.00           0.00           0.00              0              3           0.26           0.70           1.26           0.42
+                                   key#8:             0              0           0.00           0.00           0.00           0.00              0              1           2.17           2.17           2.17           2.17
+                &(&cache_cleaner)->timer:             0              0           0.00           0.00           0.00           0.00              0              1           0.41           0.41           0.41           0.41
+                         sb_pagefaults-R:             0              0           0.00           0.00           0.00           0.00              0            183           0.22          32.61         208.80           1.14
+              &sbi->s_writepages_rwsem-R:             0              0           0.00           0.00           0.00           0.00              0              7           1.25        3100.99        3262.36         466.05
+              (&journal->j_commit_timer):             0              0           0.00           0.00           0.00           0.00              0              4           0.04           4.52           8.98           2.24
+             &transaction->t_handle_lock:             0              0           0.00           0.00           0.00           0.00              2              2           0.09           0.56           0.65           0.33
+     &journal->j_wait_transaction_locked:             0              0           0.00           0.00           0.00           0.00              0              2           0.42           0.43           0.85           0.43
+                         &sbi->s_md_lock:             0              0           0.00           0.00           0.00           0.00              0              4           0.04           0.60           1.15           0.29
+                     &journal->j_fc_wait:             0              0           0.00           0.00           0.00           0.00              0              2           0.15           0.35           0.50           0.25
+                &journal->j_history_lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.13           0.35           0.48           0.24
+                                   key#9:             0              0           0.00           0.00           0.00           0.00              9             28           0.05           1.78          20.17           0.72
+                     &sbi->s_orphan_lock:             0              0           0.00           0.00           0.00           0.00              0              2           0.20           1.10           1.30           0.65
+                          &rq_wait->wait:             0              0           0.00           0.00           0.00           0.00              1             44           0.04           2.77          25.35           0.58
+                                   key#1:             0              0           0.00           0.00           0.00           0.00              3              9           0.05          13.19          44.08           4.90
+                                   key#1:             0              0           0.00           0.00           0.00           0.00              1              9           0.06           5.29          34.69           3.85
+                       pvclock_gtod_data:             0              0           0.00           0.00           0.00           0.00              0           6193           0.03           1.26        1349.84           0.22
+                     edac_pci_ctls_mutex:             0              0           0.00           0.00           0.00           0.00              4             23           0.20           1.89          15.04           0.65
+     (work_completion)(&q->timeout_work):             0              0           0.00           0.00           0.00           0.00              0              6          62.69         166.91         759.25         126.54
+                               &eq->lock:             0              0           0.00           0.00           0.00           0.00              0            156           0.31           9.54         340.31           2.18
+                    &table->hash[i].lock:             0              0           0.00           0.00           0.00           0.00              1              3           1.42           4.63           7.52           2.51
+                   &table->hash2[i].lock:             0              0           0.00           0.00           0.00           0.00              2              4           0.06           0.93           1.37           0.34
+                      userns_state_mutex:             0              0           0.00           0.00           0.00           0.00              1              5           0.05           0.66           0.90           0.18
+                             &ctx->wqh#2:             0              0           0.00           0.00           0.00           0.00              1             39           0.05           0.57           4.82           0.12
+                    &(&pci->work)->timer:             0              0           0.00           0.00           0.00           0.00              0             23           0.32           5.74          60.82           2.64
+   (work_completion)(&(&pci->work)->work:             0              0           0.00           0.00           0.00           0.00              0             23           0.34           2.77          23.23           1.01
+                    &dev->tx_global_lock:             0              0           0.00           0.00           0.00           0.00              0              2         277.10         289.49         566.59         283.30
+                           _xmit_ETHER#2:             0              0           0.00           0.00           0.00           0.00             66           1712           0.08          10.67         604.81           0.35
+                            &sch->q.lock:             0              0           0.00           0.00           0.00           0.00             66            510           0.03           1.74         132.44           0.26
+   dev->qdisc_tx_busylock ?: &qdisc_tx_b:             0              0           0.00           0.00           0.00           0.00              0           1394           0.05           1.56         280.10           0.20
+                    &____s->seqcount#6-R:             0              0           0.00           0.00           0.00           0.00              0              1           0.30           0.30           0.30           0.30
+                          &pa->pa_lock#2:             0              0           0.00           0.00           0.00           0.00              0              4           0.09           0.34           0.86           0.22
+                    &(&wb->dwork)->timer:             0              0           0.00           0.00           0.00           0.00              0              5           6.28          11.48          43.97           8.79
+                (wq_completion)writeback:             0              0           0.00           0.00           0.00           0.00              0              5          19.89        3345.09        3651.19         730.24
+   (work_completion)(&(&wb->dwork)->work:             0              0           0.00           0.00           0.00           0.00              0              5          18.08        3344.05        3644.65         728.93
+                          &p->sequence-W:             0              0           0.00           0.00           0.00           0.00              0              7           0.04           0.47           2.06           0.29
+                          &p->sequence-R:             0              0           0.00           0.00           0.00           0.00              0             14           0.03           0.54           1.48           0.11
+                         rlock-AF_PACKET:             0              0           0.00           0.00           0.00           0.00              0              5           0.06           0.59           1.35           0.27
+                         wlock-AF_PACKET:             0              0           0.00           0.00           0.00           0.00              0              2           0.06           0.98           1.04           0.52
+   dev->qdisc_running_key ?: &qdisc_runn:             0              0           0.00           0.00           0.00           0.00              0            318           0.10          15.28         641.55           2.02
+                              &n->lock-W:             0              0           0.00           0.00           0.00           0.00              5           4944           0.04           1.97         400.42           0.08
+                              &n->lock-R:             0              0           0.00           0.00           0.00           0.00              0              2           0.79           1.31           2.10           1.05
+                    &____s->seqcount#7-R:             0              0           0.00           0.00           0.00           0.00              0              4           0.04           0.95           1.16           0.29
+        (work_completion)(&rq->dim.work):             0              0           0.00           0.00           0.00           0.00              0             26          81.76         121.57        2485.28          95.59
+                    &____s->seqcount#8-R:             0              0           0.00           0.00           0.00           0.00              0            190           0.03           1.11          24.49           0.13
+                        &undo_list->lock:             0              0           0.00           0.00           0.00           0.00              0              1           0.07           0.07           0.07           0.07
+                                  lock#1:             0              0           0.00           0.00           0.00           0.00              2              2           0.50           0.99           1.49           0.75
+                           rlock-AF_INET:             0              0           0.00           0.00           0.00           0.00              2              4           0.06           1.06           1.65           0.41
+                           &list->lock#3:             0              0           0.00           0.00           0.00           0.00              0              4           0.09           2.27           2.68           0.67
+                         slock-AF_INET/1:             0              0           0.00           0.00           0.00           0.00             23            188           0.52          39.41         694.89           3.70
+                          kn->active#1-R:             0              0           0.00           0.00           0.00           0.00              0             16           3.67          12.63         136.50           8.53
+                         &tty->ctrl.lock:             0              0           0.00           0.00           0.00           0.00              7            427           0.04           1.02          63.40           0.15
+           (work_completion)(&buf->work):             0              0           0.00           0.00           0.00           0.00              0           1382           0.02          16.11        1339.32           0.97
+          (&icsk->icsk_retransmit_timer):             0              0           0.00           0.00           0.00           0.00              0             19           1.10           3.30          31.79           1.67
+              (&icsk->icsk_delack_timer):             0              0           0.00           0.00           0.00           0.00              0              1           0.71           0.71           0.71           0.71
+                  tk_core.seq.seqcount-W:             0              0           0.00           0.00           0.00           0.00              0           6193           0.12           5.30        7807.09           1.26
+                  tk_core.seq.seqcount-R:             0              0           0.00           0.00           0.00           0.00              0         860223           0.02           2.95       77447.11           0.09
+                    &tty->legacy_mutex/1:             0              0           0.00           0.00           0.00           0.00              1              2           2.95           7.20          10.15           5.07
+               &o_tty->termios_rwsem/1-R:             0              0           0.00           0.00           0.00           0.00              3           1408           0.39          58.95        2992.06           2.13
+                &ldata->atomic_read_lock:             0              0           0.00           0.00           0.00           0.00              0            489           0.62           6.46         743.17           1.52
+               &sb->s_type->i_lock_key#3:             0              0           0.00           0.00           0.00           0.00              4             25           0.04           1.19           6.92           0.28
+                    (&dom->period_timer):             0              0           0.00           0.00           0.00           0.00              0              8           4.10           7.76          49.35           6.17
+              &type->i_mutex_dir_key#1-R:             0              0           0.00           0.00           0.00           0.00              0              2         106.78         222.02         328.80         164.40
+                 &type->s_umount_key#5-R:             0              0           0.00           0.00           0.00           0.00              0              1          41.70          41.70          41.70          41.70
+                          sb_writers#1-R:             0              0           0.00           0.00           0.00           0.00              0             23           3.88          63.31         641.60          27.90
+                               &pl->lock:             0              0           0.00           0.00           0.00           0.00              3              5           5.19          14.60          48.20           9.64
+                 &type->s_umount_key#5-R:             0              0           0.00           0.00           0.00           0.00              0              4           6.83          59.17         139.43          34.86
+                  (&dev->watchdog_timer):             0              0           0.00           0.00           0.00           0.00              0              2         277.64         290.10         567.75         283.87
+                 &(&tbl->gc_work)->timer:             0              0           0.00           0.00           0.00           0.00              0              2           1.26           2.39           3.65           1.82
+   (work_completion)(&(&tbl->gc_work)->w:             0              0           0.00           0.00           0.00           0.00              0              2           0.97           1.59           2.57           1.28
+        (work_completion)(&sq->dim.work):             0              0           0.00           0.00           0.00           0.00              0              2          76.05          90.60         166.65          83.33
+                             (&n->timer):             0              0           0.00           0.00           0.00           0.00              0              3           2.93          22.15          44.70          14.90
+              &sb->s_type->i_mutex_key#2:             0              0           0.00           0.00           0.00           0.00             18             22           3.64          58.49         583.59          26.53
+                                   key#1:             0              0           0.00           0.00           0.00           0.00            208            208           0.04           1.09         111.66           0.54
+        &(&krcp->page_cache_work)->timer:             0              0           0.00           0.00           0.00           0.00              0              3           5.73          10.24          23.79           7.93
+                        &stopper->lock/1:             0              0           0.00           0.00           0.00           0.00              2              3           0.20           0.99           2.18           0.73
+                           &p->pi_lock/1:             0              0           0.00           0.00           0.00           0.00              2              3           0.06          18.12          18.26           6.09
+                           &rq->__lock/1:             0              0           0.00           0.00           0.00           0.00              1              3           0.07          10.60          20.97           6.99
+                              &grp->lock:             0              0           0.00           0.00           0.00           0.00             11             34           0.27           1.73          31.40           0.92
+                            &grp->lock/1:             0              0           0.00           0.00           0.00           0.00              3              3           0.06           0.07           0.20           0.07
+                            cgroup_mutex:             0              0           0.00           0.00           0.00           0.00              0              2          17.37          42.58          59.95          29.98

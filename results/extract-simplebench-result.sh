@@ -4,16 +4,17 @@ NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=512
 
 declare -a nproc=("1" "4" "8" "16" "32")
-declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII")
+#declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII" "CIP" "MINCORE")
+declare -a techarr=("VanillaRA" "OSonly" "CrossInfo" "CII" "CIP" "CIPI" "MINCORE")
 
 READSIZE=2M
-RASIZE=10M
+RASIZE=10Mpg
 
 
-TARGETDIR=$OUTPUTDIR
+TARGETDIR=$OUTPUTDIR/SIMPLEBENCH-21SEPT-STATS/
 
-DATA_FOLDER=$OUTPUT_FOLDER/SIMPLE_BENCH_SHARED/STATS
-BASENAME=stats_shared_seq
+DATA_FOLDER=$OUTPUT_FOLDER/SIMPLEBENCH-21SEPT-STATS/read_pvt_rand
+BASENAME=stats_pvt_rand
 
 #Checks if the OUTFILE exists, 
 TOUCH_OUTFILE(){
@@ -31,7 +32,8 @@ TOUCH_OUTFILE(){
 }
 
 EXTRACT_PERF() {
-        cat $1 | grep "READ_SEQUENTIAL Bandwidth" | awk '{print $4}'
+        #cat $1 | grep "READ_SEQUENTIAL Bandwidth" | awk '{print $4}'
+        cat $1 | grep "READ_RANDOM Bandwidth" | awk '{print $4}'
 }
 
 GET_PERF() {
@@ -48,7 +50,7 @@ GET_PERF() {
                         echo "$FILENAME"
 
                         perf=`EXTRACT_PERF $DATA_FOLDER/$FILENAME`
-                        #echo "perf = $perf"
+                        echo "perf = $perf"
                         printf " $perf" >> $resultfile
                 done
                         printf "\n" >> $resultfile
@@ -181,8 +183,8 @@ GET_NR_RA() {
         done
 }
 
-#GET_PERF
+GET_PERF
 
 #GET_MISS_RATIO
 
-GET_NR_RA
+#GET_NR_RA
