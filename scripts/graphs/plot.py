@@ -105,7 +105,7 @@ d = drawable(canvas=c, coord=[22,10], xrange=[-0.5,t.getmax('rownumber')+0.5], y
 # specify x-axis, the other to specify y-axis
 axis(d, linewidth=0.5, xtitle=xtitledef,
         xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=5, ytitle=ytitledef,
-        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[1,0], xtitleshift=[0,6])
+        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[0,-1], xtitleshift=[0,6])
 
 
 p = plotter()
