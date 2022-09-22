@@ -139,7 +139,6 @@ void mincore_th(void *arg){
                 exit(0);
         }
 
-
         if(fstat(fd, &st) != 0){
                 printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
                 exit(0);
@@ -221,7 +220,7 @@ void reader_th(void *arg){
                 printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
                 exit(0);
         }
-#ifdef MODIFIED_RA
+#if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
         struct read_ra_req ra;
 	ra.data = NULL;
@@ -405,7 +404,6 @@ skip_open:
 
 
 #ifdef ENABLE_MINCORE_RA
-
         struct thread_args *req_mincore = (struct thread_args*)
 #ifdef SHARED_FILE
                                 malloc(sizeof(struct thread_args)*1);
@@ -422,7 +420,6 @@ skip_open:
                 strcpy(req_mincore[i].filename, filename);
                 thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
         }
-
 #endif //ENABLE_MINCORE_RA
 
         thpool_wait(thpool);
