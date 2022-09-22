@@ -457,7 +457,8 @@ skip_open:
 #endif
 
 #ifdef ENABLE_MINCORE_RA
-        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+        printf("Total nr_ra = %ld mincore\n", total_nr_syscalls.load());
+        printf("Total nr_bytes_ra= %ld mincore\n", total_bytes_ra.load());
         start_cross_trace(PRINT_GLOBAL_STATS, 0);
 #endif
         return 0;
