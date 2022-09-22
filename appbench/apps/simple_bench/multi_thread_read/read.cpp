@@ -40,6 +40,7 @@ void os_constructors(){
         start_cross_trace(ENABLE_FILE_STATS, 0);
 
         char a;
+#if 0
 #ifdef SET_READ_UNLIMITED
 	a = '1';
 #else
@@ -53,6 +54,7 @@ void os_constructors(){
 	a = '0'; //enables 2mb limit in readahead
 #endif
 	set_readahead_2mb_limit(a);
+#endif
 
 
 	//Set bitmap size inside the OS
