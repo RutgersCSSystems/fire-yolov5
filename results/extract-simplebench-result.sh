@@ -4,15 +4,14 @@ NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=512
 
 declare -a nproc=("1" "4" "8" "16" "32")
-declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII")
+declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII" "CIP" "MINCORE")
 
-READSIZE=2M
-RASIZE=10M
+READSIZE=128pg
+RASIZE=2560Lpg
 
+TARGETDIR=$OUTPUTDIR/SIMPLEBENCH-21SEPT-STATS
 
-TARGETDIR=$OUTPUTDIR
-
-DATA_FOLDER=$OUTPUT_FOLDER/SIMPLE_BENCH_SHARED/STATS
+DATA_FOLDER=$OUTPUT_FOLDER/SIMPLEBENCH-21SEPT-STATS/read_shared_seq
 BASENAME=stats_shared_seq
 
 #Checks if the OUTFILE exists, 
@@ -181,8 +180,8 @@ GET_NR_RA() {
         done
 }
 
-#GET_PERF
+GET_PERF
 
 #GET_MISS_RATIO
 
-GET_NR_RA
+#GET_NR_RA
