@@ -220,14 +220,16 @@ void reader_th(void *arg){
                 printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
                 exit(0);
         }
+#endif //SHARED_FILE
+
 #if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
         struct read_ra_req ra;
 	ra.data = NULL;
 	readahead_info(a->fd, 0, 0, &ra);
-#endif //MODIFIED_RA
+        start_cross_trace(ENABLE_FILE_STATS, 0);
+#endif //MODIFIED_RA or ENABLE_MINCORE_RA
 
-#endif //SHARED_FILE
         gettimeofday(&open_end, NULL);
 
         //Report about the thread
@@ -412,11 +414,12 @@ skip_open:
 #endif //SHARED_FILE
 
 #ifdef SHARED_FILE
-        for(int i=0; i<1; i++)
+        for(int i=0; i<1; i++){
+                file_name(i, filename, 1);
 #else
-        for(int i=0; i<NR_THREADS; i++)
+        for(int i=0; i<NR_THREADS; i++){
+                file_name(i, filename, NR_THREADS);
 #endif
-        {
                 strcpy(req_mincore[i].filename, filename);
                 thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
         }
@@ -453,6 +456,7 @@ skip_open:
 
 #ifdef ENABLE_MINCORE_RA
         printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+        start_cross_trace(PRINT_GLOBAL_STATS, 0);
 #endif
         return 0;
 }
