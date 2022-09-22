@@ -54,6 +54,10 @@ std::atomic_flag i_map_init;
 threadpool workerpool = NULL;
 #endif
 
+#ifdef ENABLE_EVICTION
+threadpool evict_pool = NULL;
+#endif
+
 
 #ifdef PREDICTOR
 //Maps fd to its file_predictor, global ds
@@ -159,8 +163,17 @@ void init_global_ds(void){
 		i_map = init_inode_fd_map();
 		if(!i_map){
 			fprintf(stderr, "%s:%d Hashmap alloc failed\n", __func__, __LINE__);
+                        goto exit;
 		}
+
+#ifdef ENABLE_EVICTION
+                thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
+#endif
 	}
+
+
+exit:
+        return;
 }
 
 /*
@@ -240,6 +253,17 @@ void con(){
         }
         */
 #endif
+
+#ifdef ENABLE_EVICTION
+	evict_pool = thpool_init(NR_EVICT_WORKERS);
+	if(!evict_pool){
+		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_EVICT_WORKERS);
+	}else{
+		printf("Created %d bg_threads in EVICTION pool\n", NR_EVICT_WORKERS);
+	}
+#endif
+
+
 	init_global_ds();
 
 #ifdef SET_READ_UNLIMITED
@@ -336,9 +360,7 @@ int set_curr_last_fd(int fd){
 }
 
 int evict_advise(int fd){
-
-	//printf("%s:%d Evicting using fadvice fd:%d\n", __func__, __LINE__, fd);
-	return posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+	return real_posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 }
 
 int perform_eviction(struct thread_args *arg){
@@ -668,6 +690,12 @@ void prefetcher_th(void *arg) {
 #endif
     	uinode_bitmap_unlock(a->uinode);
 
+
+#ifdef ENABLE_EVICTION
+        update_lru(a->uinode);
+        //update_nr_free_pg(ra.nr_free);
+#endif
+
         //gettimeofday(&end, NULL);
         //printf("ra time = %ld\n", usec_diff(&start, &end));
 
@@ -865,8 +893,9 @@ void inline prefetch_file(void *args){
 		printf("ERR: %s: No workerpool ? \n", __func__);
 	else{
 		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-		//printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-		//		arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
+
+		debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
+				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 	}
 		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 #else
@@ -909,6 +938,7 @@ void inline record_open(struct file_desc desc){
 			goto exit;
         	}
 		fp->uinode = desc.uinode;
+
 
 
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
@@ -1032,6 +1062,7 @@ void update_file_predictor_and_prefetch(void *arg){
 	}
 
 	if(fp){
+
 			/*
 			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 			 */
@@ -1041,10 +1072,17 @@ void update_file_predictor_and_prefetch(void *arg){
         	if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
         		return;
 
+#if 0
+                /*update lru if file is fully prefetched*/
+                if(fp->uinode->fully_prefetched.load()){
+                        update_lru(fp->uinode);
+                }
+#endif
+
         	if(fp->should_prefetch_now()){
-            	a->fp = fp;
+            	                a->fp = fp;
 				prefetch_file(arg);
-			}
+		        }
 		}
         else{
                 printf("%s: No file_predictor\n", __func__);
@@ -1128,7 +1166,7 @@ void handle_file_close(int fd){
 #ifdef MAINTAIN_UINODE
 	int i_fd_cnt = handle_close(i_map, fd);
 #ifdef ENABLE_EVICTION
-	if(!i_fd_cnt){
+	if(!i_fd_cnt || (i_fd_cnt < 2)){
 		evict_advise(fd);
 	}
 #endif
