@@ -40,7 +40,7 @@ NR_READ_PAGES=512
 RA_SIZE=10M ##MB
 READ_SIZE=2M ##MB
 
-APP="./bin/read_pvt_seq"
+APP="./bin/read_pvt_rand"
 
 declare -a nproc=("16" "4" "8" "1" "32")
 
@@ -163,13 +163,14 @@ do
         COMPILE_APP $NPROC
         #CLEAN_AND_WRITE
 
-        FILENAMEBASE="stats_pvt_seq_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
+        FILENAMEBASE="stats_pvt_rand_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
 
         VanillaRA &> VanillaRA_${FILENAMEBASE}
-        VanillaOPT &> VanillaOPT_${FILENAMEBASE}
+        #VanillaOPT &> VanillaOPT_${FILENAMEBASE}
         OSonly &> OSonly_${FILENAMEBASE}
         CrossInfo &> CrossInfo_${FILENAMEBASE}
         CII &> CII_${FILENAMEBASE}
         CIP &> CIP_${FILENAMEBASE}
         MINCORE &> MINCORE_${FILENAMEBASE}
 done
+

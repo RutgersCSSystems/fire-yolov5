@@ -40,7 +40,7 @@ NR_READ_PAGES=512
 RA_SIZE=10M ##MB
 READ_SIZE=2M ##MB
 
-APP="./bin/read_pvt_seq"
+APP="./bin/read_shared_rand"
 
 declare -a nproc=("16" "4" "8" "1" "32")
 
@@ -63,7 +63,7 @@ CLEAN_AND_WRITE() {
         UNSETPRELOAD
 
         CLEAR_FILES
-        ./bin/write_pvt
+        ./bin/write_shared
 
         FlushDisk
 }
@@ -158,12 +158,15 @@ MINCORE() {
 }
 
 
+
+COMPILE_APP 1
+#CLEAN_AND_WRITE
+
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        #CLEAN_AND_WRITE
 
-        FILENAMEBASE="stats_pvt_seq_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
+        FILENAMEBASE="stats_shared_rand_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
 
         VanillaRA &> VanillaRA_${FILENAMEBASE}
         VanillaOPT &> VanillaOPT_${FILENAMEBASE}
