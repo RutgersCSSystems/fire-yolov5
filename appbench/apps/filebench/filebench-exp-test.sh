@@ -30,12 +30,11 @@ mkdir -p $RESULTS
 
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-declare -a workload_arr=("webserver.f")
-
+declare -a workload_arr=("fileserver.f")
 #declare -a config_arr=("Cross_Info" "Cross_Blind" "OSonly")
 
 declare -a config_arr=("CIP" "OSonly")
-#declare -a config_arr=("OSonly")
+declare -a config_arr=("OSonly")
 declare -a thread_arr=("16")
 
 
