@@ -31,19 +31,21 @@ mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("fileserver.f")
-#declare -a config_arr=("Cross_Info" "Cross_Blind" "OSonly")
+declare -a workload_arr=("oltp.f")
+declare -a workload_arr=("mongo.f")
 
-declare -a config_arr=("CIP" "OSonly")
-declare -a config_arr=("OSonly")
+
+
+declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
+#declare -a config_arr=("CIP" "OSonly")
+#declare -a config_arr=("OSonly")
 declare -a thread_arr=("16")
+
+declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
+declare -a prefech_thrd_arr=("1" "2" "4" "8" "16")
 
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
-
-cd $PREDICT_LIB_DIR
-./compile.sh
-cd $DBHOME
-
 
 FlushDisk()
 {
@@ -74,88 +76,69 @@ CLEAN_AND_WRITE()
         FlushDisk
 }
 
-print_results() {
-
-	echo "Vanilla Results"
-	cat $RESULTS/VANILLA.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPNI Results"
-	cat $RESULTS/CPNI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CNI Results"
-	cat $RESULTS/CNI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPBI Results"
-	cat $RESULTS/CPBI.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPBV Results"
-	cat $RESULTS/CPBV.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CPNV Results"
-	cat $RESULTS/CPNV.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-	echo "CROSS-NAIVE Results"
-	cat $RESULTS/Cross_Naive.out | grep "$WORKLOAD" | awk '{print $7}'
-	echo "...."
-
-}
-
-
 GEN_RESULT_PATH() {
 	TYPE=$1
 	CONFIG=$2
 	THREAD=$3
+	PREFETCHSZ=$4
+	PREFETCHTH=$5
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
-	RESULTFILE=$RESULTS/$CONFIG.out
+	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH".out
 }
 
 
 RUN() {
 
-
 	for WORKLOAD in "${workload_arr[@]}"
 	do
 		for CONFIG in "${config_arr[@]}"
 		do
-			for THREAD in "${thread_arr[@]}"
+			for prefetchsz in "${prefech_sz_arr[@]}"
 			do
+				for prefechthrd in "${prefech_thrd_arr[@]}"
+				do
+					cd $PREDICT_LIB_DIR
+					sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
+					sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
 
-				RESULTS=""
-				WORKPATH="workloads/$WORKLOAD"
-				WRITEARGS="-f $WORKPATH"
-				READARGS="-f $WORKPATH"
-				#RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
-				GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD
+					./compile.sh
+					cd $DBHOME
 
-				echo $RESULTS/$CONFIG.out
+					for THREAD in "${thread_arr[@]}"
+					do
+						RESULTS=""
+						WORKPATH="workloads/$WORKLOAD"
+						WRITEARGS="-f $WORKPATH"
+						READARGS="-f $WORKPATH"
+						#RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
+						GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD $prefetchsz $prefechthrd
 
-				mkdir -p $RESULTS
+						echo $RESULTS/$CONFIG.out
 
-				echo "For Workload $WORKPATH, generating $RESULTS/$CONFIG.out"
+						mkdir -p $RESULTS
 
-				#echo "BEGINNING TO WARM UP ......."
-				CLEAN_AND_WRITE
-				#echo "FINISHING WARM UP ......."
-				echo "..................................................."
-				echo "RUNNING $CONFIG...................................."
-				echo "..................................................."
-				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
-				export LD_PRELOAD=""
-				sudo dmesg -c &>> $RESULTS/$CONFIG.out
-				echo ".......FINISHING $CONFIG......................"
-				#CLEAR_DATA
+						echo "For Workload $WORKPATH, generating $RESULTS/$CONFIG.out"
+
+						#echo "BEGINNING TO WARM UP ......."
+						CLEAN_AND_WRITE
+						#echo "FINISHING WARM UP ......."
+						echo "..................................................."
+						echo "RUNNING $CONFIG...................................."
+						echo "..................................................."
+						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+						$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
+						export LD_PRELOAD=""
+						sudo dmesg -c &>> $RESULTS/$CONFIG.out
+						echo ".......FINISHING $CONFIG......................"
+						#CLEAR_DATA
+					done
+				done
 			done
 		done
+
 	done
 }
 
