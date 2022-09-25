@@ -50,16 +50,11 @@ declare -a threadarr=("1" "4" "8" "16")
 #declare -a threadarr=("16")
 
 
-
 declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
 declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
 
 declare -a snappyworkarr=("files-500")
 declare -a snappyproxyarr=("10MB-files")
-
-
-#declare -a techarr=("OSonly" "Cross_Naive" "CNI" "CPNI")
-#declare -a techarrname=("OSonly" "CNaive" "CNI" "CPNI")
 
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII")
