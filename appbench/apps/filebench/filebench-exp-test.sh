@@ -127,7 +127,12 @@ GEN_RESULT_PATH() {
 	THREAD=$3
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
+<<<<<<< HEAD
 	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+=======
+	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH".out
+	echo "-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH"
+>>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 }
 
 
@@ -148,6 +153,7 @@ RUN() {
 
 			for THREAD in "${thread_arr[@]}"
 			do
+<<<<<<< HEAD
 				RESULTS=""
 				WORKPATH="workloads/$WORKLOAD"
 				WRITEARGS="-f $WORKPATH"
@@ -173,6 +179,46 @@ RUN() {
 				sudo dmesg -c &>> $RESULTFILE
 				echo ".......FINISHING $CONFIG......................"
 				#CLEAR_DATA
+=======
+				for prefechthrd in "${prefech_thrd_arr[@]}"
+				do
+					cd $PREDICT_LIB_DIR
+					sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
+					sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
+
+					./compile.sh
+					cd $DBHOME
+
+					for THREAD in "${thread_arr[@]}"
+					do
+						RESULTS=""
+						WORKPATH="workloads/$WORKLOAD"
+						WRITEARGS="-f $WORKPATH"
+						READARGS="-f $WORKPATH"
+						#RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
+						GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD $prefetchsz $prefechthrd
+
+						echo $RESULTS/$CONFIG.out
+
+						mkdir -p $RESULTS
+
+						echo "For Workload $WORKPATH, generating $RESULTFILE"
+
+						#echo "BEGINNING TO WARM UP ......."
+						CLEAN_AND_WRITE
+						#echo "FINISHING WARM UP ......."
+						echo "..................................................."
+						echo "RUNNING $CONFIG...................................."
+						echo "..................................................."
+						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+						$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE
+						export LD_PRELOAD=""
+						sudo dmesg -c &>> $RESULTFILE
+						echo ".......FINISHING $CONFIG......................"
+						#CLEAR_DATA
+					done
+				done
+>>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 			done
 		done
 
