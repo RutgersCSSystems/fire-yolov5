@@ -10,8 +10,8 @@
 
 #sudo apt update; sudo apt install mpich -y
 
-PREFETCH_SIZE=4096
-NR_WORKERS=2
+PREFETCH_SIZE=64
+NR_WORKERS=16
 CROSS_BITMAP_SHIFT=37
 NR_PREDICT_SAMPLE_FREQ=8
 make install

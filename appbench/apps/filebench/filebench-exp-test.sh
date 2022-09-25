@@ -87,6 +87,7 @@ GEN_RESULT_PATH() {
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
 	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH".out
+	echo "-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH"
 }
 
 
@@ -120,7 +121,7 @@ RUN() {
 
 						mkdir -p $RESULTS
 
-						echo "For Workload $WORKPATH, generating $RESULTS/$CONFIG.out"
+						echo "For Workload $WORKPATH, generating $RESULTFILE"
 
 						#echo "BEGINNING TO WARM UP ......."
 						CLEAN_AND_WRITE
@@ -129,9 +130,9 @@ RUN() {
 						echo "RUNNING $CONFIG...................................."
 						echo "..................................................."
 						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-						$APPPREFIX $APP $PARAMS $READARGS &> $RESULTS/$CONFIG.out
+						$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE
 						export LD_PRELOAD=""
-						sudo dmesg -c &>> $RESULTS/$CONFIG.out
+						sudo dmesg -c &>> $RESULTFILE
 						echo ".......FINISHING $CONFIG......................"
 						#CLEAR_DATA
 					done
