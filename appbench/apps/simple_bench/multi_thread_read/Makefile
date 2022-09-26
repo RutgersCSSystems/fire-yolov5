@@ -17,6 +17,7 @@ all: read_pvt write_pvt write_shared read_shared
 
 read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o $(BIN_DIR)/read_pvt_seq_global $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o $(BIN_DIR)/read_pvt_seq_mincore $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq_vanilla $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq_vanilla_opt $(LIBS)
@@ -29,6 +30,7 @@ write_pvt: write.cpp utils/thpool.c
 
 read_shared: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o $(BIN_DIR)/read_shared_seq_global $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o $(BIN_DIR)/read_shared_seq_mincore $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DMODIFIED_RA -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_mra $(LIBS)
