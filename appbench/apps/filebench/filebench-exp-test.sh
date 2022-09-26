@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 DBHOME=$PWD
 THREAD=4
@@ -24,29 +24,84 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
-
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-#declare -a config_arr=("Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("fileserver.f")
 #declare -a workload_arr=("oltp.f")
 #declare -a workload_arr=("mongo.f")
+<<<<<<< HEAD
 
 
 
 declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
 declare -a config_arr=("CIP")
+=======
+
+declare -a config_arr=("Cross_Info" "CIP" "CII")
+>>>>>>> 212ee97df4980d2e3e34501f5ea9489a024ef761
 #declare -a config_arr=("OSonly")
 declare -a thread_arr=("32")
+
+workload_arr_in=$1
+config_arr_in=$2
+thread_arr_in=$3
+
+glob_prefetchsz=1024
+glob_prefechthrd=1
 
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
 declare -a prefech_thrd_arr=("1" "8" "16")
 
+get_global_arr() {
+
+	if [ ! -z "$workload_arr_in" ] 
+	then
+		if [ ${#workload_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		    workload_arr=("${workload_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$config_arr_in" ]
+	then
+		if [ ${#config_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		   config_arr=("${config_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$thread_arr_in" ]
+	then
+		if [ ${#thread_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		   thread_arr=("${thread_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$4" ]
+	then
+		prefetchsz=$4
+	else
+		prefetchsz=$glob_prefetchsz
+	fi
+
+	if [ ! -z "$5" ]
+	then
+		prefechthrd=$5
+	else
+		prefechthrd=$glob_prefechthrd
+	fi
+}
+
+get_global_arr
+
+
+
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
-
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -56,7 +111,6 @@ FlushDisk()
         sudo dmesg --clear
         sleep 5
 }
-
 
 CLEAR_DATA()
 {
@@ -70,7 +124,6 @@ CLEAR_DATA()
 
 CLEAN_AND_WRITE()
 {
-        #printf "in ${FUNCNAME[0]}\n"
         export LD_PRELOAD=""
         CLEAR_DATA
         FlushDisk
@@ -80,14 +133,14 @@ GEN_RESULT_PATH() {
 	TYPE=$1
 	CONFIG=$2
 	THREAD=$3
-	PREFETCHSZ=$4
-	PREFETCHTH=$5
-	#WORKLOAD="DUMMY"
-	#RESULTFILE=""
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
+<<<<<<< HEAD
+	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+=======
 	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH".out
 	echo "-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH"
+>>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 }
 
 
@@ -97,8 +150,44 @@ RUN() {
 	do
 		for CONFIG in "${config_arr[@]}"
 		do
-			for prefetchsz in "${prefech_sz_arr[@]}"
+			cd $PREDICT_LIB_DIR
+			echo "sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh"
+			sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
+			echo "sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh"
+			sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
+
+			./compile.sh
+			cd $DBHOME
+
+			for THREAD in "${thread_arr[@]}"
 			do
+<<<<<<< HEAD
+				RESULTS=""
+				WORKPATH="workloads/$WORKLOAD"
+				WRITEARGS="-f $WORKPATH"
+				READARGS="-f $WORKPATH"
+				GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD
+
+				echo $RESULTFILE
+				mkdir -p $RESULTS
+				echo "For Workload $WORKPATH, generating $RESULTFILE"
+
+				#echo "BEGINNING TO WARM UP ......."
+				CLEAN_AND_WRITE
+				#echo "FINISHING WARM UP ......."
+				echo "..................................................."
+				echo "RUNNING $CONFIG...................................."
+				echo "..................................................."
+
+				echo "$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE"
+
+				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE
+				export LD_PRELOAD=""
+				sudo dmesg -c &>> $RESULTFILE
+				echo ".......FINISHING $CONFIG......................"
+				#CLEAR_DATA
+=======
 				for prefechthrd in "${prefech_thrd_arr[@]}"
 				do
 					cd $PREDICT_LIB_DIR
@@ -137,13 +226,21 @@ RUN() {
 						#CLEAR_DATA
 					done
 				done
+>>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 			done
 		done
 
 	done
 }
 
-RUN
-#print_results
-#CLEAR_DATA
+
+for glob_prefetchsz in "${prefech_sz_arr[@]}"
+do
+	for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+	do
+	        get_global_arr	
+		RUN
+	done
+done
+
 exit
