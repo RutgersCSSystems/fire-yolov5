@@ -31,18 +31,18 @@ mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("fileserver.f")
-declare -a workload_arr=("oltp.f")
-declare -a workload_arr=("mongo.f")
+#declare -a workload_arr=("oltp.f")
+#declare -a workload_arr=("mongo.f")
 
 
 
 declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-#declare -a config_arr=("CIP" "OSonly")
+declare -a config_arr=("CIP")
 #declare -a config_arr=("OSonly")
-declare -a thread_arr=("16")
+declare -a thread_arr=("32")
 
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
-declare -a prefech_thrd_arr=("1" "2" "4" "8" "16")
+declare -a prefech_thrd_arr=("1" "8" "16")
 
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
