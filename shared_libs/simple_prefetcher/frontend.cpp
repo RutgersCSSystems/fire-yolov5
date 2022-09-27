@@ -888,26 +888,16 @@ void *prefetcher_th(void *arg) {
 			pthread_t thread;
 			pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
-<<<<<<< HEAD
+
 			if(!workerpool)
 				printf("ERR: %s: No workerpool ? \n", __func__);
 			else{
 				thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-				//printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-				//		arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
+
+				debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
+						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 			}
 			//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
-=======
-	if(!workerpool)
-		printf("ERR: %s: No workerpool ? \n", __func__);
-	else{
-		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-
-		debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
-	}
-		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
->>>>>>> 117417a2b4623d63d0c9e279ca8a794bbc3d81de
 #else
 			prefetcher_th((void*)arg);
 #endif
@@ -942,35 +932,6 @@ void *prefetcher_th(void *arg) {
 			if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
-<<<<<<< HEAD
-				file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
-				if(!fp){
-					printf("%s ERR: Could not allocate new file_predictor\n", __func__);
-					goto exit;
-				}
-				fp->uinode = desc.uinode;
-
-
-				debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
-						__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
-
-				std::lock_guard<std::mutex> guard(fp_mutex);
-				fd_to_file_pred.insert({fd, fp});
-
-				/*
-				 * When a file is opened.
-				 * We give it a signin bonus. Prefetch a small portion of the start
-				 * of the file
-				 */
-				if(fp->should_prefetch_now()){
-					struct thread_args arg;
-					arg.fd = fd;
-					arg.fp = fp;
-
-					//printf("%s: Doing a Bonus Prefetch\n", __func__);
-					prefetch_file(&arg);
-				}
-=======
 		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
 		if(!fp){
 			printf("%s ERR: Could not allocate new file_predictor\n", __func__);
@@ -999,7 +960,6 @@ void *prefetcher_th(void *arg) {
 	     		//printf("%s: Doing a Bonus Prefetch\n", __func__);
              		prefetch_file(&arg);
           	}
->>>>>>> 117417a2b4623d63d0c9e279ca8a794bbc3d81de
 #endif
 
 				/*
@@ -1083,7 +1043,7 @@ void *prefetcher_th(void *arg) {
 
 
 #ifdef PREDICTOR
-		void update_file_predictor_and_prefetch(void *arg){
+void update_file_predictor_and_prefetch(void *arg){
 
 			struct thread_args *a = (struct thread_args*)arg;
 			file_predictor *fp = NULL;
@@ -1101,50 +1061,31 @@ void *prefetcher_th(void *arg) {
 				return;
 			}
 
-<<<<<<< HEAD
 			if(fp){
-				/*
-=======
-	if(fp){
 
-			/*
->>>>>>> 117417a2b4623d63d0c9e279ca8a794bbc3d81de
-			printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
-				 */
-				fp->nr_reads_done += 1L;
-				fp->predictor_update(a->offset, a->data_size);
+			/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
+			fp->nr_reads_done += 1L;
+			fp->predictor_update(a->offset, a->data_size);
 
-				if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
-					return;
-
-<<<<<<< HEAD
-				if(fp->should_prefetch_now()){
-					a->fp = fp;
-					prefetch_file(arg);
-				}
-			}
-			else{
-				printf("%s: No file_predictor\n", __func__);
-			}
-			return;
-=======
+			if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
+				return;
 #if 0
                 /*update lru if file is fully prefetched*/
                 if(fp->uinode->fully_prefetched.load()){
                         update_lru(fp->uinode);
                 }
 #endif
-
         	if(fp->should_prefetch_now()){
             	                a->fp = fp;
 				prefetch_file(arg);
-		        }
->>>>>>> 117417a2b4623d63d0c9e279ca8a794bbc3d81de
+		    }
 		}
+}
 #endif //PREDICTOR
 
 
-		void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
+
+void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
 
 			size_t amount_read = 0;
 			int fd = -1;
@@ -1213,20 +1154,14 @@ void *prefetcher_th(void *arg) {
 		}
 
 
-		void handle_file_close(int fd){
+void handle_file_close(int fd){
 
 #ifdef MAINTAIN_UINODE
 			int i_fd_cnt = handle_close(i_map, fd);
 #ifdef ENABLE_EVICTION
-<<<<<<< HEAD
 			if(!i_fd_cnt){
 				evict_advise(fd);
 			}
-=======
-	if(!i_fd_cnt || (i_fd_cnt < 2)){
-		evict_advise(fd);
-	}
->>>>>>> 117417a2b4623d63d0c9e279ca8a794bbc3d81de
 #endif
 #endif
 
