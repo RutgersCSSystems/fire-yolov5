@@ -235,12 +235,13 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
                 uinode->file_size = file_stat.st_size;
 
 #if defined(READAHEAD_INFO_PC_STATE) && defined(PER_INODE_BITMAP)
-                /*
-                 * Allocate per inode bitmaps if adding new inode
-                 */
+       /*
+       * Allocate per inode bitmaps if adding new inode
+       */
 		uinode->page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
-                BitArrayClearAll(uinode->page_cache_state);
-                debug_printf("%s: adding page cache to uinode %d\n", __func__, inode);
+        BitArrayClearAll(uinode->page_cache_state);
+        printf("%s: adding page cache to uinode with %d bits\n",
+        		__func__, inode, NR_BITS_PREALLOC_PC_STATE);
 #else
                 uinode->page_cache_state = NULL;
 #endif

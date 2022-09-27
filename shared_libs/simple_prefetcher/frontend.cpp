@@ -503,7 +503,6 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 
 	pc_array = page_cache_state->array;
 
-
 	while((check_pg << PAGE_SHIFT) < uinode->file_size) {
 		ulong_nr = check_pg >> 6;
 
@@ -513,8 +512,6 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 		check_pg += 1 << 6;
 	}
 	pg_diff = check_pg - start_pg;
-
-	//printf("pg_diff = %ld\n", pg_diff);
 
 #if 0
 while((check_pg << PAGE_SHIFT) < uinode->file_size) {
