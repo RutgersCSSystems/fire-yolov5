@@ -11,7 +11,12 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 See [guidelines](CONTRIBUTING.md) for contributing to this project.
 
+## SHIM
 
+```
+cd libshim
+./makeshim.sh
+```
 
 ## Linux build:
 

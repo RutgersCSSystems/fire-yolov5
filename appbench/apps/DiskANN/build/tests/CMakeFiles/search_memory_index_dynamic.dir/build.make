@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN
+CMAKE_SOURCE_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build
+CMAKE_BINARY_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build
 
 # Include any dependencies generated for this target.
 include tests/CMakeFiles/search_memory_index_dynamic.dir/depend.make
@@ -59,16 +59,16 @@ include tests/CMakeFiles/search_memory_index_dynamic.dir/flags.make
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o: tests/CMakeFiles/search_memory_index_dynamic.dir/flags.make
 tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o: ../tests/search_memory_index_dynamic.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests && g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o -c /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o"
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests && g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o -c /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.i"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp > CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp > CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.i
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.s"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp -o CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/search_memory_index_dynamic.cpp -o CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.s
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/search_memory_index_dynamic.cpp.o.requires:
 
@@ -93,8 +93,8 @@ tests/search_memory_index_dynamic: tests/CMakeFiles/search_memory_index_dynamic.
 tests/search_memory_index_dynamic: src/libdiskann.a
 tests/search_memory_index_dynamic: /usr/lib/x86_64-linux-gnu/libboost_program_options.so
 tests/search_memory_index_dynamic: tests/CMakeFiles/search_memory_index_dynamic.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable search_memory_index_dynamic"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/search_memory_index_dynamic.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable search_memory_index_dynamic"
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/search_memory_index_dynamic.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 tests/CMakeFiles/search_memory_index_dynamic.dir/build: tests/search_memory_index_dynamic
@@ -106,10 +106,10 @@ tests/CMakeFiles/search_memory_index_dynamic.dir/requires: tests/CMakeFiles/sear
 .PHONY : tests/CMakeFiles/search_memory_index_dynamic.dir/requires
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/clean:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests && $(CMAKE_COMMAND) -P CMakeFiles/search_memory_index_dynamic.dir/cmake_clean.cmake
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests && $(CMAKE_COMMAND) -P CMakeFiles/search_memory_index_dynamic.dir/cmake_clean.cmake
 .PHONY : tests/CMakeFiles/search_memory_index_dynamic.dir/clean
 
 tests/CMakeFiles/search_memory_index_dynamic.dir/depend:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/CMakeFiles/search_memory_index_dynamic.dir/DependInfo.cmake --color=$(COLOR)
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /users/kannan11/ssd/prefetching/appbench/apps/DiskANN /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/CMakeFiles/search_memory_index_dynamic.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : tests/CMakeFiles/search_memory_index_dynamic.dir/depend
 

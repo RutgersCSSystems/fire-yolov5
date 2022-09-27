@@ -25,6 +25,8 @@
  * Portions Copyright 2008 Denis Cheng
  */
 
+#define _GNU_SOURCE
+#include <unistd.h>
 #include "config.h"
 #include <pthread.h>
 #include <signal.h>
@@ -67,6 +69,9 @@ threadflow_createthread(threadflow_t *threadflow)
 	memsize = avd_get_int(threadflow->tf_memsize);
 	threadflow->tf_constmemsize = memsize;
 	int ret;
+
+	fprintf(stderr, "Creating thread %s, memory = %ld PID %u\n",
+            threadflow->tf_name, memsize, getpid());
 
 	filebench_log(LOG_DEBUG_SCRIPT, "Creating thread %s, memory = %ld",
 	    threadflow->tf_name, memsize);

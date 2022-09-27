@@ -29,18 +29,11 @@ declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("fileserver.f")
 #declare -a workload_arr=("oltp.f")
 #declare -a workload_arr=("mongo.f")
-<<<<<<< HEAD
 
-
-
-declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP")
-=======
-
+#declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
 declare -a config_arr=("Cross_Info" "CIP" "CII")
->>>>>>> 212ee97df4980d2e3e34501f5ea9489a024ef761
 #declare -a config_arr=("OSonly")
-declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 
 workload_arr_in=$1
 config_arr_in=$2

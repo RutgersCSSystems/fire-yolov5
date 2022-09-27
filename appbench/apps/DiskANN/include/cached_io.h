@@ -29,6 +29,9 @@ class cached_ifstream {
     this->cur_off = 0;
 
     try {
+      // JZ: disable cache
+      reader.rdbuf()->pubsetbuf(0, 0);
+
       reader.open(filename, std::ios::binary | std::ios::ate);
       fsize = reader.tellg();
       reader.seekg(0, std::ios::beg);
@@ -109,6 +112,9 @@ class cached_ofstream {
       : cache_size(cache_size), cur_off(0) {
     writer.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     try {
+      // JZ: disable cache
+      writer.rdbuf()->pubsetbuf(0, 0);
+
       writer.open(filename, std::ios::binary);
       assert(writer.is_open());
       assert(cache_size > 0);

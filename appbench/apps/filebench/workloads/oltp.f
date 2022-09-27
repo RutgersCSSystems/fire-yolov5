@@ -27,22 +27,24 @@ set $dir=DATA/
 set $eventrate=0
 set $runtime=40
 set $iosize=2k
-set $nshadows=200
+set $nshadows=100
 set $ndbwriters=10
+set $ndbwritersthreads=10
 set $usermode=200000
-set $filesize=10m
+set $filesize=100m
 set $memperthread=1m
 set $workingset=0
-set $logfilesize=10m
-set $nfiles=10
+set $logfilesize=100m
+set $nfiles=1000
 set $nlogfiles=1
 set $directio=0
+set $nthreads=32
 
 eventgen rate = $eventrate
 
 # Define a datafile and logfile
-define fileset name=datafiles,path=$dir,size=$filesize,entries=$nfiles,dirwidth=1024,prealloc=100,reuse
-define fileset name=logfile,path=$dir,size=$logfilesize,entries=$nlogfiles,dirwidth=1024,prealloc=100,reuse
+define fileset name=datafiles,path=$dir,size=$filesize,entries=$nfiles,dirwidth=2,prealloc=100,reuse
+define fileset name=logfile,path=$dir,size=$logfilesize,entries=$nlogfiles,dirwidth=2,prealloc=100,reuse
 
 define process name=lgwr,instances=1
 {

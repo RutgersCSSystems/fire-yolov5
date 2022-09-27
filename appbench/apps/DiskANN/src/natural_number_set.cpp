@@ -20,7 +20,7 @@ namespace diskann {
   template<typename T>
   void natural_number_set<T>::reserve(size_t count) {
     _values_vector.reserve(count);
-    _values_bitset->reserve(count);
+    // _values_bitset->reserve(count);
   }
 
   template<typename T>

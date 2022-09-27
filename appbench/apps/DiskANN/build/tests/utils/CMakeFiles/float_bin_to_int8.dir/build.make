@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN
+CMAKE_SOURCE_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build
+CMAKE_BINARY_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build
 
 # Include any dependencies generated for this target.
 include tests/utils/CMakeFiles/float_bin_to_int8.dir/depend.make
@@ -59,16 +59,16 @@ include tests/utils/CMakeFiles/float_bin_to_int8.dir/flags.make
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o: tests/utils/CMakeFiles/float_bin_to_int8.dir/flags.make
 tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o: ../tests/utils/float_bin_to_int8.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils && g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o -c /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o"
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils && g++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o -c /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.i"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp > CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp > CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.i
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.s"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp -o CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils && g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/utils/float_bin_to_int8.cpp -o CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.s
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o.requires:
 
@@ -91,8 +91,8 @@ float_bin_to_int8_EXTERNAL_OBJECTS =
 tests/utils/float_bin_to_int8: tests/utils/CMakeFiles/float_bin_to_int8.dir/float_bin_to_int8.cpp.o
 tests/utils/float_bin_to_int8: tests/utils/CMakeFiles/float_bin_to_int8.dir/build.make
 tests/utils/float_bin_to_int8: tests/utils/CMakeFiles/float_bin_to_int8.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable float_bin_to_int8"
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/float_bin_to_int8.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable float_bin_to_int8"
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/float_bin_to_int8.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 tests/utils/CMakeFiles/float_bin_to_int8.dir/build: tests/utils/float_bin_to_int8
@@ -104,10 +104,10 @@ tests/utils/CMakeFiles/float_bin_to_int8.dir/requires: tests/utils/CMakeFiles/fl
 .PHONY : tests/utils/CMakeFiles/float_bin_to_int8.dir/requires
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/clean:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils && $(CMAKE_COMMAND) -P CMakeFiles/float_bin_to_int8.dir/cmake_clean.cmake
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils && $(CMAKE_COMMAND) -P CMakeFiles/float_bin_to_int8.dir/cmake_clean.cmake
 .PHONY : tests/utils/CMakeFiles/float_bin_to_int8.dir/clean
 
 tests/utils/CMakeFiles/float_bin_to_int8.dir/depend:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/tests/utils /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/tests/utils/CMakeFiles/float_bin_to_int8.dir/DependInfo.cmake --color=$(COLOR)
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /users/kannan11/ssd/prefetching/appbench/apps/DiskANN /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/tests/utils /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/tests/utils/CMakeFiles/float_bin_to_int8.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : tests/utils/CMakeFiles/float_bin_to_int8.dir/depend
 
