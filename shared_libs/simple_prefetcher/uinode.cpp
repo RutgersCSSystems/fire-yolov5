@@ -240,8 +240,9 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
        */
 		uinode->page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
         BitArrayClearAll(uinode->page_cache_state);
-        printf("%s: adding page cache to uinode %d with %u bits\n",
+        printf("%s: adding page cache to uinode %d with %lu bits\n",
         		__func__, inode, NR_BITS_PREALLOC_PC_STATE);
+
 #else
                 uinode->page_cache_state = NULL;
 #endif
