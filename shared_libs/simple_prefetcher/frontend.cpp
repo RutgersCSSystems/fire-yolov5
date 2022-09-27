@@ -494,7 +494,7 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 
 	if(start_pg > page_cache_state->numBits){
 		printf("ERR: %s Using small bitmap; unable to support "
-		"large file size %zu, bitmap bits %d\n",
+		"large file size %zu, bitmap bits %lu\n",
 		__func__, uinode->file_size, page_cache_state->numBits);
 		goto exit;
 	}
