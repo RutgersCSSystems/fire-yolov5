@@ -166,10 +166,7 @@ void mincore_th(void *arg){
 
         while(ra_offset < filesize){
 
-                /*
-                printf("%s: fd:%d, ra_offset = %ld\n", __func__,
-                                fd, ra_offset);
-                */
+                printf("%s: fd:%d, ra_offset = %ld\n", __func__, fd, ra_offset);
 
                 if(readahead(fd, ra_offset, NR_RA_PAGES << PAGESHIFT) < 0){
                         printf("%s:unable to readahead fd:%d\n", __func__, fd);
@@ -181,19 +178,7 @@ void mincore_th(void *arg){
                         exit(0);
                 }
                 ra_offset = check_cache_update_offset(mincore_array, ra_offset, filesize);
-
-                total_nr_syscalls.store(total_nr_syscalls.load() + 2);
-                total_bytes_ra.store(total_bytes_ra.load() + (NR_RA_PAGES << PAGESHIFT));
         }
-
-#if 0
-        printf("Exiting fd=%d\n", fd);
-        /*Update the stats*/
-        total_nr_syscalls.store(total_nr_syscalls.load() + nr_syscalls_done);
-        total_bytes_ra.store(total_bytes_ra.load() + total_bytes_ra_done);
-
-        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
-#endif
 
         return;
 }
@@ -416,17 +401,16 @@ skip_open:
 #endif //SHARED_FILE
 
 #ifdef SHARED_FILE
-        for(int i=0; i<1; i++){
-                file_name(i, filename, 1);
+        for(int i=0; i<1; i++)
 #else
-        for(int i=0; i<NR_THREADS; i++){
-                file_name(i, filename, NR_THREADS);
+        for(int i=0; i<NR_THREADS; i++)
 #endif
+        {
                 strcpy(req_mincore[i].filename, filename);
                 thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
         }
-#endif //ENABLE_MINCORE_RA
 
+#endif //ENABLE_MINCORE_RA
         thpool_wait(thpool);
 
         //Print the Throughput

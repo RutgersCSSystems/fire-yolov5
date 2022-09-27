@@ -1,0 +1,126 @@
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: File-server Version 3.0 personality successfully loaded
+0.004: Populating and pre-allocating filesets
+0.016: bigfileset populated: 20000 files, avg. dir. width = 20, avg. dir. depth = 3.3, 0 leafdirs, 248732.753MB total size
+0.016: Removing bigfileset tree (if exists)
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in con
+0.021: Pre-allocating directories in bigfileset tree
+ENABLE_FILE_STATS in con
+1.946: Pre-allocating files in bigfileset tree
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+106.691: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+106.692: Population and pre-allocation of filesets completed
+ENABLE_FILE_STATS in con
+FINISHED PREALLOCATION 
+106.887: Starting 1 filereader instances
+ENABLE_FILE_STATS in con
+ENABLE_FILE_STATS in per_thread_ds
+107.895: Running...
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+ENABLE_FILE_STATS in per_thread_ds
+157.898: Run took 50 seconds...
+157.899: Per-Operation Breakdown
+statfile1            10763ops      215ops/s   0.0mb/s    0.005ms/op [0.001ms - 0.985ms]
+deletefile1          10761ops      215ops/s   0.0mb/s    0.827ms/op [0.019ms - 108.357ms]
+closefile3           10763ops      215ops/s   0.0mb/s    0.003ms/op [0.001ms - 0.189ms]
+readfile1            10763ops      215ops/s 2671.1mb/s   26.113ms/op [0.015ms - 405.282ms]
+openfile2            10770ops      215ops/s   0.0mb/s    0.173ms/op [0.003ms - 20.206ms]
+closefile2           10770ops      215ops/s   0.0mb/s    0.002ms/op [0.001ms - 0.009ms]
+appendfilerand1      10770ops      215ops/s   1.7mb/s    0.246ms/op [0.003ms - 82.687ms]
+openfile1            10770ops      215ops/s   0.0mb/s    0.162ms/op [0.004ms - 105.031ms]
+closefile1           10770ops      215ops/s   0.0mb/s    0.004ms/op [0.001ms - 0.195ms]
+wrtfile1             10770ops      215ops/s 2683.2mb/s   46.259ms/op [0.018ms - 663.946ms]
+createfile1          10779ops      216ops/s   0.0mb/s    0.376ms/op [0.238ms - 72.209ms]
+157.899: IO Summary: 118449 ops 2368.837 ops/s 215/431 rd/wr 5356.0mb/s 6.742ms/op
+157.899: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/fileserver.f"
+	User time (seconds): 0.35
+	System time (seconds): 89.13
+	Percent of CPU this job got: 56%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:39.17
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3703232
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 925664
+	Minor (reclaiming a frame) page faults: 20307
+	Voluntary context switches: 9013
+	Involuntary context switches: 1000
+	Swaps: 0
+	File system inputs: 29520
+	File system outputs: 414034384
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_STATS in dest
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[15631.431988] write_proc_unbounded: Value of write = 0
+[15631.432000] write_proc_2mb_limit: Value of write = 0
+[15631.432004] write_proc_bitmap_shift: Value of write = 37
+[15631.436148] write_proc_unbounded: Value of write = 0
+[15631.436159] write_proc_2mb_limit: Value of write = 0
+[15631.436163] write_proc_bitmap_shift: Value of write = 37
+[15632.725207] write_proc_unbounded: Value of write = 0
+[15632.725217] write_proc_2mb_limit: Value of write = 0
+[15632.725222] write_proc_bitmap_shift: Value of write = 37
+[15632.727699] write_proc_unbounded: Value of write = 0
+[15632.727709] write_proc_2mb_limit: Value of write = 0
+[15632.727714] write_proc_bitmap_shift: Value of write = 37
+[15632.727896] write_proc_unbounded: Value of write = 0
+[15632.727899] write_proc_2mb_limit: Value of write = 0
+[15632.730393] write_proc_unbounded: Value of write = 0
+[15632.730402] write_proc_2mb_limit: Value of write = 0
+[15632.730407] write_proc_bitmap_shift: Value of write = 37
+[15632.803855] sh (5990): drop_caches: 3
+[15634.614827] sh (5995): drop_caches: 3
+[15722.764989] write_proc_unbounded: Value of write = 0
+[15722.765000] write_proc_2mb_limit: Value of write = 0
+[15722.765004] write_proc_bitmap_shift: Value of write = 37
+[15722.766998] write_proc_unbounded: Value of write = 0
+[15722.767007] write_proc_2mb_limit: Value of write = 0
+[15722.767011] write_proc_bitmap_shift: Value of write = 37
+[15736.282183] sh (6003): drop_caches: 3
+[15739.373812] sh (6012): drop_caches: 3
+[15739.402069] write_proc_unbounded: Value of write = 0
+[15739.402078] write_proc_2mb_limit: Value of write = 0
+[15739.402083] write_proc_bitmap_shift: Value of write = 37
+[15739.480727] sh (6020): drop_caches: 3
+[15739.572568] sh (6025): drop_caches: 3
+[15739.598042] write_proc_unbounded: Value of write = 0
+[15739.598051] write_proc_2mb_limit: Value of write = 0
+[15739.598056] write_proc_bitmap_shift: Value of write = 37
+[15790.609289] write_proc_unbounded: Value of write = 0
+[15790.609303] write_proc_2mb_limit: Value of write = 0

@@ -847,6 +847,7 @@ normal_readahead:
 	ret = ksys_readahead(fd, offset, count);
 
 exit:
+	fdput(this_fd);
         return ret;
 
 }

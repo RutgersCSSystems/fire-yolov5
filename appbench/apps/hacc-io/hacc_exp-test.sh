@@ -21,9 +21,9 @@ mkdir -p $DBDIR
 
 #indicates numiterations
 declare -a num_arr=("20000000" "40000000" "10000000")
-declare -a num_arr=("80000000")
-declare -a thread_arr=("16")
-declare -a workload_arr=("HACC-restart")
+declare -a num_arr=("40000000")
+declare -a thread_arr=("16" "8" "32" "4")
+declare -a workload_arr=("restart")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI" "CIPI_sync")
 #declare -a config_arr=("Cross_Info")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
