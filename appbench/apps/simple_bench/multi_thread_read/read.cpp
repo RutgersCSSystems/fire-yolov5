@@ -415,6 +415,11 @@ int main(int argc, char **argv)
 
         os_constructors();
 
+#ifdef GLOBAL_TIMER
+        struct timeval global_start, global_end;
+        gettimeofday(&global_start, NULL);
+#endif
+
         long size = FILESIZE;
 
         /*
@@ -516,6 +521,13 @@ skip_open:
 #endif //ENABLE_MINCORE_RA
         thpool_wait(thpool);
 
+
+#ifdef GLOBAL_TIMER
+        gettimeofday(&global_end, NULL);
+        float global_max_time = 0.f; //in sec
+#endif
+
+
         //Print the Throughput
         
         long size_mb;
@@ -529,6 +541,7 @@ skip_open:
 #else
         size_mb = FILESIZE/(1024L*1024L);
 #endif
+
         printf("Total File size = %ld MB\n", size_mb);
         for(int i=0; i<NR_THREADS; i++){
                 time = req[i].read_time/1000000.f;
@@ -549,12 +562,20 @@ skip_open:
                         nr_total_read_pg, nr_total_misses_pg, (nr_total_misses_pg/nr_total_read_pg));
 #endif
 
+#ifdef GLOBAL_TIMER
+        global_max_time = usec_diff(&global_start, &global_end)/1000000.f;
+#endif
+
 #if defined(READ_SEQUENTIAL) && defined(STRIDED_READ)
         printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif defined(READ_SEQUENTIAL) && !defined(STRIDED_READ)
         printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif READ_RANDOM
         printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+#endif
+
+#ifdef GLOBAL_TIMER
+        printf("GLOBAL Bandwidth = %.2f MB/sec\n", size_mb/global_max_time);
 #endif
 
 #ifdef ENABLE_MINCORE_RA
