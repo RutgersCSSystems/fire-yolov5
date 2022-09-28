@@ -3,6 +3,7 @@
 
 #define PG_SZ 4096L
 #define PAGESHIFT 12L
+#define BYTESHIFT 3L
 
 #ifdef DEBUG
 #define debug_printf(...) printf(__VA_ARGS__ )
@@ -151,8 +152,6 @@ struct read_ra_req{
 	 */
 	unsigned long *data;  //page bitmap for readahead file
 	unsigned long nr_relevant_ulongs; //number of bits relevant for the file
-
-
 };
 
 

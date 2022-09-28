@@ -33,6 +33,7 @@
 
 #include "util.h"
 #include "utils/thpool.h"
+#include "utils/bitarray.h"
 
 
 std::atomic<long> total_nr_syscalls(0);
@@ -74,6 +75,13 @@ struct thread_args{
         size_t offset; //Offset of file where RA to start from
         unsigned long read_time; //Return value, time taken to read the file in microsec
         char filename[FILENAMEMAX]; //filename for opening that file
+
+        /*
+         * To be used by mincore to update the 
+         * misses and hits
+         */
+        unsigned long nr_total_read_pg;
+        unsigned long nr_total_misses_pg;
 };
 
 
@@ -196,6 +204,56 @@ void mincore_th(void *arg){
 }
 
 
+void update_pc_misses(void *arg, void *mem, off_t filesize, off_t offset, size_t buff_sz){
+
+        struct thread_args *a = (struct thread_args*)arg;
+        unsigned int nr_pages, nr_file_pg, i;
+
+        unsigned char *mincore_array = NULL;
+
+        off_t nr_misses_pg = 0;
+        off_t nr_read_pg = 0;
+
+#ifndef DEBUG_PC_MISSES_MINCORE
+        goto exit;
+#endif
+
+        if(!arg || !mem)
+                goto exit;
+
+        nr_pages = (filesize+PG_SZ) >> PAGESHIFT;
+        mincore_array = (unsigned char *)malloc(nr_pages);
+        if(!mincore_array){
+                printf("%s: mincore_array could not be allocated error %s\n", __func__, strerror(errno));
+        }
+
+        if(mincore(mem, filesize, mincore_array) == -1){
+                printf("%s: mincore error %s\n", __func__, strerror(errno));
+                goto free_exit;
+        }
+
+        for(i=0; i<(buff_sz >> PAGESHIFT); i++){
+                if(mincore_array[i+(offset>>PAGESHIFT)] == 0){
+                        nr_misses_pg += 1UL;
+                }
+                nr_read_pg += 1UL;
+                //printf("mincore_array[%u] = %u\n", i, mincore_array[i+(offset>>PAGESHIFT)]);
+        }
+        a->nr_total_misses_pg += nr_misses_pg;
+        a->nr_total_read_pg += nr_read_pg;
+
+#if 0
+        printf("%s: offset:%ld, buff_sz:%ld, tot_read=%ld, tot_misses=%ld\n",
+                        __func__, offset >> PAGESHIFT, buff_sz >> PAGESHIFT, a->nr_total_read_pg, a->nr_total_misses_pg);
+#endif
+
+free_exit:
+        free(mincore_array);
+exit:
+        return;
+}
+
+
 //Will be reading one pvt file per thread
 void reader_th(void *arg){
 
@@ -203,14 +261,17 @@ void reader_th(void *arg){
 
         struct timeval start, end;
         struct timeval open_start, open_end;
+        void *mem = NULL;
 
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
 
         size_t readnow, bytes_read, offset, ra_offset;
 
-        long tid = gettid();
+        off_t filesize;
+        struct stat st;
 
+        long tid = gettid();
 
         gettimeofday(&open_start, NULL);
 #if SHARED_FILE
@@ -220,6 +281,19 @@ void reader_th(void *arg){
                 exit(0);
         }
 #endif //SHARED_FILE
+
+#ifdef DEBUG_PC_MISSES_MINCORE
+        if(fstat(a->fd, &st) != 0){
+                printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
+                goto exit;
+        }
+
+        filesize = st.st_size;
+        mem = mmap(NULL, filesize, PROT_READ, MAP_SHARED, a->fd, 0);
+        if(mem == MAP_FAILED){
+                printf("%s: unable to mmap file %s (%s), skipping", __func__, a->filename, strerror(errno));
+        }
+#endif //DEBUG_PC_MISSES_MINCORE
 
 #if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
@@ -275,7 +349,11 @@ void reader_th(void *arg){
 			debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
 					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
 		}
-#endif
+#endif //APP_OPT_PREFETCH
+
+
+                //Checks mincore to determine the number of misses
+                update_pc_misses(arg, mem, filesize, offset, buff_sz);
 
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, offset);
@@ -294,6 +372,7 @@ void reader_th(void *arg){
         }
         gettimeofday(&end, NULL);
 
+
 #elif READ_RANDOM
 
         size_t nr_file_portions = a->size/buff_sz;
@@ -307,14 +386,24 @@ void reader_th(void *arg){
         gettimeofday(&start, NULL);
 
         for(long i=0; i<nr_file_portions; i++){
+
+                //Checks mincore to determine the number of misses
+                update_pc_misses(arg, mem, filesize, ((read_sequence[i]*buff_sz)+a->offset), buff_sz);
+
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, (read_sequence[i]*buff_sz)+a->offset);
         }
 
         gettimeofday(&end, NULL);
-#endif
+
+#endif //READ_SEQUENTIAL
 
         a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
+
+#ifdef DEBUG_PC_MISSES_MINCORE
+        munmap(mem, filesize);
+#endif
+
 exit:
         return;
 }
@@ -390,6 +479,8 @@ skip_open:
                 req[i].nr_read_pg = NR_PAGES_READ;
                 req[i].read_time = 0UL;
 
+                req[i].nr_total_read_pg = 0UL;
+                req[i].nr_total_misses_pg = 0UL;
 #ifdef SHARED_FILE
                 //req[i].fd = fd_list[0];
                 req[i].fd = -1;
@@ -444,6 +535,20 @@ skip_open:
                 if(max_time < time)
                         max_time = time;
         }
+
+#ifdef DEBUG_PC_MISSES_MINCORE
+        double nr_total_read_pg = 0;
+        double nr_total_misses_pg = 0;
+
+        for(int i=0; i<NR_THREADS; i++){
+                nr_total_read_pg += req[i].nr_total_read_pg;
+                nr_total_misses_pg += req[i].nr_total_misses_pg;
+        }
+
+        printf("MISSES_MINCORE total_read=%.1lf, total_misses=%.1lf, missratio=%lf\n",
+                        nr_total_read_pg, nr_total_misses_pg, (nr_total_misses_pg/nr_total_read_pg));
+#endif
+
 #if defined(READ_SEQUENTIAL) && defined(STRIDED_READ)
         printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif defined(READ_SEQUENTIAL) && !defined(STRIDED_READ)
