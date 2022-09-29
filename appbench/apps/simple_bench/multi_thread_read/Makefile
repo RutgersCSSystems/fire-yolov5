@@ -32,7 +32,7 @@ read_shared: read.cpp utils/thpool.c utils/bitarray.c
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DGLOBAL_TIMER -o $(BIN_DIR)/read_shared_seq_global $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DENABLE_MINCORE_RA -o $(BIN_DIR)/read_shared_seq_mincore $(LIBS)
-	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DDEBUG_PC_MISSES_MINCORE -o $(BIN_DIR)/read_shared_seq_misses $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DSTATS_PC_MISSES_MINCORE -o $(BIN_DIR)/read_shared_seq_misses $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DMODIFIED_RA -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_mra $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_opt $(LIBS)

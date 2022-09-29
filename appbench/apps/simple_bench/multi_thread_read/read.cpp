@@ -128,7 +128,11 @@ off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off
 /*
  * Reads through one file's page cache while prefetching
  */
+#ifdef THPOOL
 void mincore_th(void *arg){
+#else
+void *mincore_th(void *arg){
+#endif
 
         struct thread_args *a = (struct thread_args*)arg;
         struct stat st;
@@ -200,7 +204,11 @@ void mincore_th(void *arg){
         printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
 #endif
 
+#ifdef THPOOL
         return;
+#else
+        return NULL;
+#endif
 }
 
 
@@ -214,7 +222,7 @@ void update_pc_misses(void *arg, void *mem, off_t filesize, off_t offset, size_t
         off_t nr_misses_pg = 0;
         off_t nr_read_pg = 0;
 
-#ifndef DEBUG_PC_MISSES_MINCORE
+#ifndef STATS_PC_MISSES_MINCORE
         goto exit;
 #endif
 
@@ -255,7 +263,11 @@ exit:
 
 
 //Will be reading one pvt file per thread
+#ifdef THPOOL
 void reader_th(void *arg){
+#else
+void *reader_th(void *arg){
+#endif
 
         struct thread_args *a = (struct thread_args*)arg;
 
@@ -282,7 +294,7 @@ void reader_th(void *arg){
         }
 #endif //SHARED_FILE
 
-#ifdef DEBUG_PC_MISSES_MINCORE
+#ifdef STATS_PC_MISSES_MINCORE
         if(fstat(a->fd, &st) != 0){
                 printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
                 goto exit;
@@ -293,7 +305,7 @@ void reader_th(void *arg){
         if(mem == MAP_FAILED){
                 printf("%s: unable to mmap file %s (%s), skipping", __func__, a->filename, strerror(errno));
         }
-#endif //DEBUG_PC_MISSES_MINCORE
+#endif //STATS_PC_MISSES_MINCORE
 
 #if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
@@ -400,12 +412,16 @@ void reader_th(void *arg){
 
         a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
 
-#ifdef DEBUG_PC_MISSES_MINCORE
+#ifdef STATS_PC_MISSES_MINCORE
         munmap(mem, filesize);
 #endif
 
 exit:
+#ifdef THPOOL
         return;
+#else
+        return NULL;
+#endif
 }
 
 
@@ -460,19 +476,27 @@ skip_open:
         }
 #endif
 
+#ifdef THPOOL
         threadpool thpool;
         thpool = thpool_init(NR_THREADS); //spawns a set of worker threads
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
+#else
+        pthread_t pthreads[NR_THREADS];
+#endif
 
 #ifdef ENABLE_MINCORE_RA
+#ifdef THPOOL
         threadpool mincorepool;
         mincorepool = thpool_init(MINCORE_THREADS); //spawns a set of worker threads
         if(!mincorepool){
                 printf("FAILED: creating mincorepool with %d threads\n", NR_THREADS);
         }
-#endif
+#else
+        pthread_t mincore_pthreads[MINCORE_THREADS];
+#endif //THPOOL
+#endif //ENABLE_MINCORE_RA
 
         //Preallocating all the thread_args to remove overheads
         struct thread_args *req = (struct thread_args*)
@@ -496,7 +520,11 @@ skip_open:
                 req[i].offset = 0;
 #endif
 
+#ifdef THPOOL
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
+#else
+                pthread_create(&pthreads[i], NULL, reader_th, (void*)&req[i]);
+#endif
         }
 
 
@@ -516,10 +544,24 @@ skip_open:
                 file_name(i, filename, NR_THREADS);
 #endif
                 strcpy(req_mincore[i].filename, filename);
+
+#ifdef THPOOL
                 thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
+#else
+                pthread_create(&mincore_pthreads[i], NULL, mincore_th, (void*)&req_mincore[i]);
+#endif
+
         }
 #endif //ENABLE_MINCORE_RA
+
+
+#ifdef THPOOL
         thpool_wait(thpool);
+#else
+        for(int i=0; i<NR_THREADS; i++){
+                pthread_join(pthreads[i], NULL);
+        }
+#endif
 
 
 #ifdef GLOBAL_TIMER
@@ -549,7 +591,7 @@ skip_open:
                         max_time = time;
         }
 
-#ifdef DEBUG_PC_MISSES_MINCORE
+#ifdef STATS_PC_MISSES_MINCORE
         double nr_total_read_pg = 0;
         double nr_total_misses_pg = 0;
 
