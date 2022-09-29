@@ -31,7 +31,6 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
-#include "frontend.hpp"
 
 
 #ifdef ENABLE_MPI
@@ -79,6 +78,7 @@ std::mutex fp_mutex;
 threadpool_t *pool[QUEUES];
 pthread_mutex_t lock;
 
+#include "frontend.hpp"
 
 
 
@@ -257,7 +257,7 @@ void con(){
 
     for(int i = 0; i < QUEUES; i++) {
             pool[i] = threadpool_create(THREAD, SIZE, 0);
-            assert(pool[i] != NULL);
+            //assert(pool[i] != NULL);
     }
 #endif
 
@@ -902,14 +902,14 @@ void *prefetcher_th(void *arg) {
 						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 			}
 #endif
-            int idx= uinode->ino % QUEUES;
+            //int idx= uinode->ino % QUEUES;
             //thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-            threadpool_add(pool[idx], prefetcher_th, (void*)arg, 0);
+            threadpool_add(pool[uinode->ino % QUEUES], prefetcher_th, (void*)arg, 0);
 #else
 			prefetcher_th((void*)arg);
 #endif
 
-			prefetch_file_exit:
+prefetch_file_exit:
 			debug_printf("Exiting %s\n", __func__);
 			return;
 		}

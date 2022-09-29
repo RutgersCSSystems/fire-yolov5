@@ -129,7 +129,7 @@ class per_thread_ds{
 
         //constructor
         per_thread_ds(){
-        mytid = gettid();
+        //mytid = gettid();
 
 #ifdef ENABLE_OS_STATS
 		fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
