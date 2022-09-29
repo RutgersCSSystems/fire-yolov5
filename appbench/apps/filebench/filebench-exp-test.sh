@@ -26,12 +26,12 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-declare -a workload_arr=("fileserver.f")
+declare -a workload_arr=("randomrw.f")
 #declare -a workload_arr=("oltp.f")
 #declare -a workload_arr=("mongo.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("Cross_Info" "CIP" "CII")
+declare -a config_arr=("Cross_Info" "CIP" "CII" "OSonly")
 #declare -a config_arr=("OSonly")
 declare -a thread_arr=("16")
 
@@ -44,6 +44,11 @@ glob_prefechthrd=1
 
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
 declare -a prefech_thrd_arr=("1" "8" "16")
+
+declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("16")
+
+
 
 get_global_arr() {
 
@@ -128,12 +133,7 @@ GEN_RESULT_PATH() {
 	THREAD=$3
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
-<<<<<<< HEAD
 	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
-=======
-	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH".out
-	echo "-PREFETCHSZ-$PREFETCHSZ-PREFETTHRD-$PREFETCHTH"
->>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 }
 
 
@@ -143,44 +143,8 @@ RUN() {
 	do
 		for CONFIG in "${config_arr[@]}"
 		do
-			cd $PREDICT_LIB_DIR
-			echo "sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh"
-			sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
-			echo "sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh"
-			sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
-
-			./compile.sh
-			cd $DBHOME
-
 			for THREAD in "${thread_arr[@]}"
 			do
-<<<<<<< HEAD
-				RESULTS=""
-				WORKPATH="workloads/$WORKLOAD"
-				WRITEARGS="-f $WORKPATH"
-				READARGS="-f $WORKPATH"
-				GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD
-
-				echo $RESULTFILE
-				mkdir -p $RESULTS
-				echo "For Workload $WORKPATH, generating $RESULTFILE"
-
-				#echo "BEGINNING TO WARM UP ......."
-				CLEAN_AND_WRITE
-				#echo "FINISHING WARM UP ......."
-				echo "..................................................."
-				echo "RUNNING $CONFIG...................................."
-				echo "..................................................."
-
-				echo "$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE"
-
-				export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-				$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE
-				export LD_PRELOAD=""
-				sudo dmesg -c &>> $RESULTFILE
-				echo ".......FINISHING $CONFIG......................"
-				#CLEAR_DATA
-=======
 				for prefechthrd in "${prefech_thrd_arr[@]}"
 				do
 					cd $PREDICT_LIB_DIR
@@ -196,7 +160,6 @@ RUN() {
 						WORKPATH="workloads/$WORKLOAD"
 						WRITEARGS="-f $WORKPATH"
 						READARGS="-f $WORKPATH"
-						#RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 						GEN_RESULT_PATH $WORKPATH $CONFIG $THREAD $prefetchsz $prefechthrd
 
 						echo $RESULTS/$CONFIG.out
@@ -219,7 +182,6 @@ RUN() {
 						#CLEAR_DATA
 					done
 				done
->>>>>>> 1d2f13264c1133c49fa893561fd26a95e9c1b300
 			done
 		done
 

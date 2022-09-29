@@ -16,7 +16,7 @@ NR_WORKERS=2
 PORTION_PAGES=32
 NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(5MB)
-#CROSS_BITMAP_SHIFT=24
+CROSS_BITMAP_SHIFT=36
 
 SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c 
 
