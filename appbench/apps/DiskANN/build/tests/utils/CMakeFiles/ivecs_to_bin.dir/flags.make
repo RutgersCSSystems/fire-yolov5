@@ -6,5 +6,5 @@ CXX_FLAGS =  -fopenmp -O3 -DNDEBUG -Ofast -DNDEBUG -march=native -mtune=native -
 
 CXX_DEFINES = -DMKL_ILP64
 
-CXX_INCLUDES = -I/users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/include -I/opt/intel/compilers_and_libraries_2018/linux/mkl/include -I/usr/include/mkl 
+CXX_INCLUDES = -I/users/kannan11/ssd/prefetching/appbench/apps/DiskANN/include -I/opt/intel/oneapi/mkl/latest/include -I/usr/include/mkl 
 

@@ -109,6 +109,8 @@ typedef int8_t   _s8;
 inline void      open_file_to_write(std::ofstream&     writer,
                                     const std::string& filename) {
   writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+  writer.rdbuf()->pubsetbuf(0, 0);
   if (!file_exists(filename))
     writer.open(filename, std::ios::binary | std::ios::out);
   else
@@ -568,6 +570,7 @@ namespace diskann {
 
   inline void open_file_to_write(std::ofstream&     writer,
                                  const std::string& filename) {
+    writer.rdbuf()->pubsetbuf(0, 0);
     writer.exceptions(std::ofstream::failbit | std::ofstream::badbit);
     if (!file_exists(filename))
       writer.open(filename, std::ios::binary | std::ios::out);
@@ -838,6 +841,9 @@ namespace diskann {
           __FUNCSIG__, __FILE__, __LINE__);
     }
     std::ifstream reader;
+    // JZ: disable cache
+    reader.rdbuf()->pubsetbuf(0, 0);
+
     reader.exceptions(std::ios::badbit | std::ios::failbit);
     reader.open(bin_file, std::ios::binary);
     reader.seekg(offset, reader.beg);

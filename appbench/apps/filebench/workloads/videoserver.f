@@ -35,10 +35,10 @@
 
 set $dir=DATA/
 set $eventrate=20
-set $filesize=4g
+set $filesize=100m
 set $nthreads=16
-set $numactivevids=10
-set $numpassivevids=20
+set $numactivevids=200
+set $numpassivevids=1000
 set $reuseit=false
 set $readiosize=256k
 set $writeiosize=16k
@@ -49,8 +49,8 @@ set $actvidsname=activevids
 set $repintval=10
 
 eventgen rate=$eventrate
-define fileset name=$actvidsname,path=$dir,size=$filesize,entries=$numactivevids,dirwidth=4,prealloc,paralloc,reuse=$reuseit
-define fileset name=$passvidsname,path=$dir,size=$filesize,entries=$numpassivevids,dirwidth=20,prealloc=50,paralloc,reuse=$reuseit
+define fileset name=$actvidsname,path=$dir,size=$filesize,entries=$numactivevids,dirwidth=1,prealloc,paralloc,reuse=$reuseit
+define fileset name=$passvidsname,path=$dir,size=$filesize,entries=$numpassivevids,dirwidth=1,prealloc=50,paralloc,reuse=$reuseit
 
 define process name=vidwriter,instances=1
 {

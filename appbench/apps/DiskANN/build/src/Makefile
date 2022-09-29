@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN
+CMAKE_SOURCE_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build
+CMAKE_BINARY_DIR = /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,14 +80,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_progress_start /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/src/CMakeFiles/progress.marks
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build/CMakeFiles 0
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -E cmake_progress_start /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/src/CMakeFiles/progress.marks
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/clean
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/CMakeFiles/diskann.dir/rule:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/diskann.dir/rule
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/diskann.dir/rule
 .PHONY : src/CMakeFiles/diskann.dir/rule
 
 # Convenience name for target.
@@ -122,12 +122,12 @@ diskann: src/CMakeFiles/diskann.dir/rule
 
 # fast build rule for target.
 diskann/fast:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/build
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/build
 .PHONY : diskann/fast
 
 # Convenience name for target.
 src/CMakeFiles/diskann_s.dir/rule:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/diskann_s.dir/rule
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/diskann_s.dir/rule
 .PHONY : src/CMakeFiles/diskann_s.dir/rule
 
 # Convenience name for target.
@@ -137,7 +137,7 @@ diskann_s: src/CMakeFiles/diskann_s.dir/rule
 
 # fast build rule for target.
 diskann_s/fast:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/build
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/build
 .PHONY : diskann_s/fast
 
 ann_exception.o: ann_exception.cpp.o
@@ -146,8 +146,8 @@ ann_exception.o: ann_exception.cpp.o
 
 # target to build an object file
 ann_exception.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.o
 .PHONY : ann_exception.cpp.o
 
 ann_exception.i: ann_exception.cpp.i
@@ -156,8 +156,8 @@ ann_exception.i: ann_exception.cpp.i
 
 # target to preprocess a source file
 ann_exception.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.i
 .PHONY : ann_exception.cpp.i
 
 ann_exception.s: ann_exception.cpp.s
@@ -166,8 +166,8 @@ ann_exception.s: ann_exception.cpp.s
 
 # target to generate assembly for a file
 ann_exception.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/ann_exception.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/ann_exception.cpp.s
 .PHONY : ann_exception.cpp.s
 
 aux_utils.o: aux_utils.cpp.o
@@ -176,8 +176,8 @@ aux_utils.o: aux_utils.cpp.o
 
 # target to build an object file
 aux_utils.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.o
 .PHONY : aux_utils.cpp.o
 
 aux_utils.i: aux_utils.cpp.i
@@ -186,8 +186,8 @@ aux_utils.i: aux_utils.cpp.i
 
 # target to preprocess a source file
 aux_utils.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.i
 .PHONY : aux_utils.cpp.i
 
 aux_utils.s: aux_utils.cpp.s
@@ -196,8 +196,8 @@ aux_utils.s: aux_utils.cpp.s
 
 # target to generate assembly for a file
 aux_utils.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/aux_utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/aux_utils.cpp.s
 .PHONY : aux_utils.cpp.s
 
 distance.o: distance.cpp.o
@@ -206,8 +206,8 @@ distance.o: distance.cpp.o
 
 # target to build an object file
 distance.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.o
 .PHONY : distance.cpp.o
 
 distance.i: distance.cpp.i
@@ -216,8 +216,8 @@ distance.i: distance.cpp.i
 
 # target to preprocess a source file
 distance.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.i
 .PHONY : distance.cpp.i
 
 distance.s: distance.cpp.s
@@ -226,8 +226,8 @@ distance.s: distance.cpp.s
 
 # target to generate assembly for a file
 distance.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/distance.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/distance.cpp.s
 .PHONY : distance.cpp.s
 
 index.o: index.cpp.o
@@ -236,8 +236,8 @@ index.o: index.cpp.o
 
 # target to build an object file
 index.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.o
 .PHONY : index.cpp.o
 
 index.i: index.cpp.i
@@ -246,8 +246,8 @@ index.i: index.cpp.i
 
 # target to preprocess a source file
 index.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.i
 .PHONY : index.cpp.i
 
 index.s: index.cpp.s
@@ -256,8 +256,8 @@ index.s: index.cpp.s
 
 # target to generate assembly for a file
 index.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/index.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/index.cpp.s
 .PHONY : index.cpp.s
 
 linux_aligned_file_reader.o: linux_aligned_file_reader.cpp.o
@@ -266,8 +266,8 @@ linux_aligned_file_reader.o: linux_aligned_file_reader.cpp.o
 
 # target to build an object file
 linux_aligned_file_reader.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.o
 .PHONY : linux_aligned_file_reader.cpp.o
 
 linux_aligned_file_reader.i: linux_aligned_file_reader.cpp.i
@@ -276,8 +276,8 @@ linux_aligned_file_reader.i: linux_aligned_file_reader.cpp.i
 
 # target to preprocess a source file
 linux_aligned_file_reader.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.i
 .PHONY : linux_aligned_file_reader.cpp.i
 
 linux_aligned_file_reader.s: linux_aligned_file_reader.cpp.s
@@ -286,8 +286,8 @@ linux_aligned_file_reader.s: linux_aligned_file_reader.cpp.s
 
 # target to generate assembly for a file
 linux_aligned_file_reader.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/linux_aligned_file_reader.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/linux_aligned_file_reader.cpp.s
 .PHONY : linux_aligned_file_reader.cpp.s
 
 logger.o: logger.cpp.o
@@ -296,8 +296,8 @@ logger.o: logger.cpp.o
 
 # target to build an object file
 logger.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.o
 .PHONY : logger.cpp.o
 
 logger.i: logger.cpp.i
@@ -306,8 +306,8 @@ logger.i: logger.cpp.i
 
 # target to preprocess a source file
 logger.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.i
 .PHONY : logger.cpp.i
 
 logger.s: logger.cpp.s
@@ -316,8 +316,8 @@ logger.s: logger.cpp.s
 
 # target to generate assembly for a file
 logger.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/logger.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/logger.cpp.s
 .PHONY : logger.cpp.s
 
 math_utils.o: math_utils.cpp.o
@@ -326,8 +326,8 @@ math_utils.o: math_utils.cpp.o
 
 # target to build an object file
 math_utils.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.o
 .PHONY : math_utils.cpp.o
 
 math_utils.i: math_utils.cpp.i
@@ -336,8 +336,8 @@ math_utils.i: math_utils.cpp.i
 
 # target to preprocess a source file
 math_utils.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.i
 .PHONY : math_utils.cpp.i
 
 math_utils.s: math_utils.cpp.s
@@ -346,8 +346,8 @@ math_utils.s: math_utils.cpp.s
 
 # target to generate assembly for a file
 math_utils.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/math_utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/math_utils.cpp.s
 .PHONY : math_utils.cpp.s
 
 memory_mapper.o: memory_mapper.cpp.o
@@ -356,8 +356,8 @@ memory_mapper.o: memory_mapper.cpp.o
 
 # target to build an object file
 memory_mapper.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.o
 .PHONY : memory_mapper.cpp.o
 
 memory_mapper.i: memory_mapper.cpp.i
@@ -366,8 +366,8 @@ memory_mapper.i: memory_mapper.cpp.i
 
 # target to preprocess a source file
 memory_mapper.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.i
 .PHONY : memory_mapper.cpp.i
 
 memory_mapper.s: memory_mapper.cpp.s
@@ -376,8 +376,8 @@ memory_mapper.s: memory_mapper.cpp.s
 
 # target to generate assembly for a file
 memory_mapper.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/memory_mapper.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/memory_mapper.cpp.s
 .PHONY : memory_mapper.cpp.s
 
 natural_number_map.o: natural_number_map.cpp.o
@@ -386,8 +386,8 @@ natural_number_map.o: natural_number_map.cpp.o
 
 # target to build an object file
 natural_number_map.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.o
 .PHONY : natural_number_map.cpp.o
 
 natural_number_map.i: natural_number_map.cpp.i
@@ -396,8 +396,8 @@ natural_number_map.i: natural_number_map.cpp.i
 
 # target to preprocess a source file
 natural_number_map.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.i
 .PHONY : natural_number_map.cpp.i
 
 natural_number_map.s: natural_number_map.cpp.s
@@ -406,8 +406,8 @@ natural_number_map.s: natural_number_map.cpp.s
 
 # target to generate assembly for a file
 natural_number_map.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_map.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_map.cpp.s
 .PHONY : natural_number_map.cpp.s
 
 natural_number_set.o: natural_number_set.cpp.o
@@ -416,8 +416,8 @@ natural_number_set.o: natural_number_set.cpp.o
 
 # target to build an object file
 natural_number_set.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.o
 .PHONY : natural_number_set.cpp.o
 
 natural_number_set.i: natural_number_set.cpp.i
@@ -426,8 +426,8 @@ natural_number_set.i: natural_number_set.cpp.i
 
 # target to preprocess a source file
 natural_number_set.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.i
 .PHONY : natural_number_set.cpp.i
 
 natural_number_set.s: natural_number_set.cpp.s
@@ -436,8 +436,8 @@ natural_number_set.s: natural_number_set.cpp.s
 
 # target to generate assembly for a file
 natural_number_set.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/natural_number_set.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/natural_number_set.cpp.s
 .PHONY : natural_number_set.cpp.s
 
 partition_and_pq.o: partition_and_pq.cpp.o
@@ -446,8 +446,8 @@ partition_and_pq.o: partition_and_pq.cpp.o
 
 # target to build an object file
 partition_and_pq.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.o
 .PHONY : partition_and_pq.cpp.o
 
 partition_and_pq.i: partition_and_pq.cpp.i
@@ -456,8 +456,8 @@ partition_and_pq.i: partition_and_pq.cpp.i
 
 # target to preprocess a source file
 partition_and_pq.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.i
 .PHONY : partition_and_pq.cpp.i
 
 partition_and_pq.s: partition_and_pq.cpp.s
@@ -466,8 +466,8 @@ partition_and_pq.s: partition_and_pq.cpp.s
 
 # target to generate assembly for a file
 partition_and_pq.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/partition_and_pq.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/partition_and_pq.cpp.s
 .PHONY : partition_and_pq.cpp.s
 
 pq_flash_index.o: pq_flash_index.cpp.o
@@ -476,8 +476,8 @@ pq_flash_index.o: pq_flash_index.cpp.o
 
 # target to build an object file
 pq_flash_index.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.o
 .PHONY : pq_flash_index.cpp.o
 
 pq_flash_index.i: pq_flash_index.cpp.i
@@ -486,8 +486,8 @@ pq_flash_index.i: pq_flash_index.cpp.i
 
 # target to preprocess a source file
 pq_flash_index.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.i
 .PHONY : pq_flash_index.cpp.i
 
 pq_flash_index.s: pq_flash_index.cpp.s
@@ -496,8 +496,8 @@ pq_flash_index.s: pq_flash_index.cpp.s
 
 # target to generate assembly for a file
 pq_flash_index.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/pq_flash_index.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/pq_flash_index.cpp.s
 .PHONY : pq_flash_index.cpp.s
 
 utils.o: utils.cpp.o
@@ -506,8 +506,8 @@ utils.o: utils.cpp.o
 
 # target to build an object file
 utils.cpp.o:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.o
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.o
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.o
 .PHONY : utils.cpp.o
 
 utils.i: utils.cpp.i
@@ -516,8 +516,8 @@ utils.i: utils.cpp.i
 
 # target to preprocess a source file
 utils.cpp.i:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.i
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.i
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.i
 .PHONY : utils.cpp.i
 
 utils.s: utils.cpp.s
@@ -526,8 +526,8 @@ utils.s: utils.cpp.s
 
 # target to generate assembly for a file
 utils.cpp.s:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.s
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann.dir/build.make src/CMakeFiles/diskann.dir/utils.cpp.s
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(MAKE) -f src/CMakeFiles/diskann_s.dir/build.make src/CMakeFiles/diskann_s.dir/utils.cpp.s
 .PHONY : utils.cpp.s
 
 # Help Target
@@ -590,6 +590,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /users/kannan11/ssd/sudarsun/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /users/kannan11/ssd/prefetching/appbench/apps/DiskANN/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

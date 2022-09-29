@@ -90,6 +90,7 @@ procflow_createproc(procflow_t *procflow)
 		return (-1);
 	}
 #else
+	fprintf(stderr, "fork() %d\n", __LINE__);
 	if ((pid = fork()) < 0) {
 		filebench_log(LOG_ERROR,
 		    "procflow_createproc fork failed: %s",

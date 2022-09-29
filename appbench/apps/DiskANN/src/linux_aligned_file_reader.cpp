@@ -1,12 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
-//
-
-#define _GNU_SOURCE
-#include <unistd.h>
-#include <sys/syscall.h>
-#define gettid() syscall(SYS_gettid)
-
 
 #include "linux_aligned_file_reader.h"
 
@@ -16,8 +9,6 @@
 #include "tsl/robin_map.h"
 #include "utils.h"
 #define MAX_EVENTS 1024
-
-
 
 namespace {
   typedef struct io_event io_event_t;
@@ -45,7 +36,6 @@ namespace {
       std::vector<io_event_t>  evts(n_ops);
       std::vector<struct iocb> cb(n_ops);
       for (uint64_t j = 0; j < n_ops; j++) {
-	fprintf(stderr, "performing reads %d \n", gettid());      
         io_prep_pread(cb.data() + j, fd, read_reqs[j + iter * MAX_EVENTS].buf,
                       read_reqs[j + iter * MAX_EVENTS].len,
                       read_reqs[j + iter * MAX_EVENTS].offset);

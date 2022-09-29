@@ -17,7 +17,7 @@ namespace diskann {
   template<typename Key, typename Value>
   void natural_number_map<Key, Value>::reserve(size_t count) {
     _values_vector.reserve(count);
-    _values_bitset->reserve(count);
+    // _values_bitset->reserve(count);
   }
 
   template<typename Key, typename Value>
