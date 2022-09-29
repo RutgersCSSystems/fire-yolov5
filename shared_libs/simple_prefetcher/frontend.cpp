@@ -31,6 +31,8 @@
 #include <sys/mman.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
+#include "frontend.hpp"
+
 
 #ifdef ENABLE_MPI
 #include <mpi.h>
@@ -68,7 +70,18 @@ std::atomic_flag fd_to_file_pred_init;
 std::mutex fp_mutex;
 #endif
 
-#include "frontend.hpp"
+
+#include <assert.h>
+#include "utils/thpool-simple.h"
+#define THREAD NR_WORKERS
+#define SIZE   50000
+#define QUEUES 16
+threadpool_t *pool[QUEUES];
+pthread_mutex_t lock;
+
+
+
+
 
 #ifdef ENABLE_MPI
 struct hashtable *mpi_map;
@@ -234,6 +247,7 @@ void con(){
 	link_shim_functions();
 
 #ifdef THPOOL_PREFETCH
+
 	workerpool = thpool_init(NR_WORKERS);
 	if(!workerpool){
 		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
@@ -241,17 +255,10 @@ void con(){
 		debug_printf("Created %d bg_threads\n", NR_WORKERS);
 	}
 
-	/*
-        for(int i=0; i<8; i++){
-	        workerpool[i] = thpool_init(1);
-	        if(!workerpool[i]){
-		        printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
-	        }
-	        else{
-		        debug_printf("Created %d bg_threads\n", NR_WORKERS);
-	        }
-        }
-	 */
+    for(int i = 0; i < QUEUES; i++) {
+            pool[i] = threadpool_create(THREAD, SIZE, 0);
+            assert(pool[i] != NULL);
+    }
 #endif
 
 #ifdef ENABLE_EVICTION
@@ -662,12 +669,10 @@ void *prefetcher_th(void *arg) {
 
 			//struct timeval start, end;
 			//gettimeofday(&start, NULL);
-
 			uinode_bitmap_lock(a->uinode);
 
-			//err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
-			err = readahead(a->fd, file_pos, a->prefetch_size);
-
+			err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+			//err = readahead(a->fd, file_pos, a->prefetch_size);
 			if(err < -10){
 				uinode_bitmap_unlock(a->uinode);
 				goto exit_prefetcher_th;
@@ -886,6 +891,7 @@ void *prefetcher_th(void *arg) {
 			pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
 
+#if 0
 			if(!workerpool)
 				printf("ERR: %s: No workerpool ? \n", __func__);
 			else{
@@ -895,7 +901,10 @@ void *prefetcher_th(void *arg) {
 				debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
 						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 			}
-
+#endif
+            int idx= uinode->ino % QUEUES;
+            //thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+            threadpool_add(pool[idx], prefetcher_th, (void*)arg, 0);
 #else
 			prefetcher_th((void*)arg);
 #endif

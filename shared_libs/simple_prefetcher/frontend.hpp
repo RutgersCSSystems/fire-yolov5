@@ -125,11 +125,11 @@ class per_thread_ds{
 
         unsigned long nr_readaheads; //Counts the nr of readaheads done by apps
 
-	int touchme; //just touch this variable if you want to call the constructor
+        int touchme; //just touch this variable if you want to call the constructor
 
         //constructor
         per_thread_ds(){
-                mytid = gettid();
+        mytid = gettid();
 
 #ifdef ENABLE_OS_STATS
 		fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
