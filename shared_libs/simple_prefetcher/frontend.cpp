@@ -665,8 +665,8 @@ void *prefetcher_th(void *arg) {
 
 			uinode_bitmap_lock(a->uinode);
 
-			err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
-			//err = readahead(a->fd, file_pos, a->prefetch_size);
+			//err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+			err = readahead(a->fd, file_pos, a->prefetch_size);
 
 			if(err < -10){
 				uinode_bitmap_unlock(a->uinode);
@@ -890,11 +890,12 @@ void *prefetcher_th(void *arg) {
 				printf("ERR: %s: No workerpool ? \n", __func__);
 			else{
 				thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+				//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 
 				debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
 						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 			}
-			//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
+
 #else
 			prefetcher_th((void*)arg);
 #endif
