@@ -33,6 +33,7 @@
 
 #include "util.h"
 #include "utils/thpool.h"
+#include "utils/bitarray.h"
 
 
 std::atomic<long> total_nr_syscalls(0);
@@ -62,12 +63,9 @@ void os_constructors(){
 	set_readahead_2mb_limit(a);
 #endif
 
-
 	//Set bitmap size inside the OS
 	a = CROSS_BITMAP_SHIFT;
 	set_cross_bitmap_shift(a);
-
-
 }
 
 struct thread_args{
@@ -77,6 +75,13 @@ struct thread_args{
         size_t offset; //Offset of file where RA to start from
         unsigned long read_time; //Return value, time taken to read the file in microsec
         char filename[FILENAMEMAX]; //filename for opening that file
+
+        /*
+         * To be used by mincore to update the 
+         * misses and hits
+         */
+        unsigned long nr_total_read_pg;
+        unsigned long nr_total_misses_pg;
 };
 
 
@@ -123,7 +128,11 @@ off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off
 /*
  * Reads through one file's page cache while prefetching
  */
+#ifdef THPOOL
 void mincore_th(void *arg){
+#else
+void *mincore_th(void *arg){
+#endif
 
         struct thread_args *a = (struct thread_args*)arg;
         struct stat st;
@@ -166,7 +175,10 @@ void mincore_th(void *arg){
 
         while(ra_offset < filesize){
 
-                printf("%s: fd:%d, ra_offset = %ld\n", __func__, fd, ra_offset);
+                /*
+                printf("%s: fd:%d, ra_offset = %ld\n", __func__,
+                                fd, ra_offset);
+                */
 
                 if(readahead(fd, ra_offset, NR_RA_PAGES << PAGESHIFT) < 0){
                         printf("%s:unable to readahead fd:%d\n", __func__, fd);
@@ -178,27 +190,100 @@ void mincore_th(void *arg){
                         exit(0);
                 }
                 ra_offset = check_cache_update_offset(mincore_array, ra_offset, filesize);
+
+                total_nr_syscalls.store(total_nr_syscalls.load() + 2);
+                total_bytes_ra.store(total_bytes_ra.load() + (NR_RA_PAGES << PAGESHIFT));
         }
 
+#if 0
+        printf("Exiting fd=%d\n", fd);
+        /*Update the stats*/
+        total_nr_syscalls.store(total_nr_syscalls.load() + nr_syscalls_done);
+        total_bytes_ra.store(total_bytes_ra.load() + total_bytes_ra_done);
+
+        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+#endif
+
+#ifdef THPOOL
+        return;
+#else
+        return NULL;
+#endif
+}
+
+
+void update_pc_misses(void *arg, void *mem, off_t filesize, off_t offset, size_t buff_sz){
+
+        struct thread_args *a = (struct thread_args*)arg;
+        unsigned int nr_pages, nr_file_pg, i;
+
+        unsigned char *mincore_array = NULL;
+
+        off_t nr_misses_pg = 0;
+        off_t nr_read_pg = 0;
+
+#ifndef STATS_PC_MISSES_MINCORE
+        goto exit;
+#endif
+
+        if(!arg || !mem)
+                goto exit;
+
+        nr_pages = (filesize+PG_SZ) >> PAGESHIFT;
+        mincore_array = (unsigned char *)malloc(nr_pages);
+        if(!mincore_array){
+                printf("%s: mincore_array could not be allocated error %s\n", __func__, strerror(errno));
+        }
+
+        if(mincore(mem, filesize, mincore_array) == -1){
+                printf("%s: mincore error %s\n", __func__, strerror(errno));
+                goto free_exit;
+        }
+
+        for(i=0; i<(buff_sz >> PAGESHIFT); i++){
+                if(mincore_array[i+(offset>>PAGESHIFT)] == 0){
+                        nr_misses_pg += 1UL;
+                }
+                nr_read_pg += 1UL;
+                //printf("mincore_array[%u] = %u\n", i, mincore_array[i+(offset>>PAGESHIFT)]);
+        }
+        a->nr_total_misses_pg += nr_misses_pg;
+        a->nr_total_read_pg += nr_read_pg;
+
+#if 0
+        printf("%s: offset:%ld, buff_sz:%ld, tot_read=%ld, tot_misses=%ld\n",
+                        __func__, offset >> PAGESHIFT, buff_sz >> PAGESHIFT, a->nr_total_read_pg, a->nr_total_misses_pg);
+#endif
+
+free_exit:
+        free(mincore_array);
+exit:
         return;
 }
 
 
 //Will be reading one pvt file per thread
+#ifdef THPOOL
 void reader_th(void *arg){
+#else
+void *reader_th(void *arg){
+#endif
 
         struct thread_args *a = (struct thread_args*)arg;
 
         struct timeval start, end;
         struct timeval open_start, open_end;
+        void *mem = NULL;
 
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
 
         size_t readnow, bytes_read, offset, ra_offset;
 
-        long tid = gettid();
+        off_t filesize;
+        struct stat st;
 
+        long tid = gettid();
 
         gettimeofday(&open_start, NULL);
 #if SHARED_FILE
@@ -208,6 +293,19 @@ void reader_th(void *arg){
                 exit(0);
         }
 #endif //SHARED_FILE
+
+#ifdef STATS_PC_MISSES_MINCORE
+        if(fstat(a->fd, &st) != 0){
+                printf("\n Unable to Fstats %s:%ld\n", a->filename, tid);
+                goto exit;
+        }
+
+        filesize = st.st_size;
+        mem = mmap(NULL, filesize, PROT_READ, MAP_SHARED, a->fd, 0);
+        if(mem == MAP_FAILED){
+                printf("%s: unable to mmap file %s (%s), skipping", __func__, a->filename, strerror(errno));
+        }
+#endif //STATS_PC_MISSES_MINCORE
 
 #if defined(MODIFIED_RA) || defined(ENABLE_MINCORE_RA)
         printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
@@ -263,7 +361,11 @@ void reader_th(void *arg){
 			debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
 					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
 		}
-#endif
+#endif //APP_OPT_PREFETCH
+
+
+                //Checks mincore to determine the number of misses
+                update_pc_misses(arg, mem, filesize, offset, buff_sz);
 
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, offset);
@@ -282,6 +384,7 @@ void reader_th(void *arg){
         }
         gettimeofday(&end, NULL);
 
+
 #elif READ_RANDOM
 
         size_t nr_file_portions = a->size/buff_sz;
@@ -295,16 +398,30 @@ void reader_th(void *arg){
         gettimeofday(&start, NULL);
 
         for(long i=0; i<nr_file_portions; i++){
+
+                //Checks mincore to determine the number of misses
+                update_pc_misses(arg, mem, filesize, ((read_sequence[i]*buff_sz)+a->offset), buff_sz);
+
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, (read_sequence[i]*buff_sz)+a->offset);
         }
 
         gettimeofday(&end, NULL);
-#endif
+
+#endif //READ_SEQUENTIAL
 
         a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
+
+#ifdef STATS_PC_MISSES_MINCORE
+        munmap(mem, filesize);
+#endif
+
 exit:
+#ifdef THPOOL
         return;
+#else
+        return NULL;
+#endif
 }
 
 
@@ -313,6 +430,11 @@ int main(int argc, char **argv)
 {
 
         os_constructors();
+
+#ifdef GLOBAL_TIMER
+        struct timeval global_start, global_end;
+        gettimeofday(&global_start, NULL);
+#endif
 
         long size = FILESIZE;
 
@@ -354,19 +476,27 @@ skip_open:
         }
 #endif
 
+#ifdef THPOOL
         threadpool thpool;
         thpool = thpool_init(NR_THREADS); //spawns a set of worker threads
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
+#else
+        pthread_t pthreads[NR_THREADS];
+#endif
 
 #ifdef ENABLE_MINCORE_RA
+#ifdef THPOOL
         threadpool mincorepool;
         mincorepool = thpool_init(MINCORE_THREADS); //spawns a set of worker threads
         if(!mincorepool){
                 printf("FAILED: creating mincorepool with %d threads\n", NR_THREADS);
         }
-#endif
+#else
+        pthread_t mincore_pthreads[MINCORE_THREADS];
+#endif //THPOOL
+#endif //ENABLE_MINCORE_RA
 
         //Preallocating all the thread_args to remove overheads
         struct thread_args *req = (struct thread_args*)
@@ -378,6 +508,8 @@ skip_open:
                 req[i].nr_read_pg = NR_PAGES_READ;
                 req[i].read_time = 0UL;
 
+                req[i].nr_total_read_pg = 0UL;
+                req[i].nr_total_misses_pg = 0UL;
 #ifdef SHARED_FILE
                 //req[i].fd = fd_list[0];
                 req[i].fd = -1;
@@ -388,7 +520,11 @@ skip_open:
                 req[i].offset = 0;
 #endif
 
+#ifdef THPOOL
                 thpool_add_work(thpool, reader_th, (void*)&req[i]);
+#else
+                pthread_create(&pthreads[i], NULL, reader_th, (void*)&req[i]);
+#endif
         }
 
 
@@ -401,17 +537,38 @@ skip_open:
 #endif //SHARED_FILE
 
 #ifdef SHARED_FILE
-        for(int i=0; i<1; i++)
+        for(int i=0; i<1; i++){
+                file_name(i, filename, 1);
 #else
-        for(int i=0; i<NR_THREADS; i++)
+        for(int i=0; i<NR_THREADS; i++){
+                file_name(i, filename, NR_THREADS);
 #endif
-        {
                 strcpy(req_mincore[i].filename, filename);
-                thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
-        }
 
+#ifdef THPOOL
+                thpool_add_work(mincorepool, mincore_th, (void*)&req_mincore[i]);
+#else
+                pthread_create(&mincore_pthreads[i], NULL, mincore_th, (void*)&req_mincore[i]);
+#endif
+
+        }
 #endif //ENABLE_MINCORE_RA
+
+
+#ifdef THPOOL
         thpool_wait(thpool);
+#else
+        for(int i=0; i<NR_THREADS; i++){
+                pthread_join(pthreads[i], NULL);
+        }
+#endif
+
+
+#ifdef GLOBAL_TIMER
+        gettimeofday(&global_end, NULL);
+        float global_max_time = 0.f; //in sec
+#endif
+
 
         //Print the Throughput
         
@@ -426,12 +583,31 @@ skip_open:
 #else
         size_mb = FILESIZE/(1024L*1024L);
 #endif
+
         printf("Total File size = %ld MB\n", size_mb);
         for(int i=0; i<NR_THREADS; i++){
                 time = req[i].read_time/1000000.f;
                 if(max_time < time)
                         max_time = time;
         }
+
+#ifdef STATS_PC_MISSES_MINCORE
+        double nr_total_read_pg = 0;
+        double nr_total_misses_pg = 0;
+
+        for(int i=0; i<NR_THREADS; i++){
+                nr_total_read_pg += req[i].nr_total_read_pg;
+                nr_total_misses_pg += req[i].nr_total_misses_pg;
+        }
+
+        printf("MISSES_MINCORE total_read=%.1lf, total_misses=%.1lf, missratio=%lf\n",
+                        nr_total_read_pg, nr_total_misses_pg, (nr_total_misses_pg/nr_total_read_pg));
+#endif
+
+#ifdef GLOBAL_TIMER
+        global_max_time = usec_diff(&global_start, &global_end)/1000000.f;
+#endif
+
 #if defined(READ_SEQUENTIAL) && defined(STRIDED_READ)
         printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #elif defined(READ_SEQUENTIAL) && !defined(STRIDED_READ)
@@ -440,7 +616,13 @@ skip_open:
         printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
 #endif
 
+#ifdef GLOBAL_TIMER
+        printf("GLOBAL Bandwidth = %.2f MB/sec\n", size_mb/global_max_time);
+#endif
+
 #ifdef ENABLE_MINCORE_RA
+        printf("Total Syscalls Done = %ld , total bytes ra= %ld\n", total_nr_syscalls.load(), total_bytes_ra.load());
+
         printf("Total nr_ra = %ld mincore\n", total_nr_syscalls.load());
         printf("Total nr_bytes_ra= %ld mincore\n", total_bytes_ra.load());
         start_cross_trace(PRINT_GLOBAL_STATS, 0);

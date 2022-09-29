@@ -9,6 +9,10 @@ fi
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
+APPPREFIX=
+#APPPREFIX="numactl --cpunodebind=0 --membind=0"
+APP="./bin/read_shared_seq"
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -31,6 +35,15 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
+<<<<<<< HEAD
+FILESIZE=80 ##GB
+NR_RA_PAGES=2048L #nr_pages
+NR_READ_PAGES=128
+#NR_READ_PAGES=512
+
+#declare -a nproc=("16" "4" "8" "1" "32")
+declare -a nproc=("16")
+=======
 FILESIZE=50 ##GB
 
 NR_RA_PAGES=2560L #nr_pages
@@ -43,6 +56,7 @@ READ_SIZE=2M ##MB
 APP="./bin/read_shared_seq"
 
 declare -a nproc=("16" "4" "8" "1" "32")
+>>>>>>> bf5654878635c5a8733add583442004b5282bd9e
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -68,14 +82,13 @@ CLEAN_AND_WRITE() {
         FlushDisk
 }
 
-
 VanillaRA() {
         echo "Read Shared Seq Vanilla RA"
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
         #./bin/read_shared_seq_vanilla
-	${APP}_vanilla
+        $APPPREFIX ${APP}_vanilla
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -87,8 +100,7 @@ VanillaOPT() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
-	${APP}_vanilla_opt
-        #./bin/read_shared_seq_vanilla_opt
+        $APPPREFIX ${APP}_vanilla_opt
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -101,7 +113,7 @@ OSonly() {
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         #./bin/read_shared_seq
-	${APP}
+        $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -113,7 +125,7 @@ CrossInfo() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
-	${APP}
+        $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -125,7 +137,7 @@ CII() {
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_CII.so"
-	${APP}
+        $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -133,11 +145,13 @@ CII() {
 }
 
 CIP() {
-        echo "Cross Info IOOPT"
+<<<<<<< HEAD
+        echo "Cross Info Predict"
         FlushDisk
         ENABLE_LOCK_STATS
         export LD_PRELOAD="/usr/lib/lib_CIP.so"
-	${APP}
+        #./bin/read_shared_seq
+        $APPPREFIX ${APP}
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
@@ -150,13 +164,12 @@ MINCORE() {
         ENABLE_LOCK_STATS
         export LD_PRELOAD=""
         #./bin/read_shared_seq_mincore
-        ${APP}_mincore
+        $APPPREFIX ${APP}_mincore
         export LD_PRELOAD=""
         DISABLE_LOCK_STATS
         sudo dmesg -c
         sudo cat /proc/lock_stat
 }
-
 
 
 COMPILE_APP 1
@@ -166,7 +179,7 @@ for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
 
-        FILENAMEBASE="stats_shared_seq_${READ_SIZE}r_${RA_SIZE}pgra_$NPROC"
+        FILENAMEBASE="stats_shared_seq_${NR_READ_PAGES}pgr_${NR_RA_PAGES}pgra_$NPROC"
 
         VanillaRA &> VanillaRA_${FILENAMEBASE}
         VanillaOPT &> VanillaOPT_${FILENAMEBASE}

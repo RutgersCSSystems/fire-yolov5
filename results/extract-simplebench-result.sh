@@ -4,17 +4,15 @@ NR_RA_PAGES=2560L #nr_pages
 NR_READ_PAGES=512
 
 declare -a nproc=("1" "4" "8" "16" "32")
-#declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII" "CIP" "MINCORE")
-declare -a techarr=("VanillaRA" "OSonly" "CrossInfo" "CII" "CIP" "CIPI" "MINCORE")
+declare -a techarr=("VanillaRA" "VanillaOPT" "OSonly" "CrossInfo" "CII" "CIP" "MINCORE")
 
-READSIZE=2M
-RASIZE=10Mpg
+READSIZE=128pg
+RASIZE=2560Lpg
 
+TARGETDIR=$OUTPUTDIR/SIMPLEBENCH-21SEPT-STATS
 
-TARGETDIR=$OUTPUTDIR/SIMPLEBENCH-21SEPT-STATS/
-
-DATA_FOLDER=$OUTPUT_FOLDER/SIMPLEBENCH-21SEPT-STATS/read_pvt_rand
-BASENAME=stats_pvt_rand
+DATA_FOLDER=$OUTPUT_FOLDER/SIMPLEBENCH-21SEPT-STATS/read_shared_seq
+BASENAME=stats_shared_seq
 
 #Checks if the OUTFILE exists, 
 TOUCH_OUTFILE(){
