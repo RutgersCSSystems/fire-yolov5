@@ -76,6 +76,7 @@ std::mutex fp_mutex;
 #define SIZE   50000
 #define QUEUES 16
 threadpool_t *pool[QUEUES];
+int g_next_queue=0;
 pthread_mutex_t lock;
 
 #include "frontend.hpp"
@@ -902,9 +903,10 @@ void *prefetcher_th(void *arg) {
 						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
 			}
 #endif
-		        //int idx= uinode->ino % QUEUES;
-            		//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-            		threadpool_add(pool[uinode->ino % QUEUES], prefetcher_th, (void*)arg, 0);
+		    //int idx= uinode->ino % QUEUES;
+            //thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+            threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+            g_next_queue++;
 #else
 			prefetcher_th((void*)arg);
 #endif
