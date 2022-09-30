@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 DBHOME=$PWD
 PREDICT="OSONLY"
 THREAD=32
@@ -25,8 +25,10 @@ declare -a num_arr=("40000000")
 declare -a thread_arr=("16" "8" "32" "4")
 declare -a workload_arr=("restart")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI" "CIPI_sync")
-#declare -a config_arr=("Cross_Info")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
+
+declare -a config_arr=("CII" "CIP" "OSonly")
+declare -a thread_arr=("16")
 
 
 #Require for large database
@@ -129,7 +131,7 @@ RUN() {
 
 					mkdir -p $RESULTS
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
-					mpiexec -n $THREAD -env LD_PRELOAD=/usr/lib/lib_$CONFIG.so ./hacc_io_read $NUM $DBDIR &> $RESULTFILE
+					mpiexec -n $THREAD -x LD_PRELOAD=/usr/lib/lib_$CONFIG.so ./hacc_io_read $NUM $DBDIR &> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"

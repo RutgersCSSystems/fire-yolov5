@@ -10,8 +10,8 @@
 
 #sudo apt update; sudo apt install mpich -y
 
-PREFETCH_SIZE=1024
-NR_WORKERS=16
+PREFETCH_SIZE=4096
+NR_WORKERS=4
 CROSS_BITMAP_SHIFT=37
 NR_PREDICT_SAMPLE_FREQ=8
 make -j$(nproc)

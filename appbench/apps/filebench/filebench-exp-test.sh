@@ -32,7 +32,8 @@ declare -a workload_arr=("randomrw.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
 declare -a config_arr=("Cross_Info" "CIP" "CII" "OSonly")
-#declare -a config_arr=("OSonly")
+declare -a config_arr=("OSonly")
+declare -a config_arr=("CII")
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -45,8 +46,8 @@ glob_prefechthrd=1
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
 declare -a prefech_thrd_arr=("1" "8" "16")
 
-declare -a prefech_sz_arr=("1024")
-declare -a prefech_thrd_arr=("16")
+declare -a prefech_sz_arr=("4096")
+declare -a prefech_thrd_arr=("4")
 
 
 
