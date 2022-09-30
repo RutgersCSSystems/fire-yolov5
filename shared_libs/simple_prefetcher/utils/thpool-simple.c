@@ -291,8 +291,9 @@ static void *threadpool_thread(void *threadpool)
         task.argument = pool->queue[pool->head].argument;
         pool->head = (pool->head + 1) % pool->queue_size;
         pool->count -= 1;
-	if(pool->count)
-		fprintf(stderr,"Total pending tasks %d\n", pool->count);
+
+  	    //if(pool->count)
+		  //  fprintf(stderr,"Total pending tasks %d\n", pool->count);
 
         /* Unlock */
         pthread_mutex_unlock(&(pool->lock));
