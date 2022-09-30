@@ -46,20 +46,21 @@ let XTITLE='#. of threads'
 declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
 declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
-declare -a threadarr=("1" "4" "8" "16")
 #declare -a threadarr=("16")
 
 
 declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
 declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
 
-declare -a snappyworkarr=("files-500")
-declare -a snappyproxyarr=("10MB-files")
+declare -a snappyworkarr=("fsize-100000" "fsize-200000")
+declare -a snappyproxyarr=("100MB/file" "200MB/file")
 
+declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 
-declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo" "CrossInfo[+OPT]")
+declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo" "CrossInfo[+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict,+OPT]")
 
+declare -a threadarr=("4" "8" "16")
 
 
 
@@ -340,6 +341,21 @@ MOVEGRAPHS() {
 }
 
 
+APP='snappy'
+TARGET="$OUTPUTDIR/snappy"
+let APPINTERVAL=1000
+YTITLE='Throughput (MB/sec)'
+XTITLE='#. of threads'
+echo $TARGET
+apparr=("${snappyworkarr[@]}")
+proxyapparr=("${snappyproxyarr[@]}")
+EXTRACT_RESULT "snappy"
+MOVEGRAPHS
+#EXTRACT_RESULT_THREADS "snappy"
+#MOVEGRAPHS
+exit
+
+
 
 APP='ROCKSDB'
 TARGET="$OUTPUTDIR/ROCKSDB"
@@ -350,11 +366,8 @@ let APPINTERVAL=1000
 YTITLE='Throughput (OPS/sec) in 100x'
 echo $TARGET
 XTITLE='Workloads'
-
 EXTRACT_RESULT "ROCKSDB"
 MOVEGRAPHS
-
-
 XTITLE='#. of threads'
 #EXTRACT_RESULT_THREADS "ROCKSDB"
 MOVEGRAPHS
@@ -378,22 +391,6 @@ exit
 
 
 
-
-APP='snappy'
-
-TARGET="$OUTPUTDIR/snappy"
-
-let APPINTERVAL=1000
-YTITLE='Throughput (MB/sec)'
-echo $TARGET
-
-apparr=("${snappyworkarr[@]}")
-proxyapparr=("${snappyproxyarr[@]}")
-EXTRACT_RESULT "snappy"
-
-XTITLE='#. of threads'
-EXTRACT_RESULT_THREADS "snappy"
-exit
 
 
 

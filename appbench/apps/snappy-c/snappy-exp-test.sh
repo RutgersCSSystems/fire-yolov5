@@ -30,19 +30,20 @@ mkdir -p $RESULTS
 declare -a thread_arr=("16")
 
 #Number of files to compress
-declare -a workload_arr=("100")
+declare -a workload_arr=("200")
 
 # Size of each file in KB
 #declare -a filesize_arr=("30000" "20000" "10000")
-declare -a filesize_arr=("100000")
+declare -a filesize_arr=("100000" "200000")
 
 FILESIZE=1000
 
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
 declare -a config_arr=("Cross_Info" "OSonly")
-declare -a config_arr=("Cross_Info")
-#declare -a config_arr=("CIP" "CII" "OSonly")
+declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
+declare -a config_arr=("Cross_Info" "Vanilla" "CIP" "CII" "CIPI" "OSonly")
+
 
 FlushDisk()
 {
