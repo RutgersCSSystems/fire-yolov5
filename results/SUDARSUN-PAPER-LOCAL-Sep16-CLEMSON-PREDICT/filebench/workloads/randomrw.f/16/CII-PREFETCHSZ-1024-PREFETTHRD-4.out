@@ -1,0 +1,88 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+add_fd_to_inode: adding page cache to uinode 82319898 with 16777216 bits
+0.000: Allocated 14825MB of shared memory
+0.005: Random RW Version 3.0 personality successfully loaded
+0.005: Populating and pre-allocating filesets
+0.006: Removing largefile1 tree (if exists)
+0.015: Pre-allocating directories in largefile1 tree
+2.503: Pre-allocating files in largefile1 tree
+add_fd_to_inode: adding page cache to uinode 82847637 with 16777216 bits
+21.660: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+21.660: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+21.895: Starting 1 rand-rw instances
+22.903: Running...
+122.905: Run took 100 seconds...
+122.906: Per-Operation Breakdown
+rand-write1          14739373ops   147390ops/s 1151.5mb/s    0.099ms/op [0.001ms - 42.054ms]
+rand-read1           123754757ops  1237519ops/s 9668.1mb/s    0.004ms/op [0.001ms - 44.916ms]
+122.906: IO Summary: 138494130 ops 1384909.461 ops/s 1237519/147390 rd/wr 10819.6mb/s 0.014ms/op
+122.906: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/randomrw.f"
+	User time (seconds): 0.27
+	System time (seconds): 9.99
+	Percent of CPU this job got: 8%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:04.36
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3695820
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921962
+	Minor (reclaiming a frame) page faults: 11890
+	Voluntary context switches: 8838
+	Involuntary context switches: 362
+	Swaps: 0
+	File system inputs: 41096
+	File system outputs: 49318440
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[544388.058265] write_proc_unbounded: Value of write = 1
+[544388.058276] write_proc_2mb_limit: Value of write = 1
+[544388.058281] write_proc_bitmap_shift: Value of write = 36
+[544388.062410] write_proc_unbounded: Value of write = 1
+[544388.062420] write_proc_2mb_limit: Value of write = 1
+[544388.062424] write_proc_bitmap_shift: Value of write = 36
+[544389.457689] write_proc_unbounded: Value of write = 1
+[544389.457699] write_proc_2mb_limit: Value of write = 1
+[544389.457704] write_proc_bitmap_shift: Value of write = 36
+[544389.461103] write_proc_unbounded: Value of write = 1
+[544389.461112] write_proc_2mb_limit: Value of write = 1
+[544389.461117] write_proc_bitmap_shift: Value of write = 36
+[544389.461363] write_proc_unbounded: Value of write = 0
+[544389.461366] write_proc_2mb_limit: Value of write = 0
+[544389.465591] write_proc_unbounded: Value of write = 1
+[544389.465596] write_proc_2mb_limit: Value of write = 1
+[544389.465599] write_proc_bitmap_shift: Value of write = 36
+[544389.550952] sh (129172): drop_caches: 3
+[544391.922862] sh (129177): drop_caches: 3
+[544398.164432] write_proc_unbounded: Value of write = 1
+[544398.164442] write_proc_2mb_limit: Value of write = 1
+[544398.164446] write_proc_bitmap_shift: Value of write = 36
+[544398.167775] write_proc_unbounded: Value of write = 1
+[544398.167784] write_proc_2mb_limit: Value of write = 1
+[544398.167788] write_proc_bitmap_shift: Value of write = 36
+[544398.754309] sh (129253): drop_caches: 3
+[544411.078994] sh (129258): drop_caches: 3
+[544411.113133] write_proc_unbounded: Value of write = 1
+[544411.113143] write_proc_2mb_limit: Value of write = 1
+[544411.113149] write_proc_bitmap_shift: Value of write = 36
+[544411.212366] sh (129300): drop_caches: 3
+[544411.318626] sh (129305): drop_caches: 3
+[544411.347350] write_proc_unbounded: Value of write = 1
+[544411.347359] write_proc_2mb_limit: Value of write = 1
+[544411.347363] write_proc_bitmap_shift: Value of write = 36
+[544512.428817] write_proc_unbounded: Value of write = 0
+[544512.428827] write_proc_2mb_limit: Value of write = 0
