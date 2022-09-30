@@ -11,7 +11,7 @@ HACC_EXE = hacc_io hacc_io_write hacc_io_read hacc_open_close hacc_printinfo
 CXXFLAGS =  -g -O3 -DGLEAN_PRINT_PERROR -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -Wall
 
 ### Targets - do file-per-process by default
-fpp: CXXFLAGS += #-DHACC_IO_FILE_PER_PROCESS
+fpp: CXXFLAGS += -DHACC_IO_FILE_PER_PROCESS
 fpp: all
 
 all: $(HACC_EXE)
