@@ -234,6 +234,10 @@ static void CompressData(void *cntxt) {
                         output = NULL;
                 }
 
+                if (input) {
+                       free(input);
+                       input = NULL;
+                }
 #ifdef _ENABLE_TIMER
                 gettimeofday(&end_t, NULL);
                 compress_time += simulation_time(start_t, end_t);
