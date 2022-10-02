@@ -11,7 +11,6 @@ source $RUN_SCRIPTS/generic_funcs.sh
 
 APPPREFIX=
 #APPPREFIX="numactl --cpunodebind=0 --membind=0"
-APP="./bin/read_shared_seq"
 
 FlushDisk()
 {
@@ -35,19 +34,10 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
-<<<<<<< HEAD
-FILESIZE=80 ##GB
-NR_RA_PAGES=2048L #nr_pages
-NR_READ_PAGES=128
-#NR_READ_PAGES=512
-
-#declare -a nproc=("16" "4" "8" "1" "32")
-declare -a nproc=("16")
-=======
 FILESIZE=50 ##GB
 
 NR_RA_PAGES=2560L #nr_pages
-NR_READ_PAGES=512
+NR_READ_PAGES=128
 
 ##These need to be equivalent of the above
 RA_SIZE=10M ##MB
@@ -55,9 +45,7 @@ READ_SIZE=2M ##MB
 
 APP="./bin/read_shared_seq"
 
-declare -a nproc=("16" "4" "8" "1" "32")
->>>>>>> bf5654878635c5a8733add583442004b5282bd9e
-
+declare -a nproc=("16")
 #deletes all the Read files
 CLEAR_FILES() {
         rm -rf ./threads_*/
