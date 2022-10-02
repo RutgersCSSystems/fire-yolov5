@@ -1,14 +1,17 @@
 Created 16 bg_threads
 DESTRUCTOR GETTING CALLED 
-tot input sz 40960000000 outsz 1940016000
-Total time: 24.19 s
-Average throughput: 1614.50 MB/s
-[44461.012790] sh (34611): drop_caches: 3
-[44461.064010] sh (34616): drop_caches: 3
-[44463.111403] sh (34622): drop_caches: 3
-[44463.155510] sh (34627): drop_caches: 3
-[44465.189633] write_proc_unbounded: Value of write = 0
-[44465.189641] write_proc_2mb_limit: Value of write = 0
-[44465.189646] write_proc_bitmap_shift: Value of write = 36
-[44489.384745] write_proc_unbounded: Value of write = 0
-[44489.384756] write_proc_2mb_limit: Value of write = 0
+PRINT_GLOBAL_LIB_STATS in dest
+tot input sz 65536000000 outsz 3104025600
+Total time: 42.45 s
+Average throughput: 1472.31 MB/s
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[45618.112556] sh (46640): drop_caches: 3
+[45618.181541] sh (46645): drop_caches: 3
+[45620.226835] sh (46651): drop_caches: 3
+[45620.267500] sh (46656): drop_caches: 3
+[45622.299989] write_proc_unbounded: Value of write = 0
+[45622.299998] write_proc_2mb_limit: Value of write = 0
+[45622.300003] write_proc_bitmap_shift: Value of write = 36
+[45664.750524] write_proc_unbounded: Value of write = 0
+[45664.750539] write_proc_2mb_limit: Value of write = 0

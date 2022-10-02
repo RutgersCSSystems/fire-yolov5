@@ -25,24 +25,85 @@ let gen_data=$1
 mkdir -p $RESULTS
 
 #declare -a thread_arr=("4" "8" "16" "32")
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-
 declare -a thread_arr=("16")
 
 #Number of files to compress
-declare -a workload_arr=("200")
+declare -a workload_arr=("400")
 
 # Size of each file in KB
-#declare -a filesize_arr=("30000" "20000" "10000")
-declare -a filesize_arr=("100000" "200000")
-
+declare -a filesize_arr=("10000" "20000" "40000" "80000" "100000")
 FILESIZE=1000
-
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
 declare -a config_arr=("Cross_Info" "OSonly")
 declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
+
 declare -a config_arr=("Cross_Info" "Vanilla" "CIP" "CII" "CIPI" "OSonly")
+#declare -a config_arr=("OSonly")
+#declare -a config_arr=("Cross_Info" "CIP" "CII" "CIPI")
+
+declare -a prefech_sz_arr=("4096" "1024")
+declare -a prefech_thrd_arr=("1" "4" "16")
+
+#Pass these arguments as a global variable
+workload_arr_in=$2
+config_arr_in=$3
+thread_arr_in=$4
+
+glob_prefetchsz=1024
+glob_prefechthrd=1
+
+#enable sensitivity study?
+let glob_enable_sensitive=0
+
+
+get_global_arr() {
+
+	if [ ! -z "$workload_arr_in" ] 
+	then
+		if [ ${#workload_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		    workload_arr=("${workload_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$config_arr_in" ]
+	then
+		if [ ${#config_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		   config_arr=("${config_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$thread_arr_in" ]
+	then
+		if [ ${#thread_arr_in=[@]} -eq 0 ]; then
+		    echo "input array in NULL"
+		else
+		   thread_arr=("${thread_arr_in[@]}")
+		fi
+	fi
+
+	if [ ! -z "$4" ]
+	then
+		prefetchsz=$4
+	else
+		prefetchsz=$glob_prefetchsz
+	fi
+
+	if [ ! -z "$5" ]
+	then
+		prefechthrd=$5
+	else
+		prefechthrd=$glob_prefechthrd
+	fi
+}
+
+get_global_arr
+
+
 
 
 FlushDisk()
@@ -124,14 +185,28 @@ GEN_RESULT_PATH() {
 	#RESULTFILE=""
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKPATH/$THREAD
 	mkdir -p $RESULTS
-	RESULTFILE=$RESULTS/$CONFIG.out
+	if [ $glob_enable_sensitive -gt 0 ]; then
+		RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+	else
+		RESULTFILE=$RESULTS/$CONFIG".out"
+	fi
 }
 
 
 
 RUN() {
 
-	COMPILE_SHAREDLIB
+        #COMPILE_SHAREDLIB
+        cd $PREDICT_LIB_DIR
+
+	if [ $glob_enable_sensitive -gt 0 ]; then
+		sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
+		sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
+	fi
+
+	./compile.sh
+	cd $DBHOME
+	
 
 	#NUMFILES
 	for WORKLOAD in "${workload_arr[@]}"
@@ -174,7 +249,20 @@ RUN() {
 	done
 }
 
-RUN
+if [ $glob_enable_sensitive -gt 0 ]; then 
+	for glob_prefetchsz in "${prefech_sz_arr[@]}"
+	do
+		for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+		do
+			get_global_arr	
+			RUN
+		done
+	done
+else
+	RUN
+fi
+
+
 #CLEAR_DATA
 exit
 

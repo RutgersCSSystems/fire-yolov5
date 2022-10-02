@@ -51,10 +51,13 @@ t = table(file=output)
 def get_legends():
     global legends 
     global legendtext
+    global clusterlen
 
     print str(os.getenv('legendlist'))
+
     if(str(os.getenv('legendlist')) != 'None'):
         legends=os.getenv('legendlist').split(',')
+        clusterlen=len(legends)
 
     if(str(os.getenv('legendnamelist')) != 'None'):
         legendtext=os.getenv('legendnamelist').split(',')

@@ -52,15 +52,20 @@ declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" 
 declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
 declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
 
-declare -a snappyworkarr=("fsize-100000" "fsize-200000")
-declare -a snappyproxyarr=("100MB/file" "200MB/file")
+declare -a snappyworkarr=("fsize-20000" "fsize-40000" "fsize-80000" "fsize-100000")
+declare -a snappyproxyarr=("200MB-files" "400MB-files" "800MB-files" "1000MB-files")
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo" "CrossInfo[+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict,+OPT]")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo" "CrossInfo[+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
-declare -a threadarr=("4" "8" "16")
+#declare -a techarr=("Cross_Info")
+#declare -a techarrname=("CrossInfo")
+
+
+#declare -a threadarr=("4" "8" "16")
+declare -a threadarr=("16")
 
 
 

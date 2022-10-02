@@ -8,8 +8,8 @@ fi
 
 
 PREDICT=0
-DATA=com-orkut.ungraph.txt
-#DATA=com-friendster.ungraph.txt
+#DATA=com-orkut.ungraph.txt
+DATA=com-friendster.ungraph.txt
 INPUT=$SHARED_DATA/$DATA
 APPBASE=$APPBENCH/apps/graphchi/graphchi-cpp/bin/example_apps
 APP=$APPBASE/pagerank
@@ -48,6 +48,7 @@ FlushDisk
 FlushDisk
 rm -rf $DATA.*
 #SETPRELOAD
+export LD_PRELOAD=/usr/lib/lib_CIP.so
 echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1
 export LD_PRELOAD=""
 set +x
