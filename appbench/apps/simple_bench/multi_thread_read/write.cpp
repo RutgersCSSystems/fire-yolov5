@@ -38,9 +38,18 @@ void prefetcher_th(void *arg){
                 return;
         }
 
-        for(long i=0; i <a->size; i++) {
+	int write_size = PG_SZ * NR_PAGES_READ;
+	char *buffer = (char *)malloc(write_size);
+	memset(buffer, 'C', write_size);
+        /*for(long i=0; i < a->size; i++) {
                 fprintf(fp, "C");
-        }
+        }*/
+	long i = 0;
+	while(i < a->size) {
+		 fwrite(buffer, write_size, 1, fp);
+		 i = i + write_size;	
+	     	 //printf("TID:%ld: size=%ld, current=%ld\n", tid, a->size, i);
+	}
 
         fclose(fp);
         return;

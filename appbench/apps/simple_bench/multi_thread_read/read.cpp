@@ -33,8 +33,6 @@
 
 #include "util.h"
 #include "utils/thpool.h"
-#include "utils/bitarray.h"
-
 
 std::atomic<long> total_nr_syscalls(0);
 std::atomic<long> total_bytes_ra(0);

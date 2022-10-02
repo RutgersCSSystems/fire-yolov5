@@ -580,194 +580,187 @@ unsigned long usec_diff(struct timeval *a, struct timeval *b)
 #ifdef CONCURRENT_PREFETCH
 void *prefetcher_th(void *arg) {
 #else //THPOOL needs void 
-	void prefetcher_th(void *arg) {
+void prefetcher_th(void *arg) {
 #endif
 
-		long tid = gettid();
-		struct thread_args *a = (struct thread_args*)arg;
+	long tid = gettid();
+	struct thread_args *a = (struct thread_args*)arg;
 
 
 #ifdef ENABLE_LIB_STATS
-		/*
-		 * per_thread counter for nr of readaheads done
-		 * and nr of bytes requested for readahead
-		 */
-		long nr_ra_done = 0;
-		long nr_bytes_ra_done = 0;
+	/*
+	 * per_thread counter for nr of readaheads done
+	 * and nr of bytes requested for readahead
+	 */
+	long nr_ra_done = 0;
+	long nr_bytes_ra_done = 0;
 #endif
 
-		off_t file_pos; //actual file position where readahead will be done
-		size_t readnow;
-		struct read_ra_req ra;
-		off_t start_pg; //start from here in page_cache_state
-		off_t zero_pg; //end of bitmap search
-		off_t check_pg; //checking the bitmap a bit further
-		off_t pg_diff;
-		long err;
+	off_t file_pos; //actual file position where readahead will be done
+	size_t readnow;
+	struct read_ra_req ra;
+	off_t start_pg; //start from here in page_cache_state
+	off_t zero_pg; //end of bitmap search
+	off_t check_pg; //checking the bitmap a bit further
+	off_t pg_diff;
+	long err;
 
-		bit_array_t *page_cache_state = NULL;
+	bit_array_t *page_cache_state = NULL;
 
 
+	/*
+	 * If the file is completely prefetched, dont prefetch
+	 */
+	if(a->uinode && a->uinode->fully_prefetched.load()){
+		//printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
+		goto exit_prefetcher_th;
+	}
+
+	/*
+	 * Allocate page cache bitmap if you want to use it without predictor
+	 */
+	page_cache_state = allocate_bitmap(a);
+
+	check_pc_bitmap(arg);
+
+	file_pos = a->offset;
+
+
+	/*
+	 * If the file prefetch offset is almost towards the end of file
+	 * dont prefetch
+	 */
+	if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
+		goto exit_prefetcher_th;
+	}
+
+	debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
+			"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
+			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
+			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
+
+
+	while (file_pos < a->file_size){
 		/*
-		 * If the file is completely prefetched, dont prefetch
+		 * Stop prefetching if the prefetch limit is reached
 		 */
-		if(a->uinode && a->uinode->fully_prefetched.load()){
-			//printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
+		if((file_pos - a->offset) >= a->prefetch_limit){
+			debug_printf("%s: offset > prefetch_limit\n", __func__);
 			goto exit_prefetcher_th;
 		}
 
 		/*
-		 * Allocate page cache bitmap if you want to use it without predictor
+		 * If the file is closed, dont do any prefetching
 		 */
-		page_cache_state = allocate_bitmap(a);
-
-		check_pc_bitmap(arg);
-
-		file_pos = a->offset;
-
-
-		/*
-		 * If the file prefetch offset is almost towards the end of file
-		 * dont prefetch
-		 */
-		if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
+		if(is_file_closed(a->uinode, a->fd)){
 			goto exit_prefetcher_th;
 		}
-
-		debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
-				"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
-				a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
-				a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
-
-
-		while (file_pos < a->file_size){
-			/*
-			 * Stop prefetching if the prefetch limit is reached
-			 */
-			if((file_pos - a->offset) >= a->prefetch_limit){
-				debug_printf("%s: offset > prefetch_limit\n", __func__);
-				goto exit_prefetcher_th;
-			}
-
-			/*
-			 * If the file is closed, dont do any prefetching
-			 */
-			if(is_file_closed(a->uinode, a->fd)){
-				goto exit_prefetcher_th;
-			}
 
 #ifdef MODIFIED_RA
-			if(page_cache_state) {
-				ra.data = page_cache_state->array;
-			}else{
-				ra.data = NULL;
-			}
+		if(page_cache_state) {
+			ra.data = page_cache_state->array;
+		}else{
+			ra.data = NULL;
+		}
 
-			if(!ra.data){
-				printf("%s: no ra.data\n", __func__);
-				goto exit_prefetcher_th;
-			}
+		if(!ra.data){
+			printf("%s: no ra.data\n", __func__);
+			goto exit_prefetcher_th;
+		}
 
-			//struct timeval start, end;
-			//gettimeofday(&start, NULL);
-			uinode_bitmap_lock(a->uinode);
+		//struct timeval start, end;
+		//gettimeofday(&start, NULL);
+		uinode_bitmap_lock(a->uinode);
 
-			err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
-			//err = readahead(a->fd, file_pos, a->prefetch_size);
-			if(err < -10){
-				uinode_bitmap_unlock(a->uinode);
-				goto exit_prefetcher_th;
-			}
-			else if(err < 0){
-				uinode_bitmap_unlock(a->uinode);
-				printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
-				goto exit_prefetcher_th;
-			}
+		err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+		//err = readahead(a->fd, file_pos, a->prefetch_size);
+		if(err < -10){
+			uinode_bitmap_unlock(a->uinode);
+			goto exit_prefetcher_th;
+		}
+		else if(err < 0){
+			uinode_bitmap_unlock(a->uinode);
+			printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
+			goto exit_prefetcher_th;
+		}
 
 #ifdef ENABLE_LIB_STATS
-			else{
-				nr_ra_done += 1;
-				nr_bytes_ra_done += a->prefetch_size;
-				//fprintf(stderr, "File Size %zu, Bytes prefetched %zu Inode %d\n",
-				//		a->file_size, nr_bytes_ra_done, a->uinode->ino);
-			}
+		else{
+			nr_ra_done += 1;
+			nr_bytes_ra_done += a->prefetch_size;
+			//fprintf(stderr, "File Size %zu, Bytes prefetched %zu Inode %d\n",
+			//		a->file_size, nr_bytes_ra_done, a->uinode->ino);
+		}
 #endif
-			uinode_bitmap_unlock(a->uinode);
+		uinode_bitmap_unlock(a->uinode);
 
 #ifdef ENABLE_EVICTION
-		        update_lru(a->uinode);
-		        //update_nr_free_pg(ra.nr_free);
+		update_lru(a->uinode);
+		//update_nr_free_pg(ra.nr_free);
 #endif
-        //gettimeofday(&end, NULL);
-        //printf("ra time = %ld\n", usec_diff(&start, &end));
+//gettimeofday(&end, NULL);
+//printf("ra time = %ld\n", usec_diff(&start, &end));
 
 #ifdef READAHEAD_INFO_PC_STATE
 
-			//gettimeofday(&start, NULL);
+		//gettimeofday(&start, NULL);
+		pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
+		//gettimeofday(&end, NULL);
+		//printf("update offset time = %ld\n", usec_diff(&start, &end));
 
-			pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
+		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
+				"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
+				file_pos, pg_diff, a->fd, ra.data,
+				page_cache_state->numBits, start_pg, zero_pg);
 
-			//gettimeofday(&end, NULL);
-
-			//printf("update offset time = %ld\n", usec_diff(&start, &end));
-
-			debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
-					"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
-					file_pos, pg_diff, a->fd, ra.data,
-					page_cache_state->numBits, start_pg, zero_pg);
-
-			if(pg_diff == 0){
-				printf("ERR:%s, pg_diff==0\n", __func__);
-				goto exit_prefetcher_th;
-			}
-
-
-			file_pos += pg_diff << PAGE_SHIFT;
+		if(pg_diff == 0){
+			printf("ERR:%s, pg_diff==0\n", __func__);
+			goto exit_prefetcher_th;
+		}
+		file_pos += pg_diff << PAGE_SHIFT;
 
 #else //READAHEAD_INFO_PC_STATE
-			file_pos += a->prefetch_size;
+		file_pos += a->prefetch_size;
 #endif //READAHEAD_INFO_PC_STATE
 
-			/*
-			 * if the memory is less NR_REMAINING
-			 * the prefetcher stops
-			 */
-			if(ra.nr_free < NR_REMAINING)
-			{
-				debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
-				goto exit_prefetcher_th;
-			}
-#else //MODIFIED_RA
-			if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
-				//printf("error while readahead: TID:%ld \n", tid);
-				goto exit_prefetcher_th;
-			}
-#ifdef ENABLE_LIB_STATS
-			else{
-				nr_ra_done += 1;
-				nr_bytes_ra_done += a->prefetch_size;
-			}
-#endif
-			file_pos += a->prefetch_size;
-#endif //MODIFIED_RA
+		/*
+		 * if the memory is less NR_REMAINING
+		 * the prefetcher stops
+		 */
+		if(ra.nr_free < NR_REMAINING)
+		{
+			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+			goto exit_prefetcher_th;
 		}
+#else //MODIFIED_RA
+		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
+			//printf("error while readahead: TID:%ld \n", tid);
+			goto exit_prefetcher_th;
+		}
+#ifdef ENABLE_LIB_STATS
+		else{
+			nr_ra_done += 1;
+			nr_bytes_ra_done += a->prefetch_size;
+		}
+#endif
+		file_pos += a->prefetch_size;
+#endif //MODIFIED_RA
+	}
 
-
-		exit_prefetcher_th:
-		release_bitmap(page_cache_state);
+exit_prefetcher_th:
+	release_bitmap(page_cache_state);
 
 #ifndef CONCURRENT_PREDICTOR
-		free(arg);
+	free(arg);
 #endif
 
 
 #ifdef ENABLE_LIB_STATS
-		update_ra_stats_if_enabled(nr_ra_done, nr_bytes_ra_done);
+	update_ra_stats_if_enabled(nr_ra_done, nr_bytes_ra_done);
 #endif
-
-		debug_printf("Exiting %s\n", __func__);
-		return;
-	}
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
 
 
 	/*
@@ -776,176 +769,175 @@ void *prefetcher_th(void *arg) {
 #ifndef PREDICTOR
 	void inline prefetch_file(int fd){
 #else
-		//void inline prefetch_file(int fd, file_predictor *fp){
-		void inline prefetch_file(void *args){
-			struct thread_args *a = (struct thread_args*)args;
-			int fd = a->fd;
-			file_predictor *fp = a->fp;
+//void inline prefetch_file(int fd, file_predictor *fp){
+void inline prefetch_file(void *args){
+	struct thread_args *a = (struct thread_args*)args;
+	int fd = a->fd;
+	file_predictor *fp = a->fp;
 #endif
 
-			struct thread_args *arg = NULL;
-			off_t filesize;
-			off_t stride;
-			struct u_inode *uinode;
+	struct thread_args *arg = NULL;
+	off_t filesize;
+	off_t stride;
+	struct u_inode *uinode;
 
-			/*
-			 * When PREDICTOR is enabled, file sanity checks are not required
-			 * This is because the file has already been screened for
-			 * 1. Filesize
-			 * 2. Type (regular file etc.)
-			 * 3. Sequentiality
-			 * This was done at record_open
-			 */
+	/*
+	 * When PREDICTOR is enabled, file sanity checks are not required
+	 * This is because the file has already been screened for
+	 * 1. Filesize
+	 * 2. Type (regular file etc.)
+	 * 3. Sequentiality
+	 * This was done at record_open
+	 */
 #ifdef PREDICTOR
-			filesize = fp->filesize;
-			stride = fp->is_strided() * fp->portion_sz;
-			stride = 0; //XXX: TEMP fix Need to change stride detection based on all access patterns
-			if(stride < 0){
-				printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
-				stride = 0;
-			}
+	filesize = fp->filesize;
+	stride = fp->is_strided() * fp->portion_sz;
+	stride = 0; //XXX: TEMP fix Need to change stride detection based on all access patterns
+	if(stride < 0){
+		printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
+		stride = 0;
+	}
 #else
-			filesize = reg_fd(fd);
-			stride = 0;
+	filesize = reg_fd(fd);
+	stride = 0;
 #endif
-			debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
+	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
 #ifdef MAINTAIN_UINODE
-			uinode = get_uinode(i_map, fd);
+	uinode = get_uinode(i_map, fd);
 #else
-			uinode = NULL;
+	uinode = NULL;
 #endif
 
-			if(filesize > MIN_FILE_SZ){
+	if(filesize > MIN_FILE_SZ){
 #ifdef CONCURRENT_PREDICTOR
-				arg = (struct thread_args*)args;
+		arg = (struct thread_args*)args;
 #else
-				arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+		arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 #endif
-				if(!arg) {
-					goto prefetch_file_exit;
-				}
-				arg->fd = fd;
-				arg->file_size = filesize;
-				arg->stride = stride;
+		if(!arg) {
+			goto prefetch_file_exit;
+		}
+		arg->fd = fd;
+		arg->file_size = filesize;
+		arg->stride = stride;
 
 #ifdef ENABLE_EVICTION_OLD
-				set_thread_args_evict(arg);
+		set_thread_args_evict(arg);
 #else
-				arg->current_fd = 0;
-				arg->last_fd = 0;
+		arg->current_fd = 0;
+		arg->last_fd = 0;
 #endif
 
 #ifdef FULL_PREFETCH
-				//Allows the whole file to be prefetched at once
-				arg->prefetch_size = filesize;
-				debug_printf("%s: Doing a full prefetch %zu bytes\n", __func__, filesize);
+		//Allows the whole file to be prefetched at once
+		arg->prefetch_size = filesize;
+		debug_printf("%s: Doing a full prefetch %zu bytes\n", __func__, filesize);
 
 #elif PREDICTOR
-				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-				arg->prefetch_limit = fp->prefetch_limit;
-				arg->offset = fp->last_read_offset;
+		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+		arg->prefetch_limit = fp->prefetch_limit;
+		arg->offset = fp->last_read_offset;
 
-				/*
-				 * Update the last ra_offset
-				 */
-				fp->last_ra_offset = arg->offset + arg->prefetch_limit;
-				//printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
+		/*
+		 * Update the last ra_offset
+		 */
+		fp->last_ra_offset = arg->offset + arg->prefetch_limit;
+		//printf("%s: last_ra_offset=%ld\n", __func__, fp->last_ra_offset);
 #else
-				/*
-				 * This is !PREDICTOR and !FULL_PREFETCH
-				 * which means prefetch blindly NR_RA_PAGES at a time
-				 */
-				arg->offset = 0;
-				arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
-				arg->prefetch_limit = filesize;
+		/*
+		 * This is !PREDICTOR and !FULL_PREFETCH
+		 * which means prefetch blindly NR_RA_PAGES at a time
+		 */
+		arg->offset = 0;
+		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+		arg->prefetch_limit = filesize;
 #endif
 
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
-				arg->page_cache_state = fp->page_cache_state;
+		arg->page_cache_state = fp->page_cache_state;
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
-				if(uinode){
+		if(uinode){
 
-					arg->page_cache_state = uinode->page_cache_state;
+			arg->page_cache_state = uinode->page_cache_state;
 
-					if(arg->page_cache_state == NULL)
-						printf("%s: pagecache NULL\n", __func__);
-					arg->uinode = uinode;
-				}else{
-					printf("%s: No Uinode!! fd:%d \n", __func__, fd);
-					arg->page_cache_state = NULL;
-					arg->uinode = NULL;
-				}
+			if(arg->page_cache_state == NULL)
+				printf("%s: pagecache NULL\n", __func__);
+			arg->uinode = uinode;
+		}else{
+			printf("%s: No Uinode!! fd:%d \n", __func__, fd);
+			arg->page_cache_state = NULL;
+			arg->uinode = NULL;
+		}
 #else
-				arg->page_cache_state = NULL;
+		arg->page_cache_state = NULL;
 #endif
-			}
-			else{
-				debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
-				goto prefetch_file_exit;
-			}
+	}
+	else{
+		debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
+		goto prefetch_file_exit;
+	}
 
 #ifdef CONCURRENT_PREDICTOR
-			prefetcher_th((void*)arg);
+	prefetcher_th((void*)arg);
 #elif defined(CONCURRENT_PREFETCH)
-			pthread_t thread;
-			pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
+	pthread_t thread;
+	pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
 
 #if 0
-			if(!workerpool)
-				printf("ERR: %s: No workerpool ? \n", __func__);
-			else{
-				thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-				//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
+	if(!workerpool)
+		printf("ERR: %s: No workerpool ? \n", __func__);
+	else{
+		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
 
-				debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-						arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
-			}
+		debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
+				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
+	}
 #endif
-		    //int idx= uinode->ino % QUEUES;
-            //thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-            threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
-            g_next_queue++;
+	//int idx= uinode->ino % QUEUES;
+	//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
+	threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+	g_next_queue++;
 #else
-			prefetcher_th((void*)arg);
+	prefetcher_th((void*)arg);
 #endif
 
 prefetch_file_exit:
-			debug_printf("Exiting %s\n", __func__);
-			return;
-		}
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
 
 
+/*
+ * Initialize a file_predictor object if
+ * the file is > Min_FILE_SZ
+ *
+ * and init the bitmap inside the kernel
+ */
+void inline record_open(struct file_desc desc){
 
-		/*
-		 * Initialize a file_predictor object if
-		 * the file is > Min_FILE_SZ
-		 *
-		 * and init the bitmap inside the kernel
-		 */
-		void inline record_open(struct file_desc desc){
+	int fd = desc.fd;
+	off_t filesize = reg_fd(fd);
+	struct timespec start, end;
 
-			int fd = desc.fd;
-			off_t filesize = reg_fd(fd);
-			struct timespec start, end;
+	debug_printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
 
-			debug_printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
-
-			/*
-			 * TODO BUG: This would only work for workloads that already have their
-			 * files setup.
-			 *
-			 * In pure write workloads, the file could be very small initially
-			 */
-			if(filesize > MIN_FILE_SZ){
+	/*
+	 * TODO BUG: This would only work for workloads that already have their
+	 * files setup.
+	 *
+	 * In pure write workloads, the file could be very small initially
+	 */
+	if(filesize > MIN_FILE_SZ){
 
 #ifdef PREDICTOR
 		file_predictor *fp = new file_predictor(fd, filesize, desc.filename);
 		if(!fp){
 			printf("%s ERR: Could not allocate new file_predictor\n", __func__);
 			goto exit;
-        	}
+			}
 		fp->uinode = desc.uinode;
 
 
@@ -956,122 +948,120 @@ prefetch_file_exit:
 		std::lock_guard<std::mutex> guard(fp_mutex);
 		fd_to_file_pred.insert({fd, fp});
 
-         /*
-         * When a file is opened.
-         * We give it a signin bonus. Prefetch a small portion of the start
-         * of the file
-         */
-         	if(fp->should_prefetch_now()){
-        	 	struct thread_args arg;
-             		arg.fd = fd;
-             		arg.fp = fp;
+		 /*
+		 * When a file is opened.
+		 * We give it a signin bonus. Prefetch a small portion of the start
+		 * of the file
+		 */
+			if(fp->should_prefetch_now()){
+				struct thread_args arg;
+					arg.fd = fd;
+					arg.fp = fp;
 
-	     		//printf("%s: Doing a Bonus Prefetch\n", __func__);
-             		prefetch_file(&arg);
-          	}
+				//printf("%s: Doing a Bonus Prefetch\n", __func__);
+					prefetch_file(&arg);
+			}
 #endif
 
-				/*
-				 * This allocates the file's bitmap inside the kernel
-				 * So no file cache data is lost from bitmap
-				 * This is very important todo before any app reads happen
-				 *
-				 * If OS stats are enabled, the first RA has already happened
-				 */
+		/*
+		 * This allocates the file's bitmap inside the kernel
+		 * So no file cache data is lost from bitmap
+		 * This is very important todo before any app reads happen
+		 *
+		 * If OS stats are enabled, the first RA has already happened
+		 */
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(ENABLE_OS_STATS)
-				debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
-				//clock_gettime(CLOCK_REALTIME, &start);
+		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
+		//clock_gettime(CLOCK_REALTIME, &start);
 
 #if defined(PREFETCH_BOOST)
-				struct read_ra_req ra;
-				ra.data = NULL;
-				readahead_info(fd, 0, 0, &ra);
-				debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+		struct read_ra_req ra;
+		ra.data = NULL;
+		readahead_info(fd, 0, 0, &ra);
+		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
 
 #endif //defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
+	}
+	else{
+		debug_printf("%s: fd=%d filesize=%ld is smaller than %d bytes\n", __func__, fd, filesize, MIN_FILE_SZ);
+	}
 
-			}
-			else{
-				debug_printf("%s: fd=%d filesize=%ld is smaller than %d bytes\n", __func__, fd, filesize, MIN_FILE_SZ);
-			}
-
-			exit:
-			debug_printf("Exiting %s\n", __func__);
-			return;
-		}
+	exit:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
 
 
-		/*
-		 * Does all the extra computing at open
-		 * for all the open functions
-		 */
-		void handle_open(struct file_desc desc){
+/*
+ * Does all the extra computing at open
+ * for all the open functions
+ */
+void handle_open(struct file_desc desc){
 
-			debug_printf("%s: fd:%d, TID:%ld\n", __func__, desc.fd, gettid());
+	debug_printf("%s: fd:%d, TID:%ld\n", __func__, desc.fd, gettid());
 
-			desc.uinode = NULL;
+	desc.uinode = NULL;
 
 #ifdef ENABLE_OS_STATS
-			ptd.touchme = true; //enable per-thread filestats
-			/*
-			 * Allocates the bitmaps for this file
-			 */
-			struct read_ra_req ra;
-			ra.data = NULL;
-			readahead_info(desc.fd, 0, 0, &ra);
+	ptd.touchme = true; //enable per-thread filestats
+	/*
+	 * Allocates the bitmaps for this file
+	 */
+	struct read_ra_req ra;
+	ra.data = NULL;
+	readahead_info(desc.fd, 0, 0, &ra);
 #endif
 
 
 #ifdef ONLY_INTERCEPT
-			return;
+	return;
 #endif
 
 #ifdef MAINTAIN_UINODE
-			if(add_fd_to_inode(i_map, desc.fd) < 0){
-				printf("ERR:%s unable to add to uinode\n", __func__);
-			}
-			desc.uinode = get_uinode(i_map, desc.fd);
+	if(add_fd_to_inode(i_map, desc.fd) < 0){
+		printf("ERR:%s unable to add to uinode\n", __func__);
+	}
+	desc.uinode = get_uinode(i_map, desc.fd);
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-			record_open(desc);
+	record_open(desc);
 #endif
 
-			/*
-			 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
-			 */
+	/*
+	 * DONT compile library with both PREDICTOR and BLIND_PREFETCH
+	 */
 #ifdef BLIND_PREFETCH
-			// Prefetch without predicting
-			prefetch_file(desc.fd);
+	// Prefetch without predicting
+	prefetch_file(desc.fd);
 #endif
 
 
-			debug_printf("Exiting %s\n", __func__);
-		}
+	debug_printf("Exiting %s\n", __func__);
+}
 
 
 #ifdef PREDICTOR
 void update_file_predictor_and_prefetch(void *arg){
 
-			struct thread_args *a = (struct thread_args*)arg;
-			file_predictor *fp = NULL;
+	struct thread_args *a = (struct thread_args*)arg;
+	file_predictor *fp = NULL;
 
-			if (a->fd < 1)
-				return;
+	if (a->fd < 1)
+		return;
 
-			try{
-				/* We don't need a guard here. Do we? */
-				std::lock_guard<std::mutex> guard(fp_mutex);
-				fp = fd_to_file_pred.at(a->fd);
-			}
-			catch(const std::out_of_range &orr){
-				debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
-				return;
-			}
+	try{
+		/* We don't need a guard here. Do we? */
+		std::lock_guard<std::mutex> guard(fp_mutex);
+		fp = fd_to_file_pred.at(a->fd);
+	}
+	catch(const std::out_of_range &orr){
+		debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
+		return;
+	}
 
-			if(fp){
-
+	if(fp){
 			/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 			fp->nr_reads_done += 1L;
 			fp->predictor_update(a->offset, a->data_size);
@@ -1079,15 +1069,15 @@ void update_file_predictor_and_prefetch(void *arg){
 			if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
 				return;
 #if 0
-                /*update lru if file is fully prefetched*/
-                if(fp->uinode->fully_prefetched.load()){
-                        update_lru(fp->uinode);
-                }
+				/*update lru if file is fully prefetched*/
+				if(fp->uinode->fully_prefetched.load()){
+						update_lru(fp->uinode);
+				}
 #endif
-        	if(fp->should_prefetch_now()){
-            	                a->fp = fp;
+			if(fp->should_prefetch_now()){
+								a->fp = fp;
 				prefetch_file(arg);
-		    }
+			}
 		}
 }
 #endif //PREDICTOR
@@ -1096,435 +1086,431 @@ void update_file_predictor_and_prefetch(void *arg){
 
 void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offset) {
 
-			size_t amount_read = 0;
-			int fd = -1;
-			off_t offset;
+	size_t amount_read = 0;
+	int fd = -1;
+	off_t offset;
 
-			//debug_printf("%s: TID:%ld\n", __func__, gettid());
+	//debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-			if(file_fd < 3 && !stream){
-				goto skip_read_predictor;
-			}else if(file_fd >= 3){
-				fd = file_fd;
-				offset = file_offset;
-			}else if(stream){
-				fd = fileno(stream);
-				offset = ftell(stream);
-			}
+	if(file_fd < 3 && !stream){
+		goto skip_read_predictor;
+	}else if(file_fd >= 3){
+		fd = file_fd;
+		offset = file_offset;
+	}else if(stream){
+		fd = fileno(stream);
+		offset = ftell(stream);
+	}
 
 
 #ifdef ONLY_INTERCEPT
-			goto skip_read_predictor;
+	goto skip_read_predictor;
 #endif
 
-			/*
-			 * Sanity check
-			 */
-			if(fd < 3){
-				goto skip_read_predictor;
-			}
+	/*
+	 * Sanity check
+	 */
+	if(fd < 3){
+		goto skip_read_predictor;
+	}
 
 
 #ifdef ENABLE_EVICTION_OLD
-			set_curr_last_fd(fd);
+	set_curr_last_fd(fd);
 #endif
 
 
 #ifdef PREDICTOR
 
 #ifdef CONCURRENT_PREDICTOR
-			struct thread_args *arg;
-			arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+	struct thread_args *arg;
+	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
 
-			arg->fd = fd;
-			arg->offset = offset;
-			arg->data_size = data_size;
+	arg->fd = fd;
+	arg->offset = offset;
+	arg->data_size = data_size;
 
-			update_file_predictor_and_prefetch(arg);
+	update_file_predictor_and_prefetch(arg);
 
-			/*
-			 * XXX: Thpool is not working right now
-			 */
-			//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
-			free(arg);
+	/*
+	 * XXX: Thpool is not working right now
+	 */
+	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
+	free(arg);
 #else
-			struct thread_args arg;
-			arg.fd = fd;
-			arg.offset = offset;
-			arg.data_size = data_size;
+	struct thread_args arg;
+	arg.fd = fd;
+	arg.offset = offset;
+	arg.data_size = data_size;
 
-			update_file_predictor_and_prefetch(&arg);
+	update_file_predictor_and_prefetch(&arg);
 #endif //CONCURRENT_PREDICTOR
 
 #endif //PREDICTOR
 
-			skip_read_predictor:
-			return;
-		}
+	skip_read_predictor:
+	return;
+}
 
 
 void handle_file_close(int fd){
 
 #ifdef MAINTAIN_UINODE
-			int i_fd_cnt = handle_close(i_map, fd);
+	int i_fd_cnt = handle_close(i_map, fd);
 #ifdef ENABLE_EVICTION
-			if(!i_fd_cnt){
-				evict_advise(fd);
-			}
+	if(!i_fd_cnt){
+		evict_advise(fd);
+	}
 #endif
 #endif
 
 
 #ifdef PREDICTOR
-			init_global_ds();
-			file_predictor *fp;
-			try{
-				debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-				std::lock_guard<std::mutex> guard(fp_mutex);
-				fp = fd_to_file_pred.at(fd);
-				fd_to_file_pred.erase(fd);
-			}
-			catch(const std::out_of_range){
-				debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
-				goto exit_handle_file_close;
-			}
+	init_global_ds();
+	file_predictor *fp;
+	try{
+		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+		std::lock_guard<std::mutex> guard(fp_mutex);
+		fp = fd_to_file_pred.at(fd);
+		fd_to_file_pred.erase(fd);
+	}
+	catch(const std::out_of_range){
+		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);
+		goto exit_handle_file_close;
+	}
 
-			if(fp){
-				delete(fp);
-			}
+	if(fp){
+		delete(fp);
+	}
 #endif
 
-			exit_handle_file_close:
-			debug_printf("Exiting %s\n", __func__);
-			return;
-		}
+	exit_handle_file_close:
+	debug_printf("Exiting %s\n", __func__);
+	return;
+}
 
 
-		//////////////////////////////////////////////////////////
-		//Intercepted Functions
-		//////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////
+	//Intercepted Functions
+	//////////////////////////////////////////////////////////
 
 #ifdef ENABLE_MPI
-		int MPI_File_read_at(MPI_File fh, MPI_Offset offset, void *buf,
-				int count, MPI_Datatype datatype, MPI_Status * status) {
+int MPI_File_read_at(MPI_File fh, MPI_Offset offset, void *buf,
+		int count, MPI_Datatype datatype, MPI_Status * status) {
 
-			printf("%s:%d \n", __func__, __LINE__);
-			return 0;
-		}
+	printf("%s:%d \n", __func__, __LINE__);
+	return 0;
+}
 
-		int MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status)
-		{
-			printf("%s:%d \n", __func__, __LINE__);
-			return real_MPI_File_read_at_all_end(fh, buf, status);
-		}
+int MPI_File_read_at_all_end(MPI_File fh, void *buf, MPI_Status *status)
+{
+	printf("%s:%d \n", __func__, __LINE__);
+	return real_MPI_File_read_at_all_end(fh, buf, status);
+}
 
-		int MPI_File_read_at_all_begin(MPI_File fh, void *buf, MPI_Status *status)
-		{
-			printf("%s:%d \n", __func__, __LINE__);
-			return real_MPI_File_read_at_all_begin(fh, buf, status);
-		}
+int MPI_File_read_at_all_begin(MPI_File fh, void *buf, MPI_Status *status)
+{
+	printf("%s:%d \n", __func__, __LINE__);
+	return real_MPI_File_read_at_all_begin(fh, buf, status);
+}
 
-		int MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh) {
+int MPI_File_open(MPI_Comm comm, const char *filename, int amode, MPI_Info info, MPI_File *fh) {
 
-			int ret = 0;
-			int fd = real_open(filename, amode, 0);
-			ret = real_MPI_File_open(comm, filename, amode, info, fh);
-			printf("%s:%d, FD %d\n", __func__, __LINE__, fd);
-			mpi_hadle_fd[fh] = fd;
+	int ret = 0;
+	int fd = real_open(filename, amode, 0);
+	ret = real_MPI_File_open(comm, filename, amode, info, fh);
+	printf("%s:%d, FD %d\n", __func__, __LINE__, fd);
+	mpi_hadle_fd[fh] = fd;
 
-			struct file_desc desc;
-			desc.fd = fd;
-			handle_open(desc);
+	struct file_desc desc;
+	desc.fd = fd;
+	handle_open(desc);
 
-			return ret;
-		}
+	return ret;
+}
 #endif
 
+//OPEN SYSCALLS
+int openat(int dirfd, const char *pathname, int flags, ...){
 
-		//OPEN SYSCALLS
+	int fd;
+	struct file_desc desc;
+	debug_printf("Entering %s\n", pathname);
 
-		int openat(int dirfd, const char *pathname, int flags, ...){
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_openat(dirfd, pathname, flags, mode);
+	}
+	else{
+		fd = real_openat(dirfd, pathname, flags, 0);
+	}
 
-			int fd;
-			struct file_desc desc;
+	if(fd < 0)
+		goto exit;
 
+	desc.fd = fd;
+	desc.filename = pathname;
 
-			debug_printf("Entering %s\n", pathname);
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
-			if(flags & O_CREAT){
-				va_list valist;
-				va_start(valist, flags);
-				mode_t mode = va_arg(valist, mode_t);
-				va_end(valist);
-				fd = real_openat(dirfd, pathname, flags, mode);
-			}
-			else{
-				fd = real_openat(dirfd, pathname, flags, 0);
-			}
+	handle_open(desc);
 
-			if(fd < 0)
-				goto exit;
+exit:
+	debug_printf("Exiting %s\n", __func__);
+	return fd;
+}
 
-			desc.fd = fd;
-			desc.filename = pathname;
 
-			debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+int open64(const char *pathname, int flags, ...){
 
-			handle_open(desc);
+	int fd;
+	struct file_desc desc;
 
-			exit:
-			debug_printf("Exiting %s\n", __func__);
-			return fd;
-		}
 
+	debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
 
-		int open64(const char *pathname, int flags, ...){
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_open(pathname, flags, mode);
+	}
+	else{
+		fd = real_open(pathname, flags, 0);
+	}
 
-			int fd;
-			struct file_desc desc;
+	desc.fd = fd;
+	desc.filename = pathname;
 
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
-			debug_printf("%s: file %s: fd=%d\n", __func__, pathname, fd);
+	handle_open(desc);
 
-			if(flags & O_CREAT){
-				va_list valist;
-				va_start(valist, flags);
-				mode_t mode = va_arg(valist, mode_t);
-				va_end(valist);
-				fd = real_open(pathname, flags, mode);
-			}
-			else{
-				fd = real_open(pathname, flags, 0);
-			}
+exit:
+	debug_printf("Exiting %s\n", __func__);
+	return fd;
+}
 
-			desc.fd = fd;
-			desc.filename = pathname;
 
-			debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+int open(const char *pathname, int flags, ...){
 
-			handle_open(desc);
+	int fd;
+	struct file_desc desc;
 
-			exit:
-			debug_printf("Exiting %s\n", __func__);
-			return fd;
-		}
+	debug_printf("%s: file %s\n", __func__,  pathname);
 
+	if(flags & O_CREAT){
+		va_list valist;
+		va_start(valist, flags);
+		mode_t mode = va_arg(valist, mode_t);
+		va_end(valist);
+		fd = real_open(pathname, flags, mode);
+	}
+	else{
+		fd = real_open(pathname, flags, 0);
+	}
 
-		int open(const char *pathname, int flags, ...){
+	if(fd < 0)
+		goto exit;
 
-			int fd;
-			struct file_desc desc;
+	desc.fd = fd;
+	desc.filename = pathname;
 
-			debug_printf("%s: file %s\n", __func__,  pathname);
+	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
-			if(flags & O_CREAT){
-				va_list valist;
-				va_start(valist, flags);
-				mode_t mode = va_arg(valist, mode_t);
-				va_end(valist);
-				fd = real_open(pathname, flags, mode);
-			}
-			else{
-				fd = real_open(pathname, flags, 0);
-			}
+	handle_open(desc);
 
-			if(fd < 0)
-				goto exit;
 
-			desc.fd = fd;
-			desc.filename = pathname;
+exit:
+	debug_printf("Exiting %s\n", __func__);
+	return fd;
+}
 
-			debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
-			handle_open(desc);
+FILE *fopen(const char *filename, const char *mode){
 
+	int fd;
+	FILE *ret;
+	struct file_desc desc;
 
-			exit:
-			debug_printf("Exiting %s\n", __func__);
-			return fd;
-		}
+	debug_printf("%s: file %s\n", __func__,  filename);
+	ret = real_fopen(filename, mode);
+	if(!ret)
+		return ret;
 
+	fd = fileno(ret);
+	desc.fd = fd;
+	desc.filename = filename;
 
-		FILE *fopen(const char *filename, const char *mode){
+	debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
 
-			int fd;
-			FILE *ret;
-			struct file_desc desc;
+	handle_open(desc);
 
-			debug_printf("%s: file %s\n", __func__,  filename);
-			ret = real_fopen(filename, mode);
-			if(!ret)
-				return ret;
+	exit:
+	debug_printf("Exiting %s\n", __func__);
+	return ret;
+}
 
-			fd = fileno(ret);
-			desc.fd = fd;
-			desc.filename = filename;
 
-			debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
+//READ SYSCALLS
 
-			handle_open(desc);
+ssize_t pread64(int fd, void *data, size_t size, off_t offset){
+	return pread(fd, data, size, offset);
+}
 
-			exit:
-			debug_printf("Exiting %s\n", __func__);
-			return ret;
-		}
 
+ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
-		//READ SYSCALLS
+	ssize_t amount_read;
 
-		ssize_t pread64(int fd, void *data, size_t size, off_t offset){
-			return pread(fd, data, size, offset);
-		}
+	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
+	read_predictor(NULL, size, fd, offset);
 
-		ssize_t pread(int fd, void *data, size_t size, off_t offset){
+	skip_predictor:
+	amount_read = real_pread(fd, data, size, offset);
 
-			ssize_t amount_read;
+	exit_pread:
+	return amount_read;
+}
 
-			debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
-			read_predictor(NULL, size, fd, offset);
+/*Several applications use fgets*/
+char *fgets( char *str, int num, FILE *stream ) {
 
-			skip_predictor:
-			amount_read = real_pread(fd, data, size, offset);
+	debug_printf( "Start %s\n", __func__);
 
-			exit_pread:
-			return amount_read;
-		}
+	read_predictor(stream, num, 0, 0);
 
+	return real_fgets(str, num, stream);
+}
 
-		/*Several applications use fgets*/
-		char *fgets( char *str, int num, FILE *stream ) {
 
-			debug_printf( "Start %s\n", __func__);
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
-			read_predictor(stream, num, 0, 0);
 
-			return real_fgets(str, num, stream);
-		}
+	size_t amount_read = 0;
 
+	debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-		size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
+	read_predictor(stream, size*nmemb, 0, 0);
 
+	skip_predictor:
+	amount_read = real_fread(ptr, size, nmemb, stream);
 
-			size_t amount_read = 0;
+	exit_fread:
+	debug_printf( "Exiting %s\n", __func__);
+	return amount_read;
+}
 
-			debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-			read_predictor(stream, size*nmemb, 0, 0);
+//CLOSE SYSCALLS
 
-			skip_predictor:
-			amount_read = real_fread(ptr, size, nmemb, stream);
+int fclose(FILE *stream){
 
-			exit_fread:
-			debug_printf( "Exiting %s\n", __func__);
-			return amount_read;
-		}
+	int fd = fileno(stream);
 
-
-		//CLOSE SYSCALLS
-
-		int fclose(FILE *stream){
-
-			int fd = fileno(stream);
-
-			debug_printf( "Entering %s\n", __func__);
+	debug_printf( "Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
-			goto exit_fclose;
+	goto exit_fclose;
 #endif
 
-			handle_file_close(fd);
+	handle_file_close(fd);
 
-			exit_fclose:
-			debug_printf( "Exiting %s\n", __func__);
-			return real_fclose(stream);
-		}
+	exit_fclose:
+	debug_printf( "Exiting %s\n", __func__);
+	return real_fclose(stream);
+}
 
 
-		int close(int fd){
+int close(int fd){
 
-			debug_printf("Entering %s\n", __func__);
+	debug_printf("Entering %s\n", __func__);
 
 #ifdef ONLY_INTERCEPT
-			goto exit_close;
+	goto exit_close;
 #endif
 
-			handle_file_close(fd);
-			exit_close:
-			debug_printf( "Exiting %s\n", __func__);
-			return real_close(fd);
-		}
+	handle_file_close(fd);
+	exit_close:
+	debug_printf( "Exiting %s\n", __func__);
+	return real_close(fd);
+}
 
 
-		//PREFETCH SYSCALLS
+//PREFETCH SYSCALLS
 
-		ssize_t readahead(int fd, off_t offset, size_t count){
+ssize_t readahead(int fd, off_t offset, size_t count){
 
-			ssize_t ret = 0;
+	ssize_t ret = 0;
 
-			debug_printf("Entering %s\n", __func__);
+	debug_printf("Entering %s\n", __func__);
 #ifdef DISABLE_APP_READAHEADS
-			goto exit_readahead;
+	goto exit_readahead;
 #endif
 
 #ifdef ENABLE_LIB_STATS
-			total_nr_ra += 1;
-			total_bytes_ra += count;
+	total_nr_ra += 1;
+	total_bytes_ra += count;
 #endif
 
-			ret = real_readahead(fd, offset, count);
+	ret = real_readahead(fd, offset, count);
 
-			exit_readahead:
-			debug_printf( "Exiting %s\n", __func__);
-			return ret;
-		}
-
-
-		int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
-
-			int ret = -1;
-			debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
-			ret = posix_fadvise(fd, offset, len, advice);
-			debug_printf( "Exiting %s\n", __func__);
-			return ret;
-		}
+	exit_readahead:
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
 
 
-		int posix_fadvise(int fd, off_t offset, off_t len, int advice){
+int posix_fadvise64(int fd, off_t offset, off_t len, int advice){
 
-			int ret = 0;
-			debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+	int ret = -1;
+	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+	ret = posix_fadvise(fd, offset, len, advice);
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
+
+
+int posix_fadvise(int fd, off_t offset, off_t len, int advice){
+
+	int ret = 0;
+	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
 
 #ifdef DISABLE_FADV_RANDOM
-			if(advice == POSIX_FADV_RANDOM)
-				goto exit;
+	if(advice == POSIX_FADV_RANDOM)
+		goto exit;
 #endif
 
 #ifdef DISABLE_FADV_DONTNEED
-			if(advice == POSIX_FADV_DONTNEED)
-				goto exit;
+	if(advice == POSIX_FADV_DONTNEED)
+		goto exit;
 #endif
 
-			ret = real_posix_fadvise(fd, offset, len, advice);
-			exit:
-			debug_printf( "Exiting %s\n", __func__);
-			return ret;
-		}
+	ret = real_posix_fadvise(fd, offset, len, advice);
+	exit:
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
 
 
-		int madvise(void *addr, size_t length, int advice){
-			int ret = 0;
+int madvise(void *addr, size_t length, int advice){
+	int ret = 0;
 
-			debug_printf("%s: called ADV=%d\n", __func__, advice);
+	debug_printf("%s: called ADV=%d\n", __func__, advice);
 
 #ifdef DISABLE_MADV_DONTNEED
-			if(advice == MADV_DONTNEED)
-				goto exit;
+	if(advice == MADV_DONTNEED)
+		goto exit;
 #endif
 
-			ret = real_madvise(addr, length, advice);
-			exit:
-			debug_printf( "Exiting %s\n", __func__);
-			return ret;
-		}
+	ret = real_madvise(addr, length, advice);
+	exit:
+	debug_printf( "Exiting %s\n", __func__);
+	return ret;
+}
