@@ -87,9 +87,13 @@ set_simplebench_global_vars() {
 }
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
-declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
+#declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+
+
+declare -a techarr=("Vanilla" "OSonly" "CII" "CIP" "CIPI")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
 
 
