@@ -380,7 +380,7 @@ TARGET="$OUTPUTDIR/SIMPLEBENCH"
 set_simplebench_global_vars
 
 let APPINTERVAL=200
-YTITLE='Throughput (MB/sec)'
+YTITLE='Throughput (MB/sec) in 10x'
 XTITLE='#. of threads'
 echo $TARGET
 apparr=("${simplebenchworkarr[@]}")
