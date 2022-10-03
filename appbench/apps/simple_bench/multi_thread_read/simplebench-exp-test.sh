@@ -23,7 +23,7 @@ declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
 
 
-declare -a nproc=("16")
+declare -a nproc=("64" "4")
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq_global_simple") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
