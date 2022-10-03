@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILESIZE=50 #GB
+FILESIZE=80 #GB
 NR_READ_PAGES=128 #nr_pages
 NR_THREADS=8
 NR_STRIDE=64 #nr_pages

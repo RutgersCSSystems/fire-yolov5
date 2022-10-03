@@ -44,12 +44,12 @@ void prefetcher_th(void *arg){
         /*for(long i=0; i < a->size; i++) {
                 fprintf(fp, "C");
         }*/
-	long i = 0;
+	long i = 0, bytes;
 	while(i < a->size) {
-		 fwrite(buffer, write_size, 1, fp);
+		 bytes += fwrite(buffer, write_size, 1, fp);
 		 i = i + write_size;	
-	     	 //printf("TID:%ld: size=%ld, current=%ld\n", tid, a->size, i);
 	}
+     	printf("TID:%ld: size=%ld, bytes=%ld\n", tid, a->size, bytes);
 
         fclose(fp);
         return;

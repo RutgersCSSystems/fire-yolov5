@@ -83,9 +83,10 @@
  */
 void set_read_limits(char a){
 
-	printf("%s: Setting Read Limits to %c\n", __func__, a);
 	int fd = open(UNBOUNDED_PROCFS_FILE, O_RDWR, 0);
-	pwrite(fd, &a, sizeof(char), 0);
+	int bytes = pwrite(fd, &a, sizeof(char), 0);
+	printf("%s: Setting Read Limits to %c %d\n", __func__, a, bytes);
+
 	close(fd);
 	printf("Exiting %s\n", __func__);
 }
@@ -94,9 +95,10 @@ void set_read_limits(char a){
  * Set disable_2mb_limits to 0 or 1
  */
 void set_readahead_2mb_limit(char a){
-	printf("%s: Setting Readahead 2MB Limit to %c\n", __func__, a);
+	//printf("%s: Setting Readahead 2MB Limit to %c\n", __func__, a);
 	int fd = open(RA_2MB_LIMIT_PROCFS_FILE, O_RDWR, 0);
-	pwrite(fd, &a, sizeof(char), 0);
+	int bytes =  pwrite(fd, &a, sizeof(char), 0);
+	printf("%s: Setting Setting Readahead 2MB Limit to %c %d\n", __func__, a, bytes);
 	close(fd);
 	printf("Exiting %s\n", __func__);
 }
@@ -105,9 +107,9 @@ void set_readahead_2mb_limit(char a){
  * Set cross_bitmap_shift
  */
 void set_cross_bitmap_shift(char a){
-	printf("%s: Setting cross_bitmap_shift to %c\n", __func__, a);
 	int fd = open(CROSS_BITMAP_SHIFT_FILE, O_RDWR, 0);
-	pwrite(fd, &a, sizeof(char), 0);
+	int bytes = pwrite(fd, &a, sizeof(char), 0);
+	printf("%s: Setting cross_bitmap_shift to %c %d\n", __func__, a, bytes);
 	close(fd);
 	printf("Exiting %s\n", __func__);
 }
