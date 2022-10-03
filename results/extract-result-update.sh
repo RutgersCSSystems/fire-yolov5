@@ -25,6 +25,7 @@ let SCALE_SPARK_GRAPH=50000
 
 
 let SCALE_SNAPPY_GRAPH=1
+let SCALE_SIMPLEBENCH_GRAPH=10
 
 let INCR_KERN_BAR_SPACE=3
 let INCR_BREAKDOWN_BAR_SPACE=2
@@ -169,7 +170,7 @@ PULL_RESULT() {
                 elif [ "$APP" = 'SIMPLEBENCH' ];
                 then
                         val=`cat $APPFILE | grep "GLOBAL Bandwidth = " | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
-                        scaled_value=$(echo $val $SCALE_SNAPPY_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+                        scaled_value=$(echo $val $SCALE_SIMPLEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
                 fi
 
@@ -378,7 +379,7 @@ TARGET="$OUTPUTDIR/SIMPLEBENCH"
 #set the arrays
 set_simplebench_global_vars
 
-let APPINTERVAL=2000
+let APPINTERVAL=200
 YTITLE='Throughput (MB/sec)'
 XTITLE='#. of threads'
 echo $TARGET
