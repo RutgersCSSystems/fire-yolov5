@@ -1,0 +1,15 @@
++ FlushDisk
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
++ sudo sh -c echo 3 > /proc/sys/vm/drop_caches
++ sudo sh -c sync
+FLUSING THE FILES 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+set_cross_bitmap_shift: Setting cross_bitmap_shift to % 1
+Exiting set_cross_bitmap_shift
+Warmed up by reading 85899345920 bytes
+Total File size = 81920 MB
+READ_SEQUENTIAL Bandwidth = 3753.70 MB/sec
+Total nr_ra = 5050
+Total nr_bytes_ra = 84724940800

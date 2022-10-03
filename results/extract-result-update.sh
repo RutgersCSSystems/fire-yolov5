@@ -76,9 +76,13 @@ set_snappy_global_vars() {
 
 
 set_simplebench_global_vars() {
-	declare -a simplebenchworkarr=("read_pvt_seq" "read_shared_seq" "read_pvt_seq" "read_shared_seq")
-	declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
-	declare -a threadarr=("16")
+	simplebenchworkarr=("read_pvt_seq" "read_shared_seq" "read_pvt_seq" "read_shared_seq")
+	simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
+
+	simplebenchworkarr=("read_shared_seq_global_simple")
+	simplebenchproxyarr=("shared-seq")
+
+	threadarr=("1" "4" "8" "16" "32")
 }
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
@@ -161,6 +165,12 @@ PULL_RESULT() {
                 then
                         val=`cat $APPFILE | grep "Average throughput:" | awk 'BEGIN {SUM=0}; {SUM=SUM+$3}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_SNAPPY_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+
+                elif [ "$APP" = 'SIMPLEBENCH' ];
+                then
+                        val=`cat $APPFILE | grep "MB/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_SNAPPY_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+
                 fi
 
 		#echo $scaled_value $APPVAL".DATA"
@@ -360,8 +370,32 @@ MOVEGRAPHS() {
 }
 
 
+APP='SIMPLEBENCH'
+TARGET="$OUTPUTDIR/SIMPLEBENCH"
+
+#set the arrays
+set_simplebench_global_vars
+
+let APPINTERVAL=1000
+YTITLE='Throughput (MB/sec)'
+XTITLE='#. of threads'
+echo $TARGET
+apparr=("${simplebenchworkarr[@]}")
+proxyapparr=("${simplebenchproxyarr[@]}")
+#EXTRACT_RESULT "SIMPLEBENCH"
+#MOVEGRAPHS
+EXTRACT_RESULT_THREADS "SIMPLEBENCH"
+MOVEGRAPHS
+exit
+
+
+
 APP='snappy'
 TARGET="$OUTPUTDIR/snappy"
+
+#set the arrays
+set_snappy_global_vars
+
 let APPINTERVAL=1000
 YTITLE='Throughput (MB/sec)'
 XTITLE='#. of threads'
@@ -378,6 +412,10 @@ exit
 
 APP='ROCKSDB'
 TARGET="$OUTPUTDIR/ROCKSDB"
+
+#set the arrays
+set_rocks_global_vars
+
 apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
 
