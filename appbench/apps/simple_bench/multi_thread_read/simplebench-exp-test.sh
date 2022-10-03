@@ -1,5 +1,5 @@
 #!/bin/bash
-set +x
+set -x
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -27,11 +27,11 @@ declare -a nproc=("16")
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI")
-declare -a config_arr=("CIPI" "CIP")
+#declare -a config_arr=("CIPI" "CIP" )
 
 STATS=1 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=80 ##GB
+FILESIZE=100 ##GB
 
 #Compiles the application
 COMPILE_APP() {

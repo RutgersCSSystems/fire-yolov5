@@ -74,7 +74,7 @@ std::mutex fp_mutex;
 #include "utils/thpool-simple.h"
 #define THREAD NR_WORKERS
 #define SIZE   50000
-#define QUEUES 16
+#define QUEUES 32
 threadpool_t *pool[QUEUES];
 int g_next_queue=0;
 pthread_mutex_t lock;
@@ -458,9 +458,7 @@ void check_pc_bitmap(void *arg){
 	if(prefetch_limit_pg == 0)
 		prefetch_limit_pg = 1;
 
-
-	uinode_bitmap_lock(a->uinode);
-
+	//uinode_bitmap_lock(a->uinode);
 	while(curr_pg < (start_pg + prefetch_limit_pg)){
 
 		if(BitArrayTestBit(page_cache_state, curr_pg)){
@@ -469,7 +467,7 @@ void check_pc_bitmap(void *arg){
 			break;
 		}
 	}
-	uinode_bitmap_unlock(a->uinode);
+	//uinode_bitmap_unlock(a->uinode);
 
 	a->offset = curr_pg << PAGE_SHIFT;
 	debug_printf("%s: changing offset from pg %ld to %ld fd:%d\n", __func__, start_pg, curr_pg, a->fd);
@@ -486,10 +484,8 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 	off_t start_pg; //start from here in page_cache_state
 	off_t zero_pg; //end of bitmap search
 	off_t check_pg; //checking the bitmap a bit further
-
 	off_t pg_diff = 0;
 	off_t ulong_nr = 0;
-
 	unsigned long *pc_array;
 
 	if(!page_cache_state || !uinode){
@@ -508,12 +504,12 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 	}
 
 	uinode_bitmap_lock(uinode);
-
 	pc_array = page_cache_state->array;
+	uinode_bitmap_unlock(uinode);
 
 	while((check_pg << PAGE_SHIFT) < uinode->file_size) {
-		ulong_nr = check_pg >> 6;
 
+		ulong_nr = check_pg >> 6;
 		if(pc_array[ulong_nr] == 0){
 			break;
 		}
@@ -521,46 +517,16 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 	}
 	pg_diff = check_pg - start_pg;
 
-#if 0
-while((check_pg << PAGE_SHIFT) < uinode->file_size) {
+	uinode_bitmap_lock(uinode);
 
-	if((check_pg - zero_pg) > NR_BITS_BEFORE_GIVEUP) {
-		printf("ERR: %s: No bits are set - giving up\n", __func__);
-		break;
+	uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
+
+	if(uinode->prefetched_bytes > uinode->file_size){
+		uinode->fully_prefetched.store(true);
 	}
-
-	if(BitArrayTestBit(page_cache_state, check_pg)){
-		check_pg += 1;
-		zero_pg = check_pg;
-	}else if(zero_pg == start_pg){
-		check_pg += 1;
-	}else
-		break;
-}
-pg_diff = zero_pg - start_pg;
-#endif
-
-
-//pg_diff = prefetch_size >> PAGE_SHIFT;
-
-uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
-
-if(uinode->prefetched_bytes > uinode->file_size){
-	uinode->fully_prefetched.store(true);
-}
-
-uinode_bitmap_unlock(uinode);
-
-//gettimeofday(&start, NULL);
-
-//pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos);
-
-//gettimeofday(&end, NULL);
-
-//printf("update offset time = %ld\n", usec_diff(&start, &end));
-
+	uinode_bitmap_unlock(uinode);
 exit:
-return pg_diff;
+	return pg_diff;
 }
 
 //returns microsecond time difference
@@ -571,6 +537,48 @@ unsigned long usec_diff(struct timeval *a, struct timeval *b)
 	usec = (b->tv_sec - a->tv_sec)*1000000;
 	usec += b->tv_usec - a->tv_usec;
 	return usec;
+}
+
+
+int shoud_stop_prefetch(struct thread_args *a, off_t file_pos) {
+
+	/*
+	 * Stop prefetching if the prefetch limit is reached
+	 */
+	if((file_pos - a->offset) >= a->prefetch_limit){
+		debug_printf("%s: offset > prefetch_limit\n", __func__);
+		goto stop_prefetch;
+	}
+
+	/*
+	 * If the file is closed, dont do any prefetching
+	 */
+	if(is_file_closed(a->uinode, a->fd)){
+		goto stop_prefetch;
+	}
+
+	return 0;
+
+stop_prefetch:
+	return -1;
+}
+
+
+int check_mem_and_stop(struct read_ra_req *ra, struct thread_args *a) {
+
+#ifndef ENABLE_EVICTION
+	return 0;
+#endif
+	/*
+	 * if the memory is less NR_REMAINING
+	 * the prefetcher stops
+	 */
+	if(ra->nr_free < NR_REMAINING)
+	{
+		debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+		return -1;
+	}
+	return 0;
 }
 
 
@@ -585,8 +593,6 @@ void prefetcher_th(void *arg) {
 
 	long tid = gettid();
 	struct thread_args *a = (struct thread_args*)arg;
-
-
 #ifdef ENABLE_LIB_STATS
 	/*
 	 * per_thread counter for nr of readaheads done
@@ -595,7 +601,6 @@ void prefetcher_th(void *arg) {
 	long nr_ra_done = 0;
 	long nr_bytes_ra_done = 0;
 #endif
-
 	off_t file_pos; //actual file position where readahead will be done
 	size_t readnow;
 	struct read_ra_req ra;
@@ -606,7 +611,6 @@ void prefetcher_th(void *arg) {
 	long err;
 
 	bit_array_t *page_cache_state = NULL;
-
 
 	/*
 	 * If the file is completely prefetched, dont prefetch
@@ -620,11 +624,8 @@ void prefetcher_th(void *arg) {
 	 * Allocate page cache bitmap if you want to use it without predictor
 	 */
 	page_cache_state = allocate_bitmap(a);
-
 	check_pc_bitmap(arg);
-
 	file_pos = a->offset;
-
 
 	/*
 	 * If the file prefetch offset is almost towards the end of file
@@ -641,21 +642,9 @@ void prefetcher_th(void *arg) {
 
 
 	while (file_pos < a->file_size){
-		/*
-		 * Stop prefetching if the prefetch limit is reached
-		 */
-		if((file_pos - a->offset) >= a->prefetch_limit){
-			debug_printf("%s: offset > prefetch_limit\n", __func__);
-			goto exit_prefetcher_th;
-		}
 
-		/*
-		 * If the file is closed, dont do any prefetching
-		 */
-		if(is_file_closed(a->uinode, a->fd)){
+		if(shoud_stop_prefetch(a, file_pos))
 			goto exit_prefetcher_th;
-		}
-
 #ifdef MODIFIED_RA
 		if(page_cache_state) {
 			ra.data = page_cache_state->array;
@@ -683,36 +672,26 @@ void prefetcher_th(void *arg) {
 			printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
 			goto exit_prefetcher_th;
 		}
-
 #ifdef ENABLE_LIB_STATS
 		else{
 			nr_ra_done += 1;
 			nr_bytes_ra_done += a->prefetch_size;
-			//fprintf(stderr, "File Size %zu, Bytes prefetched %zu Inode %d\n",
-			//		a->file_size, nr_bytes_ra_done, a->uinode->ino);
+			debug_printf("File Size %zu, Bytes prefetched %zu Inode %d\n",
+				a->file_size, nr_bytes_ra_done, a->uinode->ino);
 		}
 #endif
 		uinode_bitmap_unlock(a->uinode);
-
 #ifdef ENABLE_EVICTION
 		update_lru(a->uinode);
 		//update_nr_free_pg(ra.nr_free);
 #endif
-//gettimeofday(&end, NULL);
-//printf("ra time = %ld\n", usec_diff(&start, &end));
 
 #ifdef READAHEAD_INFO_PC_STATE
-
-		//gettimeofday(&start, NULL);
 		pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
-		//gettimeofday(&end, NULL);
-		//printf("update offset time = %ld\n", usec_diff(&start, &end));
-
 		debug_printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
 				"tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
 				file_pos, pg_diff, a->fd, ra.data,
 				page_cache_state->numBits, start_pg, zero_pg);
-
 		if(pg_diff == 0){
 			printf("ERR:%s, pg_diff==0\n", __func__);
 			goto exit_prefetcher_th;
@@ -727,16 +706,15 @@ void prefetcher_th(void *arg) {
 		 * if the memory is less NR_REMAINING
 		 * the prefetcher stops
 		 */
-		if(ra.nr_free < NR_REMAINING)
-		{
-			debug_printf("%s: Not prefetching any further: fd=%d\n", __func__, a->fd);
+		if(check_mem_and_stop(&ra, a))
 			goto exit_prefetcher_th;
-		}
+
 #else //MODIFIED_RA
 		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
 			//printf("error while readahead: TID:%ld \n", tid);
 			goto exit_prefetcher_th;
 		}
+
 #ifdef ENABLE_LIB_STATS
 		else{
 			nr_ra_done += 1;
@@ -754,7 +732,6 @@ exit_prefetcher_th:
 	free(arg);
 #endif
 
-
 #ifdef ENABLE_LIB_STATS
 	update_ra_stats_if_enabled(nr_ra_done, nr_bytes_ra_done);
 #endif
@@ -767,10 +744,11 @@ exit_prefetcher_th:
 	 * Spawns or enqueues a request for file prefetching
 	 */
 #ifndef PREDICTOR
-	void inline prefetch_file(int fd){
+void inline prefetch_file(int fd){
 #else
 //void inline prefetch_file(int fd, file_predictor *fp){
 void inline prefetch_file(void *args){
+
 	struct thread_args *a = (struct thread_args*)args;
 	int fd = a->fd;
 	file_predictor *fp = a->fp;
@@ -1062,23 +1040,23 @@ void update_file_predictor_and_prefetch(void *arg){
 	}
 
 	if(fp){
-			/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
-			fp->nr_reads_done += 1L;
-			fp->predictor_update(a->offset, a->data_size);
+		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
+		fp->nr_reads_done += 1L;
+		fp->predictor_update(a->offset, a->data_size);
 
-			if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
-				return;
+		if(fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)
+			return;
 #if 0
-				/*update lru if file is fully prefetched*/
-				if(fp->uinode->fully_prefetched.load()){
-						update_lru(fp->uinode);
-				}
-#endif
-			if(fp->should_prefetch_now()){
-								a->fp = fp;
-				prefetch_file(arg);
+			/*update lru if file is fully prefetched*/
+			if(fp->uinode->fully_prefetched.load()){
+					update_lru(fp->uinode);
 			}
+#endif
+		if(fp->should_prefetch_now()){
+			a->fp = fp;
+			prefetch_file(arg);
 		}
+	}
 }
 #endif //PREDICTOR
 
