@@ -23,15 +23,17 @@ declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
 
 
-declare -a nproc=("16")
+declare -a nproc=("32")
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_shared_seq") ##read binaries
+declare -a workload_arr=("read_shared_seq_global_simple") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 #declare -a config_arr=("CIPI" "CIP" )
 
 STATS=1 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
 FILESIZE=80 ##GB
+
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
 #Compiles the application
 COMPILE_APP() {
@@ -103,10 +105,14 @@ GEN_RESULT_PATH() {
 RUN() {
         echo "STARTING to RUN"
 
+
         for WORKLOAD in "${workload_arr[@]}"
         do
                 for NPROC in "${nproc[@]}"
                 do
+			sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
+			./compile.sh
+
                         for READ_SIZE in "${read_size[@]}"
                         do
                                 #COMPILE_APP $FILESIZE $READ_SIZE $NPROC
@@ -122,6 +128,9 @@ RUN() {
                                         #if [ "$STATS" -eq "1" ]; then
                                          #       ENABLE_LOCK_STATS
                                         #fi
+
+					`./clearcache.sh`
+
 					echo $RESULTFILE
                                         export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					$base/bin/$WORKLOAD &> $RESULTFILE

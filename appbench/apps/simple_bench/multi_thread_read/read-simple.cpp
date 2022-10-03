@@ -104,54 +104,23 @@ void shuffle(long int array[], size_t n) {
 }
 
 
+off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off_t filesize){
 
-void update_pc_misses(void *arg, void *mem, off_t filesize, off_t offset, size_t buff_sz){
+        off_t pg_ra_offset = ra_offset >> PAGESHIFT;
+        off_t pg_filesize = filesize >> PAGESHIFT;
 
-        struct thread_args *a = (struct thread_args*)arg;
-        unsigned int nr_pages, nr_file_pg, i;
+        off_t uchar_nr;
 
-        unsigned char *mincore_array = NULL;
+        while(pg_ra_offset < pg_filesize){
 
-        off_t nr_misses_pg = 0;
-        off_t nr_read_pg = 0;
+                uchar_nr = pg_ra_offset >> 3;
+                if(mincore_arr[uchar_nr] == 0)
+                        break;
 
-#ifndef STATS_PC_MISSES_MINCORE
-        goto exit;
-#endif
-
-        if(!arg || !mem)
-                goto exit;
-
-        nr_pages = (filesize+PG_SZ) >> PAGESHIFT;
-        mincore_array = (unsigned char *)malloc(nr_pages);
-        if(!mincore_array){
-                printf("%s: mincore_array could not be allocated error %s\n", __func__, strerror(errno));
+                pg_ra_offset += 1 << 3;
         }
 
-        if(mincore(mem, filesize, mincore_array) == -1){
-                printf("%s: mincore error %s\n", __func__, strerror(errno));
-                goto free_exit;
-        }
-
-        for(i=0; i<(buff_sz >> PAGESHIFT); i++){
-                if(mincore_array[i+(offset>>PAGESHIFT)] == 0){
-                        nr_misses_pg += 1UL;
-                }
-                nr_read_pg += 1UL;
-                //printf("mincore_array[%u] = %u\n", i, mincore_array[i+(offset>>PAGESHIFT)]);
-        }
-        a->nr_total_misses_pg += nr_misses_pg;
-        a->nr_total_read_pg += nr_read_pg;
-
-#if 0
-        printf("%s: offset:%ld, buff_sz:%ld, tot_read=%ld, tot_misses=%ld\n",
-                        __func__, offset >> PAGESHIFT, buff_sz >> PAGESHIFT, a->nr_total_read_pg, a->nr_total_misses_pg);
-#endif
-
-free_exit:
-        free(mincore_array);
-exit:
-        return;
+        return pg_ra_offset << PAGESHIFT;
 }
 
 
@@ -163,22 +132,16 @@ void *reader_th(void *arg){
 #endif
 
         struct thread_args *a = (struct thread_args*)arg;
-
         struct timeval start, end;
         struct timeval open_start, open_end;
         void *mem = NULL;
-
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
-
         size_t readnow, bytes_read, offset, ra_offset;
-
         off_t filesize;
         struct stat st;
-
         long tid = gettid();
 
-        gettimeofday(&open_start, NULL);
 #if SHARED_FILE
         a->fd = open(a->filename, O_RDWR);
         if (a->fd == -1){
@@ -194,9 +157,6 @@ void *reader_th(void *arg){
 	readahead_info(a->fd, 0, 0, &ra);
         start_cross_trace(ENABLE_FILE_STATS, 0);
 #endif //MODIFIED_RA or ENABLE_MINCORE_RA
-
-        gettimeofday(&open_end, NULL);
-
         //Report about the thread
         debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
@@ -206,8 +166,41 @@ void *reader_th(void *arg){
         bytes_read = 0UL;
         offset = a->offset;
 
+#ifdef APP_SINGLE_PREFETCH
+
+#ifdef MODIFIED_RA
+	ra.data = NULL;
+	readahead_info(a->fd, 0, NR_RA_PAGES << PAGESHIFT, &ra);
+#else //NORMAL_RA
+	readahead(a->fd, offset, a->size);
+#endif //MODIFIED_RA
+
+	debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+                        __func__, a->fd, offset, a->size);
+
+#elif defined(APP_OPT_PREFETCH)
+	ra_offset = a->offset;
+#endif //APP_SINGLE_PREFETCH
+
         while(bytes_read < a->size){
+
                 debug_printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
+
+#ifdef APP_OPT_PREFETCH
+		if(offset >= ra_offset){
+			ra_offset = offset;
+#ifdef MODIFIED_RA
+	                ra.data = NULL;
+			readahead_info(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT, &ra);
+#else //NORMAL_RA
+			readahead(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
+#endif //MODIFIED_RA
+			ra_offset += NR_RA_PAGES << PAGESHIFT;
+
+			debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
+					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
+		}
+#endif //APP_OPT_PREFETCH
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, offset);
                 if(readnow < 0){
@@ -216,6 +209,7 @@ void *reader_th(void *arg){
                         goto exit;
                 }
                 bytes_read += readnow;
+
                 offset += readnow;
 #ifdef STRIDED_READ
                 offset += NR_STRIDE * PG_SZ;
@@ -237,14 +231,15 @@ void *reader_th(void *arg){
         for(long i=0; i<nr_file_portions; i++){
 
                 //Checks mincore to determine the number of misses
-                update_pc_misses(arg, mem, filesize, ((read_sequence[i]*buff_sz)+a->offset), buff_sz);
-
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, (read_sequence[i]*buff_sz)+a->offset);
         }
+
         gettimeofday(&end, NULL);
+
 #endif //READ_SEQUENTIAL
         a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
+
 exit:
 #ifdef THPOOL
         return;
@@ -253,20 +248,6 @@ exit:
 #endif
 }
 
-
-int warmup_and_flush(int fd, size_t size) {
-
-        int read_size = PG_SZ * NR_PAGES_READ * 10;
-        char *buffer = (char *)malloc(read_size);
-        long i = 0, bytes=0;
-        while(i < size) {
-                 //bytes += read(fd, buffer, read_size);
-		 bytes += pread(fd, buffer, read_size, bytes);
-                 i = i + read_size;
-        }
-        printf("Warmed up by reading %ld bytes\n", bytes);
-	return 0;
-}
 
 
 int main(int argc, char **argv)
@@ -307,11 +288,7 @@ int main(int argc, char **argv)
                 break;
 #endif
         }
-
-        //Done opening all files
 skip_open:
-
-
 //Disables OS pred
 #if defined(ONLYAPP) && !defined(SHARED_FILE)
         for(int i=0; i<NR_THREADS; i++){
@@ -328,23 +305,6 @@ skip_open:
 #else
         pthread_t pthreads[NR_THREADS];
 #endif
-
-#if 0
-        for(int i=0; i<NR_THREADS; i++) {
-#ifdef SHARED_FILE
-		int warmfd = open(filename, O_RDWR);
-#else		
-		int warmfd= fd_list[i];
-#endif		
-		warmup_and_flush(warmfd, FILESIZE);
-#ifdef SHARED_FILE
-		break;
-#endif		
-	}
-	int ret = system("./clearcache.sh");
-	fprintf(stderr, "FLUSING THE FILES %d\n", ret);
-#endif
-
         //Preallocating all the thread_args to remove overheads
         struct thread_args *req = (struct thread_args*)
                                 malloc(sizeof(struct thread_args)*NR_THREADS);
@@ -373,7 +333,6 @@ skip_open:
                 pthread_create(&pthreads[i], NULL, reader_th, (void*)&req[i]);
 #endif
         }
-
 
 #ifdef THPOOL
         thpool_wait(thpool);

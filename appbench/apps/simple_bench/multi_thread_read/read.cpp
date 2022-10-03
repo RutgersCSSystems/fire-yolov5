@@ -272,18 +272,14 @@ void *reader_th(void *arg){
         struct timeval start, end;
         struct timeval open_start, open_end;
         void *mem = NULL;
-
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
-
         size_t readnow, bytes_read, offset, ra_offset;
-
         off_t filesize;
         struct stat st;
-
         long tid = gettid();
 
-        gettimeofday(&open_start, NULL);
+        //gettimeofday(&open_start, NULL);
 #if SHARED_FILE
         a->fd = open(a->filename, O_RDWR);
         if (a->fd == -1){
@@ -312,15 +308,13 @@ void *reader_th(void *arg){
 	readahead_info(a->fd, 0, 0, &ra);
         start_cross_trace(ENABLE_FILE_STATS, 0);
 #endif //MODIFIED_RA or ENABLE_MINCORE_RA
-
-        gettimeofday(&open_end, NULL);
+        //gettimeofday(&open_end, NULL);
 
         //Report about the thread
         debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
                         tid, a->offset, a->size, a->fd, a->nr_read_pg);
 
 #ifdef READ_SEQUENTIAL
-
         gettimeofday(&start, NULL);
         bytes_read = 0UL;
         offset = a->offset;
@@ -362,8 +356,10 @@ void *reader_th(void *arg){
 #endif //APP_OPT_PREFETCH
 
 
+#if defined(ENABLE_MINCORE_RA)		
                 //Checks mincore to determine the number of misses
                 update_pc_misses(arg, mem, filesize, offset, buff_sz);
+#endif
 
                 readnow = pread(a->fd, ((char *)buffer),
                                         buff_sz, offset);
@@ -378,7 +374,6 @@ void *reader_th(void *arg){
 #ifdef STRIDED_READ
                 offset += NR_STRIDE * PG_SZ;
 #endif //STRIDED_READ
-                //usleep(1);
         }
         gettimeofday(&end, NULL);
 

@@ -35,42 +35,56 @@ let APPINTERVAL=1000
 let YTITLE="Throughput OPS/sec"
 let XTITLE='#. of threads'
 
+#Just the declarations. You can customize 
+#in the functions below
+declare -a rocksworkarr=("multireadrandom")
+declare -a rocksworkproxyarr=("multirrandom")
+
+declare -a filesworkarr=("filemicro_seqread.f")
+declare -a fileproxyarr=("seqread")
+
+declare -a snappyworkarr=("fsize-20000")
+declare -a snappyproxyarr=("200MB-files")
+
+declare -a simplebenchworkarr=("read-pvt-seq" "read-shared-seq" "read-pvt-seq" "read-shared-seq")
+declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
+
+
+declare -a threadarr=("16")
+
+let graphmax=0
 
 #APPlication Array for file bench
-#declare -a rocksworkarr=("readseq" "readrandom" "readreverse" "readwhilewriting" "readwhilescanning")
-#declare -a techarr=("Vanilla" "Cross_Naive" "CPBI" "CPNI" "CNI" "CPBV" "CPNV")
-
-#declare -a rocksworkarr=("readseq" "readrandom" "readwhilescanning" "multireadrandom")
-#declare -a rocksworkproxyarr=("readseq" "readrandom" "readwhilescanning" "multireadrandom")
-
-declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
-declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
-
-#declare -a threadarr=("16")
+set_rocks_global_vars() {
+	declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+	declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
+	declare -a threadarr=("16")
+}
 
 
-declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
-declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
+set_filebench_global_vars() {
+	declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
+	declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
+	declare -a threadarr=("16")
+}
 
-declare -a snappyworkarr=("fsize-20000" "fsize-40000" "fsize-80000" "fsize-100000")
-declare -a snappyproxyarr=("200MB-files" "400MB-files" "800MB-files" "1000MB-files")
+set_snappy_global_vars() {
+	declare -a snappyworkarr=("fsize-20000" "fsize-40000" "fsize-80000" "fsize-100000")
+	declare -a snappyproxyarr=("200MB-files" "400MB-files" "800MB-files" "1000MB-files")
+	declare -a threadarr=("16")
+}
+
+
+set_simplebench_global_vars() {
+	declare -a simplebenchworkarr=("read_pvt_seq" "read_shared_seq" "read_pvt_seq" "read_shared_seq")
+	declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
+	declare -a threadarr=("16")
+}
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
-
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
 declare -a techarrname=("APPonly" "OSonly" "CrossInfo" "CrossInfo[+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
-#declare -a techarr=("Cross_Info")
-#declare -a techarrname=("CrossInfo")
-
-
-#declare -a threadarr=("4" "8" "16")
-declare -a threadarr=("16")
-
-
-
-
-let graphmax=0
 
 
 
