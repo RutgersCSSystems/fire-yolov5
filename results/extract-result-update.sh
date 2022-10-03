@@ -80,8 +80,8 @@ set_simplebench_global_vars() {
 	simplebenchworkarr=("read_pvt_seq" "read_shared_seq" "read_pvt_seq" "read_shared_seq")
 	simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
 
-	simplebenchworkarr=("read_shared_seq_global_simple")
-	simplebenchproxyarr=("shared-seq")
+	simplebenchworkarr=("read_shared_seq_global_simple" "read_pvt_seq_global")
+	simplebenchproxyarr=("shared-seq" "pvt-seq")
 
 	threadarr=("1" "8" "16" "32")
 }
@@ -385,8 +385,8 @@ XTITLE='#. of threads'
 echo $TARGET
 apparr=("${simplebenchworkarr[@]}")
 proxyapparr=("${simplebenchproxyarr[@]}")
-#EXTRACT_RESULT "SIMPLEBENCH"
-#MOVEGRAPHS
+EXTRACT_RESULT "SIMPLEBENCH"
+MOVEGRAPHS
 EXTRACT_RESULT_THREADS "SIMPLEBENCH"
 MOVEGRAPHS
 exit
