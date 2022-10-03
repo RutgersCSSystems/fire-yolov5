@@ -378,7 +378,7 @@ TARGET="$OUTPUTDIR/SIMPLEBENCH"
 #set the arrays
 set_simplebench_global_vars
 
-let APPINTERVAL=1000
+let APPINTERVAL=2000
 YTITLE='Throughput (MB/sec)'
 XTITLE='#. of threads'
 echo $TARGET
