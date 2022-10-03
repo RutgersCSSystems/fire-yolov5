@@ -366,7 +366,9 @@ EXTRACT_RESULT_THREADS()  {
 
 MOVEGRAPHS() {
 	mkdir graphs
-	mv *.pdf graphs/
+	mkdir -p graphs/local/
+	cp *.pdf graphs/
+	cp *.pdf graphs/local/
 }
 
 
