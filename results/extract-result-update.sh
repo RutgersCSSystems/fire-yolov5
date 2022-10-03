@@ -168,7 +168,7 @@ PULL_RESULT() {
 
                 elif [ "$APP" = 'SIMPLEBENCH' ];
                 then
-                        val=`cat $APPFILE | grep "MB/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
+                        val=`cat $APPFILE | grep "GLOBAL Bandwidth = " | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_SNAPPY_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
                 fi
