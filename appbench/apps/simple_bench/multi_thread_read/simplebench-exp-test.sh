@@ -23,12 +23,14 @@ declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
 
 
-declare -a nproc=("32" "16" "8")
-declare -a nproc=("1")
+declare -a nproc=("32" "16" "8" "1")
+#declare -a nproc=("1")
 
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq_global_simple") ##read binaries
 declare -a workload_arr=("read_pvt_seq_global")
+declare -a workload_arr=("read_shared_rand")
+
 
 
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
