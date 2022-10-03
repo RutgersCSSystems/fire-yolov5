@@ -83,7 +83,7 @@ set_simplebench_global_vars() {
 	simplebenchworkarr=("read_shared_seq_global_simple")
 	simplebenchproxyarr=("shared-seq")
 
-	threadarr=("1" "8" "16" "32" "64")
+	threadarr=("1" "8" "16" "32")
 }
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
