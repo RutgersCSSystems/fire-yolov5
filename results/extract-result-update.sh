@@ -262,6 +262,8 @@ GENERATE_GRAPH_MULTITHREADS() {
 
 	APPNAME=$1
 	APP=$2
+	workload=$3
+
 	VAR=""
 	echo "GENERATE_GRAPH_MULTITHREADS:" $APPNAME
 	rm -rf $APPNAME"-THREADS.DATA"
@@ -278,7 +280,7 @@ GENERATE_GRAPH_MULTITHREADS() {
 	GENERATE_PYTHON_LIST
 
 	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-$workload-THREAD-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -360,12 +362,14 @@ EXTRACT_RESULT_THREADS()  {
 			#echo "*******************************************************************************"
 
 		done
+
+		for APPLICATION in "${apparr[@]}"
+		do
+			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
+		done
+
 	done
 
-	for APPLICATION in "${apparr[@]}"
-	do
-		GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP
-	done
 
 }
 
