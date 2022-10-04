@@ -24,19 +24,19 @@ declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
 
 
 declare -a nproc=("32" "16" "8" "1")
-#declare -a nproc=("1")
+declare -a nproc=("8")
 
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq_global_simple") ##read binaries
-declare -a workload_arr=("read_pvt_seq_global")
-declare -a workload_arr=("read_shared_rand")
+#declare -a workload_arr=("read_pvt_seq_global")
+#declare -a workload_arr=("read_shared_rand")
 
 
 
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-#declare -a config_arr=("CIPI" "CIP" )
+declare -a config_arr=("CIP" "CIPI" )
 
-STATS=1 #0 for perf runs and 1 for stats
+STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
 FILESIZE=80 ##GB
 
@@ -102,7 +102,7 @@ GEN_RESULT_PATH() {
         if [ "$STATS" -eq "1" ]; then
                 RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}_STATS/$WORKLOAD/$THREAD
         else
-                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}_PERF/$WORKLOAD/$THREAD
+                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/$WORKLOAD/$THREAD
         fi
         mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG.out
