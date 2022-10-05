@@ -88,8 +88,8 @@ set_simplebench_global_vars() {
 
 set_simplebench_read_size_sensitivity_global_vars() {
 
-	simplebenchworkarr=("read_shared_seq-READSIZE-32" "read_shared_seq-READSIZE-128")
-	simplebenchproxyarr=("shared-seq-32" "shared-seq-128")
+	simplebenchworkarr=("read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128")
+	simplebenchproxyarr=("shared-seq-4" "shared-seq-128")
 
 	threadarr=("16")
 }
@@ -184,7 +184,7 @@ PULL_RESULT() {
 
                 elif [ "$APP" = 'SIMPLEBENCH' ];
                 then
-                        val=`cat $APPFILE | grep "MB/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
+                        val=`cat $APPFILE | grep "READ.*Bandwidth.*" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_SIMPLEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
                 elif [ "$APP" = 'SIMPLEBENCH-READSIZE-EXP' ];
@@ -389,16 +389,16 @@ EXTRACT_RESULT_THREADS()  {
 }
 
 MOVEGRAPHS() {
-	mkdir -p graphs/$APP/
-	mkdir -p graphs/local/$APP/
-	cp *.pdf graphs/$APP/
-	cp *.pdf graphs/local/$APP/
+	mkdir -p graphs/$APP"$APPPREFIX"/
+	mkdir -p graphs/local/$APP"$APPPREFIX"/
+	cp *.pdf graphs/$APP"$APPPREFIX"/
+	cp *.pdf graphs/local/$APP"$APPPREFIX"/
 }
 
 
-APP='SIMPLEBENCH-READSIZE-EXP'
-TARGET="$OUTPUTDIR/SIMPLEBENCH-READSIZE-EXP"
-
+APP='SIMPLEBENCH'
+TARGET="$OUTPUTDIR/SIMPLEBENCH"
+export APPPREFIX="-READSIZE-EXP"
 #set the arrays
 set_simplebench_read_size_sensitivity_global_vars
 
@@ -409,7 +409,7 @@ XTITLE="Access Size in Pages"
 echo $TARGET
 apparr=("${simplebenchworkarr[@]}")
 proxyapparr=("${simplebenchproxyarr[@]}")
-EXTRACT_RESULT "SIMPLEBENCH-READSIZE-EXP"
+EXTRACT_RESULT "SIMPLEBENCH"
 MOVEGRAPHS
 #EXTRACT_RESULT_THREADS "SIMPLEBENCH-READSIZE-EXP"
 #MOVEGRAPHS

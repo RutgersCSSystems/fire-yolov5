@@ -29,9 +29,11 @@ declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simpl
 
 
 declare -a nproc=("16")
-declare -a readsize_arr=("32")
+declare -a readsize_arr=("4")
 declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
+declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
+
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
