@@ -88,8 +88,8 @@ set_simplebench_global_vars() {
 
 set_simplebench_read_size_sensitivity_global_vars() {
 
-	simplebenchworkarr=("read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128")
-	simplebenchproxyarr=("shared-seq-4" "shared-seq-128")
+	simplebenchworkarr=("read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128" "read_shared_rand-READSIZE-4" "read_shared_rand-READSIZE-128")
+	simplebenchproxyarr=("shared-seq-4" "shared-seq-128" "shared-rand-4" "shared-rand-128")
 
 	threadarr=("16")
 }
