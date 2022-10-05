@@ -101,14 +101,14 @@ get_ytile()
 ctype = 'eps'
 c = canvas('pdf', title=graptitle, dimensions=[graphxdim, graphydim])
 
-d = drawable(canvas=c, coord=[22,12], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
+d = drawable(canvas=c, coord=[22,14], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
 
 
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
 axis(d, linewidth=0.5, xtitle=xtitledef,
         xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=XTSIZE, ytitle=ytitledef,
-        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,2], ylabelshift=[-1, 0], xtitleshift=[0,4])
+        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1, 0], xtitleshift=[0,4])
 
 
 p = plotter()
@@ -131,7 +131,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=2, skipspace=24)
+L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=2, skipspace=26)
 
 c.render()
 exit()
