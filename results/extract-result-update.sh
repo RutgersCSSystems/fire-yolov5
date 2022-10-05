@@ -86,6 +86,17 @@ set_simplebench_global_vars() {
 	threadarr=("1" "8" "16" "32")
 }
 
+set_simplebench_read_size_sensitivity_global_vars() {
+
+	simplebenchworkarr=("read_shared_seq_global_simple-READSIZE-4" "read_shared_seq_global_simple-READSIZE-64")
+	simplebenchproxyarr=("shared-seq-4pages" "shared-seq-size-64pages")
+
+	threadarr=("16")
+}
+
+
+
+
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 
 #declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
@@ -173,9 +184,13 @@ PULL_RESULT() {
 
                 elif [ "$APP" = 'SIMPLEBENCH' ];
                 then
-                        val=`cat $APPFILE | grep "GLOBAL Bandwidth = " | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
+                        val=`cat $APPFILE | grep "MB/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_SIMPLEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
+                elif [ "$APP" = 'SIMPLEBENCH-READSIZE-EXP' ];
+                then
+                        val=`cat $APPFILE | grep "READ.*Bandwidth.*" | awk 'BEGIN {SUM=0}; {SUM=SUM+$4}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_SIMPLEBENCH_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
                 fi
 
 		#echo $scaled_value $APPVAL".DATA"
@@ -374,11 +389,33 @@ EXTRACT_RESULT_THREADS()  {
 }
 
 MOVEGRAPHS() {
-	mkdir graphs
-	mkdir -p graphs/local/
-	cp *.pdf graphs/
-	cp *.pdf graphs/local/
+	mkdir -p graphs/$APP/
+	mkdir -p graphs/local/$APP/
+	cp *.pdf graphs/$APP/
+	cp *.pdf graphs/local/$APP/
 }
+
+
+APP='SIMPLEBENCH-READSIZE-EXP'
+TARGET="$OUTPUTDIR/SIMPLEBENCH-READSIZE-EXP"
+
+#set the arrays
+set_simplebench_read_size_sensitivity_global_vars
+
+
+let APPINTERVAL=200
+YTITLE='Throughput (MB/sec) in 10x'
+XTITLE="Access Size in Pages"
+echo $TARGET
+apparr=("${simplebenchworkarr[@]}")
+proxyapparr=("${simplebenchproxyarr[@]}")
+EXTRACT_RESULT "SIMPLEBENCH-READSIZE-EXP"
+MOVEGRAPHS
+#EXTRACT_RESULT_THREADS "SIMPLEBENCH-READSIZE-EXP"
+#MOVEGRAPHS
+exit
+
+
 
 
 APP='SIMPLEBENCH'

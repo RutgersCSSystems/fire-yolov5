@@ -96,6 +96,18 @@ file_predictor::~file_predictor(){
 }
 
 
+
+int short_access_diff(off_t offset, off_t last_offset) {
+
+	long curroff = (long)offset;
+	long prevoff = (long)last_offset;
+
+	if (abs(curroff - prevoff) > (NR_RA_PAGES * PAGESIZE)) {
+		return 0;
+	}
+	return 1;
+}
+
 /*
  * If offset being accessed is from an Unset file portion, set it,
  * 1. Set that file portion in access_history
@@ -157,6 +169,15 @@ is_not_seq:
         goto exit_success;
 
 is_seq:
+	/* If the access difference between current and previous
+	* access is still too wide,
+	* may be not change the current state?
+	*/
+    	if(!short_access_diff(offset, last_read_offset)) {
+    	    //fprintf(stderr, "short_access_diff too far \n");
+	    goto exit_success;
+	}
+	
         old_seq = sequentiality;
         sequentiality = (std::min<int>)(DEFSEQ, sequentiality+1); //keeps from overflowing
 

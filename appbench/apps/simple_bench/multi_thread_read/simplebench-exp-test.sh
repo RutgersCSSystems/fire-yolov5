@@ -22,19 +22,22 @@ declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
 
+declare -a readsize_arr=("128" "64" "32" "4")
+
 
 declare -a nproc=("32" "16" "8" "1")
-declare -a nproc=("8")
+declare -a nproc=("16")
 
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_shared_seq_global_simple") ##read binaries
 #declare -a workload_arr=("read_pvt_seq_global")
-#declare -a workload_arr=("read_shared_rand")
+declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simple")
 
 
 
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-declare -a config_arr=("CIP" "CIPI" )
+#declare -a config_arr=("Vanilla" "Cross_Info" "CII" "OSonly")
+#declare -a config_arr=("CIP" "CIPI" )
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
@@ -99,10 +102,11 @@ GEN_RESULT_PATH() {
         WORKLOAD=$1
         CONFIG=$2
         THREAD=$3
+	READSIZE=$4
         if [ "$STATS" -eq "1" ]; then
-                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}_STATS/$WORKLOAD/$THREAD
+                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}_STATS/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
         else
-                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/$WORKLOAD/$THREAD
+                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
         fi
         mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG.out
@@ -113,48 +117,53 @@ RUN() {
         echo "STARTING to RUN"
 
 
-        for WORKLOAD in "${workload_arr[@]}"
+        for READSIZE in "${readsize_arr[@]}"
         do
-                for NPROC in "${nproc[@]}"
-                do
-			sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
-			./compile.sh
+		sed -i "/NR_READ_PAGES_VAR=/c\NR_READ_PAGES_VAR=$READSIZE" compile.sh
 
-                        for READ_SIZE in "${read_size[@]}"
-                        do
-                                #COMPILE_APP $FILESIZE $READ_SIZE $NPROC
-                                CLEAN_AND_WRITE $WORKLOAD $FILESIZE
+		for WORKLOAD in "${workload_arr[@]}"
+		do
+			for NPROC in "${nproc[@]}"
+			do
+				sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
+				./compile.sh
 
-                                for CONFIG in "${config_arr[@]}"
-                                do
-                                        echo "######################################################,"
-                                        echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READ_SIZE"
+				for READ_SIZE in "${read_size[@]}"
+				do
+					#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
+					CLEAN_AND_WRITE $WORKLOAD $FILESIZE
 
-                                        GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC
+					for CONFIG in "${config_arr[@]}"
+					do
+						echo "######################################################,"
+						echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READ_SIZE"
 
-                                        #if [ "$STATS" -eq "1" ]; then
-                                         #       ENABLE_LOCK_STATS
-                                        #fi
+						GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $READSIZE
 
-					`./clearcache.sh`
+						#if [ "$STATS" -eq "1" ]; then
+						 #       ENABLE_LOCK_STATS
+						#fi
 
-					echo $RESULTFILE
-                                        export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$base/bin/$WORKLOAD &> $RESULTFILE
-					export LD_PRELOAD=""
+						`./clearcache.sh`
 
-                                        #if [ "$STATS" -eq "1" ]; then
-                                        #        DISABLE_LOCK_STATS
-                                        #fi
+						echo $RESULTFILE
+						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+						$base/bin/$WORKLOAD &> $RESULTFILE
+						export LD_PRELOAD=""
 
-					#sudo dmesg -c &>> $RESULTFILE
-                                        #sudo cat /proc/lock_stat &>> $RESULTFILE
+						#if [ "$STATS" -eq "1" ]; then
+						#        DISABLE_LOCK_STATS
+						#fi
 
-                                        REFRESH
-                                done
-                        done
-                done
-        done
+						#sudo dmesg -c &>> $RESULTFILE
+						#sudo cat /proc/lock_stat &>> $RESULTFILE
+
+						REFRESH
+					done
+				done
+			done
+		done
+	done
 }
 
 RUN
