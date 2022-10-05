@@ -29,7 +29,7 @@ declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simpl
 
 
 declare -a nproc=("16")
-declare -a readsize_arr=("128")
+declare -a readsize_arr=("32")
 declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 
