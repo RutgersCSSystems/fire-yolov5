@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -33,6 +33,7 @@ declare -a readsize_arr=("4")
 declare -a workload_arr=("read_shared_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
+declare -a config_arr=("OSonly")
 
 
 STATS=0 #0 for perf runs and 1 for stats
