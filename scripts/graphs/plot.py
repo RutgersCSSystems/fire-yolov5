@@ -101,7 +101,7 @@ get_ytile()
 ctype = 'eps'
 c = canvas('pdf', title=graptitle, dimensions=[graphxdim, graphydim])
 
-d = drawable(canvas=c, coord=[22,10], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
+d = drawable(canvas=c, coord=[22,12], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
 
 
 # because tics and axes are different, call axis() twice, once to
@@ -131,7 +131,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+6, d.top()-1], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=2, skipspace=22)
+L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=2, skipspace=24)
 
 c.render()
 exit()
