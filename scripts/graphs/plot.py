@@ -24,7 +24,7 @@ graphydim=75
 
 #graph plotting x and y dimension
 plotxdim=220
-plotydim=60
+plotydim=55
 
 #Y-axis max and interval
 ymax=700
