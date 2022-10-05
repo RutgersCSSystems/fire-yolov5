@@ -107,7 +107,7 @@ d = drawable(canvas=c, coord=[22,10], xrange=[-0.5,t.getmax('rownumber')+0.5], y
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
 axis(d, linewidth=0.5, xtitle=xtitledef,
-        xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=5, ytitle=ytitledef,
+        xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=XTSIZE, ytitle=ytitledef,
         ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,2], ylabelshift=[-1, 0], xtitleshift=[0,4])
 
 
@@ -131,7 +131,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=4, hspace=1, skipnext=3, skipspace=22)
+L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=3, skipspace=22)
 
 c.render()
 exit()
