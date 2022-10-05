@@ -19,11 +19,11 @@ legendtext=['Vanilla', 'OSonly', 'CNaive', 'CNI']
 clusterlen=len(legendtext)
 
 #Graph x and y-axis dimension
-graphxdim=200
+graphxdim=240
 graphydim=75
 
 #graph plotting x and y dimension
-plotxdim=180
+plotxdim=220
 plotydim=60
 
 #Y-axis max and interval
