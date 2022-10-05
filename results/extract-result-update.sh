@@ -25,7 +25,7 @@ let SCALE_SPARK_GRAPH=50000
 
 
 let SCALE_SNAPPY_GRAPH=1
-let SCALE_SIMPLEBENCH_GRAPH=1
+let SCALE_SIMPLEBENCH_GRAPH=1000
 
 let INCR_KERN_BAR_SPACE=3
 let INCR_BREAKDOWN_BAR_SPACE=2
@@ -403,7 +403,7 @@ export APPPREFIX="-READSIZE-EXP"
 set_simplebench_read_size_sensitivity_global_vars
 
 
-let APPINTERVAL=1500
+let APPINTERVAL=150
 YTITLE='Throughput (MB/sec) in 10x'
 XTITLE="Access Size in Pages"
 echo $TARGET
