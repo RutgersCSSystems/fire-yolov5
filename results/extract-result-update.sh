@@ -403,7 +403,7 @@ export APPPREFIX="-READSIZE-EXP"
 set_simplebench_read_size_sensitivity_global_vars
 
 
-let APPINTERVAL=1000
+let APPINTERVAL=1500
 YTITLE='Throughput (MB/sec) in 10x'
 XTITLE="Access Size in Pages"
 echo $TARGET
