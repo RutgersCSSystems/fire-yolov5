@@ -13,6 +13,8 @@ DBDIR=$DBHOME/DATA
 APP="filebench"
 APPOUTPUTNAME="filebench"
 
+#Enable sensitivity to vary prefetch size and prefetch thread count
+ENABLE_SENSITIVITY=0
 
 #WORKLOAD="readseq"
 #WORKLOAD="workloads/fileserver.f"
@@ -28,10 +30,10 @@ declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "r
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("randomrw.f")
 #declare -a workload_arr=("oltp.f")
-#declare -a workload_arr=("mongo.f")
+declare -a workload_arr=("mongo.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP" "CII" "CIPI")
+declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
 #declare -a config_arr=("OSonly")
 #declare -a config_arr=("CIP")
 declare -a thread_arr=("16")
@@ -46,10 +48,10 @@ glob_prefechthrd=1
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
 declare -a prefech_thrd_arr=("1" "8" "16")
 
-declare -a prefech_sz_arr=("4096" "1024")
-declare -a prefech_thrd_arr=("1" "4" "16")
+declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("4")
 
-
+mkdir DATA
 
 get_global_arr() {
 
@@ -134,7 +136,13 @@ GEN_RESULT_PATH() {
 	THREAD=$3
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
 	mkdir -p $RESULTS
-	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+
+	if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+	then
+		RESULTFILE=$RESULTS/$CONFIG".out"
+	else
+		RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+	fi
 }
 
 
