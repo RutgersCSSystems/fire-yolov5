@@ -57,9 +57,13 @@ let graphmax=0
 
 #APPlication Array for file bench
 set_rocks_global_vars() {
-	declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
-	declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
-	declare -a threadarr=("16")
+	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+	rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
+
+	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse")
+	rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse")
+
+	threadarr=("16")
 }
 
 
@@ -106,9 +110,11 @@ declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 #declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
 
-declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
+#declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
+declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
 
 
 GET_GRAPH_YMAX() {
@@ -399,6 +405,30 @@ MOVEGRAPHS() {
 }
 
 
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/ROCKSDB/$APPPREFIX"
+
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+
+let APPINTERVAL=1000
+YTITLE='Throughput (OPS/sec) in 100x'
+echo $TARGET
+XTITLE='Workloads'
+EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS
+XTITLE='#. of threads'
+#EXTRACT_RESULT_THREADS "ROCKSDB"
+MOVEGRAPHS
+exit
+
+
+
+
+
 APP='SIMPLEBENCH'
 TARGET="$OUTPUTDIR/SIMPLEBENCH"
 export APPPREFIX="-READSIZE-EXP"
@@ -457,28 +487,6 @@ EXTRACT_RESULT "snappy"
 MOVEGRAPHS
 #EXTRACT_RESULT_THREADS "snappy"
 #MOVEGRAPHS
-exit
-
-
-
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/ROCKSDB"
-
-#set the arrays
-set_rocks_global_vars
-
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-
-let APPINTERVAL=1000
-YTITLE='Throughput (OPS/sec) in 100x'
-echo $TARGET
-XTITLE='Workloads'
-EXTRACT_RESULT "ROCKSDB"
-MOVEGRAPHS
-XTITLE='#. of threads'
-#EXTRACT_RESULT_THREADS "ROCKSDB"
-MOVEGRAPHS
 exit
 
 
