@@ -27,7 +27,9 @@ declare -a workload_arr=("restart")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI" "CIPI_sync")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
 
-declare -a config_arr=("CII" "CIP" "CIPI" "OSonly")
+#declare -a config_arr=("OSonly" "CIP" "CIPI" "CII")
+declare -a config_arr=("Cross_Info")
+
 declare -a thread_arr=("16")
 
 
@@ -112,9 +114,9 @@ RUN() {
 		do
 
 			echo "BEGINNING TO WARM UP ......."
-			#cd $PREDICT_LIB_DIR
-			#$PREDICT_LIB_DIR/compile.sh
-			#cd $DBHOME
+			cd $PREDICT_LIB_DIR
+			$PREDICT_LIB_DIR/compile.sh
+			cd $DBHOME
 
 			PARAMS="$NUM $DBDIR"
 			COMPILE_AND_WRITE

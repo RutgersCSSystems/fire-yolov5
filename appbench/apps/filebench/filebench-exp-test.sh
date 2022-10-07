@@ -30,12 +30,12 @@ declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "r
 declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 declare -a workload_arr=("randomrw.f")
 #declare -a workload_arr=("oltp.f")
-declare -a workload_arr=("mongo.f")
+#declare -a workload_arr=("mongo.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
+declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla")
 #declare -a config_arr=("OSonly")
-#declare -a config_arr=("CIP")
+declare -a config_arr=("CIP" "CII" "CIPI")
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -157,8 +157,8 @@ RUN() {
 				for prefechthrd in "${prefech_thrd_arr[@]}"
 				do
 					cd $PREDICT_LIB_DIR
-					sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
-					sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
+					sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+					sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
 
 					./compile.sh
 					cd $DBHOME
