@@ -415,8 +415,8 @@ set_rocks_global_vars
 apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
 
-let APPINTERVAL=1000
-YTITLE='Throughput (OPS/sec) in 100x'
+let APPINTERVAL=10
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'
 EXTRACT_RESULT "ROCKSDB"
