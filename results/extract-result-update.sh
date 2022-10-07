@@ -91,8 +91,8 @@ set_simplebench_read_size_sensitivity_global_vars() {
 	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_seq-READSIZE-128" "read_pvt_rand-READSIZE-4" "read_pvt_rand-READSIZE-128" "read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128" "read_shared_rand-READSIZE-4" "read_shared_rand-READSIZE-128")
 	simplebenchproxyarr=("privseq-4" "privseq-128" "privrand-4" "privrand-128" "shareseq-4" "shareseq-128" "sharerand-4" "sharerand-128")
 
-	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_seq-READSIZE-32" "read_pvt_rand-READSIZE-4" "read_pvt_rand-READSIZE-32" "read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-32" "read_shared_rand-READSIZE-4" "read_shared_rand-READSIZE-32")
-	simplebenchproxyarr=("privseq-4" "privseq-32" "privrand-4" "privrand-32" "shareseq-4" "shareseq-32" "sharerand-4" "sharerand-32")
+	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4"  "read_shared_seq-READSIZE-4" "read_shared_rand-READSIZE-4" "read_pvt_seq-READSIZE-32" "read_pvt_rand-READSIZE-32" "read_shared_seq-READSIZE-32" "read_shared_rand-READSIZE-32")
+	simplebenchproxyarr=("privseq-4" "privrand-4"  "shareseq-4" "sharerand-4" "privseq-32" "privrand-32" "shareseq-32" "sharerand-32")
 
 
 	threadarr=("16")
