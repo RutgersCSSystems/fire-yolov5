@@ -409,7 +409,7 @@ set_simplebench_read_size_sensitivity_global_vars
 
 let APPINTERVAL=150
 YTITLE='Throughput (MB/sec) in 10x'
-XTITLE="Access Size in Pages"
+XTITLE="Sequential and Random Access Patterns and Access Sizes in Pages"
 echo $TARGET
 apparr=("${simplebenchworkarr[@]}")
 proxyapparr=("${simplebenchproxyarr[@]}")
