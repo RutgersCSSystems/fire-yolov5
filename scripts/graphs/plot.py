@@ -101,7 +101,7 @@ get_ytile()
 ctype = 'eps'
 c = canvas('pdf', title=graptitle, dimensions=[graphxdim, graphydim])
 
-d = drawable(canvas=c, coord=[22,14], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
+d = drawable(canvas=c, coord=[22,20], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
 
 
 # because tics and axes are different, call axis() twice, once to
