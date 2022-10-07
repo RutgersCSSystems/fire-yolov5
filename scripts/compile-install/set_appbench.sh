@@ -140,7 +140,7 @@ INSTALL_SYSTEM_LIBS
 $SCRIPTS/compile-install/compile_sharedlib.sh
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
-$SCRIPTS/compile-install/compile_nokvm.sh makemenu
+#$SCRIPTS/compile-install/compile_nokvm.sh makemenu
 exit
 
 
