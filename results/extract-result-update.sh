@@ -19,7 +19,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=100
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=100000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -415,7 +415,7 @@ set_rocks_global_vars
 apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
 
-let APPINTERVAL=1500
+let APPINTERVAL=10
 YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'
