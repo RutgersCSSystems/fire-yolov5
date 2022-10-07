@@ -111,11 +111,11 @@ declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 #declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
 
 
-#declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
+declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
-declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
+#declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
 
 
 GET_GRAPH_YMAX() {
