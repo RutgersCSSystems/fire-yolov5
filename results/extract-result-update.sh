@@ -411,6 +411,7 @@ EXTRACT_RESULT_THREADS()  {
 UPDATE_PAPER() {
 	mkdir -p $PAPERGRAPHS
 	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
 	git commit -am "adding current results"
 	git push origin 
