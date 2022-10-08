@@ -82,7 +82,7 @@ def get_yrange():
 
     print ymax
     print yinterval
-    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval)
+    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval + yinterval)
 
 def get_ytile():
     global ytitledef
