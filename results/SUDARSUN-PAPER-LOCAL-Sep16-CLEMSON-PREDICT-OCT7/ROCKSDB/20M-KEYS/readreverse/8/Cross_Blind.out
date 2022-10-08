@@ -1,0 +1,46 @@
+Received signal 11 (Segmentation fault)
+#0   /usr/lib/lib_Cross_Blind.so(_Z13prefetcher_thPv+0x20) [0x7f1b54243250] Command terminated by signal 11
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=readreverse --use_existing_db=1 --mmap_read=0 --threads=8"
+	User time (seconds): 0.07
+	System time (seconds): 0.75
+	Percent of CPU this job got: 285%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.28
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 41556
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 77
+	Minor (reclaiming a frame) page faults: 9534
+	Voluntary context switches: 583
+	Involuntary context switches: 10
+	Swaps: 0
+	File system inputs: 598760
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[75408.067040] sh (66838): drop_caches: 3
+[75408.112290] sh (66843): drop_caches: 3
+[75413.145140] write_proc_unbounded: Value of write = 0
+[75413.145154] write_proc_2mb_limit: Value of write = 0
+[75413.145160] write_proc_bitmap_shift: Value of write = 38
+[75413.152968] write_proc_unbounded: Value of write = 0
+[75413.152984] write_proc_2mb_limit: Value of write = 0
+[75413.152990] write_proc_bitmap_shift: Value of write = 38
+[75413.426955] traps: db_bench[66887] general protection fault ip:7f1b54243250 sp:7f1b511eeaa0 error:0 in lib_Cross_Blind.so[7f1b5423e000+a000]
+[75413.427566] write_proc_unbounded: Value of write = 0
+[75413.427581] write_proc_2mb_limit: Value of write = 0
+[75413.427586] write_proc_bitmap_shift: Value of write = 38
+[75413.431688] write_proc_unbounded: Value of write = 0
+[75413.431696] write_proc_2mb_limit: Value of write = 0
+[75413.431701] write_proc_bitmap_shift: Value of write = 38
+[75413.435609] write_proc_unbounded: Value of write = 0
+[75413.435616] write_proc_2mb_limit: Value of write = 0

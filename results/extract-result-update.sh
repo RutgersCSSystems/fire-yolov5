@@ -19,7 +19,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=100
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=1000
+let SCALE_ROCKSDB_GRAPH=100000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 
@@ -57,10 +57,23 @@ let graphmax=0
 
 #APPlication Array for file bench
 set_rocks_global_vars() {
-	declare -a rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
-	declare -a rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
-	declare -a threadarr=("16")
+	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+	rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
+
+	rocksworkarr=("readseq" "readreverse" "readwhilescanning" "multireadrandom")
+	rocksworkproxyarr=("readseq" "readreverse" "readscan" "multirrandom")
+
+	threadarr=("16")
 }
+
+
+set_rocks_thread_impact_global_vars() {
+	rocksworkarr=("readseq")
+	rocksworkproxyarr=("rseq")
+	threadarr=("8" "16" "32")
+}
+
+
 
 
 set_filebench_global_vars() {
@@ -110,16 +123,19 @@ declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
+#declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
 
 
 GET_GRAPH_YMAX() {
 
 	let currval=$1
+	let max=$graphmax
 
-	if [[ $currval > "$graphmax" ]]; then
-		graphmax=$1
-		#echo "$graphmax"
+	if [[ $currval -gt $max ]]; then
+		let graphmax=$currval
 	fi
+	#echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
 }
 
 
@@ -392,12 +408,52 @@ EXTRACT_RESULT_THREADS()  {
 
 }
 
+UPDATE_PAPER() {
+	cd $PAPERGRAPHS
+	mkdir -p $PAPERGRAPHS
+	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	git add $PAPERGRAPHS
+	git add $PAPERGRAPHS/*
+	git commit -am "adding current results"
+	git push origin 
+}
+
 MOVEGRAPHS() {
 	mkdir -p graphs/$APP"$APPPREFIX"/
 	mkdir -p graphs/local/$APP"$APPPREFIX"/
+
 	cp *.pdf graphs/$APP"$APPPREFIX"/
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/
+
+	UPDATE_PAPER
 }
+
+
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/ROCKSDB/$APPPREFIX"
+
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+
+let APPINTERVAL=10
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+#EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS
+XTITLE='#. of threads'
+set_rocks_thread_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+EXTRACT_RESULT_THREADS "ROCKSDB"
+MOVEGRAPHS
+exit
+
+
+
 
 
 APP='SIMPLEBENCH'
@@ -458,28 +514,6 @@ EXTRACT_RESULT "snappy"
 MOVEGRAPHS
 #EXTRACT_RESULT_THREADS "snappy"
 #MOVEGRAPHS
-exit
-
-
-
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/ROCKSDB"
-
-#set the arrays
-set_rocks_global_vars
-
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-
-let APPINTERVAL=1000
-YTITLE='Throughput (OPS/sec) in 100x'
-echo $TARGET
-XTITLE='Workloads'
-EXTRACT_RESULT "ROCKSDB"
-MOVEGRAPHS
-XTITLE='#. of threads'
-#EXTRACT_RESULT_THREADS "ROCKSDB"
-MOVEGRAPHS
 exit
 
 

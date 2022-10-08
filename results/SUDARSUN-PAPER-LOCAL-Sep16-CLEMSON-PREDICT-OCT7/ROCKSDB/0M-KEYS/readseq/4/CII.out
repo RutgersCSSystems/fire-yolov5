@@ -1,0 +1,66 @@
+RocksDB:    version 7.6.0
+Date:       Fri Oct  7 23:58:41 2022
+CPU:        128 * AMD EPYC 7543 32-Core Processor
+CPUCache:   512 KB
+Initializing RocksDB Options from the specified file
+Initializing RocksDB Options from command-line flags
+Integrated BlobDB: blob cache disabled
+Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
+Values:     4096 bytes each (2048 bytes after compression)
+Entries:    0
+Prefix:    0 bytes
+Keys per prefix:    0
+RawSize:    0.0 MB (estimated)
+FileSize:   0.0 MB (estimated)
+Write rate: 0 bytes/second
+Read rate: 0 ops/second
+Compression: Snappy
+Compression sampling rate: 0
+Memtablerep: SkipListFactory
+Perf Level: 1
+------------------------------------------------
+DB path: [/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA]
+readseq      :     472.000 micros/op 7299 ops/sec 0.000 seconds 1 operations;
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 10765
+Total nr_bytes_ra = 45151682560
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=0 --seed=1576170874 --benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=4"
+	User time (seconds): 0.89
+	System time (seconds): 14.45
+	Percent of CPU this job got: 119%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:12.85
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 13149220
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 84
+	Minor (reclaiming a frame) page faults: 3287791
+	Voluntary context switches: 5906
+	Involuntary context switches: 344
+	Swaps: 0
+	File system inputs: 88086296
+	File system outputs: 6600
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[34423.464302] sh (37858): drop_caches: 3
+[34423.502308] sh (37863): drop_caches: 3
+[34428.534850] write_proc_unbounded: Value of write = 1
+[34428.534863] write_proc_2mb_limit: Value of write = 1
+[34428.534869] write_proc_bitmap_shift: Value of write = 38
+[34428.543055] write_proc_unbounded: Value of write = 1
+[34428.543067] write_proc_2mb_limit: Value of write = 1
+[34428.543072] write_proc_bitmap_shift: Value of write = 38
+[34441.130101] write_proc_unbounded: Value of write = 0
+[34441.130109] write_proc_2mb_limit: Value of write = 0
+[34441.392773] write_proc_unbounded: Value of write = 0
+[34441.392792] write_proc_2mb_limit: Value of write = 0

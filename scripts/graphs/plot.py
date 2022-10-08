@@ -19,11 +19,11 @@ legendtext=['Vanilla', 'OSonly', 'CNaive', 'CNI']
 clusterlen=len(legendtext)
 
 #Graph x and y-axis dimension
-graphxdim=240
+graphxdim=140
 graphydim=75
 
 #graph plotting x and y dimension
-plotxdim=220
+plotxdim=120
 plotydim=55
 
 #Y-axis max and interval
@@ -80,9 +80,10 @@ def get_yrange():
     if(str(os.getenv('yinterval')) != 'None'):     
         yinterval = int(os.getenv('yinterval'))
 
-    print ymax
-    print yinterval
-    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval)
+    print "YINTERVAL: " +  str(yinterval)
+    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval + yinterval)
+    print "YMAX : " + str(ymax)
+
 
 def get_ytile():
     global ytitledef
@@ -131,7 +132,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=2, skipspace=40)
+L.draw(c, coord=[d.left()+4, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=3, skipspace=30)
 
 c.render()
 exit()
