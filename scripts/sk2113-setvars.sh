@@ -17,6 +17,9 @@ export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="40" #In GB
 export KERNEL=$NVMBASE/KERNEL
 
+#PAPER FOLDER
+export PAPER=$NVMBASE/IntelliOS-paper/crossprefetch/
+export PAPERGRAPHS=$NVMBASE/IntelliOS-paper/crossprefetch/graphs/OCT7
 
 #BENCHMARKS AND LIBS
 export OUTPUT_FOLDER=$NVMBASE/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-SENSITIVE

@@ -407,11 +407,22 @@ EXTRACT_RESULT_THREADS()  {
 
 }
 
+UPDATE_PAPER() {
+	mkdir -p $PAPERGRAPHS
+	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	git add $PAPERGRAPHS/*
+	git commit -am "adding current results"
+	git push origin 
+}
+
 MOVEGRAPHS() {
 	mkdir -p graphs/$APP"$APPPREFIX"/
 	mkdir -p graphs/local/$APP"$APPPREFIX"/
+
 	cp *.pdf graphs/$APP"$APPPREFIX"/
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/
+
+	UPDATE_PAPER
 }
 
 
