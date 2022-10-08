@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000")
-NUM=20000
+declare -a num_arr=("20000000")
+NUM=20000000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
@@ -45,7 +45,7 @@ NUM=20000
 
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8" "4" "1")
-declare -a thread_arr=("32")
+#declare -a thread_arr=("32")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
@@ -136,7 +136,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
