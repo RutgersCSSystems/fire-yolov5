@@ -1,0 +1,40 @@
+Received signal 11 (Segmentation fault)
+Command terminated by signal 11
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=0 --seed=1576170874 --benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=1"
+	User time (seconds): 0.08
+	System time (seconds): 0.57
+	Percent of CPU this job got: 257%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.25
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 41220
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 81
+	Minor (reclaiming a frame) page faults: 9185
+	Voluntary context switches: 502
+	Involuntary context switches: 22
+	Swaps: 0
+	File system inputs: 579408
+	File system outputs: 80
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[35064.071609] sh (41454): drop_caches: 3
+[35064.116544] sh (41459): drop_caches: 3
+[35069.149994] write_proc_unbounded: Value of write = 0
+[35069.150009] write_proc_2mb_limit: Value of write = 0
+[35069.150014] write_proc_bitmap_shift: Value of write = 38
+[35069.157821] write_proc_unbounded: Value of write = 0
+[35069.157833] write_proc_2mb_limit: Value of write = 0
+[35069.157838] write_proc_bitmap_shift: Value of write = 38
+[35069.390000] traps: db_bench[41502] general protection fault ip:7fe11c807250 sp:7fe119fb3aa0 error:0 in lib_Cross_Blind.so[7fe11c802000+a000]
+[35069.405986] write_proc_unbounded: Value of write = 0
+[35069.405993] write_proc_2mb_limit: Value of write = 0

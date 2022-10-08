@@ -1,0 +1,55 @@
+Received signal 11 (Segmentation fault)
+#0   /usr/lib/lib_Cross_Blind.so(_Z13prefetcher_thPv+0x20) [0x7fb8641eb250] ??	??:0	DESTRUCTOR GETTING CALLED 	PRINT_GLOBAL_LIB_STATS in dest	Total nr_ra = 0	Total nr_bytes_ra = 0	
+#1   /usr/lib/lib_Cross_Blind.so(+0x7ab9) [0x7fb8641edab9] Command terminated by signal 11
+	Command being timed: "./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=0 --seed=1576170874 --benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32"
+	User time (seconds): 0.06
+	System time (seconds): 0.65
+	Percent of CPU this job got: 257%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 40636
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 91
+	Minor (reclaiming a frame) page faults: 11738
+	Voluntary context switches: 613
+	Involuntary context switches: 37
+	Swaps: 0
+	File system inputs: 583136
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+PRINT_GLOBAL_LIB_STATS in dest
+Total nr_ra = 0
+Total nr_bytes_ra = 0
+[33122.584567] sh (28488): drop_caches: 3
+[33122.630096] sh (28493): drop_caches: 3
+[33127.664731] write_proc_unbounded: Value of write = 0
+[33127.664745] write_proc_2mb_limit: Value of write = 0
+[33127.664751] write_proc_bitmap_shift: Value of write = 38
+[33127.672243] write_proc_unbounded: Value of write = 0
+[33127.672256] write_proc_2mb_limit: Value of write = 0
+[33127.672261] write_proc_bitmap_shift: Value of write = 38
+[33127.888195] write_proc_unbounded: Value of write = 0
+[33127.888208] write_proc_2mb_limit: Value of write = 0
+[33127.888213] write_proc_bitmap_shift: Value of write = 38
+[33127.892276] write_proc_unbounded: Value of write = 0
+[33127.892290] write_proc_2mb_limit: Value of write = 0
+[33127.892295] write_proc_bitmap_shift: Value of write = 38
+[33127.926474] write_proc_unbounded: Value of write = 0
+[33127.926481] write_proc_2mb_limit: Value of write = 0
+[33127.942520] traps: db_bench[28560] general protection fault ip:7fb8641eb250 sp:7fb8547e3aa0 error:0 in lib_Cross_Blind.so[7fb8641e6000+a000]
+[33127.945377] write_proc_unbounded: Value of write = 0
+[33127.945389] write_proc_2mb_limit: Value of write = 0
+[33127.945394] write_proc_bitmap_shift: Value of write = 38
+[33127.946274] write_proc_unbounded: Value of write = 0
+[33127.946282] write_proc_2mb_limit: Value of write = 0
+[33127.947396] write_proc_unbounded: Value of write = 0
+[33127.947406] write_proc_2mb_limit: Value of write = 0
+[33127.947410] write_proc_bitmap_shift: Value of write = 38
