@@ -44,8 +44,8 @@ NUM=20000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
-#declare -a thread_arr=("16" "32" "8")
-declare -a thread_arr=("16")
+declare -a thread_arr=("8" "4" "1")
+#declare -a thread_arr=("32")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
@@ -57,8 +57,8 @@ echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a workload_arr=("fillseq" "fillrandom")
-#declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync")
-declare -a config_arr=("CIPI")
+declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
+#declare -a config_arr=("CIPI")
 
 
 #declare -a workload_arr=("multireadrandom")
@@ -122,10 +122,10 @@ GEN_RESULT_PATH() {
 	WORKLOAD=$1
 	CONFIG=$2
 	THREAD=$3
-	let NUM=$4/1000000
+	let KEYCOUNT=$NUM/1000000
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$NUM"M-KEYS"/$WORKLOAD/$THREAD
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
 	mkdir -p $RESULTS
 	RESULTFILE=$RESULTS/$CONFIG.out
 }

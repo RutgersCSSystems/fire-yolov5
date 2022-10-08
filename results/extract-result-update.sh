@@ -67,6 +67,15 @@ set_rocks_global_vars() {
 }
 
 
+set_rocks_thread_impact_global_vars() {
+	rocksworkarr=("readseq")
+	rocksworkproxyarr=("rseq")
+	threadarr=("8" "16" "32")
+}
+
+
+
+
 set_filebench_global_vars() {
 	declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
 	declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
@@ -419,10 +428,13 @@ let APPINTERVAL=10
 YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'
-EXTRACT_RESULT "ROCKSDB"
+#EXTRACT_RESULT "ROCKSDB"
 MOVEGRAPHS
 XTITLE='#. of threads'
-#EXTRACT_RESULT_THREADS "ROCKSDB"
+set_rocks_thread_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+EXTRACT_RESULT_THREADS "ROCKSDB"
 MOVEGRAPHS
 exit
 

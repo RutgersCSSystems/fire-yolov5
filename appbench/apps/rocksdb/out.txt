@@ -18,11 +18,13 @@
 + num_arr=("20000000")
 + declare -a num_arr
 + NUM=20000000
-+ thread_arr=("16")
++ thread_arr=("16" "32" "8" "4" "1")
++ declare -a thread_arr
++ thread_arr=("32")
 + declare -a thread_arr
 + workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 + declare -a workload_arr
-+ USEDB=0
++ USEDB=1
 + echo 'CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!'
 CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
 + echo 'CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!'
@@ -31,9 +33,7 @@ CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!
 CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
 + echo 'CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!'
 CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
-+ workload_arr=("fillseq" "fillrandom")
-+ declare -a workload_arr
-+ config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync")
++ config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 + declare -a config_arr
 + ulimit -n 1000000
 + RUN
@@ -41,51 +41,6 @@ CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
 BEGINNING TO WARM UP .......
 + cd /users/kannan11/ssd/prefetching/shared_libs/simple_prefetcher
 + /users/kannan11/ssd/prefetching/shared_libs/simple_prefetcher/compile.sh
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_Vanilla.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_Cross_Blind.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DBLIND_PREFETCH -DDISABLE_APP_READAHEAD -DDISABLE_FADV_DONTNEED
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_OSonly.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DDISABLE_APP_READAHEADS
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_INTERCEPT.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DONLY_INTERCEPT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_Cross_Info.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DDISABLE_FADV_DONTNEED -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH 
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CIP.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS 
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CIP_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS 
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CIPI_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS  -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT	    
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CPBV.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_APP_READAHEADS -DENABLE_EVICTION 
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CIPI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS  \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CPBI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DPREDICTOR -DDISABLE_APP_READAHEADS -DENABLE_EVICTION  \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CNI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH  -DDISABLE_FADV_DONTNEED \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_DISABLE_ADV.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_DONTNEED -DDISABLE_MADV_DONTNEED
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CNF.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM   -DDISABLE_FADV_DONTNEED
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_VRAI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DBLIND_PREFETCH -DDISABLE_APP_READAHEAD -DDISABLE_FADV_DONTNEED \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_VRA.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DTHPOOL_PREFETCH -DBLIND_PREFETCH -DDISABLE_APP_READAHEAD -DDISABLE_FADV_DONTNEED
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CII.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DDISABLE_FADV_DONTNEED -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH  \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_Cross_Info_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DDISABLE_FADV_DONTNEED -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH 
-g++  -fPIC -shared -std=gnu++11 -Wno-unused-result -g -o lib_CII_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=4 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP  -DENABLE_OS_STATS  -DENABLE_LIB_STATS  -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=37 -DDISABLE_FADV_RANDOM  -DDISABLE_FADV_DONTNEED -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH  \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-gcc clear-stats.c -o clear_os_stats
 sudo cp *.so /usr/local/lib
 sudo cp *.so /usr/lib
 sudo cp clear_os_stats /usr/bin
@@ -101,39 +56,38 @@ FINISHING WARM UP .......
 + sudo sh -c sync
 + sleep 5
 + sudo dmesg -c
-[  561.079765] sh (5208): drop_caches: 3
-[  562.241013] sh (5215): drop_caches: 3
-[ 1146.673237] sh (6404): drop_caches: 3
-[ 1146.749616] sh (6410): drop_caches: 3
+[40161.187681] sh (45781): drop_caches: 3
+[40161.228158] sh (45786): drop_caches: 3
+[40277.029620] sh (45866): drop_caches: 3
+[40277.080209] sh (45871): drop_caches: 3
 + for NUM in "${num_arr[@]}"
 + for THREAD in "${thread_arr[@]}"
 + PARAMS='--db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000  --seed=1576170874'
 + for WORKLOAD in "${workload_arr[@]}"
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq Cross_Info 16 20000000
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq Cross_Info 32 20000000
++ WORKLOAD=readseq
 + CONFIG=Cross_Info
-+ THREAD=16
-+ let NUM=20000000/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16/Cross_Info.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16
-+ echo 'RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16/Cross_Info.out'
-RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16/Cross_Info.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info.out'
+RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_Cross_Info.so
 + LD_PRELOAD=/usr/lib/lib_Cross_Info.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING Cross_Info......................'
 .......FINISHING Cross_Info......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/20M-KEYS/fillseq/16/Cross_Info.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -143,29 +97,28 @@ RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/resul
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq OSonly 16 20
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq OSonly 32 20000000
++ WORKLOAD=readseq
 + CONFIG=OSonly
-+ THREAD=16
-+ let NUM=20/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/OSonly.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/OSonly.out'
-RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/OSonly.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/OSonly.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/OSonly.out'
+RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/OSonly.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_OSonly.so
 + LD_PRELOAD=/usr/lib/lib_OSonly.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING OSonly......................'
 .......FINISHING OSonly......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/OSonly.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/OSonly.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -175,29 +128,28 @@ RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/S
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq Vanilla 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq Vanilla 32 20000000
++ WORKLOAD=readseq
 + CONFIG=Vanilla
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Vanilla.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Vanilla.out'
-RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Vanilla.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Vanilla.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Vanilla.out'
+RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Vanilla.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_Vanilla.so
 + LD_PRELOAD=/usr/lib/lib_Vanilla.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING Vanilla......................'
 .......FINISHING Vanilla......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Vanilla.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Vanilla.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -207,29 +159,28 @@ RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq Cross_Info_sync 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq Cross_Info_sync 32 20000000
++ WORKLOAD=readseq
 + CONFIG=Cross_Info_sync
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Info_sync.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Info_sync.out'
-RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Info_sync.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info_sync.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info_sync.out'
+RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info_sync.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
 + LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING Cross_Info_sync......................'
 .......FINISHING Cross_Info_sync......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Info_sync.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Info_sync.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -239,29 +190,28 @@ RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq Cross_Blind 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq Cross_Blind 32 20000000
++ WORKLOAD=readseq
 + CONFIG=Cross_Blind
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Blind.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Blind.out'
-RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Blind.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Blind.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Blind.out'
+RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Blind.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_Cross_Blind.so
 + LD_PRELOAD=/usr/lib/lib_Cross_Blind.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING Cross_Blind......................'
 .......FINISHING Cross_Blind......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/Cross_Blind.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/Cross_Blind.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -271,29 +221,28 @@ RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/resu
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq CII 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq CII 32 20000000
++ WORKLOAD=readseq
 + CONFIG=CII
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CII.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CII.out'
-RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CII.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CII.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CII.out'
+RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CII.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_CII.so
 + LD_PRELOAD=/usr/lib/lib_CII.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING CII......................'
 .......FINISHING CII......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CII.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CII.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -303,29 +252,28 @@ RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDA
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq CIP 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq CIP 32 20000000
++ WORKLOAD=readseq
 + CONFIG=CIP
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP.out'
-RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP.out'
+RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_CIP.so
 + LD_PRELOAD=/usr/lib/lib_CIP.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING CIP......................'
 .......FINISHING CIP......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -335,29 +283,59 @@ RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDA
 + sleep 5
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillseq CIP_sync 16 0
-+ WORKLOAD=fillseq
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq CIP_sync 32 20000000
++ WORKLOAD=readseq
 + CONFIG=CIP_sync
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP_sync.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16
-+ echo 'RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP_sync.out'
-RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP_sync.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP_sync.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP_sync.out'
+RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP_sync.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_CIP_sync.so
 + LD_PRELOAD=/usr/lib/lib_CIP_sync.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillseq --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING CIP_sync......................'
 .......FINISHING CIP_sync......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillseq/16/CIP_sync.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIP_sync.out
++ grep MB/s
++ FlushDisk
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
++ sudo sh -c sync
++ sleep 5
++ for CONFIG in "${config_arr[@]}"
++ RESULTS=
++ READARGS='--benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readseq CIPI 32 20000000
++ WORKLOAD=readseq
++ CONFIG=CIPI
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIPI.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32
++ echo 'RUNNING CIPI and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIPI.out'
+RUNNING CIPI and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIPI.out
++ echo ...................................................
+...................................................
++ export LD_PRELOAD=/usr/lib/lib_CIPI.so
++ LD_PRELOAD=/usr/lib/lib_CIPI.so
++ export LD_PRELOAD=
++ LD_PRELOAD=
++ sudo dmesg -c
++ echo '.......FINISHING CIPI......................'
+.......FINISHING CIPI......................
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readseq/32/CIPI.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -368,29 +346,28 @@ RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results
 + for WORKLOAD in "${workload_arr[@]}"
 + for CONFIG in "${config_arr[@]}"
 + RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom Cross_Info 16 0
-+ WORKLOAD=fillrandom
++ READARGS='--benchmarks=readrandom --use_existing_db=1 --mmap_read=0 --threads=32'
++ GEN_RESULT_PATH readrandom Cross_Info 32 20000000
++ WORKLOAD=readrandom
 + CONFIG=Cross_Info
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info.out'
-RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info.out
++ THREAD=32
++ let KEYCOUNT=20000000/1000000
++ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32
++ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32/Cross_Info.out
++ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32
++ echo 'RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32/Cross_Info.out'
+RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32/Cross_Info.out
 + echo ...................................................
 ...................................................
 + export LD_PRELOAD=/usr/lib/lib_Cross_Info.so
 + LD_PRELOAD=/usr/lib/lib_Cross_Info.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
 + export LD_PRELOAD=
 + LD_PRELOAD=
 + sudo dmesg -c
 + echo '.......FINISHING Cross_Info......................'
 .......FINISHING Cross_Info......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info.out
++ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT-OCT7/ROCKSDB/20M-KEYS/readrandom/32/Cross_Info.out
 + grep MB/s
 + FlushDisk
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
@@ -398,228 +375,3 @@ RUNNING Cross_Info and writing results to #/users/kannan11/ssd/prefetching/resul
 + sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
 + sudo sh -c sync
 + sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom OSonly 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=OSonly
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/OSonly.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/OSonly.out'
-RUNNING OSonly and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/OSonly.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_OSonly.so
-+ LD_PRELOAD=/usr/lib/lib_OSonly.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING OSonly......................'
-.......FINISHING OSonly......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/OSonly.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom Vanilla 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=Vanilla
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Vanilla.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Vanilla.out'
-RUNNING Vanilla and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Vanilla.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_Vanilla.so
-+ LD_PRELOAD=/usr/lib/lib_Vanilla.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING Vanilla......................'
-.......FINISHING Vanilla......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Vanilla.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom Cross_Info_sync 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=Cross_Info_sync
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info_sync.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info_sync.out'
-RUNNING Cross_Info_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info_sync.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
-+ LD_PRELOAD=/usr/lib/lib_Cross_Info_sync.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING Cross_Info_sync......................'
-.......FINISHING Cross_Info_sync......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Info_sync.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom Cross_Blind 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=Cross_Blind
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Blind.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Blind.out'
-RUNNING Cross_Blind and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Blind.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_Cross_Blind.so
-+ LD_PRELOAD=/usr/lib/lib_Cross_Blind.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING Cross_Blind......................'
-.......FINISHING Cross_Blind......................
-+ grep MB/s
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/Cross_Blind.out
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom CII 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=CII
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CII.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CII.out'
-RUNNING CII and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CII.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_CII.so
-+ LD_PRELOAD=/usr/lib/lib_CII.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING CII......................'
-.......FINISHING CII......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CII.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom CIP 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=CIP
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP.out'
-RUNNING CIP and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_CIP.so
-+ LD_PRELOAD=/usr/lib/lib_CIP.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING CIP......................'
-.......FINISHING CIP......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ for CONFIG in "${config_arr[@]}"
-+ RESULTS=
-+ READARGS='--benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16'
-+ GEN_RESULT_PATH fillrandom CIP_sync 16 0
-+ WORKLOAD=fillrandom
-+ CONFIG=CIP_sync
-+ THREAD=16
-+ let NUM=0/1000000
-+ RESULTS=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ RESULTFILE=/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP_sync.out
-+ mkdir -p /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16
-+ echo 'RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP_sync.out'
-RUNNING CIP_sync and writing results to #/users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP_sync.out
-+ echo ...................................................
-...................................................
-+ export LD_PRELOAD=/usr/lib/lib_CIP_sync.so
-+ LD_PRELOAD=/usr/lib/lib_CIP_sync.so
-+ /usr/bin/time -v ./db_bench --db=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=20000000 --seed=1576170874 --benchmarks=fillrandom --use_existing_db=0 --mmap_read=0 --threads=16
-+ export LD_PRELOAD=
-+ LD_PRELOAD=
-+ sudo dmesg -c
-+ echo '.......FINISHING CIP_sync......................'
-.......FINISHING CIP_sync......................
-+ cat /users/kannan11/ssd/prefetching/results/SUDARSUN-PAPER-LOCAL-Sep16-CLEMSON-PREDICT/ROCKSDB/0M-KEYS/fillrandom/16/CIP_sync.out
-+ grep MB/s
-+ FlushDisk
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches'
-+ sudo sh -c sync
-+ sleep 5
-+ exit
