@@ -19,11 +19,11 @@ legendtext=['Vanilla', 'OSonly', 'CNaive', 'CNI']
 clusterlen=len(legendtext)
 
 #Graph x and y-axis dimension
-graphxdim=120
+graphxdim=140
 graphydim=75
 
 #graph plotting x and y dimension
-plotxdim=100
+plotxdim=120
 plotydim=55
 
 #Y-axis max and interval
@@ -131,7 +131,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+6, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=3, skipspace=30)
+L.draw(c, coord=[d.left()+4, d.top()-2], width=4, height=4, fontsize=XTSIZE, hspace=1, skipnext=3, skipspace=30)
 
 c.render()
 exit()
