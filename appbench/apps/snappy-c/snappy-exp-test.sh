@@ -45,6 +45,10 @@ declare -a config_arr=("Cross_Info" "Vanilla" "CIP" "CII" "CIPI" "OSonly")
 declare -a prefech_sz_arr=("4096" "1024")
 declare -a prefech_thrd_arr=("1" "4" "16")
 
+declare -a prefech_sz_arr=("4096" "1024")
+declare -a prefech_thrd_arr=("1" "4")
+
+
 #Pass these arguments as a global variable
 workload_arr_in=$2
 config_arr_in=$3
@@ -200,8 +204,8 @@ RUN() {
         cd $PREDICT_LIB_DIR
 
 	if [ $glob_enable_sensitive -gt 0 ]; then
-		sed -i "/NR_WORKERS=/c\NR_WORKERS=$prefechthrd" compile.sh
-		sed -i "/PREFETCH_SIZE=/c\PREFETCH_SIZE=$prefetchsz" compile.sh
+		sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+		sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
 	fi
 
 	./compile.sh

@@ -56,11 +56,11 @@ echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
-declare -a workload_arr=("fillseq" "fillrandom")
+#declare -a workload_arr=("fillseq" "fillrandom")
 declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync")
 #declare -a workload_arr=("multireadrandom")
 
-#declare -a config_arr=("OSonly")
+declare -a config_arr=("CIPI")
 #declare -a config_arr=("Cross_Info")
 #declare -a config_arr=("CIP" "CIP_sync")
 #declare -a config_arr=("Cross_Info_sync")
