@@ -134,8 +134,12 @@ GET_GRAPH_YMAX() {
 	echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
 
 	if [[ $currval > $max ]]; then
-		let graphmax=$1
+		let graphmax=$currval
 	fi
+
+	echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
+
+
 }
 
 
