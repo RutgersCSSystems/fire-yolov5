@@ -80,8 +80,8 @@ def get_yrange():
     if(str(os.getenv('yinterval')) != 'None'):     
         yinterval = int(os.getenv('yinterval'))
 
-    print ymax
-    print yinterval
+    print "YMAX :" ymax
+    print "YINTERVAL: " yinterval
     ymax=int((math.ceil(ymax/yinterval) +2) * yinterval + yinterval)
 
 def get_ytile():
