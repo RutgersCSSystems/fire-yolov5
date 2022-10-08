@@ -130,9 +130,10 @@ declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+pre
 GET_GRAPH_YMAX() {
 
 	let currval=$1
+	let max=$graphmax
 	echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
 
-	if [[ $currval > "$graphmax" ]]; then
+	if [[ $currval > "$max" ]]; then
 		graphmax=$1
 	fi
 }
