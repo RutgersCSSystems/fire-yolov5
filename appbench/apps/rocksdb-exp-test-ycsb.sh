@@ -27,7 +27,7 @@ READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$TH
 APPPREFIX="/usr/bin/time -v"
 
 APP=db_bench
-APPOUTPUTNAME="ROCKSDB"
+APPOUTPUTNAME="YCSB-ROCKSDB"
 
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
@@ -44,11 +44,11 @@ NUM=20000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("8" "4" "1")
-declare -a thread_arr=("32")
+declare -a thread_arr=("8")
+#declare -a thread_arr=("32")
 
 
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
 
 USEDB=1
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
@@ -58,7 +58,7 @@ echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!
 
 #declare -a workload_arr=("fillseq" "fillrandom")
 declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
-#declare -a config_arr=("CIPI")
+declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
 #declare -a config_arr=("CIP" "CIP_sync")
@@ -99,14 +99,15 @@ CLEAR_DATA()
 COMPILE_AND_WRITE()
 {
         export LD_PRELOAD=""
-	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200"
+	#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200"
+       PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --benchmarks=fillycsb --use_existing_db=0 --num=$NUM --duration=10 --compression_type=none --value_size=$VALUE_SIZE --threads=1"
+
 	mkdir -p $RESULTS
 
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
         $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
-
         ##Condition the DB to get Stable results
         #$DBHOME/db_bench $PARAMS $READARGS  #&> $RESULTS/WARMUP-READ1.out
         #FlushDisk
@@ -146,7 +147,8 @@ RUN() {
 	do
 		for THREAD in "${thread_arr[@]}"
 		do
-			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
+			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
+			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=10 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
 
 			for WORKLOAD in "${workload_arr[@]}"
 			do
