@@ -22,6 +22,7 @@ let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=100000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
+let SCALE_YCSB_GRAPH=1
 
 
 let SCALE_SNAPPY_GRAPH=1
@@ -40,6 +41,10 @@ let XTITLE='#. of threads'
 #in the functions below
 declare -a rocksworkarr=("multireadrandom")
 declare -a rocksworkproxyarr=("multirrandom")
+
+declare -a rocksycsbarr=("multireadrandom")
+declare -a rocksycsbproxyarr=("multirrandom")
+
 
 declare -a filesworkarr=("filemicro_seqread.f")
 declare -a fileproxyarr=("seqread")
@@ -73,6 +78,12 @@ set_rocks_thread_impact_global_vars() {
 	threadarr=("8" "16" "32")
 }
 
+
+set_rocks_ycsb_global_vars() {
+	rocksycsbarr=("ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
+	rocksycsbproxyarr=("work-b" "work-c" "work-d" "work-e")
+	threadarr=("16")
+}
 
 
 
@@ -196,6 +207,11 @@ PULL_RESULT() {
 		then
                         val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
+
+		elif [ "$APP" = 'YCSB-ROCKSDB' ];
+		then
+                        val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_YCSB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
                 elif [ "$APP" = 'snappy' ];
                 then
@@ -409,18 +425,17 @@ EXTRACT_RESULT_THREADS()  {
 }
 
 UPDATE_PAPER() {
-	cd $PAPERGRAPHS
 	mkdir -p $PAPERGRAPHS
 	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
-	git commit -am "adding current results"
+	git commit -am "adding current results for $APP"
 	git push origin 
 }
 
 MOVEGRAPHS() {
-	mkdir -p graphs/$APP"$APPPREFIX"/
-	mkdir -p graphs/local/$APP"$APPPREFIX"/
+	mkdir -p graphs/$APP"$APPPREFIX"
+	mkdir -p graphs/local/$APP"$APPPREFIX"
 
 	cp *.pdf graphs/$APP"$APPPREFIX"/
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/
@@ -430,25 +445,17 @@ MOVEGRAPHS() {
 
 
 export APPPREFIX="20M-KEYS"
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/ROCKSDB/$APPPREFIX"
-
+APP='YCSB-ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
 #set the arrays
-set_rocks_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-
-let APPINTERVAL=10
-YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+set_rocks_ycsb_global_vars
+apparr=("${rocksycsbarr[@]}")
+proxyapparr=("${rocksycsbproxyarr[@]}")
+let APPINTERVAL=100000
+YTITLE='Throughput (OPS/sec) in '$SCALE_YCSB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'
-#EXTRACT_RESULT "ROCKSDB"
-MOVEGRAPHS
-XTITLE='#. of threads'
-set_rocks_thread_impact_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-EXTRACT_RESULT_THREADS "ROCKSDB"
+EXTRACT_RESULT "YCSB-ROCKSDB"
 MOVEGRAPHS
 exit
 

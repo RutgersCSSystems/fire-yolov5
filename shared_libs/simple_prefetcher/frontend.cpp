@@ -693,7 +693,7 @@ void prefetcher_th(void *arg) {
 				file_pos, pg_diff, a->fd, ra.data,
 				page_cache_state->numBits, start_pg, zero_pg);
 		if(pg_diff == 0){
-			printf("ERR:%s, pg_diff==0\n", __func__);
+			printf("ERR:%s, pg_diff==0 file_pos %zu\n", __func__, file_pos);
 			goto exit_prefetcher_th;
 		}
 		file_pos += pg_diff << PAGE_SHIFT;
@@ -702,12 +702,16 @@ void prefetcher_th(void *arg) {
 		file_pos += a->prefetch_size;
 #endif //READAHEAD_INFO_PC_STATE
 
+
+#ifdef ENABLE_EVICTION		
 		/*
 		 * if the memory is less NR_REMAINING
 		 * the prefetcher stops
 		 */
 		if(check_mem_and_stop(&ra, a))
 			goto exit_prefetcher_th;
+#endif
+
 
 #else //MODIFIED_RA
 		if(real_readahead(a->fd, file_pos, a->prefetch_size) < 0) {
