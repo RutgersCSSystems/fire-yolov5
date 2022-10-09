@@ -257,7 +257,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 	uinode->fdcount++;
 	debug_printf("ADDING INODE %d, FDCOUNT %d, uinode=%p \n", inode, uinode->fdcount, uinode);
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_DISABLE
         //Adds the uinode to the LRU
         if(new_uinode && uinode && uinode->file_size > MIN_FILE_SZ){
                 update_lru(uinode);
@@ -348,7 +348,7 @@ int handle_close(struct hashtable *i_map, int fd){
 
 
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_DISABLE
 /*Number of pages free inside the OS*/
 
 /*GLOBAL FILE LEVEL LRU*/
@@ -476,7 +476,7 @@ wait_for_eviction:
                 sleep(SLEEP_TIME);
         }
 }
-#endif //ENABLE_EVICTION
+#endif //ENABLE_EVICTION_DISABLE
 
 #endif //MAINTAIN_UINODE
 

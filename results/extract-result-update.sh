@@ -22,7 +22,7 @@ let SCALE_REDIS_GRAPH=1000
 let SCALE_ROCKSDB_GRAPH=100000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
-let SCALE_YCSB_GRAPH=1
+let SCALE_YCSB_GRAPH=10000
 
 
 let SCALE_SNAPPY_GRAPH=1
@@ -427,8 +427,10 @@ EXTRACT_RESULT_THREADS()  {
 UPDATE_PAPER() {
 	mkdir -p $PAPERGRAPHS
 	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	cd $PAPERGRAPHS
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
+	git pull
 	git commit -am "adding current results for $APP"
 	git push origin 
 }
@@ -451,7 +453,8 @@ TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
 set_rocks_ycsb_global_vars
 apparr=("${rocksycsbarr[@]}")
 proxyapparr=("${rocksycsbproxyarr[@]}")
-let APPINTERVAL=100000
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=100
 YTITLE='Throughput (OPS/sec) in '$SCALE_YCSB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'

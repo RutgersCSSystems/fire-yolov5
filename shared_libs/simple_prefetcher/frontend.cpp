@@ -180,7 +180,7 @@ void init_global_ds(void){
                         goto exit;
 		}
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_DISABLE
                 thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
 #endif
 	}
@@ -262,7 +262,7 @@ void con(){
     }
 #endif
 
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_DISABLE
 	evict_pool = thpool_init(NR_EVICT_WORKERS);
 	if(!evict_pool){
 		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_EVICT_WORKERS);
@@ -335,7 +335,13 @@ void dest(){
 }
 
 
-#ifdef ENABLE_EVICTION
+int evict_advise(int fd){
+	//fprintf(stderr,"evicting inode \n");
+	return real_posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+}
+
+
+#ifdef ENABLE_EVICTION_OLD
 int set_thread_args_evict(struct thread_args *arg) {
 	arg->current_fd = ptd.current_fd;
 	arg->last_fd = ptd.last_fd;
@@ -365,10 +371,6 @@ int set_curr_last_fd(int fd){
 		ptd.current_fd = fd;
 	}
 	return 0;
-}
-
-int evict_advise(int fd){
-	return real_posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 }
 
 int perform_eviction(struct thread_args *arg){
@@ -566,7 +568,7 @@ stop_prefetch:
 
 int check_mem_and_stop(struct read_ra_req *ra, struct thread_args *a) {
 
-#ifndef ENABLE_EVICTION
+#ifndef ENABLE_EVICTION_DISABLE
 	return 0;
 #endif
 	/*
@@ -681,7 +683,7 @@ void prefetcher_th(void *arg) {
 		}
 #endif
 		uinode_bitmap_unlock(a->uinode);
-#ifdef ENABLE_EVICTION
+#ifdef ENABLE_EVICTION_DISABLE
 		update_lru(a->uinode);
 		//update_nr_free_pg(ra.nr_free);
 #endif
@@ -703,7 +705,7 @@ void prefetcher_th(void *arg) {
 #endif //READAHEAD_INFO_PC_STATE
 
 
-#ifdef ENABLE_EVICTION		
+#ifdef ENABLE_EVICTION_DISABLE
 		/*
 		 * if the memory is less NR_REMAINING
 		 * the prefetcher stops
@@ -804,7 +806,7 @@ void inline prefetch_file(void *args){
 		arg->file_size = filesize;
 		arg->stride = stride;
 
-#ifdef ENABLE_EVICTION_OLD
+#ifdef ENABLE_EVICTION_DISABLE
 		set_thread_args_evict(arg);
 #else
 		arg->current_fd = 0;
@@ -1097,7 +1099,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	}
 
 
-#ifdef ENABLE_EVICTION_OLD
+#ifdef ENABLE_EVICTION_DISABLE
 	set_curr_last_fd(fd);
 #endif
 

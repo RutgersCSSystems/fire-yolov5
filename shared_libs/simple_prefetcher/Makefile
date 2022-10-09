@@ -82,11 +82,10 @@ Cross_Info: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Cross_Info.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO)
 
-
 #Cross-Blind + readahead_info syscall + bitmap checking + Mem Evictions
 Cross_Info_Budget: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIB.so $^ $(LIBS) $(DEBUG) \
-	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(DISABLE_FADV_DONTNEED) $(THPOOL_BLOCK_RA_INFO_BUDGET)
+	    $(VAR_FLAGS) $(THPOOL_BLOCK_RA_INFO_BUDGET)
 
 
 #Cross-Blind + readahead_info syscall + bitmap checking - Thpool

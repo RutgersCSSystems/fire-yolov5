@@ -28,10 +28,11 @@ mkdir -p $RESULTS
 declare -a thread_arr=("16")
 
 #Number of files to compress
-declare -a workload_arr=("400")
+declare -a workload_arr=("200")
 
 # Size of each file in KB
 declare -a filesize_arr=("10000" "20000" "40000" "80000" "100000")
+declare -a filesize_arr=("10000")
 FILESIZE=1000
 
 declare -a config_arr=("Cross_Blind" "Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "CII")
@@ -40,13 +41,13 @@ declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
 
 declare -a config_arr=("Cross_Info" "Vanilla" "CIP" "CII" "CIPI" "OSonly")
 #declare -a config_arr=("OSonly")
-#declare -a config_arr=("Cross_Info" "CIP" "CII" "CIPI")
+declare -a config_arr=("OSonly" "Cross_Info")
 
 declare -a prefech_sz_arr=("4096" "1024")
 declare -a prefech_thrd_arr=("1" "4" "16")
 
-declare -a prefech_sz_arr=("4096" "1024")
-declare -a prefech_thrd_arr=("1" "4")
+declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("1")
 
 
 #Pass these arguments as a global variable

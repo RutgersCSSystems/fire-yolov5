@@ -81,7 +81,7 @@ def get_yrange():
         yinterval = int(os.getenv('yinterval'))
 
     print "YINTERVAL: " +  str(yinterval)
-    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval + yinterval)
+    ymax=int((math.ceil(ymax/yinterval) +2) * yinterval + int(yinterval)/2)
     print "YMAX : " + str(ymax)
 
 
