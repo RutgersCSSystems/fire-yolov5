@@ -105,7 +105,7 @@ bit_array_t *BitArrayCreate(const unsigned long bits)
 	}
 
 	/* allocate structure */
-	ba = (bit_array_t *)malloc(sizeof(bit_array_t));
+	ba = (bit_array_t *)calloc(1, sizeof(bit_array_t));
 
 	if (ba == NULL)
 	{
@@ -117,7 +117,7 @@ bit_array_t *BitArrayCreate(const unsigned long bits)
 		ba->numBits = bits;
 
 		/* allocate array */
-		ba->array = (unsigned long *)malloc(sizeof(unsigned long) *
+		ba->array = (unsigned long *)calloc(1, sizeof(unsigned long) *
 				BITS_TO_CHARS(bits));
 
 		if (ba->array == NULL)
