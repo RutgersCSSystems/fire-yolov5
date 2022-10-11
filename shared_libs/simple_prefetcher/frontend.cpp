@@ -1342,9 +1342,9 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
-	read_predictor(NULL, size, fd, offset);
+	//read_predictor(NULL, size, fd, offset);
 
-	skip_predictor:
+skip_predictor:
 	amount_read = real_pread(fd, data, size, offset);
 
 	exit_pread:
@@ -1357,7 +1357,7 @@ char *fgets( char *str, int num, FILE *stream ) {
 
 	debug_printf( "Start %s\n", __func__);
 
-	read_predictor(stream, num, 0, 0);
+	//read_predictor(stream, num, 0, 0);
 
 	return real_fgets(str, num, stream);
 }
@@ -1409,8 +1409,8 @@ int close(int fd){
 	goto exit_close;
 #endif
 
-	handle_file_close(fd);
-	exit_close:
+	//handle_file_close(fd);
+exit_close:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
 }
