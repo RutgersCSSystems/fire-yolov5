@@ -987,6 +987,8 @@ void handle_open(struct file_desc desc){
 
 	desc.uinode = NULL;
 
+	return;
+
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
 	/*
@@ -1303,11 +1305,9 @@ int open(const char *pathname, int flags, ...){
 
 	desc.fd = fd;
 	desc.filename = pathname;
-
 	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
 	//handle_open(desc);
-
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -1332,7 +1332,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
 
-	///handle_open(desc);
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
