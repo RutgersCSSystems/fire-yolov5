@@ -1086,7 +1086,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		offset = ftell(stream);
 	}
 
-
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
 #endif
@@ -1383,7 +1382,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	read_predictor(stream, size*nmemb, 0, 0);
 
-	skip_predictor:
+skip_predictor:
 	amount_read = real_fread(ptr, size, nmemb, stream);
 
 	exit_fread:
