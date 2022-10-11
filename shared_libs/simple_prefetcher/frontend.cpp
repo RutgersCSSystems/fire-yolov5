@@ -1009,11 +1009,8 @@ void handle_open(struct file_desc desc){
 	desc.uinode = get_uinode(i_map, desc.fd);
 #endif
 
-	return;
-
-
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-	//record_open(desc);
+	record_open(desc);
 #endif
 
 	/*
@@ -1021,7 +1018,7 @@ void handle_open(struct file_desc desc){
 	 */
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
-	//prefetch_file(desc.fd);
+	prefetch_file(desc.fd);
 #endif
 
 
