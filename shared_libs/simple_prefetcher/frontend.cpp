@@ -1008,7 +1008,7 @@ void handle_open(struct file_desc desc){
 	 */
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
-	prefetch_file(desc.fd);
+	//prefetch_file(desc.fd);
 #endif
 
 
