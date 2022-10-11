@@ -1370,7 +1370,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-	read_predictor(stream, size*nmemb, 0, 0);
+	//read_predictor(stream, size*nmemb, 0, 0);
 
 skip_predictor:
 	amount_read = real_fread(ptr, size, nmemb, stream);
