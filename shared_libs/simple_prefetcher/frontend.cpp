@@ -971,7 +971,7 @@ void inline record_open(struct file_desc desc){
 		debug_printf("%s: fd=%d filesize=%ld is smaller than %d bytes\n", __func__, fd, filesize, MIN_FILE_SZ);
 	}
 
-	exit:
+exit:
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
