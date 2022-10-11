@@ -939,9 +939,11 @@ void inline record_open(struct file_desc desc){
 		 */
 			if(fp->should_prefetch_now()){
 				struct thread_args arg;
-				arg.fd = fd;
-				arg.fp = fp;
-				//prefetch_file(&arg);
+					arg.fd = fd;
+					arg.fp = fp;
+
+				//printf("%s: Doing a Bonus Prefetch\n", __func__);
+					prefetch_file(&arg);
 			}
 #endif
 
@@ -955,6 +957,14 @@ void inline record_open(struct file_desc desc){
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(ENABLE_OS_STATS)
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
+
+#if defined(PREFETCH_BOOST)
+		struct read_ra_req ra;
+		ra.data = NULL;
+		readahead_info(fd, 0, 0, &ra);
+		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+#endif
+
 #endif //defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
 	}
 	else{
@@ -1008,7 +1018,7 @@ void handle_open(struct file_desc desc){
 	 */
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
-	//prefetch_file(desc.fd);
+	prefetch_file(desc.fd);
 #endif
 
 
@@ -1075,6 +1085,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		fd = fileno(stream);
 		offset = ftell(stream);
 	}
+
 
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
@@ -1321,7 +1332,8 @@ FILE *fopen(const char *filename, const char *mode){
 
 	debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
 
-	//handle_open(desc);
+	handle_open(desc);
+
 exit:
 	debug_printf("Exiting %s\n", __func__);
 	return ret;
@@ -1341,12 +1353,12 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
-	//read_predictor(NULL, size, fd, offset);
+	read_predictor(NULL, size, fd, offset);
 
 skip_predictor:
 	amount_read = real_pread(fd, data, size, offset);
 
-	exit_pread:
+exit_pread:
 	return amount_read;
 }
 
@@ -1356,7 +1368,7 @@ char *fgets( char *str, int num, FILE *stream ) {
 
 	debug_printf( "Start %s\n", __func__);
 
-	//read_predictor(stream, num, 0, 0);
+	read_predictor(stream, num, 0, 0);
 
 	return real_fgets(str, num, stream);
 }
@@ -1369,7 +1381,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-	//read_predictor(stream, size*nmemb, 0, 0);
+	read_predictor(stream, size*nmemb, 0, 0);
 
 skip_predictor:
 	amount_read = real_fread(ptr, size, nmemb, stream);
@@ -1394,7 +1406,7 @@ int fclose(FILE *stream){
 
 	handle_file_close(fd);
 
-	exit_fclose:
+exit_fclose:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_fclose(stream);
 }
@@ -1408,8 +1420,8 @@ int close(int fd){
 	goto exit_close;
 #endif
 
-	//handle_file_close(fd);
-exit_close:
+	handle_file_close(fd);
+	exit_close:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
 }
@@ -1456,16 +1468,17 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
 #ifdef DISABLE_FADV_RANDOM
 	if(advice == POSIX_FADV_RANDOM)
-		goto exit;
+		goto exit_fadvise;
 #endif
 
 #ifdef DISABLE_FADV_DONTNEED
 	if(advice == POSIX_FADV_DONTNEED)
-		goto exit;
+		goto exit_fadvise;
 #endif
 
 	ret = real_posix_fadvise(fd, offset, len, advice);
-	exit:
+
+exit_fadvise:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
@@ -1482,7 +1495,7 @@ int madvise(void *addr, size_t length, int advice){
 #endif
 
 	ret = real_madvise(addr, length, advice);
-	exit:
+exit:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
