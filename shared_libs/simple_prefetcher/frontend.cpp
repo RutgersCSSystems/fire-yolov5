@@ -1404,7 +1404,7 @@ int fclose(FILE *stream){
 	goto exit_fclose;
 #endif
 
-	handle_file_close(fd);
+	//handle_file_close(fd);
 
 exit_fclose:
 	debug_printf( "Exiting %s\n", __func__);
