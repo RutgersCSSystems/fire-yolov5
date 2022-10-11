@@ -1002,6 +1002,9 @@ void handle_open(struct file_desc desc){
 	return;
 #endif
 
+	return;
+
+
 #ifdef MAINTAIN_UINODE
 	if(add_fd_to_inode(i_map, desc.fd) < 0){
 		printf("ERR:%s unable to add to uinode\n", __func__);
@@ -1009,7 +1012,6 @@ void handle_open(struct file_desc desc){
 	desc.uinode = get_uinode(i_map, desc.fd);
 #endif
 
-	return;
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
 	//record_open(desc);
