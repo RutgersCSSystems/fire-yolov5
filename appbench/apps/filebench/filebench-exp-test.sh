@@ -26,16 +26,16 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
-declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f")
-declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-declare -a workload_arr=("randomrw.f")
-#declare -a workload_arr=("oltp.f")
-#declare -a workload_arr=("mongo.f")
+declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f")
+#declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
+declare -a workload_arr=("varmail.f")
+declare -a workload_arr=("webserver.f")
+#declare -a workload_arr=("tpcso.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla")
+declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla" "Cross_Info")
 #declare -a config_arr=("OSonly")
-declare -a config_arr=("CIP" "CII" "CIPI")
+#declare -a config_arr=("CIP" "CII" "CIPI")
 declare -a thread_arr=("16")
 
 workload_arr_in=$1

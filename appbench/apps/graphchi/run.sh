@@ -44,11 +44,42 @@ export GRAPHCHI_ROOT=$APPBENCH/apps/graphchi/graphchi-cpp
 cd $APPBENCH/apps/graphchi 
 #echo "RUNNING CROSSLAYER.................."
 #$DBHOME/db_bench $PARAMS $WRITEARGS &> out.txt
+
 FlushDisk
 FlushDisk
-rm -rf $DATA.*
-#SETPRELOAD
-export LD_PRELOAD=/usr/lib/lib_CIP.so
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1
+
+rm -rf $SHARED_DATA/$DATA.*
+export LD_PRELOAD=/usr/lib/lib_CII_sync.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
 export LD_PRELOAD=""
+exit 
+
+
+FlushDisk
+FlushDisk
+rm -rf $SHARED_DATA/$DATA.*
+export LD_PRELOAD=/usr/lib/lib_CIPI.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
+export LD_PRELOAD=""
+
+FlushDisk
+FlushDisk
+
+rm -rf $SHARED_DATA/$DATA.*
+export LD_PRELOAD=/usr/lib/lib_CII.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
+export LD_PRELOAD=""
+
+FlushDisk
+FlushDisk
+
+rm -rf $SHARED_DATA/$DATA.*
+export LD_PRELOAD=/usr/lib/lib_OSonly.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
+export LD_PRELOAD=""
+
+
+
+
+
 set +x

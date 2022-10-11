@@ -6,8 +6,8 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-DBDIR=$DBHOME/DATA
-#DBDIR=/mnt/remote/DATA
+#DDIR=$DBHOME/DATA
+DBDIR=/mnt/remote/DATA
 
 
 if [ -z "$APPS" ]; then
@@ -38,6 +38,7 @@ mkdir -p $RESULTS
 
 declare -a num_arr=("20000000")
 NUM=20000000
+
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -48,6 +49,7 @@ declare -a thread_arr=("8" "4" "1")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+
 
 USEDB=1
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
@@ -130,12 +132,11 @@ GEN_RESULT_PATH() {
 RUN() {
 
         #CLEAR_DATA
-
 	echo "BEGINNING TO WARM UP ......."
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	#COMPILE_AND_WRITE
+	COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -157,7 +158,7 @@ RUN() {
 
 					mkdir -p $RESULTS
 
-					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
+					echo "RUNNING $CONFIG and writing results to $RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE

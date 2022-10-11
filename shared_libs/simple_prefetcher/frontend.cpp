@@ -695,8 +695,8 @@ void prefetcher_th(void *arg) {
 				file_pos, pg_diff, a->fd, ra.data,
 				page_cache_state->numBits, start_pg, zero_pg);
 		if(pg_diff == 0){
-			printf("ERR:%s, pg_diff==0 file_pos %zu\n", __func__, file_pos);
-			goto exit_prefetcher_th;
+			//printf("ERR:%s, pg_diff==0 file_pos %zu\n", __func__, file_pos);
+			//goto exit_prefetcher_th;
 		}
 		file_pos += pg_diff << PAGE_SHIFT;
 
