@@ -174,7 +174,7 @@
  * for uinodes
  */
 #ifndef MAXFILES
-#define MAXFILES 10000
+#define MAXFILES 100000
 #endif
 
 
