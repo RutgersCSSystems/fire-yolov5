@@ -987,7 +987,7 @@ void handle_open(struct file_desc desc){
 
 	desc.uinode = NULL;
 
-#if 0 //def ENABLE_OS_STATS
+#ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
 	/*
 	 * Allocates the bitmaps for this file
@@ -1018,7 +1018,7 @@ void handle_open(struct file_desc desc){
 	 */
 #ifdef BLIND_PREFETCH
 	// Prefetch without predicting
-	prefetch_file(desc.fd);
+	//prefetch_file(desc.fd);
 #endif
 
 
