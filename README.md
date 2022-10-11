@@ -133,7 +133,7 @@ this script needs to be updated to run different applications
 Check the scripts before running all_variation.
 
 ```
-pushd ./shared_libs/simple_prefetcher/
+pushd $NVMBASE/shared_libs/simple_prefetcher/
 ./compile.sh
 popd
 
