@@ -75,22 +75,27 @@ cd prefetching
 source ./scripts/setvars.sh ## This sets appropriate env variables
 ```
 
+@Jian use this for setting your variables
+```
+cd prefetching
+source ./scripts/jian-setvars.sh ## This sets appropriate env variables
+```
+
 
 
 ### Compile Kernel
 
 #### To compile deb for baremetal
 
-Before running the following commands, make sure you dont have other deb files in the NVM folder.
+Before running the following commands, make sure you dont have other deb files in the source base folder (prefetching).
 
 ```
 cd prefetching/linux-5.14.0
 ./compile_modified_deb.sh ## This will produce and install the modified kernel
-#./compile_vanilla_deb.sh ## This will produce and install the vanilla kernel
 sudo reboot ## this will reboot the node with the new linux 
 ```
 
-#### To compile for qemu
+#### To compile for qemu (Skip QEMU installation or steps for baremetal)
 
 ```
 source ./scripts/setvars.sh
@@ -132,44 +137,55 @@ pushd ./shared_libs/simple_prefetcher/
 ./compile.sh
 popd
 
-source ./scripts/setvars.sh
-./scripts/run/run_all_variation.sh
+source ./scripts/YOUR-setvars.sh //substitute YOUR with appropriate setvars.sh
 ```
+
 
 ## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
-
 To compile, assuming the environmental variables are set using set_vars.sh
-
 ```
+cd $NVMBASE/appbench/apps/rocksdb
 ./compile.sh
 ```
 
-
-
 The following script runs multiple configurations of RocksDB by varying 
-Cross-prefetch configurations, thread counts, and workloads.
+Cross-prefetch configurations and vanilla configurations, thread counts, and workloads.
 
+For local storage execution, we will use rocksdb-exp-test.sh script. 
 ```
-cd $APPS/rocksdb
 ./rocksdb-exp-test.sh 
 
 ```
+For remote storage execution, we will use rocksdb-exp-test.sh script. 
+```
+./rocksdb-exp-test-remote.sh
 
+```
+
+
+#### Varying Parameters
 To vary either RocksDB parameters, workloads, or the technique used for prefetching, vary one of these parameters in the 
 rocksdb-exp-test.sh script
 
+For the number of keys, we set the values here. We use by default 20M keys and 100-byte keys. If you want to change the number 
+of keys, update this
 ```
-declare -a num_arr=("1000000")
-NUM=1000000
+declare -a num_arr=("20000000")
+NUM=20000000
+```
 
-declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
-declare -a config_arr=("Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a workload_arr=("overwrite" "readwhilewriting" "readwhilescanning")
+#### Varying Parameters
+```
+declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a thread_arr=("4" "8" "16" "32")
 ```
 
-## Result extraction and Graph Generation (script under progress)
 
+## Deprecated After this.
+
+
+## Result extraction and Graph Generation (script under progress)
 
 
 
