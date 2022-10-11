@@ -177,7 +177,7 @@ NUM=20000000
 #### Varying Parameters
 ```
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
+declare -a config_arr=("OSonly" "Vanilla" "Cross_Info" "Cross_Info_sync" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a thread_arr=("4" "8" "16" "32")
 ```
 
