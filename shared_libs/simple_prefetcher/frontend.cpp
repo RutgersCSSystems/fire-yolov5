@@ -987,8 +987,6 @@ void handle_open(struct file_desc desc){
 
 	desc.uinode = NULL;
 
-	return;
-
 #ifdef ENABLE_OS_STATS
 	ptd.touchme = true; //enable per-thread filestats
 	/*
@@ -1010,6 +1008,8 @@ void handle_open(struct file_desc desc){
 	}
 	desc.uinode = get_uinode(i_map, desc.fd);
 #endif
+
+	return;
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
 	//record_open(desc);
