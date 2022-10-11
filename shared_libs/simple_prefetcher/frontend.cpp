@@ -1332,7 +1332,7 @@ FILE *fopen(const char *filename, const char *mode){
 
 	debug_printf("%s: file %s fd:%d\n", __func__,  filename, fd);
 
-	handle_open(desc);
+	///handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
