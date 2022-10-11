@@ -1420,8 +1420,8 @@ int close(int fd){
 	goto exit_close;
 #endif
 
-	handle_file_close(fd);
-	exit_close:
+	//handle_file_close(fd);
+exit_close:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
 }
