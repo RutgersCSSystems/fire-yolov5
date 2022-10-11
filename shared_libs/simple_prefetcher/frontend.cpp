@@ -939,11 +939,9 @@ void inline record_open(struct file_desc desc){
 		 */
 			if(fp->should_prefetch_now()){
 				struct thread_args arg;
-					arg.fd = fd;
-					arg.fp = fp;
-
-				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-					prefetch_file(&arg);
+				arg.fd = fd;
+				arg.fp = fp;
+				//prefetch_file(&arg);
 			}
 #endif
 
@@ -957,14 +955,6 @@ void inline record_open(struct file_desc desc){
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && !defined(ENABLE_OS_STATS)
 		debug_printf("%s: first READAHEAD: %ld\n", __func__, ptd.mytid);
 		//clock_gettime(CLOCK_REALTIME, &start);
-
-#if defined(PREFETCH_BOOST)
-		struct read_ra_req ra;
-		ra.data = NULL;
-		readahead_info(fd, 0, 0, &ra);
-		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
-#endif
-
 #endif //defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
 	}
 	else{
