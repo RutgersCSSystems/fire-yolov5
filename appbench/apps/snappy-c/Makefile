@@ -10,7 +10,7 @@ LDFLAGS=-lpthread -lm #-lcrfslib
 # download it somewhere and point to it
 KDOC := /usr/src/linux/scripts/kernel-doc
 
-all: libsnappyc.so.1 snappy_test_posix gen_file_posix
+all: clean libsnappyc.so.1 snappy_test_posix gen_file_posix
 
 snappy.o: snappy.c compat.h snappy-int.h
 
@@ -21,7 +21,7 @@ CLEAN := scmd.o snappy.o scmd bench bench.o fuzzer.o fuzzer map.o verify.o \
 	 snappy_test snappy_test_offload snappy_test_posix gen_file gen_file_posix
 
 clean: 
-	rm -f ${CLEAN}
+	rm -rf ${CLEAN}
 
 src: src.lex
 	flex src.lex

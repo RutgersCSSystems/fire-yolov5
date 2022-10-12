@@ -39,8 +39,8 @@ threadpool workerpool = NULL;
 struct thrd_cntxt {
     int id;
 	struct snappy_env env;	
-	char in_path[1024];
-	char out_path[1024];
+	char *in_path;
+	char *out_path;
 	size_t tot_input_bytes;
 	size_t tot_output_bytes;
 };
@@ -254,6 +254,8 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 
 	//memset(cntxt->in_path, '0', 255);
 	//memset(cntxt->out_path, '0', 255);
+	cntxt->in_path = (char *)malloc(1024);
+	cntxt->out_path = (char *)malloc(1024);
 
 	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
