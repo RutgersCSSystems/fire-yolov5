@@ -1129,8 +1129,8 @@ void update_file_predictor_and_prefetch(void *arg){
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 		fp->predictor_update(a->offset, a->data_size);
 
-		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0) )
-			return;
+		//if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0) )
+			//return;
 
 #if 0
 			/*update lru if file is fully prefetched*/
@@ -1138,7 +1138,7 @@ void update_file_predictor_and_prefetch(void *arg){
 					update_lru(fp->uinode);
 			}
 #endif
-		if(fp->should_prefetch_now() && fp->nr_reads_done){
+		if(fp->should_prefetch_now() && fp->nr_reads_done && (fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)){
 			a->fp = fp;
 			printf("%s:%d \n", __func__, __LINE__);
 			prefetch_file_predictor((void*)a);
