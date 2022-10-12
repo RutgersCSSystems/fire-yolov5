@@ -75,7 +75,7 @@ libsnappyc.so.1: snappy.o thpool.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^
 
 snappy_test_posix:
-	$(CC) $(LDFLAGS) snappy_test.c snappy.o thpool.o -o snappy_test_posix  -D_POSIX -D_USE_THREADING -lpthread -g
+	$(CC) $(LDFLAGS) snappy_test.c snappy.o thpool.o -o snappy_test_posix  -D_POSIX -D_USE_THREADING -lpthread
 	cp snappy_test_posix snappy
 
 snappy_test:
