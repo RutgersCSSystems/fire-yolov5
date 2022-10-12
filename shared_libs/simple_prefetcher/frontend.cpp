@@ -781,6 +781,7 @@ void inline prefetch_file(void *args){
 		printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
 		stride = 0;
 	}
+	uinode = fp->uinode;
 #else
 	filesize = reg_fd(fd);
 	stride = 0;
@@ -788,7 +789,8 @@ void inline prefetch_file(void *args){
 	debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
 #ifdef MAINTAIN_UINODE
-	uinode = get_uinode(i_map, fd);
+	if(!uinode)
+		uinode = get_uinode(i_map, fd);
 #else
 	uinode = NULL;
 #endif
