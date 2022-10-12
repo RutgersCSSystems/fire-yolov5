@@ -1140,7 +1140,9 @@ void update_file_predictor_and_prefetch(void *arg){
 #endif
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
-			prefetch_file(arg);
+			//prefetch_file(arg);
+		    threadpool_add(pool[g_next_queue % QUEUES], prefetch_file_predictor, (void*)arg, 0);
+		    g_next_queue++;
 		}
 	}
 }
@@ -1182,9 +1184,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	arg->fd = fd;
 	arg->offset = offset;
 	arg->data_size = data_size;
-	//update_file_predictor_and_prefetch(arg);
-    threadpool_add(pool[g_next_queue % QUEUES], update_file_predictor_and_prefetch, (void*)arg, 0);
-    g_next_queue++;
+	update_file_predictor_and_prefetch(arg);
 	free(arg);
 #else
 	struct thread_args arg;
