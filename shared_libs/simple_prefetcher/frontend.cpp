@@ -1134,8 +1134,6 @@ void update_file_predictor_and_prefetch(void *arg){
 		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0))
 			return;
 
-		//if(!fp->nr_reads_done)
-			//return;
 #if 0
 			/*update lru if file is fully prefetched*/
 			if(fp->uinode->fully_prefetched.load()){
