@@ -308,6 +308,7 @@ void thread_perform_compress(char *str, int numthreads) {
             return;
         }
 	}
+    return;
 
 	for (tdx=0; tdx < numthreads; tdx++) {
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
