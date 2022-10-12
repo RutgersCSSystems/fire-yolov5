@@ -252,10 +252,11 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 {
 	int pathlen = 0;
 
-	//memset(cntxt->in_path, '0', 255);
-	//memset(cntxt->out_path, '0', 255);
 	cntxt->in_path = (char *)malloc(1024);
 	cntxt->out_path = (char *)malloc(1024);
+	memset(cntxt->in_path, '0', 1024);
+	memset(cntxt->out_path, '0', 1024);
+
 
 	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
@@ -309,7 +310,7 @@ void thread_perform_compress(char *str, int numthreads) {
 	    	printf("failed to init snappy environment\n");
             return;
         }
-		//thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
+		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
 	}
 	thpool_wait(workerpool);
 
