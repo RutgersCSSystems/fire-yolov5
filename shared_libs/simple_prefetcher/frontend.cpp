@@ -1129,7 +1129,7 @@ void update_file_predictor_and_prefetch(void *arg){
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 		fp->predictor_update(a->offset, a->data_size);
 
-		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0)|| !fp->nr_reads_done)
+		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0) && !fp->nr_reads_done)
 			return;
 
 		fp->nr_reads_done += 1L;
