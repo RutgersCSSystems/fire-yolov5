@@ -326,13 +326,14 @@ void thread_perform_compress(char *str, int numthreads) {
 
 		generate_path(&cntxt[tdx], str, tdx+1);
         cntxt[tdx].id = tdx;
+        continue;
 
 	    if (snappy_init_env(&cntxt[tdx].env)) {
 	    	printf("failed to init snappy environment\n");
             return;
         }
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
-	        //pthread_create(&thread[tdx], NULL, CompressData, (void*)&cntxt[tdx]);
+	    //pthread_create(&thread[tdx], NULL, CompressData, (void*)&cntxt[tdx]);
 	}
 	/*generate_path(&cntxt[tdx], str, tdx+1);
         cntxt[tdx].id = tdx;
@@ -357,7 +358,7 @@ void thread_perform_compress(char *str, int numthreads) {
 		g_tot_output_bytes += cntxt[tdx].tot_output_bytes;
 	}
 #endif
-        fprintf(stdout, "tot input sz %zu outsz %zu\n", g_tot_input_bytes, g_tot_output_bytes);
+    fprintf(stdout, "tot input sz %zu outsz %zu\n", g_tot_input_bytes, g_tot_output_bytes);
 
 
 	thpool_destroy(workerpool);
@@ -379,7 +380,7 @@ int main(int argc, char **argv) {
 
         gettimeofday(&start, NULL);
 
-        //thread_perform_compress(argv[1], atoi(argv[2]));
+        thread_perform_compress(argv[1], atoi(argv[2]));
 
         gettimeofday(&end, NULL);
         sec = simulation_time(start, end);
