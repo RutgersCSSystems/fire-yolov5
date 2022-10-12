@@ -323,10 +323,10 @@ void thread_perform_compress(char *str, int numthreads) {
 	for (tdx=0; tdx < numthreads; tdx++) {
 
 		int pathlen=0;
-
+		continue;
 		generate_path(&cntxt[tdx], str, tdx+1);
         cntxt[tdx].id = tdx;
-        continue;
+
 
 	    if (snappy_init_env(&cntxt[tdx].env)) {
 	    	printf("failed to init snappy environment\n");
