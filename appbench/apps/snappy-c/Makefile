@@ -10,6 +10,8 @@ LDFLAGS=-lpthread -lm #-lcrfslib
 # download it somewhere and point to it
 KDOC := /usr/src/linux/scripts/kernel-doc
 
+
+	 
 all: clean libsnappyc.so.1 snappy_test_posix gen_file_posix
 
 snappy.o: snappy.c compat.h snappy-int.h
