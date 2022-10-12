@@ -992,6 +992,7 @@ void inline record_open(struct file_desc desc){
 	off_t filesize = reg_fd(fd);
 	struct timespec start, end;
 
+
 	if(!filesize)
 		printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
 	/*
