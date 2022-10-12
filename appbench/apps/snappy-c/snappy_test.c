@@ -101,7 +101,6 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
             input = NULL;
             return NULL;
         }
-
         *size = bytes;
         fclose(fp);
 
