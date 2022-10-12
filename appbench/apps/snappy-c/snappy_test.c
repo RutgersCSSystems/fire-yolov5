@@ -169,7 +169,7 @@ static void CompressData(void *cntxt) {
         while ((entry = readdir(mydir)) != NULL) {
                 char *output = NULL;
                 char *input = NULL;
-                char fname[256];
+                char fname[1024];
 
                 cls_file = NULL;
                 if (entry->d_type == DT_DIR) 
@@ -278,15 +278,16 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 void thread_perform_compress(char *str, int numthreads) {
 
 #ifdef _USE_THREADING
+
 	int tdx = 0;
-        workerpool = thpool_init(numthreads);
-        if(!workerpool){
-                printf("%s:FAILED creating thpool with %d threads\n", __func__, numthreads);
+    workerpool = thpool_init(numthreads);
+    if(!workerpool){
+        printf("%s:FAILED creating thpool with %d threads\n", __func__, numthreads);
 		exit(0);
-        }
-        else{
-                fprintf(stderr, "Created %d bg_threads\n", numthreads);
-        }
+    }
+    else{
+        fprintf(stderr, "Created %d bg_threads\n", numthreads);
+    }
 
 	cntxt = (struct thrd_cntxt *)malloc(sizeof(struct thrd_cntxt) * numthreads);
 	if(!cntxt) {
@@ -294,32 +295,6 @@ void thread_perform_compress(char *str, int numthreads) {
 		return;
 	}
 #endif
-
-
-#if 0 //def _USE_THREADING
-	pthread_t *thread = (pthread_t *)malloc(numthreads*sizeof(pthread_t));
-	int tdx=0;
-
-	cntxt = (struct thrd_cntxt *)malloc(sizeof(struct thrd_cntxt) * numthreads);
-	if(!cntxt) {
-		fprintf(stderr, "Thread allocation failed \n");
-		return;
-	}
-#endif
-
-
-#ifndef _USE_THREADING
-        if (!g_snappy_init) {
-                if (snappy_init_env(&g_snappy_env)) {
-                        printf("failed to init snappy environment\n");
-                        return;
-                }
-                g_snappy_init = 1;
-        }
-
-        CompressData((char*)str);
-
-#else //_USE_THREADING
 
 	for (tdx=0; tdx < numthreads; tdx++) {
 
@@ -332,23 +307,9 @@ void thread_perform_compress(char *str, int numthreads) {
 	    	printf("failed to init snappy environment\n");
             return;
         }
-		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
-	    //pthread_create(&thread[tdx], NULL, CompressData, (void*)&cntxt[tdx]);
+		//thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
 	}
-	/*generate_path(&cntxt[tdx], str, tdx+1);
-        cntxt[tdx].id = tdx;
-
-	if (snappy_init_env(&cntxt[tdx].env)) {
-		printf("failed to init snappy environment\n");
-		return;
-	}
-	CompressData((void*)&cntxt[tdx]);
-
-	for (tdx=0; tdx < numthreads; tdx++)
-		pthread_join(thread[tdx], NULL);*/
-
 	thpool_wait(workerpool);
-	/*while(g_completed < numthreads);*/
 
 	g_tot_input_bytes = 0;
 	g_tot_output_bytes = 0; 
@@ -357,10 +318,7 @@ void thread_perform_compress(char *str, int numthreads) {
 		g_tot_input_bytes += cntxt[tdx].tot_input_bytes;
 		g_tot_output_bytes += cntxt[tdx].tot_output_bytes;
 	}
-#endif
     fprintf(stdout, "tot input sz %zu outsz %zu\n", g_tot_input_bytes, g_tot_output_bytes);
-
-
 	thpool_destroy(workerpool);
 }
 
