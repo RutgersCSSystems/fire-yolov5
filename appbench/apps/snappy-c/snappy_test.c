@@ -210,9 +210,9 @@ static void CompressData(void *cntxt) {
 #ifdef _USE_THREADING
 		thrdcntxt->tot_input_bytes += datasize;
 #endif
-                /*if (snappy_compress(&local_env, (const char *)input, datasize, output, &outsz) != 0) {
+                if (snappy_compress(&local_env, (const char *)input, datasize, output, &outsz) != 0) {
                         printf("compress failed\n");
-                }*/
+                }
                 if (!use_mmap && !use_nvmalloc) {
                         if (input) {
                                 free(input);
@@ -379,7 +379,7 @@ int main(int argc, char **argv) {
 
         gettimeofday(&start, NULL);
 
-	thread_perform_compress(argv[1], atoi(argv[2]));
+        //thread_perform_compress(argv[1], atoi(argv[2]));
 
         gettimeofday(&end, NULL);
         sec = simulation_time(start, end);
