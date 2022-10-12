@@ -37,7 +37,7 @@ int g_completed=0;
 threadpool workerpool = NULL;
 
 struct thrd_cntxt {
-        int id;
+    int id;
 	struct snappy_env env;	
 	char in_path[1024];
 	char out_path[1024];
@@ -270,7 +270,7 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 
 	mkdir(cntxt->out_path, 0755);
 	strcat(cntxt->out_path,"/");
-	//fprintf(stderr, "INPUT %s OUTPUT %s \n", cntxt->in_path, cntxt->out_path);
+	fprintf(stderr, "INPUT %s OUTPUT %s \n", cntxt->in_path, cntxt->out_path);
 }
 
 
