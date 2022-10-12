@@ -303,11 +303,13 @@ void thread_perform_compress(char *str, int numthreads) {
 		generate_path(&cntxt[tdx], str, tdx+1);
         cntxt[tdx].id = tdx;
 
-
 	    if (snappy_init_env(&cntxt[tdx].env)) {
 	    	printf("failed to init snappy environment\n");
             return;
         }
+	}
+
+	for (tdx=0; tdx < numthreads; tdx++) {
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
 	}
 	thpool_wait(workerpool);
