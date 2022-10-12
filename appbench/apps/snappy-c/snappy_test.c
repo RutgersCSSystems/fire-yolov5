@@ -252,10 +252,10 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 {
 	int pathlen = 0;
 
-	memset(cntxt->in_path, '0', 255);
-	memset(cntxt->out_path, '0', 255);
+	//memset(cntxt->in_path, '0', 255);
+	//memset(cntxt->out_path, '0', 255);
 
-	/*strcpy(cntxt->in_path, (char*)str);
+	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
 
 	strcpy(cntxt->out_path, (char*)str);
@@ -270,7 +270,7 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 	sprintf(cntxt->out_path+pathlen,"%d",tdx);
 
 	mkdir(cntxt->out_path, 0755);
-	strcat(cntxt->out_path,"/");*/
+	strcat(cntxt->out_path,"/");
 	fprintf(stderr, "INPUT %s OUTPUT %s \n", cntxt->in_path, cntxt->out_path);
 }
 
