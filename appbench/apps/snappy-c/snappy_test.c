@@ -173,12 +173,12 @@ static void CompressData(void *cntxt) {
 
                 cls_file = NULL;
                 if (entry->d_type == DT_DIR) 
-			//goto next;
-			continue;
+                	//goto next;
+                	continue;
 
                 if (strlen(entry->d_name) < 4) 
-			//goto next;
-			continue;
+                	//goto next;
+                	continue;
 
 #ifdef _ENABLE_TIMER
                 gettimeofday(&start_t, NULL);
@@ -235,7 +235,7 @@ static void CompressData(void *cntxt) {
                 }
 
                 if (input) {
-                       free(input);
+                       //free(input);
                        input = NULL;
                 }
 #ifdef _ENABLE_TIMER
@@ -251,8 +251,8 @@ static void CompressData(void *cntxt) {
 void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx) 
 {
 	int pathlen = 0;
-	//memset(cntxt->in_path, '0', 255);
-	//memset(cntxt->out_path, '0', 255);
+	memset(cntxt->in_path, '0', 255);
+	memset(cntxt->out_path, '0', 255);
 
 	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
@@ -325,13 +325,12 @@ void thread_perform_compress(char *str, int numthreads) {
 		int pathlen=0;
 
 		generate_path(&cntxt[tdx], str, tdx+1);
-                cntxt[tdx].id = tdx;
+        cntxt[tdx].id = tdx;
 
-	        if (snappy_init_env(&cntxt[tdx].env)) {
-                        printf("failed to init snappy environment\n");
-                        return;
-                }
-
+	    if (snappy_init_env(&cntxt[tdx].env)) {
+	    	printf("failed to init snappy environment\n");
+            return;
+        }
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
 	        //pthread_create(&thread[tdx], NULL, CompressData, (void*)&cntxt[tdx]);
 	}
