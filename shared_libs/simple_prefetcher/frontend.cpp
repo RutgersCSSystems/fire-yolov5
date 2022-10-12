@@ -921,11 +921,9 @@ void inline record_open(struct file_desc desc){
 		if(!fp){
 			printf("%s ERR: Could not allocate new file_predictor\n", __func__);
 			goto exit;
-			}
+		}
+
 		fp->uinode = desc.uinode;
-
-
-
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
@@ -939,11 +937,10 @@ void inline record_open(struct file_desc desc){
 		 */
 			if(fp->should_prefetch_now()){
 				struct thread_args arg;
-					arg.fd = fd;
-					arg.fp = fp;
-
+				arg.fd = fd;
+				arg.fp = fp;
 				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-				//prefetch_file(&arg);
+				prefetch_file(&arg);
 			}
 #endif
 
