@@ -39,8 +39,8 @@ threadpool workerpool = NULL;
 struct thrd_cntxt {
         int id;
 	struct snappy_env env;	
-	char in_path[256];
-	char out_path[256];	
+	char in_path[1024];
+	char out_path[1024];
 	size_t tot_input_bytes;
 	size_t tot_output_bytes;
 };
@@ -323,7 +323,6 @@ void thread_perform_compress(char *str, int numthreads) {
 	for (tdx=0; tdx < numthreads; tdx++) {
 
 		int pathlen=0;
-		continue;
 		generate_path(&cntxt[tdx], str, tdx+1);
         cntxt[tdx].id = tdx;
 
