@@ -746,6 +746,102 @@ exit_prefetcher_th:
 }
 
 
+/*
+ * Spawns or enqueues a request for file prefetching
+ */
+void inline prefetch_file_predictor(void *args){
+
+	struct thread_args *a = (struct thread_args*)args;
+    int fd = a->fd;
+    file_predictor *fp = a->fp;
+
+    struct thread_args *arg = NULL;
+    off_t filesize;
+    off_t stride;
+    struct u_inode *uinode;
+
+    filesize = fp->filesize;
+    stride = fp->is_strided() * fp->portion_sz;
+    stride = 0; //XXX: TEMP fix Need to change stride detection based on all access patterns
+    if(stride < 0){
+    	printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
+    	stride = 0;
+    }
+    uinode = fp->uinode;
+    debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
+
+    if(!uinode)
+    	uinode = get_uinode(i_map, fd);
+
+    if(filesize > MIN_FILE_SZ){
+#ifdef CONCURRENT_PREDICTOR
+	arg = (struct thread_args*)args;
+#else
+	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+#endif
+	if(!arg) {
+		goto prefetch_file_exit;
+	}
+	arg->fd = fd;
+	arg->file_size = filesize;
+	arg->stride = stride;
+
+#ifdef ENABLE_EVICTION_DISABLE
+	set_thread_args_evict(arg);
+#else
+	arg->current_fd = 0;
+	arg->last_fd = 0;
+#endif
+
+	arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+	arg->prefetch_limit = fp->prefetch_limit;
+	arg->offset = fp->last_read_offset;
+	fp->last_ra_offset = arg->offset + arg->prefetch_limit;
+
+#if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
+
+	fprintf(stderr, "%s: %d Using per fp cache state \n", __func__, __LINE__);
+	arg->page_cache_state = fp->page_cache_state;
+
+#elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
+	if(uinode){
+
+		arg->page_cache_state = uinode->page_cache_state;
+		fprintf(stderr, "%s: %d Using global cache state \n", __func__, __LINE__);
+
+		if(arg->page_cache_state == NULL)
+			printf("%s: pagecache NULL\n", __func__);
+			arg->uinode = uinode;
+	}else{
+		printf("%s: No Uinode!! fd:%d \n", __func__, fd);
+		arg->page_cache_state = NULL;
+		arg->uinode = NULL;
+	}
+#else
+	arg->page_cache_state = NULL;
+#endif
+}
+else{
+	debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
+	goto prefetch_file_exit;
+}
+
+
+#ifdef CONCURRENT_PREDICTOR
+    prefetcher_th((void*)arg);
+#elif defined(THPOOL_PREFETCH)
+    threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+    g_next_queue++;
+#else
+    prefetcher_th((void*)arg);
+#endif
+
+prefetch_file_exit:
+		debug_printf("Exiting %s\n", __func__);
+return;
+}
+
+
 	/*
 	 * Spawns or enqueues a request for file prefetching
 	 */

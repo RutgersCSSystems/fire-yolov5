@@ -4,6 +4,7 @@
 #include "shim.hpp"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
+#include "predictor.hpp"
 
 #define __READAHEAD_INFO 451
 #define __NR_start_crosslayer 448
@@ -19,7 +20,7 @@ struct thread_args{
 	long offset; //where to start
 	long file_size; //total filesize
 	long prefetch_size; //size of each prefetch req
-        long prefetch_limit; //total prefetch todo
+    long prefetch_limit; //total prefetch todo
 
 	//difference between the end of last access and start of this access in pages
 	size_t stride;
@@ -35,20 +36,17 @@ struct thread_args{
 	 */
 	bit_array_t *page_cache_state;
 
-        struct u_inode *uinode;
+    struct u_inode *uinode;
 
-        /*
-         * Some offsets used exclusively by read_predictor
-         */
-        size_t data_size;
+    /*
+    * Some offsets used exclusively by read_predictor
+    */
+    size_t data_size;
+    file_predictor *fp;
 
-#ifdef PREDICTOR
-        file_predictor *fp;
-#endif
 };
 
-//returns filesize if fd is regular file
-//else 0
+
 off_t reg_fd(int fd){
 
     if(fd<=2)

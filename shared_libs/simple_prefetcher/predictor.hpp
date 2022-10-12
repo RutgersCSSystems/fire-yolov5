@@ -46,7 +46,7 @@ class file_predictor{
 		int fd;
 		size_t filesize;
 
-                long nr_reads_done;
+        long nr_reads_done;
 
 		/*
 		 * The file is divided into FILESIZE/(PORTION_SIZE*PAGESIZE) portions
@@ -76,20 +76,20 @@ class file_predictor{
 		 */
 		bit_array_t *page_cache_state;
 
-                /*
-                 * Records the last read done on this fd
-                 * Also records the last RA done using this fd
-                 * Since the file can be large and be opened with multiple
-                 * fds; there can be multiple RAs on the same file (multiple fds)
-                 */
-                size_t last_ra_offset;
-                size_t last_read_offset;
+        /*
+        * Records the last read done on this fd
+        * Also records the last RA done using this fd
+        * Since the file can be large and be opened with multiple
+        * fds; there can be multiple RAs on the same file (multiple fds)
+        */
+        size_t last_ra_offset;
+        size_t last_read_offset;
 
-                /*
-                 * It is the limit of bytes to prefetch in a file
-                 * from last_ra_offset before exiting prefetcher_th
-                 */
-                size_t prefetch_limit;
+        /*
+        * It is the limit of bytes to prefetch in a file
+        * from last_ra_offset before exiting prefetcher_th
+        */
+        size_t prefetch_limit;
 
 		/*
 		 * This variable summarizes if the file is reasonably
@@ -118,12 +118,11 @@ class file_predictor{
 		//0 if not strided. doesnt mean its not sequential
 		long is_strided();
 
-
-                /*
-                 * Returns true if it is time to prefetch for
-                 * the given access pattern etc on this fd
-                 */
-                bool should_prefetch_now();
+        /*
+        * Returns true if it is time to prefetch for
+        * the given access pattern etc on this fd
+        */
+        bool should_prefetch_now();
 };
 
 #endif //_PREDICTOR_HPP
