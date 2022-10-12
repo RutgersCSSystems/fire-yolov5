@@ -1020,8 +1020,6 @@ void handle_open(struct file_desc desc){
 	// Prefetch without predicting
 	prefetch_file(desc.fd);
 #endif
-
-
 	debug_printf("Exiting %s\n", __func__);
 }
 
