@@ -1148,6 +1148,7 @@ void update_file_predictor_and_prefetch(void *arg){
 			(arg);
 		    //threadpool_add(pool[g_next_queue % QUEUES], prefetch_file_predictor, (void*)arg, 0);
 		    //g_next_queue++;
+			printf("%s:%d \n", __func__, __LINE__);
 			prefetch_file_predictor((void*)arg);
 		}
 	}
