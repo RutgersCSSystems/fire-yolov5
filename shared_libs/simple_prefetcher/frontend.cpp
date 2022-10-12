@@ -992,7 +992,8 @@ void inline record_open(struct file_desc desc){
 	off_t filesize = reg_fd(fd);
 	struct timespec start, end;
 
-	debug_printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
+	if(!filesize)
+		printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
 	/*
 	 * TODO BUG: This would only work for workloads that already have their
 	 * files setup.
