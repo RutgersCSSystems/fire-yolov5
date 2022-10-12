@@ -83,25 +83,27 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
         fseek(fp, 0L, SEEK_END);
         fsize = ftell(fp);
         fseek(fp, 0, SEEK_SET);
-        /*if(fstat(fileno(fp), &file_status) != 0){
-                perror("ERROR");
-        }*/
         if (fsize < 1) {
                 *size = 0;
                 return NULL;
         }
+
         input = (char *)malloc(fsize);
-        bytes = fread(input, 1, fsize, fp);
-        if (!bytes) {
-                fprintf(stdout, "invalid input data %s", filearr);
-                *size = 0;
-		free(input);
-                input = NULL;
-		return NULL;
+
+        bytes = 0;
+        while(bytes < fsize){
+        	bytes += fread(input+bytes, 1, fsize, fp);
+		}
+        if(!bytes) {
+        	fprintf(stdout, "invalid input data %s", filearr);
+            *size = 0;
+            free(input);
+            input = NULL;
+            return NULL;
         }
 
         *size = bytes;
-	fclose(fp);
+        fclose(fp);
 
         return input;
 }
