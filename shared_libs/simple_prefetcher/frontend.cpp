@@ -993,8 +993,10 @@ void inline record_open(struct file_desc desc){
 	struct timespec start, end;
 
 
-	if(!filesize)
+	if(!filesize) {
 		printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
+		return;
+	}
 	/*
 	 * TODO BUG: This would only work for workloads that already have their
 	 * files setup.
