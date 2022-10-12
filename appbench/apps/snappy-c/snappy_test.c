@@ -275,6 +275,9 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 
 void thread_perform_compress(char *str, int numthreads) {
 
+    struct timeval start, end;
+    double sec = 0;
+
 #ifdef _USE_THREADING
 
 	int tdx = 0;
@@ -305,9 +308,12 @@ void thread_perform_compress(char *str, int numthreads) {
             return;
         }
 	}
+
+    gettimeofday(&start, NULL);
+
+
 	for (tdx=0; tdx < numthreads; tdx++) {
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
-		//CompressData((void*)&cntxt[tdx]);
 	}
 	thpool_wait(workerpool);
 
@@ -318,10 +324,16 @@ void thread_perform_compress(char *str, int numthreads) {
 		g_tot_input_bytes += cntxt[tdx].tot_input_bytes;
 		g_tot_output_bytes += cntxt[tdx].tot_output_bytes;
 	}
+
+    gettimeofday(&end, NULL);
+    sec = simulation_time(start, end);
+    printf("Total time: %.2lf s\n", sec);
+    printf("Average throughput: %.2lf MB/s\n",
+           g_tot_input_bytes/ sec / 1024 / 1024);
+
     fprintf(stdout, "tot input sz %zu outsz %zu\n", g_tot_input_bytes, g_tot_output_bytes);
 	thpool_destroy(workerpool);
 }
-
 
 
 int main(int argc, char **argv) {
@@ -333,19 +345,7 @@ int main(int argc, char **argv) {
         if (argc > 3) {
                 return 0;
         }
-        struct timeval start, end;
-        double sec = 0;
-
-        gettimeofday(&start, NULL);
-
         thread_perform_compress(argv[1], atoi(argv[2]));
-
-        gettimeofday(&end, NULL);
-        sec = simulation_time(start, end);
-        //printf("Compression takes %.2lf s\n", compress_time);
-        printf("Total time: %.2lf s\n", sec);
-        printf("Average throughput: %.2lf MB/s\n",
-               g_tot_input_bytes/ sec / 1024 / 1024);
 
         return 0;
 }
