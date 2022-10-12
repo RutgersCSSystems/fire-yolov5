@@ -131,17 +131,16 @@ static void CompressData(char *read_dir) {
 static void CompressData(void *cntxt) {
 #endif
 
-        int cntr = 0;
-
-        FILE *fp;
-        char buffer[256];
-        char output_dir[256];
-        size_t outsz = 0;
-        FILE *outfp = NULL;
-        size_t datasize;
-        struct timeval t0,t1;
-        long diff;
-	struct snappy_env local_env = g_snappy_env;
+    int cntr = 0;
+    FILE *fp;
+    char buffer[1024];
+    char output_dir[1024];
+    size_t outsz = 0;
+    FILE *outfp = NULL;
+    size_t datasize;
+    struct timeval t0,t1;
+    long diff;
+    struct snappy_env local_env = g_snappy_env;
 
 
 #ifdef _USE_THREADING
@@ -214,10 +213,10 @@ static void CompressData(void *cntxt) {
                         printf("compress failed\n");
                 }
                 if (!use_mmap && !use_nvmalloc) {
-                        if (input) {
-                                free(input);
-                                input = NULL;
-                        }
+                    if (input) {
+                    	free(input);
+                        input = NULL;
+                    }
                 }
                 g_tot_output_bytes += outsz;
 
@@ -230,8 +229,8 @@ static void CompressData(void *cntxt) {
                 }
 
                 if (output) {
-                       free(output);
-                        output = NULL;
+                       //free(output);
+                       output = NULL;
                 }
 
                 if (input) {
@@ -308,11 +307,9 @@ void thread_perform_compress(char *str, int numthreads) {
             return;
         }
 	}
-    return;
-
 	for (tdx=0; tdx < numthreads; tdx++) {
 		thpool_add_work(workerpool, CompressData, (void*)&cntxt[tdx]);
-		CompressData((void*)&cntxt[tdx]);
+		//CompressData((void*)&cntxt[tdx]);
 	}
 	thpool_wait(workerpool);
 
