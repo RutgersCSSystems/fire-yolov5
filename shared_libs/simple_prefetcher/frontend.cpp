@@ -1140,9 +1140,10 @@ void update_file_predictor_and_prefetch(void *arg){
 #endif
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
-			prefetch_file_predictor(arg);
+			(arg);
 		    //threadpool_add(pool[g_next_queue % QUEUES], prefetch_file_predictor, (void*)arg, 0);
 		    //g_next_queue++;
+			prefetch_file_predictor((void*)arg);
 		}
 	}
 }
