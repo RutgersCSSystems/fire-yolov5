@@ -943,7 +943,7 @@ void inline record_open(struct file_desc desc){
 					arg.fp = fp;
 
 				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-				//prefetch_file(&arg);
+				prefetch_file(&arg);
 			}
 #endif
 
