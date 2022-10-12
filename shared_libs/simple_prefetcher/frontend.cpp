@@ -943,7 +943,7 @@ void inline record_open(struct file_desc desc){
 					arg.fp = fp;
 
 				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-					prefetch_file(&arg);
+				//prefetch_file(&arg);
 			}
 #endif
 
@@ -1010,7 +1010,7 @@ void handle_open(struct file_desc desc){
 #endif
 
 #if defined(PREDICTOR) || defined(READAHEAD_INFO_PC_STATE)
-	//record_open(desc);
+	record_open(desc);
 #endif
 
 	/*
