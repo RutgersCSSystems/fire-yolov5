@@ -762,16 +762,12 @@ void inline prefetch_file_predictor(void *args){
 
     filesize = fp->filesize;
     stride = fp->is_strided() * fp->portion_sz;
-    stride = 0; //XXX: TEMP fix Need to change stride detection based on all access patterns
-    if(stride < 0){
-    	printf("ERROR: %s: stride is %ld, should be > 0\n", __func__, stride);
-    	stride = 0;
-    }
+    stride = 0; //FIXME: BUGGY
     uinode = fp->uinode;
-    debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
-
     if(!uinode)
     	uinode = get_uinode(i_map, fd);
+
+    debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
     if(filesize > MIN_FILE_SZ){
 #ifdef CONCURRENT_PREDICTOR
@@ -785,7 +781,6 @@ void inline prefetch_file_predictor(void *args){
 	arg->fd = fd;
 	arg->file_size = filesize;
 	arg->stride = stride;
-
 #ifdef ENABLE_EVICTION_DISABLE
 	set_thread_args_evict(arg);
 #else
@@ -799,16 +794,10 @@ void inline prefetch_file_predictor(void *args){
 	fp->last_ra_offset = arg->offset + arg->prefetch_limit;
 
 #if defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(PREDICTOR) && !defined(PER_INODE_BITMAP)
-
-	fprintf(stderr, "%s: %d Using per fp cache state \n", __func__, __LINE__);
 	arg->page_cache_state = fp->page_cache_state;
-
 #elif defined(MODIFIED_RA) && defined(READAHEAD_INFO_PC_STATE) && defined(MAINTAIN_UINODE) && defined(PER_INODE_BITMAP)
 	if(uinode){
-
 		arg->page_cache_state = uinode->page_cache_state;
-		fprintf(stderr, "%s: %d Using global cache state \n", __func__, __LINE__);
-
 		if(arg->page_cache_state == NULL)
 			printf("%s: pagecache NULL\n", __func__);
 			arg->uinode = uinode;
@@ -825,7 +814,6 @@ else{
 	debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
 	goto prefetch_file_exit;
 }
-
 
 #ifdef CONCURRENT_PREDICTOR
     prefetcher_th((void*)arg);
@@ -1167,8 +1155,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	off_t offset;
 
 	//debug_printf("%s: TID:%ld\n", __func__, gettid());
-
-	if(file_fd < 3 && !stream){
+	if(file_fd < 3 || !stream){
 		goto skip_read_predictor;
 	}else if(file_fd >= 3){
 		fd = file_fd;
@@ -1178,18 +1165,9 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		offset = ftell(stream);
 	}
 
-
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
 #endif
-
-	/*
-	 * Sanity check
-	 */
-	if(fd < 3){
-		goto skip_read_predictor;
-	}
-
 
 #ifdef ENABLE_EVICTION_DISABLE
 	set_curr_last_fd(fd);
@@ -1197,7 +1175,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 
 
 #ifdef PREDICTOR
-
 #ifdef CONCURRENT_PREDICTOR
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
@@ -1205,26 +1182,20 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	arg->fd = fd;
 	arg->offset = offset;
 	arg->data_size = data_size;
-
 	update_file_predictor_and_prefetch(arg);
-
-	/*
-	 * XXX: Thpool is not working right now
-	 */
-	//thpool_add_work(workerpool, update_file_predictor_and_prefetch, (void*)arg);
+    threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+    g_next_queue++;
 	free(arg);
 #else
 	struct thread_args arg;
 	arg.fd = fd;
 	arg.offset = offset;
 	arg.data_size = data_size;
-
 	update_file_predictor_and_prefetch(&arg);
 #endif //CONCURRENT_PREDICTOR
-
 #endif //PREDICTOR
 
-	skip_read_predictor:
+skip_read_predictor:
 	return;
 }
 
