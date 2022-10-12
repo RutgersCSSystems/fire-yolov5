@@ -1369,7 +1369,7 @@ int open(const char *pathname, int flags, ...){
 	desc.filename = pathname;
 	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
-	//handle_open(desc);
+	handle_open(desc);
 
 exit:
 	debug_printf("Exiting %s\n", __func__);
@@ -1415,7 +1415,7 @@ ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
 	debug_printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
-	//read_predictor(NULL, size, fd, offset);
+	read_predictor(NULL, size, fd, offset);
 
 skip_predictor:
 	amount_read = real_pread(fd, data, size, offset);
@@ -1430,7 +1430,7 @@ char *fgets( char *str, int num, FILE *stream ) {
 
 	debug_printf( "Start %s\n", __func__);
 
-	//read_predictor(stream, num, 0, 0);
+	read_predictor(stream, num, 0, 0);
 
 	return real_fgets(str, num, stream);
 }
@@ -1443,7 +1443,7 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream){
 
 	debug_printf("%s: TID:%ld\n", __func__, gettid());
 
-	//read_predictor(stream, size*nmemb, 0, 0);
+	read_predictor(stream, size*nmemb, 0, 0);
 
 skip_predictor:
 	amount_read = real_fread(ptr, size, nmemb, stream);
@@ -1466,7 +1466,7 @@ int fclose(FILE *stream){
 	goto exit_fclose;
 #endif
 
-	//handle_file_close(fd);
+	handle_file_close(fd);
 
 exit_fclose:
 	debug_printf( "Exiting %s\n", __func__);
@@ -1482,7 +1482,7 @@ int close(int fd){
 	goto exit_close;
 #endif
 
-	//handle_file_close(fd);
+	handle_file_close(fd);
 exit_close:
 	debug_printf( "Exiting %s\n", __func__);
 	return real_close(fd);
