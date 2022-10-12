@@ -196,18 +196,16 @@ static void CompressData(void *cntxt) {
                 if (!datasize) 
 			continue;
 
-                bzero(fname, 256);
+                bzero(fname, 1024);
                 strcpy(fname, (char *)output_dir);
                 strcat(fname, entry->d_name);
                 strcat(fname, ".comp");
-
                 output = (char *)malloc(datasize * 2);
                 assert(output);
 
                 g_tot_input_bytes += datasize;
-
 #ifdef _USE_THREADING
-		thrdcntxt->tot_input_bytes += datasize;
+                thrdcntxt->tot_input_bytes += datasize;
 #endif
                 if (snappy_compress(&local_env, (const char *)input, datasize, output, &outsz) != 0) {
                         printf("compress failed\n");
@@ -229,12 +227,12 @@ static void CompressData(void *cntxt) {
                 }
 
                 if (output) {
-                       //free(output);
+                       free(output);
                        output = NULL;
                 }
 
                 if (input) {
-                       //free(input);
+                       free(input);
                        input = NULL;
                 }
 #ifdef _ENABLE_TIMER
