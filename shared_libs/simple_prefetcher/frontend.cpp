@@ -618,7 +618,7 @@ void prefetcher_th(void *arg) {
 	 * If the file is completely prefetched, dont prefetch
 	 */
 	if(a->uinode && a->uinode->fully_prefetched.load()){
-		printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
+		//printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
 		goto exit_prefetcher_th;
 	}
 
@@ -1141,6 +1141,8 @@ void update_file_predictor_and_prefetch(void *arg){
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
 			prefetch_file_predictor(arg);
+		    //threadpool_add(pool[g_next_queue % QUEUES], prefetch_file_predictor, (void*)arg, 0);
+		    //g_next_queue++;
 		}
 	}
 }
@@ -1152,8 +1154,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 
 	size_t amount_read = 0;
 	int fd = -1;
-	off_t offset = 0;
-	FILE *fp = NULL;
+	off_t offset;
 
 	//debug_printf("%s: TID:%ld\n", __func__, gettid());
 	if(file_fd < 3 || !stream){
@@ -1179,6 +1180,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 #ifdef CONCURRENT_PREDICTOR
 	struct thread_args *arg;
 	arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+
 	arg->fd = fd;
 	arg->offset = offset;
 	arg->data_size = data_size;
