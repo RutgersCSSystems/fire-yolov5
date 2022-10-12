@@ -994,7 +994,7 @@ void inline record_open(struct file_desc desc){
 
 
 	if(!filesize) {
-		printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
+		//printf("%s: Trying to predict fd:%d filesize=%ld\n", __func__, fd, filesize);
 		return;
 	}
 	/*
