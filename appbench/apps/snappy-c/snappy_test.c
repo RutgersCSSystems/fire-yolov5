@@ -251,8 +251,8 @@ static void CompressData(void *cntxt) {
 void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx) 
 {
 	int pathlen = 0;
-	memset(cntxt->in_path, '0', 255);
-	memset(cntxt->out_path, '0', 255);
+	//memset(cntxt->in_path, '0', 255);
+	//memset(cntxt->out_path, '0', 255);
 
 	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
