@@ -254,10 +254,8 @@ void generate_path(struct thrd_cntxt *cntxt, char *str, int tdx)
 
 	cntxt->in_path = (char *)malloc(1024);
 	cntxt->out_path = (char *)malloc(1024);
-	memset(cntxt->in_path, '0', 1024);
-	memset(cntxt->out_path, '0', 1024);
-
-
+	//memset(cntxt->in_path, '0', 1024);
+	//memset(cntxt->out_path, '0', 1024);
 	strcpy(cntxt->in_path, (char*)str);
 	strcat(cntxt->in_path,"/");
 
