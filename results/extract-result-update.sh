@@ -447,6 +447,31 @@ MOVEGRAPHS() {
 
 
 export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=100
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS
+XTITLE='#. of threads'
+set_rocks_thread_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+EXTRACT_RESULT_THREADS "ROCKSDB"
+MOVEGRAPHS
+exit
+
+
+
+
+export APPPREFIX="20M-KEYS"
 APP='YCSB-ROCKSDB'
 TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
 #set the arrays
