@@ -180,14 +180,12 @@ void init_global_ds(void){
                         goto exit;
 		}
 
-#ifdef ENABLE_EVICTION_DISABLE
-                thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
+#ifdef ENABLE_EVICTION
+       thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
 #endif
 	}
-
-
 exit:
-        return;
+    return;
 }
 
 /*
@@ -262,7 +260,7 @@ void con(){
     }
 #endif
 
-#ifdef ENABLE_EVICTION_DISABLE
+#ifdef ENABLE_EVICTION
 	evict_pool = thpool_init(NR_EVICT_WORKERS);
 	if(!evict_pool){
 		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_EVICT_WORKERS);
@@ -339,54 +337,6 @@ int evict_advise(int fd){
 	//fprintf(stderr,"evicting inode \n");
 	return real_posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 }
-
-
-#ifdef ENABLE_EVICTION_OLD
-int set_thread_args_evict(struct thread_args *arg) {
-	arg->current_fd = ptd.current_fd;
-	arg->last_fd = ptd.last_fd;
-	return 0;
-}
-
-int set_curr_last_fd(int fd){
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
-	return 0;
-}
-
-int perform_eviction(struct thread_args *arg){
-	/*
-	 * when crunched with memory, remove cache pages for
-	 * last fd. Since the thread has moved on from it.
-	 */
-	if(arg->current_fd != arg->last_fd){
-		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
-		evict_advise(arg->last_fd);
-	}
-
-	return 0;
-}
-#endif
-
 
 bit_array_t *allocate_bitmap(struct thread_args *a) {
 
@@ -683,7 +633,8 @@ void prefetcher_th(void *arg) {
 		}
 #endif
 		uinode_bitmap_unlock(a->uinode);
-#ifdef ENABLE_EVICTION_DISABLE
+
+#ifdef ENABLE_EVICTION
 		update_lru(a->uinode);
 		//update_nr_free_pg(ra.nr_free);
 #endif
@@ -1565,3 +1516,52 @@ exit:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
+
+
+
+
+#ifdef ENABLE_EVICTION_OLD
+int set_thread_args_evict(struct thread_args *arg) {
+	arg->current_fd = ptd.current_fd;
+	arg->last_fd = ptd.last_fd;
+	return 0;
+}
+
+int set_curr_last_fd(int fd){
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
+	return 0;
+}
+
+int perform_eviction(struct thread_args *arg){
+	/*
+	 * when crunched with memory, remove cache pages for
+	 * last fd. Since the thread has moved on from it.
+	 */
+	if(arg->current_fd != arg->last_fd){
+		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
+		evict_advise(arg->last_fd);
+	}
+
+	return 0;
+}
+#endif

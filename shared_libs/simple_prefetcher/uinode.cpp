@@ -256,7 +256,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 	uinode->fdcount++;
 	debug_printf("ADDING INODE %d, FDCOUNT %d, uinode=%p \n", inode, uinode->fdcount, uinode);
 
-#ifdef ENABLE_EVICTION_DISABLE
+#ifdef ENABLE_EVICTION
         //Adds the uinode to the LRU
         if(new_uinode && uinode && uinode->file_size > MIN_FILE_SZ){
                 update_lru(uinode);
@@ -347,13 +347,6 @@ int handle_close(struct hashtable *i_map, int fd){
 
 
 
-#ifdef ENABLE_EVICTION_DISABLE
-/*Number of pages free inside the OS*/
-
-/*GLOBAL FILE LEVEL LRU*/
-cache::lru_cache<int, struct u_inode*> lrucache(MAXFILES);
-std::mutex lru_guard;
-
 #if 0
 std::atomic<long> nr_os_free_pg(0);
 /*
@@ -368,6 +361,13 @@ void increase_free_pg(unsigned long increased_pg){
 }
 #endif
 
+
+#ifdef ENABLE_EVICTION
+/*Number of pages free inside the OS*/
+
+/*GLOBAL FILE LEVEL LRU*/
+cache::lru_cache<int, struct u_inode*> lrucache(MAXFILES);
+std::mutex lru_guard;
 
 void update_lru(struct u_inode *uinode){
         if(uinode){
@@ -433,13 +433,12 @@ int evict_inode_from_mem(struct u_inode *uinode){
                         return -1;
                 }
 
-                debug_printf("%s: evicting uinode:%d, fd:%d\n", __func__, uinode->ino, uinode->fdlist[0]);
+                printf("%s: evicting uinode:%d, fd:%d\n", __func__, uinode->ino, uinode->fdlist[0]);
 
                 uinode->evicted = FILE_EVICTED;
-		uinode->fully_prefetched.store(false); //Reset fully prefetched for this file
+                uinode->fully_prefetched.store(false); //Reset fully prefetched for this file
                 //increase_free_pg(uinode->file_size >> PAGE_SHIFT);
         }
-
         return 0;
 }
 
@@ -449,8 +448,6 @@ void evict_inactive_inodes(void *arg){
 
         struct hashtable *i_map = (struct hashtable *)arg;
         int tot_inodes;
-
-        //off_t curr_mem_gb = 0;
 
         while(true){
 retry:
@@ -475,7 +472,7 @@ wait_for_eviction:
                 sleep(SLEEP_TIME);
         }
 }
-#endif //ENABLE_EVICTION_DISABLE
+#endif //ENABLE_EVICTION
 
 #endif //MAINTAIN_UINODE
 
