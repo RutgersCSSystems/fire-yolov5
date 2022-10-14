@@ -26,10 +26,10 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
-declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f")
+declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "varmail.f" "webserver")
 #declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-declare -a workload_arr=("varmail.f")
-declare -a workload_arr=("webserver.f")
+#declare -a workload_arr=("varmail.f")
+declare -a workload_arr=("mongo.f")
 #declare -a workload_arr=("tpcso.f")
 
 #declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
@@ -45,11 +45,11 @@ thread_arr_in=$3
 glob_prefetchsz=1024
 glob_prefechthrd=1
 
-declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
-declare -a prefech_thrd_arr=("1" "8" "16")
+declare -a prefech_sz_arr=("4096" "2048" "1024" "512")
+declare -a prefech_thrd_arr=("1" "8")
 
-declare -a prefech_sz_arr=("1024")
-declare -a prefech_thrd_arr=("4")
+#declare -a prefech_sz_arr=("1024")
+#declare -a prefech_thrd_arr=("4")
 
 mkdir DATA
 
@@ -157,9 +157,11 @@ RUN() {
 				for prefechthrd in "${prefech_thrd_arr[@]}"
 				do
 					cd $PREDICT_LIB_DIR
-					sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
-					sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
-
+				        if [ "$ENABLE_SENSITIVITY" -eq "1" ]
+				        then
+						sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+						sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
+					fi
 					./compile.sh
 					cd $DBHOME
 
@@ -198,13 +200,21 @@ RUN() {
 }
 
 
-for glob_prefetchsz in "${prefech_sz_arr[@]}"
-do
-	for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+
+if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+then
+	RUN
+else
+	for glob_prefetchsz in "${prefech_sz_arr[@]}"
 	do
-	        get_global_arr	
-		RUN
+		for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+		do
+			get_global_arr	
+			RUN
+		done
 	done
-done
+
+fi
+
 
 exit

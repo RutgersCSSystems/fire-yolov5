@@ -43,34 +43,32 @@ NUM=20000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("8" "4" "1")
-#declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 
 
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+#declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+declare -a workload_arr=("readseq" "multireadrandom")
+
 
 USEDB=1
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 
-#declare -a workload_arr=("fillseq" "fillrandom")
-declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+
+#declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-#declare -a config_arr=("CIP" "CIP_sync")
+declare -a config_arr=("CIPI_sync" "OSonly")
 #declare -a config_arr=("Cross_Info_sync")
-#USEDB=1
-#declare -a config_arr=( "CIPI_sync")
-
-
-#declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
-
 
 #Require for large database
 ulimit -n 1000000 
+
 
 
 FlushDisk()
@@ -123,6 +121,15 @@ GEN_RESULT_PATH() {
 	#RESULTFILE=""
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
 	mkdir -p $RESULTS
+
+        if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+        then
+                RESULTFILE=$RESULTS/$CONFIG".out"
+        else
+                RESULTFILE=$RESULTS/$CONFIG"-MEMREDUCE_FRAC$MEM_REDUCE_FRAC".out
+        fi
+
+
 	RESULTFILE=$RESULTS/$CONFIG.out
 }
 
@@ -135,7 +142,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	#COMPILE_AND_WRITE
+	COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -172,7 +179,43 @@ RUN() {
 	done
 }
 
-RUN
+#RUN
 #CLEAR_DATA
-exit
+#exit
+
+GETMEMORYBUDGET() {
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        $SCRIPTS/mount/umount_ext4ramdisk.sh
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        sudo rm -rf  /mnt/ext4ramdisk/
+
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+
+	echo "MEMORY $1"
+	let FRACTION=$1
+	let NUMANODE0=$(($NUMAFREE0/$FRACTION))
+	let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+
+
+	let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
+	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+
+	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
+	$SCRIPTS/mount/releasemem.sh "NODE0"
+	$SCRIPTS/mount/releasemem.sh "NODE1"
+
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+}
+
+declare -a membudget=("5")
+for MEM_REDUCE_FRAC in "${membudget[@]}"
+do
+	GETMEMORYBUDGET $MEM_REDUCE_FRAC
+	RUN
+done
+
+$SCRIPTS/mount/releasemem.sh "NODE0"
+$SCRIPTS/mount/releasemem.sh "NODE1"
 

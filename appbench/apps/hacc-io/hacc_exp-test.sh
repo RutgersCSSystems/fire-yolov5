@@ -28,7 +28,7 @@ declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" 
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
 
 #declare -a config_arr=("OSonly" "CIP" "CIPI" "CII")
-declare -a config_arr=("Cross_Info")
+declare -a config_arr=("Cross_Info_sync" "CIPI_sync")
 
 declare -a thread_arr=("16")
 
