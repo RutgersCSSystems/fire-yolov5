@@ -188,6 +188,35 @@ exit:
     return;
 }
 
+
+//PREFETCH SYSCALLS
+long readahead_info_wrap(int fd, off64_t offset, size_t count, struct
+		read_ra_req *ra) {
+        long err = -1; 
+
+#ifdef ENABLE_EVICTION
+	/* We are dangerously low on memory 
+	 * So time to evict
+	 */
+	if(is_memory_danger_low()) {
+		fprintf(stderr, "turning off everything \n");
+		return err;
+	}
+	else if(is_memory_low()) {
+		/*Can we still use readahead? */
+		fprintf(stderr, "using readahead \n");
+		err = readahead(fd, offset, count);
+	}else 
+#endif
+	//fprintf(stderr, "using readahead info\n");
+	err = readahead_info(fd, offset, count, ra);
+
+        return err;
+}
+
+
+
+
 /*
  * Set unbounded_read to 0 or 1
  */
@@ -221,7 +250,6 @@ void set_cross_bitmap_shift(char a){
 	real_close(fd);
 	debug_printf("Exiting %s\n", __func__);
 }
-
 
 
 void con(){
@@ -613,7 +641,7 @@ void prefetcher_th(void *arg) {
 		//gettimeofday(&start, NULL);
 		uinode_bitmap_lock(a->uinode);
 
-		err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra);
 		//err = readahead(a->fd, file_pos, a->prefetch_size);
 		if(err < -10){
 			uinode_bitmap_unlock(a->uinode);
@@ -998,7 +1026,7 @@ void inline record_open(struct file_desc desc){
 #if defined(PREFETCH_BOOST)
 		struct read_ra_req ra;
 		ra.data = NULL;
-		readahead_info(fd, 0, 0, &ra);
+		readahead_info_wrap(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
 
@@ -1031,7 +1059,7 @@ void handle_open(struct file_desc desc){
 	 */
 	struct read_ra_req ra;
 	ra.data = NULL;
-	readahead_info(desc.fd, 0, 0, &ra);
+	readahead_info_wrap(desc.fd, 0, 0, &ra);
 #endif
 
 
@@ -1080,7 +1108,7 @@ void update_file_predictor_and_prefetch(void *arg){
 		return;
 	}
 
-#ifdef ENABLE_EVICTION
+#if 0 //def ENABLE_EVICTION
 		if(fp->uinode != NULL) {
 			set_uinode_access_time(fp->uinode);
 		}
@@ -1119,9 +1147,12 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
 	off_t offset;
 
-	if(file_fd < 3 && !stream){
+	if(file_fd < 3) {
 		goto skip_read_predictor;
-	}else if(file_fd >= 3){
+	}else if(!stream) {
+		goto skip_read_predictor;
+	}
+	else if(file_fd >= 3){
 		fd = file_fd;
 		offset = file_offset;
 	}else if(stream){
@@ -1449,8 +1480,6 @@ exit_close:
 	return real_close(fd);
 }
 
-
-//PREFETCH SYSCALLS
 
 ssize_t readahead(int fd, off_t offset, size_t count){
 

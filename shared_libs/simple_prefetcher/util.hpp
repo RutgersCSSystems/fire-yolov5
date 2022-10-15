@@ -116,6 +116,15 @@
 
 /*
  * Minimum available memory after which we should
+ * start doing eviction
+ */
+#ifndef MEM_DANGER_WATERMARK
+#define MEM_DANGER_WATERMARK (1L * GB)
+#endif
+
+
+/*
+ * Minimum available memory after which we should
  * stop doing eviction
  */
 #ifndef MEM_HIGH_WATERMARK

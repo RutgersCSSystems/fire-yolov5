@@ -87,6 +87,8 @@ void update_lru(struct u_inode *uinode);
 long curr_available_free_mem_pg();
 
 bool is_memory_low(void);
+bool is_memory_danger_low(void);
+
 int evict_inode_from_mem(struct u_inode *uinode);
 void evict_inactive_inodes(void *arg);
 void set_uinode_access_time(struct u_inode *uinode);

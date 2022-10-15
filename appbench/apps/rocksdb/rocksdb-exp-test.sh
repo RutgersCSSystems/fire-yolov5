@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("1000000")
-NUM=1000000
+declare -a num_arr=("10000000")
+NUM=10000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -50,7 +50,7 @@ declare -a thread_arr=("16")
 #declare -a workload_arr=("readseq" "multireadrandom")
 declare -a workload_arr=("multireadrandom")
 
-declare -a membudget=("6" "4" "2" "1")
+declare -a membudget=("6" "4" "2")
 
 
 USEDB=1
@@ -122,19 +122,17 @@ GEN_RESULT_PATH() {
 	let KEYCOUNT=$NUM/1000000
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+	then 
+		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+	else
+        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+	fi
 	mkdir -p $RESULTS
-
-        if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
-        then
-                RESULTFILE=$RESULTS/$CONFIG".out"
-        else
-                RESULTFILE=$RESULTS/$CONFIG"-MEMREDUCE_FRAC$MEM_REDUCE_FRAC".out
-        fi
-
-
-	RESULTFILE=$RESULTS/$CONFIG.out
+        RESULTFILE=$RESULTS/$CONFIG".out"
 }
+
 
 
 RUN() {
@@ -212,7 +210,7 @@ GETMEMORYBUDGET() {
         #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
 then
 	for MEM_REDUCE_FRAC in "${membudget[@]}"
 	do

@@ -56,7 +56,7 @@ int fadvise(int fd, off_t offset, off_t len, int advice){
 std::atomic_flag inode_map_init;
 std::mutex m;
 bool g_lowmem_thresh=false;
-
+bool g_dangermem_thresh=false;
 /*****************************************************************************/
 struct key
 {
@@ -399,6 +399,12 @@ unsigned long mem_low_watermark(){
         return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_LOW_WATERMARK);
 }
 
+unsigned long mem_danger_watermark(){
+        struct sysinfo si;
+        sysinfo (&si);
+        return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_DANGER_WATERMARK);
+}
+
 
 /*
  * Returns True if available memory is higher than
@@ -417,9 +423,19 @@ bool is_memory_low(void) {
 	return g_lowmem_thresh;
 }
 
+bool is_memory_danger_low(void) {
+	return g_dangermem_thresh;
+}
+
+
 int set_memory_low(bool islowmem) {
 	g_lowmem_thresh = islowmem;
 }
+
+int set_memory_danger_low(bool islowmem) {
+        g_dangermem_thresh = islowmem;
+}
+
 
 
 void set_uinode_access_time(struct u_inode *uinode) {
@@ -433,12 +449,19 @@ void set_uinode_access_time(struct u_inode *uinode) {
  */
 int evict_inode_from_mem(void){
 
-	int batch_size = 20;
+	int batch_size = 30;
 	int i = 0;
 	struct u_inode *uinode = NULL;
 
 	for (i=0; i < batch_size; i++) {
 
+		if(!mem_danger_watermark()){
+                        set_memory_danger_low(false);
+                }
+
+		/*
+		 * We can return beyond this point 
+		 */
 		if(!mem_low_watermark()){
                         set_memory_low(false);
 			return 0;
