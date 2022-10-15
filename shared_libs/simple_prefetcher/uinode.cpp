@@ -227,7 +227,7 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 			m.unlock();
 			return -1;
 		}
-                new_uinode = true;
+        new_uinode = true;
 		uinode->ino = inode;
 		uinode->fdcount = 0;
 		uinode->full_prefetched = 0;
@@ -469,6 +469,7 @@ retry:
                 }
 
 wait_for_eviction:
+				printf("WAITING FOR EVICTION \n");
                 sleep(SLEEP_TIME);
         }
 }

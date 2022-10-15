@@ -111,7 +111,7 @@
  */
 #ifndef MEM_LOW_WATERMARK
 //#define MEM_LOW_WATERMARK (240L * GB)
-#define MEM_LOW_WATERMARK (5L * GB)
+#define MEM_LOW_WATERMARK (15L * GB)
 #endif
 
 /*
