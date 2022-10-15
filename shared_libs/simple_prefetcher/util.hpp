@@ -116,6 +116,16 @@
 
 /*
  * Minimum available memory after which we should
+ * start doing eviction
+ */
+#ifndef MEM_OTHER_NUMA_NODE
+//#define MEM_LOW_WATERMARK (240L * GB)
+#define MEM_OTHER_NUMA_NODE (8L * GB)
+#endif
+
+
+/*
+ * Minimum available memory after which we should
  * stop doing eviction
  */
 #ifndef MEM_HIGH_WATERMARK
