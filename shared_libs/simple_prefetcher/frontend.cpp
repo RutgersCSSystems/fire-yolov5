@@ -1147,18 +1147,18 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
 	off_t offset;
 
-	if(file_fd < 3) {
-		goto skip_read_predictor;
-	}else if(!stream) {
-		goto skip_read_predictor;
-	}
-	else if(file_fd >= 3){
+
+	if(file_fd >= 3){
 		fd = file_fd;
 		offset = file_offset;
 	}else if(stream){
 		fd = fileno(stream);
 		offset = ftell(stream);
 	}
+
+	if(fd < 3) {
+		goto skip_read_predictor;
+	}	
 
 
 #ifdef ONLY_INTERCEPT
