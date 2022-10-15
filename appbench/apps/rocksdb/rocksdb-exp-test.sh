@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
+declare -a num_arr=("1000000")
+NUM=1000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -47,9 +47,10 @@ declare -a thread_arr=("16")
 
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a workload_arr=("readseq" "multireadrandom")
+#declare -a workload_arr=("readseq" "multireadrandom")
 declare -a workload_arr=("multireadrandom")
 
+declare -a membudget=("6" "4" "2" "1")
 
 
 USEDB=1
@@ -65,9 +66,9 @@ ENABLE_MEM_SENSITIVE=1
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CIPB" "Vanilla" "OSonly")
-#declare -a config_arr=("Cross_Info_sync")
-
+declare -a config_arr=("CIPI" "CIPB" "CPBI" "CPBI_sync" "Vanilla" "OSonly")
+#declare -a config_arr=("CPBI")
+#declare -a config_arr=("Vanilla")
 #Require for large database
 ulimit -n 1000000 
 
@@ -211,13 +212,16 @@ GETMEMORYBUDGET() {
         #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-declare -a membudget=("3")
-for MEM_REDUCE_FRAC in "${membudget[@]}"
-do
-	#GETMEMORYBUDGET $MEM_REDUCE_FRAC
+if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+then
+	for MEM_REDUCE_FRAC in "${membudget[@]}"
+	do
+		GETMEMORYBUDGET $MEM_REDUCE_FRAC
+		RUN
+		$SCRIPTS/mount/releasemem.sh "NODE0"
+		$SCRIPTS/mount/releasemem.sh "NODE1"
+	done
+else
 	RUN
-done
-
-$SCRIPTS/mount/releasemem.sh "NODE0"
-$SCRIPTS/mount/releasemem.sh "NODE1"
+fi
 

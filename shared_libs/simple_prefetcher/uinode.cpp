@@ -55,7 +55,7 @@ int fadvise(int fd, off_t offset, off_t len, int advice){
 //robin_hood::unordered_map<int, void *> inode_map;
 std::atomic_flag inode_map_init;
 std::mutex m;
-
+bool g_lowmem_thresh=false;
 
 /*****************************************************************************/
 struct key
@@ -396,7 +396,7 @@ unsigned long mem_low_watermark(){
         struct sysinfo si;
         sysinfo (&si);
         //fprintf(stderr, "%s si.freeram %zu \n", __func__,si.freeram);
-        return (si.freeram <= MEM_LOW_WATERMARK);
+        return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_LOW_WATERMARK);
 }
 
 
@@ -408,37 +408,62 @@ unsigned long mem_high_watermark(){
         struct sysinfo si;
         sysinfo (&si);
 
-        return (si.freeram > MEM_HIGH_WATERMARK);
+        return (si.freeram - MEM_OTHER_NUMA_NODE > MEM_HIGH_WATERMARK);
         //return (nr_os_free_pg.load() > (MEM_HIGH_WATERMARK >> PAGE_SHIFT));
+}
+
+
+bool is_memory_low(void) {
+	return g_lowmem_thresh;
+}
+
+int set_memory_low(bool islowmem) {
+	g_lowmem_thresh = islowmem;
+}
+
+
+void set_uinode_access_time(struct u_inode *uinode) {
+	uinode->update_time = std::time(nullptr);
+	//std::cout << uinode->update_time << " seconds since the Epoch\n";
 }
 
 
 /*
  * Call this for victim uinode
  */
-int evict_inode_from_mem(struct u_inode *uinode){
+int evict_inode_from_mem(void){
 
-        if(!uinode)
-                return -1;
+	int batch_size = 20;
+	int i = 0;
+	struct u_inode *uinode = NULL;
 
-        if((uinode->fdcount > 0)
-                && (uinode->file_size > 0)
-                && (uinode->fdlist[0] > 0)
-                && (uinode->evicted != FILE_EVICTED))
-        {
+	for (i=0; i < batch_size; i++) {
 
-                if(fadvise(uinode->fdlist[0], 0, 0, POSIX_FADV_DONTNEED)){
-                        fprintf(stderr, "%s:%d eviction failed using fadvise fd:%d SIZE:%zu\n", __func__,
-                                        __LINE__, uinode->fdlist[0], uinode->file_size);
-                        return -1;
+		if(!mem_low_watermark()){
+                        set_memory_low(false);
+			return 0;
                 }
 
-                printf("%s: evicting uinode:%d, fd:%d\n", __func__, uinode->ino, uinode->fdlist[0]);
+		uinode = get_lru_victim();
+		if(!uinode)
+			return -1;
 
-                uinode->evicted = FILE_EVICTED;
-                uinode->fully_prefetched.store(false); //Reset fully prefetched for this file
-                //increase_free_pg(uinode->file_size >> PAGE_SHIFT);
-        }
+		if((uinode->fdcount > 0)
+			&& (uinode->file_size > 0)
+			&& (uinode->fdlist[0] > 0)
+			&& (uinode->evicted != FILE_EVICTED)) {
+
+			if(fadvise(uinode->fdlist[0], 0, 0, POSIX_FADV_DONTNEED)){
+				fprintf(stderr, "%s:%d eviction failed using fadvise fd:%d SIZE:%zu\n", __func__,
+						__LINE__, uinode->fdlist[0], uinode->file_size);
+				return -1;
+			}
+			//printf("%s: evicting uinode:%d, fd:%d\n", __func__, uinode->ino, uinode->fdlist[0]);
+			uinode->evicted = FILE_EVICTED;
+			uinode->fully_prefetched.store(false); //Reset fully prefetched for this file
+		}
+		uinode = NULL;
+	}
         return 0;
 }
 
@@ -458,15 +483,19 @@ retry:
                 }
 
                 if(!mem_low_watermark()){
+
+			set_memory_low(false);
                         goto wait_for_eviction;
                 }
 
-                evict_inode_from_mem(get_lru_victim());
+		set_memory_low(true);
+
+                evict_inode_from_mem();
 
                 //Not enough eviction done
-                if(!mem_high_watermark()){
+                /*if(!mem_high_watermark()){
                         goto retry;
-                }
+                }*/
 
 wait_for_eviction:
 		//printf("WAITING FOR EVICTION \n");

@@ -17,7 +17,7 @@ struct u_inode {
 	int full_prefetched; //has the file been already fully prefetched?
 
 #ifdef ENABLE_FNAME
-    char filename[256];
+    	char filename[256];
 #endif
 
 	long prefetch_size; //size of each prefetch req
@@ -44,6 +44,7 @@ struct u_inode {
          * Used by Eviction
          */
         int evicted; //set to FILE_EVICTED if evicted
+	std::time_t update_time;
 
 	u_inode(){
 		ino = 0;
@@ -85,6 +86,8 @@ void increase_free_pg(unsigned long increased_pg);
 void update_lru(struct u_inode *uinode);
 long curr_available_free_mem_pg();
 
+bool is_memory_low(void);
 int evict_inode_from_mem(struct u_inode *uinode);
 void evict_inactive_inodes(void *arg);
+void set_uinode_access_time(struct u_inode *uinode);
 #endif

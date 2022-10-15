@@ -702,7 +702,7 @@ exit_prefetcher_th:
  */
 void inline prefetch_file_predictor(void *args){
 
-	struct thread_args *a = (struct thread_args*)args;
+    struct thread_args *a = (struct thread_args*)args;
     int fd = a->fd;
     file_predictor *fp = a->fp;
 
@@ -975,13 +975,13 @@ void inline record_open(struct file_desc desc){
 		 * We give it a signin bonus. Prefetch a small portion of the start
 		 * of the file
 		 */
-			if(fp->should_prefetch_now()){
-				struct thread_args arg;
-				arg.fd = fd;
-				arg.fp = fp;
-				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-				 prefetch_file_predictor(&arg);
-			}
+		if(fp->should_prefetch_now()){
+			struct thread_args arg;
+			arg.fd = fd;
+			arg.fp = fp;
+			//printf("%s: Doing a Bonus Prefetch\n", __func__);
+			 prefetch_file_predictor(&arg);
+		}
 #endif
 
 		/*
@@ -1080,6 +1080,14 @@ void update_file_predictor_and_prefetch(void *arg){
 		return;
 	}
 
+#ifdef ENABLE_EVICTION
+		if(fp->uinode != NULL) {
+			set_uinode_access_time(fp->uinode);
+		}
+#endif
+
+
+
 	if(fp){
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 
@@ -1090,14 +1098,13 @@ void update_file_predictor_and_prefetch(void *arg){
 			return;
 
 #if 0
-			/*update lru if file is fully prefetched*/
-			if(fp->uinode->fully_prefetched.load()){
-					update_lru(fp->uinode);
-			}
+		/*update lru if file is fully prefetched*/
+		if(fp->uinode->fully_prefetched.load()){
+				update_lru(fp->uinode);
+		}
 #endif
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
-			printf("%s:%d \n", __func__, __LINE__);
 			prefetch_file_predictor((void*)arg);
 		}
 	}
@@ -1112,8 +1119,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
 	off_t offset;
 
-	//debug_printf("%s: TID:%ld\n", __func__, gettid());
-	if(file_fd < 3 || !stream){
+	if(file_fd < 3 && !stream){
 		goto skip_read_predictor;
 	}else if(file_fd >= 3){
 		fd = file_fd;
@@ -1123,6 +1129,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		offset = ftell(stream);
 	}
 
+
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
 #endif
@@ -1130,7 +1137,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 #ifdef ENABLE_EVICTION_DISABLE
 	set_curr_last_fd(fd);
 #endif
-
 
 #ifdef PREDICTOR
 #ifdef CONCURRENT_PREDICTOR
