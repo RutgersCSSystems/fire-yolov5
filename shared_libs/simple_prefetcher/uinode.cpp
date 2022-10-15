@@ -395,7 +395,7 @@ long curr_available_free_mem_pg(){
 unsigned long mem_low_watermark(){
         struct sysinfo si;
         sysinfo (&si);
-
+        fprintf(stderr, "%s si.freeram %zu \n", __func__,si.freeram);
         return (si.freeram <= MEM_LOW_WATERMARK);
 }
 
