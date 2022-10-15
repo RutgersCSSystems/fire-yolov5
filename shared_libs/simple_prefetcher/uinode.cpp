@@ -395,7 +395,7 @@ long curr_available_free_mem_pg(){
 unsigned long mem_low_watermark(){
         struct sysinfo si;
         sysinfo (&si);
-        fprintf(stderr, "%s si.freeram %zu \n", __func__,si.freeram);
+        //fprintf(stderr, "%s si.freeram %zu \n", __func__,si.freeram);
         return (si.freeram <= MEM_LOW_WATERMARK);
 }
 
@@ -469,7 +469,7 @@ retry:
                 }
 
 wait_for_eviction:
-				printf("WAITING FOR EVICTION \n");
+		//printf("WAITING FOR EVICTION \n");
                 sleep(SLEEP_TIME);
         }
 }

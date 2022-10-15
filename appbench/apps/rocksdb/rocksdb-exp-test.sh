@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("2000000")
+NUM=2000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -48,6 +48,8 @@ declare -a thread_arr=("16")
 
 #declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 declare -a workload_arr=("readseq" "multireadrandom")
+declare -a workload_arr=("multireadrandom")
+
 
 
 USEDB=1
@@ -63,7 +65,7 @@ ENABLE_MEM_SENSITIVE=1
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CIPB" "OSonly")
+declare -a config_arr=("CIPB" "Vanilla" "OSonly")
 #declare -a config_arr=("Cross_Info_sync")
 
 #Require for large database
@@ -167,7 +169,7 @@ RUN() {
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
@@ -203,16 +205,16 @@ GETMEMORYBUDGET() {
 
 	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
 	$SCRIPTS/mount/releasemem.sh "NODE0"
-	$SCRIPTS/mount/releasemem.sh "NODE1"
+	#$SCRIPTS/mount/releasemem.sh "NODE1"
 
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 declare -a membudget=("3")
 for MEM_REDUCE_FRAC in "${membudget[@]}"
 do
-	GETMEMORYBUDGET $MEM_REDUCE_FRAC
+	#GETMEMORYBUDGET $MEM_REDUCE_FRAC
 	RUN
 done
 
