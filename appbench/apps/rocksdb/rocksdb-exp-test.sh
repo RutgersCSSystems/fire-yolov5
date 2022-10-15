@@ -63,7 +63,7 @@ ENABLE_MEM_SENSITIVE=1
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CIPI_sync" "OSonly")
+declare -a config_arr=("CIPB" "OSonly")
 #declare -a config_arr=("Cross_Info_sync")
 
 #Require for large database
@@ -142,7 +142,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -167,7 +167,7 @@ RUN() {
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
@@ -209,7 +209,7 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-declare -a membudget=("5")
+declare -a membudget=("3")
 for MEM_REDUCE_FRAC in "${membudget[@]}"
 do
 	GETMEMORYBUDGET $MEM_REDUCE_FRAC
