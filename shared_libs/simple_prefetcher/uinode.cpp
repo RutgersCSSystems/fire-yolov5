@@ -55,8 +55,11 @@ int fadvise(int fd, off_t offset, off_t len, int advice){
 //robin_hood::unordered_map<int, void *> inode_map;
 std::atomic_flag inode_map_init;
 std::mutex m;
+std::mutex evict_lock;
+
 bool g_lowmem_thresh=false;
 bool g_dangermem_thresh=false;
+long g_tot_bytes_fetch = 0;
 /*****************************************************************************/
 struct key
 {
@@ -202,48 +205,51 @@ int add_fd_to_inode(struct hashtable *i_map, int fd, char *fname){
 int add_fd_to_inode(struct hashtable *i_map, int fd){
 #endif
 
-   struct stat file_stat;
-   int inode, ret;
-   struct u_inode *uinode = NULL;
-   struct value *found = NULL;
+	struct stat file_stat;
+   	int inode, ret;
+   	struct u_inode *uinode = NULL;
+   	struct value *found = NULL;
 
-   bool new_uinode = false;
+   	bool new_uinode = false;
 
-   if(!i_map)
-	return -1;
+   	if(!i_map)
+		return -1;
 
-    ret = fstat (fd, &file_stat);
-    inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
+    	ret = fstat (fd, &file_stat);
+    	inode = file_stat.st_ino;  // inode now contains inode number of the file with descriptor fd
 
-    m.lock();
+    	m.lock();
 
-    found = hash_get(i_map, inode);
-    if(found) {
-    	uinode = (struct u_inode *)found->value;
-    }
+    	found = hash_get(i_map, inode);
+    	
+	if(found) {
+    		uinode = (struct u_inode *)found->value;
+    	}
+
 	if(uinode == NULL){
-                uinode = new struct u_inode;
+        	uinode = new struct u_inode;
 		if(!uinode){
 			m.unlock();
 			return -1;
 		}
-        new_uinode = true;
+
+        	new_uinode = true;
 		uinode->ino = inode;
 		uinode->fdcount = 0;
 		uinode->full_prefetched = 0;
-        uinode->file_size = file_stat.st_size;
+        	uinode->file_size = file_stat.st_size;
 
 #if defined(READAHEAD_INFO_PC_STATE) && defined(PER_INODE_BITMAP)
-       /*
-       * Allocate per inode bitmaps if adding new inode
-       */
+       		/*
+       		* Allocate per inode bitmaps if adding new inode
+       		*/
 		uinode->page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
-        //BitArrayClearAll(uinode->page_cache_state);
-        debug_printf("%s: adding page cache to uinode %d with %lu bits\n",
+        	//BitArrayClearAll(uinode->page_cache_state);
+        	debug_printf("%s: adding page cache to uinode %d with %lu bits\n",
         		__func__, inode, NR_BITS_PREALLOC_PC_STATE);
 
 #else
-        uinode->page_cache_state = NULL;
+        	uinode->page_cache_state = NULL;
 #endif
 
 #ifdef ENABLE_FNAME
@@ -262,7 +268,6 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
                 update_lru(uinode);
         }
 #endif
-
 	return 0;
 }
 
@@ -324,6 +329,7 @@ int inode_reduce_ref(struct hashtable *i_map, int fd) {
 }
 
 struct hashtable *init_inode_fd_map(void) {
+
 	 return create_hashtable(MAXFILES, hashfromkey, equalkeys);
 }
 
@@ -368,19 +374,31 @@ void increase_free_pg(unsigned long increased_pg){
 /*GLOBAL FILE LEVEL LRU*/
 cache::lru_cache<int, struct u_inode*> lrucache(MAXFILES);
 std::mutex lru_guard;
+long lru_inodes=0;
 
 void update_lru(struct u_inode *uinode){
         if(uinode){
-                std::lock_guard<std::mutex> guard(lru_guard);
-                lrucache.put(uinode->ino, uinode);
+            //std::lock_guard<std::mutex> guard(lru_guard);
+        	evict_lock.lock();
+            lrucache.put(uinode->ino, uinode);
+		    evict_lock.unlock();
+		    lru_inodes++;
         }
 }
 
-
 struct u_inode *get_lru_victim(){
-        std::lock_guard<std::mutex> guard(lru_guard);
-        return lrucache.pop_last()->second;
+
+	struct u_inode *uinode = NULL;
+	if(lru_inodes > 0)
+		lru_inodes--;
+
+	evict_lock.lock();
+	uinode = (struct u_inode *)lrucache.pop_last()->second;
+	evict_lock.unlock();
+    //std::lock_guard<std::mutex> guard(lru_guard);
+    return uinode;
 }
+
 
 /*
 long curr_available_free_mem_pg(){
@@ -388,20 +406,65 @@ long curr_available_free_mem_pg(){
 }
 */
 
+
+long update_prefetch_bytes(size_t bytes, int add) {
+
+	if(add) { 
+		g_tot_bytes_fetch += bytes;
+	}else if(g_tot_bytes_fetch > 0){
+		g_tot_bytes_fetch -= bytes;
+	}
+	return g_tot_bytes_fetch;
+}
+
+long get_prefetch_bytes(void) {
+
+	if(g_tot_bytes_fetch < 0)
+		return 0;
+	else
+		return g_tot_bytes_fetch;
+}
+
+
+
+ssize_t read_mem_info(void)
+{
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    FILE *meminfo_fp = NULL;
+
+    if(!meminfo_fp)
+    	meminfo_fp = fopen("memcap.out", "r");
+    if (meminfo_fp == NULL)
+        return -1;
+
+    getline(&line, &len, meminfo_fp);
+    read = (size_t)atoi(line);
+    printf("%s memcap %zu \n", line, read);
+    fclose(meminfo_fp);
+    return read;	
+ }
+
+
 /*
  * Returns True if available memory is lower than
  * LOW WATERMARK
  */
 unsigned long mem_low_watermark(){
-        struct sysinfo si;
+        
+	struct sysinfo si;
         sysinfo (&si);
-        //fprintf(stderr, "%s si.freeram %zu \n", __func__,si.freeram);
+
         return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_LOW_WATERMARK);
 }
 
 unsigned long mem_danger_watermark(){
         struct sysinfo si;
         sysinfo (&si);
+
+	debug_printf(stderr, "si.freeram %ld MEM_OTHER_NUMA_NODE %ld diff %ld MEM_DANGER_WATERMARK %ld \n", 
+			si.freeram, MEM_OTHER_NUMA_NODE, si.freeram - MEM_OTHER_NUMA_NODE,  MEM_DANGER_WATERMARK);
         return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_DANGER_WATERMARK);
 }
 
@@ -415,7 +478,27 @@ unsigned long mem_high_watermark(){
         sysinfo (&si);
 
         return (si.freeram - MEM_OTHER_NUMA_NODE > MEM_HIGH_WATERMARK);
-        //return (nr_os_free_pg.load() > (MEM_HIGH_WATERMARK >> PAGE_SHIFT));
+}
+
+int have_we_evicted_enough() {
+	struct sysinfo si;
+	sysinfo (&si);
+
+	/*We get the single numa available memory*/
+	unsigned long avblmem = si.freeram - MEM_OTHER_NUMA_NODE;
+	unsigned long singlenuma = si.totalram/2;
+	singlenuma = singlenuma/2;
+	/*We check if prefetching is using more than half of singlenuma 
+	 * If yes, we will return false, else, the memory usage is not likely 
+	 * from our prefetching and we cannot do much
+	 */
+	if(singlenuma > get_prefetch_bytes()) {
+		//fprintf(stderr, "Half of memroy socket %lu, " 
+		//	"current prefetched %lu available mem %lu \n", 
+		//		singlenuma, get_prefetch_bytes(), avblmem);
+		return 1;
+	}
+		return 0;
 }
 
 
@@ -449,15 +532,22 @@ void set_uinode_access_time(struct u_inode *uinode) {
  */
 int evict_inode_from_mem(void){
 
-	int batch_size = 30;
-	int i = 0;
+	int batch_size = 10;
+	int i = 0, lowmem=0, dangermem=0;
 	struct u_inode *uinode = NULL;
 
 	for (i=0; i < batch_size; i++) {
 
+		/*if(have_we_evicted_enough()) {
+			sleep(SLEEP_TIME);
+			return 0;
+		}*/
+
 		if(!mem_danger_watermark()){
                         set_memory_danger_low(false);
-                }
+                }else {
+			dangermem=1;
+		}
 
 		/*
 		 * We can return beyond this point 
@@ -465,7 +555,9 @@ int evict_inode_from_mem(void){
 		if(!mem_low_watermark()){
                         set_memory_low(false);
 			return 0;
-                }
+                }else {
+			lowmem=1;
+		}
 
 		uinode = get_lru_victim();
 		if(!uinode)
@@ -481,9 +573,16 @@ int evict_inode_from_mem(void){
 						__LINE__, uinode->fdlist[0], uinode->file_size);
 				return -1;
 			}
-			//printf("%s: evicting uinode:%d, fd:%d\n", __func__, uinode->ino, uinode->fdlist[0]);
+
+			debug_printf("%s: evicting uinode:%d, fd:%d items in list %ld " 
+					"TID %ld PID %ld dangermem=%d lowmem=%d\n", 
+					__func__, uinode->ino, uinode->fdlist[0], lru_inodes, 
+					gettid(), (long)getpid(), dangermem, lowmem);
+
 			uinode->evicted = FILE_EVICTED;
 			uinode->fully_prefetched.store(false); //Reset fully prefetched for this file
+
+			update_prefetch_bytes(uinode->file_size, 0);
 		}
 		uinode = NULL;
 	}
@@ -502,6 +601,9 @@ retry:
                 tot_inodes = hashtable_count(i_map);
 
                 if(tot_inodes < 2 || !lrucache.size()){
+			/*printf("WAITING FOR EVICTION totinodes %d " 
+				"LRU size %zu TID %ld PID %d\n", 
+				tot_inodes, lrucache.size(), gettid(), getpid());*/
                         goto wait_for_eviction;
                 }
 
@@ -516,9 +618,9 @@ retry:
                 evict_inode_from_mem();
 
                 //Not enough eviction done
-                /*if(!mem_high_watermark()){
+                if(!mem_low_watermark()){
                         goto retry;
-                }*/
+                }
 
 wait_for_eviction:
 		//printf("WAITING FOR EVICTION \n");
