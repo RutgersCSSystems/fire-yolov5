@@ -1535,10 +1535,10 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
 
 #ifdef ENABLE_EVICTION
-	//if(is_memory_low() ) {
+	if(is_memory_danger_low() ) {
 		//printf("%s:%d mem dangerously low\n", __func__, __LINE__);
 		goto listen_to_app;
-	//}
+	}
 #endif
 
 #ifdef DISABLE_FADV_RANDOM
