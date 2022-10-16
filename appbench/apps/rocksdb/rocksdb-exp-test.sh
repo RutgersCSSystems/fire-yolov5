@@ -47,10 +47,10 @@ declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-#declare -a workload_arr=("readseq" "multireadrandom")
+declare -a workload_arr=("readseq")
 #declare -a workload_arr=("multireadrandom")
 declare -a membudget=("6" "4" "2")
-declare -a membudget=("6")
+declare -a membudget=("4")
 
 USEDB=1
 MEM_REDUCE_FRAC=1
@@ -63,7 +63,7 @@ ENABLE_MEM_SENSITIVE=1
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-declare -a config_arr=("CPBI_sync")
+declare -a config_arr=("CPBI" "Vanilla" "OSonly" "Cross_Info_sync")
 #declare -a config_arr=("Vanilla")
 #Require for large database
 ulimit -n 1000000 

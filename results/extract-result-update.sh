@@ -79,6 +79,16 @@ set_rocks_thread_impact_global_vars() {
 }
 
 
+set_rocks_memimpact_impact_global_vars() {
+	rocksworkarr=("readseq")
+	rocksworkproxyarr=("rseq")
+	memfractarr=("6")
+	threadarr=("16")
+}
+
+
+
+
 set_rocks_ycsb_global_vars() {
 	rocksycsbarr=("ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
 	rocksycsbproxyarr=("work-b" "work-c" "work-d" "work-e")
@@ -308,6 +318,28 @@ GRAPH_GEN_FIRSTCOL_MULTITHREADS() {
 	done 
 }
 
+GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
+
+	APP=$1
+	let num=0
+
+	rm -rf "$APP.DATA"
+	rm -rf MULTITHREADS.tmp
+
+	if [[ "$num" -eq 0 ]]; then
+
+		echo "# reader" > MULTITHREADS.tmp
+	fi
+	let "num=num+1"
+
+	for threadval in "${threadarr[@]}"
+	do
+		echo $threadval >> MULTITHREADS.tmp
+	done 
+}
+
+
+
 
 GENERATE_GRAPH_MULTITHREADS() {
 
@@ -342,6 +374,46 @@ GENERATE_GRAPH_MULTITHREADS() {
 
 	done
 }
+
+
+GENERATE_GRAPH_MEMSENSITIVE() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	MEMFRAC=$4
+
+	VAR=""
+	echo "GENERATE_GRAPH_MEMSENSITIVE:" $APPNAME
+	rm -rf $APPNAME"-MEMFRAC.DATA"
+
+	for TECH in "${techarr[@]}"
+	do
+		VAR+="$APPNAME-$TECH.DATA "
+	done
+
+	echo $VAR
+
+	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-MEMFRAC.DATA"`
+	cat $APPNAME"-MEMFRAC.DATA"
+	VAR=""
+
+	GENERATE_PYTHON_LIST
+
+	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-MEMFRAC-Sensitivity"
+	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APPNAME"-MEMFRAC.DATA" $OUTPUTPATH/$APP"-$workload-MEMFRAC-Sensitivity"
+
+	for threadval in "${threadarr[@]}"
+	do
+		for TECH in "${techarr[@]}"
+		do
+		  	rm -rf "$APPNAME-$TECH.DATA"
+		done
+
+	done
+}
+
+
 
 
 EXTRACT_RESULT()  {
@@ -418,11 +490,56 @@ EXTRACT_RESULT_THREADS()  {
 		do
 			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
 		done
+	done
+}
+
+
+EXTRACT_RESULT_MEMSENSITIVE()  {
+
+	rm -rf $APP".data"
+	exclude=0
+	ADD=$1
+	dir=0
+	let num=0;
+
+	GRAPH_GEN_FIRSTCOL_MEMSENSITIVE $APP
+
+	let num=0;
+
+	for appval in "${apparr[@]}"
+	do
+		for TECH in "${techarr[@]}"
+		do
+			#appval=""
+			let num=0;
+
+			#echo "*******************************************************************************"
+			for THREAD in "${threadarr[@]}"
+			do
+				for MEMFRAC in "${memfractarr[@]}"
+				do
+					if [[ "$num" -eq 0 ]]; then
+						rm -rf $appval-$TECH".DATA"
+						echo $TECH > $appval-$TECH".DATA"
+						num=$num+1
+					fi
+					TECHOUT=$TECH".out"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/MEMFRAC$MEMFRAC/$TECHOUT" $num "$appval"
+				done
+			done
+			#echo "*******************************************************************************"
+		done
+
+		for APPLICATION in "${apparr[@]}"
+		do
+			GENERATE_GRAPH_MEMSENSITIVE $APPLICATION $APP $appval
+		done
 
 	done
-
-
 }
+
+
+
 
 UPDATE_PAPER() {
 	mkdir -p $PAPERGRAPHS
@@ -444,6 +561,34 @@ MOVEGRAPHS() {
 
 	UPDATE_PAPER
 }
+
+
+MOVEGRAPHS-MEMSENSITIVE() {
+	mkdir -p graphs/$APP"$APPPREFIX"/"MEMFRAC"
+	mkdir -p graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
+
+	cp *.pdf graphs/$APP"$APPPREFIX"/"MEMFRAC"
+	cp *.pdf graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
+	UPDATE_PAPER
+}
+
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_memimpact_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=100
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Fraction of Memory Capacity Relative to Database Size'
+EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS-MEMSENSITIVE
+exit
+
+
 
 
 export APPPREFIX="20M-KEYS"
