@@ -36,41 +36,46 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("10000000")
+NUM=10000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
+<<<<<<< HEAD
 #declare -a thread_arr=("8" "4" "1")
+=======
+>>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 declare -a thread_arr=("16")
 
 
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+#declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+#declare -a workload_arr=("readseq" "multireadrandom")
+declare -a workload_arr=("multireadrandom")
+
+declare -a membudget=("6" "4" "2")
+
 
 USEDB=1
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 
-#declare -a workload_arr=("fillseq" "fillrandom")
-declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+
+#declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-#declare -a config_arr=("CIP" "CIP_sync")
-#declare -a config_arr=("Cross_Info_sync")
-#USEDB=1
-#declare -a config_arr=( "CIPI_sync")
-
-
-#declare -a config_arr=("Cross_Naive" "CNI" "CPNI")
-
-
+declare -a config_arr=("CIPI" "CIPB" "CPBI" "CPBI_sync" "Vanilla" "OSonly")
+#declare -a config_arr=("CPBI")
+#declare -a config_arr=("Vanilla")
 #Require for large database
 ulimit -n 1000000 
+
 
 
 FlushDisk()
@@ -121,10 +126,17 @@ GEN_RESULT_PATH() {
 	let KEYCOUNT=$NUM/1000000
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+	then 
+		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+	else
+        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+	fi
 	mkdir -p $RESULTS
-	RESULTFILE=$RESULTS/$CONFIG.out
+        RESULTFILE=$RESULTS/$CONFIG".out"
 }
+
 
 
 RUN() {
@@ -172,7 +184,46 @@ RUN() {
 	done
 }
 
-RUN
+#RUN
 #CLEAR_DATA
-exit
+#exit
+
+GETMEMORYBUDGET() {
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        $SCRIPTS/mount/umount_ext4ramdisk.sh
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        sudo rm -rf  /mnt/ext4ramdisk/
+
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+
+	echo "MEMORY $1"
+	let FRACTION=$1
+	let NUMANODE0=$(($NUMAFREE0/$FRACTION))
+	let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+
+
+	let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
+	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+
+	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
+	$SCRIPTS/mount/releasemem.sh "NODE0"
+	#$SCRIPTS/mount/releasemem.sh "NODE1"
+
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+}
+
+if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+then
+	for MEM_REDUCE_FRAC in "${membudget[@]}"
+	do
+		GETMEMORYBUDGET $MEM_REDUCE_FRAC
+		RUN
+		$SCRIPTS/mount/releasemem.sh "NODE0"
+		$SCRIPTS/mount/releasemem.sh "NODE1"
+	done
+else
+	RUN
+fi
 

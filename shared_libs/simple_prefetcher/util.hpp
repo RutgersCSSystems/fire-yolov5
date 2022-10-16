@@ -111,17 +111,37 @@
  */
 #ifndef MEM_LOW_WATERMARK
 //#define MEM_LOW_WATERMARK (240L * GB)
-#define MEM_LOW_WATERMARK (5L * GB)
+#define MEM_LOW_WATERMARK (10L * GB)
 #endif
+
+/*
+ * Minimum available memory after which we should
+ * start doing eviction
+ */
+#ifndef MEM_DANGER_WATERMARK
+#define MEM_DANGER_WATERMARK (1L * GB)
+#endif
+
 
 /*
  * Minimum available memory after which we should
  * stop doing eviction
  */
 #ifndef MEM_HIGH_WATERMARK
-//#define MEM_HIGH_WATERMARK (245L * GB)
-#define MEM_HIGH_WATERMARK (10L * GB)
+#define MEM_HIGH_WATERMARK (4L * GB)
 #endif
+
+
+
+/*
+ * Minimum available memory after which we should
+ * start doing eviction
+ */
+#ifndef MEM_OTHER_NUMA_NODE
+//#define MEM_LOW_WATERMARK (240L * GB)
+#define MEM_OTHER_NUMA_NODE (8L * GB)
+#endif
+
 
 /*
  * bitshift for kernel bitmaps

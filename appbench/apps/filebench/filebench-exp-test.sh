@@ -26,6 +26,7 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
+<<<<<<< HEAD
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
 #declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
 #declare -a workload_arr=("varmail.f")
@@ -39,6 +40,18 @@ declare -a workload_arr=("filemicro_seqread.f")
 declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
 #declare -a config_arr=("CIPI" "OSonly")
 #declare -a config_arr=("CIPI")
+=======
+declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "varmail.f" "webserver")
+#declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
+#declare -a workload_arr=("varmail.f")
+declare -a workload_arr=("mongo.f")
+#declare -a workload_arr=("tpcso.f")
+
+#declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
+declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla" "Cross_Info")
+#declare -a config_arr=("OSonly")
+#declare -a config_arr=("CIP" "CII" "CIPI")
+>>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -48,11 +61,16 @@ thread_arr_in=$3
 glob_prefetchsz=1024
 glob_prefechthrd=1
 
-declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
-declare -a prefech_thrd_arr=("1" "8" "16")
+declare -a prefech_sz_arr=("4096" "2048" "1024" "512")
+declare -a prefech_thrd_arr=("1" "8")
 
+<<<<<<< HEAD
 declare -a prefech_sz_arr=("4096")
 declare -a prefech_thrd_arr=("4")
+=======
+#declare -a prefech_sz_arr=("1024")
+#declare -a prefech_thrd_arr=("4")
+>>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 
 mkdir DATA
 
@@ -160,9 +178,11 @@ RUN() {
 				for prefechthrd in "${prefech_thrd_arr[@]}"
 				do
 					cd $PREDICT_LIB_DIR
-					sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
-					sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
-
+				        if [ "$ENABLE_SENSITIVITY" -eq "1" ]
+				        then
+						sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+						sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
+					fi
 					./compile.sh
 					cd $DBHOME
 
@@ -201,13 +221,21 @@ RUN() {
 }
 
 
-for glob_prefetchsz in "${prefech_sz_arr[@]}"
-do
-	for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+
+if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+then
+	RUN
+else
+	for glob_prefetchsz in "${prefech_sz_arr[@]}"
 	do
-	        get_global_arr	
-		RUN
+		for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+		do
+			get_global_arr	
+			RUN
+		done
 	done
-done
+
+fi
+
 
 exit

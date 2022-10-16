@@ -180,15 +180,42 @@ void init_global_ds(void){
                         goto exit;
 		}
 
-#ifdef ENABLE_EVICTION_DISABLE
-                thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
+#ifdef ENABLE_EVICTION
+       thpool_add_work(evict_pool, evict_inactive_inodes, (void*)i_map);
 #endif
 	}
-
-
 exit:
-        return;
+    return;
 }
+
+
+//PREFETCH SYSCALLS
+long readahead_info_wrap(int fd, off64_t offset, size_t count, struct
+		read_ra_req *ra) {
+        long err = -1; 
+
+#ifdef ENABLE_EVICTION
+	/* We are dangerously low on memory 
+	 * So time to evict
+	 */
+	if(is_memory_danger_low()) {
+		fprintf(stderr, "turning off everything \n");
+		return err;
+	}
+	else if(is_memory_low()) {
+		/*Can we still use readahead? */
+		fprintf(stderr, "using readahead \n");
+		err = readahead(fd, offset, count);
+	}else 
+#endif
+	//fprintf(stderr, "using readahead info\n");
+	err = readahead_info(fd, offset, count, ra);
+
+        return err;
+}
+
+
+
 
 /*
  * Set unbounded_read to 0 or 1
@@ -223,7 +250,6 @@ void set_cross_bitmap_shift(char a){
 	real_close(fd);
 	debug_printf("Exiting %s\n", __func__);
 }
-
 
 
 void con(){
@@ -262,7 +288,7 @@ void con(){
     }
 #endif
 
-#ifdef ENABLE_EVICTION_DISABLE
+#ifdef ENABLE_EVICTION
 	evict_pool = thpool_init(NR_EVICT_WORKERS);
 	if(!evict_pool){
 		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_EVICT_WORKERS);
@@ -339,54 +365,6 @@ int evict_advise(int fd){
 	//fprintf(stderr,"evicting inode \n");
 	return real_posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
 }
-
-
-#ifdef ENABLE_EVICTION_OLD
-int set_thread_args_evict(struct thread_args *arg) {
-	arg->current_fd = ptd.current_fd;
-	arg->last_fd = ptd.last_fd;
-	return 0;
-}
-
-int set_curr_last_fd(int fd){
-	/*
-	 * The first time ptd is accessed by a thread(clone)
-	 * it calls its constructor.
-	 */
-	if(ptd.last_fd == 0){
-		ptd.last_fd = fd;
-		ptd.current_fd = fd;
-	}
-	else{
-		/*
-		 * Update the current and last fd
-		 * for this thread each time it reads
-		 *
-		 * Heuristic: If the thread moves on to
-		 * another fd, it is likely done with last_fd
-		 * ie. in an event of memory pressure, cleanup that
-		 * file from memory
-		 */
-		ptd.last_fd = ptd.current_fd;
-		ptd.current_fd = fd;
-	}
-	return 0;
-}
-
-int perform_eviction(struct thread_args *arg){
-	/*
-	 * when crunched with memory, remove cache pages for
-	 * last fd. Since the thread has moved on from it.
-	 */
-	if(arg->current_fd != arg->last_fd){
-		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
-		evict_advise(arg->last_fd);
-	}
-
-	return 0;
-}
-#endif
-
 
 bit_array_t *allocate_bitmap(struct thread_args *a) {
 
@@ -663,7 +641,7 @@ void prefetcher_th(void *arg) {
 		//gettimeofday(&start, NULL);
 		uinode_bitmap_lock(a->uinode);
 
-		err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra);
 		//err = readahead(a->fd, file_pos, a->prefetch_size);
 		if(err < -10){
 			uinode_bitmap_unlock(a->uinode);
@@ -683,7 +661,8 @@ void prefetcher_th(void *arg) {
 		}
 #endif
 		uinode_bitmap_unlock(a->uinode);
-#ifdef ENABLE_EVICTION_DISABLE
+
+#ifdef ENABLE_EVICTION
 		update_lru(a->uinode);
 		//update_nr_free_pg(ra.nr_free);
 #endif
@@ -751,7 +730,7 @@ exit_prefetcher_th:
  */
 void inline prefetch_file_predictor(void *args){
 
-	struct thread_args *a = (struct thread_args*)args;
+    struct thread_args *a = (struct thread_args*)args;
     int fd = a->fd;
     file_predictor *fp = a->fp;
 
@@ -1024,13 +1003,13 @@ void inline record_open(struct file_desc desc){
 		 * We give it a signin bonus. Prefetch a small portion of the start
 		 * of the file
 		 */
-			if(fp->should_prefetch_now()){
-				struct thread_args arg;
-				arg.fd = fd;
-				arg.fp = fp;
-				//printf("%s: Doing a Bonus Prefetch\n", __func__);
-				 prefetch_file_predictor(&arg);
-			}
+		if(fp->should_prefetch_now()){
+			struct thread_args arg;
+			arg.fd = fd;
+			arg.fp = fp;
+			//printf("%s: Doing a Bonus Prefetch\n", __func__);
+			 prefetch_file_predictor(&arg);
+		}
 #endif
 
 		/*
@@ -1047,7 +1026,7 @@ void inline record_open(struct file_desc desc){
 #if defined(PREFETCH_BOOST)
 		struct read_ra_req ra;
 		ra.data = NULL;
-		readahead_info(fd, 0, 0, &ra);
+		readahead_info_wrap(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
 
@@ -1080,7 +1059,7 @@ void handle_open(struct file_desc desc){
 	 */
 	struct read_ra_req ra;
 	ra.data = NULL;
-	readahead_info(desc.fd, 0, 0, &ra);
+	readahead_info_wrap(desc.fd, 0, 0, &ra);
 #endif
 
 
@@ -1129,6 +1108,14 @@ void update_file_predictor_and_prefetch(void *arg){
 		return;
 	}
 
+#if 0 //def ENABLE_EVICTION
+		if(fp->uinode != NULL) {
+			set_uinode_access_time(fp->uinode);
+		}
+#endif
+
+
+
 	if(fp){
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
 
@@ -1139,14 +1126,13 @@ void update_file_predictor_and_prefetch(void *arg){
 			return;
 
 #if 0
-			/*update lru if file is fully prefetched*/
-			if(fp->uinode->fully_prefetched.load()){
-					update_lru(fp->uinode);
-			}
+		/*update lru if file is fully prefetched*/
+		if(fp->uinode->fully_prefetched.load()){
+				update_lru(fp->uinode);
+		}
 #endif
 		if(fp->should_prefetch_now()){
 			a->fp = fp;
-			printf("%s:%d \n", __func__, __LINE__);
 			prefetch_file_predictor((void*)arg);
 		}
 	}
@@ -1161,16 +1147,19 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
 	off_t offset;
 
-	//debug_printf("%s: TID:%ld\n", __func__, gettid());
-	if(file_fd < 3 || !stream){
-		goto skip_read_predictor;
-	}else if(file_fd >= 3){
+
+	if(file_fd >= 3){
 		fd = file_fd;
 		offset = file_offset;
 	}else if(stream){
 		fd = fileno(stream);
 		offset = ftell(stream);
 	}
+
+	if(fd < 3) {
+		goto skip_read_predictor;
+	}	
+
 
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
@@ -1179,7 +1168,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 #ifdef ENABLE_EVICTION_DISABLE
 	set_curr_last_fd(fd);
 #endif
-
 
 #ifdef PREDICTOR
 #ifdef CONCURRENT_PREDICTOR
@@ -1493,8 +1481,6 @@ exit_close:
 }
 
 
-//PREFETCH SYSCALLS
-
 ssize_t readahead(int fd, off_t offset, size_t count){
 
 	ssize_t ret = 0;
@@ -1565,3 +1551,52 @@ exit:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
+
+
+
+
+#ifdef ENABLE_EVICTION_OLD
+int set_thread_args_evict(struct thread_args *arg) {
+	arg->current_fd = ptd.current_fd;
+	arg->last_fd = ptd.last_fd;
+	return 0;
+}
+
+int set_curr_last_fd(int fd){
+	/*
+	 * The first time ptd is accessed by a thread(clone)
+	 * it calls its constructor.
+	 */
+	if(ptd.last_fd == 0){
+		ptd.last_fd = fd;
+		ptd.current_fd = fd;
+	}
+	else{
+		/*
+		 * Update the current and last fd
+		 * for this thread each time it reads
+		 *
+		 * Heuristic: If the thread moves on to
+		 * another fd, it is likely done with last_fd
+		 * ie. in an event of memory pressure, cleanup that
+		 * file from memory
+		 */
+		ptd.last_fd = ptd.current_fd;
+		ptd.current_fd = fd;
+	}
+	return 0;
+}
+
+int perform_eviction(struct thread_args *arg){
+	/*
+	 * when crunched with memory, remove cache pages for
+	 * last fd. Since the thread has moved on from it.
+	 */
+	if(arg->current_fd != arg->last_fd){
+		debug_printf("%s: Evicting fd:%d\n", __func__, arg->last_fd);
+		evict_advise(arg->last_fd);
+	}
+
+	return 0;
+}
+#endif

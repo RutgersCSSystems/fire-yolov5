@@ -28,6 +28,10 @@ declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" 
 
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
 #declare -a config_arr=("OSonly" "CIP" "CIPI" "CII")
+<<<<<<< HEAD
+=======
+declare -a config_arr=("Cross_Info_sync" "CIPI_sync")
+>>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 
 declare -a thread_arr=("32")
 
