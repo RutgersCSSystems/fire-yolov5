@@ -43,8 +43,8 @@ NUM=20000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("8" "4" "1")
-#declare -a thread_arr=("32")
+#declare -a thread_arr=("8" "4" "1")
+declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")

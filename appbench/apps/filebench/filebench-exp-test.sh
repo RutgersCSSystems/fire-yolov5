@@ -26,16 +26,19 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
-declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f")
+declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
 #declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-declare -a workload_arr=("varmail.f")
-declare -a workload_arr=("webserver.f")
-#declare -a workload_arr=("tpcso.f")
+#declare -a workload_arr=("varmail.f")
+#declare -a workload_arr=("mongo.f")
+#declare -a workload_arr=("fivestreamread.f")
+declare -a workload_arr=("filemicro_seqread.f")
 
-#declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla" "Cross_Info")
-#declare -a config_arr=("OSonly")
-#declare -a config_arr=("CIP" "CII" "CIPI")
+
+
+#declare -a config_arr=("Cross_Info" "CIP" "Vanilla")
+declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
+#declare -a config_arr=("CIPI" "OSonly")
+#declare -a config_arr=("CIPI")
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -48,7 +51,7 @@ glob_prefechthrd=1
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "32" "64")
 declare -a prefech_thrd_arr=("1" "8" "16")
 
-declare -a prefech_sz_arr=("1024")
+declare -a prefech_sz_arr=("4096")
 declare -a prefech_thrd_arr=("4")
 
 mkdir DATA

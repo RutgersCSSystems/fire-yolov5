@@ -24,11 +24,11 @@
 #
 
 set $dir=DATA/
-set $nfiles=10000
+set $nfiles=5000
 set $meandirwidth=1
 set $filesize=cvar(type=cvar-gamma,parameters=mean:4638400;gamma:1.5)
 set $nthreads=16
-set $iosize=64k
+set $iosize=16k
 set $meanappendsize=16k
 
 define fileset name=bigfileset,path=$dir,size=$filesize,entries=$nfiles,dirwidth=$meandirwidth,prealloc=100,readonly
@@ -73,4 +73,4 @@ define process name=filereader,instances=1
 }
 
 echo  "Web-server Version 3.1 personality successfully loaded"
-run 60
+run 30

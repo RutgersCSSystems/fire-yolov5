@@ -23,9 +23,9 @@
 # Use is subject to license terms.
 #
 
-set $dir=/tmp
+set $dir=DATA/
 set $filesize=1g
-set $nthreads=1
+set $nthreads=16
 set $iosize=1m
 
 define file name=largefile1,path=$dir,size=$filesize,prealloc,reuse
@@ -58,4 +58,5 @@ define process name=seqread,instances=1
   }
 }
 
-echo  "Five Stream Read Version 3.0 personality successfully loaded"
+run 30
+#echo  "Five Stream Read Version 3.0 personality successfully loaded"

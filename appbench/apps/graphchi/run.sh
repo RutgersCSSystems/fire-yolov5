@@ -6,7 +6,7 @@ if [ -z "$NVMBASE" ]; then
 fi
 
 
-
+ITERS=1
 PREDICT=0
 #DATA=com-orkut.ungraph.txt
 DATA=com-friendster.ungraph.txt
@@ -21,6 +21,12 @@ FlushDisk()
 	sudo sh -c "sync"
 	sudo sh -c "sync"
 	sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+}
+
+CLEANDATA() 
+{
+	echo "Cleaning"
+	#rm -rf $SHARED_DATA/$DATA.*
 }
 
 SETPRELOAD()
@@ -47,36 +53,35 @@ cd $APPBENCH/apps/graphchi
 
 FlushDisk
 FlushDisk
+CLEANDATA
+export LD_PRELOAD=/usr/lib/lib_CIPI.so 
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters $ITERS
+export LD_PRELOAD=""
 
-rm -rf $SHARED_DATA/$DATA.*
+FlushDisk
+FlushDisk
+CLEANDATA
+export LD_PRELOAD=/usr/lib/lib_OSonly.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters $ITERS
+export LD_PRELOAD=""
+exit
+
+
+FlushDisk
+FlushDisk
+CLEANDATA
+export LD_PRELOAD=/usr/lib/lib_CII.so
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters $ITERS
+export LD_PRELOAD=""
+
+
+FlushDisk
+FlushDisk
+CLEANDATA
 export LD_PRELOAD=/usr/lib/lib_CII_sync.so
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
+echo "edgelist" | $APPPREFIX $APP file $INPUT niters $ITERS
 export LD_PRELOAD=""
 exit 
-
-
-FlushDisk
-FlushDisk
-rm -rf $SHARED_DATA/$DATA.*
-export LD_PRELOAD=/usr/lib/lib_CIPI.so
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
-export LD_PRELOAD=""
-
-FlushDisk
-FlushDisk
-
-rm -rf $SHARED_DATA/$DATA.*
-export LD_PRELOAD=/usr/lib/lib_CII.so
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
-export LD_PRELOAD=""
-
-FlushDisk
-FlushDisk
-
-rm -rf $SHARED_DATA/$DATA.*
-export LD_PRELOAD=/usr/lib/lib_OSonly.so
-echo "edgelist" | $APPPREFIX $APP file $INPUT niters 1 &>> out.txt
-export LD_PRELOAD=""
 
 
 

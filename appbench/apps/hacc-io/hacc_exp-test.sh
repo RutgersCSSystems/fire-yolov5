@@ -25,12 +25,11 @@ declare -a num_arr=("40000000")
 declare -a thread_arr=("16" "8" "32" "4")
 declare -a workload_arr=("restart")
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI" "CIPI_sync")
+
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Blind" "CII" "Cross_Info" "CIP" "CIPI")
-
 #declare -a config_arr=("OSonly" "CIP" "CIPI" "CII")
-declare -a config_arr=("Cross_Info")
 
-declare -a thread_arr=("16")
+declare -a thread_arr=("32")
 
 
 #Require for large database
@@ -131,6 +130,8 @@ RUN() {
 					RESULTS=""
 					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
 
+					#COMPILE_AND_WRITE
+
 					mkdir -p $RESULTS
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					mpiexec -n $THREAD -env LD_PRELOAD=/usr/lib/lib_$CONFIG.so ./hacc_io_read $NUM $DBDIR &> $RESULTFILE
@@ -139,6 +140,7 @@ RUN() {
 					echo ".......FINISHING $CONFIG......................"
 					cat $RESULTS/$CONFIG.out | grep "MB/s"
 					FlushDisk
+					#rm -rf checkpoint-Part000000*
 				done
 			done
 		done

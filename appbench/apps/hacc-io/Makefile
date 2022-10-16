@@ -8,7 +8,7 @@
 # -DHACC_IO_DISABLE_WRITE to build version that only reads a checkpoint
 
 HACC_EXE = hacc_io hacc_io_write hacc_io_read hacc_open_close hacc_printinfo
-CXXFLAGS =  -g -O3 -DGLEAN_PRINT_PERROR -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -Wall
+CXXFLAGS =  -O3 -DGLEAN_PRINT_PERROR -D_FILE_OFFSET_BITS=64 -D_LARGEFILE64_SOURCE -Wall #-g
 
 ### Targets - do file-per-process by default
 fpp: CXXFLAGS += -DHACC_IO_FILE_PER_PROCESS

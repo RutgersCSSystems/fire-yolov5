@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 NUMTHREAD=1
 BENCHMARKS="fillrandom,readrandom"
 NUMKEYS="1000000"
@@ -25,9 +25,9 @@ MAKE() {
 
 SETUP
 MAKE
-$DBBENCH_VANLILLA/db_bench --threads=$NUMTHREAD --num=$NUMKEYS --benchmarks=$BENCHMARKS --value_size=$VALUSESZ $OTHERPARAMS
+$DBBENCH_VANLILLA/db_bench --threads=$NUMTHREAD --num=$NUMKEYS --benchmarks=$BENCHMARKS --value_size=$VALUSESZ $OTHERPARAMS --db=DATA
 SETUP
 
 #Run all benchmarks
-$DBBENCH_VANLILLA/db_bench --threads=$NUMTHREAD --num=$NUMKEYS --value_size=$VALUSESZ $OTHERPARAMS
+$DBBENCH_VANLILLA/db_bench --threads=$NUMTHREAD --num=$NUMKEYS --value_size=$VALUSESZ $OTHERPARAMS --db=DATA
 
