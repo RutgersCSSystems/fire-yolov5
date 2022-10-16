@@ -104,7 +104,7 @@ COMPILE_AND_WRITE()
         $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
 
         ##Condition the DB to get Stable results
-        #$DBHOME/db_bench $PARAMS $READARGS  #&> $RESULTS/WARMUP-READ1.out
+        #$DBHOME/db_bench $PARAMS/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/LOCK $READARGS  #&> $RESULTS/WARMUP-READ1.out
         #FlushDisk
         #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
 }
