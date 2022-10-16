@@ -128,7 +128,7 @@
  * stop doing eviction
  */
 #ifndef MEM_HIGH_WATERMARK
-#define MEM_HIGH_WATERMARK (4L * GB)
+#define MEM_HIGH_WATERMARK (10L * GB)
 #endif
 
 
