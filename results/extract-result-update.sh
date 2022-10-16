@@ -340,9 +340,9 @@ GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
 	fi
 	let "num=num+1"
 
-	for threadval in "${threadarr[@]}"
+	for memfracval in "${memfractarr[@]}"
 	do
-		echo $threadval >> MULTITHREADS.tmp
+		echo $memfracval >> MULTITHREADS.tmp
 	done 
 }
 
