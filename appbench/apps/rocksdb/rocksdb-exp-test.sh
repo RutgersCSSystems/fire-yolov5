@@ -50,6 +50,7 @@ declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse
 #declare -a workload_arr=("readseq" "multireadrandom")
 #declare -a workload_arr=("multireadrandom")
 declare -a membudget=("6" "4" "2")
+declare -a membudget=("6")
 
 USEDB=1
 MEM_REDUCE_FRAC=1
@@ -62,7 +63,7 @@ ENABLE_MEM_SENSITIVE=1
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-#declare -a config_arr=("CPBI_sync")
+declare -a config_arr=("CPBI_sync")
 #declare -a config_arr=("Vanilla")
 #Require for large database
 ulimit -n 1000000 
@@ -209,10 +210,10 @@ if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
 then
 	for MEM_REDUCE_FRAC in "${membudget[@]}"
 	do
-		GETMEMORYBUDGET $MEM_REDUCE_FRAC
+		#GETMEMORYBUDGET $MEM_REDUCE_FRAC
 		RUN
-		$SCRIPTS/mount/releasemem.sh "NODE0"
-		$SCRIPTS/mount/releasemem.sh "NODE1"
+		#$SCRIPTS/mount/releasemem.sh "NODE0"
+		#$SCRIPTS/mount/releasemem.sh "NODE1"
 	done
 else
 	RUN
