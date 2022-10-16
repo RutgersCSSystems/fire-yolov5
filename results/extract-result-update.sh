@@ -60,6 +60,16 @@ declare -a threadarr=("16")
 
 let graphmax=0
 
+declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
+#declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+
+
+declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
+
+
+
 #APPlication Array for file bench
 set_rocks_global_vars() {
 	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
@@ -84,6 +94,9 @@ set_rocks_memimpact_impact_global_vars() {
 	rocksworkproxyarr=("rseq")
 	memfractarr=("6")
 	threadarr=("16")
+
+	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
+	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT+budget]")
 }
 
 
@@ -134,15 +147,6 @@ set_simplebench_read_size_sensitivity_global_vars() {
 
 
 
-
-declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
-
-#declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
-
-
-declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
 #declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
 #declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
@@ -205,6 +209,8 @@ PULL_RESULT() {
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
 
+	echo $APPFILE
+
 	if [ -f $APPFILE ]; then
 
 		if [ "$APP" = 'filebench' ]; 
@@ -242,7 +248,9 @@ PULL_RESULT() {
 		#echo $scaled_value $APPVAL".DATA"
 		echo $scaled_value &>> $APPVAL".DATA"
 		echo $scaled_value &>> $WORKLOAD-$APPVAL".DATA"
-		#echo $WORKLOAD-$APPVAL".DATA"
+		echo $WORKLOAD-$APPVAL".DATA" a
+		cat $WORKLOAD-$APPVAL".DATA"
+		echo "***************************"
 		GET_GRAPH_YMAX $scaled_value
 	fi
 }
@@ -524,7 +532,7 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 						num=$num+1
 					fi
 					TECHOUT=$TECH".out"
-					PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/MEMFRAC$MEMFRAC/$TECHOUT" $num "$appval"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
 				done
 			done
 			#echo "*******************************************************************************"
