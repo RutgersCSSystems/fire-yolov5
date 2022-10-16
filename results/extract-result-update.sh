@@ -14,6 +14,7 @@ TYPE=""
 STATTYPE="APP"
 STATTYPE="KERNEL"
 ZPLOT="$NVMBASE/graphs/zplot"
+GRAPHPYTHON="plot.py"
 
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
@@ -293,7 +294,7 @@ GENERATE_GRAPH_MULTIAPPS() {
 	GENERATE_PYTHON_LIST
 
 	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
-	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
 
 	rm -rf "MULTIAPPS.tmp"
 
@@ -592,6 +593,8 @@ let APPINTERVAL=10
 YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Fraction of Memory Capacity Relative to Database Size'
+
+GRAPHPYTHON="lineplot.py"
 EXTRACT_RESULT_MEMSENSITIVE "ROCKSDB"
 MOVEGRAPHS-MEMSENSITIVE
 exit
