@@ -92,7 +92,7 @@ set_rocks_thread_impact_global_vars() {
 set_rocks_memimpact_impact_global_vars() {
 	rocksworkarr=("readseq")
 	rocksworkproxyarr=("rseq")
-	memfractarr=("6")
+	memfractarr=("6" "4" "2")
 	threadarr=("16")
 
 	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
