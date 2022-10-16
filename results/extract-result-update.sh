@@ -293,7 +293,7 @@ GENERATE_GRAPH_MULTIAPPS() {
 
 	GENERATE_PYTHON_LIST
 
-	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
 	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
 
 	rm -rf "MULTIAPPS.tmp"
@@ -594,7 +594,7 @@ YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Fraction of Memory Capacity Relative to Database Size'
 
-GRAPHPYTHON="lineplot.py"
+export GRAPHPYTHON="lineplot.py"
 EXTRACT_RESULT_MEMSENSITIVE "ROCKSDB"
 MOVEGRAPHS-MEMSENSITIVE
 exit
