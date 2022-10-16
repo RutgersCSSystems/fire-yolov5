@@ -1157,6 +1157,14 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	int fd = -1;
 	off_t offset;
 
+#ifdef ENABLE_EVICTION
+	if(is_memory_low() ) {
+		//printf("%s:%d mem dangerously low\n", __func__, __LINE__);
+		return;
+	}
+#endif
+
+
 
 	if(file_fd >= 3){
 		fd = file_fd;
@@ -1528,8 +1536,8 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
 #ifdef ENABLE_EVICTION
 	if(is_memory_low() ) {
-		printf("%s:%d mem dangerously low\n", __func__, __LINE__);
-		goto listen_to_app;
+		//printf("%s:%d mem dangerously low\n", __func__, __LINE__);
+		//goto listen_to_app;
 	}
 #endif
 
