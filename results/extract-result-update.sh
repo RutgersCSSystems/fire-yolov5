@@ -587,8 +587,8 @@ TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
 set_rocks_memimpact_impact_global_vars
 apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
-let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=100
+let scalefactor=$SCALE_ROCKSDB_GRAPH
+let APPINTERVAL=10
 YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Fraction of Memory Capacity Relative to Database Size'
