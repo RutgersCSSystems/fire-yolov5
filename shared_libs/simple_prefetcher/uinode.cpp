@@ -378,11 +378,11 @@ long lru_inodes=0;
 
 void update_lru(struct u_inode *uinode){
         if(uinode){
-                //std::lock_guard<std::mutex> guard(lru_guard);
-		evict_lock.lock();
-                lrucache.put(uinode->ino, uinode);
-		evict_lock.unlock();
-		lru_inodes++;
+            //std::lock_guard<std::mutex> guard(lru_guard);
+        	evict_lock.lock();
+            lrucache.put(uinode->ino, uinode);
+		    evict_lock.unlock();
+		    lru_inodes++;
         }
 }
 
@@ -395,10 +395,10 @@ struct u_inode *get_lru_victim(){
 	evict_lock.lock();
 	uinode = (struct u_inode *)lrucache.pop_last()->second;
 	evict_lock.unlock();
-
-        //std::lock_guard<std::mutex> guard(lru_guard);
-        return uinode;
+    //std::lock_guard<std::mutex> guard(lru_guard);
+    return uinode;
 }
+
 
 /*
 long curr_available_free_mem_pg(){
