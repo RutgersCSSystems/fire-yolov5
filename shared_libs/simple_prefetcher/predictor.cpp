@@ -226,12 +226,12 @@ bool file_predictor::should_prefetch_now(){
         debug_printf("%s: fd=%d last_read_offset=%ld, last_ra_offset=%ld, diff=%ld, prefetch_limit=%ld\n",
                         __func__, fd, last_read_offset, last_ra_offset, (last_ra_offset-last_read_offset), prefetch_limit);
 
-#ifdef ENABLE_EVICTION
-	if(is_memory_low() == true) {
+//#ifdef ENABLE_EVICTION
+//	if(is_memory_low() == true) {
 		//fprintf(stderr, "preventing prefetch \n");
-		return false;
-	}
-#endif
+//		return false;
+//	}
+//#endif
 
 	if(prefetch_limit > 0 && this->uinode && (this->uinode->ino > 0) &&
 			!this->uinode->fully_prefetched.load()) {

@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("10000000")
-NUM=10000000
+declare -a num_arr=("20000000")
+NUM=20000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -46,28 +46,23 @@ NUM=10000000
 declare -a thread_arr=("16")
 
 
-#declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
+declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 #declare -a workload_arr=("readseq" "multireadrandom")
-declare -a workload_arr=("multireadrandom")
-
+#declare -a workload_arr=("multireadrandom")
 declare -a membudget=("6" "4" "2")
-
 
 USEDB=1
 MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=1
 
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!"
-#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("CIPI")
 #declare -a workload_arr=("multireadrandom")
 #declare -a config_arr=("Cross_Info")
-declare -a config_arr=("CIPI" "CIPB" "CPBI" "CPBI_sync" "Vanilla" "OSonly")
-#declare -a config_arr=("CPBI")
+declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
+#declare -a config_arr=("CPBI_sync")
 #declare -a config_arr=("Vanilla")
 #Require for large database
 ulimit -n 1000000 

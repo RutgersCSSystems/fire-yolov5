@@ -119,7 +119,7 @@
  * start doing eviction
  */
 #ifndef MEM_DANGER_WATERMARK
-#define MEM_DANGER_WATERMARK (1L * GB)
+#define MEM_DANGER_WATERMARK (8L * GB)
 #endif
 
 
@@ -194,7 +194,7 @@
  * for uinodes
  */
 #ifndef MAXFILES
-#define MAXFILES 300000
+#define MAXFILES 500000
 #endif
 
 

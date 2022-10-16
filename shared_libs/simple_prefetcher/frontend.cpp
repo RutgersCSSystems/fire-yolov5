@@ -189,28 +189,44 @@ exit:
 }
 
 
+long get_prefetch_pages() {
+
+#ifdef ENABLE_EVICTION
+	if(is_memory_low()) {
+		return (NR_RA_PAGES/4) * PAGESIZE;
+	}
+#endif
+	return NR_RA_PAGES * PAGESIZE;
+}
+
 //PREFETCH SYSCALLS
 long readahead_info_wrap(int fd, off64_t offset, size_t count, struct
-		read_ra_req *ra) {
+		read_ra_req *ra, struct u_inode *uinode) {
         long err = -1; 
-
 #ifdef ENABLE_EVICTION
 	/* We are dangerously low on memory 
 	 * So time to evict
 	 */
 	if(is_memory_danger_low()) {
-		fprintf(stderr, "turning off everything \n");
+		//fprintf(stderr, "turning off everything \n");
 		return err;
 	}
 	else if(is_memory_low()) {
 		/*Can we still use readahead? */
-		fprintf(stderr, "using readahead \n");
+		//fprintf(stderr, "using readahead \n");
 		err = readahead(fd, offset, count);
+		return err;
 	}else 
 #endif
-	//fprintf(stderr, "using readahead info\n");
-	err = readahead_info(fd, offset, count, ra);
-
+	{
+		err = readahead_info(fd, offset, count, ra);
+#ifdef ENABLE_EVICTION
+		update_prefetch_bytes(count, 1);
+#endif
+	}
+#ifdef ENABLE_EVICTION
+        update_lru(uinode);
+#endif
         return err;
 }
 
@@ -284,7 +300,7 @@ void con(){
 
     for(int i = 0; i < QUEUES; i++) {
             pool[i] = threadpool_create(THREAD, SIZE, 0);
-            //assert(pool[i] != NULL);
+            assert(pool[i] != NULL);
     }
 #endif
 
@@ -640,8 +656,7 @@ void prefetcher_th(void *arg) {
 		//struct timeval start, end;
 		//gettimeofday(&start, NULL);
 		uinode_bitmap_lock(a->uinode);
-
-		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra);
+		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra, a->uinode);
 		//err = readahead(a->fd, file_pos, a->prefetch_size);
 		if(err < -10){
 			uinode_bitmap_unlock(a->uinode);
@@ -649,7 +664,7 @@ void prefetcher_th(void *arg) {
 		}
 		else if(err < 0){
 			uinode_bitmap_unlock(a->uinode);
-			printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
+			//printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
 			goto exit_prefetcher_th;
 		}
 #ifdef ENABLE_LIB_STATS
@@ -662,10 +677,10 @@ void prefetcher_th(void *arg) {
 #endif
 		uinode_bitmap_unlock(a->uinode);
 
-#ifdef ENABLE_EVICTION
-		update_lru(a->uinode);
+//#ifdef ENABLE_EVICTION
+//		update_lru(a->uinode);
 		//update_nr_free_pg(ra.nr_free);
-#endif
+//#endif
 
 #ifdef READAHEAD_INFO_PC_STATE
 		pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
@@ -767,7 +782,7 @@ void inline prefetch_file_predictor(void *args){
 	arg->last_fd = 0;
 #endif
 
-	arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+	arg->prefetch_size = get_prefetch_pages();
 	arg->prefetch_limit = fp->prefetch_limit;
 	arg->offset = fp->last_read_offset;
 	fp->last_ra_offset = arg->offset + arg->prefetch_limit;
@@ -788,11 +803,11 @@ void inline prefetch_file_predictor(void *args){
 #else
 	arg->page_cache_state = NULL;
 #endif
-}
-else{
+  }
+  else{
 	debug_printf("%s: fd=%d is smaller than %d bytes\n", __func__, fd, MIN_FILE_SZ);
 	goto prefetch_file_exit;
-}
+  }
 
 #ifdef CONCURRENT_PREDICTOR
     prefetcher_th((void*)arg);
@@ -1026,7 +1041,7 @@ void inline record_open(struct file_desc desc){
 #if defined(PREFETCH_BOOST)
 		struct read_ra_req ra;
 		ra.data = NULL;
-		readahead_info_wrap(fd, 0, 0, &ra);
+		readahead_info(fd, 0, 0, &ra);
 		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
 
@@ -1059,7 +1074,7 @@ void handle_open(struct file_desc desc){
 	 */
 	struct read_ra_req ra;
 	ra.data = NULL;
-	readahead_info_wrap(desc.fd, 0, 0, &ra);
+	readahead_info(desc.fd, 0, 0, &ra);
 #endif
 
 
@@ -1113,18 +1128,13 @@ void update_file_predictor_and_prefetch(void *arg){
 			set_uinode_access_time(fp->uinode);
 		}
 #endif
-
-
-
 	if(fp){
 		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
-
 		fp->predictor_update(a->offset, a->data_size);
 		fp->nr_reads_done += 1L;
 
 		if((fp->nr_reads_done % NR_PREDICT_SAMPLE_FREQ > 0))
 			return;
-
 #if 0
 		/*update lru if file is fully prefetched*/
 		if(fp->uinode->fully_prefetched.load()){
@@ -1159,8 +1169,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	if(fd < 3) {
 		goto skip_read_predictor;
 	}	
-
-
 #ifdef ONLY_INTERCEPT
 	goto skip_read_predictor;
 #endif
@@ -1518,6 +1526,13 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 	int ret = 0;
 	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
 
+#ifdef ENABLE_EVICTION
+	if(is_memory_danger_low() ) {
+		printf("%s:%d mem dangerously low\n", __func__, __LINE__);
+		goto listen_to_app;
+	}
+#endif
+
 #ifdef DISABLE_FADV_RANDOM
 	if(advice == POSIX_FADV_RANDOM)
 		goto exit_fadvise;
@@ -1528,6 +1543,7 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 		goto exit_fadvise;
 #endif
 
+listen_to_app:
 	ret = real_posix_fadvise(fd, offset, len, advice);
 
 exit_fadvise:
