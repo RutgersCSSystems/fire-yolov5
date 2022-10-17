@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("10000000")
+NUM=10000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -58,11 +58,11 @@ ENABLE_MEM_SENSITIVE=1
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-declare -a config_arr=("CPBI" "Vanilla" "OSonly" "Cross_Info_sync" "CIPI")
+declare -a config_arr=("CPBI" "Vanilla" "OSonly" "CIPI")
 
-declare -a workload_arr=("multireadrandom")
-declare -a config_arr=("CPBI")
-declare -a membudget=("6")
+#declare -a workload_arr=("multireadrandom")
+#declare -a config_arr=("CPBI")
+#declare -a membudget=("6")
 
 
 #Require for large database
