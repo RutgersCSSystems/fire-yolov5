@@ -553,8 +553,10 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 
 
 UPDATE_PAPER() {
+
+	INPUTPATH=$1
 	mkdir -p $PAPERGRAPHS
-	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	cp -r $INPUTPATH $PAPERGRAPHS/
 	cd $PAPERGRAPHS
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
@@ -564,23 +566,32 @@ UPDATE_PAPER() {
 }
 
 MOVEGRAPHS() {
-	mkdir -p graphs/$APP"$APPPREFIX"
-	mkdir -p graphs/local/$APP"$APPPREFIX"
 
-	cp *.pdf graphs/$APP"$APPPREFIX"/
-	cp *.pdf graphs/local/$APP"$APPPREFIX"/
+	GRAPHDATA="graphs/$APP$APPPREFIX"
+	GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX"
 
-	UPDATE_PAPER
+	mkdir -p $GRAPHDATA
+	mkdir -p $GRAPHLOCALDATA
+
+	cp *.pdf $GRAPHDATA/
+	cp *.pdf $GRAPHLOCALDATA/
+
+	UPDATE_PAPER $GRAPHDATA
 }
 
 MOVEGRAPHS-MEMSENSITIVE() {
-	mkdir -p graphs/$APP"$APPPREFIX"/"MEMFRAC"
-	mkdir -p graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
 
-	cp *.pdf graphs/$APP"$APPPREFIX"/"MEMFRAC"
-	cp *.pdf graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
-	UPDATE_PAPER
+	GRAPHDATA="graphs/$APP$APPPREFIX/MEMFRAC"
+	GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX/MEMFRAC"
+
+	mkdir -p $GRAPHDATA
+	mkdir -p $GRAPHLOCALDATA
+
+	cp *.pdf $GRAPHDATA
+	cp *.pdf $GRAPHLOCALDATA
+	UPDATE_PAPER $GRAPHDATA
 }
+
 
 export APPPREFIX="20M-KEYS"
 APP='ROCKSDB'
