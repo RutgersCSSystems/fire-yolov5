@@ -596,7 +596,7 @@ XTITLE='Fraction of Memory Capacity Relative to Database Size'
 
 export GRAPHPYTHON="lineplot.py"
 EXTRACT_RESULT_MEMSENSITIVE "ROCKSDB"
-MOVEGRAPHS-MEMSENSITIVE
+#MOVEGRAPHS-MEMSENSITIVE
 exit
 
 

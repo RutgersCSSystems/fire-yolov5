@@ -214,7 +214,7 @@ long readahead_info_wrap(int fd, off64_t offset, size_t count, struct
 	else if(is_memory_low()) {
 		/*Can we still use readahead? */
 		//fprintf(stderr, "using readahead \n");
-		err = readahead(fd, offset, count);
+		//err = readahead(fd, offset, count);
 		return err;
 	}else 
 #endif
