@@ -14,6 +14,7 @@ TYPE=""
 STATTYPE="APP"
 STATTYPE="KERNEL"
 ZPLOT="$NVMBASE/graphs/zplot"
+GRAPHPYTHON="plot.py"
 
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
@@ -60,6 +61,16 @@ declare -a threadarr=("16")
 
 let graphmax=0
 
+declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
+#declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
+#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+
+
+declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
+
+
+
 #APPlication Array for file bench
 set_rocks_global_vars() {
 	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
@@ -77,6 +88,19 @@ set_rocks_thread_impact_global_vars() {
 	rocksworkproxyarr=("rseq")
 	threadarr=("8" "16" "32")
 }
+
+
+set_rocks_memimpact_impact_global_vars() {
+	rocksworkarr=("readseq")
+	rocksworkproxyarr=("rseq")
+	memfractarr=("6" "4" "2")
+	threadarr=("16")
+
+	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
+	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT+budget]")
+}
+
+
 
 
 set_rocks_ycsb_global_vars() {
@@ -124,15 +148,6 @@ set_simplebench_read_size_sensitivity_global_vars() {
 
 
 
-
-declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
-
-#declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
-
-
-declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
 #declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
 #declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
@@ -195,6 +210,8 @@ PULL_RESULT() {
 
 	resultfile=$TARGET/$outfile/"GRAPH.DATA"
 
+	echo $APPFILE
+
 	if [ -f $APPFILE ]; then
 
 		if [ "$APP" = 'filebench' ]; 
@@ -232,7 +249,9 @@ PULL_RESULT() {
 		#echo $scaled_value $APPVAL".DATA"
 		echo $scaled_value &>> $APPVAL".DATA"
 		echo $scaled_value &>> $WORKLOAD-$APPVAL".DATA"
-		#echo $WORKLOAD-$APPVAL".DATA"
+		echo $WORKLOAD-$APPVAL".DATA" a
+		cat $WORKLOAD-$APPVAL".DATA"
+		echo "***************************"
 		GET_GRAPH_YMAX $scaled_value
 	fi
 }
@@ -270,7 +289,6 @@ GENERATE_GRAPH_MULTIAPPS() {
 
 	echo $VAR
 	`paste "MULTIAPPS.tmp" $VAR &>> $APP"-THREADS-$threadval".DATA`
-
 
 	rm -rf "MULTIAPPS.tmp"
 
@@ -310,6 +328,28 @@ GRAPH_GEN_FIRSTCOL_MULTITHREADS() {
 	done 
 }
 
+GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
+
+	APP=$1
+	let num=0
+
+	rm -rf "$APP.DATA"
+	rm -rf MULTITHREADS.tmp
+
+	if [[ "$num" -eq 0 ]]; then
+
+		echo "# reader" > MULTITHREADS.tmp
+	fi
+	let "num=num+1"
+
+	for memfracval in "${memfractarr[@]}"
+	do
+		echo $memfracval >> MULTITHREADS.tmp
+	done 
+}
+
+
+
 
 GENERATE_GRAPH_MULTITHREADS() {
 
@@ -332,8 +372,8 @@ GENERATE_GRAPH_MULTITHREADS() {
 
 	GENERATE_PYTHON_LIST
 
-	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-$workload-THREAD-Sensitivity"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-$workload-THREAD-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -344,6 +384,46 @@ GENERATE_GRAPH_MULTITHREADS() {
 
 	done
 }
+
+
+GENERATE_GRAPH_MEMSENSITIVE() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	MEMFRAC=$4
+
+	VAR=""
+	echo "GENERATE_GRAPH_MEMSENSITIVE:" $APPNAME
+	rm -rf $APPNAME"-MEMFRAC.DATA"
+
+	for TECH in "${techarr[@]}"
+	do
+		VAR+="$APPNAME-$TECH.DATA "
+	done
+
+	echo $VAR
+
+	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-MEMFRAC.DATA"`
+	cat $APPNAME"-MEMFRAC.DATA"
+	VAR=""
+
+	GENERATE_PYTHON_LIST
+
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-MEMFRAC-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-MEMFRAC.DATA" $OUTPUTPATH/$APP"-$workload-MEMFRAC-Sensitivity"
+
+	for threadval in "${threadarr[@]}"
+	do
+		for TECH in "${techarr[@]}"
+		do
+		  	rm -rf "$APPNAME-$TECH.DATA"
+		done
+
+	done
+}
+
+
 
 
 EXTRACT_RESULT()  {
@@ -421,11 +501,56 @@ EXTRACT_RESULT_THREADS()  {
 		do
 			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
 		done
+	done
+}
+
+
+EXTRACT_RESULT_MEMSENSITIVE()  {
+
+	rm -rf $APP".data"
+	exclude=0
+	ADD=$1
+	dir=0
+	let num=0;
+
+	GRAPH_GEN_FIRSTCOL_MEMSENSITIVE $APP
+
+	let num=0;
+
+	for appval in "${apparr[@]}"
+	do
+		for TECH in "${techarr[@]}"
+		do
+			#appval=""
+			let num=0;
+
+			#echo "*******************************************************************************"
+			for THREAD in "${threadarr[@]}"
+			do
+				for MEMFRAC in "${memfractarr[@]}"
+				do
+					if [[ "$num" -eq 0 ]]; then
+						rm -rf $appval-$TECH".DATA"
+						echo $TECH > $appval-$TECH".DATA"
+						num=$num+1
+					fi
+					TECHOUT=$TECH".out"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
+				done
+			done
+			#echo "*******************************************************************************"
+		done
+
+		for APPLICATION in "${apparr[@]}"
+		do
+			GENERATE_GRAPH_MEMSENSITIVE $APPLICATION $APP $appval
+		done
 
 	done
-
-
 }
+
+
+
 
 UPDATE_PAPER() {
 	mkdir -p $PAPERGRAPHS
@@ -463,6 +588,36 @@ EXTRACT_RESULT "filebench"
 MOVEGRAPHS
 exit
 
+
+
+
+
+MOVEGRAPHS-MEMSENSITIVE() {
+	mkdir -p graphs/$APP"$APPPREFIX"/"MEMFRAC"
+	mkdir -p graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
+
+	cp *.pdf graphs/$APP"$APPPREFIX"/"MEMFRAC"
+	cp *.pdf graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
+	UPDATE_PAPER
+}
+
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_memimpact_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_ROCKSDB_GRAPH
+let APPINTERVAL=10
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Fraction of Memory Capacity Relative to Database Size'
+
+export GRAPHPYTHON="lineplot.py"
+EXTRACT_RESULT_MEMSENSITIVE "ROCKSDB"
+#MOVEGRAPHS-MEMSENSITIVE
+exit
 
 
 

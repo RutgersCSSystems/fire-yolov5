@@ -51,11 +51,9 @@ declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-#declare -a workload_arr=("readseq" "multireadrandom")
-#declare -a workload_arr=("multireadrandom")
+#declare -a workload_arr=("readseq")
+declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq")
 declare -a membudget=("6" "4" "2")
-declare -a membudget=("6")
-
 USEDB=1
 MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=1
@@ -63,12 +61,14 @@ ENABLE_MEM_SENSITIVE=1
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
-#declare -a config_arr=("CIPI")
-#declare -a workload_arr=("multireadrandom")
-#declare -a config_arr=("Cross_Info")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-declare -a config_arr=("CPBI_sync")
-#declare -a config_arr=("Vanilla")
+declare -a config_arr=("CPBI" "Vanilla" "OSonly" "Cross_Info_sync" "CIPI")
+
+declare -a workload_arr=("multireadrandom")
+declare -a config_arr=("CPBI")
+declare -a membudget=("6")
+
+
 #Require for large database
 ulimit -n 1000000 
 
@@ -167,6 +167,9 @@ RUN() {
 
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
+
+					rm -rf $DBDIR/LOCK
+
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
@@ -214,10 +217,10 @@ if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
 then
 	for MEM_REDUCE_FRAC in "${membudget[@]}"
 	do
-		#GETMEMORYBUDGET $MEM_REDUCE_FRAC
+		GETMEMORYBUDGET $MEM_REDUCE_FRAC
 		RUN
-		#$SCRIPTS/mount/releasemem.sh "NODE0"
-		#$SCRIPTS/mount/releasemem.sh "NODE1"
+		$SCRIPTS/mount/releasemem.sh "NODE0"
+		$SCRIPTS/mount/releasemem.sh "NODE1"
 	done
 else
 	RUN
