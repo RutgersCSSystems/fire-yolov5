@@ -112,9 +112,9 @@ set_rocks_ycsb_global_vars() {
 
 
 set_filebench_global_vars() {
-	declare -a filesworkarr=("filemicro_seqread.f"  "randomread.f" "videoserver.f" "fileserver.f")
-	declare -a fileproxyarr=("seqread"  "randread" "videoserve" "fileserve")
-	declare -a threadarr=("16")
+	filesworkarr=("filemicro_seqread.f" "randomread.f" "mongo.f" "fivestreamread.f")
+	fileproxyarr=("seqread"  "randread" "mongo" "streamread")
+	threadarr=("16")
 }
 
 set_snappy_global_vars() {
@@ -290,18 +290,19 @@ GENERATE_GRAPH_MULTIAPPS() {
 	echo $VAR
 	`paste "MULTIAPPS.tmp" $VAR &>> $APP"-THREADS-$threadval".DATA`
 
-
-	GENERATE_PYTHON_LIST
-
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
-	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
-
 	rm -rf "MULTIAPPS.tmp"
 
 	for TECH in "${techarr[@]}"
 	do
 		rm -rf $TECH".DATA"
 	done
+
+	GENERATE_PYTHON_LIST
+
+	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
+	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
+
+
 }
 
 
@@ -450,6 +451,7 @@ EXTRACT_RESULT()  {
 					num=$num+1
 				fi
 
+				echo "TECH ARR:" $appval
 				TECHOUT=$TECH".out"
 				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
@@ -570,6 +572,24 @@ MOVEGRAPHS() {
 
 	UPDATE_PAPER
 }
+
+APPPREFIX=""
+APP='filebench'
+TARGET="$OUTPUTDIR/$APP/workloads"
+set_filebench_global_vars
+apparr=("${filesworkarr[@]}")     
+proxyapparr=("${fileproxyarr[@]}")
+let scalefactor=$SCALE_FILEBENCH_GRAPH
+let APPINTERVAL=500
+YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+EXTRACT_RESULT "filebench"
+MOVEGRAPHS
+exit
+
+
+
 
 
 MOVEGRAPHS-MEMSENSITIVE() {
@@ -714,14 +734,6 @@ exit
 
 
 
-
-APP='filebench'
-TARGET="$OUTPUTDIR/filebench/workloads"
-#echo $TARGET
-apparr=("${filesworkarr[@]}")     
-proxyapparr=("${fileproxyarr[@]}")
-EXTRACT_RESULT "filebench"
-exit
 
 
 

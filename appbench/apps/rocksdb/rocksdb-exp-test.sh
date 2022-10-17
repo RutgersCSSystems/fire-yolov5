@@ -43,6 +43,10 @@ NUM=10000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 #declare -a thread_arr=("1" "4" "8" "16")
+<<<<<<< HEAD
+#declare -a thread_arr=("8" "4" "1")
+=======
+>>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 declare -a thread_arr=("16")
 
 

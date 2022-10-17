@@ -1,0 +1,262 @@
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.004: Populating and pre-allocating filesets
+0.004: Removing largefile5 tree (if exists)
+0.066: Pre-allocating directories in largefile5 tree
+1.972: Pre-allocating files in largefile5 tree
+3.202: Removing largefile4 tree (if exists)
+3.263: Pre-allocating directories in largefile4 tree
+3.561: Pre-allocating files in largefile4 tree
+4.756: Removing largefile3 tree (if exists)
+4.815: Pre-allocating directories in largefile3 tree
+5.095: Pre-allocating files in largefile3 tree
+6.270: Removing largefile2 tree (if exists)
+6.334: Pre-allocating directories in largefile2 tree
+6.608: Pre-allocating files in largefile2 tree
+7.744: Removing largefile1 tree (if exists)
+7.803: Pre-allocating directories in largefile1 tree
+8.070: Pre-allocating files in largefile1 tree
+9.200: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+9.201: Population and pre-allocation of filesets completed
+FINISHED PREALLOCATION 
+9.463: Starting 1 seqread instances
+fork() 93
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread5, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread4, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread3, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread2, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+Creating thread seqread1, memory = 10485760 PID 98926
+10.492: Running...
+40.497: Run took 30 seconds...
+40.498: Per-Operation Breakdown
+seqread5             520999ops    17364ops/s 17346.5mb/s    0.917ms/op [0.001ms - 196.739ms]
+seqread4             473403ops    15777ops/s 15761.8mb/s    1.008ms/op [0.001ms - 196.281ms]
+seqread3             526343ops    17542ops/s 17524.4mb/s    0.907ms/op [0.001ms - 199.654ms]
+seqread2             476480ops    15880ops/s 15864.2mb/s    1.002ms/op [0.001ms - 198.470ms]
+seqread1             467768ops    15590ops/s 15574.1mb/s    1.021ms/op [0.001ms - 197.378ms]
+40.498: IO Summary: 2464993 ops 82152.481 ops/s 82152/0 rd/wr 82071.1mb/s 0.969ms/op
+40.498: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "filebench -f workloads/fivestreamread.f"
+	User time (seconds): 0.39
+	System time (seconds): 6.80
+	Percent of CPU this job got: 17%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.91
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3694144
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922759
+	Minor (reclaiming a frame) page faults: 61748
+	Voluntary context switches: 36925
+	Involuntary context switches: 5639
+	Swaps: 0
+	File system inputs: 142728
+	File system outputs: 17862888
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[34188.030012] write_proc_unbounded: Value of write = 0
+[34188.035158] write_proc_2mb_limit: Value of write = 0
+[34188.040169] write_proc_bitmap_shift: Value of write = 39
+[34188.053870] write_proc_unbounded: Value of write = 0
+[34188.058841] write_proc_2mb_limit: Value of write = 0
+[34188.063809] write_proc_bitmap_shift: Value of write = 39
+[34189.380789] write_proc_unbounded: Value of write = 0
+[34189.385760] write_proc_2mb_limit: Value of write = 0
+[34189.390729] write_proc_bitmap_shift: Value of write = 39
+[34189.402832] write_proc_unbounded: Value of write = 0
+[34189.407807] write_proc_2mb_limit: Value of write = 0
+[34189.412778] write_proc_bitmap_shift: Value of write = 39
+[34189.418318] write_proc_unbounded: Value of write = 0
+[34189.423286] write_proc_2mb_limit: Value of write = 0
+[34189.442735] write_proc_unbounded: Value of write = 0
+[34189.447711] write_proc_2mb_limit: Value of write = 0
+[34189.452690] write_proc_bitmap_shift: Value of write = 39
+[34189.541825] sh (92800): drop_caches: 3
+[34191.310536] sh (92805): drop_caches: 3
+[34191.637657] write_proc_unbounded: Value of write = 0
+[34191.642633] write_proc_2mb_limit: Value of write = 0
+[34191.647620] write_proc_bitmap_shift: Value of write = 39
+[34191.659126] write_proc_unbounded: Value of write = 0
+[34191.664103] write_proc_2mb_limit: Value of write = 0
+[34191.669077] write_proc_bitmap_shift: Value of write = 39
+[34191.818045] sh (93332): drop_caches: 3
+[34192.533672] sh (93337): drop_caches: 3
+[34192.580248] write_proc_unbounded: Value of write = 0
+[34192.585240] write_proc_2mb_limit: Value of write = 0
+[34192.590232] write_proc_bitmap_shift: Value of write = 39
+[34192.602443] write_proc_unbounded: Value of write = 0
+[34192.607419] write_proc_2mb_limit: Value of write = 0
+[34192.612390] write_proc_bitmap_shift: Value of write = 39
+[34192.617904] write_proc_unbounded: Value of write = 0
+[34192.622874] write_proc_2mb_limit: Value of write = 0
+[34192.639988] write_proc_unbounded: Value of write = 0
+[34192.644964] write_proc_2mb_limit: Value of write = 0
+[34192.649931] write_proc_bitmap_shift: Value of write = 39
+[34192.771258] sh (94127): drop_caches: 3
+[34192.899334] sh (94132): drop_caches: 3
+[34193.214479] write_proc_unbounded: Value of write = 0
+[34193.219449] write_proc_2mb_limit: Value of write = 0
+[34193.224437] write_proc_bitmap_shift: Value of write = 39
+[34193.236390] write_proc_unbounded: Value of write = 0
+[34193.241540] write_proc_2mb_limit: Value of write = 0
+[34193.246509] write_proc_bitmap_shift: Value of write = 39
+[34193.372292] sh (94659): drop_caches: 3
+[34194.092172] sh (94664): drop_caches: 3
+[34194.133910] write_proc_unbounded: Value of write = 0
+[34194.138884] write_proc_2mb_limit: Value of write = 0
+[34194.143879] write_proc_bitmap_shift: Value of write = 39
+[34194.155762] write_proc_unbounded: Value of write = 0
+[34194.160747] write_proc_2mb_limit: Value of write = 0
+[34194.165734] write_proc_bitmap_shift: Value of write = 39
+[34194.171237] write_proc_unbounded: Value of write = 0
+[34194.176211] write_proc_2mb_limit: Value of write = 0
+[34194.191827] write_proc_unbounded: Value of write = 0
+[34194.197151] write_proc_2mb_limit: Value of write = 0
+[34194.202127] write_proc_bitmap_shift: Value of write = 39
+[34194.309252] sh (95454): drop_caches: 3
+[34194.433107] sh (95459): drop_caches: 3
+[34194.746733] write_proc_unbounded: Value of write = 0
+[34194.751702] write_proc_2mb_limit: Value of write = 0
+[34194.756670] write_proc_bitmap_shift: Value of write = 39
+[34194.768330] write_proc_unbounded: Value of write = 0
+[34194.773481] write_proc_2mb_limit: Value of write = 0
+[34194.778452] write_proc_bitmap_shift: Value of write = 39
+[34194.904525] sh (95986): drop_caches: 3
+[34195.605135] sh (95991): drop_caches: 3
+[34195.648050] write_proc_unbounded: Value of write = 0
+[34195.653021] write_proc_2mb_limit: Value of write = 0
+[34195.657989] write_proc_bitmap_shift: Value of write = 39
+[34195.670037] write_proc_unbounded: Value of write = 0
+[34195.675009] write_proc_2mb_limit: Value of write = 0
+[34195.679979] write_proc_bitmap_shift: Value of write = 39
+[34195.685502] write_proc_unbounded: Value of write = 0
+[34195.690470] write_proc_2mb_limit: Value of write = 0
+[34195.711584] write_proc_unbounded: Value of write = 0
+[34195.716558] write_proc_2mb_limit: Value of write = 0
+[34195.721528] write_proc_bitmap_shift: Value of write = 39
+[34195.826342] sh (96783): drop_caches: 3
+[34195.947168] sh (96788): drop_caches: 3
+[34196.256797] write_proc_unbounded: Value of write = 0
+[34196.261769] write_proc_2mb_limit: Value of write = 0
+[34196.266752] write_proc_bitmap_shift: Value of write = 39
+[34196.278622] write_proc_unbounded: Value of write = 0
+[34196.283590] write_proc_2mb_limit: Value of write = 0
+[34196.288818] write_proc_bitmap_shift: Value of write = 39
+[34196.411524] sh (97316): drop_caches: 3
+[34197.080990] sh (97321): drop_caches: 3
+[34197.121920] write_proc_unbounded: Value of write = 0
+[34197.126897] write_proc_2mb_limit: Value of write = 0
+[34197.131872] write_proc_bitmap_shift: Value of write = 39
+[34197.143437] write_proc_unbounded: Value of write = 0
+[34197.148415] write_proc_2mb_limit: Value of write = 0
+[34197.153411] write_proc_bitmap_shift: Value of write = 39
+[34197.158912] write_proc_unbounded: Value of write = 0
+[34197.163887] write_proc_2mb_limit: Value of write = 0
+[34197.179361] write_proc_unbounded: Value of write = 0
+[34197.184332] write_proc_2mb_limit: Value of write = 0
+[34197.189645] write_proc_bitmap_shift: Value of write = 39
+[34197.292898] sh (98111): drop_caches: 3
+[34197.411377] sh (98116): drop_caches: 3
+[34197.719002] write_proc_unbounded: Value of write = 0
+[34197.724166] write_proc_2mb_limit: Value of write = 0
+[34197.729150] write_proc_bitmap_shift: Value of write = 39
+[34197.740340] write_proc_unbounded: Value of write = 0
+[34197.745312] write_proc_2mb_limit: Value of write = 0
+[34197.750279] write_proc_bitmap_shift: Value of write = 39
+[34197.867597] sh (98643): drop_caches: 3
+[34198.538721] sh (98648): drop_caches: 3
+[34198.578965] write_proc_unbounded: Value of write = 0
+[34198.583938] write_proc_2mb_limit: Value of write = 0
+[34198.588916] write_proc_bitmap_shift: Value of write = 39
+[34198.685258] sh (98916): drop_caches: 3
+[34198.801738] sh (98921): drop_caches: 3
+[34198.841904] write_proc_unbounded: Value of write = 0
+[34198.846878] write_proc_2mb_limit: Value of write = 0
+[34198.851856] write_proc_bitmap_shift: Value of write = 39
+[34229.965986] write_proc_unbounded: Value of write = 0
+[34229.970967] write_proc_2mb_limit: Value of write = 0
