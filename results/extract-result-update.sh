@@ -573,25 +573,6 @@ MOVEGRAPHS() {
 	UPDATE_PAPER
 }
 
-APPPREFIX=""
-APP='filebench'
-TARGET="$OUTPUTDIR/$APP/workloads"
-set_filebench_global_vars
-apparr=("${filesworkarr[@]}")     
-proxyapparr=("${fileproxyarr[@]}")
-let scalefactor=$SCALE_FILEBENCH_GRAPH
-let APPINTERVAL=500
-YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
-echo $TARGET
-XTITLE='Workloads'
-EXTRACT_RESULT "filebench"
-MOVEGRAPHS
-exit
-
-
-
-
-
 MOVEGRAPHS-MEMSENSITIVE() {
 	mkdir -p graphs/$APP"$APPPREFIX"/"MEMFRAC"
 	mkdir -p graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
@@ -616,8 +597,27 @@ XTITLE='Fraction of Memory Capacity Relative to Database Size'
 
 export GRAPHPYTHON="lineplot.py"
 EXTRACT_RESULT_MEMSENSITIVE "ROCKSDB"
-#MOVEGRAPHS-MEMSENSITIVE
+MOVEGRAPHS-MEMSENSITIVE
 exit
+
+APPPREFIX=""
+APP='filebench'
+TARGET="$OUTPUTDIR/$APP/workloads"
+set_filebench_global_vars
+apparr=("${filesworkarr[@]}")     
+proxyapparr=("${fileproxyarr[@]}")
+let scalefactor=$SCALE_FILEBENCH_GRAPH
+let APPINTERVAL=500
+YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+EXTRACT_RESULT "filebench"
+MOVEGRAPHS
+exit
+
+
+
+
 
 
 
