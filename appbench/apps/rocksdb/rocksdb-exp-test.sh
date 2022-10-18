@@ -215,6 +215,7 @@ then
 	for MEM_REDUCE_FRAC in "${membudget[@]}"
 	do
 		GETMEMORYBUDGET $MEM_REDUCE_FRAC
+		exit
 		RUN
 		$SCRIPTS/mount/releasemem.sh "NODE0"
 		$SCRIPTS/mount/releasemem.sh "NODE1"
