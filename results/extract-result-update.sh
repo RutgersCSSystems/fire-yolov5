@@ -26,7 +26,7 @@ let SCALE_SPARK_GRAPH=50000
 let SCALE_YCSB_GRAPH=10000
 
 
-let SCALE_SNAPPY_GRAPH=1
+let SCALE_SNAPPY_GRAPH=10
 let SCALE_SIMPLEBENCH_GRAPH=10
 
 let INCR_KERN_BAR_SPACE=3
@@ -94,10 +94,24 @@ set_rocks_memimpact_impact_global_vars() {
 	rocksworkarr=("readseq")
 	rocksworkproxyarr=("rseq")
 	memfractarr=("6" "4" "2")
+	memfractarrproxy=("6" "4" "2")
 	threadarr=("16")
 
 	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
 	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT+budget]")
+}
+
+set_snappy_memimpact_impact_global_vars() {
+
+        snappyworkarr=("100")
+        snappyproxyarr=("Snappy-100MB")
+        memfractarr=("6" "4" "2" "1")
+        memfractarrproxy=("6" "4" "2" "1")
+
+        threadarr=("8")
+
+        techarr=("Vanilla" "OSonly" "Cross_Info" "CIPI" "CPBI" )
+        techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT]"  "CrossInfo[+predict+OPT+budget]")
 }
 
 
@@ -249,9 +263,9 @@ PULL_RESULT() {
 		#echo $scaled_value $APPVAL".DATA"
 		echo $scaled_value &>> $APPVAL".DATA"
 		echo $scaled_value &>> $WORKLOAD-$APPVAL".DATA"
-		echo $WORKLOAD-$APPVAL".DATA" a
-		cat $WORKLOAD-$APPVAL".DATA"
-		echo "***************************"
+		#echo $WORKLOAD-$APPVAL".DATA" 
+		#cat $WORKLOAD-$APPVAL".DATA"
+		#echo "***************************"
 		GET_GRAPH_YMAX $scaled_value
 	fi
 }
@@ -591,6 +605,27 @@ MOVEGRAPHS-MEMSENSITIVE() {
 	cp *.pdf $GRAPHLOCALDATA
 	UPDATE_PAPER $GRAPHDATA
 }
+
+
+export APPPREFIX=""
+APP='snappy'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_snappy_memimpact_impact_global_vars
+apparr=("${snappyworkarr[@]}")
+proxyapparr=("${snappyproxyarr[@]}")
+let scalefactor=$SCALE_SNAPPY_GRAPH
+let APPINTERVAL=100
+YTITLE='Throughput (MB/sec) in '$SCALE_SNAPPY_GRAPH'x'
+echo $TARGET
+XTITLE='Fraction of Memory Capacity Relative to Data Size'
+
+#export GRAPHPYTHON="lineplot.py"
+export GRAPHPYTHON="plot.py"
+EXTRACT_RESULT_MEMSENSITIVE "snappy"
+MOVEGRAPHS-MEMSENSITIVE
+exit
+
 
 
 export APPPREFIX="20M-KEYS"

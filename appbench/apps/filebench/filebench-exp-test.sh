@@ -26,32 +26,11 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
-<<<<<<< HEAD
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
-#declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-#declare -a workload_arr=("varmail.f")
-#declare -a workload_arr=("mongo.f")
-#declare -a workload_arr=("fivestreamread.f")
-declare -a workload_arr=("filemicro_seqread.f")
 
 
-
-#declare -a config_arr=("Cross_Info" "CIP" "Vanilla")
 declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
-#declare -a config_arr=("CIPI" "OSonly")
 #declare -a config_arr=("CIPI")
-=======
-declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "varmail.f" "webserver")
-#declare -a workload_arr=("filemicro_seqread.f" "randomread.f"  "fileserver.f")
-#declare -a workload_arr=("varmail.f")
-declare -a workload_arr=("mongo.f")
-#declare -a workload_arr=("tpcso.f")
-
-#declare -a config_arr=("Cross_Info" "CIP" "OSonly" "Vanilla")
-declare -a config_arr=("CIP" "CII" "CIPI" "OSonly" "Vanilla" "Cross_Info")
-#declare -a config_arr=("OSonly")
-#declare -a config_arr=("CIP" "CII" "CIPI")
->>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -59,20 +38,28 @@ config_arr_in=$2
 thread_arr_in=$3
 
 glob_prefetchsz=1024
-glob_prefechthrd=1
+glob_prefechthrd=8
 
 declare -a prefech_sz_arr=("4096" "2048" "1024" "512")
 declare -a prefech_thrd_arr=("1" "8")
 
-<<<<<<< HEAD
-declare -a prefech_sz_arr=("4096")
-declare -a prefech_thrd_arr=("4")
-=======
-#declare -a prefech_sz_arr=("1024")
-#declare -a prefech_thrd_arr=("4")
->>>>>>> f8812d44459d12173db228bbf78a95d6e0259e90
+declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("8")
+
+
+declare -a workload_arr=("mongo.f")
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
+declare -a membudget=("6")
+declare -a config_arr=( "CII" "Vanilla" "CIPI" "OSonly")
+declare -a config_arr=( "CPBI" "Vanilla" "OSonly")
+declare -a config_arr=( "Vanilla")
+declare -a config_arr=( "CPBI")
+
+
 
 mkdir DATA
+
 
 get_global_arr() {
 
@@ -121,9 +108,9 @@ get_global_arr() {
 get_global_arr
 
 
-
-
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+
+
 FlushDisk()
 {
         sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
@@ -156,13 +143,21 @@ GEN_RESULT_PATH() {
 	CONFIG=$2
 	THREAD=$3
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
-	mkdir -p $RESULTS
 
-	if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+	echo "ENABLE_MEM_SENSITIVE******"$ENABLE_MEM_SENSITIVE
+
+	if [ "$ENABLE_SENSITIVITY" -eq "1" ]
 	then
-		RESULTFILE=$RESULTS/$CONFIG".out"
-	else
 		RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+
+	elif [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+	then
+		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+		echo "*******$RESULTS********"
+		RESULTFILE=$RESULTS/$CONFIG".out"
+		mkdir -p $RESULTS
+	else 
+		RESULTFILE=$RESULTS/$CONFIG".out"
 	fi
 }
 
@@ -183,7 +178,7 @@ RUN() {
 						sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
 						sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
 					fi
-					./compile.sh
+					./compile.sh &> out.txt
 					cd $DBHOME
 
 					for THREAD in "${thread_arr[@]}"
@@ -220,6 +215,46 @@ RUN() {
 	done
 }
 
+GETMEMORYBUDGET() {
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        $SCRIPTS/mount/umount_ext4ramdisk.sh
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        sudo rm -rf  /mnt/ext4ramdisk/
+
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+
+        echo "MEMORY $1"
+        let FRACTION=$1
+        let NUMANODE0=$(($NUMAFREE0/$FRACTION))
+        let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+
+
+        let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
+        let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+
+        echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
+        #$SCRIPTS/mount/releasemem.sh "NODE0"
+        #$SCRIPTS/mount/releasemem.sh "NODE1"
+
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+}
+
+if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+then
+        for MEM_REDUCE_FRAC in "${membudget[@]}"
+        do
+                #GETMEMORYBUDGET $MEM_REDUCE_FRAC
+                RUN
+                #$SCRIPTS/mount/releasemem.sh "NODE0"
+                #$SCRIPTS/mount/releasemem.sh "NODE1"
+        done
+else
+        RUN
+fi
+
+exit
 
 
 if [ "$ENABLE_SENSITIVITY" -eq "0" ]
