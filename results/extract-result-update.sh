@@ -20,7 +20,7 @@ GRAPHPYTHON="plot.py"
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=100
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=100000
+let SCALE_ROCKSDB_GRAPH=1
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 let SCALE_YCSB_GRAPH=10000
@@ -554,7 +554,7 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 
 UPDATE_PAPER() {
 	mkdir -p $PAPERGRAPHS
-	cp -r graphs/local/$APP"$APPPREFIX" $PAPERGRAPHS/
+	cp -r $1 $PAPERGRAPHS/
 	cd $PAPERGRAPHS
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
@@ -570,7 +570,7 @@ MOVEGRAPHS() {
 	cp *.pdf graphs/$APP"$APPPREFIX"/
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/
 
-	UPDATE_PAPER
+	UPDATE_PAPER "graphs/local/$APP$APPPREFIX"
 }
 
 MOVEGRAPHS-MEMSENSITIVE() {
@@ -579,8 +579,47 @@ MOVEGRAPHS-MEMSENSITIVE() {
 
 	cp *.pdf graphs/$APP"$APPPREFIX"/"MEMFRAC"
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
-	UPDATE_PAPER
+	UPDATE_PAPER "graphs/local/$APP$APPPREFIX"/"MEMFRAC"
 }
+
+
+MOVEGRAPHS_ROCKSB() {
+
+	OUTPUT=graphs/local/ROCKSDB18/$APP"$APPPREFIX"
+	mkdir -p $OUTPUT
+	cp *.pdf $OUTPUT
+
+	UPDATE_PAPER $OUTPUT
+}
+
+
+
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=500000
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+
+export GRAPHPYTHON="plot.py"
+
+EXTRACT_RESULT "ROCKSDB"
+#MOVEGRAPHS
+XTITLE='#. of threads'
+set_rocks_thread_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+EXTRACT_RESULT_THREADS "ROCKSDB"
+#MOVEGRAPHS
+exit
+
+
 
 export APPPREFIX="20M-KEYS"
 APP='ROCKSDB'
@@ -621,28 +660,6 @@ exit
 
 
 
-
-export APPPREFIX="20M-KEYS"
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
-#set the arrays
-set_rocks_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=100
-YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
-echo $TARGET
-XTITLE='Workloads'
-EXTRACT_RESULT "ROCKSDB"
-MOVEGRAPHS
-XTITLE='#. of threads'
-set_rocks_thread_impact_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-EXTRACT_RESULT_THREADS "ROCKSDB"
-MOVEGRAPHS
-exit
 
 
 

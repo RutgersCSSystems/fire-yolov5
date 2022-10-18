@@ -129,6 +129,7 @@ for x in range(0, len(legendtext)):
     barargs['fillsize'] = '0.5'
     barargs['fillskip'] = '0.5'
     barargs['cluster'] = [i,clusterlen+1]
+    #barargs['labelfield']='c1'
     p.verticalbars(**barargs)
     i=i+1;
 
