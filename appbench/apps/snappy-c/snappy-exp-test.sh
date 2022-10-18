@@ -33,7 +33,7 @@ declare -a workload_arr=("100")
 # Size of each file in KB
 declare -a filesize_arr=("10000" "20000" "40000" "80000" "100000")
 declare -a filesize_arr=("60000" "80000"  "100000"  "120000"  "140000")
-declare -a filesize_arr=("100000"  "120000"  "140000")
+declare -a filesize_arr=("100000")
 
 FILESIZE=1000
 
@@ -43,17 +43,12 @@ declare -a config_arr=("CIP" "CII" "CIPI" "OSonly")
 
 
 #declare -a config_arr=("Cross_Info" "Vanilla" "CIP" "CII" "CIPI" "OSonly")
-declare -a config_arr=("OSonly" "CII" "CIPI")
 #declare -a config_arr=("CIPI")
-#declare -a config_arr=("OSonly")
+#declare -a config_arr=("Vanilla")
 
 
 declare -a prefech_sz_arr=("1024" "512" "2048" "4096")
 declare -a prefech_thrd_arr=("1" "4" "8" "16")
-
-declare -a prefech_sz_arr=("2048")
-declare -a prefech_thrd_arr=("4")
-
 
 #Pass these arguments as a global variable
 workload_arr_in=$2
@@ -63,8 +58,30 @@ thread_arr_in=$4
 glob_prefetchsz=1024
 glob_prefechthrd=1
 
+
+
 #enable sensitivity study?
-let glob_enable_sensitive=1
+let glob_enable_sensitive=0
+
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
+declare -a membudget=("6" "4" "2" "1")
+#declare -a membudget=("6")
+declare -a config_arr=("OSonly" "CII" "CIPI" "CPBI" "Vanilla" "Cross_Info")
+#declare -a config_arr=("Cross_Info")
+#declare -a config_arr=("CPBI")
+declare -a thread_arr=("16")
+
+
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+
+
+enable_prefetch_sensitivity() {
+	prefech_sz_arr=("2048")
+	prefech_thrd_arr=("4")
+}
+
+
 
 
 get_global_arr() {
@@ -195,7 +212,14 @@ GEN_RESULT_PATH() {
 	#RESULTFILE=""
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$WORKPATH/$THREAD
 	mkdir -p $RESULTS
-	if [ $glob_enable_sensitive -gt 0 ]; then
+
+        if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+        then
+                RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+		mkdir -p $RESULTS
+		RESULTFILE=$RESULTS/$CONFIG".out"
+
+	elif [ $glob_enable_sensitive -gt 0 ]; then
 		RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
 	else
 		RESULTFILE=$RESULTS/$CONFIG".out"
@@ -214,7 +238,7 @@ RUN() {
 		sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
 	fi
 
-	./compile.sh
+	./compile.sh &> out.txt
 	cd $DBHOME
 	
 
@@ -245,10 +269,16 @@ RUN() {
 
 					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
 					echo "..................................................."
-					#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					echo "$APPPREFIX $DBHOME/$APP $PARAMS"
-					#$APPPREFIX 
-					LD_PRELOAD=/usr/lib/lib_$CONFIG.so $DBHOME/$APP $PARAMS  &> $RESULTFILE
+	
+						
+					if [ "$CONFIG" == "Vanilla" ]
+					then
+						$DBHOME/$APP $PARAMS  &> $RESULTFILE
+					else
+						LD_PRELOAD=/usr/lib/lib_$CONFIG.so $DBHOME/$APP $PARAMS  &> $RESULTFILE
+					fi
+
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
@@ -259,6 +289,53 @@ RUN() {
 	done
 }
 
+
+GETMEMORYBUDGET() {
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        $SCRIPTS/mount/umount_ext4ramdisk.sh
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        sudo rm -rf  /mnt/ext4ramdisk/
+
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+
+        echo "MEMORY $1"
+        let FRACTION=$1
+        let NUMANODE0=$(($NUMAFREE0/$FRACTION))
+        let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+
+
+        let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
+        let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+
+        echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
+        $SCRIPTS/mount/releasemem.sh "NODE0"
+        #$SCRIPTS/mount/releasemem.sh "NODE1"
+
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+}
+
+if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+then
+        for MEM_REDUCE_FRAC in "${membudget[@]}"
+        do
+                GETMEMORYBUDGET $MEM_REDUCE_FRAC
+                RUN
+                $SCRIPTS/mount/releasemem.sh "NODE0"
+                $SCRIPTS/mount/releasemem.sh "NODE1"
+        done
+else
+        RUN
+fi
+exit
+
+
+
+
+
+
+enable_prefetch_sensitivity()
 if [ $glob_enable_sensitive -gt 0 ]; then 
 	for glob_prefetchsz in "${prefech_sz_arr[@]}"
 	do

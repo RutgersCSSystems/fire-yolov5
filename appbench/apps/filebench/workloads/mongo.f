@@ -26,7 +26,7 @@
 
 set $dir=DATA/
 set $nfiles=200
-set $dirwidth=2
+set $dirwidth=1
 set $filesize=128m
 set $nthreads=16
 set $meaniosize=16k

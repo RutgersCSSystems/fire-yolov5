@@ -26,7 +26,7 @@ let SCALE_SPARK_GRAPH=50000
 let SCALE_YCSB_GRAPH=10000
 
 
-let SCALE_SNAPPY_GRAPH=1
+let SCALE_SNAPPY_GRAPH=10
 let SCALE_SIMPLEBENCH_GRAPH=10
 
 let INCR_KERN_BAR_SPACE=3
@@ -94,10 +94,24 @@ set_rocks_memimpact_impact_global_vars() {
 	rocksworkarr=("readseq")
 	rocksworkproxyarr=("rseq")
 	memfractarr=("6" "4" "2")
+	memfractarrproxy=("6" "4" "2")
 	threadarr=("16")
 
 	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
 	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT+budget]")
+}
+
+set_snappy_memimpact_impact_global_vars() {
+
+        snappyworkarr=("100")
+        snappyproxyarr=("Snappy-100MB")
+        memfractarr=("6" "4" "2" "1")
+        memfractarrproxy=("6" "4" "2" "1")
+
+        threadarr=("8")
+
+        techarr=("Vanilla" "OSonly" "Cross_Info" "CIPI" "CPBI" )
+        techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT]"  "CrossInfo[+predict+OPT+budget]")
 }
 
 
@@ -249,9 +263,9 @@ PULL_RESULT() {
 		#echo $scaled_value $APPVAL".DATA"
 		echo $scaled_value &>> $APPVAL".DATA"
 		echo $scaled_value &>> $WORKLOAD-$APPVAL".DATA"
-		echo $WORKLOAD-$APPVAL".DATA" a
-		cat $WORKLOAD-$APPVAL".DATA"
-		echo "***************************"
+		#echo $WORKLOAD-$APPVAL".DATA" 
+		#cat $WORKLOAD-$APPVAL".DATA"
+		#echo "***************************"
 		GET_GRAPH_YMAX $scaled_value
 	fi
 }
@@ -553,8 +567,10 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 
 
 UPDATE_PAPER() {
+
+	INPUTPATH=$1
 	mkdir -p $PAPERGRAPHS
-	cp -r $1 $PAPERGRAPHS/
+	cp -r $INPUTPATH $PAPERGRAPHS/
 	cd $PAPERGRAPHS
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
@@ -564,18 +580,20 @@ UPDATE_PAPER() {
 }
 
 MOVEGRAPHS() {
-	mkdir -p graphs/$APP"$APPPREFIX"
-	mkdir -p graphs/local/$APP"$APPPREFIX"
 
-	cp *.pdf graphs/$APP"$APPPREFIX"/
-	cp *.pdf graphs/local/$APP"$APPPREFIX"/
+	GRAPHDATA="graphs/$APP$APPPREFIX"
+	GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX"
 
-	UPDATE_PAPER "graphs/local/$APP$APPPREFIX"
+	mkdir -p $GRAPHDATA
+	mkdir -p $GRAPHLOCALDATA
+
+	cp *.pdf $GRAPHDATA/
+	cp *.pdf $GRAPHLOCALDATA/
+
+	UPDATE_PAPER $GRAPHDATA
 }
 
 MOVEGRAPHS-MEMSENSITIVE() {
-	mkdir -p graphs/$APP"$APPPREFIX"/"MEMFRAC"
-	mkdir -p graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
 
 	cp *.pdf graphs/$APP"$APPPREFIX"/"MEMFRAC"
 	cp *.pdf graphs/local/$APP"$APPPREFIX"/"MEMFRAC"
@@ -617,6 +635,25 @@ apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
 EXTRACT_RESULT_THREADS "ROCKSDB"
 #MOVEGRAPHS
+exit
+
+export APPPREFIX=""
+APP='snappy'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_snappy_memimpact_impact_global_vars
+apparr=("${snappyworkarr[@]}")
+proxyapparr=("${snappyproxyarr[@]}")
+let scalefactor=$SCALE_SNAPPY_GRAPH
+let APPINTERVAL=100
+YTITLE='Throughput (MB/sec) in '$SCALE_SNAPPY_GRAPH'x'
+echo $TARGET
+XTITLE='Fraction of Memory Capacity Relative to Data Size'
+
+#export GRAPHPYTHON="lineplot.py"
+export GRAPHPYTHON="plot.py"
+EXTRACT_RESULT_MEMSENSITIVE "snappy"
+MOVEGRAPHS-MEMSENSITIVE
 exit
 
 
