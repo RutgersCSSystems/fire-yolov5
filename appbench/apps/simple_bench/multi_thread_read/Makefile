@@ -16,7 +16,7 @@ FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREAD
 
 SHARED_FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) 
 
-all: read_pvt write_pvt write_shared read_shared read_shared_simple
+all: read_pvt write_pvt write_shared read_shared read_shared_simple read_mmap_shared
 
 read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)
@@ -26,6 +26,7 @@ read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq_vanilla_opt $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -DSTRIDED_READ -o $(BIN_DIR)/read_pvt_strided $(LIBS)
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_pvt_rand $(LIBS)
+
 
 
 write_pvt: write.cpp utils/thpool.c
@@ -41,6 +42,16 @@ read_shared: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_seq_vanilla_opt $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -DSTRIDED_READ -o $(BIN_DIR)/read_shared_strided $(LIBS)
 	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_shared_rand $(LIBS)
+
+
+read_mmap_shared: read-mmap.cpp utils/thpool.c
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_mmap_seq $(LIBS)
+	$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DREAD_RANDOM -o $(BIN_DIR)/read_shared_mmap_rand $(LIBS)
+	#$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_mmap_seq_vanilla $(LIBS)
+	#$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_SINGLE_PREFETCH -DMODIFIED_RA -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_mmap_seq_vanilla_mra $(LIBS)
+	#$(CXX) $^ $(FLAGS) -DSHARED_FILE $(DEBUG) -DAPP_OPT_PREFETCH -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_shared_mmap_seq_vanilla_opt $(LIBS)
+
+
 
 
 read_shared_simple: read-simple.cpp utils/thpool.c
