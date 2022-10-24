@@ -29,6 +29,9 @@ if(NOT MSVC)
 	set(CMAKE_CXX_COMPILER g++)
 endif()
 
+add_compile_options(-march=native -mavx)
+
+
 # Install nuget packages for dependencies.
 if (MSVC)
     find_program(NUGET_EXE NAMES nuget)
@@ -126,7 +129,7 @@ if (MSVC)
     set(DISKANN_MKL_LIB_PATH "${DISKANN_MSVC_PACKAGES}/intelmkl.static.win-x64/lib/native/win-x64")
 
     set(DISKANN_MKL_LINK_LIBRARIES
-        "${DISKANN_MKL_LIB_PATH}/mkl_intel_ilp64.lib"
+        "${DISKANN_MKL_LIB_PATH}/mkl_ntel_ilp64.lib"
         "${DISKANN_MKL_LIB_PATH}/mkl_core.lib"
         "${DISKANN_MKL_LIB_PATH}/mkl_intel_thread.lib")
 else()
@@ -141,7 +144,7 @@ else()
 	include_directories(/usr/include/mkl)
 
 	# compile flags and link libraries
-        add_compile_options(-m64 -Wl,--no-as-needed) 
+        add_compile_options(-m64 -Wl,--no-as-needed -mavx) 
 	link_libraries(mkl_intel_ilp64 mkl_intel_thread mkl_core iomp5 pthread m dl)
 endif()
 
@@ -230,7 +233,7 @@ else()
     #	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DDEBUG -O0 -fsanitize=address -fsanitize=leak -fsanitize=undefined")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -DDEBUG -Wall -Wextra")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast -DNDEBUG -march=native -mtune=native -ftree-vectorize")
-	add_compile_options(-march=native -Wall -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free -fopenmp -fopenmp-simd -funroll-loops -Wfatal-errors -DUSE_AVX2)
+	add_compile_options(-march=native -Wall -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free -fopenmp -fopenmp-simd -funroll-loops -Wfatal-errors)
 endif()
 
 add_subdirectory(src)

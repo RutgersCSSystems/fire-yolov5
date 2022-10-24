@@ -27,7 +27,7 @@ let SCALE_YCSB_GRAPH=10000
 
 
 let SCALE_SNAPPY_GRAPH=10
-let SCALE_SIMPLEBENCH_GRAPH=10
+let SCALE_SIMPLEBENCH_GRAPH=1
 
 let INCR_KERN_BAR_SPACE=3
 let INCR_BREAKDOWN_BAR_SPACE=2
@@ -153,9 +153,11 @@ set_simplebench_read_size_sensitivity_global_vars() {
 	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_seq-READSIZE-128" "read_pvt_rand-READSIZE-4" "read_pvt_rand-READSIZE-128" "read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128" "read_shared_rand-READSIZE-4" "read_shared_rand-READSIZE-128")
 	simplebenchproxyarr=("privseq-4" "privseq-128" "privrand-4" "privrand-128" "shareseq-4" "shareseq-128" "sharerand-4" "sharerand-128")
 
-	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4"  "read_shared_seq-READSIZE-4" "read_shared_rand-READSIZE-4" "read_pvt_seq-READSIZE-32" "read_pvt_rand-READSIZE-32" "read_shared_seq-READSIZE-32" "read_shared_rand-READSIZE-32")
-	simplebenchproxyarr=("privseq-4" "privrand-4"  "shareseq-4" "sharerand-4" "privseq-32" "privrand-32" "shareseq-32" "sharerand-32")
+	#simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4"  "read_shared_seq-READSIZE-4" "read_shared_rand-READSIZE-4" "read_pvt_seq-READSIZE-32" "read_pvt_rand-READSIZE-32" "read_shared_seq-READSIZE-32" "read_shared_rand-READSIZE-32")
+	#simplebenchproxyarr=("privseq-4" "privrand-4"  "shareseq-4" "sharerand-4" "privseq-32" "privrand-32" "shareseq-32" "sharerand-32")
 
+	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4" "read_shared_seq-READSIZE-4"  "read_shared_rand-READSIZE-4") 
+	simplebenchproxyarr=("private-seq" "private-rand" "shared-seq" "shared-rand")
 
 	threadarr=("16")
 }
@@ -610,6 +612,40 @@ MOVEGRAPHS_ROCKSB() {
 	UPDATE_PAPER $OUTPUT
 }
 
+MOVEGRAPHS_SIMPLEBENCH() {
+	OUTPUT=graphs/local/SIMPLEBENCH-OCT18/$APP"$APPPREFIX"
+	mkdir -p $OUTPUT
+	cp *.pdf $OUTPUT
+
+	UPDATE_PAPER $OUTPUT
+}
+
+
+
+APP='SIMPLEBENCH'
+
+TARGET="$OUTPUTDIR/SIMPLEBENCH"
+export APPPREFIX="-READSIZE-EXP"
+#set the arrays
+set_simplebench_read_size_sensitivity_global_vars
+
+
+let APPINTERVAL=2000
+YTITLE='Throughput (MB/sec) in $SCALE_SIMPLEBENCH_GRAPHx'
+XTITLE="Sequential and Random Access Patterns and Access Sizes in Pages"
+echo $TARGET
+apparr=("${simplebenchworkarr[@]}")
+proxyapparr=("${simplebenchproxyarr[@]}")
+EXTRACT_RESULT "SIMPLEBENCH"
+MOVEGRAPHS_SIMPLEBENCH
+
+#EXTRACT_RESULT_THREADS "SIMPLEBENCH-READSIZE-EXP"
+#MOVEGRAPHS
+exit
+
+
+
+
 
 
 export APPPREFIX="20M-KEYS"
@@ -719,26 +755,6 @@ exit
 
 
 
-
-
-APP='SIMPLEBENCH'
-TARGET="$OUTPUTDIR/SIMPLEBENCH"
-export APPPREFIX="-READSIZE-EXP"
-#set the arrays
-set_simplebench_read_size_sensitivity_global_vars
-
-
-let APPINTERVAL=150
-YTITLE='Throughput (MB/sec) in 10x'
-XTITLE="Sequential and Random Access Patterns and Access Sizes in Pages"
-echo $TARGET
-apparr=("${simplebenchworkarr[@]}")
-proxyapparr=("${simplebenchproxyarr[@]}")
-EXTRACT_RESULT "SIMPLEBENCH"
-MOVEGRAPHS
-#EXTRACT_RESULT_THREADS "SIMPLEBENCH-READSIZE-EXP"
-#MOVEGRAPHS
-exit
 
 
 

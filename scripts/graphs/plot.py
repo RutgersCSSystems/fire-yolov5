@@ -31,8 +31,8 @@ ymax=700
 yinterval=100
 
 # Font Sizes
-XTSIZE=4
-YTSIZE=4
+XTSIZE=5
+YTSIZE=5
 
 #default y-axis titley
 ytitledef='Throughput (OPS/sec) in 100x'
@@ -102,14 +102,14 @@ get_ytile()
 ctype = 'eps'
 c = canvas('pdf', title=graptitle, dimensions=[graphxdim, graphydim])
 
-d = drawable(canvas=c, coord=[22,16], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
+d = drawable(canvas=c, coord=[24,16], xrange=[-0.5,t.getmax('rownumber')+0.5], yrange=[0, ymax], dimensions=[plotxdim, plotydim])
 
 
 # because tics and axes are different, call axis() twice, once to
 # specify x-axis, the other to specify y-axis
 axis(d, linewidth=0.5, xtitle=xtitledef,
         xtitlesize=XTSIZE, xmanual=t.query(select='reader,rownumber'), xlabelfontsize=XTSIZE, ytitle=ytitledef,
-        ytitlesize=YTSIZE, ylabelfontsize=5, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1, 0], xtitleshift=[0,1])
+        ytitlesize=YTSIZE, ylabelfontsize=YTSIZE, yauto=[0,ymax,yinterval], ticmajorsize=2, xlabelshift=[0,1], ylabelshift=[-1, 0], xtitleshift=[0,1], ytitleshift=[1,0])
 
 
 p = plotter()

@@ -291,7 +291,7 @@ namespace diskann {
              unpack[5] + unpack[6] + unpack[7];
 
 #else
-#ifdef __SSE2__
+#if 0 //def __SSE2__
 #define SSE_DOT(addr1, addr2, dest, tmp1, tmp2) \
   tmp1 = _mm128_loadu_ps(addr1);                \
   tmp2 = _mm128_loadu_ps(addr2);                \
@@ -331,11 +331,11 @@ namespace diskann {
 #else
 
     float        dot0, dot1, dot2, dot3;
-    const float *last = a + size;
+    const float *last = (const float *)(a + size);
     const float *unroll_group = last - 3;
 
     /* Process 4 items with each loop for efficiency. */
-    while (a < unroll_group) {
+    while ((const float*)a < (const float*)unroll_group) {
       dot0 = a[0] * b[0];
       dot1 = a[1] * b[1];
       dot2 = a[2] * b[2];
@@ -345,7 +345,7 @@ namespace diskann {
       b += 4;
     }
     /* Process last 0-3 pixels.  Not needed for standard vector lengths. */
-    while (a < last) {
+    while ((const float*)a < (const float*)last) {
       result += *a++ * *b++;
     }
 #endif
