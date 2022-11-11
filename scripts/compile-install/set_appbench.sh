@@ -110,19 +110,19 @@ INSTALL_CASSANDRA() {
 }
 
 INSTALL_ROCKSDB() {
-	cd $APPS
+	cd $APPBENCH/apps
 	cd rocksdb
 	./compile.sh
 }
 
 INSTALL_SNAPPY() {
-	cd $APPS
+	cd $APPBENCH/apps
 	cd snappy-c
 	./compile.sh
 }
 
 INSTALL_FILEBENCH() {
-	cd $APPS
+	cd $APPBENCH/apps
 	cd filebench
 	./compile.sh
 }
