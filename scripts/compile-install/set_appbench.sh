@@ -115,6 +115,20 @@ INSTALL_ROCKSDB() {
 	./compile.sh
 }
 
+INSTALL_SNAPPY() {
+	cd $APPS
+	cd snappy-c
+	./compile.sh
+}
+
+INSTALL_FILEBENCH() {
+	cd $APPS
+	cd filebench
+	./compile.sh
+}
+
+
+
 INSTALL_GFLAGS(){
 	cd $SHARED_LIBS
 	git clone https://github.com/gflags/gflags.git
@@ -128,19 +142,21 @@ INSTALL_GFLAGS(){
 GETAPPS(){
 	mkdir $APPBENCH
 	cd $APPBENCH
-	git clone https://github.com/SudarsunKannan/leveldb
 	mkdir $APPBENCH/apps
 	cd $APPBENCH/apps
+	git clone https://github.com/SudarsunKannan/leveldb
 	git clone https://github.com/SudarsunKannan/fio
 	cd $APPBENCH/apps
 	git clone https://github.com/memcached/memcached.git
 }
 
+
 INSTALL_SYSTEM_LIBS
 $SCRIPTS/compile-install/compile_sharedlib.sh
 INSTALL_GFLAGS
 INSTALL_ROCKSDB
-#$SCRIPTS/compile-install/compile_nokvm.sh makemenu
+INSTALL_SNAPPY
+INSTAL_FILEBENCH
 exit
 
 
