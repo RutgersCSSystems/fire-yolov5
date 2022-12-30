@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("4000000")
+NUM=4000000
 
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
@@ -50,6 +50,7 @@ declare -a thread_arr=("8" "4" "1")
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 
+declare -a workload_arr=("multireadrandom")
 
 USEDB=1
 echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
