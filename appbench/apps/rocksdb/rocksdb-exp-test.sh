@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("4000000")
+NUM=4000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -47,21 +47,26 @@ declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-#declare -a workload_arr=("readseq")
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq")
+
+declare -a workload_arr=("multireadrandom")
+
+
 declare -a membudget=("6" "4" "2")
 USEDB=1
 MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+ENABLE_MEM_SENSITIVE=0
 
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-declare -a config_arr=("CPBI" "Vanilla" "OSonly" "CIPI")
+
+declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync")
+#declare -a config_arr=("CPBI")
+
 
 #declare -a workload_arr=("multireadrandom")
-#declare -a config_arr=("CPBI")
 #declare -a membudget=("6")
 
 
@@ -138,7 +143,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -166,7 +171,7 @@ RUN() {
 					rm -rf $DBDIR/LOCK
 
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
