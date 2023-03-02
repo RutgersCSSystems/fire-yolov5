@@ -74,8 +74,8 @@ declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+pre
 #APPlication Array for file bench
 set_rocks_global_vars() {
 
-	techarr=("Vanilla" "OSonly" "CIP_sync" "CII_sync")
-	techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+	techarr=("Vanilla" "OSonly" "CIP_sync" "CII_sync" "Cross_Info_sync")
+	techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall]")
 
 	#rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
 	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
