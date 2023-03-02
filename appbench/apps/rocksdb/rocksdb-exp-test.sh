@@ -63,7 +63,7 @@ ENABLE_MEM_SENSITIVE=0
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
 
 declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync")
-#declare -a config_arr=("CPBI")
+declare -a config_arr=( "Cross_Info_sync" "CII" "CIP" "CPBI")
 
 
 #declare -a workload_arr=("multireadrandom")
@@ -143,7 +143,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
