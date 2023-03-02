@@ -73,8 +73,12 @@ declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+pre
 
 #APPlication Array for file bench
 set_rocks_global_vars() {
-	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
-	rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
+
+	techarr=("Vanilla" "OSonly" "CIP_sync" "CII_sync")
+	techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+
+	#rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
 	rocksworkarr=("readseq" "readreverse" "readwhilescanning" "multireadrandom")
 	rocksworkproxyarr=("readseq" "readreverse" "readscan" "multirrandom")
@@ -622,6 +626,25 @@ MOVEGRAPHS_SIMPLEBENCH() {
 
 
 
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=500000
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+
+export GRAPHPYTHON="plot.py"
+EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS
+exit
+
+
 APP='SIMPLEBENCH'
 
 TARGET="$OUTPUTDIR/SIMPLEBENCH"
@@ -648,22 +671,8 @@ exit
 
 
 
-export APPPREFIX="20M-KEYS"
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
-#set the arrays
-set_rocks_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=500000
-YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
-echo $TARGET
-XTITLE='Workloads'
 
-export GRAPHPYTHON="plot.py"
 
-EXTRACT_RESULT "ROCKSDB"
 #MOVEGRAPHS
 XTITLE='#. of threads'
 set_rocks_thread_impact_global_vars
