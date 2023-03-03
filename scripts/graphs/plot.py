@@ -7,8 +7,8 @@ legends=['Vanilla', 'Cross_Naive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
 legendtext=['Vanilla', 'CNaive', 'CNI', 'CPNI', "CPNV", 'CPBI', 'CPBV']
 
 
-color=['dimgray', 'dimgray', 'darkorange', 'black', 'bisque', 'red', 'green']
-filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid']
+color=['dimgray', 'dimgray', 'darkorange', 'black', 'bisque', 'red', 'green' 'yellow' 'black']
+filestyle=['hline', 'solid', 'dline1', 'dline2', 'dline1', 'solid', 'solid' 'solid' 'solid']
 
 
 
