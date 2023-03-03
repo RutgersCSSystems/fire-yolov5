@@ -77,6 +77,9 @@ set_rocks_global_vars() {
 	techarr=("Vanilla" "OSonly" "CIP" "CII" "Cross_Info_sync")
 	techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall]")
 
+	techarr=("Vanilla" "OSonly" "CII_sync" "CII" "CIP_sync" "CIP" "CPBI_sync"  "CPBI")
+	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall+sync]" "CrossInfo[+fetchall]" "CrossInfo[+predict+sync]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT+budget+sync]" "CrossInfo[+predict+OPT+budget]")
+
 	#rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
 	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
