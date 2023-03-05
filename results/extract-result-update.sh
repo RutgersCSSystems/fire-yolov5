@@ -639,7 +639,7 @@ set_rocks_global_vars
 apparr=("${rocksworkarr[@]}")
 proxyapparr=("${rocksworkproxyarr[@]}")
 let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=500000
+let APPINTERVAL=1000
 YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
 echo $TARGET
 XTITLE='Workloads'
