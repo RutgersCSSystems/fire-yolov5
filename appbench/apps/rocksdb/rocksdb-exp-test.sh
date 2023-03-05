@@ -47,9 +47,9 @@ declare -a thread_arr=("16")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq")
 
-declare -a workload_arr=("readrandom")
+declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
+#declare -a workload_arr=("readrandom")
 
 
 declare -a membudget=("6" "4" "2")
