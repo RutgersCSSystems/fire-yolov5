@@ -64,7 +64,7 @@ declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_syn
 
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 declare -a config_arr=( "Cross_Info" "CII" "CIP" "CPBI")
-declare -a config_arr=("CII")
+declare -a config_arr=("CIPI")
 
 
 #declare -a workload_arr=("multireadrandom")
