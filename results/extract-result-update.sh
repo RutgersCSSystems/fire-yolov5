@@ -84,7 +84,7 @@ set_rocks_global_vars() {
 	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
 	rocksworkarr=("readseq" "readreverse" "readwhilescanning" "multireadrandom" "readrandom")
-	rocksworkproxyarr=("readseq" "readreverse" "readscan" "multirrandom" "rdrandom")
+	rocksworkproxyarr=("rseq" "rrev" "rscan" "multirrand" "rrand")
 
 	threadarr=("16")
 }
