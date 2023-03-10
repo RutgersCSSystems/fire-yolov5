@@ -91,8 +91,8 @@ set_rocks_global_vars() {
 
 
 set_rocks_thread_impact_global_vars() {
-	rocksworkarr=("multireadrandom")
-	rocksworkproxyarr=("multirrand")
+	rocksworkarr=("readrandom")
+	rocksworkproxyarr=("rrand")
 	threadarr=("1" "4" "8" "16")
 }
 
