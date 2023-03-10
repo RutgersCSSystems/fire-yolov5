@@ -91,9 +91,9 @@ set_rocks_global_vars() {
 
 
 set_rocks_thread_impact_global_vars() {
-	rocksworkarr=("readseq")
-	rocksworkproxyarr=("rseq")
-	threadarr=("8" "16" "32")
+	rocksworkarr=("multireadrandom")
+	rocksworkproxyarr=("multirrand")
+	threadarr=("1" "4" "8" "16" "32")
 }
 
 
@@ -630,6 +630,20 @@ MOVEGRAPHS_SIMPLEBENCH() {
 }
 
 
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+XTITLE='#. of threads'
+set_rocks_thread_impact_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=1000
+EXTRACT_RESULT_THREADS "ROCKSDB"
+MOVEGRAPHS
+exit
+
+
 
 export APPPREFIX="20M-KEYS"
 APP='ROCKSDB'
@@ -678,14 +692,6 @@ exit
 
 
 
-#MOVEGRAPHS
-XTITLE='#. of threads'
-set_rocks_thread_impact_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-EXTRACT_RESULT_THREADS "ROCKSDB"
-#MOVEGRAPHS
-exit
 
 export APPPREFIX=""
 APP='snappy'
