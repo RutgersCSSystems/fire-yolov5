@@ -42,7 +42,7 @@ NUM=20000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("1" "4" "8")
+declare -a thread_arr=("1" "4" "8" "16" "32")
 #declare -a thread_arr=("16")
 
 
