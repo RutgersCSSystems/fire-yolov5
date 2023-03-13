@@ -302,7 +302,7 @@ GRAPH_GEN_FIRSTCOL_MULTIAPPS() {
 GENERATE_GRAPH_MULTIAPPS() {
 
 	threadval=$1
-	rm -rf $OUTPUTPATH/$APP-THREADS-$threadval.DATA
+	rm -rf $OUTPUTDIR/$APP-THREADS-$threadval.DATA
 
 	VAR=""
 	for TECH in "${techarr[@]}"
@@ -311,7 +311,7 @@ GENERATE_GRAPH_MULTIAPPS() {
 	done
 
 	echo $VAR
-	`paste "MULTIAPPS.tmp" $VAR &>> $APP"-THREADS-$threadval".DATA`
+	`paste "MULTIAPPS.tmp" $VAR &>> $OUTPUTDIR/$APP"-THREADS-$threadval".DATA`
 
 	rm -rf "MULTIAPPS.tmp"
 
@@ -322,8 +322,8 @@ GENERATE_GRAPH_MULTIAPPS() {
 
 	GENERATE_PYTHON_LIST
 
-	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
-	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
+	echo "python $SCRIPTS/graphs/$APP.py  $OUTPUTDIR/$APP-THREADS-$threadval.DATA  $OUTPUTDIR/$APP-$threadval"
+	python $SCRIPTS/graphs/plot".py"  $OUTPUTDIR/$APP"-THREADS-$threadval.DATA"  $OUTPUTDIR/$APP"-$threadval"
 
 
 }
@@ -389,14 +389,14 @@ GENERATE_GRAPH_MULTITHREADS() {
 		VAR+="$APPNAME-$TECH.DATA "
 	done
 	echo $VAR
-	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-THREADS.DATA"`
+	`paste MULTITHREADS.tmp $VAR &>> $OUTPUTDIR/$APPNAME"-THREADS.DATA"`
 	cat $APPNAME"-THREADS.DATA"
 	VAR=""
 
 	GENERATE_PYTHON_LIST
 
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-$workload-THREAD-Sensitivity"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -427,14 +427,14 @@ GENERATE_GRAPH_MEMSENSITIVE() {
 
 	echo $VAR
 
-	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-MEMFRAC.DATA"`
+	`paste MULTITHREADS.tmp $VAR &>> $OUTPUTDIR/$APPNAME"-MEMFRAC.DATA"`
 	cat $APPNAME"-MEMFRAC.DATA"
 	VAR=""
 
 	GENERATE_PYTHON_LIST
 
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-MEMFRAC-Sensitivity"
-	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-MEMFRAC.DATA" $OUTPUTPATH/$APP"-$workload-MEMFRAC-Sensitivity"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP-MEMFRAC-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTDIR/$APPNAME"-MEMFRAC.DATA" $OUTPUTDIR/$APP"-$workload-MEMFRAC-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
