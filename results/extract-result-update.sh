@@ -462,8 +462,12 @@ EXTRACT_RESULT()  {
 	dir=0
 	let num=0;
 
+
 	for G_TRIAL in "${trials[@]}"
 	do
+		echo $TARGET-$G_TRIAL
+		echo $OUTPUTDIR
+
 		for THREAD in "${threadarr[@]}"
 		do
 			GRAPH_GEN_FIRSTCOL_MULTIAPPS
@@ -502,33 +506,41 @@ EXTRACT_RESULT_THREADS()  {
 
 	let num=0;
 
-	for appval in "${apparr[@]}"
-	do
-		for TECH in "${techarr[@]}"
-		do
-			#appval=""
-			let num=0;
 
-			#echo "*******************************************************************************"
-			for THREAD in "${threadarr[@]}"
+        for G_TRIAL in "${trials[@]}"
+        do
+		echo $TARGET-$G_TRIAL
+		echo $OUTPUTDIR
+		continue
+
+		for appval in "${apparr[@]}"
+		do
+			for TECH in "${techarr[@]}"
 			do
-				if [[ "$num" -eq 0 ]]; then
-					rm -rf $appval-$TECH".DATA"
-					echo $TECH > $appval-$TECH".DATA"
-					num=$num+1
-				fi
+				#appval=""
+				let num=0;
 
-				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
+				#echo "*******************************************************************************"
+				for THREAD in "${threadarr[@]}"
+				do
+					if [[ "$num" -eq 0 ]]; then
+						rm -rf $appval-$TECH".DATA"
+						echo $TECH > $appval-$TECH".DATA"
+						num=$num+1
+					fi
+
+					TECHOUT=$TECH".out"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
+				done
+				#cat $appval-$TECH".DATA"
+				#echo "*******************************************************************************"
+
 			done
-			#cat $appval-$TECH".DATA"
-			#echo "*******************************************************************************"
 
-		done
-
-		for APPLICATION in "${apparr[@]}"
-		do
-			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
+			for APPLICATION in "${apparr[@]}"
+			do
+				GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
+			done
 		done
 	done
 }
