@@ -443,6 +443,9 @@ PLOT_MATPLOT_GRAPHS() {
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
 
+	export graphoutput="$OUTPUTDIR/$APP-$workload-THREAD-Sensitivity.pdf"
+	echo $graphoutput
+
 	#for threadval in "${threadarr[@]}"
 	#do
 		#for TECH in "${techarr[@]}"
@@ -465,8 +468,11 @@ PLOT_MATPLOT_THREADS() {
 	GENERATE_LEGEND_LIST
 	GENERATE_TRIAL_LIST
 
+	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$workload-THREAD-Sensitivity.pdf"
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
+
+	exit
 
 	#for threadval in "${threadarr[@]}"
 	#do
@@ -763,7 +769,7 @@ EXTRACT_THREADS() {
 		#MOVEGRAPHS
 	done
 		GENERATE_TRIAL_LIST
-		PLOT_MATPLOT_THREADS
+		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
 

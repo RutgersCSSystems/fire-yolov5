@@ -69,3 +69,6 @@ export TEST_TMPDIR=/mnt/pmemdir
 
 #Commands
 mkdir $KERNEL
+
+echo "backend: Agg" > ~/.config/matplotlib/matplotlibrc
+

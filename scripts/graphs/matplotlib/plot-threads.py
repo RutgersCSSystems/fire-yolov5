@@ -12,10 +12,10 @@ readers = ['1', '4', '8', '16', '32']
 techniques = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
 techniques_text = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
 
-
-
 # Create an empty dictionary to hold the mean values and standard deviations for each technique and reader
 data = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
+
+outputfile="testfile.pdf"
 
 # We can override the global variables with environment variables set somewhere lese
 def get_legends():
@@ -23,6 +23,7 @@ def get_legends():
     global legendtext
     global trialarr
     global clusterlen
+    global outputfile
 
     #print str(os.getenv('legendlist'))
     if(str(os.getenv('legendlist')) != 'None'):
@@ -40,6 +41,9 @@ def get_legends():
         trialarr=os.getenv('traildatalist').split(',') 
         trial_files=trialarr
 
+    if(str(os.getenv('graphoutput')) != 'None'):
+        outputfile=os.getenv('graphoutput') 
+
     #print legends 
     #print legendtext
 
@@ -55,7 +59,9 @@ techniques_text=legendtext
 print techniques_text
 print "**************"
 trial_files=trialarr
-
+print "************"
+outfile=outputfile
+print outputfile
 #exit();
 
 # Read the data from each trial file
@@ -109,4 +115,4 @@ ax.tick_params(axis='x', labelsize=14)
 ax.tick_params(axis='y', labelsize=14)
 
 #plt.show()
-plt.savefig("rocksdb-16threads.pdf")
+plt.savefig(outfile)
