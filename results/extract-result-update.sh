@@ -468,6 +468,7 @@ EXTRACT_RESULT()  {
 		echo $TARGET-$G_TRIAL
 		echo $OUTPUTDIR
 
+
 		for THREAD in "${threadarr[@]}"
 		do
 			GRAPH_GEN_FIRSTCOL_MULTIAPPS
@@ -510,7 +511,6 @@ EXTRACT_RESULT_THREADS()  {
         for G_TRIAL in "${trials[@]}"
         do
 		OUTPUTDIR=$TARGET-$G_TRIAL
-		echo $OUTPUTDIR
 		continue
 
 		for appval in "${apparr[@]}"
