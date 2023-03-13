@@ -508,40 +508,33 @@ EXTRACT_RESULT_THREADS()  {
 	let num=0;
 
 
-        for G_TRIAL in "${trials[@]}"
-        do
-		OUTPUTDIR=$TARGET-$G_TRIAL
-		echo $OUTPUTDIR
-		continue
-
-		for appval in "${apparr[@]}"
+	for appval in "${apparr[@]}"
+	do
+		for TECH in "${techarr[@]}"
 		do
-			for TECH in "${techarr[@]}"
+			#appval=""
+			let num=0;
+
+			#echo "*******************************************************************************"
+			for THREAD in "${threadarr[@]}"
 			do
-				#appval=""
-				let num=0;
+				if [[ "$num" -eq 0 ]]; then
+					rm -rf $appval-$TECH".DATA"
+					echo $TECH > $appval-$TECH".DATA"
+					num=$num+1
+				fi
 
-				#echo "*******************************************************************************"
-				for THREAD in "${threadarr[@]}"
-				do
-					if [[ "$num" -eq 0 ]]; then
-						rm -rf $appval-$TECH".DATA"
-						echo $TECH > $appval-$TECH".DATA"
-						num=$num+1
-					fi
-
-					TECHOUT=$TECH".out"
-					PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
-				done
-				#cat $appval-$TECH".DATA"
-				#echo "*******************************************************************************"
-
+				TECHOUT=$TECH".out"
+				PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
+			#cat $appval-$TECH".DATA"
+			#echo "*******************************************************************************"
 
-			for APPLICATION in "${apparr[@]}"
-			do
-				GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
-			done
+		done
+
+		for APPLICATION in "${apparr[@]}"
+		do
+			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
 		done
 	done
 }
@@ -652,7 +645,6 @@ for G_TRIAL in "${trials[@]}"
 do
 	OUTPUTDIR=$TARGET-$G_TRIAL
 	echo $OUTPUTDIR
-	continue
 
 	export APPPREFIX="20M-KEYS"
 	APP='ROCKSDB'
@@ -666,7 +658,7 @@ do
 	EXTRACT_RESULT_THREADS "ROCKSDB"
 	MOVEGRAPHS
 done
-
+exit
 
 export APPPREFIX="20M-KEYS"
 APP='ROCKSDB'
