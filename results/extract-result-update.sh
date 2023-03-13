@@ -511,6 +511,7 @@ EXTRACT_RESULT_THREADS()  {
         do
 		OUTPUTDIR=$TARGET-$G_TRIAL
 		echo $OUTPUTDIR
+		continue
 
 		for appval in "${apparr[@]}"
 		do
