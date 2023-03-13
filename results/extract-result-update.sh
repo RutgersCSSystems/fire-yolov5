@@ -234,7 +234,7 @@ PULL_RESULT() {
 	outfile=$(basename $dir)
 	outputfile=$APP".data"
 
-	resultfile=$TARGET/$outfile/"GRAPH.DATA"
+	resultfile=$OUTPUTDIR/$outfile/"GRAPH.DATA"
 
 	echo $APPFILE
 
@@ -480,7 +480,7 @@ EXTRACT_RESULT()  {
 
 				echo "TECH ARR:" $appval
 				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 		done
 		GENERATE_GRAPH_MULTIAPPS $THREAD
@@ -518,7 +518,7 @@ EXTRACT_RESULT_THREADS()  {
 				fi
 
 				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 			#cat $appval-$TECH".DATA"
 			#echo "*******************************************************************************"
@@ -563,7 +563,7 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 						num=$num+1
 					fi
 					TECHOUT=$TECH".out"
-					PULL_RESULT $APP $TECH $THREAD "$TARGET/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
+					PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
 				done
 			done
 			#echo "*******************************************************************************"
