@@ -643,6 +643,7 @@ do
 	export APPPREFIX="20M-KEYS"
 	APP='ROCKSDB'
 	TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+	OUTPUTDIR=$TARGET
 	XTITLE='#. of threads'
 	set_rocks_thread_impact_global_vars
 	apparr=("${rocksworkarr[@]}")
