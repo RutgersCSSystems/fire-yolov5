@@ -99,7 +99,7 @@ for i, technique in enumerate(techniques):
     means = [data[technique][reader]['mean'] for reader in readers]
     stds = [data[technique][reader]['std'] for reader in readers]
     hatch = "/" if i % 2 == 0 else "\\" # add hatch pattern based on technique index
-    ax.bar(x + (i - 2) * width, means, yerr=stds, align='center', width=width, label=technique, hatch=hatch)
+    ax.bar(x + (i - 2) * width, means, yerr=stds, align='center', width=width, label=techniques_text[i], hatch=hatch)
 
 ax.set_xticks(x)
 ax.set_xticklabels(readers)
