@@ -1,7 +1,7 @@
 #!/bin/bash
 #set -x
 
-TARGET=$OUTPUTDIR
+TARGET=$OUTPUT_GRAPH_FOLDER
 
 OUTPUTPATH=$PWD
 
@@ -38,6 +38,8 @@ let APPINTERVAL=1000
 let YTITLE="Throughput OPS/sec"
 let XTITLE='#. of threads'
 
+let G_TRIAL="TRIAL2"
+
 #Just the declarations. You can customize 
 #in the functions below
 declare -a rocksworkarr=("multireadrandom")
@@ -69,6 +71,7 @@ declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
 
+declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 
 
 #APPlication Array for file bench
@@ -231,7 +234,7 @@ PULL_RESULT() {
 	outfile=$(basename $dir)
 	outputfile=$APP".data"
 
-	resultfile=$TARGET/$outfile/"GRAPH.DATA"
+	resultfile=$TARGET"-"$G_TRIAL/$outfile/"GRAPH.DATA"
 
 	echo $APPFILE
 
@@ -459,29 +462,30 @@ EXTRACT_RESULT()  {
 	dir=0
 	let num=0;
 
-
-	for THREAD in "${threadarr[@]}"
+	for G_TRIAL in "${trials[@]}"
 	do
-		GRAPH_GEN_FIRSTCOL_MULTIAPPS
-
-
-		for TECH in "${techarr[@]}"
+		for THREAD in "${threadarr[@]}"
 		do
-			let num=0;
+			GRAPH_GEN_FIRSTCOL_MULTIAPPS
 
-			for appval in "${apparr[@]}"
+			for TECH in "${techarr[@]}"
 			do
-				if [[ "$num" -eq 0 ]]; then
-					echo $TECH > $TECH.DATA
-					num=$num+1
-				fi
+				let num=0;
 
-				echo "TECH ARR:" $appval
-				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				for appval in "${apparr[@]}"
+				do
+					if [[ "$num" -eq 0 ]]; then
+						echo $TECH > $TECH.DATA
+						num=$num+1
+					fi
+
+					echo "TECH ARR:" $appval
+					TECHOUT=$TECH".out"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
+				done
 			done
+			GENERATE_GRAPH_MULTIAPPS $THREAD
 		done
-		GENERATE_GRAPH_MULTIAPPS $THREAD
 	done
 }
 
@@ -515,7 +519,7 @@ EXTRACT_RESULT_THREADS()  {
 				fi
 
 				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 			#cat $appval-$TECH".DATA"
 			#echo "*******************************************************************************"
@@ -560,7 +564,7 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 						num=$num+1
 					fi
 					TECHOUT=$TECH".out"
-					PULL_RESULT $APP $TECH $THREAD "$TARGET/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
+					PULL_RESULT $APP $TECH $THREAD "$TARGET-$G_TRIAL/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
 				done
 			done
 			#echo "*******************************************************************************"

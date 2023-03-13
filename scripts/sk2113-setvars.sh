@@ -25,6 +25,8 @@ export PAPERGRAPHS=$NVMBASE/IntelliOS-paper/crossprefetch/graphs/OCT7
 export MACHINE_NAME="CLEMSON"
 export OUTPUT_FOLDER=$NVMBASE/results/$MACHINE_NAME/SC-RESULTS-TRIAL2
 
+export OUTPUT_GRAPH_FOLDER=$NVMBASE/results/$MACHINE_NAME/SC-RESULTS
+
 export OUTPUTDIR=$OUTPUT_FOLDER
 export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
