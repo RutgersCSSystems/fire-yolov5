@@ -2,6 +2,7 @@
 #set -x
 
 TARGET=$OUTPUT_GRAPH_FOLDER
+mkdir -p $OUTPUT_GRAPH_FOLDER
 
 OUTPUTPATH=$PWD
 
@@ -58,8 +59,9 @@ declare -a snappyproxyarr=("200MB-files")
 declare -a simplebenchworkarr=("read-pvt-seq" "read-shared-seq" "read-pvt-seq" "read-shared-seq")
 declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
 
-
 declare -a threadarr=("16")
+
+declare -a trialdatafiles=()
 
 let graphmax=0
 
@@ -191,7 +193,7 @@ GET_GRAPH_YMAX() {
 }
 
 
-GENERATE_PYTHON_LIST() {
+GENERATE_LEGEND_LIST() {
 
         export legendlist=${techarr[0]}
         for i in "${techarr[@]:1}"; do
@@ -215,6 +217,27 @@ GENERATE_PYTHON_LIST() {
 	export xtitledef=$XTITLE
 }
 
+
+GENERATE_TRIAL_LIST() {
+
+        export triallist=${trials[0]}
+
+	export traildatalist=${trialdatafiles[0]}
+	#traildatalist=()
+
+        for i in "${trials[@]:1}"; do
+           triallist+=",$i"
+        done
+
+        for j in "${trialdatafiles[@]:1}"; do
+	   echo $j
+           traildatalist+=", $j"
+        done
+
+	echo $traildatalist
+        #echo $triallist
+	#echo $traildatalist
+}
 
 
 
@@ -323,7 +346,7 @@ GENERATE_GRAPH_MULTIAPPS() {
 		rm -rf $TECH".DATA"
 	done
 
-	GENERATE_PYTHON_LIST
+	GENERATE_LEGEND_LIST
 
 	echo "python $SCRIPTS/graphs/$APP.py  $OUTPUTDIR/$APP-THREADS-$threadval.DATA  $OUTPUTDIR/$APP-$threadval"
 	python $SCRIPTS/graphs/plot".py"  $OUTPUTDIR/$APP"-THREADS-$threadval.DATA"  $OUTPUTDIR/$APP"-$threadval"
@@ -375,33 +398,17 @@ GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
 }
 
 
-
-
-GENERATE_GRAPH_MULTITHREADS() {
+PLOT_GRAPHS() {
 
 	APPNAME=$1
 	APP=$2
 	workload=$3
+	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
 
-	rm -rf $OUTPUTDIR/$APPNAME"-THREADS.DATA"
+	GENERATE_LEGEND_LIST
 
-	VAR=""
-	echo "GENERATE_GRAPH_MULTITHREADS:" $APPNAME
-	rm -rf $APPNAME"-THREADS.DATA"
-
-	for TECH in "${techarr[@]}"
-	do
-		VAR+="$APPNAME-$TECH.DATA "
-	done
-	echo $VAR
-	`paste MULTITHREADS.tmp $VAR &>> $OUTPUTDIR/$APPNAME"-THREADS.DATA"`
-	cat $APPNAME"-THREADS.DATA"
-	VAR=""
-
-	GENERATE_PYTHON_LIST
-
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -411,6 +418,37 @@ GENERATE_GRAPH_MULTITHREADS() {
 		done
 
 	done
+
+}
+
+
+GEN_GRAPH_DATA_THREADS() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
+	TMPDATAF=$OUTPUT_GRAPH_FOLDER/$APP
+	mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
+
+	rm -rf $OUTFILE
+
+	VAR=""
+	echo "GEN_GRAPH_DATA_THREADS:" $APPNAME
+	rm -rf $APPNAME"-THREADS.DATA"
+
+	for TECH in "${techarr[@]}"
+	do
+		VAR+="$APPNAME-$TECH.DATA "
+	done
+	echo $VAR
+	`paste MULTITHREADS.tmp $VAR &>> $OUTFILE`
+	cat $OUTFILE
+	cp $OUTFILE $TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA"
+
+	trialdatafiles+=($TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA")
+	VAR=""
+
 }
 
 
@@ -436,7 +474,7 @@ GENERATE_GRAPH_MEMSENSITIVE() {
 	cat $APPNAME"-MEMFRAC.DATA"
 	VAR=""
 
-	GENERATE_PYTHON_LIST
+	GENERATE_LEGEND_LIST
 
 	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP-MEMFRAC-Sensitivity"
 	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTDIR/$APPNAME"-MEMFRAC.DATA" $OUTPUTDIR/$APP"-$workload-MEMFRAC-Sensitivity"
@@ -525,10 +563,6 @@ EXTRACT_RESULT_THREADS()  {
 
 		done
 
-		for APPLICATION in "${apparr[@]}"
-		do
-			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
-		done
 	done
 }
 
@@ -651,9 +685,19 @@ do
 	let scalefactor=$SCALE_YCSB_GRAPH
 	let APPINTERVAL=1000
 	EXTRACT_RESULT_THREADS "ROCKSDB"
+
+	#This generates older graphs
+	for APPLICATION in "${apparr[@]}"
+	do
+		GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
+		PLOT_GRAPHS $APPLICATION $APP $appval
+	done
 	MOVEGRAPHS
 done
+	GENERATE_TRIAL_LIST
+
 exit
+
 
 export APPPREFIX="20M-KEYS"
 APP='ROCKSDB'
