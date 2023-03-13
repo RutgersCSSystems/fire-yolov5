@@ -648,20 +648,24 @@ MOVEGRAPHS_SIMPLEBENCH() {
 	UPDATE_PAPER $OUTPUT
 }
 
+for G_TRIAL in "${trials[@]}"
+do
+	OUTPUTDIR=$TARGET-$G_TRIAL
+	echo $OUTPUTDIR
+	continue
 
-export APPPREFIX="20M-KEYS"
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
-XTITLE='#. of threads'
-set_rocks_thread_impact_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=1000
-EXTRACT_RESULT_THREADS "ROCKSDB"
-MOVEGRAPHS
-exit
-
+	export APPPREFIX="20M-KEYS"
+	APP='ROCKSDB'
+	TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+	XTITLE='#. of threads'
+	set_rocks_thread_impact_global_vars
+	apparr=("${rocksworkarr[@]}")
+	proxyapparr=("${rocksworkproxyarr[@]}")
+	let scalefactor=$SCALE_YCSB_GRAPH
+	let APPINTERVAL=1000
+	EXTRACT_RESULT_THREADS "ROCKSDB"
+	MOVEGRAPHS
+done
 
 
 export APPPREFIX="20M-KEYS"
