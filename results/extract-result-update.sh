@@ -509,9 +509,8 @@ EXTRACT_RESULT_THREADS()  {
 
         for G_TRIAL in "${trials[@]}"
         do
-		echo $TARGET-$G_TRIAL
+		OUTPUTDIR=$TARGET-$G_TRIAL
 		echo $OUTPUTDIR
-		continue
 
 		for appval in "${apparr[@]}"
 		do
