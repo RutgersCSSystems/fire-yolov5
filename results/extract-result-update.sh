@@ -76,11 +76,11 @@ let graphmax=0
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 #declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+opt]" "CrossInfo[+predict]" "CrossInfo[+predict+opt]")
+#declare -a techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+fetchall+opt]" "Cross[+predict]" "Cross[+predict+opt]")
 
 
 declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+opt]" "CrossInfo[+fetchall+opt]")
+declare -a techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 
 declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 
@@ -89,7 +89,7 @@ declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 set_rocks_global_vars() {
 
 	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-	techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+opt]" "CrossInfo[+fetchall+opt]")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 
 	#techarr=("Vanilla" "OSonly" "CII_sync" "CII" "CIP_sync" "CIP" "CPBI_sync"  "CPBI")
 	#techarrname=("APPonly" "OSonly" "+fetchall+sync" "+fetchall" "+pred+sync" "+pred" "+pred+opt+budget+sync" "+pred+opt+budget")
@@ -119,7 +119,7 @@ set_rocks_memimpact_impact_global_vars() {
 	threadarr=("16")
 
 	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
-	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+opt+budget]")
+	techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+predict+opt+budget]")
 }
 
 set_snappy_memimpact_impact_global_vars() {
@@ -132,7 +132,7 @@ set_snappy_memimpact_impact_global_vars() {
         threadarr=("8")
 
         techarr=("Vanilla" "OSonly" "Cross_Info" "CIPI" "CPBI" )
-        techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+opt]"  "CrossInfo[+predict+opt+budget]")
+        techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+predict+opt]"  "Cross[+predict+opt+budget]")
 }
 
 
@@ -187,7 +187,7 @@ set_simplebench_read_size_sensitivity_global_vars() {
 
 
 #declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+opt]")
+#declare -a techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+fetchall+opt]")
 
 
 GET_GRAPH_YMAX() {
