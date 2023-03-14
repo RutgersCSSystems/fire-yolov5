@@ -110,7 +110,7 @@ ax.set_ylabel('Througput in 1000x')
 ax.legend(fontsize=12)
 ax.set_ylabel('Throughput in 1000x', fontdict={'fontsize': 14})
 ax.set_xlabel('Access Pattern', fontdict={'fontsize': 14})
-ax.legend(ncol=2, columnspacing=0.0, fontsize=13, loc='best')
+ax.legend(ncol=2, columnspacing=-1.0, fontsize=13, loc='best')
 ax.tick_params(axis='x', labelsize=14)
 ax.tick_params(axis='y', labelsize=14)
 
