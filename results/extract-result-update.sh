@@ -19,7 +19,7 @@ ZPLOT="$NVMBASE/graphs/zplot"
 
 GRAPHPYTHON="plot.py"
 
-GRAPHMATPLOTLIB="plot-new.py"
+GRAPHMATPLOTLIB="plot-alltech.py"
 GRAPHMATPLOTLIBTHREADS="plot-threads.py"
 
 #READER="# reader"
@@ -331,36 +331,7 @@ GRAPH_GEN_FIRSTCOL_MULTIAPPS() {
 		echo ${proxyapparr[$num]} >> MULTIAPPS.tmp
 		let "num=num+1"
 	done 
-}
-
-
-GENERATE_GRAPH_MULTIAPPS() {
-
-	threadval=$1
-	rm -rf $OUTPUTDIR/$APP-THREADS-$threadval.DATA
-
-	VAR=""
-	for TECH in "${techarr[@]}"
-	do
-		  VAR+="${TECH}.DATA "
-	done
-
-	#echo $VAR
-	`paste "MULTIAPPS.tmp" $VAR &>> $OUTPUTDIR/$APP"-THREADS-$threadval".DATA`
-
-	rm -rf "MULTIAPPS.tmp"
-
-	for TECH in "${techarr[@]}"
-	do
-		rm -rf $TECH".DATA"
-	done
-
-	GENERATE_LEGEND_LIST
-
-	echo "python $SCRIPTS/graphs/$APP.py  $OUTPUTDIR/$APP-THREADS-$threadval.DATA  $OUTPUTDIR/$APP-$threadval"
-	python $SCRIPTS/graphs/plot".py"  $OUTPUTDIR/$APP"-THREADS-$threadval.DATA"  $OUTPUTDIR/$APP"-$threadval"
-
-
+	#cat MULTIAPPS.tmp
 }
 
 
@@ -435,16 +406,18 @@ PLOT_MATPLOT_GRAPHS() {
 	APPNAME=$1
 	APP=$2
 	workload=$3
-	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
+	SUFFIX="pattern-Sensitivity"
+	OUTFILE=$OUTPUTDIR/$APPNAME"-$SUFFIX.DATA"
 
 	GENERATE_LEGEND_LIST
 	GENERATE_TRIAL_LIST
 
-	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
-
-	export graphoutput="$OUTPUTDIR/$APP-$workload-THREAD-Sensitivity.pdf"
+	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$SUFFIX.pdf"
 	echo $graphoutput
+
+	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-$SUFFIX"
+	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
+
 
 	#for threadval in "${threadarr[@]}"
 	#do
@@ -471,9 +444,6 @@ PLOT_MATPLOT_THREADS() {
 	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$workload-THREAD-Sensitivity.pdf"
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
-
-	exit
-
 	#for threadval in "${threadarr[@]}"
 	#do
 		#for TECH in "${techarr[@]}"
@@ -485,6 +455,46 @@ PLOT_MATPLOT_THREADS() {
 
 }
 
+
+
+GENERATE_GRAPH_MULTIAPPS() {
+
+        APPNAME=$1
+        APP=$2
+        workload=$3
+	threadval=$4
+
+        OUTFILE=$OUTPUTDIR/$APP-THREADS-$threadval.DATA
+        TMPDATAF=$OUTPUT_GRAPH_FOLDER/$APP
+        mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
+
+
+	VAR=""
+	for TECH in "${techarr[@]}"
+	do
+		  VAR+="${TECH}.DATA "
+	done
+
+	#echo $VAR
+	`paste "MULTIAPPS.tmp" $VAR &>> $OUTFILE`
+
+	#cat $OUTFILE
+        cp $OUTFILE $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+
+        trialdatafiles+=($TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA")
+
+	#rm -rf "MULTIAPPS.tmp"
+	rm -rf $OUTFILE
+	#echo $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+	#cat $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+	for TECH in "${techarr[@]}"
+	do
+		rm -rf $TECH".DATA"
+	done
+	#GENERATE_LEGEND_LIST
+	#echo "python $SCRIPTS/graphs/$APP.py  $OUTPUTDIR/$APP-THREADS-$threadval.DATA  $OUTPUTDIR/$APP-$threadval"
+	#python $SCRIPTS/graphs/plot".py"  $OUTPUTDIR/$APP"-THREADS-$threadval.DATA"  $OUTPUTDIR/$APP"-$threadval"
+}
 
 
 
@@ -582,13 +592,12 @@ EXTRACT_RESULT()  {
 					echo $TECH > $TECH.DATA
 					num=$num+1
 				fi
-
 				#echo "TECH ARR:" $appval
 				TECHOUT=$TECH".out"
 				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 		done
-		GENERATE_GRAPH_MULTIAPPS $THREAD
+		#GENERATE_GRAPH_MULTIAPPS $THREAD
 	done
 }
 
@@ -735,6 +744,47 @@ MOVEGRAPHS_SIMPLEBENCH() {
 }
 
 
+EXTRACT_PATTERN() {
+
+	for G_TRIAL in "${trials[@]}"
+	do
+
+		export APPPREFIX="20M-KEYS"
+		APP='ROCKSDB'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='Access Pattern'
+		set_rocks_global_vars
+
+		apparr=("${rocksworkarr[@]}")
+		proxyapparr=("${rocksworkproxyarr[@]}")
+
+		let scalefactor=$SCALE_YCSB_GRAPH
+		let APPINTERVAL=1000
+
+		EXTRACT_RESULT "ROCKSDB"
+
+		#This generates older graphs
+		#for APPLICATION in "${apparr[@]}"
+		#do
+			#GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
+			GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+			#PLOT_ZPLOT_GRAPHS $APPLICATION $APP $appval
+		#done
+		#MOVEGRAPHS
+	done
+	GENERATE_TRIAL_LIST
+	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+}
+
+
+
+
 EXTRACT_THREADS() {
 
 	for G_TRIAL in "${trials[@]}"
@@ -773,7 +823,8 @@ EXTRACT_THREADS() {
 }
 
 
-EXTRACT_THREADS
+EXTRACT_PATTERN
+#EXTRACT_THREADS
 exit
 
 

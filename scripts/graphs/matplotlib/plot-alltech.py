@@ -6,8 +6,8 @@ import os
 trial_files = ['ROCKSDB-THREADS-16-trial4.DATA', 'ROCKSDB-THREADS-16-trial2.DATA', 'ROCKSDB-THREADS-16-trial3.DATA']
 
 # Define the names of the readers and techniques
-#readers = ['rseq', 'rrev', 'rscan', 'multirrand', 'rrand']
-readers = ['1', '4', '8', '16', '32']
+readers = ['rseq', 'rrev', 'rscan', 'multirrand', 'rrand']
+#readers = ['1', '4', '8', '16', '32']
 
 techniques = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
 techniques_text = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
