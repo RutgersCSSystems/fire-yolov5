@@ -53,15 +53,15 @@ get_legends()
 #print "**************"
 
 techniques=legends
-print techniques
-print "**************"
+#print techniques
+#print "**************"
 techniques_text=legendtext
-print techniques_text
-print "**************"
+#print techniques_text
+#print "**************"
 trial_files=trialarr
-print "************"
+#print "************"
 outfile=outputfile
-print outputfile
+#print outputfile
 #exit();
 
 # Read the data from each trial file

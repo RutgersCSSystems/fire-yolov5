@@ -45,8 +45,8 @@ let INCR_FULL_BAR_SPACE=1
 let INCR_ONE_SPACE=1
 
 let APPINTERVAL=1000
-let YTITLE="Throughput OPS/sec"
-let XTITLE='#. of threads'
+YTITLE="Throughput OPS/sec"
+XTITLE='#. of threads'
 
 let G_TRIAL="TRIAL2"
 
@@ -70,7 +70,7 @@ declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-rand
 
 declare -a threadarr=("16")
 
-declare -a trialdatafiles=()
+declare -a trialdatafiles
 
 let graphmax=0
 
@@ -93,7 +93,6 @@ set_rocks_global_vars() {
 
 	#techarr=("Vanilla" "OSonly" "CII_sync" "CII" "CIP_sync" "CIP" "CPBI_sync"  "CPBI")
 	#techarrname=("APPonly" "OSonly" "+fetchall+sync" "+fetchall" "+pred+sync" "+pred" "+pred+opt+budget+sync" "+pred+opt+budget")
-
 	#rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
 	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
@@ -105,6 +104,11 @@ set_rocks_global_vars() {
 
 
 set_rocks_thread_impact_global_vars() {
+
+	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
+
+
 	rocksworkarr=("readrandom")
 	rocksworkproxyarr=("rrand")
 	threadarr=("1" "4" "8" "16" "32")
@@ -201,6 +205,24 @@ GET_GRAPH_YMAX() {
 	#echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
 }
 
+CLEAR_LEGEND_LIST() {
+
+	#legendlist=("")
+	#export legendlist
+
+	#legendnamelist=("")
+	#export legendnamelist
+
+	#traildatalist=("")
+	#export traildatalist
+	unset traildatalist
+
+	triallist=("")
+	#export triallist
+}
+
+
+
 
 GENERATE_LEGEND_LIST() {
 
@@ -208,14 +230,12 @@ GENERATE_LEGEND_LIST() {
         for i in "${techarr[@]:1}"; do
            legendlist+=",$i"
         done
-        echo $legendlist
 
         i=0
         export legendnamelist=${techarrname[0]}
         for i in "${techarrname[@]:1}"; do
            legendnamelist+=",$i"
         done
-        #echo $legendnamelist
 
 	export ymax=$graphmax
 	export yinterval=$APPINTERVAL 
@@ -224,6 +244,7 @@ GENERATE_LEGEND_LIST() {
 	#export ytitledef='Throughput (OPS/sec) in 100x'
 	export ytitledef=$YTITLE
 	export xtitledef=$XTITLE
+	#echo "LEGENDLIST" $legendlist
 }
 
 
@@ -243,7 +264,9 @@ GENERATE_TRIAL_LIST() {
            traildatalist+=",$j"
         done
 
+	#echo "*******"
 	#echo $traildatalist
+	#echo "*********"
         #echo $triallist
 	#echo $traildatalist
 }
@@ -399,6 +422,8 @@ PLOT_ZPLOT_GRAPHS() {
 
 	done
 
+	#CLEAR_LEGEND_LIST
+
 }
 
 PLOT_MATPLOT_GRAPHS() {
@@ -419,6 +444,7 @@ PLOT_MATPLOT_GRAPHS() {
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
 
 
+	#CLEAR_LEGEND_LIST
 	#for threadval in "${threadarr[@]}"
 	#do
 		#for TECH in "${techarr[@]}"
@@ -444,6 +470,9 @@ PLOT_MATPLOT_THREADS() {
 	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$workload-THREAD-Sensitivity.pdf"
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
+
+	#CLEAR_LEGEND_LIST
+
 	#for threadval in "${threadarr[@]}"
 	#do
 		#for TECH in "${techarr[@]}"
@@ -468,6 +497,8 @@ GENERATE_GRAPH_MULTIAPPS() {
         TMPDATAF=$OUTPUT_GRAPH_FOLDER/$APP
         mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
 
+	DESTFILE=$TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+
 
 	VAR=""
 	for TECH in "${techarr[@]}"
@@ -475,25 +506,21 @@ GENERATE_GRAPH_MULTIAPPS() {
 		  VAR+="${TECH}.DATA "
 	done
 
-	#echo $VAR
 	`paste "MULTIAPPS.tmp" $VAR &>> $OUTFILE`
+        cp $OUTFILE $DESTFILE
 
-	#cat $OUTFILE
-        cp $OUTFILE $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+	#echo $DESTFILE
+	#echo $G_TRIAL
+        trialdatafiles+=("$DESTFILE")
 
-        trialdatafiles+=($TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA")
-
-	#rm -rf "MULTIAPPS.tmp"
 	rm -rf $OUTFILE
-	#echo $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
-	#cat $TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
 	for TECH in "${techarr[@]}"
 	do
 		rm -rf $TECH".DATA"
 	done
-	#GENERATE_LEGEND_LIST
-	#echo "python $SCRIPTS/graphs/$APP.py  $OUTPUTDIR/$APP-THREADS-$threadval.DATA  $OUTPUTDIR/$APP-$threadval"
-	#python $SCRIPTS/graphs/plot".py"  $OUTPUTDIR/$APP"-THREADS-$threadval.DATA"  $OUTPUTDIR/$APP"-$threadval"
+
+	#echo $trialdatafiles
+	#printf '%s\n' "${trialdatafiles[@]}"
 }
 
 
@@ -511,16 +538,16 @@ GEN_GRAPH_DATA_THREADS() {
 	rm -rf $OUTFILE
 
 	VAR=""
-	echo "GEN_GRAPH_DATA_THREADS:" $APPNAME
+	#echo "GEN_GRAPH_DATA_THREADS:" $APPNAME
 	rm -rf $APPNAME"-THREADS.DATA"
 
 	for TECH in "${techarr[@]}"
 	do
 		VAR+="$APPNAME-$TECH.DATA "
 	done
-	echo $VAR
+	#echo $VAR
 	`paste MULTITHREADS.tmp $VAR &>> $OUTFILE`
-	cat $OUTFILE
+	#cat $OUTFILE
 	cp $OUTFILE $TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA"
 
 	trialdatafiles+=($TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA")
@@ -597,7 +624,6 @@ EXTRACT_RESULT()  {
 				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 		done
-		#GENERATE_GRAPH_MULTIAPPS $THREAD
 	done
 }
 
@@ -772,13 +798,10 @@ EXTRACT_PATTERN() {
 		#This generates older graphs
 		#for APPLICATION in "${apparr[@]}"
 		#do
-			#GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
 			GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
-			#PLOT_ZPLOT_GRAPHS $APPLICATION $APP $appval
 		#done
 		#MOVEGRAPHS
 	done
-	GENERATE_TRIAL_LIST
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
 }
 
@@ -814,17 +837,16 @@ EXTRACT_THREADS() {
 		for APPLICATION in "${apparr[@]}"
 		do
 			GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
-			#PLOT_ZPLOT_GRAPHS $APPLICATION $APP $appval
 		done
-		#MOVEGRAPHS
 	done
-		GENERATE_TRIAL_LIST
 		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
-
-EXTRACT_PATTERN
-#EXTRACT_THREADS
+#EXTRACT_PATTERN
+echo "---------------------------------------"
+echo "        "
+CLEAR_LEGEND_LIST
+EXTRACT_THREADS
 exit
 
 
