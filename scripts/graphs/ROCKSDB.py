@@ -62,7 +62,7 @@ for x in range(0, len(legendtext)):
     p.verticalbars(**barargs)
     i=i+1;
 
-L.draw(c, coord=[d.left()+20, d.top()-10], width=4, height=4, fontsize=4, hspace=1, skipnext=2, skipspace=22)
+L.draw(c, coord=[d.left()+20, d.top()-10], width=4, height=4, fontsize=3, hspace=1, skipnext=2, skipspace=22)
 
 c.render()
 exit()

@@ -42,26 +42,32 @@ NUM=20000000
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-#declare -a thread_arr=("1" "4" "8" "16")
-declare -a thread_arr=("16")
+declare -a thread_arr=("1" "4" "8" "16" "32")
+declare -a thread_arr=("32")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-#declare -a workload_arr=("readseq")
-declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq")
+
+declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
+#declare -a workload_arr=("readrandom")
+
+
 declare -a membudget=("6" "4" "2")
 USEDB=1
 MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+ENABLE_MEM_SENSITIVE=0
 
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-declare -a config_arr=("CPBI" "Vanilla" "OSonly" "CIPI")
+
+#declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
+declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+#declare -a config_arr=("CII")
+
 
 #declare -a workload_arr=("multireadrandom")
-#declare -a config_arr=("CPBI")
 #declare -a membudget=("6")
 
 
@@ -138,7 +144,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk

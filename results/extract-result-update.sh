@@ -1,7 +1,8 @@
 #!/bin/bash
 #set -x
 
-TARGET=$OUTPUTDIR
+TARGET=$OUTPUT_GRAPH_FOLDER
+mkdir -p $OUTPUT_GRAPH_FOLDER
 
 OUTPUTPATH=$PWD
 
@@ -13,14 +14,23 @@ TYPE=""
 
 STATTYPE="APP"
 STATTYPE="KERNEL"
+
 ZPLOT="$NVMBASE/graphs/zplot"
+
 GRAPHPYTHON="plot.py"
+
+GRAPHMATPLOTLIB="plot-alltech.py"
+GRAPHMATPLOTLIBTHREADS="plot-threads.py"
+
+#READER="# reader"
+READER="reader"
+
 
 ## Scaling Kernel Stats Graph
 let SCALE_KERN_GRAPH=100000
 let SCALE_FILEBENCH_GRAPH=100
 let SCALE_REDIS_GRAPH=1000
-let SCALE_ROCKSDB_GRAPH=1
+let SCALE_ROCKSDB_GRAPH=1000
 let SCALE_CASSANDRA_GRAPH=100
 let SCALE_SPARK_GRAPH=50000
 let SCALE_YCSB_GRAPH=10000
@@ -35,8 +45,10 @@ let INCR_FULL_BAR_SPACE=1
 let INCR_ONE_SPACE=1
 
 let APPINTERVAL=1000
-let YTITLE="Throughput OPS/sec"
-let XTITLE='#. of threads'
+YTITLE="Throughput OPS/sec"
+XTITLE='#. of threads'
+
+let G_TRIAL="TRIAL2"
 
 #Just the declarations. You can customize 
 #in the functions below
@@ -56,37 +68,50 @@ declare -a snappyproxyarr=("200MB-files")
 declare -a simplebenchworkarr=("read-pvt-seq" "read-shared-seq" "read-pvt-seq" "read-shared-seq")
 declare -a simplebenchproxyarr=("pvt-seq" "shared-seq" "pvt-random" "shared-random")
 
-
 declare -a threadarr=("16")
+
+declare -a trialdatafiles
 
 let graphmax=0
 
 declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 #declare -a techarr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CIPI")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+fetchall+OPT]" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]")
+#declare -a techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+fetchall+opt]" "Cross[+predict]" "Cross[+predict+opt]")
 
 
 declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
-declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+predict+OPT]" "CrossInfo[+fetchall+OPT]")
+declare -a techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 
+declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 
 
 #APPlication Array for file bench
 set_rocks_global_vars() {
-	rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
-	rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
 
-	rocksworkarr=("readseq" "readreverse" "readwhilescanning" "multireadrandom")
-	rocksworkproxyarr=("readseq" "readreverse" "readscan" "multirrandom")
+	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
+
+	#techarr=("Vanilla" "OSonly" "CII_sync" "CII" "CIP_sync" "CIP" "CPBI_sync"  "CPBI")
+	#techarrname=("APPonly" "OSonly" "+fetchall+sync" "+fetchall" "+pred+sync" "+pred" "+pred+opt+budget+sync" "+pred+opt+budget")
+	#rocksworkarr=("readwhilescanning" "multireadrandom" "readseq" "readreverse" "readwhilewriting" "fillseq" "fillrandom")
+	#rocksworkproxyarr=("readscan" "multirrandom" "readseq" "readreverse" "readwrite" "fillseq" "fillrandom")
+
+	rocksworkarr=("readseq" "readreverse" "readwhilescanning" "multireadrandom" "readrandom")
+	rocksworkproxyarr=("rseq" "rrev" "rscan" "multirrand" "rrand")
 
 	threadarr=("16")
 }
 
 
 set_rocks_thread_impact_global_vars() {
-	rocksworkarr=("readseq")
-	rocksworkproxyarr=("rseq")
-	threadarr=("8" "16" "32")
+
+	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
+
+
+	rocksworkarr=("readrandom")
+	rocksworkproxyarr=("rrand")
+	threadarr=("1" "4" "8" "16" "32")
 }
 
 
@@ -98,7 +123,7 @@ set_rocks_memimpact_impact_global_vars() {
 	threadarr=("16")
 
 	techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CPBI")
-	techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT+budget]")
+	techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+predict+opt+budget]")
 }
 
 set_snappy_memimpact_impact_global_vars() {
@@ -111,7 +136,7 @@ set_snappy_memimpact_impact_global_vars() {
         threadarr=("8")
 
         techarr=("Vanilla" "OSonly" "Cross_Info" "CIPI" "CPBI" )
-        techarrname=("APPonly" "OSonly" "CrossInfo[+fetchall]" "CrossInfo[+predict+OPT]"  "CrossInfo[+predict+OPT+budget]")
+        techarrname=("APPonly" "OSonly" "Cross[+fetchall]" "Cross[+predict+opt]"  "Cross[+predict+opt+budget]")
 }
 
 
@@ -166,7 +191,7 @@ set_simplebench_read_size_sensitivity_global_vars() {
 
 
 #declare -a techarr=("Vanilla" "OSonly" "CIP" "CII")
-#declare -a techarrname=("APPonly" "OSonly" "CrossInfo[+predict]" "CrossInfo[+fetchall+OPT]")
+#declare -a techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+fetchall+opt]")
 
 
 GET_GRAPH_YMAX() {
@@ -180,21 +205,37 @@ GET_GRAPH_YMAX() {
 	#echo "CURRVAL: $currval" "GRAPHMAX:" "$graphmax"
 }
 
+CLEAR_LEGEND_LIST() {
 
-GENERATE_PYTHON_LIST() {
+	#legendlist=("")
+	#export legendlist
+
+	#legendnamelist=("")
+	#export legendnamelist
+
+	#traildatalist=("")
+	#export traildatalist
+	unset traildatalist
+
+	triallist=("")
+	#export triallist
+}
+
+
+
+
+GENERATE_LEGEND_LIST() {
 
         export legendlist=${techarr[0]}
         for i in "${techarr[@]:1}"; do
            legendlist+=",$i"
         done
-        echo $legendlist
 
         i=0
         export legendnamelist=${techarrname[0]}
         for i in "${techarrname[@]:1}"; do
            legendnamelist+=",$i"
         done
-        echo $legendnamelist
 
 	export ymax=$graphmax
 	export yinterval=$APPINTERVAL 
@@ -203,8 +244,32 @@ GENERATE_PYTHON_LIST() {
 	#export ytitledef='Throughput (OPS/sec) in 100x'
 	export ytitledef=$YTITLE
 	export xtitledef=$XTITLE
+	#echo "LEGENDLIST" $legendlist
 }
 
+
+GENERATE_TRIAL_LIST() {
+
+        export triallist=${trials[0]}
+
+	export traildatalist=${trialdatafiles[0]}
+	#traildatalist=()
+
+        for i in "${trials[@]:1}"; do
+           triallist+=",$i"
+        done
+
+        for j in "${trialdatafiles[@]:1}"; do
+	   #echo $j
+           traildatalist+=",$j"
+        done
+
+	#echo "*******"
+	#echo $traildatalist
+	#echo "*********"
+        #echo $triallist
+	#echo $traildatalist
+}
 
 
 
@@ -224,9 +289,9 @@ PULL_RESULT() {
 	outfile=$(basename $dir)
 	outputfile=$APP".data"
 
-	resultfile=$TARGET/$outfile/"GRAPH.DATA"
+	resultfile=$OUTPUTDIR/$outfile/"GRAPH.DATA"
 
-	echo $APPFILE
+	#echo $APPFILE
 
 	if [ -f $APPFILE ]; then
 
@@ -281,44 +346,15 @@ GRAPH_GEN_FIRSTCOL_MULTIAPPS() {
 
 	for APPLICATION in "${apparr[@]}"
 	do
-		echo ${proxyapparr[$num]}
+		#echo ${proxyapparr[$num]}
 		if [[ "$num" -eq 0 ]]; then
 
-			echo "# reader" > MULTIAPPS.tmp
+			echo "$READER" > MULTIAPPS.tmp
 		fi
 		echo ${proxyapparr[$num]} >> MULTIAPPS.tmp
 		let "num=num+1"
 	done 
-}
-
-
-GENERATE_GRAPH_MULTIAPPS() {
-
-	threadval=$1
-	rm -rf $OUTPUTPATH/$APP-THREADS-$threadval.DATA
-
-	VAR=""
-	for TECH in "${techarr[@]}"
-	do
-		  VAR+="${TECH}.DATA "
-	done
-
-	echo $VAR
-	`paste "MULTIAPPS.tmp" $VAR &>> $APP"-THREADS-$threadval".DATA`
-
-	rm -rf "MULTIAPPS.tmp"
-
-	for TECH in "${techarr[@]}"
-	do
-		rm -rf $TECH".DATA"
-	done
-
-	GENERATE_PYTHON_LIST
-
-	echo "python $SCRIPTS/graphs/$APP.py $OUTPUTPATH/$APP-THREADS-$threadval.DATA $OUTPUTPATH/$APP-$threadval"
-	python $SCRIPTS/graphs/plot".py" $OUTPUTPATH/$APP"-THREADS-$threadval.DATA" $OUTPUTPATH/$APP"-$threadval"
-
-
+	#cat MULTIAPPS.tmp
 }
 
 
@@ -333,7 +369,7 @@ GRAPH_GEN_FIRSTCOL_MULTITHREADS() {
 
 	if [[ "$num" -eq 0 ]]; then
 
-		echo "# reader" > MULTITHREADS.tmp
+		echo "$READER" > MULTITHREADS.tmp
 	fi
 	let "num=num+1"
 
@@ -354,7 +390,7 @@ GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
 
 	if [[ "$num" -eq 0 ]]; then
 
-		echo "# reader" > MULTITHREADS.tmp
+		echo "$READER" > MULTITHREADS.tmp
 	fi
 	let "num=num+1"
 
@@ -365,31 +401,17 @@ GRAPH_GEN_FIRSTCOL_MEMSENSITIVE() {
 }
 
 
-
-
-GENERATE_GRAPH_MULTITHREADS() {
+PLOT_ZPLOT_GRAPHS() {
 
 	APPNAME=$1
 	APP=$2
 	workload=$3
+	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
 
-	VAR=""
-	echo "GENERATE_GRAPH_MULTITHREADS:" $APPNAME
-	rm -rf $APPNAME"-THREADS.DATA"
+	GENERATE_LEGEND_LIST
 
-	for TECH in "${techarr[@]}"
-	do
-		VAR+="$APPNAME-$TECH.DATA "
-	done
-	echo $VAR
-	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-THREADS.DATA"`
-	cat $APPNAME"-THREADS.DATA"
-	VAR=""
-
-	GENERATE_PYTHON_LIST
-
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-THREAD-Sensitivity"
-	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP"-$workload-THREAD-Sensitivity"
+	#echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -399,6 +421,138 @@ GENERATE_GRAPH_MULTITHREADS() {
 		done
 
 	done
+
+	#CLEAR_LEGEND_LIST
+
+}
+
+PLOT_MATPLOT_GRAPHS() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	SUFFIX="pattern-Sensitivity"
+	OUTFILE=$OUTPUTDIR/$APPNAME"-$SUFFIX.DATA"
+
+	GENERATE_LEGEND_LIST
+	GENERATE_TRIAL_LIST
+
+	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$SUFFIX.pdf"
+	echo $graphoutput
+
+	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-$SUFFIX"
+	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
+
+
+	#CLEAR_LEGEND_LIST
+	#for threadval in "${threadarr[@]}"
+	#do
+		#for TECH in "${techarr[@]}"
+		#do
+		 # 	rm -rf "$APPNAME-$TECH.DATA"
+		#done
+
+	#done
+
+}
+
+
+PLOT_MATPLOT_THREADS() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
+
+	GENERATE_LEGEND_LIST
+	GENERATE_TRIAL_LIST
+
+	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$workload-THREAD-Sensitivity.pdf"
+	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
+	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
+
+	#CLEAR_LEGEND_LIST
+
+	#for threadval in "${threadarr[@]}"
+	#do
+		#for TECH in "${techarr[@]}"
+		#do
+		 # 	rm -rf "$APPNAME-$TECH.DATA"
+		#done
+
+	#done
+
+}
+
+
+
+GENERATE_GRAPH_MULTIAPPS() {
+
+        APPNAME=$1
+        APP=$2
+        workload=$3
+	threadval=$4
+
+        OUTFILE=$OUTPUTDIR/$APP-THREADS-$threadval.DATA
+        TMPDATAF=$OUTPUT_GRAPH_FOLDER/$APP
+        mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
+
+	DESTFILE=$TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
+
+
+	VAR=""
+	for TECH in "${techarr[@]}"
+	do
+		  VAR+="${TECH}.DATA "
+	done
+
+	`paste "MULTIAPPS.tmp" $VAR &>> $OUTFILE`
+        cp $OUTFILE $DESTFILE
+
+	#echo $DESTFILE
+	#echo $G_TRIAL
+        trialdatafiles+=("$DESTFILE")
+
+	rm -rf $OUTFILE
+	for TECH in "${techarr[@]}"
+	do
+		rm -rf $TECH".DATA"
+	done
+
+	#echo $trialdatafiles
+	#printf '%s\n' "${trialdatafiles[@]}"
+}
+
+
+
+
+GEN_GRAPH_DATA_THREADS() {
+
+	APPNAME=$1
+	APP=$2
+	workload=$3
+	OUTFILE=$OUTPUTDIR/$APPNAME"-THREADS.DATA"
+	TMPDATAF=$OUTPUT_GRAPH_FOLDER/$APP
+	mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
+
+	rm -rf $OUTFILE
+
+	VAR=""
+	#echo "GEN_GRAPH_DATA_THREADS:" $APPNAME
+	rm -rf $APPNAME"-THREADS.DATA"
+
+	for TECH in "${techarr[@]}"
+	do
+		VAR+="$APPNAME-$TECH.DATA "
+	done
+	#echo $VAR
+	`paste MULTITHREADS.tmp $VAR &>> $OUTFILE`
+	#cat $OUTFILE
+	cp $OUTFILE $TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA"
+
+	trialdatafiles+=($TMPDATAF/$APPNAME"-THREADS-"$G_TRIAL".DATA")
+	VAR=""
+
 }
 
 
@@ -420,14 +574,14 @@ GENERATE_GRAPH_MEMSENSITIVE() {
 
 	echo $VAR
 
-	`paste MULTITHREADS.tmp $VAR &>> $APPNAME"-MEMFRAC.DATA"`
+	`paste MULTITHREADS.tmp $VAR &>> $OUTPUTDIR/$APPNAME"-MEMFRAC.DATA"`
 	cat $APPNAME"-MEMFRAC.DATA"
 	VAR=""
 
-	GENERATE_PYTHON_LIST
+	GENERATE_LEGEND_LIST
 
-	echo "python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-THREADS.DATA" $OUTPUTPATH/$APP-MEMFRAC-Sensitivity"
-	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTPATH/$APPNAME"-MEMFRAC.DATA" $OUTPUTPATH/$APP"-$workload-MEMFRAC-Sensitivity"
+	echo "python $SCRIPTS/graphs/$GRAPHPYTHON  $OUTPUTDIR/$APPNAME"-THREADS.DATA"  $OUTPUTDIR/$APP-MEMFRAC-Sensitivity"
+	python $SCRIPTS/graphs/$GRAPHPYTHON $OUTPUTDIR/$APPNAME"-MEMFRAC.DATA" $OUTPUTDIR/$APP"-$workload-MEMFRAC-Sensitivity"
 
 	for threadval in "${threadarr[@]}"
 	do
@@ -455,7 +609,6 @@ EXTRACT_RESULT()  {
 	do
 		GRAPH_GEN_FIRSTCOL_MULTIAPPS
 
-
 		for TECH in "${techarr[@]}"
 		do
 			let num=0;
@@ -466,13 +619,11 @@ EXTRACT_RESULT()  {
 					echo $TECH > $TECH.DATA
 					num=$num+1
 				fi
-
-				echo "TECH ARR:" $appval
+				#echo "TECH ARR:" $appval
 				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 		done
-		GENERATE_GRAPH_MULTIAPPS $THREAD
 	done
 }
 
@@ -488,6 +639,7 @@ EXTRACT_RESULT_THREADS()  {
 	GRAPH_GEN_FIRSTCOL_MULTITHREADS $APP
 
 	let num=0;
+
 
 	for appval in "${apparr[@]}"
 	do
@@ -506,17 +658,13 @@ EXTRACT_RESULT_THREADS()  {
 				fi
 
 				TECHOUT=$TECH".out"
-				PULL_RESULT $APP $TECH $THREAD "$TARGET/$appval/$THREAD/$TECHOUT" $num "$appval"
+				PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/$appval/$THREAD/$TECHOUT" $num "$appval"
 			done
 			#cat $appval-$TECH".DATA"
 			#echo "*******************************************************************************"
 
 		done
 
-		for APPLICATION in "${apparr[@]}"
-		do
-			GENERATE_GRAPH_MULTITHREADS $APPLICATION $APP $appval
-		done
 	done
 }
 
@@ -551,7 +699,7 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 						num=$num+1
 					fi
 					TECHOUT=$TECH".out"
-					PULL_RESULT $APP $TECH $THREAD "$TARGET/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
+					PULL_RESULT $APP $TECH $THREAD "$OUTPUTDIR/MEMFRAC$MEMFRAC/$appval/$THREAD/$TECHOUT" $num "$appval"
 				done
 			done
 			#echo "*******************************************************************************"
@@ -586,6 +734,7 @@ MOVEGRAPHS() {
 	GRAPHDATA="graphs/$APP$APPPREFIX"
 	GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX"
 
+	#echo $GRAPHLOCALDATA
 	mkdir -p $GRAPHDATA
 	mkdir -p $GRAPHLOCALDATA
 
@@ -621,6 +770,105 @@ MOVEGRAPHS_SIMPLEBENCH() {
 }
 
 
+EXTRACT_PATTERN() {
+
+	for G_TRIAL in "${trials[@]}"
+	do
+
+		export APPPREFIX="20M-KEYS"
+		APP='ROCKSDB'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='Access Pattern'
+		set_rocks_global_vars
+
+		apparr=("${rocksworkarr[@]}")
+		proxyapparr=("${rocksworkproxyarr[@]}")
+
+		let scalefactor=$SCALE_YCSB_GRAPH
+		let APPINTERVAL=1000
+
+		EXTRACT_RESULT "ROCKSDB"
+
+		#This generates older graphs
+		#for APPLICATION in "${apparr[@]}"
+		#do
+			GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+		#done
+		#MOVEGRAPHS
+	done
+	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+}
+
+
+
+
+EXTRACT_THREADS() {
+
+	for G_TRIAL in "${trials[@]}"
+	do
+
+		export APPPREFIX="20M-KEYS"
+		APP='ROCKSDB'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='#. of threads'
+		set_rocks_thread_impact_global_vars
+
+		apparr=("${rocksworkarr[@]}")
+		proxyapparr=("${rocksworkproxyarr[@]}")
+
+		let scalefactor=$SCALE_YCSB_GRAPH
+		let APPINTERVAL=1000
+
+		EXTRACT_RESULT_THREADS "ROCKSDB"
+
+		#This generates older graphs
+		for APPLICATION in "${apparr[@]}"
+		do
+			GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
+		done
+	done
+		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
+}
+
+#EXTRACT_PATTERN
+echo "---------------------------------------"
+echo "        "
+CLEAR_LEGEND_LIST
+EXTRACT_THREADS
+exit
+
+
+
+export APPPREFIX="20M-KEYS"
+APP='ROCKSDB'
+TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+set_rocks_global_vars
+apparr=("${rocksworkarr[@]}")
+proxyapparr=("${rocksworkproxyarr[@]}")
+let scalefactor=$SCALE_YCSB_GRAPH
+let APPINTERVAL=1000
+YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
+echo $TARGET
+XTITLE='Workloads'
+
+export GRAPHPYTHON="plot.py"
+EXTRACT_RESULT "ROCKSDB"
+MOVEGRAPHS
+exit
+
 
 APP='SIMPLEBENCH'
 
@@ -648,30 +896,8 @@ exit
 
 
 
-export APPPREFIX="20M-KEYS"
-APP='ROCKSDB'
-TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
-#set the arrays
-set_rocks_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-let scalefactor=$SCALE_YCSB_GRAPH
-let APPINTERVAL=500000
-YTITLE='Throughput (OPS/sec) in '$SCALE_ROCKSDB_GRAPH'x'
-echo $TARGET
-XTITLE='Workloads'
 
-export GRAPHPYTHON="plot.py"
 
-EXTRACT_RESULT "ROCKSDB"
-#MOVEGRAPHS
-XTITLE='#. of threads'
-set_rocks_thread_impact_global_vars
-apparr=("${rocksworkarr[@]}")
-proxyapparr=("${rocksworkproxyarr[@]}")
-EXTRACT_RESULT_THREADS "ROCKSDB"
-#MOVEGRAPHS
-exit
 
 export APPPREFIX=""
 APP='snappy'
