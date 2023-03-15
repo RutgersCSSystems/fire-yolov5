@@ -443,6 +443,7 @@ PLOT_MATPLOT_GRAPHS() {
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-$SUFFIX"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
 
+	UPDATE_PAPER $OUTPUT_GRAPH_FOLDER
 
 	#CLEAR_LEGEND_LIST
 	#for threadval in "${threadarr[@]}"
@@ -720,8 +721,10 @@ UPDATE_PAPER() {
 
 	INPUTPATH=$1
 	mkdir -p $PAPERGRAPHS
-	cp -r $INPUTPATH $PAPERGRAPHS/
+	cp -r $INPUTPATH $PAPERGRAPHS
 	cd $PAPERGRAPHS
+	echo $PAPERGRAPHS
+
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
 	git pull
@@ -798,7 +801,7 @@ EXTRACT_PATTERN() {
 		#This generates older graphs
 		#for APPLICATION in "${apparr[@]}"
 		#do
-			GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+		GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
 		#done
 		#MOVEGRAPHS
 	done
@@ -812,7 +815,6 @@ EXTRACT_THREADS() {
 
 	for G_TRIAL in "${trials[@]}"
 	do
-
 		export APPPREFIX="20M-KEYS"
 		APP='ROCKSDB'
 
@@ -842,7 +844,9 @@ EXTRACT_THREADS() {
 		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
-#EXTRACT_PATTERN
+
+EXTRACT_PATTERN
+exit
 echo "---------------------------------------"
 echo "        "
 CLEAR_LEGEND_LIST
