@@ -19,7 +19,6 @@ fi
 
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
-
 WORKLOAD="readrandom"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
@@ -47,16 +46,15 @@ declare -a thread_arr=("32")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
 #declare -a workload_arr=("readrandom")
 
 
-declare -a membudget=("6" "4" "2")
+declare -a membudget=("6" "4" "2" "8")
 USEDB=1
 MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=0
 
+ENABLE_MEM_SENSITIVE=1
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
@@ -184,10 +182,6 @@ RUN() {
 	done
 }
 
-#RUN
-#CLEAR_DATA
-#exit
-
 GETMEMORYBUDGET() {
         sudo rm -rf  /mnt/ext4ramdisk/*
         $SCRIPTS/mount/umount_ext4ramdisk.sh
@@ -208,10 +202,10 @@ GETMEMORYBUDGET() {
 
 	echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
 	$SCRIPTS/mount/releasemem.sh "NODE0"
-	#$SCRIPTS/mount/releasemem.sh "NODE1"
+	$SCRIPTS/mount/releasemem.sh "NODE1"
 
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
@@ -219,7 +213,6 @@ then
 	for MEM_REDUCE_FRAC in "${membudget[@]}"
 	do
 		GETMEMORYBUDGET $MEM_REDUCE_FRAC
-		exit
 		RUN
 		$SCRIPTS/mount/releasemem.sh "NODE0"
 		$SCRIPTS/mount/releasemem.sh "NODE1"
