@@ -47,7 +47,7 @@ declare -a thread_arr=("32")
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
-#declare -a workload_arr=("readrandom")
+declare -a workload_arr=("multireadrandom")
 
 
 declare -a membudget=("6" "4" "2" "8")
@@ -61,7 +61,10 @@ ENABLE_MEM_SENSITIVE=1
 declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
 
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
+#declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+
 #declare -a config_arr=("CII")
 
 
