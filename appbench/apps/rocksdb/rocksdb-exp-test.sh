@@ -50,7 +50,7 @@ declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" 
 declare -a workload_arr=("multireadrandom")
 
 
-declare -a membudget=("6" "4" "2" "8")
+declare -a membudget=("6" "4" "2")
 USEDB=1
 MEM_REDUCE_FRAC=1
 
