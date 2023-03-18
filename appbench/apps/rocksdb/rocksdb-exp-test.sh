@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
@@ -51,6 +51,7 @@ declare -a workload_arr=("multireadrandom")
 
 
 declare -a membudget=("6" "4" "2" "8")
+declare -a membudget=("8")
 USEDB=1
 MEM_REDUCE_FRAC=1
 
@@ -63,9 +64,8 @@ declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_syn
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 #declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
 
-declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-
-#declare -a config_arr=("CII")
+#declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+declare -a config_arr=("CPBI")
 
 
 #declare -a workload_arr=("multireadrandom")
@@ -117,6 +117,17 @@ COMPILE_AND_WRITE()
 }
 
 
+COMPILE()
+{
+        export LD_PRELOAD=""
+	cd $PREDICT_LIB_DIR
+	$PREDICT_LIB_DIR/compile.sh &> compile.out
+	cd $DBHOME
+}
+
+
+
+
 
 GEN_RESULT_PATH() {
 	WORKLOAD=$1
@@ -146,6 +157,7 @@ RUN() {
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
 	#COMPILE_AND_WRITE
+	COMPILE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -217,8 +229,8 @@ then
 	do
 		GETMEMORYBUDGET $MEM_REDUCE_FRAC
 		RUN
-		$SCRIPTS/mount/releasemem.sh "NODE0"
-		$SCRIPTS/mount/releasemem.sh "NODE1"
+		#$SCRIPTS/mount/releasemem.sh "NODE0"
+		#$SCRIPTS/mount/releasemem.sh "NODE1"
 	done
 else
 	RUN
