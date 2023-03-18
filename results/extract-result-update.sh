@@ -88,6 +88,8 @@ declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 #APPlication Array for file bench
 set_rocks_global_vars() {
 
+	trials=("TRIAL1" "TRIAL1" "TRIAL1")
+
 	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 
@@ -775,25 +777,27 @@ MOVEGRAPHS_SIMPLEBENCH() {
 
 EXTRACT_PATTERN() {
 
+        set_rocks_global_vars
+
+
 	for G_TRIAL in "${trials[@]}"
 	do
-
 		export APPPREFIX="20M-KEYS"
 		APP='ROCKSDB'
 
 		TARGET=$OUTPUT_GRAPH_FOLDER
 		OUTPUTDIR=$TARGET-$G_TRIAL
+		echo $OUTPUTDIR
 
 		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
 		OUTPUTDIR=$TARGET
 
 		XTITLE='Access Pattern'
-		set_rocks_global_vars
 
 		apparr=("${rocksworkarr[@]}")
 		proxyapparr=("${rocksworkproxyarr[@]}")
 
-		let scalefactor=$SCALE_YCSB_GRAPH
+		let scalefactor=$SCALE_ROCKSDB_GRAPH
 		let APPINTERVAL=1000
 
 		EXTRACT_RESULT "ROCKSDB"
@@ -830,7 +834,7 @@ EXTRACT_THREADS() {
 		apparr=("${rocksworkarr[@]}")
 		proxyapparr=("${rocksworkproxyarr[@]}")
 
-		let scalefactor=$SCALE_YCSB_GRAPH
+		let scalefactor=$SCALE_ROCKSDB_GRAPH
 		let APPINTERVAL=1000
 
 		EXTRACT_RESULT_THREADS "ROCKSDB"
@@ -850,7 +854,7 @@ exit
 echo "---------------------------------------"
 echo "        "
 CLEAR_LEGEND_LIST
-EXTRACT_THREADS
+#EXTRACT_THREADS
 exit
 
 
