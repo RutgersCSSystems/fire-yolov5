@@ -435,7 +435,7 @@ ssize_t read_mem_info(void)
     FILE *meminfo_fp = NULL;
 
     if(!meminfo_fp)
-    	meminfo_fp = fopen("memcap.out", "r");
+    meminfo_fp = fopen("memcap.out", "r");
     if (meminfo_fp == NULL)
         return -1;
 
@@ -463,7 +463,7 @@ unsigned long mem_danger_watermark(){
         struct sysinfo si;
         sysinfo (&si);
 
-	debug_printf(stderr, "si.freeram %ld MEM_OTHER_NUMA_NODE %ld diff %ld MEM_DANGER_WATERMARK %ld \n", 
+	debug_printf("si.freeram %ld MEM_OTHER_NUMA_NODE %ld diff %ld MEM_DANGER_WATERMARK %ld \n", 
 			si.freeram, MEM_OTHER_NUMA_NODE, si.freeram - MEM_OTHER_NUMA_NODE,  MEM_DANGER_WATERMARK);
         return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_DANGER_WATERMARK);
 }

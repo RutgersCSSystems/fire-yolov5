@@ -1411,7 +1411,6 @@ exit:
 
 
 //READ SYSCALLS
-
 ssize_t pread64(int fd, void *data, size_t size, off_t offset){
 	return pread(fd, data, size, offset);
 }
@@ -1434,6 +1433,7 @@ exit_pread:
 
 
 /*Several applications use fgets*/
+
 char *fgets( char *str, int num, FILE *stream ) {
 
 	debug_printf( "Start %s\n", __func__);
@@ -1559,7 +1559,7 @@ exit_fadvise:
 	return ret;
 }
 
-
+#if 0
 int madvise(void *addr, size_t length, int advice){
 	int ret = 0;
 
@@ -1575,7 +1575,7 @@ exit:
 	debug_printf( "Exiting %s\n", __func__);
 	return ret;
 }
-
+#endif
 
 
 
