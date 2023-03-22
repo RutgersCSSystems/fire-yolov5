@@ -75,6 +75,10 @@ declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI"
 #declare -a membudget=("6")
 
 
+declare -a trials=("TRIAL2" "TRIAL3")
+G_TRIAL="TRIAL1"
+
+
 #Require for large database
 ulimit -n 1000000 
 
@@ -142,9 +146,9 @@ GEN_RESULT_PATH() {
 
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
 	then 
-		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
 	else
-        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+        	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
 	fi
 	mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG".out"
@@ -226,8 +230,12 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
+for G_TRIAL in "${trials[@]}"
+do
+	RUN
+done
+exit
 
-RUN
 sleep 200
 
 ENABLE_MEM_SENSITIVE=1
