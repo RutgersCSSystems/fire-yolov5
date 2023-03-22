@@ -35,8 +35,8 @@ mkdir -p $RESULTS
 
 
 
-declare -a num_arr=("2000000")
-NUM=2000000
+declare -a num_arr=("20000000")
+NUM=20000000
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
@@ -64,12 +64,15 @@ declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_syn
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 #declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
 
-#declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-declare -a config_arr=("Vanilla")
+declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+declare -a config_arr=("CII")
 
 
 #declare -a workload_arr=("multireadrandom")
 #declare -a membudget=("6")
+
+declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+G_TRIAL="TRIAL1"
 
 
 #Require for large database
@@ -139,9 +142,9 @@ GEN_RESULT_PATH() {
 
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
 	then 
-		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
 	else
-        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+        	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
 	fi
 	mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG".out"
@@ -156,7 +159,7 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	COMPILE_AND_WRITE
+	#COMPILE_AND_WRITE
 	COMPILE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
@@ -184,7 +187,7 @@ RUN() {
 
 					rm -rf $DBDIR/LOCK
 
-					#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
@@ -223,16 +226,18 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
-then
-	for MEM_REDUCE_FRAC in "${membudget[@]}"
-	do
-		GETMEMORYBUDGET $MEM_REDUCE_FRAC
+for G_TRIAL in "${trials[@]}"
+do
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+	then
+		for MEM_REDUCE_FRAC in "${membudget[@]}"
+		do
+			GETMEMORYBUDGET $MEM_REDUCE_FRAC
+			RUN
+			#$SCRIPTS/mount/releasemem.sh "NODE0"
+			#$SCRIPTS/mount/releasemem.sh "NODE1"
+		done
+	else
 		RUN
-		#$SCRIPTS/mount/releasemem.sh "NODE0"
-		#$SCRIPTS/mount/releasemem.sh "NODE1"
-	done
-else
-	RUN
-fi
-
+	fi
+done
