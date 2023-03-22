@@ -243,7 +243,7 @@ int real_openat(int dirfd, const char *pathname, int flags, mode_t mode){
 
 int real_open(const char *pathname, int flags, mode_t mode){
 
-	debug_printf("%s\n", __func__);
+     debug_printf("%s\n", __func__);
 
     if(!open_ptr)
         open_ptr = ((real_open_t)dlsym(RTLD_NEXT, "open"));
