@@ -218,7 +218,7 @@ CLEAR_STATS: clear-stats.c
 install:
 	sudo cp *.so /usr/local/lib
 	sudo cp *.so /usr/lib
-	sudo cp clear_os_stats /usr/bin
+	#sudo cp clear_os_stats /usr/bin
 
 clean:
 	rm -rf *.so

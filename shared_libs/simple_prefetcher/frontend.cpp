@@ -75,13 +75,19 @@ std::mutex fp_mutex;
 #define THREAD NR_WORKERS
 #define SIZE   50000
 #define QUEUES 64
+
 threadpool_t *pool[QUEUES];
 int g_next_queue=0;
 pthread_mutex_t lock;
 
 #include "frontend.hpp"
 
-
+#ifdef PREDICTOR
+#define MIN_FD 4
+#else
+#define MIN_FD 3
+#endif
+int g_min_fd = MIN_FD;
 
 
 #ifdef ENABLE_MPI
@@ -271,6 +277,9 @@ void set_cross_bitmap_shift(char a){
 void con(){
 
 	char a;
+
+	g_min_fd = MIN_FD;
+        fprintf(stderr, "Setting g_min_fd %d \n", g_min_fd);
 
 #ifdef ENABLE_OS_STATS
 	fprintf(stderr, "ENABLE_FILE_STATS in %s\n", __func__);
@@ -1063,7 +1072,16 @@ exit:
  */
 void handle_open(struct file_desc desc){
 
-	debug_printf("%s: fd:%d, TID:%ld\n", __func__, desc.fd, gettid());
+#ifdef PREDICTOR
+	g_min_fd = MIN_FD;
+#endif
+
+	if(desc.fd <= g_min_fd) {
+		return;
+	}
+
+	debug_printf("%s: fd:%d, TID:%ld MIN FD %d\n", __func__, desc.fd,
+			gettid(), g_min_fd);
 
 	desc.uinode = NULL;
 
@@ -1210,6 +1228,10 @@ skip_read_predictor:
 
 
 void handle_file_close(int fd){
+
+	if(fd <= g_min_fd) {
+        	return;
+        }
 
 #ifdef MAINTAIN_UINODE
 	int i_fd_cnt = handle_close(i_map, fd);

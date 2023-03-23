@@ -37,11 +37,15 @@ mkdir -p $RESULTS
 
 declare -a num_arr=("20000000")
 NUM=20000000
+
+#declare -a num_arr=("200000")
+#NUM=200000
+
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 #declare -a thread_arr=("4" "8" "16" "32")
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a thread_arr=("1" "4" "8" "16" "32")
+declare -a thread_arr=("32" "16"  "8"  "4" "1")
 declare -a thread_arr=("32")
 
 
@@ -59,25 +63,16 @@ ENABLE_MEM_SENSITIVE=0
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
-declare -a config_arr=("CPBI_sync" "Vanilla" "OSonly" "Cross_Info_sync" "CIP_sync")
-
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
-#declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-declare -a config_arr=("CII")
 
-
-#declare -a workload_arr=("multireadrandom")
-#declare -a membudget=("6")
+declare -a config_arr=("CIP"  "CIPI")
 
 declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 G_TRIAL="TRIAL1"
 
-
 #Require for large database
 ulimit -n 1000000 
-
 
 
 FlushDisk()
@@ -109,6 +104,7 @@ COMPILE_AND_WRITE()
 	mkdir -p $RESULTS
 
 	cd $PREDICT_LIB_DIR
+	make clean
 	$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
         $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
@@ -188,7 +184,7 @@ RUN() {
 					rm -rf $DBDIR/LOCK
 
 					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
+					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 					export LD_PRELOAD=""
 					sudo dmesg -c &>> $RESULTFILE
 					echo ".......FINISHING $CONFIG......................"
@@ -225,6 +221,10 @@ GETMEMORYBUDGET() {
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
+
+
+
+COMPILE_AND_WRITE
 
 for G_TRIAL in "${trials[@]}"
 do
