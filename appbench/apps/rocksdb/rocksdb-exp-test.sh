@@ -46,12 +46,12 @@ NUM=20000000
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
-declare -a thread_arr=("32")
+declare -a thread_arr=("32" "16"  "8"  "4" "1")
 
 
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
-declare -a workload_arr=("multireadrandom")
+declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning")
 
 
 declare -a membudget=("6" "4" "2" "8")
@@ -65,8 +65,9 @@ ENABLE_MEM_SENSITIVE=0
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
+declare -a config_arr=("CIP"  "CIPI" "CPBI")
 
-declare -a config_arr=("CIP"  "CIPI")
+declare -a config_arr=("Vanilla" "OSonly" "CII")
 
 declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 G_TRIAL="TRIAL1"
@@ -224,7 +225,7 @@ GETMEMORYBUDGET() {
 
 
 
-COMPILE_AND_WRITE
+#COMPILE_AND_WRITE
 
 for G_TRIAL in "${trials[@]}"
 do
