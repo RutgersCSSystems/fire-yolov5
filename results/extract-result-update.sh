@@ -88,7 +88,7 @@ declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
 #APPlication Array for file bench
 set_rocks_global_vars() {
 
-	trials=("TRIAL1" "TRIAL1" "TRIAL1")
+	trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
