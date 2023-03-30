@@ -53,6 +53,7 @@ declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
 declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning")
 
+declare -a workload_arr=("multireadrandom")
 
 declare -a membudget=("6" "4" "2" "8")
 declare -a membudget=("8")
@@ -65,9 +66,8 @@ ENABLE_MEM_SENSITIVE=0
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-declare -a config_arr=("CIP"  "CIPI" "CPBI")
-
-declare -a config_arr=("Vanilla" "OSonly" "CII")
+#declare -a config_arr=("CIP"  "CIPI" "CPBI")
+#declare -a config_arr=("Vanilla" "OSonly" "CII")
 
 declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 G_TRIAL="TRIAL1"
@@ -157,7 +157,7 @@ RUN() {
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
 	#COMPILE_AND_WRITE
-	COMPILE
+	#COMPILE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -226,6 +226,7 @@ GETMEMORYBUDGET() {
 
 
 #COMPILE_AND_WRITE
+COMPILE
 
 for G_TRIAL in "${trials[@]}"
 do
