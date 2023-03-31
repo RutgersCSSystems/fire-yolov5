@@ -857,7 +857,7 @@ exit
 echo "---------------------------------------"
 echo "        "
 CLEAR_LEGEND_LIST
-#EXTRACT_THREADS
+EXTRACT_THREADS
 exit
 
 
