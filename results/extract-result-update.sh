@@ -48,7 +48,7 @@ let APPINTERVAL=1000
 YTITLE="Throughput OPS/sec"
 XTITLE='#. of threads'
 
-let G_TRIAL="TRIAL2"
+let G_TRIAL="TRIAL1"
 
 #Just the declarations. You can customize 
 #in the functions below
@@ -82,7 +82,7 @@ declare -a techarr=("Vanilla" "OSonly" "Cross_Info_sync" "CII" "CIP" "CIPI")
 declare -a techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 declare -a techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 
-declare -a trials=("TRIAL2" "TRIAL3" "TRIAL4")
+declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
 #APPlication Array for file bench
@@ -109,6 +109,8 @@ set_rocks_thread_impact_global_vars() {
 
 	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
 	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
+
+	trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
 	rocksworkarr=("readrandom")
@@ -474,6 +476,10 @@ PLOT_MATPLOT_THREADS() {
 	export graphoutput="$OUTPUT_GRAPH_FOLDER/$APP-$workload-THREAD-Sensitivity.pdf"
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS  $OUTFILE  $OUTPUTDIR/$APP-THREAD-Sensitivity"
 	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIBTHREADS $OUTFILE  $OUTPUTDIR/$APP"-$workload-THREAD-Sensitivity"
+
+
+        echo "********$OUTPUT_GRAPH_FOLDER*******"
+        UPDATE_PAPER $OUTPUT_GRAPH_FOLDER
 
 	#CLEAR_LEGEND_LIST
 
@@ -852,11 +858,10 @@ EXTRACT_THREADS() {
 }
 
 
-EXTRACT_PATTERN
-exit
+#EXTRACT_PATTERN
 echo "---------------------------------------"
 echo "        "
-CLEAR_LEGEND_LIST
+#CLEAR_LEGEND_LIST
 EXTRACT_THREADS
 exit
 
