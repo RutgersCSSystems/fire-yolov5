@@ -113,8 +113,8 @@ set_rocks_thread_impact_global_vars() {
 	trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
-	rocksworkarr=("readrandom")
-	rocksworkproxyarr=("rrand")
+	rocksworkarr=("multireadrandom")
+	rocksworkproxyarr=("multirrand")
 	threadarr=("1" "4" "8" "16" "32")
 }
 
