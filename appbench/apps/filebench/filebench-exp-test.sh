@@ -10,7 +10,7 @@ WRITE_BUFF_SIZE=67108864
 NUM=1000000
 DBDIR=$DBHOME/DATA
 #APPPREFIX="sudo /usr/bin/time -v"
-APP="filebench"
+APP="./filebench"
 APPOUTPUTNAME="filebench"
 
 #Enable sensitivity to vary prefetch size and prefetch thread count
@@ -27,8 +27,6 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
-
-
 declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
 #declare -a config_arr=("CIPI")
 declare -a thread_arr=("16")
@@ -47,16 +45,14 @@ declare -a prefech_sz_arr=("1024")
 declare -a prefech_thrd_arr=("8")
 
 
-declare -a workload_arr=("mongo.f")
+#declare -a workload_arr=("mongo.f")
 MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("6")
-declare -a config_arr=( "CII" "Vanilla" "CIPI" "OSonly")
-declare -a config_arr=( "CPBI" "Vanilla" "OSonly")
-declare -a config_arr=( "Vanilla")
-declare -a config_arr=( "CPBI")
+#declare -a config_arr=( "CIPI")
 
-
+declare -a trials=("TRIAL2" "TRIAL3")
+G_TRIAL="TRIAL1"
 
 mkdir DATA
 
@@ -142,17 +138,18 @@ GEN_RESULT_PATH() {
 	TYPE=$1
 	CONFIG=$2
 	THREAD=$3
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$TYPE/$THREAD
+        RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$TYPE/$THREAD
 
 	echo "ENABLE_MEM_SENSITIVE******"$ENABLE_MEM_SENSITIVE
 
 	if [ "$ENABLE_SENSITIVITY" -eq "1" ]
 	then
-		RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+
+	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
 
 	elif [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
 	then
-		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
 		echo "*******$RESULTS********"
 		RESULTFILE=$RESULTS/$CONFIG".out"
 		mkdir -p $RESULTS
@@ -241,18 +238,23 @@ GETMEMORYBUDGET() {
         #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
-then
-        for MEM_REDUCE_FRAC in "${membudget[@]}"
-        do
-                #GETMEMORYBUDGET $MEM_REDUCE_FRAC
-                RUN
-                #$SCRIPTS/mount/releasemem.sh "NODE0"
-                #$SCRIPTS/mount/releasemem.sh "NODE1"
-        done
-else
-        RUN
-fi
+
+
+for G_TRIAL in "${trials[@]}"
+do
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+	then
+		for MEM_REDUCE_FRAC in "${membudget[@]}"
+		do
+			#GETMEMORYBUDGET $MEM_REDUCE_FRAC
+			RUN
+			#$SCRIPTS/mount/releasemem.sh "NODE0"
+			#$SCRIPTS/mount/releasemem.sh "NODE1"
+		done
+	else
+		RUN
+	fi
+done 
 
 exit
 
