@@ -1,0 +1,145 @@
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.002: Failed to open cvar directory around line 1
+0.002: Mongo-like Version 2.3 personality successfully loaded
+0.002: Populating and pre-allocating filesets
+0.004: postsetdel populated: 200 files, avg. dir. width = 1, avg. dir. depth = inf, 0 leafdirs, 25600.000MB total size
+0.004: Removing postsetdel tree (if exists)
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+0.014: Pre-allocating directories in postsetdel tree
+Setting g_min_fd 3 
+1.832: Pre-allocating files in postsetdel tree
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+15.240: postset populated: 200 files, avg. dir. width = 1, avg. dir. depth = inf, 0 leafdirs, 25600.000MB total size
+15.240: Removing postset tree (if exists)
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+15.253: Pre-allocating directories in postset tree
+Setting g_min_fd 3 
+15.461: Pre-allocating files in postset tree
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+28.883: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+28.883: Population and pre-allocation of filesets completed
+Setting g_min_fd 3 
+FINISHED PREALLOCATION 
+29.101: Starting 1 filereader instances
+fork() 93
+Setting g_min_fd 3 
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+Creating thread filereaderthread, memory = 104857600 PID 17814
+30.111: Running...
+60.113: Run took 30 seconds...
+60.113: Per-Operation Breakdown
+closefile2           21919ops      731ops/s   0.0mb/s    0.006ms/op [0.002ms - 0.066ms]
+readfile1            21919ops      731ops/s 93575.8mb/s   21.730ms/op [11.437ms - 1329.289ms]
+openfile2            21935ops      731ops/s   0.0mb/s    0.020ms/op [0.004ms - 35.826ms]
+closefile1           21935ops      731ops/s   0.0mb/s    0.001ms/op [0.001ms - 0.014ms]
+appendfilerand1      21935ops      731ops/s   5.7mb/s    0.054ms/op [0.006ms - 46.715ms]
+openfile1            21935ops      731ops/s   0.0mb/s    0.035ms/op [0.006ms - 31.227ms]
+60.113: IO Summary: 131578 ops 4385.677 ops/s 731/731 rd/wr 93581.5mb/s 3.639ms/op
+60.113: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "./filebench -f workloads/mongo.f"
+	User time (seconds): 0.35
+	System time (seconds): 33.32
+	Percent of CPU this job got: 54%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:01.93
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3696084
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922209
+	Minor (reclaiming a frame) page faults: 36583
+	Voluntary context switches: 708270
+	Involuntary context switches: 959
+	Swaps: 0
+	File system inputs: 64944
+	File system outputs: 112295160
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[255728.195709] write_proc_unbounded: Value of write = 0
+[255728.195725] write_proc_2mb_limit: Value of write = 0
+[255728.195730] write_proc_bitmap_shift: Value of write = 38
+[255728.200867] write_proc_unbounded: Value of write = 0
+[255728.200883] write_proc_2mb_limit: Value of write = 0
+[255728.200888] write_proc_bitmap_shift: Value of write = 38
+[255729.963482] write_proc_unbounded: Value of write = 0
+[255729.963498] write_proc_2mb_limit: Value of write = 0
+[255729.963504] write_proc_bitmap_shift: Value of write = 38
+[255729.967159] write_proc_unbounded: Value of write = 0
+[255729.967175] write_proc_2mb_limit: Value of write = 0
+[255729.967179] write_proc_bitmap_shift: Value of write = 38
+[255729.967320] write_proc_unbounded: Value of write = 0
+[255729.967323] write_proc_2mb_limit: Value of write = 0
+[255729.972598] write_proc_unbounded: Value of write = 0
+[255729.972607] write_proc_2mb_limit: Value of write = 0
+[255729.972610] write_proc_bitmap_shift: Value of write = 38
+[255730.046257] sh (16827): drop_caches: 3
+[255731.758869] sh (16832): drop_caches: 3
+[255732.149079] write_proc_unbounded: Value of write = 0
+[255732.149095] write_proc_2mb_limit: Value of write = 0
+[255732.149101] write_proc_bitmap_shift: Value of write = 38
+[255732.153743] write_proc_unbounded: Value of write = 0
+[255732.153758] write_proc_2mb_limit: Value of write = 0
+[255732.153763] write_proc_bitmap_shift: Value of write = 38
+[255732.948638] sh (17170): drop_caches: 3
+[255745.166240] sh (17177): drop_caches: 3
+[255745.202643] write_proc_unbounded: Value of write = 0
+[255745.202660] write_proc_2mb_limit: Value of write = 0
+[255745.202665] write_proc_bitmap_shift: Value of write = 38
+[255745.206265] write_proc_unbounded: Value of write = 0
+[255745.206276] write_proc_2mb_limit: Value of write = 0
+[255745.206281] write_proc_bitmap_shift: Value of write = 38
+[255745.206456] write_proc_unbounded: Value of write = 0
+[255745.206459] write_proc_2mb_limit: Value of write = 0
+[255745.212817] write_proc_unbounded: Value of write = 0
+[255745.212830] write_proc_2mb_limit: Value of write = 0
+[255745.212835] write_proc_bitmap_shift: Value of write = 38
+[255745.295312] sh (17382): drop_caches: 3
+[255745.390977] sh (17387): drop_caches: 3
+[255745.767801] write_proc_unbounded: Value of write = 0
+[255745.767816] write_proc_2mb_limit: Value of write = 0
+[255745.767822] write_proc_bitmap_shift: Value of write = 38
+[255745.772982] write_proc_unbounded: Value of write = 0
+[255745.773000] write_proc_2mb_limit: Value of write = 0
+[255745.773006] write_proc_bitmap_shift: Value of write = 38
+[255746.569586] sh (17726): drop_caches: 3
+[255758.809076] sh (17731): drop_caches: 3
+[255758.845661] write_proc_unbounded: Value of write = 0
+[255758.845675] write_proc_2mb_limit: Value of write = 0
+[255758.845680] write_proc_bitmap_shift: Value of write = 38
+[255758.932433] sh (17804): drop_caches: 3
+[255759.031231] sh (17809): drop_caches: 3
+[255759.064210] write_proc_unbounded: Value of write = 0
+[255759.064224] write_proc_2mb_limit: Value of write = 0
+[255759.064229] write_proc_bitmap_shift: Value of write = 38
+[255790.134735] write_proc_unbounded: Value of write = 0
+[255790.134745] write_proc_2mb_limit: Value of write = 0

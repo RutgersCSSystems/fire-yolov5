@@ -1,0 +1,101 @@
+Setting g_min_fd 4 
+Setting g_min_fd 4 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.002: Failed to open cvar directory around line 1
+0.003: Random Read Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.003: Removing largefile1 tree (if exists)
+Setting g_min_fd 4 
+Setting g_min_fd 4 
+0.012: Pre-allocating directories in largefile1 tree
+Setting g_min_fd 4 
+1.838: Pre-allocating files in largefile1 tree
+Setting g_min_fd 4 
+Setting g_min_fd 4 
+21.394: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+21.395: Population and pre-allocation of filesets completed
+Setting g_min_fd 4 
+FINISHED PREALLOCATION 
+21.626: Starting 1 rand-read instances
+fork() 93
+Setting g_min_fd 4 
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+Creating thread rand-thread, memory = 5242880 PID 72194
+22.634: Running...
+52.634: Run took 30 seconds...
+52.635: Per-Operation Breakdown
+rand-read1           14066454ops   468869ops/s 3663.0mb/s    0.016ms/op [0.001ms - 306.410ms]
+52.635: IO Summary: 14066454 ops 468869.500 ops/s 468869/0 rd/wr 3663.0mb/s 0.016ms/op
+52.635: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "./filebench -f workloads/randomread.f"
+	User time (seconds): 0.34
+	System time (seconds): 13.94
+	Percent of CPU this job got: 26%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:54.46
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691700
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921923
+	Minor (reclaiming a frame) page faults: 11118
+	Voluntary context switches: 268770
+	Involuntary context switches: 472
+	Swaps: 0
+	File system inputs: 38032
+	File system outputs: 74520504
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[193116.487260] write_proc_unbounded: Value of write = 1
+[193116.487276] write_proc_2mb_limit: Value of write = 1
+[193116.487282] write_proc_bitmap_shift: Value of write = 38
+[193116.492060] write_proc_unbounded: Value of write = 1
+[193116.492075] write_proc_2mb_limit: Value of write = 1
+[193116.492081] write_proc_bitmap_shift: Value of write = 38
+[193118.263258] write_proc_unbounded: Value of write = 1
+[193118.263276] write_proc_2mb_limit: Value of write = 1
+[193118.263281] write_proc_bitmap_shift: Value of write = 38
+[193118.266792] write_proc_unbounded: Value of write = 1
+[193118.266808] write_proc_2mb_limit: Value of write = 1
+[193118.266813] write_proc_bitmap_shift: Value of write = 38
+[193118.266959] write_proc_unbounded: Value of write = 0
+[193118.266962] write_proc_2mb_limit: Value of write = 0
+[193118.272160] write_proc_unbounded: Value of write = 1
+[193118.272178] write_proc_2mb_limit: Value of write = 1
+[193118.272182] write_proc_bitmap_shift: Value of write = 38
+[193118.350741] sh (71963): drop_caches: 3
+[193120.067804] sh (71968): drop_caches: 3
+[193126.691058] write_proc_unbounded: Value of write = 1
+[193126.691075] write_proc_2mb_limit: Value of write = 1
+[193126.691080] write_proc_bitmap_shift: Value of write = 38
+[193126.694166] write_proc_unbounded: Value of write = 1
+[193126.694182] write_proc_2mb_limit: Value of write = 1
+[193126.694187] write_proc_bitmap_shift: Value of write = 38
+[193129.731175] sh (72106): drop_caches: 3
+[193139.621483] sh (72111): drop_caches: 3
+[193139.656891] write_proc_unbounded: Value of write = 1
+[193139.656909] write_proc_2mb_limit: Value of write = 1
+[193139.656915] write_proc_bitmap_shift: Value of write = 38
+[193139.750538] sh (72184): drop_caches: 3
+[193139.857120] sh (72189): drop_caches: 3
+[193139.888255] write_proc_unbounded: Value of write = 1
+[193139.888267] write_proc_2mb_limit: Value of write = 1
+[193139.888272] write_proc_bitmap_shift: Value of write = 38
+[193170.956674] write_proc_unbounded: Value of write = 0
+[193170.956689] write_proc_2mb_limit: Value of write = 0

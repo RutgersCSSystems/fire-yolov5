@@ -1,0 +1,126 @@
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.002: Failed to open cvar directory around line 1
+0.003: Random RW Version 3.0 personality successfully loaded
+0.003: Populating and pre-allocating filesets
+0.003: Removing largefile1 tree (if exists)
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+0.008: Pre-allocating directories in largefile1 tree
+Setting g_min_fd 3 
+1.833: Pre-allocating files in largefile1 tree
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+15.776: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+15.777: Population and pre-allocation of filesets completed
+Setting g_min_fd 3 
+FINISHED PREALLOCATION 
+16.001: Starting 1 rand-rw instances
+fork() 93
+Setting g_min_fd 3 
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-w-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+Creating thread rand-r-thread, memory = 524288000 PID 51180
+17.008: Running...
+117.012: Run took 100 seconds...
+117.012: Per-Operation Breakdown
+rand-write1          6213446ops    62132ops/s 485.4mb/s    0.248ms/op [0.002ms - 971.136ms]
+rand-read1           133611874ops  1336071ops/s 10438.1mb/s    0.004ms/op [0.001ms - 86.412ms]
+117.012: IO Summary: 139825320 ops 1398203.158 ops/s 1336071/62132 rd/wr 10923.5mb/s 0.015ms/op
+117.012: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "./filebench -f workloads/randomrw.f"
+	User time (seconds): 0.33
+	System time (seconds): 7.76
+	Percent of CPU this job got: 6%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:58.82
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3691000
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921928
+	Minor (reclaiming a frame) page faults: 8539
+	Voluntary context switches: 303364
+	Involuntary context switches: 332
+	Swaps: 0
+	File system inputs: 40608
+	File system outputs: 49349728
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[257643.077284] write_proc_unbounded: Value of write = 0
+[257643.077301] write_proc_2mb_limit: Value of write = 0
+[257643.077306] write_proc_bitmap_shift: Value of write = 38
+[257643.080845] write_proc_unbounded: Value of write = 0
+[257643.080861] write_proc_2mb_limit: Value of write = 0
+[257643.080866] write_proc_bitmap_shift: Value of write = 38
+[257644.831827] write_proc_unbounded: Value of write = 0
+[257644.831844] write_proc_2mb_limit: Value of write = 0
+[257644.831849] write_proc_bitmap_shift: Value of write = 38
+[257644.834226] write_proc_unbounded: Value of write = 0
+[257644.834243] write_proc_2mb_limit: Value of write = 0
+[257644.834248] write_proc_bitmap_shift: Value of write = 38
+[257644.834386] write_proc_unbounded: Value of write = 0
+[257644.834389] write_proc_2mb_limit: Value of write = 0
+[257644.835941] write_proc_unbounded: Value of write = 0
+[257644.835945] write_proc_2mb_limit: Value of write = 0
+[257644.835947] write_proc_bitmap_shift: Value of write = 38
+[257644.915027] sh (51144): drop_caches: 3
+[257646.634376] sh (51149): drop_caches: 3
+[257649.602635] write_proc_unbounded: Value of write = 0
+[257649.602651] write_proc_2mb_limit: Value of write = 0
+[257649.602657] write_proc_bitmap_shift: Value of write = 38
+[257649.604386] write_proc_unbounded: Value of write = 0
+[257649.604402] write_proc_2mb_limit: Value of write = 0
+[257649.604406] write_proc_bitmap_shift: Value of write = 38
+[257650.144098] sh (51157): drop_caches: 3
+[257660.577496] sh (51162): drop_caches: 3
+[257660.607033] write_proc_unbounded: Value of write = 0
+[257660.607049] write_proc_2mb_limit: Value of write = 0
+[257660.607055] write_proc_bitmap_shift: Value of write = 38
+[257660.683658] sh (51170): drop_caches: 3
+[257660.800020] sh (51175): drop_caches: 3
+[257660.832598] write_proc_unbounded: Value of write = 0
+[257660.832611] write_proc_2mb_limit: Value of write = 0
+[257660.832617] write_proc_bitmap_shift: Value of write = 38
+[257761.904632] write_proc_unbounded: Value of write = 0
+[257761.904654] write_proc_2mb_limit: Value of write = 0

@@ -155,8 +155,12 @@ set_rocks_ycsb_global_vars() {
 
 
 set_filebench_global_vars() {
-	filesworkarr=("filemicro_seqread.f" "randomread.f" "mongo.f" "fivestreamread.f")
-	fileproxyarr=("seqread"  "randread" "mongo" "streamread")
+
+	trials=("TRIAL1" "TRIAL2" "TRIAL3")
+
+	#filemicro_rread.f  filemicro_seqread.f  fileserver.f  fivestreamread.f  mongo.f  randomread.f  randomrw.f  videoserver.f
+	filesworkarr=("filemicro_seqread.f" "randomread.f" "mongo.f" "fivestreamread.f" "filemicro_rread.f" "videoserver.f" "fileserver.f")
+	fileproxyarr=("seqread"  "randread" "mongo" "streamread" "rread" "videoserve" "fileserve")
 	threadarr=("16")
 }
 
@@ -784,33 +788,45 @@ MOVEGRAPHS_SIMPLEBENCH() {
 }
 
 
+#APPPREFIX=""
+#APP='filebench'
+#TARGET="$OUTPUTDIR/$APP/workloads"
+#set_filebench_global_vars
+#apparr=("${filesworkarr[@]}")
+#proxyapparr=("${fileproxyarr[@]}")
+#let scalefactor=$SCALE_FILEBENCH_GRAPH
+#let APPINTERVAL=500
+#YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
+#XTITLE='Workloads'
+#EXTRACT_RESULT "filebench"
+#MOVEGRAPHS
 
 EXTRACT_PATTERN_FILEBENCH() {
 
-        set_rocks_global_vars
-
+	set_filebench_global_vars
 
 	for G_TRIAL in "${trials[@]}"
 	do
-		export APPPREFIX="20M-KEYS"
-		APP='ROCKSDB'
+		export APPPREFIX=""
+		APP='filebench'
 
 		TARGET=$OUTPUT_GRAPH_FOLDER
 		OUTPUTDIR=$TARGET-$G_TRIAL
 		echo $OUTPUTDIR
 
-		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		TARGET="$OUTPUTDIR/$APP/workloads"
 		OUTPUTDIR=$TARGET
 
-		XTITLE='Access Pattern'
+		YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
+		XTITLE='Workloads'
 
-		apparr=("${rocksworkarr[@]}")
-		proxyapparr=("${rocksworkproxyarr[@]}")
+		apparr=("${filesworkarr[@]}")
+		proxyapparr=("${fileproxyarr[@]}")
 
-		let scalefactor=$SCALE_ROCKSDB_GRAPH
-		let APPINTERVAL=1000
+		let scalefactor=$SCALE_FILEBENCH_GRAPH
+		let APPINTERVAL=500
 
-		EXTRACT_RESULT "ROCKSDB"
+		EXTRACT_RESULT "filebench"
 
 		#This generates older graphs
 		#for APPLICATION in "${apparr[@]}"
@@ -821,8 +837,6 @@ EXTRACT_PATTERN_FILEBENCH() {
 	done
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
 }
-
-
 
 
 EXTRACT_PATTERN_ROCKS() {
@@ -898,9 +912,9 @@ EXTRACT_THREADS_ROCKS() {
 		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
-
-EXTRACT_PATTERN_ROCKS
-EXTRACT_THREADS_ROCKS
+EXTRACT_PATTERN_FILEBENCH
+#EXTRACT_PATTERN_ROCKS
+#EXTRACT_THREADS_ROCKS
 exit
 
 

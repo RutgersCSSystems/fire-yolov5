@@ -1,0 +1,46 @@
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.002: Failed to open cvar directory around line 1
+0.002: Undefined custom variable cvar-gamma around line 29
+define cvar: failed for custom variable $filesize
+DESTRUCTOR GETTING CALLED 
+Command exited with non-zero status 1
+	Command being timed: "./filebench -f workloads/fileserver.f"
+	User time (seconds): 0.25
+	System time (seconds): 1.54
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.80
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3690392
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 921619
+	Minor (reclaiming a frame) page faults: 413
+	Voluntary context switches: 23
+	Involuntary context switches: 3
+	Swaps: 0
+	File system inputs: 2048
+	File system outputs: 7375008
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+DESTRUCTOR GETTING CALLED 
+[257322.304827] write_proc_unbounded: Value of write = 0
+[257322.304845] write_proc_2mb_limit: Value of write = 0
+[257322.304851] write_proc_bitmap_shift: Value of write = 38
+[257322.308435] write_proc_unbounded: Value of write = 0
+[257322.308450] write_proc_2mb_limit: Value of write = 0
+[257322.308455] write_proc_bitmap_shift: Value of write = 38
+[257324.044242] write_proc_unbounded: Value of write = 0
+[257324.044259] write_proc_2mb_limit: Value of write = 0
+[257324.109227] write_proc_unbounded: Value of write = 0
+[257324.109248] write_proc_2mb_limit: Value of write = 0

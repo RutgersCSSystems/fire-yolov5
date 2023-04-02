@@ -1,0 +1,151 @@
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+WARNING: Could not open /proc/sys/kernel/shmmax file!
+It means that you probably ran Filebench not as a root. Filebench will not increase shared
+region limits in this case, which can lead to the failures on certain workloads.
+Filebench Version 1.5-alpha3
+0.000: Allocated 14825MB of shared memory
+0.002: Failed to open cvar directory around line 1
+0.002: Video Server Version 3.0 personality successfully loaded
+0.002: Populating and pre-allocating filesets
+0.004: passivevids populated: 1000 files, avg. dir. width = 1, avg. dir. depth = inf, 0 leafdirs, 100000.000MB total size
+0.004: Removing passivevids tree (if exists)
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+0.009: Pre-allocating directories in passivevids tree
+Setting g_min_fd 3 
+1.830: Pre-allocating files in passivevids tree
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+28.316: activevids populated: 200 files, avg. dir. width = 1, avg. dir. depth = inf, 0 leafdirs, 20000.000MB total size
+28.316: Removing activevids tree (if exists)
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+28.322: Pre-allocating directories in activevids tree
+Setting g_min_fd 3 
+28.519: Pre-allocating files in activevids tree
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+39.608: Waiting for pre-allocation to finish (in case of a parallel pre-allocation)
+39.608: Population and pre-allocation of filesets completed
+Setting g_min_fd 3 
+FINISHED PREALLOCATION 
+39.811: Starting 1 vidreaders instances
+fork() 93
+39.812: Starting 1 vidwriter instances
+fork() 93
+Setting g_min_fd 3 
+Setting g_min_fd 3 
+Creating thread vidwriter, memory = 10485760 PID 125187
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+Creating thread vidreaders, memory = 104857600 PID 125186
+40.818: Running...
+100.820: Run took 60 seconds...
+100.820: Per-Operation Breakdown
+vidreader            11975503ops   199585ops/s 49771.8mb/s    0.062ms/op [0.001ms - 71.834ms]
+wrtclose             1490ops       25ops/s   0.0mb/s    0.007ms/op [0.002ms - 0.045ms]
+newvid               1490ops       25ops/s 2483.2mb/s   28.699ms/op [18.606ms - 48.897ms]
+wrtopen              1491ops       25ops/s   0.0mb/s    0.041ms/op [0.014ms - 0.454ms]
+vidremover           1491ops       25ops/s   0.0mb/s    3.168ms/op [0.024ms - 135.873ms]
+100.820: IO Summary: 11981465 ops 199684.231 ops/s 199585/25 rd/wr 52255.0mb/s 0.066ms/op
+100.820: Shutting down processes and raising singal
+Command terminated by signal 12
+	Command being timed: "./filebench -f workloads/videoserver.f"
+	User time (seconds): 0.37
+	System time (seconds): 46.96
+	Percent of CPU this job got: 46%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:42.61
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3694944
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 922268
+	Minor (reclaiming a frame) page faults: 32656
+	Voluntary context switches: 724311
+	Involuntary context switches: 863
+	Swaps: 0
+	File system inputs: 63088
+	File system outputs: 155331064
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+DESTRUCTOR GETTING CALLED 
+[253728.266435] write_proc_unbounded: Value of write = 0
+[253728.266450] write_proc_2mb_limit: Value of write = 0
+[253728.266455] write_proc_bitmap_shift: Value of write = 34
+[253728.269843] write_proc_unbounded: Value of write = 0
+[253728.269857] write_proc_2mb_limit: Value of write = 0
+[253728.269861] write_proc_bitmap_shift: Value of write = 34
+[253730.012541] write_proc_unbounded: Value of write = 0
+[253730.012556] write_proc_2mb_limit: Value of write = 0
+[253730.012561] write_proc_bitmap_shift: Value of write = 34
+[253730.014654] write_proc_unbounded: Value of write = 0
+[253730.014669] write_proc_2mb_limit: Value of write = 0
+[253730.014673] write_proc_bitmap_shift: Value of write = 34
+[253730.014815] write_proc_unbounded: Value of write = 0
+[253730.014818] write_proc_2mb_limit: Value of write = 0
+[253730.016535] write_proc_unbounded: Value of write = 0
+[253730.016539] write_proc_2mb_limit: Value of write = 0
+[253730.016542] write_proc_bitmap_shift: Value of write = 34
+[253730.088246] sh (124385): drop_caches: 3
+[253731.800053] sh (124392): drop_caches: 3
+[253734.392930] write_proc_unbounded: Value of write = 0
+[253734.392941] write_proc_2mb_limit: Value of write = 0
+[253734.392945] write_proc_bitmap_shift: Value of write = 34
+[253734.394640] write_proc_unbounded: Value of write = 0
+[253734.394650] write_proc_2mb_limit: Value of write = 0
+[253734.394654] write_proc_bitmap_shift: Value of write = 34
+[253735.754201] sh (124921): drop_caches: 3
+[253758.289112] sh (124932): drop_caches: 3
+[253758.325807] write_proc_unbounded: Value of write = 0
+[253758.325822] write_proc_2mb_limit: Value of write = 0
+[253758.325827] write_proc_bitmap_shift: Value of write = 34
+[253758.328090] write_proc_unbounded: Value of write = 0
+[253758.328105] write_proc_2mb_limit: Value of write = 0
+[253758.328110] write_proc_bitmap_shift: Value of write = 34
+[253758.328258] write_proc_unbounded: Value of write = 0
+[253758.328261] write_proc_2mb_limit: Value of write = 0
+[253758.330702] write_proc_unbounded: Value of write = 0
+[253758.330718] write_proc_2mb_limit: Value of write = 0
+[253758.330722] write_proc_bitmap_shift: Value of write = 34
+[253758.398831] sh (124942): drop_caches: 3
+[253758.503648] sh (124947): drop_caches: 3
+[253758.792289] write_proc_unbounded: Value of write = 0
+[253758.792306] write_proc_2mb_limit: Value of write = 0
+[253758.792311] write_proc_bitmap_shift: Value of write = 34
+[253758.794705] write_proc_unbounded: Value of write = 0
+[253758.794714] write_proc_2mb_limit: Value of write = 0
+[253758.794719] write_proc_bitmap_shift: Value of write = 34
+[253759.379049] sh (125154): drop_caches: 3
+[253769.584478] sh (125166): drop_caches: 3
+[253769.617808] write_proc_unbounded: Value of write = 0
+[253769.617823] write_proc_2mb_limit: Value of write = 0
+[253769.617829] write_proc_bitmap_shift: Value of write = 34
+[253769.693665] sh (125176): drop_caches: 3
+[253769.796150] sh (125181): drop_caches: 3
+[253769.821855] write_proc_unbounded: Value of write = 0
+[253769.821863] write_proc_unbounded: Value of write = 0
+[253769.821868] write_proc_2mb_limit: Value of write = 0
+[253769.821874] write_proc_bitmap_shift: Value of write = 34
+[253769.821874] write_proc_2mb_limit: Value of write = 0
+[253769.821881] write_proc_bitmap_shift: Value of write = 34
+[253830.882446] write_proc_unbounded: Value of write = 0
+[253830.882460] write_proc_2mb_limit: Value of write = 0
