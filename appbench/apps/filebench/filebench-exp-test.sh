@@ -51,7 +51,7 @@ ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("6")
 #declare -a config_arr=( "CIPI")
 
-declare -a trials=("TRIAL2" "TRIAL3")
+declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 G_TRIAL="TRIAL1"
 
 mkdir DATA
@@ -194,6 +194,8 @@ RUN() {
 
 						#echo "BEGINNING TO WARM UP ......."
 						CLEAN_AND_WRITE
+						CLEAR_DATA
+
 						#echo "FINISHING WARM UP ......."
 						echo "..................................................."
 						echo "RUNNING $CONFIG...................................."
@@ -203,7 +205,6 @@ RUN() {
 						export LD_PRELOAD=""
 						sudo dmesg -c &>> $RESULTFILE
 						echo ".......FINISHING $CONFIG......................"
-						#CLEAR_DATA
 					done
 				done
 			done
