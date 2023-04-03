@@ -837,7 +837,6 @@ EXTRACT_PATTERN_FILEBENCH() {
 		#do
 		GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
 		#done
-		#MOVEGRAPHS
 	done
 
 	export accesspattern=${fileproxyarr[0]}
@@ -846,6 +845,8 @@ EXTRACT_PATTERN_FILEBENCH() {
         done
 
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+
+	MOVEGRAPHS
 
 	#echo "************"
 	#printf '%s\n' "${accesspattern[@]}"
