@@ -159,8 +159,12 @@ set_filebench_global_vars() {
 	trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 	#filemicro_rread.f  filemicro_seqread.f  fileserver.f  fivestreamread.f  mongo.f  randomread.f  randomrw.f  videoserver.f
-	filesworkarr=("filemicro_seqread.f" "randomread.f" "mongo.f" "fivestreamread.f" "filemicro_rread.f" "videoserver.f" "fileserver.f")
-	fileproxyarr=("seqread"  "randread" "mongo" "streamread" "rread" "videoserve" "fileserve")
+	filesworkarr=("filemicro_seqread.f" "randomread.f" "mongo.f" "fivestreamread.f" "filemicro_rread.f" "videoserver.f")
+	fileproxyarr=("seqread"  "randread" "mongo" "streamread" "rread" "videoserve")
+
+	techarr=("Vanilla" "OSonly" "CIP" "CIPI")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]")
+
 	threadarr=("16")
 }
 
@@ -835,7 +839,17 @@ EXTRACT_PATTERN_FILEBENCH() {
 		#done
 		#MOVEGRAPHS
 	done
+
+	export accesspattern=${fileproxyarr[0]}
+        for i in "${fileproxyarr[@]:1}"; do
+           accesspattern+=",$i"
+        done
+
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+
+	#echo "************"
+	#printf '%s\n' "${accesspattern[@]}"
+	#echo "************"
 }
 
 

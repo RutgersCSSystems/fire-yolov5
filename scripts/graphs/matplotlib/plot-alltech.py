@@ -7,23 +7,40 @@ trial_files = ['ROCKSDB-THREADS-16-trial4.DATA', 'ROCKSDB-THREADS-16-trial2.DATA
 
 # Define the names of the readers and techniques
 readers = ['rseq', 'rrev', 'rscan', 'multirrand', 'rrand']
+accesspattern=['rseq', 'rrev', 'rscan', 'multirrand', 'rrand']
+
 #readers = ['1', '4', '8', '16', '32']
 
 techniques = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
 techniques_text = ['Vanilla', 'OSonly', 'CIP', 'CIPI', 'CII']
 
 # Create an empty dictionary to hold the mean values and standard deviations for each technique and reader
-data = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
+#data = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
+ylegend  = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
 
 outputfile="testfile.pdf"
 
 # We can override the global variables with environment variables set somewhere lese
 def get_legends():
+
     global legends
     global legendtext
     global trialarr
     global clusterlen
     global outputfile
+    global ylegend
+    global accesspattern
+
+    if(str(os.getenv('accesspattern')) != 'None'):
+        accesspattern=os.getenv('accesspattern').split(',')
+        print "******************"
+        print accesspattern;
+        print "******************"
+        reader = accesspattern
+        print "******************"
+        print accesspattern;
+        print "******************"
+        exit()
 
     #print str(os.getenv('legendlist'))
     if(str(os.getenv('legendlist')) != 'None'):
@@ -33,6 +50,9 @@ def get_legends():
         print "******************"
         clusterlen=len(legends)
         techniques=legends
+
+        ylegend = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
+        print ylegend
 
     if(str(os.getenv('legendnamelist')) != 'None'):
         legendtext=os.getenv('legendnamelist').split(',') 
@@ -64,6 +84,10 @@ trial_files=trialarr
 #print "************"
 outfile=outputfile
 #print outputfile
+readers=accesspattern
+
+data=ylegend
+
 #exit();
 
 # Read the data from each trial file
