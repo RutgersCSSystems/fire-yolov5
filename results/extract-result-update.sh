@@ -446,6 +446,7 @@ PLOT_MATPLOT_GRAPHS() {
 	SUFFIX="pattern-Sensitivity"
 	OUTFILE=$OUTPUTDIR/$APPNAME"-$SUFFIX.DATA"
 
+	echo "OUTFILE " $OUTFILE
 	GENERATE_LEGEND_LIST
 	GENERATE_TRIAL_LIST
 
@@ -737,10 +738,14 @@ EXTRACT_RESULT_MEMSENSITIVE()  {
 UPDATE_PAPER() {
 
 	INPUTPATH=$1
+
+	echo "Updating Paper"
+	echo "*****************"
 	mkdir -p $PAPERGRAPHS/$MACHINE_NAME
 	cp -r $INPUTPATH $PAPERGRAPHS/$MACHINE_NAME
 	cd $PAPERGRAPHS/$MACHINE_NAME
 	echo $PAPERGRAPHS/$MACHINE_NAME
+	echo "*****************"
 
 	git add $PAPERGRAPHS
 	git add $PAPERGRAPHS/*
@@ -752,17 +757,16 @@ UPDATE_PAPER() {
 MOVEGRAPHS() {
 
 	GRAPHDATA="graphs/$APP$APPPREFIX"
-	GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX"
+	#GRAPHLOCALDATA="graphs/local/$APP$APPPREFIX"
 
 	#echo $GRAPHLOCALDATA
 	mkdir -p $GRAPHDATA
-	mkdir -p $GRAPHLOCALDATA
+	#mkdir -p $GRAPHLOCALDATA
 
 	cp *.pdf $GRAPHDATA/
-	cp *.pdf $GRAPHLOCALDATA/
+	#cp *.pdf $GRAPHLOCALDATA/
 
 	echo "*********"$GRAPHDATA
-	echo "*********"$GRAPHLOCALDATA
 	UPDATE_PAPER $GRAPHDATA
 }
 
@@ -844,7 +848,9 @@ EXTRACT_PATTERN_FILEBENCH() {
            accesspattern+=",$i"
         done
 
+	echo "$APPLICATION $APP $appval"
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+	exit
 
 	MOVEGRAPHS
 

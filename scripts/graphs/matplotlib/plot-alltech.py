@@ -32,15 +32,9 @@ def get_legends():
     global accesspattern
 
     if(str(os.getenv('accesspattern')) != 'None'):
+        print "*****************"
         accesspattern=os.getenv('accesspattern').split(',')
-        print "******************"
-        print accesspattern;
-        print "******************"
-        reader = accesspattern
-        print "******************"
-        print accesspattern;
-        print "******************"
-        exit()
+        print "*****************"
 
     #print str(os.getenv('legendlist'))
     if(str(os.getenv('legendlist')) != 'None'):
@@ -51,8 +45,6 @@ def get_legends():
         clusterlen=len(legends)
         techniques=legends
 
-        ylegend = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
-        print ylegend
 
     if(str(os.getenv('legendnamelist')) != 'None'):
         legendtext=os.getenv('legendnamelist').split(',') 
@@ -85,6 +77,9 @@ trial_files=trialarr
 outfile=outputfile
 #print outputfile
 readers=accesspattern
+
+ylegend = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
+print ylegend
 
 data=ylegend
 
