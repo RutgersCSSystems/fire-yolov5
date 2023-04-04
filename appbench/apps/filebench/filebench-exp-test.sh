@@ -28,13 +28,12 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
 
-declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
-declare -a config_arr=("CII")
+declare -a config_arr=("CIP" "Vanilla" "CIPI" "OSonly")
+#declare -a config_arr=("CII")
 
 #declare -a workload_arr=( "randomrw.f" "randomread.f")
-
-
 #declare -a config_arr=("CIPI")
+
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
