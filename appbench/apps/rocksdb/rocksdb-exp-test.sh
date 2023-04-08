@@ -58,20 +58,29 @@ declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning
 #declare -a workload_arr=("multireadrandom")
 
 declare -a membudget=("6" "4" "2" "8")
-declare -a membudget=("8")
+declare -a membudget=("4")
+
 USEDB=1
 MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=1
 
-ENABLE_MEM_SENSITIVE=0
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #declare -a config_arr=("Vanilla" "OSonly" "CII_sync" "CIP_sync" "CPBI_sync" "Cross_Info_sync" "CII" "CIP" "CPBI")
 declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-#declare -a config_arr=("CIP"  "CIPI" "CPBI")
-#declare -a config_arr=("Vanilla" "OSonly" "CII")
+
+declare -a config_arr=("Vanilla" "OSonly" "CPBI")
 
 declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+
+
+declare -a membudget=("4")
+declare -a trials=("TRIAL1")
+declare -a config_arr=("Vanilla" "OSonly" "CPBI")
+declare -a workload_arr=("readrandom" "readseq")
+
+
 G_TRIAL="TRIAL1"
 
 #Require for large database
@@ -227,7 +236,7 @@ GETMEMORYBUDGET() {
 
 
 
-#COMPILE_AND_WRITE
+COMPILE_AND_WRITE
 COMPILE
 
 for G_TRIAL in "${trials[@]}"
