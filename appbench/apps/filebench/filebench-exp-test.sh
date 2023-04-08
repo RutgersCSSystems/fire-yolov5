@@ -27,8 +27,13 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 mkdir -p $RESULTS
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
-declare -a config_arr=("CIP" "CII" "Vanilla"  "Cross_Info" "CIPI" "OSonly")
+
+declare -a config_arr=("CIP" "Vanilla" "CIPI" "OSonly")
+#declare -a config_arr=("CII")
+
+#declare -a workload_arr=( "randomrw.f" "randomread.f")
 #declare -a config_arr=("CIPI")
+
 declare -a thread_arr=("16")
 
 workload_arr_in=$1
@@ -45,7 +50,6 @@ declare -a prefech_sz_arr=("1024")
 declare -a prefech_thrd_arr=("8")
 
 
-#declare -a workload_arr=("mongo.f")
 MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("6")
