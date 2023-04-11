@@ -79,7 +79,7 @@ outfile=outputfile
 readers=accesspattern
 
 ylegend = {technique: {reader: {'mean': [], 'std': []} for reader in readers} for technique in techniques}
-print ylegend
+print(ylegend)
 
 data=ylegend
 
@@ -90,7 +90,7 @@ for trial_file in trial_files:
 
     with open(trial_file, 'r') as f:
 
-        print trial_file
+        print(trial_file)
         for line in f:
             if line.startswith('reader'):
                 headers = line.strip().split()[1:]
