@@ -849,10 +849,10 @@ EXTRACT_PATTERN_SIMPLEBENCH() {
 		#done
 	done
 
-	#export accesspattern=${fileproxyarr[0]}
-        #for i in "${fileproxyarr[@]:1}"; do
-         #  accesspattern+=",$i"
-        #done
+	export accesspattern=${simplebenchproxyarr[0]}
+        for i in "${simplebenchproxyarr[@]:1}"; do
+           accesspattern+=",$i"
+        done
 	#echo "$APPLICATION $APP $appval"
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
 	#MOVEGRAPHS
