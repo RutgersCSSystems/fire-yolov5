@@ -40,7 +40,7 @@ def get_legends():
     if(str(os.getenv('legendlist')) != 'None'):
         legends=os.getenv('legendlist').split(',')
         print( "******************")
-        print legends;
+        print(legends);
         print("******************")
         clusterlen=len(legends)
         techniques=legends
