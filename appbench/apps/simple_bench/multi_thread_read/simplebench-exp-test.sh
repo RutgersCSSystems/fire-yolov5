@@ -28,16 +28,18 @@ declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simpl
 
 
 
-declare -a nproc=("16")
+declare -a nproc=("32")
 declare -a readsize_arr=("4" "128")
 declare -a readsize_arr=("4")
 declare -a workload_arr=("read_pvt_rand" "read_shared_rand" "read_shared_seq" "read_pvt_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 
-declare -a workload_arr=("read_shared_seq") ##read binaries
+#declare -a workload_arr=("read_shared_seq") ##read binaries
+declare -a workload_arr=("read_pvt_rand") 
 
 #declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-#declare -a config_arr=("OSonly")
+declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
+#declare -a config_arr=("CIPI_sync")
 
 
 STATS=0 #0 for perf runs and 1 for stats
@@ -45,6 +47,17 @@ NR_STRIDE=64 ##In pages, only relevant for strided
 FILESIZE=80 ##GB
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+
+G_TRIAL="TRIAL1"
+
+#Require for large database
+ulimit -n 1000000
+declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+declare -a membudget=("4")
+
+USEDB=0
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
 
 #Compiles the application
 COMPILE_APP() {
@@ -105,14 +118,13 @@ GEN_RESULT_PATH() {
         THREAD=$3
 	READSIZE=$4
         if [ "$STATS" -eq "1" ]; then
-                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}_STATS/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
+                RESULTS=$OUTPUTDIR"-"$G_TRIAL/${APPOUTPUTNAME}_STATS/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
         else
-                RESULTS=$OUTPUTDIR/${APPOUTPUTNAME}/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
+                RESULTS=$OUTPUTDIR"-"$G_TRIAL/${APPOUTPUTNAME}/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
         fi
         mkdir -p $RESULTS
         RESULTFILE=$RESULTS/$CONFIG.out
 }
-
 
 RUN() {
         echo "STARTING to RUN"
@@ -133,7 +145,7 @@ RUN() {
 				./compile.sh
 
 					#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
-					CLEAN_AND_WRITE $WORKLOAD $FILESIZE
+					#CLEAN_AND_WRITE $WORKLOAD $FILESIZE
 
 					for CONFIG in "${config_arr[@]}"
 					do
@@ -167,4 +179,45 @@ RUN() {
 		done
 }
 
-RUN
+
+GETMEMORYBUDGET() {
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        $SCRIPTS/mount/umount_ext4ramdisk.sh
+        sudo rm -rf  /mnt/ext4ramdisk/*
+        sudo rm -rf  /mnt/ext4ramdisk/
+
+        let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+
+        echo "MEMORY $1"
+        let FRACTION=$1
+        let NUMANODE0=$(($NUMAFREE0/$FRACTION))
+        let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+
+
+        let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
+        let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+
+        echo "***NODE 0: "$DISKSZ0"****NODE 1: "$DISKSZ1
+        $SCRIPTS/mount/releasemem.sh "NODE0"
+        $SCRIPTS/mount/releasemem.sh "NODE1"
+
+        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+}
+
+for G_TRIAL in "${trials[@]}"
+do
+        if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+        then
+                for MEM_REDUCE_FRAC in "${membudget[@]}"
+                do
+                        GETMEMORYBUDGET $MEM_REDUCE_FRAC
+                        RUN
+                        $SCRIPTS/mount/releasemem.sh "NODE0"
+                        $SCRIPTS/mount/releasemem.sh "NODE1"
+                done
+        else
+                RUN
+        fi
+done

@@ -58,10 +58,10 @@ declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning
 #declare -a workload_arr=("multireadrandom")
 
 declare -a membudget=("6" "4" "2" "8")
-declare -a membudget=("4")
+declare -a membudget=("6")
 
 USEDB=1
-MEM_REDUCE_FRAC=0
+MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=1
 
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
@@ -78,7 +78,8 @@ declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 declare -a membudget=("4")
 declare -a trials=("TRIAL1")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a workload_arr=("readrandom" "readseq")
+declare -a config_arr=("CPBI")
+declare -a workload_arr=("readrandom")
 
 
 G_TRIAL="TRIAL1"
@@ -236,7 +237,7 @@ GETMEMORYBUDGET() {
 
 
 
-COMPILE_AND_WRITE
+#COMPILE_AND_WRITE
 COMPILE
 
 for G_TRIAL in "${trials[@]}"

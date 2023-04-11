@@ -190,14 +190,19 @@ set_simplebench_read_size_sensitivity_global_vars() {
 	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_seq-READSIZE-128" "read_pvt_rand-READSIZE-4" "read_pvt_rand-READSIZE-128" "read_shared_seq-READSIZE-4" "read_shared_seq-READSIZE-128" "read_shared_rand-READSIZE-4" "read_shared_rand-READSIZE-128")
 	simplebenchproxyarr=("privseq-4" "privseq-128" "privrand-4" "privrand-128" "shareseq-4" "shareseq-128" "sharerand-4" "sharerand-128")
 
-	#simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4"  "read_shared_seq-READSIZE-4" "read_shared_rand-READSIZE-4" "read_pvt_seq-READSIZE-32" "read_pvt_rand-READSIZE-32" "read_shared_seq-READSIZE-32" "read_shared_rand-READSIZE-32")
-	#simplebenchproxyarr=("privseq-4" "privrand-4"  "shareseq-4" "sharerand-4" "privseq-32" "privrand-32" "shareseq-32" "sharerand-32")
-
 	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4" "read_shared_seq-READSIZE-4"  "read_shared_rand-READSIZE-4") 
 	simplebenchproxyarr=("private-seq" "private-rand" "shared-seq" "shared-rand")
 
-	threadarr=("16")
+	simplebenchworkarr=("read_pvt_rand-READSIZE-4") 
+	simplebenchproxyarr=("private-rand")
+	threadarr=("32")
+
+
+	techarr=("Vanilla" "OSonly" "CIP_sync" "CIPI_sync" "CII_sync")
+	techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
+
 }
+
 
 
 
@@ -517,7 +522,7 @@ GENERATE_GRAPH_MULTIAPPS() {
         mkdir -p $OUTPUT_GRAPH_FOLDER/$APP
 
 	DESTFILE=$TMPDATAF/$APP"-PATTERN-"$G_TRIAL".DATA"
-
+	echo $DESTFILE
 
 	VAR=""
 	for TECH in "${techarr[@]}"
@@ -795,19 +800,71 @@ MOVEGRAPHS_SIMPLEBENCH() {
 	UPDATE_PAPER $OUTPUT
 }
 
+#APP='SIMPLEBENCH'
+#TARGET="$OUTPUTDIR/SIMPLEBENCH"
+#export APPPREFIX="-READSIZE-EXP"
+#set_simplebench_read_size_sensitivity_global_vars
+#let APPINTERVAL=2000
+#YTITLE='Throughput (MB/sec) in $SCALE_SIMPLEBENCH_GRAPHx'
+#XTITLE="Sequential and Random Access Patterns and Access Sizes in Pages"
+#echo $TARGET
+#apparr=("${simplebenchworkarr[@]}")
+#proxyapparr=("${simplebenchproxyarr[@]}")
+#EXTRACT_RESULT "SIMPLEBENCH"
+#MOVEGRAPHS_SIMPLEBENCH
+#exit
 
-#APPPREFIX=""
-#APP='filebench'
-#TARGET="$OUTPUTDIR/$APP/workloads"
-#set_filebench_global_vars
-#apparr=("${filesworkarr[@]}")
-#proxyapparr=("${fileproxyarr[@]}")
-#let scalefactor=$SCALE_FILEBENCH_GRAPH
-#let APPINTERVAL=500
-#YTITLE='Throughput (OPS/sec) in '$SCALE_FILEBENCH_GRAPH'x'
-#XTITLE='Workloads'
-#EXTRACT_RESULT "filebench"
-#MOVEGRAPHS
+EXTRACT_PATTERN_SIMPLEBENCH() {
+
+	set_simplebench_read_size_sensitivity_global_vars
+
+	for G_TRIAL in "${trials[@]}"
+	do
+		export APPPREFIX="-READSIZE-EXP"
+		APP='SIMPLEBENCH'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+                OUTPUTDIR=$TARGET-$G_TRIAL
+                echo $OUTPUTDIR
+
+		TARGET="$OUTPUTDIR/SIMPLEBENCH"
+                OUTPUTDIR=$TARGET
+		echo $OUTPUTDIR
+
+		YTITLE='Throughput (MB/sec) in $SCALE_SIMPLEBENCH_GRAPHx'
+		XTITLE="Sequential and Random Access Patterns and Access Sizes in Pages"
+
+		apparr=("${simplebenchworkarr[@]}")
+		proxyapparr=("${simplebenchproxyarr[@]}")
+
+		let scalefactor=$SCALE_SIMPLEBENCH_GRAPH
+		let APPINTERVAL=2000
+
+		EXTRACT_RESULT "SIMPLEBENCH"
+
+		#This generates older graphs
+		#for APPLICATION in "${apparr[@]}"
+		#do
+		GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+		#done
+	done
+
+	#export accesspattern=${fileproxyarr[0]}
+        #for i in "${fileproxyarr[@]:1}"; do
+         #  accesspattern+=",$i"
+        #done
+	#echo "$APPLICATION $APP $appval"
+	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+	#MOVEGRAPHS
+
+	#echo "************"
+	#printf '%s\n' "${accesspattern[@]}"
+	#echo "************"
+}
+
+
+
+
 
 EXTRACT_PATTERN_FILEBENCH() {
 
@@ -933,7 +990,8 @@ EXTRACT_THREADS_ROCKS() {
 		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
-EXTRACT_PATTERN_FILEBENCH
+EXTRACT_PATTERN_SIMPLEBENCH
+#EXTRACT_PATTERN_FILEBENCH
 #EXTRACT_PATTERN_ROCKS
 #EXTRACT_THREADS_ROCKS
 exit
