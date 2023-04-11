@@ -459,7 +459,7 @@ PLOT_MATPLOT_GRAPHS() {
 	echo $graphoutput
 
 	echo "python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB  $OUTFILE  $OUTPUTDIR/$APP-$SUFFIX"
-	python $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
+	python3 $SCRIPTS/graphs/matplotlib/$GRAPHMATPLOTLIB $OUTFILE  $OUTPUTDIR/$APP"-$workload-$SUFFIX"
 
 	echo "********$OUTPUT_GRAPH_FOLDER*******"
 	UPDATE_PAPER $OUTPUT_GRAPH_FOLDER
