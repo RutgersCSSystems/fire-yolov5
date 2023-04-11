@@ -32,16 +32,16 @@ def get_legends():
     global accesspattern
 
     if(str(os.getenv('accesspattern')) != 'None'):
-        print "*****************"
+        print("*****************")
         accesspattern=os.getenv('accesspattern').split(',')
-        print "*****************"
+        print("*****************")
 
     #print str(os.getenv('legendlist'))
     if(str(os.getenv('legendlist')) != 'None'):
         legends=os.getenv('legendlist').split(',')
-        print "******************"
+        print( "******************")
         print legends;
-        print "******************"
+        print("******************")
         clusterlen=len(legends)
         techniques=legends
 
