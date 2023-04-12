@@ -193,8 +193,8 @@ set_simplebench_read_size_sensitivity_global_vars() {
 	simplebenchworkarr=("read_pvt_seq-READSIZE-4" "read_pvt_rand-READSIZE-4" "read_shared_seq-READSIZE-4"  "read_shared_rand-READSIZE-4") 
 	simplebenchproxyarr=("private-seq" "private-rand" "shared-seq" "shared-rand")
 
-	simplebenchworkarr=("read_pvt_rand-READSIZE-4") 
-	simplebenchproxyarr=("private-rand")
+	simplebenchworkarr=("read_pvt_rand-READSIZE-4" "read_pvt_seq-READSIZE-4") 
+	simplebenchproxyarr=("private-rand" "private-seq")
 	threadarr=("32")
 
 

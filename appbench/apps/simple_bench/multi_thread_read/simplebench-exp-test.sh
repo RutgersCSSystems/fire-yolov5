@@ -35,7 +35,7 @@ declare -a workload_arr=("read_pvt_rand" "read_shared_rand" "read_shared_seq" "r
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 
 #declare -a workload_arr=("read_shared_seq") ##read binaries
-declare -a workload_arr=("read_pvt_rand") 
+declare -a workload_arr=( "read_shared_rand" "read_shared_seq" "read_pvt_seq") 
 
 #declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
