@@ -323,6 +323,10 @@ PULL_RESULT() {
                         val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
                         scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 
+		elif [ "$APP" = 'ROCKSDB-REMOTE' ];
+		then
+                        val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
+                        scaled_value=$(echo $val $SCALE_ROCKSDB_GRAPH | awk '{printf "%4.0f\n",$1/$2}')
 		elif [ "$APP" = 'YCSB-ROCKSDB' ];
 		then
                         val=`cat $APPFILE | grep "ops/sec" | awk 'BEGIN {SUM=0}; {SUM=SUM+$5}; END {print SUM}'`
@@ -957,6 +961,47 @@ EXTRACT_PATTERN_ROCKS() {
 }
 
 
+EXTRACT_PATTERN_ROCKS_REMOTE() {
+
+        set_rocks_global_vars
+
+
+	for G_TRIAL in "${trials[@]}"
+	do
+		export APPPREFIX="20M-KEYS"
+		APP='ROCKSDB-REMOTE'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+		echo $OUTPUTDIR
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='Access Pattern'
+
+		apparr=("${rocksworkarr[@]}")
+		proxyapparr=("${rocksworkproxyarr[@]}")
+
+		let scalefactor=$SCALE_ROCKSDB_GRAPH
+		let APPINTERVAL=1000
+
+		EXTRACT_RESULT "ROCKSDB"
+
+		#This generates older graphs
+		#for APPLICATION in "${apparr[@]}"
+		#do
+		GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+		#done
+		#MOVEGRAPHS
+	done
+	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+}
+
+
+
+
+
 
 
 EXTRACT_THREADS_ROCKS_REMOTE() {
@@ -1032,7 +1077,8 @@ EXTRACT_THREADS_ROCKS() {
 #EXTRACT_PATTERN_FILEBENCH
 #EXTRACT_PATTERN_ROCKS
 #EXTRACT_THREADS_ROCKS
-EXTRACT_THREADS_ROCKS_REMOTE
+EXTRACT_PATTERN_ROCKS_REMOTE
+#EXTRACT_THREADS_ROCKS_REMOTE
 
 exit
 

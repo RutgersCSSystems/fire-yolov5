@@ -28,7 +28,7 @@ def get_legends():
     #print str(os.getenv('legendlist'))
     if(str(os.getenv('legendlist')) != 'None'):
         legends=os.getenv('legendlist').split(',')
-        print legends;
+        print(legends);
         clusterlen=len(legends)
         techniques=legends
 
@@ -69,7 +69,7 @@ for trial_file in trial_files:
 
     with open(trial_file, 'r') as f:
 
-        print trial_file
+        print(trial_file)
         for line in f:
             if line.startswith('reader'):
                 headers = line.strip().split()[1:]
