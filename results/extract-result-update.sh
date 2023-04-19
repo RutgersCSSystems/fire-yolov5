@@ -959,6 +959,42 @@ EXTRACT_PATTERN_ROCKS() {
 
 
 
+EXTRACT_THREADS_ROCKS_REMOTE() {
+
+	set_rocks_thread_impact_global_vars
+
+	for G_TRIAL in "${trials[@]}"
+	do
+		export APPPREFIX="20M-KEYS"
+		APP='ROCKSDB-REMOTE'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='#. of threads'
+		set_rocks_thread_impact_global_vars
+
+		apparr=("${rocksworkarr[@]}")
+		proxyapparr=("${rocksworkproxyarr[@]}")
+
+		let scalefactor=$SCALE_ROCKSDB_GRAPH
+		let APPINTERVAL=1000
+
+		EXTRACT_RESULT_THREADS "ROCKSDB"
+
+		#This generates older graphs
+		for APPLICATION in "${apparr[@]}"
+		do
+			GEN_GRAPH_DATA_THREADS $APPLICATION $APP $appval
+		done
+	done
+		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
+}
+
+
 EXTRACT_THREADS_ROCKS() {
 
 	for G_TRIAL in "${trials[@]}"
@@ -994,8 +1030,10 @@ EXTRACT_THREADS_ROCKS() {
 
 #EXTRACT_PATTERN_SIMPLEBENCH
 #EXTRACT_PATTERN_FILEBENCH
-EXTRACT_PATTERN_ROCKS
+#EXTRACT_PATTERN_ROCKS
 #EXTRACT_THREADS_ROCKS
+EXTRACT_THREADS_ROCKS_REMOTE
+
 exit
 
 
