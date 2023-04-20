@@ -149,7 +149,11 @@ set_snappy_memimpact_impact_global_vars() {
 set_rocks_ycsb_global_vars() {
 	rocksycsbarr=("ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
 	rocksycsbproxyarr=("work-b" "work-c" "work-d" "work-e")
-	threadarr=("16")
+	threadarr=("4")
+	trials=("TRIAL1")
+
+	techarr=("Vanilla" "OSonly" "CIP" "CIPI" "CII")
+        techarrname=("APPonly" "OSonly" "Cross[+predict]" "Cross[+predict+opt]" "Cross[+fetchall+opt]")
 }
 
 
@@ -960,6 +964,62 @@ EXTRACT_PATTERN_ROCKS() {
 	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
 }
 
+#export APPPREFIX="20M-KEYS"
+#APP='YCSB-ROCKSDB'
+#TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+#set the arrays
+#set_rocks_ycsb_global_vars
+#apparr=("${rocksycsbarr[@]}")
+#proxyapparr=("${rocksycsbproxyarr[@]}")
+#let scalefactor=$SCALE_YCSB_GRAPH
+#let APPINTERVAL=100
+#YTITLE='Throughput (OPS/sec) in '$SCALE_YCSB_GRAPH'x'
+#echo $TARGET
+#XTITLE='Workloads'
+#EXTRACT_RESULT "YCSB-ROCKSDB"
+#MOVEGRAPHS
+#exit
+
+EXTRACT_PATTERN_ROCKS_YCSB() {
+
+        set_rocks_ycsb_global_vars
+
+	for G_TRIAL in "${trials[@]}"
+	do
+		export APPPREFIX="20M-KEYS"
+		APP='YCSB-ROCKSDB'
+
+		TARGET=$OUTPUT_GRAPH_FOLDER
+		OUTPUTDIR=$TARGET-$G_TRIAL
+		echo $OUTPUTDIR
+
+		TARGET="$OUTPUTDIR/$APP/$APPPREFIX"
+		OUTPUTDIR=$TARGET
+
+		XTITLE='Access Pattern'
+
+		apparr=("${rocksycsbarr[@]}")
+		proxyapparr=("${rocksycsbproxyarr[@]}")
+
+		let scalefactor=$SCALE_YCSB_GRAPH
+		let APPINTERVAL=100
+
+		EXTRACT_RESULT "YCSB-ROCKSDB"
+
+		#This generates older graphs
+		#for APPLICATION in "${apparr[@]}"
+		#do
+		GENERATE_GRAPH_MULTIAPPS $APPLICATION $APP $appval $THREAD
+		#done
+		#MOVEGRAPHS
+	done
+	PLOT_MATPLOT_GRAPHS $APPLICATION $APP $appval
+}
+
+
+
+
+
 
 EXTRACT_PATTERN_ROCKS_REMOTE() {
 
@@ -1073,9 +1133,10 @@ EXTRACT_THREADS_ROCKS() {
 		PLOT_MATPLOT_THREADS $APPLICATION $APP $appval
 }
 
+EXTRACT_PATTERN_ROCKS_YCSB
 #EXTRACT_PATTERN_SIMPLEBENCH
 #EXTRACT_PATTERN_FILEBENCH
-EXTRACT_PATTERN_ROCKS
+#EXTRACT_PATTERN_ROCKS
 #EXTRACT_THREADS_ROCKS
 #EXTRACT_PATTERN_ROCKS_REMOTE
 #EXTRACT_THREADS_ROCKS_REMOTE
