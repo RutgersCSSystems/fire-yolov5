@@ -147,8 +147,8 @@ set_snappy_memimpact_impact_global_vars() {
 
 
 set_rocks_ycsb_global_vars() {
-	rocksycsbarr=("ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
-	rocksycsbproxyarr=("work-b" "work-c" "work-d" "work-e")
+	rocksycsbarr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde")
+	rocksycsbproxyarr=("work-a" "work-b" "work-c" "work-d" "work-e")
 	threadarr=("4")
 	trials=("TRIAL1")
 
