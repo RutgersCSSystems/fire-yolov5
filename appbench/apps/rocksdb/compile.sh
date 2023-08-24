@@ -9,5 +9,5 @@ sudo apt-get install -y libgflags2.2 libgflags-dev libsnappy-dev zlib1g-dev libb
 #rocksdb_clean
 
 echo "compiling rocksdb"
-make clean
+#make clean
 DEBUG_LEVEL=0 CFLAGS=-Wno-error make db_bench -j$(nproc)

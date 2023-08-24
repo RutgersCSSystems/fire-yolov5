@@ -299,7 +299,6 @@ void con(){
 	link_shim_functions();
 
 #ifdef THPOOL_PREFETCH
-
 	workerpool = thpool_init(NR_WORKERS);
 	if(!workerpool){
 		printf("%s:FAILED creating thpool with %d threads\n", __func__, NR_WORKERS);
@@ -1182,8 +1181,6 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 	}
 #endif
 
-
-
 	if(file_fd >= 3){
 		fd = file_fd;
 		offset = file_offset;
@@ -1555,6 +1552,8 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 
 	int ret = 0;
 	debug_printf("%s: called for %d, ADV=%d\n", __func__, fd, advice);
+
+	//goto listen_to_app;
 
 #ifdef ENABLE_EVICTION
 	if(is_memory_danger_low() ) {

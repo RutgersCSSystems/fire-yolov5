@@ -61,13 +61,14 @@ declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
 USEDB=1
-MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("6")
 declare -a trials=("TRIAL1")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("CPIB")
-declare -a workload_arr=("readrandom")
+declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
+declare -a config_arr=("CIPI")
+declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 
 
@@ -225,7 +226,7 @@ GETMEMORYBUDGET() {
 
 
 
-COMPILE_AND_WRITE
+#COMPILE_AND_WRITE
 COMPILE
 
 for G_TRIAL in "${trials[@]}"

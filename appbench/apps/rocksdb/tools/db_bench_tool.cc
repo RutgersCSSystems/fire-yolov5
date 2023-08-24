@@ -6093,7 +6093,9 @@ class Benchmark {
     }
 
     Duration duration(FLAGS_duration, reads_);
-    while (!duration.Done(entries_per_batch_)) {
+
+    while (!duration.Done(entries_per_batch_)  && num_multireads < 2000000) {
+
       DB* db = SelectDB(thread);
       if (FLAGS_multiread_stride) {
         int64_t key = GetRandomKey(&thread->rand);

@@ -456,7 +456,9 @@ unsigned long mem_low_watermark(){
 	struct sysinfo si;
         sysinfo (&si);
 
-        return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_LOW_WATERMARK);
+       //return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_LOW_WATERMARK);
+        return (si.freeram <= MEM_LOW_WATERMARK);
+
 }
 
 unsigned long mem_danger_watermark(){
@@ -465,7 +467,8 @@ unsigned long mem_danger_watermark(){
 
 	debug_printf("si.freeram %ld MEM_OTHER_NUMA_NODE %ld diff %ld MEM_DANGER_WATERMARK %ld \n", 
 			si.freeram, MEM_OTHER_NUMA_NODE, si.freeram - MEM_OTHER_NUMA_NODE,  MEM_DANGER_WATERMARK);
-        return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_DANGER_WATERMARK);
+        return (si.freeram <= MEM_DANGER_WATERMARK);
+	//return (si.freeram - MEM_OTHER_NUMA_NODE <= MEM_DANGER_WATERMARK);
 }
 
 
@@ -547,6 +550,7 @@ int evict_inode_from_mem(void){
                         set_memory_danger_low(false);
                 }else {
 			dangermem=1;
+			set_memory_danger_low(true);
 		}
 
 		/*
@@ -557,6 +561,7 @@ int evict_inode_from_mem(void){
 			return 0;
                 }else {
 			lowmem=1;
+			set_memory_low(true);
 		}
 
 		uinode = get_lru_victim();
