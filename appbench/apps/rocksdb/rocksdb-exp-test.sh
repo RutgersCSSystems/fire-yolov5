@@ -67,7 +67,8 @@ declare -a membudget=("6")
 declare -a trials=("TRIAL1")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI")
 declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
-declare -a config_arr=("CIPI")
+
+declare -a config_arr=("CIPI" "Vanilla" "OSonly")
 declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 

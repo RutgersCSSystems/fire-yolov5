@@ -507,9 +507,15 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 		goto exit;
 	}
 
+#ifndef _PERF_OPT_EXTREME
 	uinode_bitmap_lock(uinode);
+#endif
+
 	pc_array = page_cache_state->array;
+
+#ifndef _PERF_OPT_EXTREME
 	uinode_bitmap_unlock(uinode);
+#endif
 
 	while((check_pg << PAGE_SHIFT) < uinode->file_size) {
 
@@ -521,7 +527,9 @@ long update_offset_pc_state(struct u_inode *uinode, bit_array_t *page_cache_stat
 	}
 	pg_diff = check_pg - start_pg;
 
+#ifndef _PERF_OPT_EXTREME
 	uinode_bitmap_lock(uinode);
+#endif
 
 	uinode->prefetched_bytes += (pg_diff << PAGE_SHIFT);
 
@@ -681,17 +689,15 @@ void prefetcher_th(void *arg) {
 			goto exit_prefetcher_th;
 		}
 
-		//struct timeval start, end;
-		//gettimeofday(&start, NULL);
+#ifdef _PERF_OPT_EXTREME
 		uinode_bitmap_lock(a->uinode);
+#endif
+
 		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra, a->uinode);
-		//err = readahead(a->fd, file_pos, a->prefetch_size);
-		if(err < -10){
+		if(err < 0){
+#ifdef _PERF_OPT_EXTREME
 			uinode_bitmap_unlock(a->uinode);
-			goto exit_prefetcher_th;
-		}
-		else if(err < 0){
-			uinode_bitmap_unlock(a->uinode);
+#endif
 			//printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
 			goto exit_prefetcher_th;
 		}
@@ -703,7 +709,10 @@ void prefetcher_th(void *arg) {
 				a->file_size, nr_bytes_ra_done, a->uinode->ino);
 		}
 #endif
+
+#ifdef _PERF_OPT_EXTREME
 		uinode_bitmap_unlock(a->uinode);
+#endif
 
 //#ifdef ENABLE_EVICTION
 //		update_lru(a->uinode);
@@ -1038,7 +1047,9 @@ void inline record_open(struct file_desc desc){
 		debug_printf("%s: fd=%d, filesize=%ld, nr_portions=%ld, portion_sz=%ld\n",
 				__func__, fp->fd, fp->filesize, fp->nr_portions, fp->portion_sz);
 
+#ifndef _PERF_OPT_EXTREME
 		std::lock_guard<std::mutex> guard(fp_mutex);
+#endif
 		fd_to_file_pred.insert({fd, fp});
 
 		 /*
@@ -1151,8 +1162,10 @@ void update_file_predictor_and_prefetch(void *arg){
 		return;
 
 	try{
+#ifndef _PERF_OPT_EXTREME
 		/* We don't need a guard here. Do we? */
 		std::lock_guard<std::mutex> guard(fp_mutex);
+#endif
 		fp = fd_to_file_pred.at(a->fd);
 	}
 	catch(const std::out_of_range &orr){
@@ -1265,7 +1278,9 @@ void handle_file_close(int fd){
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
+#ifdef _PERF_OPT_EXTREME
 		std::lock_guard<std::mutex> guard(fp_mutex);
+#endif
 		fp = fd_to_file_pred.at(fd);
 		fd_to_file_pred.erase(fd);
 	}
@@ -1279,7 +1294,7 @@ void handle_file_close(int fd){
 	}
 #endif
 
-	exit_handle_file_close:
+exit_handle_file_close:
 	debug_printf("Exiting %s\n", __func__);
 	return;
 }
