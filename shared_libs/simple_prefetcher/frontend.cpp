@@ -603,6 +603,22 @@ void debug_print_thread_args(struct thread_args *a, long tid)
 }
 
 
+inline off_t update_prefetch_limit(struct thread_args *a) {
+
+	off_t tot_prefetch = 0;
+#ifdef _PERF_OPT
+	if(a->prefetch_limit < a->file_size) {
+		tot_prefetch = a->prefetch_limit;
+	} else {
+		tot_prefetch = a->file_size;
+	}
+	a->prefetch_limit = tot_prefetch;
+#else
+        tot_prefetch = a->file_size;
+#endif
+	return tot_prefetch;
+}
+
 /*
  * function run by the prefetcher thread
  */
@@ -632,18 +648,23 @@ void prefetcher_th(void *arg) {
 	long err;
 
 	bit_array_t *page_cache_state = NULL;
-#ifdef _PERF_OPT
         off_t tot_prefetch = 0; 
-	
-	if(a->prefetch_limit < a->file_size) {
-		tot_prefetch = a->prefetch_limit;
-	} else {
-		tot_prefetch = a->file_size;
-	}
-	a->prefetch_limit = tot_prefetch;
+
+	/*update the prefetch limit */
+	tot_prefetch = update_prefetch_limit(a);
+#if 0
+#ifdef _PERF_OPT
+        if(a->prefetch_limit < a->file_size) {
+                tot_prefetch = a->prefetch_limit;
+        } else {
+                tot_prefetch = a->file_size;
+        }
+        a->prefetch_limit = tot_prefetch;
 #else
-        off_t tot_prefetch = a->file_size;
+        tot_prefetch = a->file_size;
 #endif
+#endif
+
 	/*
 	 * If the file is completely prefetched, dont prefetch
 	 */
