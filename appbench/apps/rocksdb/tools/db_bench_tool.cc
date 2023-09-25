@@ -5771,6 +5771,9 @@ class Benchmark {
     Iterator* iter = db->NewIterator(options);
     int64_t i = 0;
     int64_t bytes = 0;
+
+    reads_ = 4000000;
+
     for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedOps(nullptr, db, 1, kRead);
@@ -6094,7 +6097,7 @@ class Benchmark {
 
     Duration duration(FLAGS_duration, reads_);
 
-    while (!duration.Done(entries_per_batch_)  && num_multireads < 2000000) {
+    while (!duration.Done(entries_per_batch_)  && num_multireads < 4000000) {
 
       DB* db = SelectDB(thread);
       if (FLAGS_multiread_stride) {
