@@ -585,6 +585,15 @@ int check_mem_and_stop(struct read_ra_req *ra, struct thread_args *a) {
 	return 0;
 }
 
+void debug_print_thread_args(struct thread_args *a, long tid) 
+{
+	printf("%s: TID:%ld: going to fetch from offset %ld for prefetch_limit "
+		"%ld on file %d of prefetch limit file_size=%ld,"
+                "rasize = %ld, stride = %ld bytes, ino=%d, inode=%p\n", __func__, tid,
+                 a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
+                 a->stride, a->uinode->ino, a->uinode);
+}
+
 
 /*
  * function run by the prefetcher thread
@@ -615,7 +624,18 @@ void prefetcher_th(void *arg) {
 	long err;
 
 	bit_array_t *page_cache_state = NULL;
-
+#ifdef _PERF_OPT
+        off_t tot_prefetch = 0; 
+	
+	if(a->prefetch_limit < a->file_size) {
+		tot_prefetch = a->prefetch_limit;
+	} else {
+		tot_prefetch = a->file_size;
+	}
+	a->prefetch_limit = tot_prefetch;
+#else
+        off_t tot_prefetch = a->file_size;
+#endif
 	/*
 	 * If the file is completely prefetched, dont prefetch
 	 */
@@ -639,13 +659,13 @@ void prefetcher_th(void *arg) {
 		goto exit_prefetcher_th;
 	}
 
-	debug_printf("%s: TID:%ld: going to fetch from %ld for size %ld on file %d total size=%ld,"
-			"rasize = %ld, stride = %ld bytes, ptr=%p, ino=%d, inode=%p\n", __func__, tid,
-			a->offset, a->prefetch_limit, a->fd, a->file_size, a->prefetch_size,
-			a->stride, page_cache_state->array, a->uinode->ino, a->uinode);
+	//debug_print_thread_args(a, tid);
 
-
+#ifdef _PERF_OPT
+	while (file_pos < tot_prefetch){
+#else
 	while (file_pos < a->file_size){
+#endif
 
 		if(shoud_stop_prefetch(a, file_pos))
 			goto exit_prefetcher_th;
