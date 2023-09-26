@@ -119,7 +119,7 @@
  * start doing eviction
  */
 #ifndef MEM_DANGER_WATERMARK
-#define MEM_DANGER_WATERMARK (8L * GB)
+#define MEM_DANGER_WATERMARK (4L * GB)
 #endif
 
 

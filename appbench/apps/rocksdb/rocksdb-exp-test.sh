@@ -65,7 +65,7 @@ MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
 #Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=1
+ENABLE_SENSITIVITY=0
 
 
 declare -a membudget=("6")
@@ -74,10 +74,10 @@ declare -a config_arr=("Vanilla" "OSonly" "CPBI")
 declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
 
 declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("CPBI_PERF")
+declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
-declare -a workload_arr=("multireadrandom")
+#declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 
 
@@ -259,8 +259,8 @@ RUN() {
 
 			for THREAD in "${thread_arr[@]}"
 			do
-				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
-
+				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
+				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for WORKLOAD in "${workload_arr[@]}"
 				do
 					for CONFIG in "${config_arr[@]}"

@@ -51,6 +51,7 @@ int fadvise(int fd, off_t offset, off_t len, int advice){
         return syscall(__FADVISE, fd, offset, len, advice);
 }
 
+
 //std::unordered_map<int, void *> inode_map;
 //robin_hood::unordered_map<int, void *> inode_map;
 std::atomic_flag inode_map_init;
@@ -272,6 +273,22 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 }
 
 
+bool is_file_closed(struct u_inode *uinode, int fd){
+
+#ifdef _PERF_OPT
+	if(!uinode)
+		return false;
+
+	for(int i=0; i < uinode->fdcount; i++){
+		if(uinode->fdlist[i] == fd){
+			return false;
+		}
+	}
+
+	return true;
+#endif
+}
+
 #ifdef _PERF_OPT
 void remove_fd_from_uinode(struct u_inode *uinode, int fd) {
   if (!uinode || uinode->fdcount == 0) {
@@ -304,6 +321,7 @@ void remove_fd_from_uinode(struct u_inode *uinode, int fd) {
   // Decrement the uinode's fdcount.
   uinode->fdcount--;
 }
+
 #else
 void remove_fd_from_uinode(struct u_inode *uinode, int fd){
 
@@ -332,22 +350,6 @@ void remove_fd_from_uinode(struct u_inode *uinode, int fd){
 }
 #endif
 
-
-bool is_file_closed(struct u_inode *uinode, int fd){
-
-#ifdef _PERF_OPT
-	if(!uinode)
-		return false;
-
-	for(int i=0; i < uinode->fdcount; i++){
-		if(uinode->fdlist[i] == fd){
-			return false;
-		}
-	}
-
-	return true;
-#endif
-}
 
 
 /*
@@ -396,24 +398,8 @@ int handle_close(struct hashtable *i_map, int fd){
 
 
 
-#if 0
-std::atomic<long> nr_os_free_pg(0);
-/*
- * Update the number of free pages in OS
- */
-void update_nr_free_pg(unsigned long nr_free){
-        nr_os_free_pg.store(nr_free);
-}
-
-void increase_free_pg(unsigned long increased_pg){
-        nr_os_free_pg += increased_pg;
-}
-#endif
-
-
 #ifdef ENABLE_EVICTION
 /*Number of pages free inside the OS*/
-
 /*GLOBAL FILE LEVEL LRU*/
 cache::lru_cache<int, struct u_inode*> lrucache(MAXFILES);
 std::mutex lru_guard;
@@ -423,9 +409,9 @@ void update_lru(struct u_inode *uinode){
         if(uinode){
             //std::lock_guard<std::mutex> guard(lru_guard);
         	evict_lock.lock();
-            lrucache.put(uinode->ino, uinode);
-		    evict_lock.unlock();
-		    lru_inodes++;
+            	lrucache.put(uinode->ino, uinode);
+		evict_lock.unlock();
+		lru_inodes++;
         }
 }
 
@@ -441,14 +427,6 @@ struct u_inode *get_lru_victim(){
     //std::lock_guard<std::mutex> guard(lru_guard);
     return uinode;
 }
-
-
-/*
-long curr_available_free_mem_pg(){
-        return nr_os_free_pg.load();
-}
-*/
-
 
 long update_prefetch_bytes(size_t bytes, int add) {
 
@@ -575,6 +553,55 @@ void set_uinode_access_time(struct u_inode *uinode) {
 }
 
 
+
+
+
+
+#ifdef _PERF_OPT
+int evict_inode_from_mem(void) {
+
+    int batch_size = 10;
+    struct u_inode *uinode = NULL;
+
+    for (int i = 0; i < batch_size; i++) {
+        if (!mem_danger_watermark()) {
+            set_memory_danger_low(false);
+        } else {
+            set_memory_danger_low(true);
+        }
+
+        if (!mem_low_watermark()) {
+            set_memory_low(false);
+            return 0; // Early return when low memory is not a concern
+        } else {
+            set_memory_low(true);
+        }
+
+        uinode = get_lru_victim();
+        if (!uinode) {
+            return -1; // Early return when no victim is available
+        }
+
+        if (uinode->fdcount > 0 &&
+            uinode->file_size > 0 &&
+            uinode->fdlist[0] > 0 &&
+            uinode->evicted != FILE_EVICTED) {
+
+            if (fadvise(uinode->fdlist[0], 0, 0, POSIX_FADV_DONTNEED)) {
+                fprintf(stderr, "%s:%d eviction failed using fadvise fd:%d SIZE:%zu\n", __func__,
+                        __LINE__, uinode->fdlist[0], uinode->file_size);
+                return -1;
+            }
+
+            uinode->evicted = FILE_EVICTED;
+            uinode->fully_prefetched.store(false); // Reset fully prefetched for this file
+            update_prefetch_bytes(uinode->file_size, 0);
+        }
+    }
+
+    return 0;
+}
+#else
 /*
  * Call this for victim uinode
  */
@@ -631,6 +658,7 @@ int evict_inode_from_mem(void){
 	}
         return 0;
 }
+#endif
 
 
 //EVICTION CODE
