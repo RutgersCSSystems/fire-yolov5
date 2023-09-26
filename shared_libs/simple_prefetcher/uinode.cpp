@@ -272,12 +272,48 @@ int add_fd_to_inode(struct hashtable *i_map, int fd){
 }
 
 
+#ifdef _PERF_OPT
+void remove_fd_from_uinode(struct u_inode *uinode, int fd) {
+  if (!uinode || uinode->fdcount == 0) {
+    return;
+  }
+
+  // Find the fd in the fdlist.
+  int i = 0;
+  while (i < uinode->fdcount && uinode->fdlist[i] != fd) {
+    i++;
+  }
+
+  // If the fd is not found, return.
+  if (i == uinode->fdcount) {
+    return;
+  }
+
+  // Set the fd to 0 in the fdlist.
+  uinode->fdlist[i] = 0;
+
+  // Copy the new file descriptors back to the uinode's fdlist.
+  int j = 0;
+  for (i = 0; i < uinode->fdcount; i++) {
+    if (uinode->fdlist[i] != 0) {
+      uinode->fdlist[j] = uinode->fdlist[i];
+      j++;
+    }
+  }
+
+  // Decrement the uinode's fdcount.
+  uinode->fdcount--;
+}
+#else
 void remove_fd_from_uinode(struct u_inode *uinode, int fd){
 
 	int newfdlist[MAX_FD_PER_INODE];
 	int new_i = 0;
 
-	for(int i=0; i<MAX_FD_PER_INODE; i++){
+        if(!uinode)
+                return;
+
+	for(int i=0; i <  uinode->fdcount; i++){
 		if(uinode->fdlist[i] == fd){
 			uinode->fdlist[i] = 0;
 		}
@@ -288,22 +324,29 @@ void remove_fd_from_uinode(struct u_inode *uinode, int fd){
 		}
 	}
 
-	for(int i=0; i<MAX_FD_PER_INODE; i++){
+	for(int i=0; i<  uinode->fdcount; i++){
 		uinode->fdlist[i] = newfdlist[i];
 	}
+	if(uinode->fdcount)
+		uinode->fdcount--;
 }
+#endif
 
 
 bool is_file_closed(struct u_inode *uinode, int fd){
+
+#ifdef _PERF_OPT
 	if(!uinode)
 		return false;
 
-	for(int i=0; i<MAX_FD_PER_INODE; i++){
+	for(int i=0; i < uinode->fdcount; i++){
 		if(uinode->fdlist[i] == fd){
 			return false;
 		}
 	}
+
 	return true;
+#endif
 }
 
 
@@ -462,6 +505,7 @@ unsigned long mem_low_watermark(){
 }
 
 unsigned long mem_danger_watermark(){
+
         struct sysinfo si;
         sysinfo (&si);
 
@@ -482,6 +526,7 @@ unsigned long mem_high_watermark(){
 
         return (si.freeram - MEM_OTHER_NUMA_NODE > MEM_HIGH_WATERMARK);
 }
+
 
 int have_we_evicted_enough() {
 	struct sysinfo si;
@@ -541,11 +586,6 @@ int evict_inode_from_mem(void){
 
 	for (i=0; i < batch_size; i++) {
 
-		/*if(have_we_evicted_enough()) {
-			sleep(SLEEP_TIME);
-			return 0;
-		}*/
-
 		if(!mem_danger_watermark()){
                         set_memory_danger_low(false);
                 }else {
@@ -553,9 +593,7 @@ int evict_inode_from_mem(void){
 			set_memory_danger_low(true);
 		}
 
-		/*
-		 * We can return beyond this point 
-		 */
+		/* We can return beyond this point*/
 		if(!mem_low_watermark()){
                         set_memory_low(false);
 			return 0;
@@ -579,10 +617,10 @@ int evict_inode_from_mem(void){
 				return -1;
 			}
 
-			debug_printf("%s: evicting uinode:%d, fd:%d items in list %ld " 
+		/*	printf("%s: evicting uinode:%d, fd:%d items in list %ld " 
 					"TID %ld PID %ld dangermem=%d lowmem=%d\n", 
 					__func__, uinode->ino, uinode->fdlist[0], lru_inodes, 
-					gettid(), (long)getpid(), dangermem, lowmem);
+					gettid(), (long)getpid(), dangermem, lowmem);*/
 
 			uinode->evicted = FILE_EVICTED;
 			uinode->fully_prefetched.store(false); //Reset fully prefetched for this file

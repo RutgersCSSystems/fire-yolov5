@@ -5858,6 +5858,9 @@ class Benchmark {
     Iterator* iter = db->NewIterator(read_options_);
     int64_t i = 0;
     int64_t bytes = 0;
+
+    reads_ = 4000000;	  
+
     for (iter->SeekToLast(); i < reads_ && iter->Valid(); iter->Prev()) {
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedOps(nullptr, db, 1, kRead);
@@ -5979,7 +5982,9 @@ class Benchmark {
     }
 
     Duration duration(FLAGS_duration, reads_);
-    while (!duration.Done(1)) {
+
+    while (!duration.Done(1) && found < 4000000) {
+
       DBWithColumnFamilies* db_with_cfh = SelectDBWithCfh(thread);
       // We use same key_rand as seed for key and column family so that we can
       // deterministically find the cfh corresponding to a particular key, as it

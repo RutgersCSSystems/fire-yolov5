@@ -63,12 +63,20 @@ declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 USEDB=1
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
+
+#Enable sensitivity to vary prefetch size and prefetch thread count
+ENABLE_SENSITIVITY=1
+
+
 declare -a membudget=("6")
 declare -a trials=("TRIAL1")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI")
 declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
 
-declare -a config_arr=("CIPI" "Vanilla" "OSonly")
+declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CPBI")
+declare -a config_arr=("CPBI_PERF")
+
+declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 
@@ -76,6 +84,65 @@ declare -a thread_arr=("32")
 G_TRIAL="TRIAL1"
 #Require for large database
 ulimit -n 1000000 
+
+workload_arr_in=$1
+config_arr_in=$2
+thread_arr_in=$3
+
+glob_prefetchsz=1024
+glob_prefechthrd=8
+
+declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "128" "64")
+declare -a prefech_sz_arr=("1024" "512" "256" "128" "64" "2048" "4096")
+declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("1")
+
+get_global_arr() {
+
+        if [ ! -z "$workload_arr_in" ]
+        then
+                if [ ${#workload_arr_in=[@]} -eq 0 ]; then
+                    echo "input array in NULL"
+                else
+                    workload_arr=("${workload_arr_in[@]}")
+                fi
+        fi
+
+        if [ ! -z "$config_arr_in" ]
+        then
+                if [ ${#config_arr_in=[@]} -eq 0 ]; then
+                    echo "input array in NULL"
+                else
+                   config_arr=("${config_arr_in[@]}")
+                fi
+        fi
+
+        if [ ! -z "$thread_arr_in" ]
+        then
+                if [ ${#thread_arr_in=[@]} -eq 0 ]; then
+                    echo "input array in NULL"
+                else
+                   thread_arr=("${thread_arr_in[@]}")
+                fi
+        fi
+
+        if [ ! -z "$4" ]
+        then
+                prefetchsz=$4
+        else
+                prefetchsz=$glob_prefetchsz
+        fi
+
+        if [ ! -z "$5" ]
+        then
+                prefechthrd=$5
+        else
+                prefechthrd=$glob_prefechthrd
+        fi
+}
+
+get_global_arr
+
 
 
 FlushDisk()
@@ -139,14 +206,24 @@ GEN_RESULT_PATH() {
 	#WORKLOAD="DUMMY"
 	#RESULTFILE=""
 
-	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+        if [ "$ENABLE_SENSITIVITY" -eq "1" ]
+        then
+		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		mkdir -p $RESULTS
+        	RESULTFILE=$RESULTS/$CONFIG"-PREFETCHSZ-$prefetchsz-PREFETTHRD-$prefechthrd".out
+
+        elif [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
 	then 
 		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		mkdir -p $RESULTS
+		RESULTFILE=$RESULTS/$CONFIG".out"
 	else
         	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+		mkdir -p $RESULTS
+		RESULTFILE=$RESULTS/$CONFIG".out"
 	fi
-	mkdir -p $RESULTS
-        RESULTFILE=$RESULTS/$CONFIG".out"
+
+	echo $RESULTFILE
 }
 
 
@@ -167,32 +244,48 @@ RUN() {
 
 	for NUM in "${num_arr[@]}"
 	do
-		for THREAD in "${thread_arr[@]}"
+	       for prefechthrd in "${prefech_thrd_arr[@]}"
 		do
-			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
+			cd $PREDICT_LIB_DIR
+			if [ "$ENABLE_SENSITIVITY" -eq "1" ]
+			then
+				sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+				sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
+			fi
 
-			for WORKLOAD in "${workload_arr[@]}"
+			./compile.sh &> out.txt
+
+			cd $DBHOME
+
+			for THREAD in "${thread_arr[@]}"
 			do
-				for CONFIG in "${config_arr[@]}"
+				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
+
+				for WORKLOAD in "${workload_arr[@]}"
 				do
-					RESULTS=""
-					READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
-					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
+					for CONFIG in "${config_arr[@]}"
+					do
+						RESULTS=""
+						READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
+						GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
 
-					mkdir -p $RESULTS
+						mkdir -p $RESULTS
 
-					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
-					echo "..................................................."
+						echo "RUNNING $CONFIG and writing results to $RESULTFILE"
+						echo "..................................................."
 
-					rm -rf $DBDIR/LOCK
+						rm -rf $DBDIR/LOCK
 
-					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
-					export LD_PRELOAD=""
-					sudo dmesg -c &>> $RESULTFILE
-					echo ".......FINISHING $CONFIG......................"
-					cat $RESULTS/$CONFIG.out | grep "MB/s"
-					FlushDisk
+						echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
+
+						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+						$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+						export LD_PRELOAD=""
+						sudo dmesg -c &>> $RESULTFILE
+						echo ".......FINISHING $CONFIG......................"
+						cat $RESULTFILE | grep "MB/s"
+						FlushDisk
+					done
 				done
 			done
 		done
@@ -230,6 +323,24 @@ GETMEMORYBUDGET() {
 #COMPILE_AND_WRITE
 COMPILE
 
+
+if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+then
+        RUN
+else
+        for glob_prefetchsz in "${prefech_sz_arr[@]}"
+        do
+                for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+                do
+                        get_global_arr
+                        RUN
+                done
+        done
+
+fi
+exit
+
+
 for G_TRIAL in "${trials[@]}"
 do
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
@@ -245,3 +356,5 @@ do
 		RUN
 	fi
 done
+
+
