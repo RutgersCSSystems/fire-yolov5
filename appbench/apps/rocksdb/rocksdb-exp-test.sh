@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a num_arr=("40000000")
-NUM=40000000
+declare -a num_arr=("25000000")
+NUM=25000000
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
 
@@ -65,7 +65,7 @@ MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
 #Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=0
+ENABLE_SENSITIVITY=1
 
 
 declare -a membudget=("6")
@@ -79,6 +79,8 @@ declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 #declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
+declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
+
 
 
 G_TRIAL="TRIAL1"
@@ -92,10 +94,9 @@ thread_arr_in=$3
 glob_prefetchsz=1024
 glob_prefechthrd=8
 
-declare -a prefech_sz_arr=("4096" "2048" "1024" "512" "256" "128" "64")
-declare -a prefech_sz_arr=("1024" "512" "256" "128" "64" "2048" "4096")
-declare -a prefech_sz_arr=("1024")
-declare -a prefech_thrd_arr=("1")
+declare -a prefech_sz_arr=("1024" "2048" "4096") #"512" "256" "128" "64" 
+#declare -a prefech_sz_arr=("1024")
+declare -a prefech_thrd_arr=("1" "8")
 
 get_global_arr() {
 
@@ -170,7 +171,7 @@ CLEAR_DATA()
 COMPILE_AND_WRITE()
 {
         export LD_PRELOAD=""
-	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200"
+	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200 --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
 	mkdir -p $RESULTS
 
 	cd $PREDICT_LIB_DIR
@@ -235,8 +236,6 @@ RUN() {
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
 	cd $DBHOME
-	#COMPILE_AND_WRITE
-	#COMPILE
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
 	FlushDisk
@@ -259,8 +258,8 @@ RUN() {
 
 			for THREAD in "${thread_arr[@]}"
 			do
-				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
-				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
+				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for WORKLOAD in "${workload_arr[@]}"
 				do
 					for CONFIG in "${config_arr[@]}"
@@ -320,7 +319,7 @@ GETMEMORYBUDGET() {
 
 
 
-#COMPILE_AND_WRITE
+COMPILE_AND_WRITE
 COMPILE
 
 
