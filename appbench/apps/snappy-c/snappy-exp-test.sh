@@ -43,8 +43,12 @@ let glob_enable_sensitive=0
 MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=1
 declare -a membudget=("6" "4" "2" "1")
+declare -a membudget=("6")
+
 declare -a config_arr=("OSonly" "CIPI_PERF" "CPBI_PERF" "Vanilla")
 declare -a config_arr=("CIPI_PERF" "CPBI_PERF")
+
+declare -a config_arr=("OSonly")
 declare -a thread_arr=("32")
 
 enable_prefetch_sensitivity() {

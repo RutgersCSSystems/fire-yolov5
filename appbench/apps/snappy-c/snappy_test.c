@@ -80,8 +80,15 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
                 return NULL;
         }
         cls_file = fp;
+
+
         fseek(fp, 0L, SEEK_END);
         fsize = ftell(fp);
+
+	int fd=fileno(fp);
+
+	posix_fadvise(fd, 0, fsize, POSIX_FADV_SEQUENTIAL);
+
         fseek(fp, 0, SEEK_SET);
         if (fsize < 1) {
                 *size = 0;
@@ -101,7 +108,9 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
             input = NULL;
             return NULL;
         }
+
         *size = bytes;
+	posix_fadvise(fd, 0, fsize, POSIX_FADV_DONTNEED);
         fclose(fp);
 
         return input;

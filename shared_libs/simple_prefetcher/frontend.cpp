@@ -1618,6 +1618,11 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice){
 	}
 #endif
 
+#ifdef DISABLE_FADV_SEQUENTIAL
+	if(advice == POSIX_FADV_SEQUENTIAL)
+		goto exit_fadvise;
+#endif
+
 #ifdef DISABLE_FADV_RANDOM
 	if(advice == POSIX_FADV_RANDOM)
 		goto exit_fadvise;
