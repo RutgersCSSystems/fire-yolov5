@@ -19,16 +19,23 @@ A small description
 
 ### Setup Environment
 
+
+#### (1) First, use the following CloudLab Wisconsin node, which is easy to reserve and use. Use the following profile:
+
+**Machine Node Name:** c220g5 
+**Profile Name:** single-raw-ubuntu-18
+
+
 #### Cloudlab Node allocation
 Recommendation to use c6525-100g@Utah; this one has two large NVMe SSDs.
-Use Profile CS764Fall2018/single-raw-ubuntu-18 to setup the node.
+Use Profile CS764Fall2018/single-raw-ubuntu-18 to set up the node.
 ```
 https://www.cloudlab.us/show-profile.php?uuid=76d501c8-02fb-11e9-9331-90e2ba22fee4
 ```
 
 #### Partition Setup & cloning
-If you are using CloudLab, the root partition is only 16GB for some profiles.
-First setup the CloudLab node with SSD and install all the required libraries.
+If you use CloudLab, the root partition is only 16GB for some profiles.
+First, setup the CloudLab node with SSD and install all the required libraries.
 ```
 lsblk
 ```
