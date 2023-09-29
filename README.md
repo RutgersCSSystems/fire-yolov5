@@ -62,7 +62,8 @@ source ./scripts/setvars.sh
 #### To compile deb for bare metal systems
 ```
 cd $BASE/linux-5.14.0
-./compile_modified_deb.sh ## This will produce and install the modified kernel
+## This will produce and install the modified kernel
+./compile_modified_deb.sh 
 sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
