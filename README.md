@@ -77,6 +77,7 @@ cd $BASE
 
 ### Starting with Medium Workloads
 
+#### Running RocksDB
 First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
 As a first step, we will start running RocksDB, a persistent key-value store.  
 To compile, assuming the environmental variables are set using set_vars.sh
@@ -103,6 +104,13 @@ To extract the results,
 ```
 ./generate_values.sh
 ```
+
+#### Running Snappy
+```
+cd $BASE/appbench/apps/snappy-c
+./release-run-med.sh
+```
+
 
 ### Running Remote Storage Experiments
 
