@@ -108,7 +108,8 @@ To extract the results,
 #### Running Snappy
 ```
 cd $BASE/appbench/apps/snappy-c
-./release-run-med.sh
+# run snappy. The value indicates an input to generate the dataset
+./release-run-med.sh 1 
 ```
 
 
