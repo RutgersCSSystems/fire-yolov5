@@ -16,7 +16,7 @@ FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) -DNR_THREADS=$(NR_THREAD
 
 SHARED_FLAGS=-DFILESZ=$(SIZE) -DNR_PAGES_READ=$(NR_READ_PAGES) 
 
-all: read_pvt write_pvt write_shared read_shared read_shared_simple read_mmap_shared
+all: read_pvt write_pvt write_shared read_shared read_shared_simple #read_mmap_shared
 
 read_pvt: read.cpp utils/thpool.c
 	$(CXX) $^ $(FLAGS) $(DEBUG) -DREAD_SEQUENTIAL -o $(BIN_DIR)/read_pvt_seq $(LIBS)

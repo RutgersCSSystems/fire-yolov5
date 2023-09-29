@@ -19,6 +19,8 @@ MIN_FILE_SZ=$(5MB)
 CROSS_BITMAP_SHIFT=36
 
 SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c
+SOURCESBASIC = libOSonly.cpp
+
 
 #DEBUG=-DDEBUG
 #ENABLE_LIB_STATS=-DENABLE_LIB_STATS #-DENABLE_PRED_STATS ##Comment if dont need lib stats
@@ -31,10 +33,9 @@ VAR_FLAGS+=-DNR_ADJACENT_CHECK=$(NR_ADJACENT_CHECK) -DMIN_FILE_SZ=$(MIN_FILE_SZ)
 
 
 ONLY_INTERCEPT=-DONLY_INTERCEPT
-DISABLE_FADV_RANDOM=#-DDISABLE_FADV_RANDOM ##Disables any FADV_RANDOM from App
+DISABLE_FADV_RANDOM=-DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL  ##Disables any FADV_RANDOM from App
 DISABLE_FADV_DONTNEED=#-DDISABLE_FADV_DONTNEED
 DISABLE_MADV_DONTNEED=#-DDISABLE_MADV_DONTNEED
-
 OS_ONLY=-DDISABLE_APP_READAHEADS
 
 
@@ -77,13 +78,13 @@ all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict C
 
 
 #App Readahead + readahead syscall (Only constructor and destructor)
-Vanilla: $(SOURCES)
+Vanilla: $(SOURCESBASIC) #$(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_Vanilla.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS)
 
-OSonly: $(SOURCES)
+OSonly: $(SOURCESBASIC) #$(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_OSonly.so $^ $(LIBS) $(DEBUG) \
-	    $(OTHERFLAGS) $(DISABLE_FADV_RANDOM) $(OS_ONLY) #$(VAR_FLAGS) 
+	    $(DISABLE_FADV_RANDOM) $(OS_ONLY) #$(VAR_FLAGS) 
 
 
 #Cross-Blind + readahead_info syscall + bitmap checking

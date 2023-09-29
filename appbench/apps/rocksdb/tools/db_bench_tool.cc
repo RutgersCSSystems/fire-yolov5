@@ -5772,9 +5772,9 @@ class Benchmark {
     int64_t i = 0;
     int64_t bytes = 0;
 
-    reads_ = 25000000;
+    //reads_ = 25000000;
 
-    for (iter->SeekToFirst(); i < reads_ && iter->Valid() && i < 1000000; iter->Next()) {
+    for (iter->SeekToFirst(); i < reads_ && iter->Valid(); iter->Next()) {
       bytes += iter->key().size() + iter->value().size();
       thread->stats.FinishedOps(nullptr, db, 1, kRead);
       ++i;
@@ -5859,7 +5859,7 @@ class Benchmark {
     int64_t i = 0;
     int64_t bytes = 0;
 
-    reads_ = 25000000;	  
+    //reads_ = 25000000;	  
 
     for (iter->SeekToLast(); i < reads_ && iter->Valid(); iter->Prev()) {
       bytes += iter->key().size() + iter->value().size();
@@ -5983,7 +5983,8 @@ class Benchmark {
 
     Duration duration(FLAGS_duration, reads_);
 
-    while (!duration.Done(1) && found < 25000000) {
+    //while (!duration.Done(1) && found < 25000000) {
+      while (!duration.Done(1)) {
 
       DBWithColumnFamilies* db_with_cfh = SelectDBWithCfh(thread);
       // We use same key_rand as seed for key and column family so that we can
@@ -6102,7 +6103,8 @@ class Benchmark {
 
     Duration duration(FLAGS_duration, reads_);
 
-    while (!duration.Done(entries_per_batch_)  && num_multireads < 25000000) {
+    //while (!duration.Done(entries_per_batch_)  && num_multireads < 25000000) {
+      while (!duration.Done(entries_per_batch_)) {
 
       DB* db = SelectDB(thread);
       if (FLAGS_multiread_stride) {

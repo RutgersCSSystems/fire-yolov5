@@ -34,17 +34,19 @@ declare -a readsize_arr=("4")
 declare -a workload_arr=("read_pvt_rand" "read_shared_rand" "read_shared_seq" "read_pvt_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 
-#declare -a workload_arr=("read_shared_seq") ##read binaries
-declare -a workload_arr=( "read_shared_rand" "read_shared_seq" "read_pvt_seq") 
+declare -a workload_arr=("read_shared_seq") ##read binaries
+#declare -a workload_arr=( "read_shared_rand" "read_shared_seq" "read_pvt_seq") 
 
 #declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
-#declare -a config_arr=("CIPI_sync")
+#declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
+#declare -a config_arr=("Vanilla" "OSonly" "CIPI_sync")
+declare -a config_arr=("CIPI_PERF")
+
 
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=80 ##GB
+FILESIZE=32 ##GB
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
@@ -137,15 +139,16 @@ RUN() {
         do
 		sed -i "/NR_READ_PAGES_VAR=/c\NR_READ_PAGES_VAR=$READSIZE" compile.sh
 
-		for WORKLOAD in "${workload_arr[@]}"
+		for NPROC in "${nproc[@]}"
 		do
-			for NPROC in "${nproc[@]}"
-			do
-				sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
-				./compile.sh
+			sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
+			./compile.sh
 
-					#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
-					#CLEAN_AND_WRITE $WORKLOAD $FILESIZE
+			#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
+			#CLEAN_AND_WRITE $WORKLOAD $FILESIZE
+
+				for WORKLOAD in "${workload_arr[@]}"
+				do
 
 					for CONFIG in "${config_arr[@]}"
 					do
@@ -171,7 +174,6 @@ RUN() {
 
 						#sudo dmesg -c &>> $RESULTFILE
 						#sudo cat /proc/lock_stat &>> $RESULTFILE
-
 						REFRESH
 					done
 				done

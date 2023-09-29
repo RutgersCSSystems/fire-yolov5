@@ -178,6 +178,7 @@ void init_global_ds(void){
 	}
 #endif
 
+#ifdef MAINTAIN_UINODE
 	if(!i_map_init.test_and_set()){
 		debug_printf("%s:%d Allocating hashmap\n", __func__, __LINE__);
 		i_map = init_inode_fd_map();
@@ -191,6 +192,8 @@ void init_global_ds(void){
 #endif
 	}
 exit:
+#endif
+
     return;
 }
 
@@ -816,8 +819,11 @@ void inline prefetch_file_predictor(void *args){
     stride = fp->is_strided() * fp->portion_sz;
     stride = 0; //FIXME: BUGGY
     uinode = fp->uinode;
+
+ #ifdef MAINTAIN_UINODE
     if(!uinode)
     	uinode = get_uinode(i_map, fd);
+#endif
 
     debug_printf("%s: fd=%d, filesize = %ld, stride= %ld\n", __func__, fd, filesize, stride);
 
