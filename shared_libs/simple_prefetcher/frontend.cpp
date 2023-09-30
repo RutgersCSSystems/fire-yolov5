@@ -354,6 +354,8 @@ void con(){
 
 
 void dest(){
+
+	return;
 	/*
 	 * Reset the IO limits to normal
 	 * Reset readahead 2MB limit
@@ -1078,7 +1080,6 @@ void inline record_open(struct file_desc desc){
 		std::lock_guard<std::mutex> guard(fp_mutex);
 #endif
 		fd_to_file_pred.insert({fd, fp});
-
 		 /*
 		 * When a file is opened.
 		 * We give it a signin bonus. Prefetch a small portion of the start
@@ -1301,15 +1302,15 @@ void handle_file_close(int fd){
 
 
 #ifdef PREDICTOR
-	init_global_ds();
+	//init_global_ds();
 	file_predictor *fp;
 	try{
 		debug_printf("%s: found fd %d in fd_to_file_pred\n", __func__, fd);
-#ifdef _PERF_OPT_EXTREME
+#ifndef _PERF_OPT_EXTREME
 		std::lock_guard<std::mutex> guard(fp_mutex);
 #endif
-		fp = fd_to_file_pred.at(fd);
-		fd_to_file_pred.erase(fd);
+		//fp = fd_to_file_pred.at(fd);
+		//fd_to_file_pred.erase(fd);
 	}
 	catch(const std::out_of_range){
 		debug_printf("%s: unable to find fd %d in fd_to_file_pred\n", __func__, fd);

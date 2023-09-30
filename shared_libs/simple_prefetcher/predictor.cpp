@@ -127,8 +127,9 @@ void file_predictor::predictor_update(off_t offset, size_t size){
         int old_seq, new_seq;
 
         if(portion_num > nr_portions){
-                printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
-                goto exit_fail;
+                //printf("%s: ERR : portion_num > nr_portions, has the filesize changed ?\n", __func__);
+                //goto exit_fail;
+		portion_num = nr_portions;
         }
 
         /*
