@@ -34,24 +34,25 @@ lsblk
 Now, you would have to set up a filesystem and mount it. 
 
 ```
-sudo mkfs.ext4 /dev/nvme0n1p4
-
-mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
-
+sudo mkfs.ext4 /dev/sda4
+mkdir ~/ssd; sudo mount /dev/sda4 ~/ssd
 cd ~/ssd; sudo chown $USER .
 ```
 
-
-
 Now, get the appropriate repo.
-
 ```
 cd ssd
 git clone https://github.com/RutgersCSSystems/ioopt
 cd ioopt
 ```
 
-You now have the repo. Before compiling and set up things, let's set the environmental variable
+You now have the repo. Before compiling and setting up things, let's set the environmental variable.
+
+First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
+Because we are using Wisconsin, you could do something like this and save the file.
+```
+export MACHINE_NAME="WISC"
+```  
 ```
 source ./scripts/setvars.sh 
 ```
@@ -61,11 +62,12 @@ source ./scripts/setvars.sh
 #### To compile deb for bare metal systems
 ```
 cd $BASE/linux-5.14.0
-./compile_modified_deb.sh ## This will produce and install the modified kernel
+## This will produce and install the modified kernel
+./compile_modified_deb.sh 
 sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
-### Run Experiments
+## Run Experiments
 All experiments are in the following folder. Use this script needs to be updated to run different applications Check the scripts before running all_variation.
 ```
 cd $BASE/shared_libs/simple_prefetcher/
@@ -73,24 +75,49 @@ cd $BASE/shared_libs/simple_prefetcher/
 cd $BASE
 ```
 
-## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
+### Starting with Medium Workloads
+
+#### Running RocksDB
+First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
+As a first step, we will start running RocksDB, a persistent key-value store.  
 To compile, assuming the environmental variables are set using set_vars.sh
+
+Let's compile RocksDB first. The script will install the necessary packages to install RocksDB.
 ```
-cd $NVMBASE/appbench/apps/rocksdb
+cd $BASE/appbench/apps/rocksdb
 ./compile.sh
 ```
 
-The following script runs multiple configurations of RocksDB by varying 
-Cross-prefetch configurations and vanilla configurations, thread counts, and workloads.
+The following script runs multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
+OSonly (OS controlled), and Cross-prefetch configurations for various thread counts, and workloads.
+```
+./release-run-med.sh
+```
+The following script will first warm up and generate the database with a raw uncompressed size of 100GB and run the experiment on 4 million key-value pairs.   
 
-For local storage execution, we will use rocksdb-exp-test.sh script. 
+Results will be generated in the following folder for 4M keys for different access patterns.
 ```
-./rocksdb-exp-test.sh 
+ls $OUTPUT_FOLDER/ROCKSDB/4M-KEYS/
+```
 
+To extract the results, 
 ```
-For remote storage execution, we will use rocksdb-exp-test.sh script. 
+./generate_values.sh
 ```
-./rocksdb-exp-test-remote.sh
+
+#### Running Snappy
+```
+cd $BASE/appbench/apps/snappy-c
+# run snappy. The value indicates an input to generate the dataset
+./release-run-med.sh 1 
+```
+
+
+### Running Remote Storage Experiments
+
+For remote storage execution, we will use the following script. 
+```
+./release-remote-run-med.sh
 ```
 
 
@@ -111,17 +138,6 @@ declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse
 declare -a config_arr=("OSonly" "Vanilla" "Cross_Info" "Cross_Info_sync" "CII" "CIP" "CIP_sync" "CIPI")
 declare -a thread_arr=("4" "8" "16" "32")
 ```
-
-
-## Deprecated After this.
-
-
-## Result extraction and Graph Generation (script under progress)
-
-
-
-
-
 
 
 
