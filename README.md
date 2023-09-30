@@ -17,149 +17,107 @@ A small description
 └── shared_libs/memory_analysis    # returns the anon and cache usage during an apprun
 ```
 
-
 ### Setup Environment
 
+(1) First, use the following CloudLab Wisconsin node, which is easy to reserve and use. Use the following profile:
 
-#### Cloudlab Node allocation
-Recommendation to use c6525-100g@Utah; this one has two large NVMe SSDs.
-Use Profile CS764Fall2018/single-raw-ubuntu-18 to setup the node.
-```
-https://www.cloudlab.us/show-profile.php?uuid=76d501c8-02fb-11e9-9331-90e2ba22fee4
-```
+**Machine Node Name:** c220g5 
+**Profile Name:** single-raw-ubuntu-18
 
-#### Partition Setup & cloning
-
-If you are using CloudLab, the root partition is only 16GB for some profiles.
-First setup the CloudLab node with SSD and install all the required libraries.
-
+(2) Partition Setup & cloning
+If you use CloudLab, the root partition is only 16GB for some profiles.
+First, set up the CloudLab node with SSD and install all the required libraries.
 ```
 lsblk
 ```
 
-You should see the following indicating the root partition size is very small:
+Now, you would have to set up a filesystem and mount it. 
 
 ```
-NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-nvme0n1     259:1    0  1.5T  0 disk 
-├─nvme0n1p1 259:2    0   16G  0 part /
-├─nvme0n1p2 259:3    0    3G  0 part 
-├─nvme0n1p3 259:4    0    3G  0 part [SWAP]
-└─nvme0n1p4 259:5    0  1.4T  0 part 
-nvme1n1     259:7    0  1.5T  0 disk  ##This partition fails the node sometimes
-```
-
-Now you would have to setup a filesystem and mount it 
-
-```
-sudo mkfs.ext4 /dev/nvme0n1p4
-
-mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
-
+sudo mkfs.ext4 /dev/sda4
+mkdir ~/ssd; sudo mount /dev/sda4 ~/ssd
 cd ~/ssd; sudo chown $USER .
 ```
 
-
-Now to get the appropriate branch
-
+Now, get the appropriate repo.
 ```
 cd ssd
-git clone git@github.com:RutgersCSSystems/prefetching.git
-cd prefetching
+git clone https://github.com/RutgersCSSystems/ioopt
+cd ioopt
 ```
 
-You now have the repo. Before running things, run
+You now have the repo. Before compiling and setting up things, let's set the environmental variable.
 
+First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
+Because we are using Wisconsin, you could do something like this and save the file.
 ```
-cd prefetching
-source ./scripts/setvars.sh ## This sets appropriate env variables
+export MACHINE_NAME="WISC"
+```  
 ```
-
-@Jian use this for setting your variables
+source ./scripts/setvars.sh 
 ```
-cd prefetching
-source ./scripts/jian-setvars.sh ## This sets appropriate env variables
-```
-
-
 
 ### Compile Kernel
 
-#### To compile deb for baremetal
-
-Before running the following commands, make sure you dont have other deb files in the source base folder (prefetching).
-
+#### To compile deb for bare metal systems
 ```
-cd prefetching/linux-5.14.0
-./compile_modified_deb.sh ## This will produce and install the modified kernel
-sudo reboot ## this will reboot the node with the new linux 
+cd $BASE/linux-5.14.0
+## This will produce and install the modified kernel
+./compile_modified_deb.sh 
+sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
-#### To compile for qemu (Skip QEMU installation or steps for baremetal)
-
+## Run Experiments
+All experiments are in the following folder. Use this script needs to be updated to run different applications Check the scripts before running all_variation.
 ```
-source ./scripts/setvars.sh
-cd prefetching/linux-5.14.0
-./compile_qemu.sh
-cd prefetching
-./scripts/compile-install/compile_kern_kvm.sh
-```
-
-### Qemu Management
-
-#### Qemu Setup
-
-```
-./scripts/qemu/qemu_create.sh ## has to be done only once
-```
-
-#### Installing all the required libraries in the QEMU
-```
-scripts/compile-install/set_appbench.sh 
-```
-
-#### Run Qemu
-To run qemu, first compile the kernel for qemu; then
-
-```
-./scripts/qemu/run_qemu.sh
-```
-
-
-### Run Experiments
-All the experiments are in the following folder.
-this script needs to be updated to run different applications
-
-Check the scripts before running all_variation.
-
-```
-pushd $NVMBASE/shared_libs/simple_prefetcher/
+cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
-popd
-
-source ./scripts/YOUR-setvars.sh //substitute YOUR with appropriate setvars.sh
+cd $BASE
 ```
 
+### Starting with Medium Workloads
 
-## Running RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
+#### Running RocksDB
+First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
+As a first step, we will start running RocksDB, a persistent key-value store.  
 To compile, assuming the environmental variables are set using set_vars.sh
+
+Let's compile RocksDB first. The script will install the necessary packages to install RocksDB.
 ```
-cd $NVMBASE/appbench/apps/rocksdb
+cd $BASE/appbench/apps/rocksdb
 ./compile.sh
 ```
 
-The following script runs multiple configurations of RocksDB by varying 
-Cross-prefetch configurations and vanilla configurations, thread counts, and workloads.
-
-For local storage execution, we will use rocksdb-exp-test.sh script. 
+The following script runs multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
+OSonly (OS controlled), and Cross-prefetch configurations for various thread counts, and workloads.
 ```
-./rocksdb-exp-test.sh 
-
+./release-run-med.sh
 ```
-For remote storage execution, we will use rocksdb-exp-test.sh script. 
-```
-./rocksdb-exp-test-remote.sh
+The following script will first warm up and generate the database with a raw uncompressed size of 100GB and run the experiment on 4 million key-value pairs.   
 
+Results will be generated in the following folder for 4M keys for different access patterns.
+```
+ls $OUTPUT_FOLDER/ROCKSDB/4M-KEYS/
+```
+
+To extract the results, 
+```
+./generate_values.sh
+```
+
+#### Running Snappy
+```
+cd $BASE/appbench/apps/snappy-c
+# run snappy. The value indicates an input to generate the dataset
+./release-run-med.sh 1 
+```
+
+
+### Running Remote Storage Experiments
+
+For remote storage execution, we will use the following script. 
+```
+./release-remote-run-med.sh
 ```
 
 
@@ -182,78 +140,5 @@ declare -a thread_arr=("4" "8" "16" "32")
 ```
 
 
-## Deprecated After this.
-
-
-## Result extraction and Graph Generation (script under progress)
-
-
-
-
-
-
-
-
-
-### [OLD: Shaleen Remove this if incorrect] 
-Run rocksdb with or without using the new pread_ra syscall
-
-To enable pread_ra syscall that is enabled for crossfs
-```
-//vim Makefile
-//## add -DCROSSLAYER_SYSCALLS to CXXFLAGS (line 20)
-//CXXFLAGS += ${EXTRA_CXXFLAGS} -DCROSSLAYER_SYSCALLS
-
-vim build_tools/build_detect_platform
-COMMON_FLAGS="$COMMON_FLAGS ${CFLAGS} -DCROSSLAYER_SYSCALLS"
-./compile.sh
-```
-
-### Alternatively, navigate to RocksDB folder
-To enable pread_ra syscall
-```
-cp build_tools/build_detect_platform_cross build_tools/build_detect_platform
-./compile.sh
-```
-
-To disable pread_ra syscall
-```
-cp build_tools/build_detect_platform_orig build_tools/build_detect_platform
-./compile.sh
-```
-
-### Alternatively, to run all for RocksDB
-```
-./run.sh 
-```
-
-The script uses the following options
-```
-       if [[ "$PREDICT" == "LIBONLY" ]]; then
-                #uses read_ra but disables OS prediction
-                echo "setting LIBONLY pred"
-                cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
-                $DBHOME/compile.sh &> compile.out
-                export LD_PRELOAD=/usr/lib/libonlylibpred.so
-        elif [[ "$PREDICT" == "CROSSLAYER" ]]; then
-                #uses read_ra
-                echo "setting CROSSLAYER pred"
-                cp $DBHOME/build_tools/build_detect_platform_cross $DBHOME/build_tools/build_detect_platform
-                $DBHOME/compile.sh &> compile.out
-                export LD_PRELOAD=/usr/lib/libos_libpred.so
-
-        elif [[ "$PREDICT" == "OSONLY" ]]; then
-                #does not use read_ra and disables all application read-ahead
-                echo "setting OS pred"
-                cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
-                $DBHOME/compile.sh &> compile.out
-                export LD_PRELOAD=/usr/lib/libonlyospred.so
-        else [[ "$PREDICT" == "VANILLA" ]]; #does not use read_ra
-                echo "setting VANILLA"
-                cp $DBHOME/build_tools/build_detect_platform_orig $DBHOME/build_tools/build_detect_platform
-                $DBHOME/compile.sh &> compile.out
-                export LD_PRELOAD=""
-        fi
-```
 
 
