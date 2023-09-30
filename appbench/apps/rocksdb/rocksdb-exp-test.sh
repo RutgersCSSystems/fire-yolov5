@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a num_arr=("25000000")
-NUM=25000000
+declare -a num_arr=("4000000")
+NUM=4000000
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
 
@@ -78,8 +78,9 @@ declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 declare -a workload_arr=("multireadrandom")
-declare -a thread_arr=("48")
+declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
+declare -a config_arr=("CPBI_PERF")
 
 
 

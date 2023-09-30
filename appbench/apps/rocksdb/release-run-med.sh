@@ -64,7 +64,7 @@ MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
 #Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=1
+ENABLE_SENSITIVITY=0
 
 
 declare -a membudget=("6")
@@ -77,8 +77,8 @@ declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 declare -a workload_arr=("multireadrandom")
-declare -a thread_arr=("48")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
+declare -a thread_arr=("32")
+declare -a config_arr=("Vanilla" "OSonly")
 
 
 
@@ -163,35 +163,6 @@ CLEAR_DATA()
         sudo killall $APP
         rm -rf $DBDIR/*
         rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
-}
-
-
-
-COMPILE_AND_WRITE()
-{
-        export LD_PRELOAD=""
-	PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM --target_file_size_base=209715200 --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
-	mkdir -p $RESULTS
-
-	cd $PREDICT_LIB_DIR
-	make clean
-	$PREDICT_LIB_DIR/compile.sh &> compile.out
-	cd $DBHOME
-        $DBHOME/db_bench $PARAMS $WRITEARGS #&> $RESULTS/WARMUP-WRITE.out
-
-        ##Condition the DB to get Stable results
-        #$DBHOME/db_bench $PARAMS/users/kannan11/ssd/prefetching/appbench/apps/rocksdb/DATA/LOCK $READARGS  #&> $RESULTS/WARMUP-READ1.out
-        #FlushDisk
-        #$DBHOME/db_bench $PARAMS $READARGS  &> WARMUP-READ2.out
-}
-
-
-COMPILE()
-{
-        export LD_PRELOAD=""
-	cd $PREDICT_LIB_DIR
-	$PREDICT_LIB_DIR/compile.sh &> compile.out
-	cd $DBHOME
 }
 
 
@@ -318,9 +289,7 @@ GETMEMORYBUDGET() {
 
 
 
-#COMPILE_AND_WRITE
 COMPILE
-
 
 for G_TRIAL in "${trials[@]}"
 do
