@@ -29,6 +29,8 @@
 #ifndef _THREADPOOL_H_
 #define _THREADPOOL_H_
 
+#include "fsck_lock.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,6 +60,54 @@ typedef enum {
 typedef enum {
     threadpool_graceful       = 1
 } threadpool_destroy_flags_t;
+
+
+typedef enum {
+    immediate_shutdown = 1,
+    graceful_shutdown  = 2
+} threadpool_shutdown_t;
+
+/**
+ *  @struct threadpool_task
+ *  @brief the work struct
+ *
+ *  @var function Pointer to the function that will perform the task.
+ *  @var argument Argument to be passed to the function.
+ */
+
+typedef struct {
+    void (*function)(void *);
+    void *argument;
+} threadpool_task_t;
+
+/**
+ *  @struct threadpool
+ *  @brief The threadpool struct
+ *
+ *  @var notify       Condition variable to notify worker threads.
+ *  @var threads      Array containing worker threads ID.
+ *  @var thread_count Number of threads
+ *  @var queue        Array containing the task queue.
+ *  @var queue_size   Size of the task queue.
+ *  @var head         Index of the first element.
+ *  @var tail         Index of the next element.
+ *  @var count        Number of pending tasks
+ *  @var shutdown     Flag indicating if the pool is shutting down
+ *  @var started      Number of started threads
+ */
+struct threadpool_t {
+  fsck_lock_t lock;	
+  pthread_cond_t notify;
+  pthread_t *threads;
+  threadpool_task_t *queue;
+  int thread_count;
+  int queue_size;
+  int head;
+  int tail;
+  int count;
+  int shutdown;
+  int started;
+};
 
 /**
  * @function threadpool_create

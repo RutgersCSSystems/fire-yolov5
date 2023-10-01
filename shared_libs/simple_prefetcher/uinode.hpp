@@ -2,10 +2,13 @@
 #define _UINODE_HPP
 
 #include <mutex>
+#include <atomic>
 #include "util.hpp"
 #include "utils/hashtable.h"
 #include "utils/thpool.h"
 #include "utils/bitarray.h"
+
+#include "cache_state_tree.hpp"
 
 //user-level inodes
 struct u_inode {
@@ -40,23 +43,30 @@ struct u_inode {
 	size_t prefetched_bytes;
 
 
-        /*
-         * Used by Eviction
-         */
-        int evicted; //set to FILE_EVICTED if evicted
-	std::time_t update_time;
+    /*
+     * Used by Eviction
+     */
+    int evicted; //set to FILE_EVICTED if evicted
+    std::time_t update_time;
 
-	u_inode(){
-		ino = 0;
-		file_size = 0;
-                fdcount = 0;
-		page_cache_state = NULL;
 
-		fully_prefetched.store(false);
-		prefetched_bytes = 0;
+    struct rb_root cache_state_tree;
+    pthread_mutex_t tree_lock;
 
-                evicted = 0;
-	}
+    u_inode(){
+        ino = 0;
+        file_size = 0;
+        fdcount = 0;
+        page_cache_state = NULL;
+
+        fully_prefetched.store(false);
+        prefetched_bytes = 0;
+
+        evicted = 0;
+
+        cache_state_tree = RB_ROOT;
+        pthread_mutex_init(&tree_lock, NULL);
+    }
 };
 
 struct hashtable *init_inode_fd_map(void);

@@ -76,6 +76,8 @@ std::mutex fp_mutex;
 #define SIZE   2000 //NR_QSIZE
 #define QUEUES 32 //NR_NQUEUES
 
+#define BITS_TO_CHARS(bits)   ((((bits) - 1) / LONG_BIT) + 1)
+
 threadpool_t *pool[QUEUES];
 int g_next_queue=0;
 pthread_mutex_t lock;
@@ -623,6 +625,112 @@ inline off_t update_prefetch_limit(struct thread_args *a) {
 	return tot_prefetch;
 }
 
+void prefetcher_interval_th(void *arg) {
+
+    int i = 0;
+    long err = 0;
+    off_t file_pos;
+    struct read_ra_req ra;
+    int states_num = 0;
+    struct cache_state_node *cache_state = NULL;
+    struct thread_args *a = (struct thread_args*)arg;
+    struct cache_state_node* state_bitmaps[MAX_STATES];
+    ra.data = NULL;
+    off_t tot_prefetch = 0;
+    long real_prefetch_size = 0;
+    int len = 0;
+    bit_array_t *temp_cache_state = NULL;
+
+    tot_prefetch = update_prefetch_limit(a);
+    file_pos = a->offset;
+
+    // temp_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+    temp_cache_state = allocate_bitmap(a);
+    // BitArrayClearAll(temp_cache_state);
+
+    // printf("prefetcher_interval_th get called\n");
+    /*
+     * If the file is completely prefetched, dont prefetch
+     */
+    if(a->uinode && a->uinode->fully_prefetched.load()){
+        printf("Aborting prefetch fd:%d since fully prefetched\n", a->fd);
+        goto exit_prefetcher_th;
+    }
+
+    /*
+     * If the file prefetch offset is almost towards the end of file
+     * dont prefetch
+     */
+    if(((a->file_size >> PAGE_SHIFT) - (file_pos >> PAGE_SHIFT)) < 1){
+        goto exit_prefetcher_th;
+    }
+
+    while (file_pos < tot_prefetch){
+        if(shoud_stop_prefetch(a, file_pos))
+            goto exit_prefetcher_th;
+
+        real_prefetch_size = a->prefetch_limit;
+        // printf("cache query, ino: %ld, offset: %ld, size: %ld, prefetch size: %ld\n", a->uinode->ino, a->offset, a->prefetch_limit, a->prefetch_size);
+
+        states_num = cache_state_query(a->uinode, &a->uinode->cache_state_tree, file_pos, file_pos + a->prefetch_limit, state_bitmaps);
+		
+		// printf("query cache state done, ino: %ld, status_num: %d\n", a->uinode->ino, states_num);
+
+		if (states_num <= 0) {
+            // printf("no cache state found\n");
+            goto exit_prefetcher_th;
+        }
+
+        for (i = 0; i < states_num; i++) {
+
+            if (!state_bitmaps[i]->fully_prefetched) {
+                cache_state = state_bitmaps[i];
+                break;
+            }
+        }
+
+        if (cache_state == NULL || cache_state->page_cache_state == NULL || real_prefetch_size <=0)
+            goto exit_prefetcher_th;
+
+        ra.data = temp_cache_state->array;
+
+        // printf("readahead, ino: %d, start: %ld, size: %ld\n", a->uinode->ino, cache_state->it.start, real_prefetch_size);
+
+        err = readahead_info_wrap(a->fd, file_pos, real_prefetch_size, &ra, a->uinode);
+        // err = readahead_info_wrap(a->fd, cache_state->it.start, real_prefetch_size, &ra, a->uinode);
+
+        // printf("readahead, ino: %d, start: %ld, end: %ld done, numbits: %ld \n", a->uinode->ino, cache_state->it.start, cache_state->it.last, cache_state->page_cache_state->numBits);
+
+        for (int j = i, k=0; j < states_num;j++,k++) {
+
+            cache_state = state_bitmaps[j];
+            len = BITS_TO_CHARS(cache_state->page_cache_state->numBits)*sizeof(unsigned long);
+
+            memcpy(cache_state->page_cache_state->array, temp_cache_state->array + (k*len), len);
+            cache_state->fully_prefetched = 1;
+        }
+
+        file_pos += a->prefetch_size;
+    }
+
+    // BitArrayClearAll(temp_cache_state);
+    // BitArraySetAll(cache_state->page_cache_state);
+
+exit_prefetcher_th:
+    release_bitmap(temp_cache_state);
+
+#ifndef CONCURRENT_PREDICTOR
+    free(arg);
+#endif
+
+#ifdef ENABLE_LIB_STATS
+    update_ra_stats_if_enabled(nr_ra_done, nr_bytes_ra_done);
+#endif
+    // printf("Exiting %s\n", __func__);
+    return;
+}
+
+
 /*
  * function run by the prefetcher thread
  */
@@ -820,6 +928,7 @@ void inline prefetch_file_predictor(void *args){
     stride = fp->is_strided() * fp->portion_sz;
     stride = 0; //FIXME: BUGGY
     uinode = fp->uinode;
+	threadpool_t *th_pool= NULL;
 
  #ifdef MAINTAIN_UINODE
     if(!uinode)
@@ -877,7 +986,14 @@ void inline prefetch_file_predictor(void *args){
 #ifdef CONCURRENT_PREDICTOR
     prefetcher_th((void*)arg);
 #elif defined(THPOOL_PREFETCH)
+
+#ifdef INTERVAL_BITMAP
+    th_pool = pool[g_next_queue % QUEUES];
+    if (th_pool!= NULL && th_pool->count != th_pool->queue_size)
+        threadpool_add(th_pool, prefetcher_interval_th, (void*)arg, 0);
+#else
     threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
+#endif
     g_next_queue++;
 #else
     prefetcher_th((void*)arg);

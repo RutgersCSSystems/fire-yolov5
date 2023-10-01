@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
@@ -71,11 +71,13 @@ ENABLE_SENSITIVITY=0
 declare -a membudget=("6")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 
-declare -a workload_arr=("multireadrandom" "readseq")
+#declare -a workload_arr=("multireadrandom" "readseq")
+declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 declare -a config_arr=("Vanilla" "OSonly")
 #declare -a config_arr=("CPBI_PERF" "CIPI_PERF")
+declare -a config_arr=("CIPI_PERF" "CIPI_interval")
 declare -a trials=("TRIAL1")
 
 
@@ -312,8 +314,8 @@ GETMEMORYBUDGET() {
 
 
 
-COMPILE_AND_WRITE
-COMPILE
+#COMPILE_AND_WRITE
+#COMPILE
 
 
 if [ "$ENABLE_SENSITIVITY" -eq "0" ]

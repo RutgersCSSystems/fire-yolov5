@@ -18,7 +18,7 @@ NR_ADJACENT_CHECK=10
 MIN_FILE_SZ=$(5MB)
 CROSS_BITMAP_SHIFT=36
 
-SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c
+SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp
 SOURCESBASIC = libOSonly.cpp
 
 
@@ -71,7 +71,7 @@ CONCURRENT_PREDICTOR_THPOOL_BLOCK_RA_INFO=-DTHPOOL_PREFETCH -DPREDICTOR  -DMODIF
 #all: Vanilla Cross_Blind OSonly INTERCEPT Cross_Info Cross_Info_Predict Cross_Info_Concurrent_Predict Cross_Info_Predict_IOOPT Cross_Pred_Budget_IOOPT Cross_Naive_IOOPT DISABLE_ADV Cross_Naive_full Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync
 
 
-all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF
+all: Vanilla Cross_Blind OSonly Cross_Info Cross_Info_sync  Cross_Info_Predict Cross_Info_Predict_IOOPT Cross_Info_Predict_IOOPT_sync Cross_Info_IOOPT Cross_Info_IOOPT_sync Cross_Info_Pred_Budget Cross_Info_Pred_Budget_IOOPT Cross_Info_Pred_Budget_IOOPT_sync Cross_Info_Predict_sync Cross_Info_Predict_IOOPT_PERF Cross_Info_Pred_Budget_IOOPT_PERF Cross_Info_Predict_IOOPT_ITER Cross_Info_Predict_MMAP
 
 #DISABLE_ADV Vanilla_RA_IOOPT Vanilla_RA Cross_Info_IOOPT Cross_Info_sync Cross_Info_IOOPT_sync Cross_Info_Budget Cross_Info_Pred_Budget Cross_Info_Predict_sync CLEAR_STATS Cross_Info_Predict_IOOPT_sync INTERCEPT
 
@@ -137,7 +137,17 @@ Cross_Info_Predict_IOOPT_PERF: $(SOURCES)
 Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI_PERF.so $^ $(LIBS) $(DEBUG) $(VAR_FLAGS) $(THPOOL_BLOCK_RA_BUDGET_INFO) $(DISABLE_FADV_RANDOM) \
 	       	-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -ljemalloc -D_PERF_OPT -D_PERF_OPT_EXTREME -DPREFETCH_BOOST
-	    
+
+Cross_Info_Predict_IOOPT_ITER: $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_interval.so $^ $(LIBS) -Wl,--no-as-needed -lintervaltreelib $(DEBUG) \
+		$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
+		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME
+
+Cross_Info_Predict_MMAP:  $(SOURCES)
+	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_mmap.so $^ $(LIBS) $(DEBUG) \
+		$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
+		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DMMAP_PREDICT
+
 #Cross_Info + IOOPT_+ Predictor + No thread pool
 Cross_Info_Predict_IOOPT_sync: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_sync.so $^ $(LIBS) $(DEBUG) \
