@@ -60,6 +60,16 @@
 #define NR_WORKERS 2
 #endif
 
+#ifndef NR_NQUEUES
+#warning NR_NQUEUES not defined. Assuming 32 workers
+#define NR_NQUEUES 32
+#endif
+
+#ifndef NR_QSIZE
+#warning NR_QSIZE not defined. Assuming 2000 workers
+#define NR_QSIZE 2000
+#endif
+
 
 //NR of eviction workers
 #ifndef NR_EVICT_WORKERS
