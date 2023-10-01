@@ -73,8 +73,8 @@ std::mutex fp_mutex;
 #include <assert.h>
 #include "utils/thpool-simple.h"
 #define THREAD NR_WORKERS
-#define SIZE   50000
-#define QUEUES 64
+#define SIZE   20000
+#define QUEUES 32
 
 threadpool_t *pool[QUEUES];
 int g_next_queue=0;

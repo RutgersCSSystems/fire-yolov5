@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#include "fsck_lock.h"
 #include "thpool-simple.h"
 
 typedef enum {
@@ -72,7 +73,7 @@ typedef struct {
  *  @var started      Number of started threads
  */
 struct threadpool_t {
-  pthread_mutex_t lock;
+  fsck_lock_t lock;	
   pthread_cond_t notify;
   pthread_t *threads;
   threadpool_task_t *queue;
@@ -120,7 +121,8 @@ threadpool_t *threadpool_create(int thread_count, int queue_size, int flags)
         (sizeof(threadpool_task_t) * queue_size);
 
     /* Initialize mutex and conditional variable first */
-    if((pthread_mutex_init(&(pool->lock), NULL) != 0) ||
+ 
+    if((fsck_lock_init(&(pool->lock), NULL) != 0) ||
        (pthread_cond_init(&(pool->notify), NULL) != 0) ||
        (pool->threads == NULL) ||
        (pool->queue == NULL)) {
@@ -158,7 +160,7 @@ int threadpool_add(threadpool_t *pool, void (*function)(void *),
         return threadpool_invalid;
     }
 
-    if(pthread_mutex_lock(&(pool->lock)) != 0) {
+    if(fsck_lock(&(pool->lock)) != 0) {
         return threadpool_lock_failure;
     }
 
@@ -191,7 +193,7 @@ int threadpool_add(threadpool_t *pool, void (*function)(void *),
         }
     } while(0);
 
-    if(pthread_mutex_unlock(&pool->lock) != 0) {
+    if(fsck_unlock(&pool->lock) != 0) {
         err = threadpool_lock_failure;
     }
 
@@ -206,7 +208,7 @@ int threadpool_destroy(threadpool_t *pool, int flags)
         return threadpool_invalid;
     }
 
-    if(pthread_mutex_lock(&(pool->lock)) != 0) {
+    if(fsck_lock(&(pool->lock)) != 0) {
         return threadpool_lock_failure;
     }
 
@@ -222,7 +224,7 @@ int threadpool_destroy(threadpool_t *pool, int flags)
 
         /* Wake up all worker threads */
         if((pthread_cond_broadcast(&(pool->notify)) != 0) ||
-           (pthread_mutex_unlock(&(pool->lock)) != 0)) {
+           (fsck_unlock(&(pool->lock)) != 0)) {
             err = threadpool_lock_failure;
             break;
         }
@@ -256,7 +258,7 @@ int threadpool_free(threadpool_t *pool)
         /* Because we allocate pool->threads after initializing the
            mutex and condition variable, we're sure they're
            initialized. Let's lock the mutex just in case. */
-        pthread_mutex_lock(&(pool->lock));
+        fsck_lock(&(pool->lock));
         pthread_mutex_destroy(&(pool->lock));
         pthread_cond_destroy(&(pool->notify));
     }
@@ -272,7 +274,7 @@ static void *threadpool_thread(void *threadpool)
 
     for(;;) {
         /* Lock must be taken to wait on conditional variable */
-        pthread_mutex_lock(&(pool->lock));
+        fsck_lock(&(pool->lock));
 
         /* Wait on condition variable, check for spurious wakeups.
            When returning from pthread_cond_wait(), we own the lock. */
@@ -296,7 +298,7 @@ static void *threadpool_thread(void *threadpool)
 		  //  fprintf(stderr,"Total pending tasks %d\n", pool->count);
 
         /* Unlock */
-        pthread_mutex_unlock(&(pool->lock));
+        fsck_unlock(&(pool->lock));
 
         /* Get to work */
         (*(task.function))(task.argument);
@@ -304,7 +306,7 @@ static void *threadpool_thread(void *threadpool)
 
     pool->started--;
 
-    pthread_mutex_unlock(&(pool->lock));
+    fsck_unlock(&(pool->lock));
     pthread_exit(NULL);
     return(NULL);
 }
