@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a num_arr=("25000000")
-NUM=25000000
+declare -a num_arr=("4000000")
+NUM=4000000
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
 
@@ -58,8 +58,8 @@ declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
 USEDB=1
-MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
 #Enable sensitivity to vary prefetch size and prefetch thread count
 ENABLE_SENSITIVITY=0
 
@@ -310,7 +310,7 @@ GETMEMORYBUDGET() {
 
 
 #COMPILE_AND_WRITE
-#COMPILE
+COMPILE
 
 
 for G_TRIAL in "${trials[@]}"
