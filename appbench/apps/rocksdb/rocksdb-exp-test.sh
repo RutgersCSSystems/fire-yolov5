@@ -20,7 +20,7 @@ fi
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
 WORKLOAD="readrandom"
-WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
+WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
@@ -47,10 +47,7 @@ declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" 
 #declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning")
 #declare -a workload_arr=("readrandom" "readseq" "readreverse" "compact" "overwrite" "readwhilewriting" "readwhilescanning")
 
-declare -a membudget=("6" "4" "2" "8")
-declare -a membudget=("6")
-
-
+declare -a membudget=("1" "2" "4" "6")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
@@ -61,20 +58,17 @@ declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 
 
 USEDB=1
-MEM_REDUCE_FRAC=0
-ENABLE_MEM_SENSITIVE=0
-
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 #Enable sensitivity to vary prefetch size and prefetch thread count
 ENABLE_SENSITIVITY=0
 
 
-declare -a membudget=("6")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
-
 declare -a workload_arr=("multireadrandom" "readseq")
 declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
-declare -a config_arr=("Vanilla" "OSonly")
+#declare -a config_arr=("Vanilla" "OSonly")
 #declare -a config_arr=("CPBI_PERF" "CIPI_PERF")
 declare -a trials=("TRIAL1")
 
@@ -316,6 +310,23 @@ COMPILE_AND_WRITE
 COMPILE
 
 
+for G_TRIAL in "${trials[@]}"
+do
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
+	then
+		for MEM_REDUCE_FRAC in "${membudget[@]}"
+		do
+			GETMEMORYBUDGET $MEM_REDUCE_FRAC
+			RUN
+			$SCRIPTS/mount/releasemem.sh "NODE0"
+			$SCRIPTS/mount/releasemem.sh "NODE1"
+		done
+	else
+		RUN
+	fi
+done
+exit
+
 if [ "$ENABLE_SENSITIVITY" -eq "0" ]
 then
         RUN
@@ -333,20 +344,5 @@ fi
 exit
 
 
-for G_TRIAL in "${trials[@]}"
-do
-	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
-	then
-		for MEM_REDUCE_FRAC in "${membudget[@]}"
-		do
-			GETMEMORYBUDGET $MEM_REDUCE_FRAC
-			RUN
-			#$SCRIPTS/mount/releasemem.sh "NODE0"
-			#$SCRIPTS/mount/releasemem.sh "NODE1"
-		done
-	else
-		RUN
-	fi
-done
 
 
