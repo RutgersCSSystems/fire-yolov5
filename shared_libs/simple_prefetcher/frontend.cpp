@@ -355,7 +355,6 @@ void con(){
 
 void dest(){
 
-	return;
 	/*
 	 * Reset the IO limits to normal
 	 * Reset readahead 2MB limit
