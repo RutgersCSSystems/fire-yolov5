@@ -147,8 +147,6 @@ void free_cross_bitmap(struct inode *inode){
 		//printk(KERN_ALERT "%s: releasing mem for inode with i_count "
 		//		"%d\n", __func__, atomic_read(&inode->i_count));
 
-		
-		
 		atomic_set(&inode->i_bitmap_freed, 1);
 
         	vfree(inode->bitmap);
@@ -214,14 +212,10 @@ void add_pg_cross_bitmap(struct inode *inode, pgoff_t start_index, unsigned long
                 goto exit;
         }
 #endif
-
-        down_write(&inode->bitmap_rw_sem);
+        //down_write(&inode->bitmap_rw_sem);
         //printk("%s: i_ino=%ld, pg_off=%ld\n", __func__, inode->i_ino, index);
-
-
         bitmap_set(inode->bitmap, start_index, nr_pages);
-
-        up_write(&inode->bitmap_rw_sem);
+        //up_write(&inode->bitmap_rw_sem);
 
 exit:
         return;
@@ -242,7 +236,6 @@ bool is_set_cross_bitmap(struct inode *inode, pgoff_t index){
 
         //XXX: Doesnt use a read lock because it is used
         //by only a stats; even if it is off by some, doesnt matter
-
         return test_bit(index, inode->bitmap);
 exit:
         return false;

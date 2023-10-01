@@ -20,7 +20,7 @@ fi
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
 WORKLOAD="readrandom"
-WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
+WRITEARGS="--benchmarks=fillrandom --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD --advise_random_on_open=false --readahead_size=2097152 --compaction_readahead_size=2097152 --log_readahead_size=2097152"
 APPPREFIX="/usr/bin/time -v"
@@ -36,8 +36,8 @@ mkdir -p $RESULTS
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 
-declare -a num_arr=("4000000")
-NUM=4000000
+declare -a num_arr=("25000000")
+NUM=25000000
 
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
 
@@ -75,6 +75,7 @@ declare -a workload_arr=("multireadrandom" "readseq")
 declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 declare -a config_arr=("Vanilla" "OSonly")
+#declare -a config_arr=("CPBI_PERF" "CIPI_PERF")
 declare -a trials=("TRIAL1")
 
 
@@ -226,7 +227,6 @@ GEN_RESULT_PATH() {
 
 
 RUN() {
-
         #CLEAR_DATA
 	echo "BEGINNING TO WARM UP ......."
 	cd $PREDICT_LIB_DIR
@@ -239,53 +239,50 @@ RUN() {
 
 	for NUM in "${num_arr[@]}"
 	do
-	       for prefechthrd in "${prefech_thrd_arr[@]}"
+		cd $PREDICT_LIB_DIR
+		if [ "$ENABLE_SENSITIVITY" -eq "1" ]
+		then
+			sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
+			sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
+		fi
+		./compile.sh &> out.txt
+
+		cd $DBHOME
+
+		for THREAD in "${thread_arr[@]}"
 		do
-			cd $PREDICT_LIB_DIR
-			if [ "$ENABLE_SENSITIVITY" -eq "1" ]
-			then
-				sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
-				sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
-			fi
-
-			./compile.sh &> out.txt
-
-			cd $DBHOME
-
-			for THREAD in "${thread_arr[@]}"
+			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000 --multiread_batched=true"
+			PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
+			for WORKLOAD in "${workload_arr[@]}"
 			do
-				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000 --multiread_batched=true"
-				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
-				for WORKLOAD in "${workload_arr[@]}"
+				for CONFIG in "${config_arr[@]}"
 				do
-					for CONFIG in "${config_arr[@]}"
-					do
-						RESULTS=""
-						READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
-						GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
+					RESULTS=""
+					READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
+					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
 
-						mkdir -p $RESULTS
+					mkdir -p $RESULTS
 
-						echo "RUNNING $CONFIG and writing results to $RESULTFILE"
-						echo "..................................................."
+					echo "RUNNING $CONFIG and writing results to $RESULTFILE"
+					echo "..................................................."
 
-						rm -rf $DBDIR/LOCK
+					rm -rf $DBDIR/LOCK
 
-						echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
+					echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
-						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-						$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
-						export LD_PRELOAD=""
-						sudo dmesg -c &>> $RESULTFILE
-						echo ".......FINISHING $CONFIG......................"
-						cat $RESULTFILE | grep "MB/s"
-						FlushDisk
-					done
+					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+					export LD_PRELOAD=""
+					sudo dmesg -c &>> $RESULTFILE
+					echo ".......FINISHING $CONFIG......................"
+					cat $RESULTFILE | grep "MB/s"
+					FlushDisk
 				done
 			done
 		done
 	done
 }
+
 
 GETMEMORYBUDGET() {
         sudo rm -rf  /mnt/ext4ramdisk/*
@@ -315,7 +312,7 @@ GETMEMORYBUDGET() {
 
 
 
-#COMPILE_AND_WRITE
+COMPILE_AND_WRITE
 COMPILE
 
 
