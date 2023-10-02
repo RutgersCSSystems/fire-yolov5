@@ -113,6 +113,22 @@ To extract the results,
 ./generate_values.sh
 ```
 
+#### Running YCSB
+
+To run YCSB workload
+```
+cd $BASE/appbench/apps/RocksDB-YCSB
+./release-run-med.sh
+```
+To extract and see the results
+```
+cd $BASE/appbench/apps/RocksDB-YCSB
+./compile.sh
+python3 extract.py
+cat RESULT.csv
+```
+
+
 #### Running Snappy
 ```
 cd $BASE/appbench/apps/snappy-c
