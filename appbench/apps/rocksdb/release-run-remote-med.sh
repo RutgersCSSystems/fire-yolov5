@@ -17,8 +17,6 @@ if [ -z "$APPS" ]; then
 fi
 
 
-#WORKLOAD="readseq"
-#WORKLOAD="readreverse"
 WORKLOAD="readrandom"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
@@ -31,20 +29,8 @@ RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
 
 mkdir -p $RESULTS
-
-
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-
-declare -a num_arr=("25000000")
-NUM=25000000
-
-declare -a thread_arr=("32" "16"  "8"  "4" "1")
-
-
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
-declare -a membudget=("6" "4" "2" "8")
-
+declare -a num_arr=("4000000")
+NUM=4000000
 
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 USEDB=1
@@ -57,17 +43,10 @@ ENABLE_SENSITIVITY=0
 
 declare -a membudget=("6")
 declare -a trials=("TRIAL1")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
-
-declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF" "CII")
-
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
-declare -a workload_arr=("multireadrandom")
-declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CII" "CPBI_PERF")
-
-
+declare -a config_arr=("CIPI_PERF" "CII" "CPBI_PERF" "Vanilla" "OSonly")
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -76,61 +55,6 @@ ulimit -n 1000000
 workload_arr_in=$1
 config_arr_in=$2
 thread_arr_in=$3
-
-glob_prefetchsz=1024
-glob_prefechthrd=8
-
-declare -a prefech_sz_arr=("1024" "2048" "4096") #"512" "256" "128" "64" 
-#declare -a prefech_sz_arr=("1024")
-declare -a prefech_thrd_arr=("1" "8")
-
-get_global_arr() {
-
-        if [ ! -z "$workload_arr_in" ]
-        then
-                if [ ${#workload_arr_in=[@]} -eq 0 ]; then
-                    echo "input array in NULL"
-                else
-                    workload_arr=("${workload_arr_in[@]}")
-                fi
-        fi
-
-        if [ ! -z "$config_arr_in" ]
-        then
-                if [ ${#config_arr_in=[@]} -eq 0 ]; then
-                    echo "input array in NULL"
-                else
-                   config_arr=("${config_arr_in[@]}")
-                fi
-        fi
-
-        if [ ! -z "$thread_arr_in" ]
-        then
-                if [ ${#thread_arr_in=[@]} -eq 0 ]; then
-                    echo "input array in NULL"
-                else
-                   thread_arr=("${thread_arr_in[@]}")
-                fi
-        fi
-
-        if [ ! -z "$4" ]
-        then
-                prefetchsz=$4
-        else
-                prefetchsz=$glob_prefetchsz
-        fi
-
-        if [ ! -z "$5" ]
-        then
-                prefechthrd=$5
-        else
-                prefechthrd=$glob_prefechthrd
-        fi
-}
-
-get_global_arr
-
-
 
 FlushDisk()
 {
@@ -151,10 +75,6 @@ CLEAR_DATA()
         rm -rf $DBDIR/*
         rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
 }
-
-
-
-
 
 GEN_RESULT_PATH() {
 	WORKLOAD=$1
@@ -185,7 +105,7 @@ GEN_RESULT_PATH() {
 
 RUN() {
 
-        #CLEAR_DATA
+    #CLEAR_DATA
 	echo "BEGINNING TO WARM UP ......."
 	cd $PREDICT_LIB_DIR
 	$PREDICT_LIB_DIR/compile.sh
@@ -197,17 +117,7 @@ RUN() {
 
 	for NUM in "${num_arr[@]}"
 	do
-	       for prefechthrd in "${prefech_thrd_arr[@]}"
-		do
-			cd $PREDICT_LIB_DIR
-			if [ "$ENABLE_SENSITIVITY" -eq "1" ]
-			then
-				sed -i "/NR_WORKERS_VAR=/c\NR_WORKERS_VAR=$prefechthrd" compile.sh
-				sed -i "/PREFETCH_SIZE_VAR=/c\PREFETCH_SIZE_VAR=$prefetchsz" compile.sh
-			fi
-
 			./compile.sh &> out.txt
-
 			cd $DBHOME
 
 			for THREAD in "${thread_arr[@]}"
@@ -242,7 +152,6 @@ RUN() {
 				done
 			done
 		done
-	done
 }
 
 GETMEMORYBUDGET() {
@@ -257,8 +166,7 @@ GETMEMORYBUDGET() {
 	echo "MEMORY $1"
 	let FRACTION=$1
 	let NUMANODE0=$(($NUMAFREE0/$FRACTION))
-	#let NUMANODE1=$(($NUMAFREE1/$FRACTION))
-	let NUMANODE1=1000
+	let NUMANODE1=$(($NUMAFREE1/$FRACTION))
 
 	let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
 	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
@@ -267,13 +175,13 @@ GETMEMORYBUDGET() {
 	$SCRIPTS/mount/releasemem.sh "NODE0"
 	$SCRIPTS/mount/releasemem.sh "NODE1"
 
-        numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+    numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
+    numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 
 
-COMPILE_AND_WRITE
+#COMPILE_AND_WRITE
 COMPILE
 
 for G_TRIAL in "${trials[@]}"
