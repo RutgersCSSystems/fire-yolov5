@@ -6,8 +6,8 @@ VALUE_SIZE=4096
 SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
-DBDIR=$DBHOME/DATA
-#DBDIR=/mnt/remote/DATA
+#DBDIR=$DBHOME/DATA
+DBDIR=/mnt/remote/DATA
 
 
 if [ -z "$APPS" ]; then
@@ -72,7 +72,7 @@ declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 #declare -a config_arr=("Vanilla" "OSonly")
 #declare -a config_arr=("CPBI_PERF" "CIPI_PERF")
-declare -a config_arr=("CIPI_PERF" "CIPI_interval")
+#declare -a config_arr=("CIPI_PERF" "CIPI_interval")
 declare -a trials=("TRIAL1")
 
 
@@ -309,8 +309,8 @@ GETMEMORYBUDGET() {
 
 
 
-#COMPILE_AND_WRITE
-COMPILE
+COMPILE_AND_WRITE
+#COMPILE
 
 
 for G_TRIAL in "${trials[@]}"
