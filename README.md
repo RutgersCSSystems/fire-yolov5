@@ -148,12 +148,64 @@ cd $BASE/appbench/apps/snappy-c
 
 
 ### Running Remote Storage Experiments
+For remote storage experiments, we will use m510 with remote NVMe support.
+These nodes are easily available and quick to launch!  We have already created
+a publically available cloudlab profile where one could launch two m510 NVMe
+nodes with NVMeOF setup across these nodes.
+
+Please follow the following steps:
+
+**1. Instantiating the nodes**
+
+(1) First, use the following CloudLab UTAH m510 nodes, which is easy to reserve and use. Use the following profile:
+**Machine Node Name:** m510
+**Profile Name:** 2-NVMe-Nodes
+
+(2) Now, you would have to set up a filesystem and mount it. 
+```
+sudo mkfs.ext4 /dev/nvme0n1
+mkdir ~/ssd; sudo mount /dev/nvme0n1p1 ~/ssd
+cd ~/ssd; sudo chown $USER .
+```
+Now, get the appropriate repo.
+```
+cd ssd
+git clone https://github.com/RutgersCSSystems/ioopt
+cd ioopt
+```
+You now have the repo. Before compiling and setting up things, let's set the environmental variable.
+
+First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
+Because we are using Wisconsin, you could do something like this and save the file.
+```
+source ./scripts/setvars.sh 
+```
+
+**2. Compiling the the OS on these nodes**
+Compiling the OS is very similar to the one described earlier. First, let's
+compile the OS for the client node where we run the application. Note the
+client node is different from the storage node that hosts the storage.
+
+```
+cd ssd/$BASE/linux-5.14.0
+## This will produce and install the modified kernel
+./compile_modified_deb.sh 
+sudo reboot ## This will reboot the node with the new Linux 5.14
+```
+
+**3. Remote NVMe setup using NVMeOF and RDMA**
+@Jian add detailed steps for Remote NVMe setup. Please describe clearly
+
+**4. Running experiments**
 
 For remote storage execution, we will use the following script. 
 ```
+cd $BASE/appbench/apps/rocksdb
 ./release-remote-run-med.sh
+python3 release-run-remote-med.sh
+#Display the results
+cat REMOTE-RESULT.csv
 ```
-
 
 #### Varying Parameters
 To vary either RocksDB parameters, workloads, or the technique used for prefetching, vary one of these parameters in the 
