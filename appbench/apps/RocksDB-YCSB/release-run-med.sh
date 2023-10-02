@@ -35,7 +35,7 @@ NUM=10000000
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")
 declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
-declare -a config_arr=("CIPI_PERF" "CPBI_PERF" "OSonly" "Vanilla")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CPBI_PERF")
 
 
 USEDB=1
