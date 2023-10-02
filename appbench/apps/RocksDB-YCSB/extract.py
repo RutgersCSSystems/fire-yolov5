@@ -4,7 +4,7 @@ import csv
 # Define the arrays
 thread_arr = ["8"]
 workload_arr = ["ycsbwklda", "ycsbwkldb", "ycsbwkldc", "ycsbwkldd", "ycsbwklde", "ycsbwkldf"]
-config_arr = ["CIPI_PERF", "CPBI_PERF", "OSonly", "Vanilla"]
+config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CPBI_PERF"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
