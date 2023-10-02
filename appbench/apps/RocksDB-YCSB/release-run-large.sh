@@ -29,8 +29,8 @@ RESULTFILE=""
 
 mkdir -p $RESULTS
 
-declare -a num_arr=("10000000")
-NUM=10000000
+declare -a num_arr=("20000000")
+NUM=20000000
 
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")
@@ -115,7 +115,7 @@ RUN() {
 		for THREAD in "${thread_arr[@]}"
 		do
 			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
-			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=30 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
+			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=60 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
 
 			for WORKLOAD in "${workload_arr[@]}"
 			do
@@ -142,7 +142,7 @@ RUN() {
 	done
 }
 
-WARMPUP
+#WARMPUP
 FlushDisk
 FlushDisk
 cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
