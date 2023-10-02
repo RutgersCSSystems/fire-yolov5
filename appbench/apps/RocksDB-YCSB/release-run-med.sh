@@ -143,10 +143,13 @@ RUN() {
 }
 
 #WARMPUP
+cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
+cp $DBHOME/Makefile.YCSB $PREDICT_LIB_DIR/Makefile
 cd $PREDICT_LIB_DIR
 $PREDICT_LIB_DIR/compile.sh
 cd $DBHOME
 
 RUN
+cd $PREDICT_LIB_DIR/Makefile.orig $PREDICT_LIB_DIR/Makefile
 exit
 
