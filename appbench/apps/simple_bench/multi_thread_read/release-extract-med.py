@@ -26,7 +26,7 @@ def main():
     with open(output_file, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
 
-        for access_pattern in ["read_pvt_rand", "read_pvt_seq"]:
+        for access_pattern in workload_arr:
             SPACE =[f"-----------------------"]
             csv_writer.writerow(SPACE)
             header_row = [f"Table for {access_pattern}"]
