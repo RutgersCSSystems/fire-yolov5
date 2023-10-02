@@ -34,7 +34,7 @@
 #ifdef FILESZ
 #define FILESIZE (FILESZ * 1024L * 1024L * 1024L)
 #else
-#define FILESIZE (10L * 1024L * 1024L * 1024L)
+#define FILESIZE (60L * 1024L * 1024L * 1024L)
 #endif
 
 //Number of pages to read in one pread syscall
