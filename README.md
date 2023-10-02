@@ -90,15 +90,15 @@ cd $BASE
 
 #### Running Microbenchmark
 
-First, let's run the Microbenchmark, where we generate 100GB of files, vary the size of each request, and measure the throughput.
+Let's run the Microbenchmark, where we generate 100GB of files, vary the size of each request, and measure the throughput.
 
-First, let's compile the microbenchmark with different workloads.
+First, to compile the microbenchmark with different workloads, use the following steps:
 ```
 cd simple_bench/multi_thread_read
 make
 ```
 
-Now, let's run the workload and see the results.
+To run the workload and see the results.
 ```
 ./release-run-med.sh
 python3 release-extract-med.py
