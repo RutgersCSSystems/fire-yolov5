@@ -99,8 +99,9 @@ Let's run the Microbenchmark, where we generate 100GB of files, vary the size of
 
 First, to compile the microbenchmark with different workloads, use the following steps:
 ```
-cd simple_bench/multi_thread_read
-make
+cd  $BASE/appbench/apps/simple_bench/multi_thread_read
+mkdir bin
+make -j4
 ```
 
 To run the workload and see the results.
