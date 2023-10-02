@@ -124,7 +124,7 @@ cd $BASE/appbench/apps/RocksDB-YCSB
 To extract and see the results
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
-python3 extract.py
+python3 release-extract-med.py
 cat RESULT.csv
 ```
 
