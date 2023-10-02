@@ -84,7 +84,7 @@ All experiments are in the following folder. This script needs to be updated to 
 Check the scripts before running all_variation.
 ```
 # Navigate to the source folder
-cd ~/ssd/iopt
+cd ~/ssd/ioopt
 source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
