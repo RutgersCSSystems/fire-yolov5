@@ -81,6 +81,9 @@ sudo reboot ## This will reboot the node with the new Linux.
 All experiments are in the following folder. This script needs to be updated to run different applications. 
 Check the scripts before running all_variation.
 ```
+# Navigate to the source folder
+cd ~/ssd/iopt
+source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
 cd $BASE
