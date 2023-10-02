@@ -1,4 +1,5 @@
 export NVMBASE=$PWD
+export BASE=$PWD
 ######## DO NOT CHANGE BEYOUND THIS ###########
 #Pass the release name
 export OS_RELEASE_NAME="bionic"
@@ -17,14 +18,25 @@ export MOUNT_DIR=$QEMU_IMG/mountdir
 export QEMUMEM="40" #In GB
 export KERNEL=$NVMBASE/KERNEL
 
-#BENCHMARKS AND LIBS
-export OUTPUT_FOLDER=$NVMBASE/results/$USER/
+#PAPER FOLDER
+export PAPER=$NVMBASE/Prop3/crossprefetch/graphs/
+export PAPERGRAPHS=$PAPER/SC
+
+#export MACHINE_NAME="CLEMSON-APR8-MEMBUDGET"
+export MACHINE_NAME="ASPLOS"
+export OUTPUT_FOLDER=$NVMBASE/results/$MACHINE_NAME/CAMERA-OPT-FINAL-TEST
+export OUTPUT_GRAPH_FOLDER=$NVMBASE/results/$MACHINE_NAME/CAMERA-OPT-FINAL-TEST
+
+#export MACHINE_NAME="CLEMSON-PREFETCH-4THREADS"
+#export OUTPUT_FOLDER=$NVMBASE/results/$MACHINE_NAME/SC-RESULTS
+#export OUTPUT_GRAPH_FOLDER=$NVMBASE/results/$MACHINE_NAME/SC-RESULTS
+
 export OUTPUTDIR=$OUTPUT_FOLDER
 export LINUX_SCALE_BENCH=$NVMBASE/linux-scalability-benchmark
 export APPBENCH=$NVMBASE/appbench
 export APPS=$NVMBASE/appbench/apps
 export SHARED_LIBS=$NVMBASE/shared_libs
-export PREDICT_LIB_DIR=$SHARED_LIBS/pred
+export PREDICT_LIB_DIR=$SHARED_LIBS/simple_prefetcher
 export QUARTZ=$SHARED_LIBS/quartz
 
 #SCRIPTS
@@ -36,7 +48,7 @@ export QUARTZSCRIPTS=$SHARED_LIBS/quartz/scripts
 
 #APP SPECIFIC and APPBENCH
 #export GRAPHCHI_ROOT=$APPBENCH/graphchi/graphchi-cpp
-export SHARED_DATA=$APPBENCH/shared_data
+export SHARED_DATA=$NVMBASE/dataset
 #export SHARED_DATA=/mnt/pmemdir
 
 export APPPREFIX="/usr/bin/time -v"
@@ -61,3 +73,6 @@ export TEST_TMPDIR=/mnt/pmemdir
 
 #Commands
 mkdir $KERNEL
+
+echo "backend: Agg" > ~/.config/matplotlib/matplotlibrc
+
