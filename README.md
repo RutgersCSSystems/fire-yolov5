@@ -54,9 +54,6 @@ You now have the repo. Before compiling and setting up things, let's set the env
 First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
 Because we are using Wisconsin, you could do something like this and save the file.
 ```
-export MACHINE_NAME="WISC"
-```  
-```
 source ./scripts/setvars.sh
 # Let's install the Debian packages
 scripts/install_packages.sh
