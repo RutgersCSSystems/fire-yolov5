@@ -3,14 +3,14 @@ import csv
 
 # Define the arrays
 thread_arr = ["16"]
-workload_arr=["multireadrandom", "readrandom", "readreverse", "readseq", "readwhilewriting", "readwhilescanning"]
-workload_arr=["multireadrandom"]
-config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CPBI_PERF", "CII"]
+workload_arr=["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
+#workload_arr=["multireadrandom"]
+config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
 print(output_dir)
-base_dir = output_dir + "-TRIAL1/REMOTE/ROCKSDB/25M-KEYS/"
+base_dir = output_dir + "-TRIAL1/REMOTE/ROCKSDB/4M-KEYS/"
 print(base_dir)
 
 # Output CSV file
