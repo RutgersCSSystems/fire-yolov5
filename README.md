@@ -78,7 +78,6 @@ cd ~/ssd/ioopt
 source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
-cd $BASE
 ```
 
 ### Starting with Medium Workloads
