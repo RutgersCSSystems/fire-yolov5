@@ -78,8 +78,8 @@ ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $READERS -u $WRITERS -p $SCHED -v $DEVCORECOU
 # First fill up the test file
 $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
 
-#declare -a readers=("1" "4" "8" "16")
-declare -a readers=("1")
+declare -a readers=("1" "4" "8" "16")
+#declare -a readers=("1")
 
 WRITERS=4
 # Vary the number of producer(writer)

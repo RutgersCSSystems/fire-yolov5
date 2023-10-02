@@ -22,7 +22,7 @@ FILESIZE=1000
 #declare -a thread_arr=("4" "8" "16" "32")
 declare -a thread_arr=("32")
 #Number of files to compress
-declare -a workload_arr=("100")
+declare -a workload_arr=("30")
 # Size of each file in KB
 declare -a filesize_arr=("60000" "80000"  "100000"  "120000"  "140000")
 #declare -a filesize_arr=("60000")
