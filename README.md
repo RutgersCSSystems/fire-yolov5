@@ -77,6 +77,14 @@ cd $BASE
 
 ### Starting with Medium Workloads
 
+#### Running Microbenchmark
+
+```
+cd shared_libs/simple_prefetcher/benchmarks
+make
+./run_scalability.sh
+```
+
 #### Running RocksDB
 First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
 As a first step, we will start running RocksDB, a persistent key-value store.  
