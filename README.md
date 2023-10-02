@@ -64,7 +64,9 @@ Because we are using Wisconsin, you could do something like this and save the fi
 export MACHINE_NAME="WISC"
 ```  
 ```
-source ./scripts/setvars.sh 
+source ./scripts/setvars.sh
+# Let's install the Debian packages
+scripts/install_packages.sh
 ```
 
 ### Compile Kernel
