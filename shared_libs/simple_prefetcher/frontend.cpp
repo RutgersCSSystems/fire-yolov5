@@ -822,13 +822,13 @@ void prefetcher_th(void *arg) {
 			goto exit_prefetcher_th;
 		}
 
-#ifdef _PERF_OPT_EXTREME
+#ifndef _PERF_OPT_EXTREME
 		uinode_bitmap_lock(a->uinode);
 #endif
 
 		err = readahead_info_wrap(a->fd, file_pos, a->prefetch_size, &ra, a->uinode);
 		if(err < 0){
-#ifdef _PERF_OPT_EXTREME
+#ifndef _PERF_OPT_EXTREME
 			uinode_bitmap_unlock(a->uinode);
 #endif
 			//printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
