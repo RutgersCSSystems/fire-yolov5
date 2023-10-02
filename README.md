@@ -1,16 +1,9 @@
 CrossPrefetch
 ==================================================
-
-
-Best Performing:
+DELETE THIS: Best Performing:
 ```
-refactor-sudarsun-perf-3
-
-commit a4eb9bf4e5ac34c759afafb7925753f30a0ec4e9
-
+refactor-sudarsun-perf-3 commit a4eb9bf4e5ac34c759afafb7925753f30a0ec4e9
 Author: sudarsun <kannan11@node-0.prefetch5.lsm-pg0.clemson.cloudlab.us>
-
-Date:   Thu Aug 24 15:12:35 2023 -0400
 ```
 
 
@@ -61,10 +54,9 @@ You now have the repo. Before compiling and setting up things, let's set the env
 First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
 Because we are using Wisconsin, you could do something like this and save the file.
 ```
-export MACHINE_NAME="WISC"
-```  
-```
-source ./scripts/setvars.sh 
+source ./scripts/setvars.sh
+# Let's install the Debian packages
+scripts/install_packages.sh
 ```
 
 ### Compile Kernel
@@ -78,16 +70,35 @@ sudo reboot ## This will reboot the node with the new Linux.
 ```
 
 ## Run Experiments
-All experiments are in the following folder. Use this script needs to be updated to run different applications Check the scripts before running all_variation.
+All experiments are in the following folder. This script needs to be updated to run different applications. 
+Check the scripts before running all_variation.
 ```
+# Navigate to the source folder
+cd ~/ssd/ioopt
+source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
-cd $BASE
 ```
 
 ### Starting with Medium Workloads
 
 #### Running Microbenchmark
+
+Let's run the Microbenchmark, where we generate 100GB of files, vary the size of each request, and measure the throughput.
+
+First, to compile the microbenchmark with different workloads, use the following steps:
+```
+cd  $BASE/appbench/apps/simple_bench/multi_thread_read
+mkdir bin
+make -j4
+```
+
+To run the workload and see the results.
+```
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
 
 ```
 cd shared_libs/simple_prefetcher/benchmarks
@@ -96,7 +107,7 @@ make
 ```
 
 #### Running RocksDB
-First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
+First, we will start with running medium workloads, which will take between 3-5 hours (or longer) to complete.
 As a first step, we will start running RocksDB, a persistent key-value store.  
 To compile, assuming the environmental variables are set using set_vars.sh
 
