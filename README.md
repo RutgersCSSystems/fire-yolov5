@@ -118,12 +118,12 @@ To extract the results,
 To run YCSB workload
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
+./compile.sh
 ./release-run-med.sh
 ```
 To extract and see the results
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
-./compile.sh
 python3 extract.py
 cat RESULT.csv
 ```
