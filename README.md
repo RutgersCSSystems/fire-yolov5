@@ -78,7 +78,8 @@ sudo reboot ## This will reboot the node with the new Linux.
 ```
 
 ## Run Experiments
-All experiments are in the following folder. Use this script needs to be updated to run different applications Check the scripts before running all_variation.
+All experiments are in the following folder. This script needs to be updated to run different applications. 
+Check the scripts before running all_variation.
 ```
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
@@ -89,6 +90,21 @@ cd $BASE
 
 #### Running Microbenchmark
 
+First, let's run the Microbenchmark, where we generate 100GB of files, vary the size of each request, and measure the throughput.
+
+First, let's compile the microbenchmark with different workloads.
+```
+cd simple_bench/multi_thread_read
+make
+```
+
+Now, let's run the workload and see the results.
+```
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
 ```
 cd shared_libs/simple_prefetcher/benchmarks
 make
@@ -96,7 +112,7 @@ make
 ```
 
 #### Running RocksDB
-First, we will start with running medium workloads, which will take more than 1.5 to 2 hours to complete.
+First, we will start with running medium workloads, which will take between 3-5 hours (or longer) to complete.
 As a first step, we will start running RocksDB, a persistent key-value store.  
 To compile, assuming the environmental variables are set using set_vars.sh
 
