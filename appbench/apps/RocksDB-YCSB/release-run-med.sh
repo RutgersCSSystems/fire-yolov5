@@ -142,7 +142,7 @@ RUN() {
 	done
 }
 
-#WARMPUP
+WARMPUP
 cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
 cp $DBHOME/Makefile.YCSB $PREDICT_LIB_DIR/Makefile
 cd $PREDICT_LIB_DIR
