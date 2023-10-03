@@ -13,7 +13,7 @@ output_dir = os.environ.get("OUTPUTDIR", "")
 output_base_dir = f"{output_dir}/snappy/"
 
 # Output CSV file
-output_file = "TEST-RESULT.csv"
+output_file = "RESULT.csv"
 
 # Function to extract the value before "MB/s" from a line and round to the nearest integer
 def extract_and_round_ops_per_sec(line):
