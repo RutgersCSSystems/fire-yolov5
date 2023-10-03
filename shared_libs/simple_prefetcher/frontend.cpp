@@ -1253,7 +1253,7 @@ void handle_open(struct file_desc desc){
 			// gettid(), g_min_fd);
 
 
-#if 0
+#ifndef MMAP_PREDICT
 	if(desc.fd <= g_min_fd) {
 		return;
 	}

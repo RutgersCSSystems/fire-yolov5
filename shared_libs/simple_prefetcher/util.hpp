@@ -157,7 +157,11 @@
  */
 #ifndef CROSS_BITMAP_SHIFT
 #warning CROSS_BITMAP_SHIFT not defined. Assuming 24
+#ifdef MMAP_PREDICT
 #define CROSS_BITMAP_SHIFT 39
+#else
+#define CROSS_BITMAP_SHIFT 33
+#endif
 #endif
 
 /*
