@@ -62,11 +62,12 @@ RUN_Filebench() {
 	cat RESULT.csv &>>  $EXEC/filebench.out
 }
 
+RUN_SNAPPY
+sleep 10
+exit
 RUN_SIMPLEBENCH
 sleep 10
 RUN_MMAPEXP
-sleep 10
-RUN_SNAPPY
 sleep 10
 RUN_RocksDB-YCSB
 sleep 10
