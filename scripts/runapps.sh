@@ -11,48 +11,65 @@ cd $BASE
 cd $PREDICT_LIB_DIR
 ./compile.sh &> $EXEC/LIB.out
 
+RUN_SIMPLEBENCH() {
+	cd $BASE/appbench/apps/simple_bench/multi_thread_read
+	./release-run-med.sh &>> $EXEC/multi_thread_read.out
+	python3 release-extract-med.py &>> $EXEC/multi_thread_read.out
+	cat RESULT.csv  &>>  $EXEC/multi_thread_read.out
+}
+
+RUN_MMAPEXP() {
+	cd $BASE/appbench/apps/simple_bench/mmap_exp
+	./release-run-med.sh &>> $EXEC/mmap_exp.out
+	python3 release-extract-med.py &>> $EXEC/mmap_exp.out
+	cat RESULT.csv  &>> $EXEC/mmap_exp.out
+}
+
 
 RUN_SNAPPY() {
 	cd $BASE/appbench/apps/snappy-c
 	./gendata-run-med.sh 1 &> $EXEC/snappy.out
 	./release-run-med.sh &>> $EXEC/snappy.out
 	python3 release-extract-med.py &>> $EXEC/snappy.out
+	cat RESULT.csv  &>> $EXEC/snappy.out
 }
 
 RUN_RocksDB-YCSB() {
 	cd $BASE/appbench/apps/RocksDB-YCSB
 	./release-run-med.sh &>> $EXEC/rocksdb-ycsb.out
 	python3 release-extract-med.py &>> $EXEC/rocksdb-ycsb.out
+	cat RESULT.csv &>> $EXEC/rocksdb-ycsb.out
 }
 
 RUN_RocksDB() {
 	cd $BASE/appbench/apps/rocksdb
 	./gendata-run-med.sh &> $EXEC/rocksdb.out
 	./release-run-med.sh &>> $EXEC/rocksdb.out
-	python3 release-extract-med.py &>> $EXEC/rocksdb-ycsb.out
+	python3 release-extract-med.py &>> $EXEC/rocksdb.out
+	cat RESULT.csv &>>  $EXEC/rocksdb.out
 }
 
+RUN_Filebench() {
+	cd $BASE/appbench/apps/filebench
+	./gendata-run-med.sh &> $EXEC/filebench.out
+	./release-run-med.sh &>> $EXEC/filebench.out
+	python3 release-extract-med.py &>> $EXEC/filebench.out
+	cat RESULT.csv &>>  $EXEC/filebench.out
+}
 
-
+RUN_SIMPLEBENCH
+sleep 10
+RUN_MMAPEXP
+sleep 10
+exit
 RUN_SNAPPY
 sleep 10
 RUN_RocksDB-YCSB
-exit
-
-cd $BASE/appbench/apps/rocksdb
-./compile.sh &> $EXEC/rocksdb.out
-
-
-
-cd $BASE/appbench/apps/simple_bench/multi_thread_read
-./compile.sh &> $EXEC/multi_thread_read.out
-
-cd $BASE/appbench/apps/simple_bench/mmap_exp
-./compile.sh &> $EXEC/mmap_exp.out
-
-cd $BASE/appbench/apps/filebench
-./compile.sh &> $EXEC/filebench.out
-
+sleep 10
+RUN_RocksDB
+sleep 10
+RUN_Filebench
+sleep 10
 cd $BASE
 exit
 
