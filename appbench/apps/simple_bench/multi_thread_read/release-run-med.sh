@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x
 
+DBHOME=$PWD
+
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -20,8 +22,8 @@ declare -a nprocess=("16")
 declare -a read_size=("20") ## in pages
 declare -a workload_arr=("read_pvt_rand" "read_pvt_seq") ##read binariesa
 #declare -a workload_arr=("read_shared_rand" "read_shared_seq") ##read binariesa
-declare -a readsize_arr=("4" "64" "256" "512" "32" "128")
-declare -a readsize_arr=("16" "32" "64")
+#declare -a readsize_arr=("4" "64" "256" "512" "32" "128")
+declare -a readsize_arr=("8" "16" "32" "64")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF")
 
 STATS=0 #0 for perf runs and 1 for stats
@@ -179,6 +181,11 @@ GETMEMORYBUDGET() {
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
+
+cp $DBHOME/Makefile.orig $PREDICT_LIB_DIR/Makefile
+cd $PREDICT_LIB_DIR
+$PREDICT_LIB_DIR/compile.sh
+cd $DBHOME
 
 
 for G_TRIAL in "${trials[@]}"
