@@ -69,6 +69,12 @@ cd $BASE/linux-5.14.0
 sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
+After rebooting, we need mount the storage again.
+
+```
+sudo mount /dev/sda4 ~/ssd
+cd ~/ssd; sudo chown $USER .
+```
 ## Run Experiments
 All experiments are in the following folder. This script needs to be updated to run different applications. 
 Check the scripts before running all_variation.
