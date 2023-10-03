@@ -46,7 +46,6 @@ declare -a trials=("TRIAL1")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 declare -a thread_arr=("16")
 declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CII" "CPBI_PERF")
-declare -a config_arr=("CIPI_PERF" "CII" "CPBI_PERF" "Vanilla" "OSonly")
 
 G_TRIAL="TRIAL1"
 #Require for large database

@@ -7,6 +7,8 @@ if [ -z "$APPS" ]; then
         exit 1
 fi
 
+WORKLOAD=shared
+
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
 
@@ -53,7 +55,8 @@ G_TRIAL="TRIAL1"
 
 #Require for large database
 ulimit -n 1000000
-declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+#declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+declare -a trials=("TRIAL1")
 declare -a membudget=("4")
 
 USEDB=0
@@ -77,40 +80,40 @@ CLEAR_FILES() {
 
 #takes Workload and filesize
 CLEAN_AND_WRITE() {
-        printf "in ${FUNCNAME[0]}\n"
+    printf "in ${FUNCNAME[0]}\n"
 
-        UNSETPRELOAD
-        pushd $base
+    UNSETPRELOAD
+    pushd $base
 
-	echo "IN CLEAN_AND_WRITE $1 $2"
+    echo "IN CLEAN_AND_WRITE $1 $2"
 
-        if [[ "$1" == *"shared"* ]]; then
-                echo "Shared File"
-                FILENAME="./threads_1/bigfakefile0.txt"
-                FILESZ=$(stat -c %s $FILENAME)
-                FILESIZE_WANTED=`echo "$2*$GB" | bc`
+    if [[ "$1" == *"shared"* ]]; then
+        echo "Shared File"
+        FILENAME="./threads_1/bigfakefile0.txt"
+        FILESZ=$(stat -c %s $FILENAME)
+        FILESIZE_WANTED=`echo "$2*$GB" | bc`
 
-		echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
+        echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
 
-		if [[ -z ${FILESZ} ]];
-		then
-			FILESZ=0
-		fi
-
-                if [ "$FILESZ" -ne "$FILESIZE_WANTED" ]; then
-                        CLEAR_FILES
-			echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
-                        $base/bin/write_shared
-                fi
-        else
-                echo "Pvt Files"
-                CLEAR_FILES
-                $base/bin/write_pvt
+        if [[ -z ${FILESZ} ]];
+        then
+            FILESZ=0
         fi
 
-        popd
+        if [ "$FILESZ" -ne "$FILESIZE_WANTED" ]; then
+            CLEAR_FILES
+            echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
+            $base/bin/write_shared
+        fi
+    else
+        echo "Pvt Files"
+        CLEAR_FILES
+        $base/bin/write_pvt
+    fi
 
-        FlushDisk
+    popd
+
+    FlushDisk
 }
 
 GEN_RESULT_PATH() {
@@ -143,7 +146,7 @@ RUN() {
 			sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
 			./compile.sh
 
-			COMPILE_APP $FILESIZE $READ_SIZE $NPROC
+			#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
 			CLEAN_AND_WRITE $WORKLOAD $FILESIZE
 
 				for WORKLOAD in "${workload_arr[@]}"

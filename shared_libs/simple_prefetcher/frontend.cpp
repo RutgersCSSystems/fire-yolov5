@@ -1249,12 +1249,18 @@ void handle_open(struct file_desc desc){
 	g_min_fd = MIN_FD;
 #endif
 
+    // printf("%s: fd:%d, TID:%ld MIN FD %d\n", __func__, desc.fd,
+			// gettid(), g_min_fd);
+
+
+#ifndef MMAP_PREDICT
 	if(desc.fd <= g_min_fd) {
 		return;
 	}
+#endif
 
-	debug_printf("%s: fd:%d, TID:%ld MIN FD %d\n", __func__, desc.fd,
-			gettid(), g_min_fd);
+	// printf("%s: fd:%d, TID:%ld MIN FD %d\n", __func__, desc.fd,
+			// gettid(), g_min_fd);
 
 	desc.uinode = NULL;
 
@@ -1554,7 +1560,7 @@ int open(const char *pathname, int flags, ...){
 	int fd;
 	struct file_desc desc;
 
-	debug_printf("%s: file %s\n", __func__,  pathname);
+	printf("%s: file %s\n", __func__,  pathname);
 
 	if(flags & O_CREAT){
 		va_list valist;
@@ -1572,7 +1578,7 @@ int open(const char *pathname, int flags, ...){
 
 	desc.fd = fd;
 	desc.filename = pathname;
-	debug_printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+	printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
 	handle_open(desc);
 
@@ -1581,6 +1587,175 @@ exit:
 	return fd;
 }
 
+#ifdef MMAP_PREDICT
+void mmap_prefetcher_th(void *arg) {
+    long tid = gettid();
+    struct thread_args *a = (struct thread_args*)arg;
+
+    off_t file_pos = 0;
+    bit_array_t *page_cache_state = NULL;
+    bit_array_t *predictor_state = NULL;
+    struct read_ra_req ra;
+    off_t pg_diff;
+    off_t start_pg;
+    off_t zero_pg;
+    long err;
+    int sequential = 0;
+
+    file_pos = a->offset;
+    page_cache_state = BitArrayCreate(NR_BITS_PREALLOC_PC_STATE);
+    BitArrayClearAll(page_cache_state);
+    a->page_cache_state = page_cache_state;
+    check_pc_bitmap(arg);
+
+    a->prefetch_size = NR_RA_PAGES * PAGESIZE;
+
+    while (file_pos < a->prefetch_limit){
+
+        if(page_cache_state) {
+            ra.data = page_cache_state->array;
+        }else{
+            ra.data = NULL;
+        }
+
+        // ra.get_full_bitmap = true;
+
+        if(!ra.data){
+            printf("%s: no ra.data\n", __func__);
+            goto exit_prefetcher_th;
+        }
+
+
+        //struct timeval start, end;
+        //gettimeofday(&start, NULL);
+        // uinode_bitmap_lock(a->uinode);
+
+        // printf("readahead, filepos: %ld, size: %ld\n", file_pos, a->prefetch_size);
+        err = readahead_info(a->fd, file_pos, a->prefetch_size, &ra);
+        // err = readahead(a->fd, file_pos, a->prefetch_size);
+        // printf("readahead11111\n");
+
+#if 0
+		if(err < -10){
+            uinode_bitmap_unlock(a->uinode);
+            goto exit_prefetcher_th;
+        }
+        else if(err < 0){
+            uinode_bitmap_unlock(a->uinode);
+            printf("readahead_info: failed fd:%d TID:%ld err:%ld\n", a->fd, tid, err);
+            goto exit_prefetcher_th;
+        }
+        uinode_bitmap_unlock(a->uinode);
+#endif
+
+
+#if 0
+        file_pos += a->prefetch_size;
+        
+        sequential +=1;
+        sequential = (std::max<int>)(DEFNSEQ, sequential);
+        a->prefetch_size = (10 * sequential) * NR_RA_PAGES * PAGESIZE;
+
+
+        printf("get offset\n");
+#endif
+        pg_diff = update_offset_pc_state(a->uinode, page_cache_state, file_pos, a->prefetch_size);
+        // printf("%s: offset=%ld, pg_diff=%ld, fd=%d, ptr=%p, "
+                // "tot_bits=%ld, start_pg=%ld pages in cache %ld\n", __func__,
+                // file_pos, pg_diff, a->fd, ra.data,
+                // page_cache_state->numBits, start_pg, zero_pg);
+
+        if(pg_diff == 0){
+            printf("ERR:%s, pg_diff==0 file_pos %zu\n", __func__, file_pos);
+            goto exit_prefetcher_th;
+        }
+
+        file_pos += pg_diff << PAGE_SHIFT;
+
+        off_t start_pg = file_pos >> PAGE_SHIFT;
+        // off_t start_pg = 0;
+        off_t curr_pg = start_pg;
+        off_t next_pg = curr_pg + 1;
+        off_t prefetch_limit_pg = (a->file_size/16) >> PAGE_SHIFT;
+        // off_t prefetch_limit_pg = 512 >> PAGE_SHIFT;
+        sequential = DEFSEQ;
+
+        if(prefetch_limit_pg == 0)
+            prefetch_limit_pg = 1;
+
+#if 1
+        //uinode_bitmap_lock(a->uinode);
+        while(next_pg < (start_pg + prefetch_limit_pg)){
+
+            if(BitArrayTestBit(page_cache_state, curr_pg)){
+                sequential -= 1;
+            }
+
+            curr_pg += 1;
+            next_pg += 1;
+        }
+#endif
+        sequential = (std::max<int>)(DEFNSEQ, sequential);
+        // printf("sequential: %d\n", sequential);
+        if (sequential > 0) {
+            a->prefetch_size = (10 * sequential) * NR_RA_PAGES * PAGESIZE;
+        } else {
+            a->prefetch_size = NR_RA_PAGES * PAGESIZE;
+		}
+		// usleep(100);
+	}
+exit_prefetcher_th:
+	release_bitmap(page_cache_state);
+	return;
+}
+
+
+void mmap_predictor_prefetch(int file_fd, off_t file_offset, size_t length) {
+
+    struct thread_args *arg = NULL;
+    file_predictor *fp = NULL;
+
+    arg = (struct thread_args *)malloc(sizeof(struct thread_args));
+    arg->fd = file_fd;
+    arg->offset = file_offset;
+    arg->prefetch_limit= file_offset + length;
+
+
+#ifdef PREDICTOR
+    try{
+        /* We don't need a guard here. Do we? */
+        std::lock_guard<std::mutex> guard(fp_mutex);
+        fp = fd_to_file_pred.at(arg->fd);
+    }
+    catch(const std::out_of_range &orr){
+        debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
+        return;
+    }
+#endif
+
+    if(fp){
+        arg->fp = fp;
+    }
+    arg->file_size = fp->filesize;
+    arg->uinode = fp->uinode;
+    if(!arg->uinode)
+        arg->uinode = get_uinode(i_map, file_fd);
+
+    threadpool_add(pool[g_next_queue % QUEUES], mmap_prefetcher_th, (void*)arg, 0);
+    g_next_queue++;
+
+}
+
+void *mmap(void *addr, size_t length, int prot, int flags,
+        int fd, off_t offset) {
+    void* ret_ptr = NULL;
+    ret_ptr = real_mmap(addr, length, prot, flags, fd, offset);
+
+    mmap_predictor_prefetch(fd, offset, length);
+
+    return ret_ptr;
+}
+#endif
 
 FILE *fopen(const char *filename, const char *mode){
 

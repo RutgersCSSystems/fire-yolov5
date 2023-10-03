@@ -290,11 +290,11 @@ int main(int argc, char **argv)
         }
 skip_open:
 //Disables OS pred
-#if defined(ONLYAPP) && !defined(SHARED_FILE)
+//#if defined(ONLYAPP) && !defined(SHARED_FILE)
         for(int i=0; i<NR_THREADS; i++){
-                posix_fadvise(fd_list[i], 0, 0, POSIX_FADV_RANDOM);
+                posix_fadvise(fd_list[i], 0, 0, POSIX_FADV_SEQUENTIAL);
         }
-#endif
+//#endif
 
 #ifdef THPOOL
         threadpool thpool;

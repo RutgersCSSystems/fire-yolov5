@@ -16,7 +16,7 @@ RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
 
 declare -a nprocess=("32" "16" "8" "1")
-declare -a nprocess=("32")
+declare -a nprocess=("16")
 declare -a read_size=("20") ## in pages
 #declare -a workload_arr=("read_pvt_rand" "read_pvt_seq" "read_shared_rand" "read_shared_seq") ##read binariesa
 declare -a workload_arr=("read_pvt_rand" "read_pvt_seq") ##read binariesa
@@ -26,7 +26,7 @@ declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF")
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=100 ##GB
+FILESIZE=20 ##GB
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 

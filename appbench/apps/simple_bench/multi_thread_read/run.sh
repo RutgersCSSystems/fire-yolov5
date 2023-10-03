@@ -3,6 +3,7 @@
 #APP=./bin/read_shared_seq
 #APPNAME="shared_seq"
 
+set -x
 APP=./bin/read_pvt_seq
 APPNAME="pvt_seq"
 
@@ -29,6 +30,41 @@ DISABLE_LOCK_STATS()
         sudo sh -c "echo 0 > /proc/sys/kernel/lock_stat"
 }
 
+
+MMAP_RUN()
+{
+        FlushDisk
+        #clear_os_stats
+        #ENABLE_LOCK_STATS
+        #export LD_PRELOAD="/usr/lib/lib_CII.so"
+        #export LD_PRELOAD="/usr/lib/lib_VRA.so"
+        #export LD_PRELOAD="/usr/lib/lib_CII_sync.so"
+        #export LD_PRELOAD="/usr/lib/lib_Cross_Info_sync.so"
+        #export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
+        #export LD_PRELOAD="/usr/lib/lib_CIP.so"
+
+        #$CACHE_STAT OSONLY_${APPNAME}_cachestat &
+
+        #export LD_PRELOAD="/usr/lib/lib_OSonly.so"
+        #export LD_PRELOAD="/usr/lib/lib_CICP.so"
+        #export LD_PRELOAD="/usr/lib/lib_CIPI.so"
+        #$APP &> OSONLY_$APPNAME
+        #./bin/read_shared_mmap_seq
+
+        #LD_PRELOAD=/usr/lib/lib_CIPI_mmap.so ./bin/read_shared_mmap_seq
+        #LD_PRELOAD=/usr/lib/lib_Vanilla.so ./bin/read_shared_mmap_seq
+        #FlushDisk
+
+
+        LD_PRELOAD=/usr/lib/lib_OSonly.so ./bin/read_shared_mmap_seq
+        #FlushDisk
+
+        #LD_PRELOAD=/usr/lib/lib_CIPI_mmap.so ./bin/read_shared_mmap_seq
+        #LD_PRELOAD=/usr/lib/lib_CIPI_mmap.so ./bin/read_shared_mmap_seq
+        #./bin/read_shared_mmap_rand
+        #export LD_PRELOAD=""
+
+}
 
 OSONLY_RUN()
 {
@@ -106,9 +142,10 @@ CROSS_PREFETCH_RUN()
 }
 
 
+MMAP_RUN
 #sudo ./utils/perf-tools/bin/cachestat
 #OSONLY_RUN
-MINCORE_RUN
+#MINCORE_RUN
 #CROSS_INFO_RUN
 #CROSS_INFO_RUN
 #exit

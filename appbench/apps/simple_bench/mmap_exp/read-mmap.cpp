@@ -37,6 +37,7 @@
 std::atomic<long> total_nr_syscalls(0);
 std::atomic<long> total_bytes_ra(0);
 
+static int global_fd = -1;
 using namespace std;
 
 
@@ -81,6 +82,8 @@ struct thread_args{
          */
         unsigned long nr_total_read_pg;
         unsigned long nr_total_misses_pg;
+
+        int id;
 };
 
 
@@ -96,7 +99,7 @@ void shuffle(long int array[], size_t n) {
     if (n > 1) {
         size_t i;
         for (i = n - 1; i > 0; i--) {
-            size_t j = (unsigned int) (drand48()*(i+1));
+            size_t j = (unsigned int) (rand()*(i+1)) % n;
             int t = array[j];
             array[j] = array[i];
             array[i] = t;
@@ -129,12 +132,11 @@ off_t check_cache_update_offset(unsigned char *mincore_arr, off_t ra_offset, off
 #ifdef THPOOL
 void reader_th(void *arg){
 #else
-void *reader_th(void *arg){
+    void *reader_th(void *arg){
 #endif
 
         struct thread_args *a = (struct thread_args*)arg;
-        struct timeval start, end;
-        struct timeval open_start, open_end;
+        struct timeval start_t, end_t;
         void *mem = NULL;
         size_t buff_sz = (PG_SZ * a->nr_read_pg);
         char *buffer = (char*) malloc(buff_sz);
@@ -142,110 +144,80 @@ void *reader_th(void *arg){
         off_t filesize;
         struct stat st;
         long tid = gettid();
+        size_t nr_reads=0;
+        int iters = FILESIZE/buff_sz;
+        int range = iters / NR_THREADS;
+        long start = a->id*range;
+        long end = (a->id+ 1)*range;
+        int i, k = 0;
+        srand(time(0));
 
-	//mmap change
-	unsigned long addr = NULL;
-	//mmap change
-	void *g_mmap_ptr = a->g_mmap_ptr;
+
+        //mmap change
+        unsigned long addr = NULL;
+        //mmap change
+        void *g_mmap_ptr = a->g_mmap_ptr;
 
 #if SHARED_FILE
-        a->fd = open(a->filename, O_RDWR);
+        // a->fd = open(a->filename, O_RDWR);
         if (a->fd == -1){
-                printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
-                exit(0);
+            printf("\n File %s Open Unsuccessful: TID:%ld\n", a->filename, tid);
+            exit(0);
         }
 
         if (g_mmap_ptr == NULL) {
-		printf ("global MMAP pointer is NULL!\n");
-    		exit(-1);
-   	}
+            printf ("global MMAP pointer is NULL!\n");
+            exit(-1);
+        }
 #endif //SHARED_FILE
 
-#if defined(MODIFIED_RA)
-        printf("%s: First ra_info for fd=%d\n", __func__, a->fd);
-        struct read_ra_req ra;
-	ra.data = NULL;
-	readahead_info(a->fd, 0, 0, &ra);
-        start_cross_trace(ENABLE_FILE_STATS, 0);
-#endif //MODIFIED_RA or ENABLE_MINCORE_RA
         //Report about the thread
-        debug_printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
-                        tid, a->offset, a->size, a->fd, a->nr_read_pg);
+        // printf("TID:%ld: going to fetch from %ld for size %ld on file %d, read_pg = %ld\n",
+                // tid, a->offset, a->size, a->fd, a->nr_read_pg);
 
 #ifdef READ_SEQUENTIAL
-        gettimeofday(&start, NULL);
+
+#ifdef OSONLY
+        madvise(g_mmap_ptr + start * buff_sz, end * buff_sz, MADV_SEQUENTIAL);
+#endif
+
+        gettimeofday(&start_t, NULL);
         bytes_read = 0UL;
         offset = a->offset;
 
-#ifdef APP_SINGLE_PREFETCH
 
-#ifdef MODIFIED_RA
-	ra.data = NULL;
-	readahead_info(a->fd, 0, NR_RA_PAGES << PAGESHIFT, &ra);
-#else //NORMAL_RA
-	readahead(a->fd, offset, a->size);
-#endif //MODIFIED_RA
+        ra_offset = a->offset;
 
-	debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
-                        __func__, a->fd, offset, a->size);
+        for (int i = start;i<end;i++) {
 
-#elif defined(APP_OPT_PREFETCH)
-	ra_offset = a->offset;
-#endif //APP_SINGLE_PREFETCH
-
-        while(bytes_read < a->size){
-
-                debug_printf("%s:%ld fd=%d bytes_read=%ld, offset=%ld, size=%ld\n", __func__, tid, a->fd, bytes_read, offset, buff_sz);
-
-#ifdef APP_OPT_PREFETCH
-		if(offset >= ra_offset){
-			ra_offset = offset;
-#ifdef MODIFIED_RA
-	                ra.data = NULL;
-			readahead_info(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT, &ra);
-#else //NORMAL_RA
-			readahead(a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
-#endif //MODIFIED_RA
-			ra_offset += NR_RA_PAGES << PAGESHIFT;
-
-			debug_printf("%s: readahead called for fd:%d, offset=%ld, bytes=%ld\n",
-					__func__, a->fd, ra_offset, NR_RA_PAGES << PAGESHIFT);
-		}
-#endif //APP_OPT_PREFETCH
-		//Here we copy the data from mmap region to a buffer.
-		memcpy((void *)buffer, (void *)(g_mmap_ptr + offset), buff_sz);
-
-                bytes_read += readnow;
-                offset += readnow;
-
-#ifdef STRIDED_READ
-                offset += NR_STRIDE * PG_SZ;
-#endif //STRIDED_READ
+            memcpy((void *)buffer, (void *)(g_mmap_ptr + i*buff_sz), buff_sz);
         }
-        gettimeofday(&end, NULL);
+
+        gettimeofday(&end_t, NULL);
 
 #elif READ_RANDOM
-        size_t nr_file_portions = a->size/buff_sz;
-        long *read_sequence = (long*)malloc(sizeof(long)*nr_file_portions);
 
-        for(long i=0; i<nr_file_portions; i++){
-                read_sequence[i] = i;
+#ifdef OSONLY
+        madvise(g_mmap_ptr + start * buff_sz, end * buff_sz, MADV_RANDOM);
+#endif
+        size_t* offsets = (size_t*)malloc(sizeof(size_t)*(end-start+1));
+
+        for(i = start, k = 0 ; i<end; i++, k++){
+            offsets[k] = rand() % (end - start + 1) + start;
         }
-        shuffle(read_sequence, nr_file_portions);
 
-        gettimeofday(&start, NULL);
+        gettimeofday(&start_t, NULL);
+        for(i=0; i<k; i++){
+            //Here we copy the data from mmap region to a buffer.
 
-        for(long i=0; i<nr_file_portions; i++){
-		//Here we copy the data from mmap region to a buffer.
-
-		size_t offset = ((read_sequence[i]*buff_sz)+a->offset) % FILESIZE;
-		fprintf(stderr, "reading the buffer at offset %u \n", offset);
-		addr = (unsigned long)(g_mmap_ptr + offset);
-		memcpy((void *)buffer, (void *)addr, buff_sz);
+            // printf("offsets[i]: %ld\n", offsets[i]);
+            addr = (unsigned long)(g_mmap_ptr + offsets[i]*buff_sz);
+            memcpy((void *)buffer, (void *)addr, buff_sz);
+            // fprintf(stderr, "reading the buffer at offset %u, size: %ld \n", offset, buff_sz);
         }
-        gettimeofday(&end, NULL);
+        gettimeofday(&end_t, NULL);
 #endif //READ_SEQUENTIAL
-        a->read_time = usec_diff(&open_start, &open_end) + usec_diff(&start, &end);
+        a->read_time = usec_diff(&start_t, &end_t);
 
 exit:
 #ifdef THPOOL
@@ -273,6 +245,7 @@ void *map_global_mmap_file(char *filename, size_t size) {
                 printf ("MMAP failed!\n");
                 exit(-1);
         }
+        global_fd = fd;
 	fprintf(stderr, "MMAP successful for size %zu\n", size);
 	return g_mmap_ptr;
 }
@@ -330,10 +303,13 @@ skip_open:
 	}
 #endif
 
-//Disables OS pred
-#if defined(ONLYAPP) && !defined(SHARED_FILE)
+#if 0
         for(int i=0; i<NR_THREADS; i++){
+#ifdef READ_SEQUENTIAL
+                posix_fadvise(fd_list[i], 0, 0, POSIX_FADV_SEQUENTIAL);
+#elif READ_RANDOM
                 posix_fadvise(fd_list[i], 0, 0, POSIX_FADV_RANDOM);
+#endif
         }
 #endif
 
@@ -352,15 +328,16 @@ skip_open:
 
         for(int i=0; i<NR_THREADS; i++){
 
-                req[i].size = FILESIZE/NR_THREADS;
+                req[i].id = i;
+                req[i].size = FILESIZE;
                 req[i].nr_read_pg = NR_PAGES_READ;
                 req[i].read_time = 0UL;
 
                 req[i].nr_total_read_pg = 0UL;
                 req[i].nr_total_misses_pg = 0UL;
 #ifdef SHARED_FILE
-                //req[i].fd = fd_list[0];
-                req[i].fd = -1;
+                req[i].fd = global_fd;
+                // req[i].fd = -1;
                 strcpy(req[i].filename, filename);
                 req[i].offset = req[i].size*i; //Start at different position
 
@@ -393,8 +370,9 @@ skip_open:
 #endif
         //Print the Throughput
         long size_mb;
-        float max_time = 0.f; //in sec
-        float time;
+        double max_time = 0.f; //in sec
+        double time;
+        double thpt = 0;
 
 #ifdef STRIDED_READ
         long nr_file_pg = FILESIZE/PG_SZ;
@@ -406,21 +384,26 @@ skip_open:
 
         printf("Total File size = %ld MB\n", size_mb);
         for(int i=0; i<NR_THREADS; i++){
-                time = req[i].read_time/1000000.f;
-                if(max_time < time)
-                        max_time = time;
+            time += (req[i].read_time/1000000.f);
+            thpt += (size_mb/ NR_THREADS*1.0 / (req[i].read_time/1000000.f));
+            // printf("time: %f\n", time);
+            // printf("thpt: %f\n", size_mb/ NR_THREADS*1.0 / (req[i].read_time/1000000.f));
+            if(max_time < time)
+                max_time = time;
         }
 
+        time /=  NR_THREADS;
 #ifdef GLOBAL_TIMER
         global_max_time = usec_diff(&global_start, &global_end)/1000000.f;
 #endif
 
 #if defined(READ_SEQUENTIAL) && defined(STRIDED_READ)
-        printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+        printf("READ_STRIDED Bandwidth = %.2f MB/sec\n", size_mb/time);
 #elif defined(READ_SEQUENTIAL) && !defined(STRIDED_READ)
-        printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+        // printf("READ_SEQUENTIAL Avg. Bandwidth = %.2f MB/sec\n", size_mb/time);
+        printf("READ_SEQUENTIAL Bandwidth = %.2f MB/sec\n", thpt);
 #elif READ_RANDOM
-        printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/max_time);
+        printf("READ_RANDOM Bandwidth = %.2f MB/sec\n", size_mb/time);
 #endif
 
 #ifdef GLOBAL_TIMER

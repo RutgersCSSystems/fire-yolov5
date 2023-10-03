@@ -54,9 +54,6 @@ You now have the repo. Before compiling and setting up things, let's set the env
 First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
 Because we are using Wisconsin, you could do something like this and save the file.
 ```
-export MACHINE_NAME="WISC"
-```  
-```
 source ./scripts/setvars.sh
 # Let's install the Debian packages
 scripts/install_packages.sh
@@ -72,6 +69,12 @@ cd $BASE/linux-5.14.0
 sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
+After rebooting, we need mount the storage again.
+
+```
+sudo mount /dev/sda4 ~/ssd
+cd ~/ssd; sudo chown $USER .
+```
 ## Run Experiments
 All experiments are in the following folder. This script needs to be updated to run different applications. 
 Check the scripts before running all_variation.
@@ -81,7 +84,6 @@ cd ~/ssd/ioopt
 source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
-cd $BASE
 ```
 
 ### Starting with Medium Workloads
@@ -104,6 +106,15 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+##### MMAP 
+
+```
+cd $BASE/appbench/apps/simple_bench/mmap_exp/
+./compile.sh
+./release-run-med.sh
+```
+
+##### File Sharing
 ```
 cd shared_libs/simple_prefetcher/benchmarks
 make

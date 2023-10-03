@@ -157,7 +157,11 @@
  */
 #ifndef CROSS_BITMAP_SHIFT
 #warning CROSS_BITMAP_SHIFT not defined. Assuming 24
-#define CROSS_BITMAP_SHIFT 34
+#ifdef MMAP_PREDICT
+#define CROSS_BITMAP_SHIFT 39
+#else
+#define CROSS_BITMAP_SHIFT 33
+#endif
 #endif
 
 /*
@@ -256,6 +260,7 @@ struct read_ra_req{
 
 	unsigned long nr_free; //nr pages that are free in mem
 
+    // bool get_full_bitmap;
 
 	/*
 	 * The following are populated by the kernel
