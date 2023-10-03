@@ -20,12 +20,12 @@ mkdir -p $RESULTS
 
 FILESIZE=1000
 #declare -a thread_arr=("4" "8" "16" "32")
-declare -a thread_arr=("16")
+declare -a thread_arr=("32")
 #Number of files to compress
 declare -a workload_arr=("100")
 # Size of each file in KB
 declare -a filesize_arr=("60000" "80000"  "100000"  "120000"  "140000")
-declare -a filesize_arr=("60000")
+declare -a filesize_arr=("140000")
 
 declare -a prefech_sz_arr=("1024" "512" "2048" "4096")
 declare -a prefech_thrd_arr=("1" "4" "8" "16")
@@ -40,10 +40,12 @@ glob_prefechthrd=1
 #enable sensitivity study?
 let glob_enable_sensitive=0
 
-MEM_REDUCE_FRAC=0
-ENABLE_MEM_SENSITIVE=0
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 declare -a membudget=("5" "4" "3" "2" "6")
 declare -a membudget=("6" "8" "9")
+declare -a membudget=("10" "11" "12" "13" "14")
+
 
 declare -a config_arr=("OSonly" "CIPI_PERF" "CPBI_PERF" "Vanilla" "CII")
 #declare -a config_arr=("CIPI_PERF")

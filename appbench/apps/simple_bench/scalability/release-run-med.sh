@@ -24,7 +24,8 @@ let MAX_READER=16
 let MAX_WRITER=4
 
 #declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
+#declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
 #declare -a config_arr=("CIPI" "CIPI_interval")
 #
 FILESIZE="1G"
@@ -80,6 +81,8 @@ $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
 
 declare -a readers=("1" "4" "8" "16")
 #declare -a readers=("1")
+
+FlushDisk
 
 WRITERS=4
 # Vary the number of producer(writer)
