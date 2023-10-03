@@ -25,6 +25,9 @@ typedef int (*real_madvise_t)(void *, size_t, int);
 
 typedef int (*real_clone_t)(int (void*), void *, int, void *, pid_t *, void *, pid_t *);
 
+typedef void* (*real_mmap_t)(void *addr, size_t length, int prot, int flags,
+                                  int fd, off_t offset);
+
 real_fopen_t fopen_ptr = NULL;
 real_open_t open_ptr = NULL;
 real_openat_t openat_ptr = NULL;
@@ -49,6 +52,7 @@ real_posix_fadvise_t posix_fadvise_ptr = NULL;
 real_readahead_t readahead_ptr = NULL;
 real_madvise_t madvise_ptr = NULL;
 
+real_mmap_t mmap_ptr = NULL;
 
 
 /*MPI operations */
@@ -158,6 +162,17 @@ int real_madvise(void *addr, size_t length, int advice){
         madvise_ptr = (real_madvise_t)dlsym(RTLD_NEXT, "madvise");
 
     return ((real_madvise_t)madvise_ptr)(addr, length, advice);
+}
+
+
+void* real_mmap(void *addr, size_t length, int prot, int flags,
+        int fd, off_t offset) {
+
+    if(!mmap_ptr)
+        mmap_ptr = (real_mmap_t)dlsym(RTLD_NEXT, "mmap");
+
+    return ((real_mmap_t)mmap_ptr)(addr, length, prot, flags, fd, offset);
+
 }
 
 FILE *real_fopen(const char *filename, const char *mode){

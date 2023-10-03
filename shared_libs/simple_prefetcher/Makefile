@@ -141,7 +141,7 @@ Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 Cross_Info_Predict_IOOPT_ITER: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_interval.so $^ $(LIBS) -Wl,--no-as-needed -lintervaltreelib $(DEBUG) \
 		$(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
-		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME
+		-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME 
 
 Cross_Info_Predict_MMAP:  $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_mmap.so $^ $(LIBS) $(DEBUG) \
@@ -166,16 +166,6 @@ Cross_Info_Pred_Budget_IOOPT_sync: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI_sync.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(DISABLE_FADV_RANDOM) $(PREDICTOR_BLOCK_RA_BUDGET_INFO_SYNC) \
 	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-
-
-
-
-
-
-
-
-
-
 
 #Cross-Blind + readahead_info syscall + bitmap checking + Mem Evictions
 Cross_Info_Budget: $(SOURCES)
