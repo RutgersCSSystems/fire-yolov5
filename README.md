@@ -112,6 +112,8 @@ cat RESULT.csv
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
 ./compile.sh
 ./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
 ```
 
 ##### File Sharing
@@ -135,18 +137,17 @@ cd $BASE/appbench/apps/rocksdb
 The following script runs multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
 OSonly (OS controlled), and Cross-prefetch configurations for various thread counts, and workloads.
 ```
+./gendata-run-med.sh
 ./release-run-med.sh
 ```
 The following script will first warm up and generate the database with a raw uncompressed size of 100GB and run the experiment on 4 million key-value pairs.   
 
 Results will be generated in the following folder for 4M keys for different access patterns.
-```
-ls $OUTPUT_FOLDER/ROCKSDB/4M-KEYS/
-```
 
 To extract the results, 
 ```
-./generate_values.sh
+python release-extract-med.py
+cat RESULT.csv
 ```
 
 #### Running YCSB
@@ -168,8 +169,11 @@ cat RESULT.csv
 #### Running Snappy
 ```
 cd $BASE/appbench/apps/snappy-c
-# run snappy. The value indicates an input to generate the dataset
-./release-run-med.sh 1 
+# The value indicates an input to generate the dataset
+./gendata-run-med.sh 1
+./release-run-med.sh 
+python3 release-extract-med.py
+cat RESULT.csv
 ```
 
 

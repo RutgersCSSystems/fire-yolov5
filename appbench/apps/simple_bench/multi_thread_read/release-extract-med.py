@@ -3,9 +3,11 @@ import csv
 
 # Define the arrays
 thread_arr = ["16"]
-workload_arr = ["read_pvt_rand", "read_shared_rand", "read_shared_seq", "read_pvt_seq"]
+workload_arr = ["read_pvt_rand", "read_pvt_seq"]
 config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
-readsize_arr = ["4", "32", "64", "128", "256", "512"]
+#readsize_arr = ["4", "32", "64", "128", "256", "512"]
+readsize_arr = ["16", "32", "64"]
+
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")

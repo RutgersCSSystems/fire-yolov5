@@ -14,7 +14,7 @@ base_dir = output_dir + "-TRIAL1/REMOTE/ROCKSDB/4M-KEYS/"
 print(base_dir)
 
 # Output CSV file
-output_file = "REMOTE-RESULT.csv"
+output_file = "RESULT.csv"
 
 # Function to extract the value before "MB/s" from a line and round to the nearest integer
 def extract_and_round_ops_per_sec(line):
