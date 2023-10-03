@@ -61,11 +61,11 @@ RUN_SIMPLEBENCH
 sleep 10
 RUN_MMAPEXP
 sleep 10
-exit
 RUN_SNAPPY
 sleep 10
 RUN_RocksDB-YCSB
 sleep 10
+exit
 RUN_RocksDB
 sleep 10
 RUN_Filebench
