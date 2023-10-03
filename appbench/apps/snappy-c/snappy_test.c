@@ -66,9 +66,7 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
         size_t fsize = 0;
 
         cls_file = NULL;
-
         if (strlen(filename) < 4) return NULL;
-
         bzero(filearr, 512);
         strcpy(filearr, read_dir);
         strcat(filearr, "/");
@@ -79,6 +77,11 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
                 fprintf(stdout, "open failed for %s \n", filearr);
                 return NULL;
         }
+
+	int fd=fileno(fp);
+	posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);  // Or use another advice option
+
+
         cls_file = fp;
         fseek(fp, 0L, SEEK_END);
         fsize = ftell(fp);
@@ -89,11 +92,10 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
         }
 
         input = (char *)malloc(fsize);
-
         bytes = 0;
         while(bytes < fsize){
         	bytes += fread(input+bytes, 1, fsize, fp);
-		}
+	}
         if(!bytes) {
         	fprintf(stdout, "invalid input data %s", filearr);
             *size = 0;
@@ -102,8 +104,10 @@ static char *ReadFromFile(int cntr, size_t *size, char *filename,
             return NULL;
         }
         *size = bytes;
-        fclose(fp);
 
+	posix_fadvise(fd, 0, 0, POSIX_FADV_DONTNEED);
+
+        fclose(fp);
         return input;
 }
 

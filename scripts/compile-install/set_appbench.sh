@@ -53,9 +53,9 @@ INSTALL_SYSTEM_LIBS(){
 
 INSTALL_CMAKE(){
     cd $SHARED_LIBS
-    wget https://cmake.org/files/v3.7/cmake-3.7.0-rc3.tar.gz
-    tar zxvf cmake-3.7.0-rc3.tar.gz
-    cd cmake-3.7.0-rc3
+    wget https://cmake.org/files/v3.12/cmake-3.12.0-rc1.tar.gz
+    tar zxvf cmake-3.12.0-rc1.tar.gz
+    cd cmake-3.12.0-rc1
     rm -rf CMakeCache*
     ./configure
     ./bootstrap

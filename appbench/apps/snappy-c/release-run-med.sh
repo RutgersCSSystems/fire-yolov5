@@ -11,8 +11,8 @@ APPOUTPUTNAME="snappy"
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
 
-DBDIR=$SHARED_DATA/snappy
-RESULTDIR=$SHARED_DATA/$APP/
+DBDIR=$DBHOME/DATA
+RESULTDIR=$DBHOME/OUTPUT
 FILECOUNT=100
 
 let gen_data=$1
@@ -20,12 +20,12 @@ mkdir -p $RESULTS
 
 FILESIZE=1000
 #declare -a thread_arr=("4" "8" "16" "32")
-declare -a thread_arr=("32")
+declare -a thread_arr=("16")
 #Number of files to compress
-declare -a workload_arr=("30")
+declare -a workload_arr=("100")
 # Size of each file in KB
 declare -a filesize_arr=("60000" "80000"  "100000"  "120000"  "140000")
-#declare -a filesize_arr=("60000")
+declare -a filesize_arr=("60000")
 
 declare -a prefech_sz_arr=("1024" "512" "2048" "4096")
 declare -a prefech_thrd_arr=("1" "4" "8" "16")
@@ -42,9 +42,11 @@ let glob_enable_sensitive=0
 
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
-declare -a membudget=("6" "4" "2" "1")
+declare -a membudget=("5" "4" "3" "2" "6")
+declare -a membudget=("6" "8" "9")
+
 declare -a config_arr=("OSonly" "CIPI_PERF" "CPBI_PERF" "Vanilla" "CII")
-#declare -a config_arr=("CIPI_PERF" "CPBI_PERF")
+#declare -a config_arr=("CIPI_PERF")
 
 enable_prefetch_sensitivity() {
 	prefech_sz_arr=("2048")
@@ -211,12 +213,7 @@ RUN() {
 			do
 				PARAMS="$DBDIR $THREAD"
 
-				if [ $gen_data -gt 0 ]
-				then
-				    echo "GENERATING NEW DATA"
-				    COMPILE_AND_WRITE $FILESIZE $WORKLOAD $THREAD
-				fi
-
+		
 				for CONFIG in "${config_arr[@]}"
 				do
 					FlushDisk
