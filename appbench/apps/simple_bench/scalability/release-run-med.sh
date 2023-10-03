@@ -27,7 +27,7 @@ let MAX_WRITER=4
 declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
 #declare -a config_arr=("CIPI" "CIPI_interval")
 #
-FILESIZE="12G"
+FILESIZE="1G"
 FILENAME="testfile"
 FSPATH=$DBDIR
 
@@ -94,14 +94,14 @@ do
 
 			echo ".......START $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
 
-            LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $result_dir/$WRITERS/$reader/output.txt
+            LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS &> $result_dir/$WRITERS/$reader/$CONFIG.out
 
             #LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS #&> $result_dir/$WRITERS/$reader/output.txt
 
             #sudo perf record -F 99  --call-graph dwarf env LD_PRELOAD=/usr/lib/lib_$CONFIG.so $CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
 
 			echo ".......FINISHING $CONFIG, Writer: $WRITERS, Reader: $reader ......................"
-			cat $result_dir/$WRITERS/$reader/output.txt | grep "writer"
+			cat $result_dir/$WRITERS/$reader/$CONFIG.out | grep "writer"
 			FlushDisk
 
         done 
