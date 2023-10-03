@@ -3,28 +3,32 @@ set -x
 #create empty file
 touch $BASE/dummy.txt
 
+COMPILEOUT=$BASE/scripts/compile
+mkdir $COMPILEOUT
+
+
 cd $BASE
 cd $PREDICT_LIB_DIR
-./compile.sh &> LIB.out
+./compile.sh &> $COMPILEOUT/LIB.out
 
 cd $BASE/appbench/apps/rocksdb
-./compile.sh &> rocksdb.out
+./compile.sh &> $COMPILEOUT/rocksdb.out
 
 
 cd $BASE/appbench/apps/snappy-c
-./compile.sh &> snappy.out
+./compile.sh &> $COMPILEOUT/snappy.out
 
 cd $BASE/appbench/apps/RocksDB-YCSB
-./compile.sh &> rocksdb-ycsb.out
+./compile.sh &> $COMPILEOUT/rocksdb-ycsb.out
 
 cd $BASE/appbench/apps/simple_bench/multi_thread_read
-./compile.sh &> multi_thread_read.out
+./compile.sh &> $COMPILEOUT/multi_thread_read.out
 
 cd $BASE/appbench/apps/simple_bench/mmap_exp
-./compile.sh &> mmap_exp.out
+./compile.sh &> $COMPILEOUT/mmap_exp.out
 
 cd $BASE/appbench/apps/filebench
-./compile.sh &> filebench.out
+./compile.sh &> $COMPILEOUT/filebench.out
 
 cd $BASE
 exit
