@@ -811,18 +811,12 @@ SYSCALL_DEFINE4(readahead_info, int, fd, loff_t, offset, size_t, count,
                 unsigned long start_ul = 0;
                 unsigned long size_ul = 0;
 
-                if(ra.get_full_bitmap){
-                    start_ul = 0;
-                    size_ul = inode->nr_longs_tot;
-                } else {
+                //Calculate the start and end 
+                unsigned long start_pg = offset >> PAGE_SHIFT;
+                unsigned long nr_pg = count >> PAGE_SHIFT;
 
-                    //Calculate the start and end 
-                    unsigned long start_pg = offset >> PAGE_SHIFT;
-                    unsigned long nr_pg = count >> PAGE_SHIFT;
-
-                    start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
-                    size_ul = (nr_pg >> 6) + 1;
-                }
+                start_ul = start_pg >> 6; //dividing by 64 (2^6 = 64)
+                size_ul = (nr_pg >> 6) + 1;
 
                 /*
 		printk_once("%s: order_ul=%d\n", __func__,

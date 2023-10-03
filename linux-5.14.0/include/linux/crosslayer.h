@@ -51,7 +51,6 @@ struct read_ra_req {
      * The following are populated by the kernel
      * and returned to user space
      */
-    bool get_full_bitmap; //readahead_info will copy the full bitmap
     unsigned long *data;  //page bitmap for readahead file
     unsigned long nr_relevant_ulongs; //number of longs in bitmap relevant for the file
 //#endif
