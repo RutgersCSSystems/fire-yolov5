@@ -1,61 +1,30 @@
 #!/bin/bash
 set -x
-BASE=$APPBENCH
-
-
 #create empty file
 touch $BASE/dummy.txt
 
-INSTALL_SHAREDLIB() {
-  cd $SHARED_LIBS/hoardlib
-  ./compile_install_hoard.sh
-  cd $SHARED_LIBS/mmap_lib
-  make clean && make && sudo make install
-}
-
-INSTALL_SHAREDLIB
-
 cd $BASE
-cd phoenix-2.0/
-make clean && make -j4
-cd tests/word_count/
-rm -rf results/*experiments*out tmp*.txt && mkdir result
-make clean && make -j4
-cp $BASE/dummy.txt tmp1.txt
+cd $PREDICT_LIB_DIR
+./compile.sh &> LIB.out
+
+cd $BASE/appbench/apps/rocksdb
+./compile.sh &> rocksdb.out
 
 
-cd $BASE
-cd graphchi/graphchi-cpp
-make clean && make -j8
+cd $BASE/appbench/apps/snappy-c
+./compile.sh &> snappy.out
 
-cd $BASE
-cd redis-3.0.0/src 
-make clean && make all -j8
+cd $BASE/appbench/apps/RocksDB-YCSB
+./compile.sh &> rocksdb-ycsb.out
 
-cd $BASE
-cd Metis
-make clean 
-./configure && make -j8
+cd $BASE/appbench/apps/simple_bench/multi_thread_read
+./compile.sh &> multi_thread_read.out
 
-cd $BASE
-cd leveldb
-make clean
-make -j8
+cd $BASE/appbench/apps/simple_bench/mmap_exp
+./compile.sh &> mmap_exp.out
 
-cd $BASE/apps
-cd fio
-./configure
-make clean && make -j4 && sudo make install
-
-cd $BASE/apps
-cd memcached
-./autogen.sh
-./configure
-make clean && make -j4 && sudo make install
-
-cd $BASE/apps
-cd memcached_client
-make
+cd $BASE/appbench/apps/filebench
+./compile.sh &> filebench.out
 
 cd $BASE
 exit
