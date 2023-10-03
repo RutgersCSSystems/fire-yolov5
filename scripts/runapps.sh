@@ -1,126 +1,59 @@
 #!/bin/bash
-#set -x
+set -x
+#create empty file
+touch $BASE/dummy.txt
 
-RUNNOW=1
-RUNSCRIPT=run.sh
-mkdir $OUTPUTDIR
+EXEC=$BASE/scripts/exec
+mkdir $EXEC
 
-USAGE(){
-echo "./app \$maxhotpage \$BW \$outputdir \$app"
+
+cd $BASE
+cd $PREDICT_LIB_DIR
+./compile.sh &> $EXEC/LIB.out
+
+
+RUN_SNAPPY() {
+	cd $BASE/appbench/apps/snappy-c
+	./gendata-run-med.sh 1 &> $EXEC/snappy.out
+	./release-run-med.sh &>> $EXEC/snappy.out
+	python3 release-extract-med.py &>> $EXEC/snappy.out
 }
 
-RUNAPP(){
-  #rm $OUTPUTDIR/$APP
-  cd $APPBASE
-  $APPBASE/$RUNSCRIPT $RUNNOW $OUTPUTDIR/$APP &> $OUTPUTDIR/$APP
-  echo "******************"  &>> $OUTPUTDIR/$APP
-  echo "KERNEL  DMESG"  &>> $OUTPUTDIR/$APP
-  echo "******************"  &>> $OUTPUTDIR/$APP 	
-  echo "  "  &>> $OUTPUTDIR/$APP
-  sudo dmesg -c &>> $OUTPUTDIR/$APP
+RUN_RocksDB-YCSB() {
+	cd $BASE/appbench/apps/RocksDB-YCSB
+	./release-run-med.sh &>> $EXEC/rocksdb-ycsb.out
+	python3 release-extract-med.py &>> $EXEC/rocksdb-ycsb.out
 }
 
-intexit() {
-    # Kill all subprocesses (all processes in the current process group)
-    kill -HUP -$$
+RUN_RocksDB() {
+	cd $BASE/appbench/apps/rocksdb
+	./gendata-run-med.sh &> $EXEC/rocksdb.out
+	./release-run-med.sh &>> $EXEC/rocksdb.out
+	python3 release-extract-med.py &>> $EXEC/rocksdb-ycsb.out
 }
 
-hupexit() {
-    # HUP'd (probably by intexit)
-    echo
-    echo "Interrupted"
-    exit
-}
-
-trap hupexit HUP
-trap intexit INT
-
-#if [ -z "$1" ]
-# then	
-#  USAGE 
-#  exit
-#fi
-
-$NVMBASE/scripts/copy_data.sh
-
-if [ -z "$4" ]
-  then
-
-	APPBASE=$APPBENCH/redis-3.0.0/src
-	APP=redis
-	echo "running $APP..."
-	RUNAPP
-	exit
-
-	APPBASE=$APPBENCH/apps/memcached_client
-	APP=memcached
-	echo "running $APP..."
-	RUNAPP
-	export LD_PRELOAD=$SHARED_LIBS/construct/libmigration.so
-	/bin/ls
-	export LD_PRELOAD=""
-
-	#APPBASE=$APPBENCH/apps/fio
-	#APP=fio
-	#echo "running $APP ..."
-	#RUNAPP
-
-	APPBASE=$APPBENCH/apps/filebench
-	APP=filebench
-	echo "running $APP ..."
-	RUNAPP
-
-        APPBASE=$APPBENCH/apps/rocksdb/build
-	APP=db_bench
-	echo "running $APP ..."
-	RUNAPP
 
 
-	APPBASE=$APPBENCH/graphchi
-	APP=graphchi
-	echo "running $APP ..."
-	RUNAPP
-	rm $SHARED_DATA/com-orkut.ungraph.txt.*
+RUN_SNAPPY
+sleep 10
+RUN_RocksDB-YCSB
+exit
 
-
-	APPBASE=$APPBENCH/Metis
-	APP=Metis
-	echo "running $APP..."
-	RUNAPP
-
-
-	#APPBASE=$APPBENCH/memcached/memtier_benchmark
-	#APP=memcached
-	#echo "running $APP ..."
-	#RUNAPP
-
-	exit
-
-	RUNSCRIPT="runfcreate.sh"
-        APP=fcreate
-        echo "running $APP ..."
-        RUNAPP
-        RUNSCRIPT=run.sh
+cd $BASE/appbench/apps/rocksdb
+./compile.sh &> $EXEC/rocksdb.out
 
 
 
+cd $BASE/appbench/apps/simple_bench/multi_thread_read
+./compile.sh &> $EXEC/multi_thread_read.out
 
-	APPBASE=$APPBENCH/apps/mongo-perf
-	APP=mongodb
-	echo "running $APP..."
-	RUNAPP
+cd $BASE/appbench/apps/simple_bench/mmap_exp
+./compile.sh &> $EXEC/mmap_exp.out
+
+cd $BASE/appbench/apps/filebench
+./compile.sh &> $EXEC/filebench.out
+
+cd $BASE
+exit
 
 
-	APPBASE=$APPBENCH/xstream_release
-	APP=xstream_release
-	scp -r $HOSTIP:$SHARED_DATA*.ini $APPBASE
-        cp $APPBASE/*.ini $SHARED_DATA
-	echo "running $APP ..."
-	RUNAPP
-
-fi
-	
-#APPBASE=$APPBENCH/$4
-#APP=$4
-#RUNAPP
-set +x
