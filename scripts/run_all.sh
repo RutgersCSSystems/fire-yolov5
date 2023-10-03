@@ -16,6 +16,7 @@ RUN_SIMPLEBENCH() {
 	./release-run-med.sh &>> $EXEC/multi_thread_read.out
 	python3 release-extract-med.py &>> $EXEC/multi_thread_read.out
 	cat RESULT.csv  &>>  $EXEC/multi_thread_read.out
+	rm -rf $BASE/appbench/apps/simple_bench/multi_thread_read/DATA
 }
 
 RUN_MMAPEXP() {
@@ -23,6 +24,7 @@ RUN_MMAPEXP() {
 	./release-run-med.sh &>> $EXEC/mmap_exp.out
 	python3 release-extract-med.py &>> $EXEC/mmap_exp.out
 	cat RESULT.csv  &>> $EXEC/mmap_exp.out
+	rm -rf $BASE/appbench/apps/simple_bench/mmap_exp/DATA
 }
 
 
@@ -32,6 +34,7 @@ RUN_SNAPPY() {
 	./release-run-med.sh &>> $EXEC/snappy.out
 	python3 release-extract-med.py &>> $EXEC/snappy.out
 	cat RESULT.csv  &>> $EXEC/snappy.out
+	rm -rf $BASE/appbench/apps/snappy-c/DATA
 }
 
 RUN_RocksDB-YCSB() {
@@ -39,6 +42,7 @@ RUN_RocksDB-YCSB() {
 	./release-run-med.sh &>> $EXEC/rocksdb-ycsb.out
 	python3 release-extract-med.py &>> $EXEC/rocksdb-ycsb.out
 	cat RESULT.csv &>> $EXEC/rocksdb-ycsb.out
+	rm -rf $BASE/appbench/apps/RocksDB-YCSB/DATA
 }
 
 RUN_RocksDB() {
@@ -47,6 +51,7 @@ RUN_RocksDB() {
 	./release-run-med.sh &>> $EXEC/rocksdb.out
 	python3 release-extract-med.py &>> $EXEC/rocksdb.out
 	cat RESULT.csv &>>  $EXEC/rocksdb.out
+	rm -rf $BASE/appbench/apps/rocksdb/DATA
 }
 
 RUN_Filebench() {
