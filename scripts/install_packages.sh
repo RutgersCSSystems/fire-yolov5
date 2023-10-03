@@ -43,5 +43,4 @@ INSTALL_SYSTEM_LIBS(){
 
 INSTALL_SYSTEM_LIBS
 source scripts/setvars.sh
-$SCRIPTS/compile_sharedlib.sh
 exit
