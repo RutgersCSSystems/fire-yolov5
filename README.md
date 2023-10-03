@@ -100,6 +100,15 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+##### MMAP 
+
+```
+cd $BASE/appbench/apps/simple_bench/mmap_exp/
+./compile.sh
+./release-run-med.sh
+```
+
+##### File Sharing
 ```
 cd shared_libs/simple_prefetcher/benchmarks
 make
