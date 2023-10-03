@@ -25,8 +25,7 @@ declare -a workload_arr=("read_pvt_rand" "read_pvt_seq") ##read binariesa
 declare -a readsize_arr=("4" "16" "32" "64")
 #declare -a readsize_arr=("8" "16" "32" "64")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("Vanilla" "OSonly")
-#$declare -a config_arr=("CIPI" "CIPI_PERF" "CIPI_sync")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
 
 
 STATS=0 #0 for perf runs and 1 for stats
