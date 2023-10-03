@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 LIBS=-lrt -lpthread -lm
-SIZE=10 ##Test file size in GBs
+SIZE=50 ##Test file size in GBs
 NR_READ_PAGES=40 ##Nr of pages to req in one read syscall
 NR_THREADS=4 ## Nr of readers 
 NR_STRIDE=64
@@ -67,5 +67,5 @@ write_shared: write.cpp utils/thpool.c
 	$(CXX) $^ $(SHARED_FLAGS) -DNR_THREADS=1 $(DEBUG) -o $(BIN_DIR)/write_shared $(LIBS)
 
 clean:
-	rm bigfakefile*
+	rm -rf bigfakefile*
 	rm $(BIN_DIR)/*

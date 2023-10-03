@@ -2,7 +2,7 @@ CXX=g++
 CC=gcc
 
 LIBS=-lpthread -lrt -ldl #-lmpi
-FLAGS=-fPIC -shared -std=c++14 -Wno-unused-result -O3 -g
+FLAGS=-fPIC -shared -std=c++14 -Wno-unused-result -O3 #-g
 INCLUDE=
 
 KB=1024
@@ -132,7 +132,7 @@ Cross_Info_Predict_IOOPT: $(SOURCES)
 Cross_Info_Predict_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CIPI_PERF.so $^ $(LIBS) $(DEBUG) \
 	    $(VAR_FLAGS) $(PREDICTOR_THPOOL_BLOCK_RA_INFO) \
-	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc #$(DISABLE_FADV_RANDOM) 
+	    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc $(DISABLE_FADV_RANDOM) 
 
 Cross_Info_Pred_Budget_IOOPT_PERF: $(SOURCES)
 	$(CXX) $(INCLUDE) $(FLAGS) -o lib_CPBI_PERF.so $^ $(LIBS) $(DEBUG) $(VAR_FLAGS) $(THPOOL_BLOCK_RA_BUDGET_INFO) $(DISABLE_FADV_RANDOM) \

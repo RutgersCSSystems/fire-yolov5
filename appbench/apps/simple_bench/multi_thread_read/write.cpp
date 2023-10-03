@@ -75,7 +75,7 @@ int main() {
         else
                 printf("Created %d bg threads\n", NR_THREADS);
 
-        for(int i=0; i<NR_THREADS; i++){
+        for(int i=0; i< NR_THREADS; i++){
                 struct thread_args *req = (struct thread_args*)malloc(sizeof(struct thread_args));
                 //file_name(str1, i, filename);
                 file_name(i, filename, NR_THREADS);

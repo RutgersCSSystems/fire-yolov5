@@ -7,47 +7,26 @@ if [ -z "$APPS" ]; then
         exit 1
 fi
 
-WORKLOAD=shared
-
 ##This script would run strided MADBench and collect its results
 source $RUN_SCRIPTS/generic_funcs.sh
-
 base=$APPS/simple_bench/multi_thread_read
-
 APPOUTPUTNAME="SIMPLEBENCH"
 
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
 
-declare -a nproc=("1" "2" "4" "8" "16")
+declare -a nprocess=("32" "16" "8" "1")
+declare -a nprocess=("32")
 declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_shared_seq" "read_pvt_seq" "read_shared_rand") ##read binaries
-declare -a config_arr=("Vanilla" "VRA" "Cross_Info" "CII")
-declare -a readsize_arr=("128" "64" "32" "4")
-declare -a nproc=("32" "16" "8" "1")
-declare -a read_size=("20") ## in pages
-declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simple")
-
-
-
-declare -a nproc=("32")
-declare -a readsize_arr=("4" "128")
-declare -a readsize_arr=("4")
-declare -a workload_arr=("read_pvt_rand" "read_shared_rand" "read_shared_seq" "read_pvt_seq") ##read binaries
-declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-declare -a workload_arr=("read_shared_seq") ##read binaries
-#declare -a workload_arr=( "read_shared_rand" "read_shared_seq" "read_pvt_seq") 
-
-#declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-#declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
-#declare -a config_arr=("Vanilla" "OSonly" "CIPI_sync")
-declare -a config_arr=("Vanilla")
-
-
+#declare -a workload_arr=("read_pvt_rand" "read_pvt_seq" "read_shared_rand" "read_shared_seq") ##read binariesa
+declare -a workload_arr=("read_pvt_rand" "read_pvt_seq") ##read binariesa
+declare -a readsize_arr=("4" "64" "256" "512" "32" "128")
+declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF")
+#declare -a config_arr=("CPBI_PERF")
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=10 ##GB
+FILESIZE=100 ##GB
 
 echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
@@ -55,7 +34,7 @@ G_TRIAL="TRIAL1"
 
 #Require for large database
 ulimit -n 1000000
-#declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 declare -a trials=("TRIAL1")
 declare -a membudget=("4")
 
@@ -67,6 +46,7 @@ ENABLE_MEM_SENSITIVE=0
 COMPILE_APP() {
         pushd $base
         CREATE_OUTFOLDER $base/bin
+	echo "make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3 NR_STRIDE=$NR_STRIDE"
         make -j SIZE=$1 NR_READ_PAGES=$2 NR_THREADS=$3 NR_STRIDE=$NR_STRIDE
         popd
 }
@@ -80,40 +60,40 @@ CLEAR_FILES() {
 
 #takes Workload and filesize
 CLEAN_AND_WRITE() {
-    printf "in ${FUNCNAME[0]}\n"
+        printf "in ${FUNCNAME[0]}\n"
 
-    UNSETPRELOAD
-    pushd $base
+        UNSETPRELOAD
+        pushd $base
 
-    echo "IN CLEAN_AND_WRITE $1 $2"
+	echo "IN CLEAN_AND_WRITE $1 $2"
 
-    if [[ "$1" == *"shared"* ]]; then
-        echo "Shared File"
-        FILENAME="./threads_1/bigfakefile0.txt"
-        FILESZ=$(stat -c %s $FILENAME)
-        FILESIZE_WANTED=`echo "$2*$GB" | bc`
+        if [[ "$1" == *"shared"* ]]; then
+                echo "Shared File"
+                FILENAME="./threads_1/bigfakefile0.txt"
+                FILESZ=$(stat -c %s $FILENAME)
+                FILESIZE_WANTED=`echo "$2*$GB" | bc`
 
-        echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
+		echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
 
-        if [[ -z ${FILESZ} ]];
-        then
-            FILESZ=0
+		if [[ -z ${FILESZ} ]];
+		then
+			FILESZ=0
+		fi
+
+                if [ "$FILESZ" -ne "$FILESIZE_WANTED" ]; then
+                        CLEAR_FILES
+			echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
+                        $base/bin/write_shared
+                fi
+        else
+                echo "Pvt Files"
+                CLEAR_FILES
+                $base/bin/write_pvt
         fi
 
-        if [ "$FILESZ" -ne "$FILESIZE_WANTED" ]; then
-            CLEAR_FILES
-            echo "FILESIZE: $FILESZ FILESIZE_WANTED: $FILESIZE_WANTED"
-            $base/bin/write_shared
-        fi
-    else
-        echo "Pvt Files"
-        CLEAR_FILES
-        $base/bin/write_pvt
-    fi
+        popd
 
-    popd
-
-    FlushDisk
+        FlushDisk
 }
 
 GEN_RESULT_PATH() {
@@ -141,41 +121,30 @@ RUN() {
         do
 		sed -i "/NR_READ_PAGES_VAR=/c\NR_READ_PAGES_VAR=$READSIZE" compile.sh
 
-		for NPROC in "${nproc[@]}"
+		for NPROC in "${nprocess[@]}"
 		do
+			echo "#. of processes: $NPROC"
 			sed -i "/NR_THREADS_VAR=/c\NR_THREADS_VAR=$NPROC" compile.sh
-			./compile.sh
+			#./compile.sh
 
-			#COMPILE_APP $FILESIZE $READ_SIZE $NPROC
+			echo "COMPILE_APP $FILESIZE $READSIZE $NPROC"
+			COMPILE_APP "$FILESIZE" "$READSIZE" "$NPROC"
 			CLEAN_AND_WRITE $WORKLOAD $FILESIZE
 
 				for WORKLOAD in "${workload_arr[@]}"
 				do
-
 					for CONFIG in "${config_arr[@]}"
 					do
 						echo "######################################################,"
 						echo "Filesize=$FILESIZE, load=$WORKLOAD, Experiment=$experiment NPROC=$NPROC Readsz=$READSIZE"
 
 						GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $READSIZE
-
-						#if [ "$STATS" -eq "1" ]; then
-						 #       ENABLE_LOCK_STATS
-						#fi
-
 						`./clearcache.sh`
 
 						echo $RESULTFILE
 						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 						$base/bin/$WORKLOAD &> $RESULTFILE
 						export LD_PRELOAD=""
-
-						#if [ "$STATS" -eq "1" ]; then
-						#        DISABLE_LOCK_STATS
-						#fi
-
-						#sudo dmesg -c &>> $RESULTFILE
-						#sudo cat /proc/lock_stat &>> $RESULTFILE
 						REFRESH
 					done
 				done
@@ -209,6 +178,7 @@ GETMEMORYBUDGET() {
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
+
 
 for G_TRIAL in "${trials[@]}"
 do

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -x
-DBHOME=$PWD
+DBHOME=$PWD/../
 THREAD=16
 VALUE_SIZE=4096
 SYNC=0
