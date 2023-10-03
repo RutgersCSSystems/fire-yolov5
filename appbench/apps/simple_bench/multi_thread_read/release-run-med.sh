@@ -1,6 +1,8 @@
 #!/bin/bash
 set -x
 
+DBHOME=$PWD
+
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -179,6 +181,11 @@ GETMEMORYBUDGET() {
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
+
+cp $DBHOME/Makefile.orig $PREDICT_LIB_DIR/Makefile
+cd $PREDICT_LIB_DIR
+$PREDICT_LIB_DIR/compile.sh
+cd $DBHOME
 
 
 for G_TRIAL in "${trials[@]}"
