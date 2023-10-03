@@ -275,6 +275,10 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
+cp $DBHOME/Makefile.snappy $PREDICT_LIB_DIR/Makefile
+cd $PREDICT_LIB_DIR
+$PREDICT_LIB_DIR/compile.sh
+cd $DBHOME
 
 if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
 then
@@ -288,4 +292,8 @@ then
 else
         RUN
 fi
+
+cp  $PREDICT_LIB_DIR/Makefile.orig $PREDICT_LIB_DIR/Makefile
+
+
 exit
