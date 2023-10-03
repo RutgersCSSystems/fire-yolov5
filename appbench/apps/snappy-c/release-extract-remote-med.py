@@ -4,9 +4,9 @@ import csv
 # Define the arrays
 thread_arr = ["32"]
 workload_arr = ["100"]
-filesize_arr = ["60000", "80000", "100000", "120000", "140000"]
+filesize_arr = ["140000"]
 config_arr = ["Vanilla", "CII", "OSonly", "CIPI_PERF", "CPBI_PERF"]
-membudget = ["9", "8", "6", "5", "4", "3", "2"]
+membudget = ["9", "10", "11", "12", "13", "14"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
