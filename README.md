@@ -177,6 +177,7 @@ effectiveness of CrossPrefetch under reducing memory capacity.
 
 ```
 cd $BASE/appbench/apps/snappy-c
+./compile.sh
 # The value indicates an input to generate the dataset
 ./gendata-run-med.sh 1
 ./release-run-med.sh 
