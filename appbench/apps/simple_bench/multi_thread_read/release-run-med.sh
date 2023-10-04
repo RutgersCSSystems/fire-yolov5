@@ -25,14 +25,14 @@ declare -a workload_arr=("read_pvt_rand" "read_pvt_seq") ##read binariesa
 declare -a readsize_arr=("4" "16" "32" "64")
 #declare -a readsize_arr=("8" "16" "32" "64")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
+declare -a config_arr=("CIPI_PERF")
 
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
 FILESIZE=60 ##GB
 
-echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+#echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 
 G_TRIAL="TRIAL1"
 
@@ -184,7 +184,7 @@ GETMEMORYBUDGET() {
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
-cp $DBHOME/Makefile.orig $PREDICT_LIB_DIR/Makefile
+cp $DBHOME/Makefile.simple $PREDICT_LIB_DIR/Makefile
 cd $PREDICT_LIB_DIR
 $PREDICT_LIB_DIR/compile.sh
 cd $DBHOME
