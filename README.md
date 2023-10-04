@@ -190,7 +190,7 @@ Please follow the following steps:
 
 ```
 git clone https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts
-cd scripts/NVMeOf
+cd scripts/remote-nvme-setup/
 ```
 
 (3)  Next, we need to setup the target and client node seperately. 
@@ -212,11 +212,10 @@ On Client Node:
 The remaining node will be the client node. Before running the script, make sure the `IP_ADDR` in the `client_setup.sh` is using the IP address of the **target machine RDMA IP**.
 
 ```
-sudo ./client_setup.sh
-
 # Replace ADDR with the IP address of the target RDMA interface.
-nvme connect -t rdma -n NVME-SUBSYSTEM-NAME -a ADDR -s 4420
+sudo ./client_setup.sh
 ```
+After that you can run `lsblk` to check that the `/mnt/remote` is mount on the remote disk `/dev/nvme1n1` 
 
 After that, same as local experiment we need to get the appropriate repo, set the environmental variable  and install the user-level library. Please refer to aboev local experiment instructions
 
