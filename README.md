@@ -85,7 +85,7 @@ cd $BASE/appbench/apps/rocksdb
 
 To run multiple configurations of RocksDB by varying APPonly (i.e.,
 application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
-controlled) by turning off application prefetch operations, and Cross-prefetch
+controlled) by turning off application prefetch operations and Cross-prefetch
 configurations for various thread counts, and workloads.
 ```
 ./gendata-run-med.sh
@@ -102,13 +102,12 @@ cat RESULT.csv
 ```
 
 Note: We observe that OSonly performance may vary on different machines with varying SSD
-storage due to its reliance on OS prefetching. Additionally, OSonly benefits
-from specific OS-level optimizations, which can occasionally result in better
-performance but is inconsistent, highlighting the need for CrossPrefetch.
+storage due to its reliance on OS prefetching, which can be unpredictable and occasionally 
+improve performance. This highlights the need for a Cross-layered approach.
 
 ##### Running YCSB
 
-To run real-world YCSB workload
+To run a real-world YCSB workload
 
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
@@ -125,7 +124,7 @@ cat RESULT.csv
 
 ##### Running MMAP 
 
-Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently acccess it.
+Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
 
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
@@ -136,12 +135,12 @@ cat RESULT.csv
 ```
 
 #### Long Running (> 1 hour)
-We now discuss the results for long running workloads which can vary from tens
+We now discuss the results for long-running workloads which can vary from tens
 of minutes to few hours dependent on the machine configuration.
 
 ##### Running Snappy (Memory Budget)
 
-Snappy experiment runs Snappy benchmark that concurrently compresses different
+Snappy experiment runs benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
 scripts also reduce the available memory for the application to study the
 effectivenss of CrossPrefetch under reducing memory capacity.
