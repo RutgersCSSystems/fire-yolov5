@@ -35,7 +35,8 @@ NUM=10000000
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")
 declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
-declare -a config_arr=("CIPI_PERF" "CPBI_PERF" "Vanilla" "OSonly")
+#declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
+declare -a config_arr=("CII")
 
 
 USEDB=1
@@ -142,7 +143,7 @@ RUN() {
 	done
 }
 
-WARMPUP
+#WARMPUP
 FlushDisk
 FlushDisk
 cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
