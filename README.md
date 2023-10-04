@@ -15,11 +15,11 @@ This repository contains the artifact for reproducing our ASPLOS '24 paper "Cros
 
 ### Setup Environment
 
-(1) First, we encourage users to use NSF CloudLab Clemson node (c6525-100g), which has 48 CPUs and two Samsung NVMe SSDs. We have created a cloudlab profile "c6525" to create the instance easily.
+(1) First, we encourage users to use the CloudLab (Clemson cluster) (c6525-100g), which has 48 CPUs and two Samsung NVMe SSDs. We have created a Cloudlab profile, "c6525" to create the instance easily.
 
 (2) Cloudlab Machine Setup
 
-First, you would have to set up a filesystem and mount it on a NVMe SSD
+First, you would have to set up a filesystem and mount it on an NVMe SSD
 
 ```
 sudo mkfs.ext4 /dev/nvme0n1p4
@@ -44,7 +44,7 @@ scripts/install_packages.sh
 
 ### Compile and install modified Linux kernel
 
-First compile and install the CrossPrefetch OS components
+First, compile and install the CrossPrefetch OS components.
 
 ```
 cd $BASE/linux-5.14.0
@@ -63,7 +63,7 @@ cd ~/nvme0n1p4; sudo chown $USER .
 
 We need **setup the environment variables and install the user-level library first before running any experiments**. 
 
-This followwing script will setup the environment variables and install the user-level library
+The following script will set the environment variables and install the user-level library.
 ```
 # Navigate to the source folder
 cd ~/ssd/ioopt
@@ -101,7 +101,7 @@ cat RESULT.csv
 
 ##### Running YCSB
 
-To run real-world YCSB workload
+To run a real-world YCSB workload
 
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
@@ -118,7 +118,7 @@ cat RESULT.csv
 
 ##### Running MMAP 
 
-Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently acccess it.
+Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently access it.
 
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
@@ -129,15 +129,15 @@ cat RESULT.csv
 ```
 
 #### Long Running (> 1 hour)
-We now discuss the results for long running workloads which can vary from tens
-of minutes to few hours dependent on the machine configuration.
+We now discuss the results for long-running workloads, which can vary from tens
+of minutes to a few hours, depending on the machine configuration.
 
 ##### Running Snappy (Memory Budget)
 
-Snappy experiment runs Snappy benchmark that concurrently compresses different
+Snappy experiment runs the Snappy benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
 scripts also reduce the available memory for the application to study the
-effectivenss of CrossPrefetch under reducing memory capacity.
+effectiveness of CrossPrefetch under reducing memory capacity.
 
 ```
 cd $BASE/appbench/apps/snappy-c
@@ -149,7 +149,7 @@ cat RESULT.csv
 ```
 
 ##### Running Microbenchmark
-The microbenchmarks can take different duration depending on the storage
+The microbenchmarks can take different durations depending on the storage
 hardware and the available memory in the system.  Let's run the microbenchmark,
 where we generate 100GB of files, vary the size of each request, and measure
 the throughput.
@@ -170,18 +170,18 @@ cat RESULT.csv
 #### Running Remote Storage Experiments
 For remote storage experiments, we will use m510 with remote NVMe support.
 These nodes are easily available and quick to launch!  We have already created
-a publically available cloudlab profile where one could launch two m510 NVMe
+a publically available CloudLab profile where one could launch two m510 NVMe
 nodes with NVMeOF setup across these nodes.
 
 Please follow the following steps:
 
 **1. Instantiating the nodes**
 
-(1) First, use the following CloudLab UTAH m510 nodes, which is easy to reserve and use. Use the following profile:
+(1) First, use the following CloudLab UTAH m510 nodes, which are easy to reserve and use. Use the following profile:
 **Machine Node Name:** m510
 **Profile Name:** 2-NVMe-Nodes
 
-(2) Now, you would have to set up a filesystem and mount it. 
+(2) Now, you must set up a filesystem and mount it. 
 ```
 sudo mkfs.ext4 /dev/nvme0n1
 mkdir ~/ssd; sudo mount /dev/nvme0n1p1 ~/ssd
