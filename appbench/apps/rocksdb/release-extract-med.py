@@ -4,8 +4,8 @@ import csv
 # Define the arrays
 thread_arr = ["32"]
 workload_arr=["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
-#workload_arr=["multireadrandom"]
 config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
+config_out_arr = ["APPonly", "OSonly","CrossP[+fetchall+opt]",  "CrossP[+predict+opt]", "CrossP[+predict+opt+budget]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
@@ -30,7 +30,7 @@ def main():
         csv_writer = csv.writer(csv_file)
         
         # Write the header row with column names from config_arr
-        header_row = ["Workload"] + config_arr
+        header_row = ["Workload"] + config_out_arr
         csv_writer.writerow(header_row)
 
         for workload in workload_arr:

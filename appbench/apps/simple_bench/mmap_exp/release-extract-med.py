@@ -32,7 +32,7 @@ def main():
             csv_writer.writerow(header_row)
             csv_writer.writerow(SPACE)
 
-            header_row = ["rsize"] + config_out_arr
+            header_row = config_out_arr
             csv_writer.writerow(header_row)
 
             for workload in workload_arr:
