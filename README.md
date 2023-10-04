@@ -15,11 +15,11 @@ This repository contains the artifact for reproducing our ASPLOS '24 paper "Cros
 
 ### Setup Environment
 
-(1) First, we encourage users to use NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a cloudlab profile "c6525" to create the instance easily.
+(1) First, we encourage users to use the NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a Cloudlab profile "c6525" to create the instance easily.
 
 (2) Cloudlab Machine Setup
 
-First, you would have to set up a filesystem and mount it on a NVMe SSD
+First, you would have to set up a filesystem and mount it on an NVMe SSD
 
 ```
 sudo mkfs.ext4 /dev/nvme0n1p4
@@ -44,7 +44,7 @@ scripts/install_packages.sh
 
 ### Compile and install modified Linux kernel
 
-First compile and install the CrossPrefetch OS components
+First, compile and install the CrossPrefetch OS components.
 
 ```
 cd $BASE/linux-5.14.0
@@ -53,20 +53,20 @@ cd $BASE/linux-5.14.0
 sudo reboot ## This will reboot the node with the new Linux. 
 ```
 
-After rebooting, we need mount the storage again.
+After rebooting, we need to mount the storage again.
 
 ```
 sudo mount /dev/nvme0n1p4 ~/ssd
-cd ~/nvme0n1p4; sudo chown $USER .
+cd ~/ssd; sudo chown $USER .
 ```
 ### Run Experiments
 
 We need **setup the environment variables and install the user-level library first before running any experiments**. 
 
-This followwing script will setup the environment variables and install the user-level library
+The following script will set the environment variables and install the user-level library.
 ```
 # Navigate to the source folder
-cd ~/ssd/ioopt
+cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
@@ -77,7 +77,7 @@ cd $BASE/shared_libs/simple_prefetcher/
 ##### Running RocksDB + YCSB
 First, we will start with running medium workloads. As a first step, we will start running RocksDB with a real-world YCSB workload.  
 
-Before compiling, we need to make sure the environmental variables are set by `set_vars.sh`.
+Before compiling, we must ensure the environmental variables are set by `set_vars.sh`.
 
  The following commands will install the necessary packages to compile RocksDB with YCSB. 
 ```
@@ -89,9 +89,9 @@ cd $BASE/appbench/apps/RocksDB-YCSB
 We run YCSB with multiple configurations of RocksDB by varying APPonly (i.e.,
 application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
 controlled) by turning off application prefetch operations and Cross-prefetch
-configurations for various thread counts, and workloads.
+configurations for various thread counts and workloads.
 
-Then run YCSB, extract and see the results
+Then run YCSB, extract, and see the results
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
 ./release-run-med.sh
@@ -99,7 +99,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-The expected results will show like the following. If we are using the same node (`c6525-100g`), the performance numbers may have variation but the trends will be similar. Please refer to Appendix A.5 for more details.
+The expected results will be like the following. If we are using the same node (`c6525-100g`), the performance numbers may have variation but the trends will be similar. Please refer to Appendix A.5 for more details.
 
 ```
 Workload,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
@@ -137,7 +137,7 @@ improve performance. This highlights the need for a Cross-layered approach.
 
 ##### Running MMAP 
 
-Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
+Next, run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
 
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
@@ -148,15 +148,15 @@ cat RESULT.csv
 ```
 
 #### Long Running (> 1 hour)
-We now discuss the results for long-running workloads which can vary from tens
-of minutes to few hours dependent on the machine configuration.
+We now discuss the results for long-running workloads, which can vary from tens
+of minutes to a few hours, dependent on the machine configuration.
 
 ##### Running Snappy (Memory Budget)
 
-Snappy experiment runs benchmark that concurrently compresses different
+The snappy experiment runs a benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
 scripts also reduce the available memory for the application to study the
-effectivenss of CrossPrefetch under reducing memory capacity.
+effectiveness of CrossPrefetch under reducing memory capacity.
 
 ```
 cd $BASE/appbench/apps/snappy-c
@@ -168,7 +168,7 @@ cat RESULT.csv
 ```
 
 ##### Running Microbenchmark
-The microbenchmarks can take different duration depending on the storage
+The microbenchmarks can take different durations depending on the storage
 hardware and the available memory in the system.  Let's run the microbenchmark,
 where we generate 100GB of files, vary the size of each request, and measure
 the throughput.
@@ -189,8 +189,8 @@ cat RESULT.csv
 #### Running Remote Storage Experiments
 For remote storage experiments, we will use `m510` with remote NVMe support.
 These nodes are easily available and quick to launch!  We have already created
-a publically available cloudlab profile where one could launch two `m510` NVMe
-nodes with NVMe-oF setup across these nodes. In addition, we also provide a easy to use script to setup the NVMe-oF.
+a publicly available Cloudlab profile where one could launch two `m510` NVMe
+nodes with NVMe-oF setup across these nodes. In addition, we also provide an easy-to-use script to set up the NVMe-oF.
 
 Please follow the following steps:
 
@@ -198,20 +198,20 @@ Please follow the following steps:
 
 (1) First, create two CloudLab UTAH `m510` nodes by using the profile `2-NVMe-Nodes`
 
-(2) Next, clone our provided script on both nodes to setup the NVMe-oF
+(2) Next, clone our provided script on both nodes to set up the NVMe-oF
 
 ```
 git clone https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts
 cd scripts/remote-nvme-setup/
 ```
 
-(3)  Next, we need to setup the target and client node seperately. 
+(3)  Next, we need to set up the target and client node separately. 
 
 On Target Node:
 
-You can pick whatever node you want as a target node, but just make sure the machine RDMA IP is match with the `IP_ADDR` in the `target_setup.sh` script
+You can pick whatever node you want as a target node, but just make sure the machine RDMA IP matches with the `IP_ADDR` in the `target_setup.sh` script
 ```
-# First format the NVMe partition that you want the client to use.
+# First, format the NVMe partition that you want the client to use.
 sudo mkfs.ext4 /dev/nvme0n1p4
 
 # Then replace ""/dev/nvme0n1p4" in target_setup.sh with the target block device.
@@ -221,19 +221,19 @@ sudo ./target_setup.sh
 
 On Client Node:
 
-The remaining node will be the client node. Before running the script, make sure the `IP_ADDR` in the `client_setup.sh` is using the IP address of the **target machine RDMA IP**.
+The remaining node will be the client node. Before running the script, ensure the `IP_ADDR` in the `client_setup.sh` uses the IP address of the **target machine RDMA IP**.
 
 ```
 # Replace ADDR with the IP address of the target RDMA interface.
 sudo ./client_setup.sh
 ```
-After that you can run `lsblk` to check that the `/mnt/remote` is mount on the remote disk `/dev/nvme1n1` 
+After that, you can run `lsblk` to check that the `/mnt/remote` is mounted on the remote disk `/dev/nvme1n1` 
 
-After that, same as local experiment we need to get the appropriate repo, set the environmental variable  and install the user-level library. Please refer to aboev local experiment instructions
+After that, same as the local experiment, we need to get the appropriate repo, set the environmental variable,  and install the user-level library. Please refer to above local experiment instructions
 
 **4. Running experiments**
 
-For remote storage execution, we need to run the following scripts on client node.
+For remote storage execution, we need to run the following scripts on the client node.
 
 ```
 cd $BASE/appbench/apps/rocksdb

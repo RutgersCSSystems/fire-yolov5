@@ -3,10 +3,11 @@ import csv
 
 # Define the arrays
 thread_arr = ["16"]
-workload_arr = ["read_pvt_seq", "read_pvt_rand"]
-config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF"]
-config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
-readsize_arr = ["128"]
+workload_arr = ["read_pvt_rand", "read_pvt_seq"]
+config_arr = ["Vanilla", "OSonly", "CIPI_PERF"]
+#readsize_arr = ["4", "32", "64", "128", "256", "512"]
+readsize_arr = ["4", "16", "32", "64"]
+
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
@@ -34,8 +35,7 @@ def main():
             csv_writer.writerow(header_row)
             csv_writer.writerow(SPACE)
 
-            #header_row = ["rsize"] + config_out_arr
-            header_row = config_out_arr
+            header_row = ["rsize"] + config_arr
             csv_writer.writerow(header_row)
 
             for readsize in readsize_arr:
@@ -44,8 +44,7 @@ def main():
                         continue  # Skip if not the desired access pattern
 
                     base_dir = base_dir_template.format(workload=workload, readsize=readsize)
-                    #workload_data = [readsize]
-                    workload_data = []
+                    workload_data = [readsize]
 
                     for config in config_arr:
                         file_path = os.path.join(base_dir, thread_arr[0], f"{config}.out")
