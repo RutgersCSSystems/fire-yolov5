@@ -15,15 +15,15 @@ This repository contains the artifact for reproducing our ASPLOS '24 paper "Cros
 
 ### Setup Environment
 
-(1) First, we encourage users to use the NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a Cloudlab profile "c6525" to create the instance easily.
+(1) First, we encourage users to use the NSF CloudLab Clemson node (`r6525`), which has 128 CPU cores and a Samsung NVMe SSD. We have created a Cloudlab profile "r6525" to create the instance easily.
 
 (2) Cloudlab Machine Setup
 
 First, you would have to set up a filesystem and mount it on an NVMe SSD
 
 ```
-sudo mkfs.ext4 /dev/nvme0n1p4
-mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
+sudo mkfs.ext4 /dev/nvme0n1
+mkdir ~/ssd; sudo mount /dev/nvme0n1 ~/ssd
 cd ~/ssd; sudo chown $USER .
 ```
 
@@ -56,7 +56,7 @@ sudo reboot ## This will reboot the node with the new Linux.
 After rebooting, we need to mount the storage again.
 
 ```
-sudo mount /dev/nvme0n1p4 ~/ssd
+sudo mount /dev/nvme0n1 ~/ssd
 cd ~/ssd; sudo chown $USER .
 ```
 ### Run Experiments
@@ -99,7 +99,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 "The expected results will appear as follows. If we are using the same node
-(c6525-100g), the performance numbers may show some variation, but the trendsa
+(r6525), the performance numbers may show some variation, but the trends
 remain (please see Appendix A.5 for details).
 
 ```
