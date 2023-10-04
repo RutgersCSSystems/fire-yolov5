@@ -1,65 +1,53 @@
-CrossPrefetch
-==================================================
-DELETE THIS: Best Performing:
-```
-refactor-sudarsun-perf-3 commit a4eb9bf4e5ac34c759afafb7925753f30a0ec4e9
-Author: sudarsun <kannan11@node-0.prefetch5.lsm-pg0.clemson.cloudlab.us>
-```
+## Artifact Evaluation Submission for CrossPrefetch [ASPLOS '24]
 
+This repository contains the artifact for reproducing our ASPLOS '24 paper "CrossPrefetch: Accelerating I/O Prefetching for Modern Storage".
 
 ### Directory structure
 ```
 .
 ├── README.md
-├── appbench/apps       # application workloads
-├── linux-5.14.0        # Modified Linux kernel
-├── results             # folder with all results 
-├── scripts             # all scripts for setup and microbench running
-└── shared_libs/simple_prefetcher    # shared lib predictor src
+├── appbench/apps       # Application workloads
+├── linux-5.14.0        # Modified Linux kernel (Cross-OS)
+├── results             # Folder with all results 
+├── scripts             # All scripts for setup and benchmark running
+└── shared_libs/simple_prefetcher    # The user-level library (Cross-Lib)
 ```
 
 ### Setup Environment
 
-(1) First, use the following CloudLab Wisconsin node, which is easy to reserve and use. Use the following profile:
+(1) First, we encourage users to use NSF CloudLab Clemson node (c6525-100g), which has 48 CPUs and two Samsung NVMe SSDs. We have created a cloudlab profile "c6525" to create the instance easily.
 
-**Machine Node Name:** c220g5 
-**Profile Name:** single-raw-ubuntu-18
+(2) Cloudlab Machine Setup
 
-(2) Partition Setup & cloning
-If you use CloudLab, the root partition is only 16GB for some profiles.
-First, set up the CloudLab node with SSD and install all the required libraries.
-```
-lsblk
-```
-
-Now, you would have to set up a filesystem and mount it. 
+First, you would have to set up a filesystem and mount it on a NVMe SSD
 
 ```
-sudo mkfs.ext4 /dev/sda4
-mkdir ~/ssd; sudo mount /dev/sda4 ~/ssd
+sudo mkfs.ext4 /dev/nvme0n1p4
+mkdir ~/ssd; sudo mount /dev/nvme0n1p4 ~/ssd
 cd ~/ssd; sudo chown $USER .
 ```
 
 Now, get the appropriate repo.
 ```
 cd ssd
-git clone https://github.com/RutgersCSSystems/ioopt
-cd ioopt
+git clone https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts
+cd crossprefetch-asplos24-artifacts
 ```
 
-You now have the repo. Before compiling and setting up things, let's set the environmental variable.
+You now have the repo. Before compiling and setting up things, let's set the environmental variable and install the required packages by using the following commands.
 
-First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
-Because we are using Wisconsin, you could do something like this and save the file.
 ```
 source ./scripts/setvars.sh
 # Let's install the Debian packages
 scripts/install_packages.sh
 ```
 
-### Compile Kernel
+### Compile and install modified Linux kernel
 
 #### To compile deb for bare metal systems
+
+First compile and install the CrossPrefetch OS components
+
 ```
 cd $BASE/linux-5.14.0
 ## This will produce and install the modified kernel
@@ -70,8 +58,8 @@ sudo reboot ## This will reboot the node with the new Linux.
 After rebooting, we need mount the storage again.
 
 ```
-sudo mount /dev/sda4 ~/ssd
-cd ~/ssd; sudo chown $USER .
+sudo mount /dev/nvme0n1p4 ~/ssd
+cd ~/nvme0n1p4; sudo chown $USER .
 ```
 ## Run Experiments
 All experiments are in the following folder. This script needs to be updated to run different applications. 
