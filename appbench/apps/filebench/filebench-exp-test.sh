@@ -26,13 +26,12 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 
 
 mkdir -p $RESULTS
+#declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
-
-declare -a config_arr=("Vanilla" "CIPI_PERF" "OSonly")
-#declare -a config_arr=("CIPI_PERF" "CPBI_PERF" "OSonly" "Vanilla")
-
-#declare -a workload_arr=( "randomrw.f" "randomread.f")
-#declare -a config_arr=("CIPI")
+declare -a config_arr=("Vanilla" "CIPI" "OSonly")
+declare -a workload_arr=("mongo.f")
+declare -a workload_arr=("randomrw.f")
+declare -a config_arr=("Vanilla" "CIPI" "CIPI_PERF")
 
 declare -a thread_arr=("16")
 
@@ -55,7 +54,8 @@ ENABLE_MEM_SENSITIVE=0
 declare -a membudget=("6")
 #declare -a config_arr=( "CIPI")
 
-declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+#declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
+declare -a trials=("TRIAL1")
 G_TRIAL="TRIAL1"
 
 mkdir DATA

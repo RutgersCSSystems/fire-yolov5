@@ -11,13 +11,11 @@ Author: sudarsun <kannan11@node-0.prefetch5.lsm-pg0.clemson.cloudlab.us>
 ```
 .
 ├── README.md
-├── appbench            # application workloads
+├── appbench/apps       # application workloads
 ├── linux-5.14.0        # Modified Linux kernel
-├── references.txt      # list of references for paper
 ├── results             # folder with all results 
 ├── scripts             # all scripts for setup and microbench running
 └── shared_libs/simple_prefetcher    # shared lib predictor src
-└── shared_libs/memory_analysis    # returns the anon and cache usage during an apprun
 ```
 
 ### Setup Environment
@@ -86,42 +84,7 @@ cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
 ```
 
-### Starting with Medium Workloads
-
-#### Running Microbenchmark
-
-Let's run the Microbenchmark, where we generate 100GB of files, vary the size of each request, and measure the throughput.
-
-First, to compile the microbenchmark with different workloads, use the following steps:
-```
-cd  $BASE/appbench/apps/simple_bench/multi_thread_read
-mkdir bin
-make -j4
-```
-
-To run the workload and see the results.
-```
-./release-run-med.sh
-python3 release-extract-med.py
-cat RESULT.csv
-```
-
-##### MMAP 
-
-```
-cd $BASE/appbench/apps/simple_bench/mmap_exp/
-./compile.sh
-./release-run-med.sh
-python3 release-extract-med.py
-cat RESULT.csv
-```
-
-##### File Sharing
-```
-cd shared_libs/simple_prefetcher/benchmarks
-make
-./run_scalability.sh
-```
+### Starting with workloads with shorter (less than 1 hour) execution 
 
 #### Running RocksDB
 First, we will start with running medium workloads, which will take between 3-5 hours (or longer) to complete.
@@ -165,6 +128,14 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+##### MMAP 
+```
+cd $BASE/appbench/apps/simple_bench/mmap_exp/
+./compile.sh
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
 
 #### Running Snappy
 ```
@@ -175,7 +146,25 @@ cd $BASE/appbench/apps/snappy-c
 python3 release-extract-med.py
 cat RESULT.csv
 ```
+#### Running Microbenchmark
+The microbenchmarks can take different duration depending on the storage
+hardware and the available memory in the system.  Let's run the microbenchmark,
+where we generate 100GB of files, vary the size of each request, and measure
+the throughput.
 
+First, to compile the microbenchmark with different workloads, use the
+following steps:
+```
+cd  $BASE/appbench/apps/simple_bench/multi_thread_read
+mkdir bin
+make -j4
+```
+To run the workload and see the results.
+```
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
 
 ### Running Remote Storage Experiments
 For remote storage experiments, we will use m510 with remote NVMe support.
@@ -236,25 +225,3 @@ python3 release-run-remote-med.sh
 #Display the results
 cat REMOTE-RESULT.csv
 ```
-
-#### Varying Parameters
-To vary either RocksDB parameters, workloads, or the technique used for prefetching, vary one of these parameters in the 
-rocksdb-exp-test.sh script
-
-For the number of keys, we set the values here. We use by default 20M keys and 100-byte keys. If you want to change the number 
-of keys, update this
-```
-declare -a num_arr=("20000000")
-NUM=20000000
-```
-
-#### Varying Parameters
-```
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a config_arr=("OSonly" "Vanilla" "Cross_Info" "Cross_Info_sync" "CII" "CIP" "CIP_sync" "CIPI")
-declare -a thread_arr=("4" "8" "16" "32")
-```
-
-
-
-
