@@ -27,8 +27,7 @@ struct thread_args{
 void prefetcher_th(void *arg){
         long tid = gettid();
         struct thread_args *a = (struct thread_args*)arg;
-        printf("TID:%ld: size=%ld on file %s\n", 
-                        tid, a->size, a->filename);
+        //printf("TID:%ld: file %s\n",  tid, a->filename);
 
         FILE *fp;
         fp=fopen(a->filename, "w");
@@ -49,7 +48,7 @@ void prefetcher_th(void *arg){
 		 bytes += fwrite(buffer, write_size, 1, fp);
 		 i = i + write_size;	
 	}
-     	printf("TID:%ld: size=%ld, bytes=%ld\n", tid, a->size, bytes);
+     	//printf("TID:%ld: size=%ld, bytes=%ld\n", tid, a->size, bytes);
 
         fclose(fp);
         return;
@@ -72,8 +71,8 @@ int main() {
         if(!thpool){
                 printf("FAILED: creating threadpool with %d threads\n", NR_THREADS);
         }
-        else
-                printf("Created %d bg threads\n", NR_THREADS);
+        //else
+                //printf("Created %d bg threads\n", NR_THREADS);
 
         for(int i=0; i< NR_THREADS; i++){
                 struct thread_args *req = (struct thread_args*)malloc(sizeof(struct thread_args));

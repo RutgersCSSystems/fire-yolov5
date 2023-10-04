@@ -99,16 +99,15 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-The expected results will show like the following. If we are using the same node (`c6525-100g`), the performance numbers may have variation but the trends will be similar. Please refer to Appendix A.5 for more details.
+"The expected results will appear as follows. If we are using the same node
+(c6525-100g), the performance numbers may show some variation, but the trendsa
+remain (please see Appendix A.5 for details).
 
 ```
 Workload,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
-ycsbwklda,66749,54151,91401,60657
-ycsbwkldb,278169,321962,480270,307074
-ycsbwkldc,386905,468608,849251,375018
-ycsbwkldd,289843,337801,663357,313849
-ycsbwklde,4260,11203,14585,9563
-ycsbwkldf,79338,67178,60537,91390
+ycsbwklda,66749,54151,91401....
+ycsbwkldb,278169,321962,480270....
+.....
 ```
 
 ##### Running RocksDB + DB_bench
@@ -134,6 +133,24 @@ cat RESULT.csv
 Note: We observe that OSonly performance may vary on different machines with varying SSD
 storage due to its reliance on OS prefetching, which can be unpredictable and occasionally 
 improve performance. This highlights the need for a Cross-layered approach.
+
+
+##### Running Microbenchmark (quick, < 7 minutes)
+The microbenchmarks can take different duration depending on the storage
+hardware and the available memory in the system.  Let's run a short microbenchmark
+
+First, to compile the microbenchmark with different workloads, use the
+following steps:
+```
+cd  $BASE/appbench/apps/simple_bench/multi_thread_read
+./compile.sh
+```
+To run the workload and see the results.
+```
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
 
 ##### Running MMAP 
 
