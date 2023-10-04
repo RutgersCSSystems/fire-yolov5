@@ -1093,7 +1093,7 @@ void inline prefetch_file(void *args){
 		 * which means prefetch blindly NR_RA_PAGES at a time
 		 */
 		arg->offset = 0;
-		arg->prefetch_size = NR_RA_PAGES * PAGESIZE;
+		arg->prefetch_size = filesize; //NR_RA_PAGES * PAGESIZE;
 		arg->prefetch_limit = filesize;
 #endif
 
@@ -1127,20 +1127,6 @@ void inline prefetch_file(void *args){
 	pthread_t thread;
 	pthread_create(&thread, NULL, prefetcher_th, (void*)arg);
 #elif defined(THPOOL_PREFETCH)
-
-#if 0
-	if(!workerpool)
-		printf("ERR: %s: No workerpool ? \n", __func__);
-	else{
-		thpool_add_work(workerpool, prefetcher_th, (void*)arg);
-		//thpool_add_work(workerpool[arg->fd-3], prefetcher_th, (void*)arg);
-
-		debug_printf("%s:Adding work fd=%d, offset=%ld, len=%ld, queuelen=%d\n", __func__,
-				arg->fd, arg->offset, arg->prefetch_limit, thpool_queue_len(workerpool));
-	}
-#endif
-	//int idx= uinode->ino % QUEUES;
-	//thpool_add_work(workerpool, prefetcher_th, (void*)arg);
 	threadpool_add(pool[g_next_queue % QUEUES], prefetcher_th, (void*)arg, 0);
 	g_next_queue++;
 #else
