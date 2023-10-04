@@ -249,7 +249,7 @@ After that, you can run `lsblk` to check that the `/mnt/remote` is mounted on th
 
 After that, same as the local experiment, we need to get the appropriate repo, set the environmental variable,  and install the user-level library. Please refer to above local experiment instructions
 
-**4. Running experiments**
+**2. Running experiments**
 
 For remote storage execution, we need to run the following scripts on the client node.
 
