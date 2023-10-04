@@ -70,7 +70,7 @@ declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 #declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF" "CPBI_PERF")
+declare -a config_arr=("Vanilla" "OSonly" "CII" "CPBI_PERF" "CIPI_PERF")
 #declare -a config_arr=("Vanilla" "OSonly")
 
 
