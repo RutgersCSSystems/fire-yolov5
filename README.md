@@ -15,11 +15,11 @@ This repository contains the artifact for reproducing our ASPLOS '24 paper "Cros
 
 ### Setup Environment
 
-(1) First, we encourage users to use NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a cloudlab profile "c6525" to create the instance easily.
+(1) First, we encourage users to use the NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a Cloudlab profile "c6525" to create the instance easily.
 
 (2) Cloudlab Machine Setup
 
-First, you would have to set up a filesystem and mount it on a NVMe SSD
+First, you would have to set up a filesystem and mount it on an NVMe SSD
 
 ```
 sudo mkfs.ext4 /dev/nvme0n1p4
@@ -44,7 +44,7 @@ scripts/install_packages.sh
 
 ### Compile and install modified Linux kernel
 
-First compile and install the CrossPrefetch OS components
+First, compile and install the CrossPrefetch OS components
 
 ```
 cd $BASE/linux-5.14.0
