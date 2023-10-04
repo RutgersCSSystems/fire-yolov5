@@ -14,12 +14,6 @@ g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_Cross_Blind.so fron
     -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DBLIND_PREFETCH -DDISABLE_APP_READAHEAD 
 g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_OSonly.so libOSonly.cpp -lpthread -lrt -ldl   \
     -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DDISABLE_APP_READAHEADS #-DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_Cross_Info.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL    -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH -DTHPOOL_PREFETCH  
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_Cross_Info_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL    -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH 
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIP.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS 
 g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIPI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
     -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS  \
     -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
@@ -31,26 +25,8 @@ g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CII.so frontend.cpp
 g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CII_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
     -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL    -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DBLIND_PREFETCH  \
     -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIPB.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CPBI.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL    -D_PERF_OPT -D_PERF_OPT_EXTREME -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT 
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CPBI_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DENABLE_EVICTION  \
-    -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIP_sync.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS 
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIPI_PERF.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-    -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS   -DPREFETCH_BOOST -DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -ljemalloc -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL  \
-    #-D_PERF_OPT_EXTREME -D_PERF_OPT
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CPBI_PERF.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   -DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DENABLE_EVICTION -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   \
-       	-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -ljemalloc -D_PERF_OPT -D_PERF_OPT_EXTREME -DPREFETCH_BOOST
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIPI_interval.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl  -Wl,--no-as-needed -lintervaltreelib  \
-	-DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS  \
-	-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DINTERVAL_BITMAP  -D_PERF_OPT -D_PERF_OPT_EXTREME 
-g++  -fPIC -shared -std=c++14 -Wno-unused-result -O3  -o lib_CIPI_mmap.so frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/bitarray.c utils/hashtable.c utils/thpool-simple.c utils/fsck_lock.c cache_state_tree.cpp -lpthread -lrt -ldl   \
-	-DNR_RA_PAGES=1024 -DNR_WORKERS=16 -DPORTION_PAGES=32 -DMAINTAIN_UINODE -DPER_INODE_BITMAP     -DNR_ADJACENT_CHECK=10 -DMIN_FILE_SZ=`echo "1024*1024*5" | bc` -DCROSS_BITMAP_SHIFT=39 -DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   -DTHPOOL_PREFETCH -DPREDICTOR -DMODIFIED_RA -DREADAHEAD_INFO_PC_STATE -DDISABLE_APP_READAHEADS  \
-	-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DMMAP_PREDICT
+make: *** No rule to make target 'Cross_Info_Pred_Budget', needed by 'all'.  Stop.
+make: *** Waiting for unfinished jobs....
 In file included from libOSonly.cpp:48:0:
 util.hpp:35:2: warning: #warning NR_RA_PAGES not defined. Assuming 40 pages [-Wcpp]
  #warning NR_RA_PAGES not defined. Assuming 40 pages
@@ -68,60 +44,12 @@ util.hpp:159:2: warning: #warning CROSS_BITMAP_SHIFT not defined. Assuming 24 [-
  #warning CROSS_BITMAP_SHIFT not defined. Assuming 24
   ^~~~~~~
 In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
                  from libOSonly.cpp:41:
 util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
  #warning NR_NQUEUES not defined. Assuming 32 workers
   ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
   ^~~~~~~
 In file included from uinode.hpp:6:0,
                  from frontend.cpp:41:
@@ -131,8 +59,10 @@ util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-W
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
   ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
+In file included from uinode.hpp:6:0,
+                 from frontend.cpp:41:
+util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
+ #warning NR_NQUEUES not defined. Assuming 32 workers
   ^~~~~~~
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
@@ -153,122 +83,8 @@ util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-W
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
   ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
 In file included from uinode.hpp:6:0,
                  from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from frontend.cpp:41:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from predictor.hpp:4:0,
-                 from predictor.cpp:37:
 util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
  #warning NR_NQUEUES not defined. Assuming 32 workers
   ^~~~~~~
@@ -331,94 +147,6 @@ util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-W
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
   ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from uinode.hpp:6:0,
-                 from uinode.cpp:47:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
 In file included from cache_state_tree.hpp:15:0,
                  from cache_state_tree.cpp:1:
 util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
@@ -459,95 +187,6 @@ util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-W
 util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
  #warning NR_QSIZE not defined. Assuming 2000 workers
   ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-In file included from cache_state_tree.hpp:15:0,
-                 from cache_state_tree.cpp:1:
-util.hpp:64:2: warning: #warning NR_NQUEUES not defined. Assuming 32 workers [-Wcpp]
- #warning NR_NQUEUES not defined. Assuming 32 workers
-  ^~~~~~~
-util.hpp:69:2: warning: #warning NR_QSIZE not defined. Assuming 2000 workers [-Wcpp]
- #warning NR_QSIZE not defined. Assuming 2000 workers
-  ^~~~~~~
-#-DSET_READ_UNLIMITED -DUNSET_2MB_RA_LIMIT -DPREFETCH_BOOST -D_PERF_OPT_EXTREME -D_PERF_OPT -ljemalloc #-DDISABLE_FADV_RANDOM -DDISABLE_FADV_DONTNEED -DDISABLE_FADV_SEQUENTIAL   
 sudo cp *.so /usr/local/lib
 sudo cp *.so /usr/lib
 #sudo cp clear_os_stats /usr/bin
