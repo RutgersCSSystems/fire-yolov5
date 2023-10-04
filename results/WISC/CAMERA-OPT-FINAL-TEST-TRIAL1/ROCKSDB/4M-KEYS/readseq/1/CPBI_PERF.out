@@ -1,144 +1,0 @@
-Setting g_min_fd 4 
-Setting g_min_fd 4 
-RocksDB:    version 7.6.0
-Date:       Fri Sep 29 20:05:31 2023
-CPU:        40 * Intel(R) Xeon(R) Silver 4114 CPU @ 2.20GHz
-CPUCache:   14080 KB
-... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 600000 ops                              ... finished 700000 ops                              ... finished 800000 ops                              ... finished 900000 ops                              ... finished 1000000 ops                              ... finished 1100000 ops                              ... finished 1200000 ops                              ... finished 1300000 ops                              ... finished 1400000 ops                              ... finished 1500000 ops                              ... finished 1600000 ops                              ... finished 1700000 ops                              ... finished 1800000 ops                              ... finished 1900000 ops                              ... finished 2000000 ops                              ... finished 2100000 ops                              ... finished 2200000 ops                              ... finished 2300000 ops                              ... finished 2400000 ops                              ... finished 2500000 ops                              db_bench: ../nptl/pthread_mutex_lock.c:81: __pthread_mutex_lock: Assertion `mutex->__data.__owner == 0' failed.
-Received signal 6 (Aborted)
-#0   /lib/x86_64-linux-gnu/libc.so.6(gsignal+0xc7) [0x7ffff5bb5e87] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#1   /lib/x86_64-linux-gnu/libc.so.6(abort+0x141) [0x7ffff5bb77f1] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#2   /lib/x86_64-linux-gnu/libc.so.6(+0x303fa) [0x7ffff5ba73fa] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#3   /lib/x86_64-linux-gnu/libc.so.6(+0x30472) [0x7ffff5ba7472] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#4   /lib/x86_64-linux-gnu/libpthread.so.0(pthread_mutex_lock+0x240) [0x7ffff77aa210] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#5   /usr/lib/lib_CPBI_PERF.so(_Z18uinode_bitmap_lockP7u_inode+0x1f) [0x7ffff7bcc21f] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#6   /usr/lib/lib_CPBI_PERF.so(_Z13prefetcher_thPv+0xbb) [0x7ffff7bca59b] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#7   /usr/lib/lib_CPBI_PERF.so(+0xbca9) [0x7ffff7bceca9] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#8   /lib/x86_64-linux-gnu/libpthread.so.0(+0x76db) [0x7ffff77a76db] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-#9   /lib/x86_64-linux-gnu/libc.so.6(clone+0x3f) [0x7ffff5c9861f] Setting g_min_fd 4 
-Setting g_min_fd 4 	Created 1 bg_threads in EVICTION pool	??	??:0	DESTRUCTOR GETTING CALLED 	
-Command terminated by signal 6
-	Command being timed: "./db_bench --db=/users/kannan11/ssd/ioopt/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/kannan11/ssd/ioopt/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=4000000 --benchmarks=readseq --use_existing_db=1 --mmap_read=0 --threads=1"
-	User time (seconds): 29.02
-	System time (seconds): 43.86
-	Percent of CPU this job got: 26%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:38.20
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 988956
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 107
-	Minor (reclaiming a frame) page faults: 314030
-	Voluntary context switches: 71149
-	Involuntary context switches: 3107
-	Swaps: 0
-	File system inputs: 172622848
-	File system outputs: 13704
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
-DESTRUCTOR GETTING CALLED 
-Created 1 bg_threads in EVICTION pool
-[942087.438756] sh (36701): drop_caches: 3
-[942089.081423] sh (36707): drop_caches: 3
-[942094.152071] write_proc_unbounded: Value of write = 1
-[942094.152084] write_proc_2mb_limit: Value of write = 1
-[942094.152091] write_proc_bitmap_shift: Value of write = 36
-[942094.175966] write_proc_unbounded: Value of write = 1
-[942094.175978] write_proc_2mb_limit: Value of write = 1
-[942094.175984] write_proc_bitmap_shift: Value of write = 36
-[942371.392373] write_proc_unbounded: Value of write = 1
-[942371.392387] write_proc_2mb_limit: Value of write = 1
-[942371.392394] write_proc_bitmap_shift: Value of write = 36
-[942371.403129] write_proc_unbounded: Value of write = 1
-[942371.403140] write_proc_2mb_limit: Value of write = 1
-[942371.403146] write_proc_bitmap_shift: Value of write = 36
-[942371.419170] write_proc_unbounded: Value of write = 0
-[942371.419191] write_proc_2mb_limit: Value of write = 0
-[942371.495686] write_proc_unbounded: Value of write = 1
-[942371.495700] write_proc_2mb_limit: Value of write = 1
-[942371.495707] write_proc_bitmap_shift: Value of write = 36
-[942371.505892] write_proc_unbounded: Value of write = 1
-[942371.505917] write_proc_2mb_limit: Value of write = 1
-[942371.505933] write_proc_bitmap_shift: Value of write = 36
-[942371.514094] write_proc_unbounded: Value of write = 0
-[942371.514108] write_proc_2mb_limit: Value of write = 0
-[942371.591970] write_proc_unbounded: Value of write = 1
-[942371.591984] write_proc_2mb_limit: Value of write = 1
-[942371.591992] write_proc_bitmap_shift: Value of write = 36
-[942371.602224] write_proc_unbounded: Value of write = 1
-[942371.602251] write_proc_2mb_limit: Value of write = 1
-[942371.602267] write_proc_bitmap_shift: Value of write = 36
-[942371.611317] write_proc_unbounded: Value of write = 0
-[942371.611330] write_proc_2mb_limit: Value of write = 0
-[942371.686994] write_proc_unbounded: Value of write = 1
-[942371.687008] write_proc_2mb_limit: Value of write = 1
-[942371.687016] write_proc_bitmap_shift: Value of write = 36
-[942371.697197] write_proc_unbounded: Value of write = 1
-[942371.697222] write_proc_2mb_limit: Value of write = 1
-[942371.697238] write_proc_bitmap_shift: Value of write = 36
-[942371.705206] write_proc_unbounded: Value of write = 0
-[942371.705219] write_proc_2mb_limit: Value of write = 0
-[942371.783529] write_proc_unbounded: Value of write = 1
-[942371.783543] write_proc_2mb_limit: Value of write = 1
-[942371.783551] write_proc_bitmap_shift: Value of write = 36
-[942371.793812] write_proc_unbounded: Value of write = 1
-[942371.793838] write_proc_2mb_limit: Value of write = 1
-[942371.793854] write_proc_bitmap_shift: Value of write = 36
-[942371.802797] write_proc_unbounded: Value of write = 0
-[942371.802810] write_proc_2mb_limit: Value of write = 0
-[942371.879647] write_proc_unbounded: Value of write = 1
-[942371.879661] write_proc_2mb_limit: Value of write = 1
-[942371.879668] write_proc_bitmap_shift: Value of write = 36
-[942371.889836] write_proc_unbounded: Value of write = 1
-[942371.889862] write_proc_2mb_limit: Value of write = 1
-[942371.889879] write_proc_bitmap_shift: Value of write = 36
-[942371.897392] write_proc_unbounded: Value of write = 0
-[942371.897406] write_proc_2mb_limit: Value of write = 0
-[942371.976653] write_proc_unbounded: Value of write = 1
-[942371.976667] write_proc_2mb_limit: Value of write = 1
-[942371.976675] write_proc_bitmap_shift: Value of write = 36
-[942371.986769] write_proc_unbounded: Value of write = 1
-[942371.986794] write_proc_2mb_limit: Value of write = 1
-[942371.986810] write_proc_bitmap_shift: Value of write = 36
-[942371.995314] write_proc_unbounded: Value of write = 0
-[942371.995326] write_proc_2mb_limit: Value of write = 0
-[942372.072322] write_proc_unbounded: Value of write = 1
-[942372.072336] write_proc_2mb_limit: Value of write = 1
-[942372.072344] write_proc_bitmap_shift: Value of write = 36
-[942372.082542] write_proc_unbounded: Value of write = 1
-[942372.082563] write_proc_2mb_limit: Value of write = 1
-[942372.082576] write_proc_bitmap_shift: Value of write = 36
-[942372.091030] write_proc_unbounded: Value of write = 0
-[942372.091047] write_proc_2mb_limit: Value of write = 0
-[942372.159619] write_proc_unbounded: Value of write = 1
-[942372.159633] write_proc_2mb_limit: Value of write = 1
-[942372.159640] write_proc_bitmap_shift: Value of write = 36
-[942372.169804] write_proc_unbounded: Value of write = 1
-[942372.169830] write_proc_2mb_limit: Value of write = 1
-[942372.169845] write_proc_bitmap_shift: Value of write = 36
-[942372.177543] write_proc_unbounded: Value of write = 0
-[942372.177555] write_proc_2mb_limit: Value of write = 0
-[942372.253169] write_proc_unbounded: Value of write = 1
-[942372.253185] write_proc_2mb_limit: Value of write = 1
-[942372.253192] write_proc_bitmap_shift: Value of write = 36
-[942372.263297] write_proc_unbounded: Value of write = 1
-[942372.263318] write_proc_2mb_limit: Value of write = 1
-[942372.263331] write_proc_bitmap_shift: Value of write = 36
-[942372.271704] write_proc_unbounded: Value of write = 0
-[942372.271720] write_proc_2mb_limit: Value of write = 0
-[942372.358398] write_proc_unbounded: Value of write = 0
-[942372.358424] write_proc_2mb_limit: Value of write = 0

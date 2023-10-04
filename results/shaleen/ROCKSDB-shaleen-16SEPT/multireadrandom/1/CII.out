@@ -1,128 +1,0 @@
-ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in con
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-ENABLE_FILE_STATS in per_thread_ds
-RocksDB:    version 7.6.0
-Date:       Fri Sep 16 10:30:19 2022
-CPU:        48 * AMD EPYC 7402P 24-Core Processor
-CPUCache:   512 KB
-entries_per_batch = 1
-... finished 100 ops                              ... finished 200 ops                              ... finished 300 ops                              ... finished 400 ops                              ... finished 500 ops                              ... finished 600 ops                              ... finished 700 ops                              ... finished 800 ops                              ... finished 900 ops                              ... finished 1000 ops                              ... finished 1500 ops                              ... finished 2000 ops                              ... finished 2500 ops                              ... finished 3000 ops                              ... finished 3500 ops                              ... finished 4000 ops                              ... finished 4500 ops                              ... finished 5000 ops                              ... finished 6000 ops                              ... finished 7000 ops                              ... finished 8000 ops                              ... finished 9000 ops                              ... finished 10000 ops                              ... finished 15000 ops                              ... finished 20000 ops                              ... finished 25000 ops                              ... finished 30000 ops                              ... finished 35000 ops                              ... finished 40000 ops                              ... finished 45000 ops                              ... finished 50000 ops                              ... finished 60000 ops                              ... finished 70000 ops                              ... finished 80000 ops                              ... finished 90000 ops                              ... finished 100000 ops                              ... finished 150000 ops                              ... finished 200000 ops                              ... finished 250000 ops                              ... finished 300000 ops                              ... finished 350000 ops                              ... finished 400000 ops                              ... finished 450000 ops                              ... finished 500000 ops                              ... finished 600000 ops                              ... finished 700000 ops                              ... finished 800000 ops                              ... finished 900000 ops                              ... finished 1000000 ops                              ... finished 1100000 ops                              ... finished 1200000 ops                              ... finished 1300000 ops                              ... finished 1400000 ops                              ... finished 1500000 ops                              ... finished 1600000 ops                              ... finished 1700000 ops                              ... finished 1800000 ops                              ... finished 1900000 ops                              ... finished 2000000 ops                              ... finished 2100000 ops                              ... finished 2200000 ops                              ... finished 2300000 ops                              ... finished 2400000 ops                              ... finished 2500000 ops                              ... finished 2600000 ops                              ... finished 2700000 ops                              ... finished 2800000 ops                              ... finished 2900000 ops                              ... finished 3000000 ops                              ... finished 3100000 ops                              ... finished 3200000 ops                              ... finished 3300000 ops                              ... finished 3400000 ops                              ... finished 3500000 ops                              ... finished 3600000 ops                              ... finished 3700000 ops                              ... finished 3800000 ops                              ... finished 3900000 ops                              ... finished 4000000 ops                              ... finished 4100000 ops                              ... finished 4200000 ops                              ... finished 4300000 ops                              ... finished 4400000 ops                              ... finished 4500000 ops                              ... finished 4600000 ops                              ... finished 4700000 ops                              ... finished 4800000 ops                              ... finished 4900000 ops                              ... finished 5000000 ops                              Initializing RocksDB Options from the specified file
-Initializing RocksDB Options from command-line flags
-Integrated BlobDB: blob cache disabled
-Keys:       1000 bytes each (+ 0 bytes user-defined timestamp)
-Values:     4096 bytes each (2048 bytes after compression)
-Entries:    5000000
-Prefix:    0 bytes
-Keys per prefix:    0
-RawSize:    24299.6 MB (estimated)
-FileSize:   14534.0 MB (estimated)
-Write rate: 0 bytes/second
-Read rate: 0 ops/second
-Compression: Snappy
-Compression sampling rate: 0
-Memtablerep: SkipListFactory
-Perf Level: 1
-------------------------------------------------
-DB path: [/users/shaleen/ssd/prefetching/appbench/apps/rocksdb/DATA]
-multireadrandom :       7.409 micros/op 134970 ops/sec 37.045 seconds 5000000 operations;  655.9 MB/s (5000000 of 5000000 found)
-DESTRUCTOR GETTING CALLED 
-PRINT_GLOBAL_STATS in dest
-PRINT_GLOBAL_LIB_STATS in dest
-Total nr_ra = 11904
-Total nr_bytes_ra = 12482248704
-	Command being timed: "./db_bench --db=/users/shaleen/ssd/prefetching/appbench/apps/rocksdb/DATA --value_size=4096 --wal_dir=/users/shaleen/ssd/prefetching/appbench/apps/rocksdb/DATA/WAL_LOG --sync=0 --key_size=1000 --write_buffer_size=67108864 --num=5000000 --seed=1576170874 --benchmarks=multireadrandom --use_existing_db=1 --mmap_read=0 --threads=1"
-	User time (seconds): 27.71
-	System time (seconds): 12.21
-	Percent of CPU this job got: 98%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:40.43
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 131196
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 85
-	Minor (reclaiming a frame) page faults: 31260
-	Voluntary context switches: 1750
-	Involuntary context switches: 77
-	Swaps: 0
-	File system inputs: 23211112
-	File system outputs: 1744
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
-DESTRUCTOR GETTING CALLED 
-PRINT_GLOBAL_STATS in dest
-PRINT_GLOBAL_LIB_STATS in dest
-Total nr_ra = 0
-Total nr_bytes_ra = 0
-[90434.030509] sh (3937): drop_caches: 3
-[90434.073061] sh (3942): drop_caches: 3
-[90439.105777] Enabled file stats for time:3949
-[90439.105838] write_proc_unbounded: Value of write = 1
-[90439.105845] write_proc_2mb_limit: Value of write = 1
-[90439.105851] write_proc_bitmap_shift: Value of write = 27
-[90439.112884] Enabled file stats for db_bench:3950
-[90439.112943] write_proc_unbounded: Value of write = 1
-[90439.112950] write_proc_2mb_limit: Value of write = 1
-[90439.112956] write_proc_bitmap_shift: Value of write = 27
-[90439.121714] Enabled file stats for db_bench:3950
-[90439.127733] Enabled file stats for db_bench:3953
-[90439.127757] Enabled file stats for db_bench:3954
-[90439.127782] Enabled file stats for db_bench:3956
-[90439.127806] Enabled file stats for db_bench:3955
-[90439.128007] Enabled file stats for db_bench:3958
-[90439.128028] Enabled file stats for db_bench:3957
-[90439.128053] Enabled file stats for db_bench:3959
-[90439.128135] Enabled file stats for db_bench:3961
-[90439.128879] Enabled file stats for db_bench:3964
-[90439.128916] Enabled file stats for db_bench:3965
-[90439.128945] Enabled file stats for db_bench:3962
-[90439.128971] Enabled file stats for db_bench:3963
-[90439.128998] Enabled file stats for db_bench:3967
-[90439.129047] Enabled file stats for db_bench:3960
-[90439.129093] Enabled file stats for db_bench:3966
-[90442.341286] FinalTaskReport:db_bench:3964 nr_pages_read:1058, nr_pages_hit:1058, nr_pages_miss:0
-[90442.344512] FinalTaskReport:db_bench:3962 nr_pages_read:977, nr_pages_hit:977, nr_pages_miss:0
-[90442.355067] FinalTaskReport:db_bench:3966 nr_pages_read:976, nr_pages_hit:976, nr_pages_miss:0
-[90442.360294] FinalTaskReport:db_bench:3955 nr_pages_read:975, nr_pages_hit:975, nr_pages_miss:0
-[90442.372333] FinalTaskReport:db_bench:3957 nr_pages_read:1020, nr_pages_hit:1020, nr_pages_miss:0
-[90442.390546] FinalTaskReport:db_bench:3965 nr_pages_read:1015, nr_pages_hit:1015, nr_pages_miss:0
-[90442.396298] FinalTaskReport:db_bench:3967 nr_pages_read:974, nr_pages_hit:974, nr_pages_miss:0
-[90442.411800] FinalTaskReport:db_bench:3954 nr_pages_read:1058, nr_pages_hit:1058, nr_pages_miss:0
-[90442.415549] FinalTaskReport:db_bench:3960 nr_pages_read:1101, nr_pages_hit:1101, nr_pages_miss:0
-[90442.427048] FinalTaskReport:db_bench:3953 nr_pages_read:1103, nr_pages_hit:1103, nr_pages_miss:0
-[90442.429843] FinalTaskReport:db_bench:3956 nr_pages_read:1040, nr_pages_hit:1022, nr_pages_miss:18
-[90442.435782] FinalTaskReport:db_bench:3959 nr_pages_read:1019, nr_pages_hit:1019, nr_pages_miss:0
-[90442.438159] FinalTaskReport:db_bench:3961 nr_pages_read:975, nr_pages_hit:975, nr_pages_miss:0
-[90442.450300] FinalTaskReport:db_bench:3963 nr_pages_read:1103, nr_pages_hit:1103, nr_pages_miss:0
-[90442.450301] FinalTaskReport:db_bench:3958 nr_pages_read:887, nr_pages_hit:887, nr_pages_miss:0
-[90479.537888] write_proc_unbounded: Value of write = 0
-[90479.537898] write_proc_2mb_limit: Value of write = 0
-[90479.537915] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[90479.537916] Final GlobalReport: nr_pages_read:7898927, nr_pages_hit:7897573, nr_pages_miss:1354
-[90479.537918] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
-[90479.537967] FinalTaskReport:db_bench:3950 nr_pages_read:1219, nr_pages_hit:1211, nr_pages_miss:8
-[90479.543549] write_proc_unbounded: Value of write = 0
-[90479.543558] write_proc_2mb_limit: Value of write = 0
-[90479.543571] __do_sys_start_cross_trace: PRINT_GLOBAL_STATS 
-[90479.543572] Final GlobalReport: nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0
-[90479.543574] __do_sys_start_cross_trace: RESET_GLOBAL_STATS 
-[90479.543630] FinalTaskReport:time:3949 nr_pages_read:0, nr_pages_hit:0, nr_pages_miss:0

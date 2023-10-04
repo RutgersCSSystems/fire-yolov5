@@ -30,18 +30,18 @@ declare -a workload_arr=("read_shared_rand_simple" "read_shared_seq_global_simpl
 
 
 
-declare -a nproc=("32")
+declare -a nproc=("16")
 declare -a readsize_arr=("4" "128")
-declare -a readsize_arr=("4")
+declare -a readsize_arr=("64")
 declare -a workload_arr=("read_pvt_rand" "read_shared_rand" "read_shared_seq" "read_pvt_seq") ##read binaries
 declare -a config_arr=("Vanilla" "Cross_Info" "CII" "CIP" "CIPI" "OSonly")
-declare -a workload_arr=("read_shared_seq") ##read binaries
-#declare -a workload_arr=( "read_shared_rand" "read_shared_seq" "read_pvt_seq") 
+#declare -a workload_arr=("read_shared_seq") ##read binaries
+declare -a workload_arr=("read_pvt_rand") 
 
 #declare -a config_arr=("Cross_Info" "CII" "CIP" "CIPI" "OSonly")
 #declare -a config_arr=("CPBI_sync" "CII_sync" "CIP_sync" "CIPI_sync" "Vanilla" "OSonly")
 #declare -a config_arr=("Vanilla" "OSonly" "CIPI_sync")
-declare -a config_arr=("Vanilla")
+declare -a config_arr=("Vanilla"  "OSonly" "CII" "CIPI_PERF")
 
 
 
