@@ -2,6 +2,7 @@
 set -x
 
 INSTALL_SYSTEM_LIBS(){
+	sudo apt-get update
 	sudo apt-get install -y libncurses-dev
 	sudo apt-get install -y git
 	sudo apt-get install -y software-properties-common
