@@ -32,7 +32,7 @@
 
 //NR of pages to prefetch in each cycle
 #ifndef NR_RA_PAGES
-#warning NR_RA_PAGES not defined. Assuming 40 pages
+//#warning NR_RA_PAGES not defined. Assuming 40 pages
 #define NR_RA_PAGES 40
 #endif
 
@@ -56,17 +56,17 @@
 
 //Nr of worker threads
 #ifndef NR_WORKERS
-#warning NR_WORKERS not defined. Assuming 2 workers
+//#warning NR_WORKERS not defined. Assuming 2 workers
 #define NR_WORKERS 2
 #endif
 
 #ifndef NR_NQUEUES
-#warning NR_NQUEUES not defined. Assuming 32 workers
+//#warning NR_NQUEUES not defined. Assuming 32 workers
 #define NR_NQUEUES 32
 #endif
 
 #ifndef NR_QSIZE
-#warning NR_QSIZE not defined. Assuming 2000 workers
+//#warning NR_QSIZE not defined. Assuming 2000 workers
 #define NR_QSIZE 2000
 #endif
 
@@ -156,7 +156,7 @@
  * bitshift for kernel bitmaps
  */
 #ifndef CROSS_BITMAP_SHIFT
-#warning CROSS_BITMAP_SHIFT not defined. Assuming 24
+//#warning CROSS_BITMAP_SHIFT not defined. Assuming 24
 #ifdef MMAP_PREDICT
 #define CROSS_BITMAP_SHIFT 39
 #else
