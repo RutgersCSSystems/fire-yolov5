@@ -3,8 +3,10 @@ import csv
 
 # Define the arrays
 workload_arr = ["read_shared_mmap_rand", "read_shared_mmap_seq"]
-config_arr = ["Vanilla", "OSonly", "CIPI_mmap", "CII"]
-config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
+#config_arr = ["Vanilla", "OSonly", "CIPI_mmap", "CII"]
+config_arr = ["Vanilla", "OSonly", "CIPI_mmap"]
+#config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
+config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
