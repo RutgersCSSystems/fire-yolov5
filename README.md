@@ -74,20 +74,38 @@ cd $BASE/shared_libs/simple_prefetcher/
 
 #### Basic Run (Shorter duration: less than 1 hour)
 
-##### Running RocksDB
-First, we will start with running medium workloads. As a first step, we will start running RocksDB, a persistent key-value store.  
+##### Running RocksDB + YCSB
+First, we will start with running medium workloads. As a first step, we will start running RocksDB with a real-world YCSB workload.  
 
-To compile, assuming the environmental variables are set using `set_vars.sh`. The following commands will install the necessary packages to compile RocksDB.
+Before compiling, we need to make sure the environmental variables are set by `set_vars.sh`.
+
+ The following commands will install the necessary packages to compile RocksDB with YCSB. 
 ```
-cd $BASE/appbench/apps/rocksdb
+cd $BASE/appbench/apps/RocksDB-YCSB
 ./compile.sh
+
 ```
 
-To run multiple configurations of RocksDB by varying APPonly (i.e.,
+We run YCSB with multiple configurations of RocksDB by varying APPonly (i.e.,
 application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
 controlled) by turning off application prefetch operations and Cross-prefetch
 configurations for various thread counts, and workloads.
+
+Then run YCSB, extract and see the results
 ```
+cd $BASE/appbench/apps/RocksDB-YCSB
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
+##### Running RocksDB + DB_bench
+
+Next, we will run RocksDB with a widely used KV benchmark DB_bench.
+
+```
+cd $BASE/appbench/apps/rocksdb
+./compile.sh
 ./gendata-run-med.sh
 ./release-run-med.sh
 ```
@@ -104,23 +122,6 @@ cat RESULT.csv
 Note: We observe that OSonly performance may vary on different machines with varying SSD
 storage due to its reliance on OS prefetching, which can be unpredictable and occasionally 
 improve performance. This highlights the need for a Cross-layered approach.
-
-##### Running YCSB
-
-To run a real-world YCSB workload
-
-```
-cd $BASE/appbench/apps/RocksDB-YCSB
-./compile.sh
-./release-run-med.sh
-```
-
-To extract and see the results
-```
-cd $BASE/appbench/apps/RocksDB-YCSB
-python3 release-extract-med.py
-cat RESULT.csv
-```
 
 ##### Running MMAP 
 
