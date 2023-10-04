@@ -1,4 +1,4 @@
-## Artifact Evaluation Submission for CrossPrefetch [ASPLOS '24]
+rtifact Evaluation Submission for CrossPrefetch [ASPLOS '24]
 
 This repository contains the artifact for reproducing our ASPLOS '24 paper "CrossPrefetch: Accelerating I/O Prefetching for Modern Storage".
 
@@ -15,11 +15,11 @@ This repository contains the artifact for reproducing our ASPLOS '24 paper "Cros
 
 ### Setup Environment
 
-(1) First, we encourage users to use the CloudLab (Clemson cluster) (c6525-100g), which has 48 CPUs and two Samsung NVMe SSDs. We have created a Cloudlab profile, "c6525" to create the instance easily.
+(1) First, we encourage users to use NSF CloudLab Clemson node (`c6525-100g`), which has 48 CPUs and two Samsung NVMe SSDs. We have created a cloudlab profile "c6525" to create the instance easily.
 
 (2) Cloudlab Machine Setup
 
-First, you would have to set up a filesystem and mount it on an NVMe SSD
+First, you would have to set up a filesystem and mount it on a NVMe SSD
 
 ```
 sudo mkfs.ext4 /dev/nvme0n1p4
@@ -44,7 +44,7 @@ scripts/install_packages.sh
 
 ### Compile and install modified Linux kernel
 
-First, compile and install the CrossPrefetch OS components.
+First compile and install the CrossPrefetch OS components
 
 ```
 cd $BASE/linux-5.14.0
@@ -63,7 +63,7 @@ cd ~/nvme0n1p4; sudo chown $USER .
 
 We need **setup the environment variables and install the user-level library first before running any experiments**. 
 
-The following script will set the environment variables and install the user-level library.
+This followwing script will setup the environment variables and install the user-level library
 ```
 # Navigate to the source folder
 cd ~/ssd/ioopt
@@ -101,7 +101,7 @@ cat RESULT.csv
 
 ##### Running YCSB
 
-To run a real-world YCSB workload
+To run real-world YCSB workload
 
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
@@ -118,7 +118,7 @@ cat RESULT.csv
 
 ##### Running MMAP 
 
-Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently access it.
+Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently acccess it.
 
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
@@ -129,15 +129,15 @@ cat RESULT.csv
 ```
 
 #### Long Running (> 1 hour)
-We now discuss the results for long-running workloads, which can vary from tens
-of minutes to a few hours, depending on the machine configuration.
+We now discuss the results for long running workloads which can vary from tens
+of minutes to few hours dependent on the machine configuration.
 
 ##### Running Snappy (Memory Budget)
 
-Snappy experiment runs the Snappy benchmark that concurrently compresses different
+Snappy experiment runs Snappy benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
 scripts also reduce the available memory for the application to study the
-effectiveness of CrossPrefetch under reducing memory capacity.
+effectivenss of CrossPrefetch under reducing memory capacity.
 
 ```
 cd $BASE/appbench/apps/snappy-c
@@ -149,7 +149,7 @@ cat RESULT.csv
 ```
 
 ##### Running Microbenchmark
-The microbenchmarks can take different durations depending on the storage
+The microbenchmarks can take different duration depending on the storage
 hardware and the available memory in the system.  Let's run the microbenchmark,
 where we generate 100GB of files, vary the size of each request, and measure
 the throughput.
@@ -168,57 +168,55 @@ cat RESULT.csv
 ```
 
 #### Running Remote Storage Experiments
-For remote storage experiments, we will use m510 with remote NVMe support.
+For remote storage experiments, we will use `m510` with remote NVMe support.
 These nodes are easily available and quick to launch!  We have already created
-a publically available CloudLab profile where one could launch two m510 NVMe
-nodes with NVMeOF setup across these nodes.
+a publically available cloudlab profile where one could launch two `m510` NVMe
+nodes with NVMe-oF setup across these nodes. In addition, we also provide a easy to use script to setup the NVMe-oF.
 
 Please follow the following steps:
 
 **1. Instantiating the nodes**
 
-(1) First, use the following CloudLab UTAH m510 nodes, which are easy to reserve and use. Use the following profile:
-**Machine Node Name:** m510
-**Profile Name:** 2-NVMe-Nodes
+(1) First, create two CloudLab UTAH `m510` nodes by using the profile `2-NVMe-Nodes`
 
-(2) Now, you must set up a filesystem and mount it. 
-```
-sudo mkfs.ext4 /dev/nvme0n1
-mkdir ~/ssd; sudo mount /dev/nvme0n1p1 ~/ssd
-cd ~/ssd; sudo chown $USER .
-```
-Now, get the appropriate repo.
-```
-cd ssd
-git clone https://github.com/RutgersCSSystems/ioopt
-cd ioopt
-```
-You now have the repo. Before compiling and setting up things, let's set the environmental variable.
-
-First in the file **scripts/setvars.sh**, set the machine data center to identify the results by changing this variable. 
-Because we are using Wisconsin, you could do something like this and save the file.
-```
-source ./scripts/setvars.sh 
-```
-
-**2. Compiling the the OS on these nodes**
-Compiling the OS is very similar to the one described earlier. First, let's
-compile the OS for the client node where we run the application. Note the
-client node is different from the storage node that hosts the storage.
+(2) Next, clone our provided script on both nodes to setup the NVMe-oF
 
 ```
-cd ssd/$BASE/linux-5.14.0
-## This will produce and install the modified kernel
-./compile_modified_deb.sh 
-sudo reboot ## This will reboot the node with the new Linux 5.14
+git clone https://github.com/RutgersCSSystems/crossprefetch-asplos24-artifacts
+cd scripts/NVMeOf
 ```
 
-**3. Remote NVMe setup using NVMeOF and RDMA**
-@Jian add detailed steps for Remote NVMe setup. Please describe clearly
+(3)  Next, we need to setup the target and client node seperately. 
+
+On Target Node:
+
+You can pick whatever node you want as a target node, but just make sure the machine RDMA IP is match with the `IP_ADDR` in the `target_setup.sh` script
+```
+# First format the NVMe partition that you want the client to use.
+sudo mkfs.ext4 /dev/nvme0n1p4
+
+# Then replace ""/dev/nvme0n1p4" in target_setup.sh with the target block device.
+# Also modify IP_ADDR in target_setup.sh to be the addr of the TARGET machine, and run the script.
+sudo ./target_setup.sh
+```
+
+On Client Node:
+
+The remaining node will be the client node. Before running the script, make sure the `IP_ADDR` in the `client_setup.sh` is using the IP address of the **target machine RDMA IP**.
+
+```
+sudo ./client_setup.sh
+
+# Replace ADDR with the IP address of the target RDMA interface.
+nvme connect -t rdma -n NVME-SUBSYSTEM-NAME -a ADDR -s 4420
+```
+
+After that, same as local experiment we need to get the appropriate repo, set the environmental variable  and install the user-level library. Please refer to aboev local experiment instructions
 
 **4. Running experiments**
 
-For remote storage execution, we will use the following script. 
+For remote storage execution, we need to run the following scripts on client node.
+
 ```
 cd $BASE/appbench/apps/rocksdb
 ./release-remote-run-med.sh
@@ -226,3 +224,4 @@ python3 release-run-remote-med.sh
 #Display the results
 cat REMOTE-RESULT.csv
 ```
+
