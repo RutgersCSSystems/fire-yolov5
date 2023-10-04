@@ -134,6 +134,18 @@ storage due to its reliance on OS prefetching, which can be unpredictable and oc
 improve performance. This highlights the need for a Cross-layered approach.
 
 
+##### Running MMAP 
+
+Next, run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
+
+```
+cd $BASE/appbench/apps/simple_bench/mmap_exp/
+./compile.sh
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
 ##### Running Microbenchmark (quick, < 4 minutes)
 The microbenchmarks can take different durations depending on the storage
 hardware and the available memory in the system.  Let's run a short microbenchmark.
@@ -151,17 +163,6 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-##### Running MMAP 
-
-Next, run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to access it concurrently.
-
-```
-cd $BASE/appbench/apps/simple_bench/mmap_exp/
-./compile.sh
-./release-run-med.sh
-python3 release-extract-med.py
-cat RESULT.csv
-```
 
 #### Long Running (> 1 hour)
 We now discuss the results for long-running workloads, which can vary from tens
