@@ -4,7 +4,8 @@ import csv
 # Define the arrays
 thread_arr = ["8"]
 workload_arr = ["ycsbwklda", "ycsbwkldb", "ycsbwkldc", "ycsbwkldd", "ycsbwklde", "ycsbwkldf"]
-config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CPBI_PERF"]
+config_arr = ["Vanilla", "OSonly", "CIPI_PERF", "CII"]
+config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
@@ -26,14 +27,14 @@ def extract_and_round_ops_per_sec(line):
 def main():
     with open(output_file, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
-        
-        # Write the header row with column names from config_arr
-        header_row = ["Workload"] + config_arr
+
+        # Write the header row with column names from config_out_arr
+        header_row = ["Workload"] + config_out_arr
         csv_writer.writerow(header_row)
 
         for workload in workload_arr:
             workload_data = [workload]
-            
+
             for config in config_arr:
                 file_path = os.path.join(base_dir, workload, thread_arr[0], f"{config}.out")
                 if os.path.exists(file_path):
@@ -50,7 +51,6 @@ def main():
                             workload_data.append("N/A")
                 else:
                     print(f"File not found: {file_path}")
-
             csv_writer.writerow(workload_data)
 
 if __name__ == "__main__":
