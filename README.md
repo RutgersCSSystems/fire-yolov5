@@ -134,9 +134,9 @@ storage due to its reliance on OS prefetching, which can be unpredictable and oc
 improve performance. This highlights the need for a Cross-layered approach.
 
 
-##### Running Microbenchmark (quick, < 7 minutes)
-The microbenchmarks can take different duration depending on the storage
-hardware and the available memory in the system.  Let's run a short microbenchmark
+##### Running Microbenchmark (quick, < 4 minutes)
+The microbenchmarks can take different durations depending on the storage
+hardware and the available memory in the system.  Let's run a short microbenchmark.
 
 First, to compile the microbenchmark with different workloads, use the
 following steps:
