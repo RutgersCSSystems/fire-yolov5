@@ -99,6 +99,18 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+The expected results will show like the following. If we are using the same node (`c6525-100g`), the numbers may changes but the performance trends will be similar. Please refer to Appendix A.5 for more details.
+
+```
+Workload,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
+ycsbwklda,66749,54151,91401,60657
+ycsbwkldb,278169,321962,480270,307074
+ycsbwkldc,386905,468608,849251,375018
+ycsbwkldd,289843,337801,663357,313849
+ycsbwklde,4260,11203,14585,9563
+ycsbwkldf,79338,67178,60537,91390
+```
+
 ##### Running RocksDB + DB_bench
 
 Next, we will run RocksDB with a widely used KV benchmark DB_bench.
