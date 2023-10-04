@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 DBHOME=$PWD
 THREAD=16
 VALUE_SIZE=4096
@@ -35,13 +35,13 @@ NUM=10000000
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")
 declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
-#declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
-declare -a config_arr=("CII")
+declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
+#declare -a config_arr=("CII")
 
 
 USEDB=1
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
+#echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 
 #declare -a config_arr=("Cross_Info" "OSonly" "Vanilla" "Cross_Info_sync" "Cross_Blind" "CII" "CIP" "CIP_sync" "CIPI")
 #Require for large database
@@ -143,7 +143,7 @@ RUN() {
 	done
 }
 
-#WARMPUP
+WARMPUP
 FlushDisk
 FlushDisk
 cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig

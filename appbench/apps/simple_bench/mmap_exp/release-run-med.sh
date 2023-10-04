@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
@@ -18,7 +18,9 @@ RESULTFILE=""
 declare -a nprocess=("32")
 declare -a workload_arr=("read_shared_mmap_seq" "read_shared_mmap_rand") ##read binariesa
 #declare -a workload_arr=("read_shared_mmap_seq") ##read binariesa
-declare -a config_arr=("Vanilla" "OSonly" "CIPI_mmap")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI_mmap" "CII")
+declare -a config_arr=("CII")
+
 
 STATS=0 #0 for perf runs and 1 for stats
 NR_STRIDE=64 ##In pages, only relevant for strided
@@ -73,7 +75,7 @@ RUN() {
     #./compile.sh
 
     echo "COMPILE_APP"
-    ./compile.sh
+    ./compile.sh &>> compile.out
 
 
     echo "write big file data"

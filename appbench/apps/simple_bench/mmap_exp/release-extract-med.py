@@ -3,7 +3,8 @@ import csv
 
 # Define the arrays
 workload_arr = ["read_shared_mmap_rand", "read_shared_mmap_seq"]
-config_arr = ["Vanilla", "OSonly", "CIPI_mmap"]
+config_arr = ["Vanilla", "OSonly", "CIPI_mmap", "CII"]
+config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
@@ -31,7 +32,7 @@ def main():
             csv_writer.writerow(header_row)
             csv_writer.writerow(SPACE)
 
-            header_row = ["rsize"] + config_arr
+            header_row = ["rsize"] + config_out_arr
             csv_writer.writerow(header_row)
 
             for workload in workload_arr:
