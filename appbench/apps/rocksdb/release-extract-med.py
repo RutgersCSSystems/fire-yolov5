@@ -4,8 +4,8 @@ import csv
 # Define the arrays
 thread_arr = ["32"]
 workload_arr=["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
-config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
-config_out_arr = ["APPonly", "OSonly","CrossP[+fetchall+opt]",  "CrossP[+predict+opt]", "CrossP[+predict+opt+budget]"]
+config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF"]
+config_out_arr = ["APPonly", "OSonly","CrossP[+fetchall+opt]",  "CrossP[+predict+opt]"]
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
