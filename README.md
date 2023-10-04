@@ -84,7 +84,7 @@ cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
 ```
 
-### Starting with workloads with shorter (less than 1 hour) execution 
+### Basic Run (Shorter duration: less than 1 hour)
 
 #### Running RocksDB
 First, we will start with running medium workloads, which will take between 3-5 hours (or longer) to complete.
@@ -137,7 +137,18 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-#### Running Snappy
+### Long Running (> 1 hour)
+We now discuss the results for long running workloads which can vary from tens
+of minutes to few hours dependent on the machine configuration.
+
+
+#### Running Snappy (Memory Budget)
+
+Snappy experiment runs Snappy benchmark that concurrently compresses different
+folders across threads. We generate an input of around 300GB-350GB of data. The
+scripts also reduce the available memory for the application to study the
+effectivenss of CrossPrefetch under reducing memory capacity.
+
 ```
 cd $BASE/appbench/apps/snappy-c
 # The value indicates an input to generate the dataset
