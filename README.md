@@ -83,8 +83,10 @@ cd $BASE/appbench/apps/rocksdb
 ./compile.sh
 ```
 
-To run multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
-OSonly (OS controlled), and Cross-prefetch configurations for various thread counts, and workloads.
+To run multiple configurations of RocksDB by varying APPonly (i.e.,
+application-controlled prefetching, which is a Vanilla RocksDB), OSonly (OS
+controlled) by turning off application prefetch operations, and Cross-prefetch
+configurations for various thread counts, and workloads.
 ```
 ./gendata-run-med.sh
 ./release-run-med.sh
@@ -98,6 +100,11 @@ To extract and see the results
 python3 release-extract-med.py
 cat RESULT.csv
 ```
+
+Note: We observe that OSonly performance may vary on different machines with varying SSD
+storage due to its reliance on OS prefetching. Additionally, OSonly benefits
+from specific OS-level optimizations, which can occasionally result in better
+performance but is inconsistent, highlighting the need for CrossPrefetch.
 
 ##### Running YCSB
 
