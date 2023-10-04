@@ -99,7 +99,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-The expected results will show like the following. If we are using the same node (`c6525-100g`), the numbers may changes but the performance trends will be similar. Please refer to Appendix A.5 for more details.
+The expected results will show like the following. If we are using the same node (`c6525-100g`), the performance numbers may have variation but the trends will be similar. Please refer to Appendix A.5 for more details.
 
 ```
 Workload,APPonly,OSonly,CrossP[+predict+opt],CrossP[+fetchall+opt]
