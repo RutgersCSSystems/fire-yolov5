@@ -57,7 +57,7 @@ After rebooting, we need mount the storage again.
 
 ```
 sudo mount /dev/nvme0n1p4 ~/ssd
-cd ~/nvme0n1p4; sudo chown $USER .
+cd ~/ssd; sudo chown $USER .
 ```
 ### Run Experiments
 
