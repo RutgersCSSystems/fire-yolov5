@@ -66,7 +66,7 @@ We need **setup the environment variables and install the user-level library fir
 This followwing script will setup the environment variables and install the user-level library
 ```
 # Navigate to the source folder
-cd ~/ssd/ioopt
+cd ~/ssd/crossprefetch-asplos24-artifacts
 source ./scripts/setvars.sh
 cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
