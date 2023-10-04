@@ -34,45 +34,22 @@ mkdir -p $RESULTS
 
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-
 declare -a num_arr=("4000000")
 NUM=4000000
 
-declare -a thread_arr=("32" "16"  "8"  "4" "1")
-
-declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
-declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
-
-declare -a membudget=("6" "4" "2" "8")
-
+#declare -a thread_arr=("32" "16"  "8"  "4" "1")
+#declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
-declare -a config_arr=("Vanilla" "OSonly" "Cross_Info" "CII" "CIP" "CPBI" "CIPI")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
-
-
+#declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 USEDB=1
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
-#Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=0
-
-
 declare -a membudget=("6")
 declare -a trials=("TRIAL1")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("CIP" "CII" "CIPI" "CPBI")
-
-declare -a config_arr=("CIPI_PERF" "Vanilla" "OSonly" "CPBI")
-declare -a config_arr=("Vanilla" "OSonly" "CPBI_PERF" "CIPI_PERF")
-
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
-#declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
-declare -a config_arr=("Vanilla" "OSonly" "CII" "CPBI_PERF" "CIPI_PERF")
-#declare -a config_arr=("Vanilla" "OSonly")
-
+declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 
 
 G_TRIAL="TRIAL1"
@@ -135,7 +112,7 @@ RUN() {
         #CLEAR_DATA
 	echo "BEGINNING TO WARM UP ......."
 	cd $PREDICT_LIB_DIR
-	$PREDICT_LIB_DIR/compile.sh
+	$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
 	echo "FINISHING WARM UP ......."
 	echo "..................................................."
@@ -144,7 +121,7 @@ RUN() {
 
 	for NUM in "${num_arr[@]}"
 	do
-			./compile.sh &> out.txt
+			./compile.sh &>> out.txt
 
 			cd $DBHOME
 
@@ -174,7 +151,7 @@ RUN() {
 						export LD_PRELOAD=""
 						sudo dmesg -c &>> $RESULTFILE
 						echo ".......FINISHING $CONFIG......................"
-						cat $RESULTFILE | grep "MB/s"
+						#cat $RESULTFILE | grep "MB/s"
 						FlushDisk
 					done
 				done
@@ -210,7 +187,7 @@ GETMEMORYBUDGET() {
 
 
 
-COMPILE
+#COMPILE
 
 for G_TRIAL in "${trials[@]}"
 do
