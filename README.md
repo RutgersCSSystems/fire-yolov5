@@ -44,8 +44,6 @@ scripts/install_packages.sh
 
 ### Compile and install modified Linux kernel
 
-#### To compile deb for bare metal systems
-
 First compile and install the CrossPrefetch OS components
 
 ```
@@ -61,9 +59,11 @@ After rebooting, we need mount the storage again.
 sudo mount /dev/nvme0n1p4 ~/ssd
 cd ~/nvme0n1p4; sudo chown $USER .
 ```
-## Run Experiments
-All experiments are in the following folder. This script needs to be updated to run different applications. 
-Check the scripts before running all_variation.
+### Run Experiments
+
+We need **setup the environment variables and install the user-level library first before running any experiments**. 
+
+This followwing script will setup the environment variables and install the user-level library
 ```
 # Navigate to the source folder
 cd ~/ssd/ioopt
@@ -72,43 +72,43 @@ cd $BASE/shared_libs/simple_prefetcher/
 ./compile.sh
 ```
 
-### Basic Run (Shorter duration: less than 1 hour)
+#### Basic Run (Shorter duration: less than 1 hour)
 
-#### Running RocksDB
-First, we will start with running medium workloads, which will take between 3-5 hours (or longer) to complete.
-As a first step, we will start running RocksDB, a persistent key-value store.  
-To compile, assuming the environmental variables are set using set_vars.sh
+##### Running RocksDB
+First, we will start with running medium workloads. As a first step, we will start running RocksDB, a persistent key-value store.  
 
-Let's compile RocksDB first. The script will install the necessary packages to install RocksDB.
+To compile, assuming the environmental variables are set using `set_vars.sh`. The following commands will install the necessary packages to compile RocksDB.
 ```
 cd $BASE/appbench/apps/rocksdb
 ./compile.sh
 ```
 
-The following script runs multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
+To run multiple configurations of RocksDB by varying APPonly (i.e., application-controlled prefetching, which is a Vanilla RocksDB), 
 OSonly (OS controlled), and Cross-prefetch configurations for various thread counts, and workloads.
 ```
 ./gendata-run-med.sh
 ./release-run-med.sh
 ```
-The following script will first warm up and generate the database with a raw uncompressed size of 100GB and run the experiment on 4 million key-value pairs.   
+The above script will first warm up and generate the database with a raw uncompressed size of 100GB and run the experiment on 4 million key-value pairs.   
 
 Results will be generated in the following folder for 4M keys for different access patterns.
 
-To extract the results, 
+To extract and see the results 
 ```
-python release-extract-med.py
+python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-#### Running YCSB
+##### Running YCSB
 
-To run YCSB workload
+To run real-world YCSB workload
+
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
 ./compile.sh
 ./release-run-med.sh
 ```
+
 To extract and see the results
 ```
 cd $BASE/appbench/apps/RocksDB-YCSB
@@ -116,7 +116,10 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-##### MMAP 
+##### Running MMAP 
+
+Next, to run the microbenchmark for MMAP, which will create a large data file (64GB) and issue 32 threads to concurrently acccess it.
+
 ```
 cd $BASE/appbench/apps/simple_bench/mmap_exp/
 ./compile.sh
@@ -125,12 +128,11 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-### Long Running (> 1 hour)
+#### Long Running (> 1 hour)
 We now discuss the results for long running workloads which can vary from tens
 of minutes to few hours dependent on the machine configuration.
 
-
-#### Running Snappy (Memory Budget)
+##### Running Snappy (Memory Budget)
 
 Snappy experiment runs Snappy benchmark that concurrently compresses different
 folders across threads. We generate an input of around 300GB-350GB of data. The
@@ -145,7 +147,8 @@ cd $BASE/appbench/apps/snappy-c
 python3 release-extract-med.py
 cat RESULT.csv
 ```
-#### Running Microbenchmark
+
+##### Running Microbenchmark
 The microbenchmarks can take different duration depending on the storage
 hardware and the available memory in the system.  Let's run the microbenchmark,
 where we generate 100GB of files, vary the size of each request, and measure
@@ -155,8 +158,7 @@ First, to compile the microbenchmark with different workloads, use the
 following steps:
 ```
 cd  $BASE/appbench/apps/simple_bench/multi_thread_read
-mkdir bin
-make -j4
+./compile.sh
 ```
 To run the workload and see the results.
 ```
@@ -165,7 +167,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-### Running Remote Storage Experiments
+#### Running Remote Storage Experiments
 For remote storage experiments, we will use m510 with remote NVMe support.
 These nodes are easily available and quick to launch!  We have already created
 a publically available cloudlab profile where one could launch two m510 NVMe
