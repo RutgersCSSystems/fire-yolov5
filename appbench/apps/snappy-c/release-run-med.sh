@@ -47,7 +47,7 @@ declare -a membudget=("6" "8" "9")
 declare -a membudget=("10" "11" "12" "13" "14")
 
 
-declare -a config_arr=("OSonly" "CIPI_PERF" "CPBI_PERF" "Vanilla" "CII")
+declare -a config_arr=("OSonly" "CIPI_PERF" "Vanilla" "CII")
 #declare -a config_arr=("CIPI_PERF")
 
 enable_prefetch_sensitivity() {
@@ -259,20 +259,20 @@ GETMEMORYBUDGET() {
         $SCRIPTS/mount/releasemem.sh "NODE1"
 
         let NUMAFREE0=`numactl --hardware | grep "node 0 free:" | awk '{print $4}'`
-        #let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
+        let NUMAFREE1=`numactl --hardware | grep "node 1 free:" | awk '{print $4}'`
 
         echo "MEMORY $1"
         let FRACTION=$1
         let NUMANODE0=$(($NUMAFREE0/$FRACTION))
-        #let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+        let NUMANODE1=$(($NUMAFREE1/$FRACTION))
 
 
         let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
-        #let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
+        let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
 
 
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
-        #numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
+        numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
 }
 
 cp $DBHOME/Makefile.snappy $PREDICT_LIB_DIR/Makefile
