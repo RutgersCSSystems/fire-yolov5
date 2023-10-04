@@ -1560,7 +1560,7 @@ int open(const char *pathname, int flags, ...){
 	int fd;
 	struct file_desc desc;
 
-	printf("%s: file %s\n", __func__,  pathname);
+	// printf("%s: file %s\n", __func__,  pathname);
 
 	if(flags & O_CREAT){
 		va_list valist;
@@ -1578,7 +1578,7 @@ int open(const char *pathname, int flags, ...){
 
 	desc.fd = fd;
 	desc.filename = pathname;
-	printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
+	// printf("%s: file %s fd:%d\n", __func__,  pathname, fd);
 
 	handle_open(desc);
 
