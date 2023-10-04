@@ -365,8 +365,6 @@ void dest(){
 	a = '0';
 	set_read_limits(a);
 	set_readahead_2mb_limit(a);
-
-	fprintf(stderr, "DESTRUCTOR GETTING CALLED \n");
 	debug_printf("DESTRUCTOR GETTING CALLED \n");
 
 #ifdef ENABLE_OS_STATS
