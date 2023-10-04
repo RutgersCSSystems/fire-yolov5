@@ -103,8 +103,8 @@ cat RESULT.csv
 
 Note: We observe that OSonly performance may vary on different machines with varying SSD
 storage due to its reliance on OS prefetching. Additionally, OSonly benefits
-from specific OS-level optimizations, which can occasionally result in better
-performance but is inconsistent, highlighting the need for CrossPrefetch.
+from our OS-level optimizations without a user-level library (e.g., a larger Xarray page vector, increased prefetch limit) 
+which can occasionally improve performance but is inconsistent, highlighting the need for a CrossPrefetch approach.
 
 ##### Running YCSB
 
