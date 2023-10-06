@@ -14,7 +14,7 @@ APP="./filebench"
 APPOUTPUTNAME="filebench"
 
 #Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=0
+ENABLE_SENSITIVITY=1
 
 #WORKLOAD="readseq"
 #WORKLOAD="workloads/fileserver.f"
@@ -28,10 +28,8 @@ RESULTS=$OUTPUTDIR/$APP/$WORKLOAD
 mkdir -p $RESULTS
 #declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
 declare -a workload_arr=("filemicro_seqread.f" "videoserver.f" "fileserver.f" "randomrw.f" "randomread.f" "filemicro_rread.f" "mongo.f" "fivestreamread.f")
-declare -a config_arr=("Vanilla" "CIPI" "OSonly")
-declare -a workload_arr=("mongo.f")
-declare -a workload_arr=("randomrw.f")
-declare -a config_arr=("Vanilla" "CIPI" "CIPI_PERF")
+#declare -a config_arr=("Vanilla" "CIPI" "OSonly")
+declare -a config_arr=("CIPI" "CIPI_PERF" "CPBI_PERF")
 
 declare -a thread_arr=("16")
 
@@ -42,11 +40,10 @@ thread_arr_in=$3
 glob_prefetchsz=1024
 glob_prefechthrd=8
 
-declare -a prefech_sz_arr=("4096" "2048" "1024" "512")
-declare -a prefech_thrd_arr=("1" "8")
-
-declare -a prefech_sz_arr=("1024")
-declare -a prefech_thrd_arr=("8")
+declare -a prefech_sz_arr=("32" "64" "4096" "2048" "1024" "512" "256" "128")
+declare -a prefech_thrd_arr=("1" "8" "4" "16" "2")
+#declare -a prefech_sz_arr=("1024")
+#declare -a prefech_thrd_arr=("8")
 
 
 MEM_REDUCE_FRAC=1
@@ -208,6 +205,8 @@ RUN() {
 						$APPPREFIX $APP $PARAMS $READARGS &> $RESULTFILE
 						export LD_PRELOAD=""
 						sudo dmesg -c &>> $RESULTFILE
+						killall filebench
+						killall filebench
 						echo ".......FINISHING $CONFIG......................"
 					done
 				done
@@ -245,6 +244,24 @@ GETMEMORYBUDGET() {
 
 
 
+if [ "$ENABLE_SENSITIVITY" -eq "0" ]
+then
+	RUN
+else
+	for glob_prefetchsz in "${prefech_sz_arr[@]}"
+	do
+		for glob_prefechthrd in "${prefech_thrd_arr[@]}"
+		do
+			get_global_arr	
+			RUN
+		done
+	done
+
+fi
+
+
+exit
+
 for G_TRIAL in "${trials[@]}"
 do
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "1" ]
@@ -264,20 +281,4 @@ done
 exit
 
 
-if [ "$ENABLE_SENSITIVITY" -eq "0" ]
-then
-	RUN
-else
-	for glob_prefetchsz in "${prefech_sz_arr[@]}"
-	do
-		for glob_prefechthrd in "${prefech_thrd_arr[@]}"
-		do
-			get_global_arr	
-			RUN
-		done
-	done
 
-fi
-
-
-exit
