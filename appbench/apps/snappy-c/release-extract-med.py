@@ -5,7 +5,8 @@ import csv
 thread_arr = ["32"]
 workload_arr = ["100"]
 filesize_arr = ["140000"]
-config_arr = ["Vanilla",  "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
+config_arr = ["Vanilla",  "OSonly", "CIPI_PERF", "CII"]
+config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall+opt]"]
 membudget = ["10", "11", "12", "13", "14"]
 
 # Base directory for output files
@@ -33,7 +34,7 @@ def main():
             csv_writer.writerow(header_row)
 
             for filesize in filesize_arr:
-                header_row = [f"Datasize", "MemRedFac"] + config_arr
+                header_row = [f"Datasize", "MemRedFac"] + config_out_arr
                 csv_writer.writerow(header_row)
 
                 for workload in workload_arr:

@@ -47,7 +47,7 @@ declare -a membudget=("6" "8" "9")
 declare -a membudget=("10" "11" "12" "13" "14")
 
 
-declare -a config_arr=("OSonly" "CIPI_PERF" "CPBI_PERF" "Vanilla" "CII")
+declare -a config_arr=("OSonly" "CIPI_PERF" "Vanilla" "CII")
 #declare -a config_arr=("CIPI_PERF")
 
 enable_prefetch_sensitivity() {
