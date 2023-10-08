@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DBHOME=$PWD
+
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -31,12 +33,22 @@ DISABLE_LOCK_STATS()
 }
 
 NR_STRIDE=64 ##In pages, only relevant for strided
-FILESIZE=80 ##GB
+FILESIZE=200 ##GB
 NR_RA_PAGES=2560L #nr_pages
-NR_READ_PAGES=128
+NR_READ_PAGES=16
 #NR_READ_PAGES=512
+RESULTFILE=""
+APPOUTPUTNAME="SIMPLEBENCH"
+
 
 declare -a nproc=("16" "4" "8" "1" "32")
+declare -a nproc=("16")
+declare -a config_arr=("VanillaRA"  "OSonly" "CII" "CIPI_PERF")
+declare -a config_arr=("CIPI_PERF" "VanillaRA")
+declare -a workload_arr=("read_pvt_seq") 
+
+G_TRIAL="TRIAL1"
+
 
 #deletes all the Read files
 CLEAR_FILES() {
@@ -45,8 +57,12 @@ CLEAR_FILES() {
 
 #Compiles the application
 COMPILE_APP() {
-        CREATE_OUTFOLDER ./bin
-        make -j SIZE=$FILESIZE NR_READ_PAGES=$NR_READ_PAGES NR_THREADS=$1 NR_STRIDE=$NR_STRIDE NR_RA_PAGES=$NR_RA_PAGES
+	cd $PREDICT_LIB_DIR
+	make clean &> OUT.txt
+	make -j16 &>> OUT.txt
+	cd $DBHOME
+        CREATE_OUTFOLDER ./bin &> OUT.txt
+        make -j SIZE=$FILESIZE NR_READ_PAGES=$NR_READ_PAGES NR_THREADS=$1 NR_STRIDE=$NR_STRIDE NR_RA_PAGES=$NR_RA_PAGES &>>OUT.txt
 }
 
 
@@ -65,99 +81,133 @@ CLEAN_AND_WRITE() {
 VanillaRA() {
         echo "Read Pvt Seq Vanilla RA"
         FlushDisk
-        ENABLE_LOCK_STATS
-        export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
+        
+        #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
         ./bin/read_pvt_seq_vanilla
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
 }
 
 VanillaOPT() {
         echo "Read Pvt Seq Vanilla RA OPT"
         FlushDisk
-        ENABLE_LOCK_STATS
-        export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
+        
+        #export LD_PRELOAD="/usr/lib/lib_Vanilla.so"
         ./bin/read_pvt_seq_vanilla_opt
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
 }
 
 OSonly() {
         echo "OS Only"
         FlushDisk
-        ENABLE_LOCK_STATS
+        
         export LD_PRELOAD="/usr/lib/lib_OSonly.so"
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
+}
+
+CIPI_PERF() {
+        echo "CIPI PERF"
+        FlushDisk
+        
+        export LD_PRELOAD="/usr/lib/lib_CIPI_PERF.so"
+        ./bin/read_pvt_seq
+        export LD_PRELOAD=""
+        
+        sudo dmesg -c
+        
 }
 
 CrossInfo() {
         echo "Cross Info"
         FlushDisk
-        ENABLE_LOCK_STATS
+        
         export LD_PRELOAD="/usr/lib/lib_Cross_Info.so"
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
 }
 
 CII() {
         echo "Cross Info IOOPT"
         FlushDisk
-        ENABLE_LOCK_STATS
+        
         export LD_PRELOAD="/usr/lib/lib_CII.so"
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
 }
 
 CIP() {
         echo "Cross Info Predict"
         FlushDisk
-        ENABLE_LOCK_STATS
+        
         export LD_PRELOAD="/usr/lib/lib_CIP.so"
         ./bin/read_pvt_seq
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
+        
 }
 
 MINCORE() {
         echo "Mincore"
         FlushDisk
-        ENABLE_LOCK_STATS
+        
         export LD_PRELOAD=""
         ./bin/read_pvt_seq_mincore
         export LD_PRELOAD=""
-        DISABLE_LOCK_STATS
+        
         sudo dmesg -c
-        sudo cat /proc/lock_stat
 }
+
+GEN_RESULT_PATH() {
+        WORKLOAD=$1
+        CONFIG=$2
+        THREAD=$3
+	READSIZE=$4
+        if [ "$STATS" -eq "1" ]; then
+                RESULTS=$OUTPUTDIR"-"$G_TRIAL/${APPOUTPUTNAME}_STATS/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
+        else
+                RESULTS=$OUTPUTDIR"-"$G_TRIAL/${APPOUTPUTNAME}/$WORKLOAD"-READSIZE-"$READSIZE/$THREAD/
+        fi
+        mkdir -p $RESULTS
+        RESULTFILE=$RESULTS/$CONFIG.out
+}
+
 
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        CLEAN_AND_WRITE
-
-        FILENAMEBASE="stats_pvt_seq_${NR_READ_PAGES}pgr_${NR_RA_PAGES}pgra_$NPROC"
-
-        VanillaRA &> VanillaRA_${FILENAMEBASE}
-        VanillaOPT &> VanillaOPT_${FILENAMEBASE}
-        OSonly &> OSonly_${FILENAMEBASE}
-        CrossInfo &> CrossInfo_${FILENAMEBASE}
-        CII &> CII_${FILENAMEBASE}
-        CIP &> CIP_${FILENAMEBASE}
-        MINCORE &> MINCORE_${FILENAMEBASE}
+        #CLEAN_AND_WRITE
+	for CONFIG in "${config_arr[@]}"
+	do
+		for WORKLOAD in "${workload_arr[@]}"
+		do
+			FlushDisk	
+			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
+			echo "RUNNING....$WORLOAD.....$CONFIG...."
+			$CONFIG #&> $RESULTFILE
+			#cat $RESULTFILE | grep "MB/s"
+			FlushDisk
+			#`$CONFIG`#() #&> $RESULTFILE
+			#VanillaOPT &> VanillaOPT_${FILENAMEBASE}
+			#CrossInfo &> CrossInfo_${FILENAMEBASE}
+			#CII &> CII_${FILENAMEBASE}
+			#CIP &> CIP_${FILENAMEBASE}
+			#MINCORE &> MINCORE_${FILENAMEBASE}
+		done
+	done 
 done

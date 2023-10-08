@@ -9,7 +9,7 @@
 # performance will go down.
 
 #sudo apt update; sudo apt install mpich -y
-PREFETCH_SIZE_VAR=32
+PREFETCH_SIZE_VAR=512
 NR_WORKERS_VAR=2
 CROSS_BITMAP_SHIFT=39
 NR_PREDICT_SAMPLE_FREQ=8
