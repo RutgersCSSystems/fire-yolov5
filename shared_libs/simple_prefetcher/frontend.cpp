@@ -1237,7 +1237,7 @@ void handle_open(struct file_desc desc){
 			// gettid(), g_min_fd);
 
 
-#ifndef MMAP_PREDICT
+#if !defined(MMAP_PREDICT) 
 	if(desc.fd <= g_min_fd) {
 		return;
 	}
@@ -1312,7 +1312,7 @@ void update_file_predictor_and_prefetch(void *arg){
 		}
 #endif
 	if(fp){
-		/* printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);*/
+        // printf("%s: updating predictor fd:%d, offset:%ld\n", __func__, a->fd, a->offset);
 		fp->predictor_update(a->offset, a->data_size);
 		fp->nr_reads_done += 1L;
 
@@ -1355,7 +1355,7 @@ void read_predictor(FILE *stream, size_t data_size, int file_fd, off_t file_offs
 		offset = ftell(stream);
 	}
 
-	if(fd < 3) {
+	if(fd <= 3) {
 		goto skip_read_predictor;
 	}	
 #ifdef ONLY_INTERCEPT
@@ -1544,7 +1544,7 @@ int open(const char *pathname, int flags, ...){
 	int fd;
 	struct file_desc desc;
 
-	// printf("%s: file %s\n", __func__,  pathname);
+    printf("%s: file %s\n", __func__,  pathname);
 
 	if(flags & O_CREAT){
 		va_list valist;
@@ -1771,6 +1771,21 @@ ssize_t pread64(int fd, void *data, size_t size, off_t offset){
 	return pread(fd, data, size, offset);
 }
 
+
+ssize_t pwrite(int fd, const void *data, size_t size, off_t offset){
+
+	ssize_t amount_write;
+
+	// printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
+
+	read_predictor(NULL, size, fd, offset);
+
+skip_predictor:
+	amount_write = real_pwrite(fd, data, size, offset);
+
+exit_pread:
+	return amount_write;
+}
 
 ssize_t pread(int fd, void *data, size_t size, off_t offset){
 
