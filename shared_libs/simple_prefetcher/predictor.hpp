@@ -29,10 +29,10 @@
 #define DEFNSEQ 0 //Not seq or strided(since off_t is ulong)
 #define LIKELYNSEQ 1 /*possibly not seq */
 #define POSSNSEQ 2 /*possibly not seq */
-#define MAYBESEQ 4 /*maybe seq */
-#define POSSSEQ 8 /* possibly seq? */
-#define LIKELYSEQ 16 /* likely seq? */
-#define DEFSEQ 32 /* definitely seq */
+#define MAYBESEQ 3 /*maybe seq */
+#define POSSSEQ 5 /* possibly seq? */
+#define LIKELYSEQ 6 /* likely seq? */
+#define DEFSEQ 7 /* definitely seq */
 
 
 void print_seq_stats();

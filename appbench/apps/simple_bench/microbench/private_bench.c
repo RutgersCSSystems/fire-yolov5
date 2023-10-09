@@ -13,6 +13,7 @@
 #define DEFAULT_FILENAME "sample_file.txt"
 #define DEFAULT_FILE_SIZE (1024 * 1024 * 100) // 100 MB
 #define DEFAULT_THREAD_COUNT 4
+#define MAX_RUNS 4
 
 char* filename;
 off_t file_size;
@@ -140,6 +141,7 @@ void* sequential_read(void* arg) {
     //off_t start_offset = thread_id * chunk_size;
     off_t chunk_size = 0;
     off_t start_offset = 0;
+    int counter = MAX_RUNS;
 
 
     // Seek to the start offset for this thread
@@ -149,10 +151,13 @@ void* sequential_read(void* arg) {
     ssize_t bytes_read = 0, curr_read=0;
     clock_t start_time = clock();
 
-    while ((curr_read = read(fd, buffer, read_write_size)) > 0) {
-        // Read the data
-	//fprintf(stderr, "curr_read %zu \n", curr_read);
-	bytes_read += curr_read;
+    for(int j=0; j < counter; j++) {
+	    lseek(fd, start_offset, SEEK_SET);
+	    while ((curr_read = read(fd, buffer, read_write_size)) > 0) {
+		// Read the data
+		//fprintf(stderr, "curr_read %zu \n", curr_read);
+		bytes_read += curr_read;
+	    }
     }
 
     clock_t end_time = clock();

@@ -41,10 +41,10 @@ RESULTFILE=""
 APPOUTPUTNAME="SIMPLEBENCH"
 
 
-declare -a nproc=("16" "4" "8" "1" "32")
+declare -a nproc=("16" "32" "8")
 declare -a nproc=("16")
 declare -a config_arr=("VanillaRA"  "OSonly" "CII" "CIPI_PERF")
-declare -a config_arr=("CIPI_PERF" "VanillaRA")
+declare -a config_arr=("CIPI_PERF" "VanillaRA" "OSonly" "CII")
 declare -a workload_arr=("read_pvt_seq") 
 
 G_TRIAL="TRIAL1"
@@ -191,7 +191,7 @@ GEN_RESULT_PATH() {
 for NPROC in "${nproc[@]}"
 do
         COMPILE_APP $NPROC
-        #CLEAN_AND_WRITE
+        CLEAN_AND_WRITE
 	for CONFIG in "${config_arr[@]}"
 	do
 		for WORKLOAD in "${workload_arr[@]}"
@@ -199,8 +199,8 @@ do
 			FlushDisk	
 			GEN_RESULT_PATH $WORKLOAD $CONFIG $NPROC $NR_READ_PAGES
 			echo "RUNNING....$WORLOAD.....$CONFIG...."
-			$CONFIG #&> $RESULTFILE
-			#cat $RESULTFILE | grep "MB/s"
+			$CONFIG &> $RESULTFILE
+			cat $RESULTFILE | grep "MB/s"
 			FlushDisk
 			#`$CONFIG`#() #&> $RESULTFILE
 			#VanillaOPT &> VanillaOPT_${FILENAMEBASE}
