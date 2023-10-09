@@ -8,6 +8,7 @@ typedef FILE *(*real_fopen_t)(const char *, const char *);
 
 typedef ssize_t (*real_read_t)(int, void *, size_t);
 typedef ssize_t (*real_pread_t)(int, void *, size_t, off_t);
+typedef ssize_t (*real_pwrite_t)(int, const void *, size_t, off_t);
 typedef size_t (*real_fread_t)(void *, size_t, size_t,FILE *);
 
 typedef char *(*real_fgets_t)(char *, int, FILE *);
@@ -32,6 +33,7 @@ real_fopen_t fopen_ptr = NULL;
 real_open_t open_ptr = NULL;
 real_openat_t openat_ptr = NULL;
 
+real_pwrite_t pwrite_ptr = NULL;
 real_pread_t pread_ptr = NULL;
 real_read_t read_ptr = NULL;
 real_fgets_t fgets_ptr = NULL;
@@ -225,6 +227,18 @@ ssize_t real_pread(int fd, void *data, size_t size, off_t offset){
 
 
     return ((real_pread_t)pread_ptr)(fd, data, size, offset);
+}
+
+
+ssize_t real_pwrite(int fd, const void *data, size_t size, off_t offset){
+
+    debug_printf("%s %zu\n", __func__, size);
+
+    if(!pwrite_ptr)
+        pwrite_ptr = (real_pwrite_t)dlsym(RTLD_NEXT, "pwrite");
+
+
+    return ((real_pwrite_t)pwrite_ptr)(fd, data, size, offset);
 }
 
 ssize_t real_write(int fd, const void *data, size_t size) {
