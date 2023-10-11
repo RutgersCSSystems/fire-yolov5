@@ -1244,3 +1244,18 @@ int iterate_fd(struct files_struct *files, unsigned n,
 	return res;
 }
 EXPORT_SYMBOL(iterate_fd);
+
+SYSCALL_DEFINE1(nusa_inode_rwsem_ctrl, int, flag)
+{
+        if (flag == 0) {
+                printk("rwlock enabled\n");
+                /* re-enable inode rw_sem */
+                current->inode_rwsem_ctrl = 0;
+        } else {
+                printk("rwlock disabled\n");
+                /* disable inode rw_sem */
+                current->inode_rwsem_ctrl = INODE_RWSEM_OFF;
+        }
+
+        return current->inode_rwsem_ctrl;
+}

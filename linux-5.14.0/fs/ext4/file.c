@@ -36,6 +36,8 @@
 #include "acl.h"
 #include "truncate.h"
 
+#define CONFIG_NUSA_CONTROL
+
 static bool ext4_dio_supported(struct inode *inode)
 {
 	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
@@ -260,7 +262,13 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
 		return -EOPNOTSUPP;
 
 	ext4_fc_start_update(inode);
-	inode_lock(inode);
+#ifdef CONFIG_NUSA_CONTROL
+    if (current->inode_rwsem_ctrl != INODE_RWSEM_OFF) {
+#endif
+        inode_lock(inode);
+#ifdef CONFIG_NUSA_CONTROL
+    }
+#endif
 	ret = ext4_write_checks(iocb, from);
 	if (ret <= 0)
 		goto out;
@@ -270,7 +278,13 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
 	current->backing_dev_info = NULL;
 
 out:
-	inode_unlock(inode);
+#ifdef CONFIG_NUSA_CONTROL
+    if (current->inode_rwsem_ctrl != INODE_RWSEM_OFF) {
+#endif
+        inode_unlock(inode);
+#ifdef CONFIG_NUSA_CONTROL
+    }
+#endif
 	ext4_fc_stop_update(inode);
 	if (likely(ret > 0)) {
 		iocb->ki_pos += ret;

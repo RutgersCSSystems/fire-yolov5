@@ -1393,6 +1393,9 @@ struct task_struct {
 	unsigned long			prev_lowest_stack;
 #endif
 
+    /* inode rw_sem control flag for NUSA */
+    int inode_rwsem_ctrl;
+
 #ifdef CONFIG_X86_MCE
 	void __user			*mce_vaddr;
 	__u64				mce_kflags;
