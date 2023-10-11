@@ -352,6 +352,10 @@ void con(){
 
 	/* register application specific handler */
 	//reg_app_sig_handler();
+#ifdef DISABLE_RWLOCK
+
+     syscall(__DISABLE_RW_LOCK, 1);
+#endif
 }
 
 
@@ -371,6 +375,11 @@ void dest(){
 	fprintf(stderr, "PRINT_GLOBAL_STATS in %s\n", __func__);
 	start_cross_trace(PRINT_GLOBAL_STATS, 0);
 	start_cross_trace(CLEAR_GLOBAL_STATS, 0);
+#endif
+
+#ifdef DISABLE_RWLOCK
+
+     syscall(__DISABLE_RW_LOCK, 0);
 #endif
 
 #ifdef ENABLE_LIB_STATS
