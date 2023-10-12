@@ -146,7 +146,7 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
-##### Running MMAP 
+##### Running shared file access 
 
 Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16.
 
