@@ -12,7 +12,7 @@ RESULT_BASE=$PWD/results/
 result_dir=$RESULT_BASE/concurrency
 
 # Setup Parameters
-let IOSIZE=4096
+let IOSIZE=1024
 
 let READERS=-1
 let WRITERS=-1
@@ -24,11 +24,11 @@ let MAX_READER=16
 let MAX_WRITER=4
 
 #declare -a config_arr=("Vanilla" "OSonly" "CPBI")
-#declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
-declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
+declare -a config_arr=("Vanilla" "OSonly" "CIPI" "CIPI_interval")
+#declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF")
 #declare -a config_arr=("CIPI" "CIPI_interval")
 #
-FILESIZE="1G"
+FILESIZE="12G"
 FILENAME="testfile"
 FSPATH=$DBDIR
 
@@ -77,9 +77,10 @@ cd $CODE
 ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $READERS -u $WRITERS -p $SCHED -v $DEVCORECOUNT -b $FILESIZE"
 
 # First fill up the test file
-$CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
+#$CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
 
 declare -a readers=("1" "4" "8" "16")
+#declare -a readers=("1" "16")
 #declare -a readers=("1")
 
 FlushDisk

@@ -146,6 +146,18 @@ python3 release-extract-med.py
 cat RESULT.csv
 ```
 
+##### Running MMAP 
+
+Next, run the microbenchmark for shared file access, which will create 4 writer threads and vary reader threads from 1 to 16.
+
+```
+cd $BASE/appbench/apps/simple_bench/scalability/
+./compile.sh
+./release-run-med.sh
+python3 release-extract-med.py
+cat RESULT.csv
+```
+
 ##### Running Microbenchmark (quick, < 4 minutes)
 The microbenchmarks can take different durations depending on the storage
 hardware and the available memory in the system.  Let's run a short microbenchmark.

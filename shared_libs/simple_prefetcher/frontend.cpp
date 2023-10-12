@@ -1787,7 +1787,9 @@ ssize_t pwrite(int fd, const void *data, size_t size, off_t offset){
 
 	// printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
+#ifdef INTERVAL_BITMAP
 	read_predictor(NULL, size, fd, offset);
+#endif
 
 skip_predictor:
 	amount_write = real_pwrite(fd, data, size, offset);
