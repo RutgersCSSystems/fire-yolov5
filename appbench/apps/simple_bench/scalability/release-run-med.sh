@@ -12,7 +12,7 @@ RESULT_BASE=$PWD/results/
 result_dir=$RESULT_BASE/concurrency
 
 # Setup Parameters
-let IOSIZE=1024
+let IOSIZE=4096
 
 let READERS=-1
 let WRITERS=-1
@@ -77,7 +77,7 @@ cd $CODE
 ARGS="-q $QUEUEDEPTH -s $IOSIZE -t $READERS -u $WRITERS -p $SCHED -v $DEVCORECOUNT -b $FILESIZE"
 
 # First fill up the test file
-#$CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
+$CODE/shared_posixio -f "$FSPATH/$FILENAME" $ARGS
 
 declare -a readers=("1" "4" "8" "16")
 #declare -a readers=("1" "16")
