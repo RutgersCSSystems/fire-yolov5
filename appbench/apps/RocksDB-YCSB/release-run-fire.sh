@@ -29,14 +29,14 @@ RESULTFILE=""
 
 mkdir -p $RESULTS
 
-declare -a num_arr=("10000000")
-NUM=10000000
+declare -a num_arr=("50000000")
+NUM=50000000
 
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")
 declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
 declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
-declare -a config_arr=("Vanilla")
+#declare -a config_arr=("Vanilla")
 
 
 USEDB=1
@@ -66,6 +66,7 @@ CLEAR_DATA()
         sudo killall $APP
         rm -rf $DBDIR/*
         rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
+	sudo killal python
 }
 
 
