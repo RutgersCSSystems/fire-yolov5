@@ -69,6 +69,18 @@ CLEAR_DATA()
 	sudo killal python
 }
 
+CLEAR_PROCESS()
+{
+        sudo killall $APP
+        sudo killall $APP
+        sleep 3
+        sudo killall $APP
+	sudo killall python
+	sleep 3
+	sudo killall python
+
+}
+
 
 
 COMPILE_AND_WRITE()
@@ -112,7 +124,7 @@ WARMPUP() {
 
 RUN_FIRE_ML() {
 	cd ../yolov5-fire-detection
-	./train-run-med.sh 512 &
+	./train-run-med.sh 512 &> $1 &
 	sleep 10
 }
 
@@ -125,9 +137,18 @@ RUN() {
 			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
 			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=30 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
 
-			for WORKLOAD in "${workload_arr[@]}"
+			for CONFIG in "${config_arr[@]}"
 			do
-				for CONFIG in "${config_arr[@]}"
+				CLEAR_PROCESS
+			
+				RESULTS=""
+				GEN_RESULT_PATH "yolov" $CONFIG $THREAD $NUM
+				RUN_FIRE_ML $RESULTFILE
+
+				cd $DBHOME
+
+
+				for WORKLOAD in "${workload_arr[@]}"
 				do
 					RESULTS=""
 					READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
@@ -161,9 +182,6 @@ FlushDisk
 FlushDisk
 cd $DBHOME
 
-RUN_FIRE_ML
-
-cd $DBHOME
 RUN
 cp $PREDICT_LIB_DIR/Makefile.orig $PREDICT_LIB_DIR/Makefile
 exit
