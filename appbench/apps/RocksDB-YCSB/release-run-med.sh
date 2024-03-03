@@ -29,8 +29,8 @@ RESULTFILE=""
 
 mkdir -p $RESULTS
 
-declare -a num_arr=("10000000")
-NUM=10000000
+declare -a num_arr=("50000000")
+NUM=50000000
 
 #declare -a thread_arr=("1" "4" "8" "16")
 declare -a thread_arr=("8")

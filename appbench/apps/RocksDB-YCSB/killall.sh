@@ -1,4 +1,4 @@
 #/bin/bash
 #set -x
 
-sudo killal python
+sudo killall python

@@ -7,6 +7,8 @@ SYNC=0
 KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
+
+BATCHSIZE=512
 #DBDIR=/mnt/remote/DATA
 
 
@@ -23,7 +25,7 @@ READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$TH
 APPPREFIX="/usr/bin/time -v"
 
 APP=db_bench
-APPOUTPUTNAME="YCSB-ROCKSDB"
+APPOUTPUTNAME="YCSB-ROCKSDB-CORUN"
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
 
@@ -124,7 +126,7 @@ WARMPUP() {
 
 RUN_FIRE_ML() {
 	cd ../yolov5-fire-detection
-	./train-run-med.sh 512 &> $1 &
+	./train-run-med.sh $BATCHSIZE &> $1 &
 	sleep 10
 }
 
@@ -142,7 +144,7 @@ RUN() {
 				CLEAR_PROCESS
 			
 				RESULTS=""
-				GEN_RESULT_PATH "yolov" $CONFIG $THREAD $NUM
+				GEN_RESULT_PATH "yolov-batchsize-$BATCHSIZE" $CONFIG $THREAD $NUM
 				RUN_FIRE_ML $RESULTFILE
 
 				cd $DBHOME
@@ -184,5 +186,7 @@ cd $DBHOME
 
 RUN
 cp $PREDICT_LIB_DIR/Makefile.orig $PREDICT_LIB_DIR/Makefile
+
+$DBHOME/killall.sh
 exit
 

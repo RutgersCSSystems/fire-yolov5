@@ -10,7 +10,7 @@ config_out_arr = ["APPonly", "OSonly", "CrossP[+predict+opt]", "CrossP[+fetchall
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
 print(output_dir)
-base_dir = output_dir + "/YCSB-ROCKSDB/10M-KEYS/"
+base_dir = output_dir + "/YCSB-ROCKSDB/50M-KEYS/"
 print(base_dir)
 
 # Output CSV file
