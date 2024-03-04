@@ -8,7 +8,7 @@ KEYSIZE=1000
 WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 
-BATCHSIZE=1024
+BATCHSIZE=128
 #DBDIR=/mnt/remote/DATA
 
 
@@ -28,6 +28,7 @@ APP=db_bench
 APPOUTPUTNAME="YCSB-ROCKSDB-CORUN"
 RESULTS="RESULTS"/$WORKLOAD
 RESULTFILE=""
+YOVLOV_RESULTFILE=""
 
 mkdir -p $RESULTS
 
@@ -38,6 +39,11 @@ NUM=50000000
 declare -a thread_arr=("8")
 declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwklde" "ycsbwkldf")
 declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
+declare -a config_arr=("CIPI_PERF" "CII" "OSonly")
+declare -a config_arr=("Vanilla")
+declare -a batch_arr=("512" "256" "128")
+
+
 #declare -a config_arr=("Vanilla")
 
 
@@ -66,7 +72,7 @@ CLEAR_DATA()
         sudo killall $APP
         sleep 3
         sudo killall $APP
-        rm -rf $DBDIR/*
+        #rm -rf $DBDIR/*
         rm -rf *.sst CURRENT IDENTITY LOCK MANIFEST-* OPTIONS-* WAL_LOG/
 	sudo killal python
 }
@@ -75,12 +81,10 @@ CLEAR_PROCESS()
 {
         sudo killall $APP
         sudo killall $APP
-        sleep 3
         sudo killall $APP
 	sudo killall python
-	sleep 3
+	sleep 7
 	sudo killall python
-
 }
 
 
@@ -101,18 +105,6 @@ COMPILE_AND_WRITE()
 
 
 
-GEN_RESULT_PATH() {
-	WORKLOAD=$1
-	CONFIG=$2
-	THREAD=$3
-	let KEYCOUNT=$NUM/1000000
-	#WORKLOAD="DUMMY"
-	#RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/"batchsize-"$BATCHSIZE/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
-	mkdir -p $RESULTS
-	RESULTFILE=$RESULTS/$CONFIG.out
-}
-
 WARMPUP() {
 
 	echo "BEGINNING TO WARM UP ......."
@@ -125,10 +117,39 @@ WARMPUP() {
 
 
 RUN_FIRE_ML() {
+
+	BATCHSIZE=$2
 	cd ../yolov5-fire-detection
 	./train-run-med.sh $BATCHSIZE &> $1 &
-	sleep 10
+	sleep 15
 }
+
+GEN_RESULT_PATH() {
+	WORKLOAD=$1
+	CONFIG=$2
+	THREAD=$3
+	NUM=$4
+	let KEYCOUNT=$NUM/1000000
+	RESULTFILE=""
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
+	mkdir -p $RESULTS
+	RESULTFILE=$RESULTS/$CONFIG.out
+}
+
+GEN_RESULT_PATH_YOVLOV() {
+	WORKLOAD=$1
+	CONFIG=$2
+	THREAD=$3
+	NUM=$4
+	let KEYCOUNT=$NUM/1000000
+	RESULTFILE=""
+        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
+	mkdir -p $RESULTS
+	YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+}
+
+
+
 
 
 RUN() {
@@ -137,43 +158,55 @@ RUN() {
 		for THREAD in "${thread_arr[@]}"
 		do
 			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
-			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=30 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
+			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=200 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
 
 			for CONFIG in "${config_arr[@]}"
 			do
-				CLEAR_PROCESS
-			
-				RESULTS=""
-				GEN_RESULT_PATH "yolov-batchsize-$BATCHSIZE" $CONFIG $THREAD $NUM
-				RUN_FIRE_ML $RESULTFILE
 
-				cd $DBHOME
+				for BATCHSIZE in "${batch_arr[@]}"
+                		do
 
+					cd $DBHOME
 
-				for WORKLOAD in "${workload_arr[@]}"
-				do
-					RESULTS=""
-					READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
-					GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
+					for WORKLOAD in "${workload_arr[@]}"
+					do
+						CLEAR_PROCESS
+						RESULTS=""
+						GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
+						#echo $RESULTFILE
+						#cat $RESULTFILE
 
-					mkdir -p $RESULTS
+						RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+						cd $DBHOME
 
-					echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
-					echo "..................................................."
-					export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-					$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
-					export LD_PRELOAD=""
-					sudo dmesg -c &>> $RESULTFILE
-					echo ".......FINISHING $CONFIG......................"
-					cat $RESULTFILE | grep "ops/sec"
-					FlushDisk
+						RESULTS=""
+						RESULTFILE=""
+						READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
+						GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
+
+						#echo $RESULTFILE
+						#continue
+						mkdir -p $RESULTS
+						cd $DBHOME
+
+						echo "RUNNING $CONFIG and writing results to #$RESULTS/$CONFIG.out"
+						echo "..................................................."
+						export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+						$APPPREFIX $DBHOME/$APP $PARAMS $READARGS &> $RESULTFILE
+						export LD_PRELOAD=""
+						sudo dmesg -c &>> $RESULTFILE
+						echo ".......FINISHING $CONFIG......................"
+						cat $RESULTFILE | grep "ops/sec"
+						FlushDisk
+						CLEAR_PROCESS
+					done
 				done
 			done
 		done
 	done
 }
 
-WARMPUP
+#WARMPUP
 FlushDisk
 FlushDisk
 cp $PREDICT_LIB_DIR/Makefile $PREDICT_LIB_DIR/Makefile.orig
