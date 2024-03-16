@@ -33,19 +33,19 @@ def plot_access_pattern(datafile, access_pattern, result_path):
             workload_name = row[0]
             if workload_name == access_pattern:
                 plt.figure(figsize=(10, 6))
-                x = np.arange(len(batch_sizes))  # x-axis positions
+                x = np.arange(len(batchsize_arr))  # x-axis positions
                 width = 0.2
 
                 for i in range(1, len(row), 3):
                     config_name = row[i].split('_')[0]
                     config_values = [int(value) for value in row[i+1:i+4]]
-                    if len(batch_sizes) == len(config_values):
+                    if len(batchsize_arr) == len(config_values):
                         plt.bar(x + (i - 1) * width, config_values, width=width, label=f"{config_name}")
 
                 plt.xlabel("Batch Size")
                 plt.ylabel("MB/s")
                 plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
-                plt.xticks(x + width * (len(row[1:]) / 3) / 2, batch_sizes)  # Center x-ticks
+                plt.xticks(x + width * (len(row[1:]) / 3) / 2, batchsize_arr)  # Center x-ticks
                 plt.legend(["Isolated", "Vanilla", "Managed"])  # Corrected legend
                 plt.tight_layout()
                 OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
