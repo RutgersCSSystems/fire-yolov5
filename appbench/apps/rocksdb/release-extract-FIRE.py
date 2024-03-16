@@ -31,12 +31,13 @@ def plot_access_pattern(datafile, access_pattern, result_path):
 
         for row in csv_reader:
             workload_name = row[0]
+            print(workload_name)
             if workload_name == access_pattern:
                 plt.figure(figsize=(10, 6))
                 x = np.arange(len(batchsize_arr))  # x-axis positions
                 width = 0.2
 
-                for i in range(1, len(row), 3):
+                for i in range(1, len(row), 4):
                     config_name = row[i].split('_')[0]
                     config_values = [int(value) for value in row[i+1:i+4]]
                     if len(batchsize_arr) == len(config_values):
