@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["128", "256", "512"]  # Adjust batch sizes as needed
+batchsize_arr = ["128", "256", "512", "768"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
-workload_arr = ["multireadrandom", "readseq"]
+workload_arr = ["multireadrandom"]
 
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
