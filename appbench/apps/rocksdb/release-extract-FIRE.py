@@ -29,7 +29,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     thread_arr = ["32"]
     batchsize_arr = ["512"]
     workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
-    config_arr = ["isolated", "vanilla", "CIPI_PERF"]
+    config_arr = ["isolated", "Vanilla", "CIPI_PERF"]
 
     workload_data = [[], [], []]
 
