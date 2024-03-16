@@ -41,8 +41,8 @@ declare -a workload_arr=("ycsbwklda" "ycsbwkldb" "ycsbwkldc" "ycsbwkldd" "ycsbwk
 declare -a config_arr=("CIPI_PERF" "CII" "Vanilla" "OSonly")
 declare -a config_arr=("CIPI_PERF" "CII" "OSonly")
 declare -a config_arr=("Vanilla")
-declare -a batch_arr=("512" "256" "128")
-
+declare -a batch_arr=("512" "256" "128" "1024")
+#declare -a batch_arr=("2048")
 
 #declare -a config_arr=("Vanilla")
 
@@ -158,7 +158,7 @@ RUN() {
 		for THREAD in "${thread_arr[@]}"
 		do
 			#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM  --seed=1576170874"
-			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=200 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
+			PARAMS="--db=$DBDIR --num_levels=6 --key_size=20 --prefix_size=20 --memtablerep=prefix_hash --bloom_bits=10 --bloom_locality=1 --use_existing_db=1 --num=$NUM --duration=400 --compression_type=none --value_size=$VALUE_SIZE --threads=$THREAD"
 
 			for CONFIG in "${config_arr[@]}"
 			do

@@ -10,6 +10,10 @@ DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
 
+BATCHSIZE=128
+YOVLOV_RESULTFILE=""
+
+
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -34,8 +38,8 @@ mkdir -p $RESULTS
 
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a num_arr=("4000000")
-NUM=4000000
+declare -a num_arr=("20000000")
+NUM=20000000
 
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
@@ -50,8 +54,11 @@ declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
-
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
+declare -a batch_arr=("512" "256" "128" "1024")
+declare -a config_arr=("Vanilla")
+#declare -a config_arr=("CIPI_PERF" "Vanilla")
+
 
 
 G_TRIAL="TRIAL1"
@@ -84,18 +91,32 @@ CLEAR_DATA()
 }
 
 
+RUN_FIRE_ML() {
+
+	BATCHSIZE=$2
+	cd ../yolov5-fire-detection
+	./train-run-med.sh $BATCHSIZE &> $1 &
+	sleep 15
+}
+
+
 
 
 
 GEN_RESULT_PATH() {
+
 	WORKLOAD=$1
 	CONFIG=$2
-	THREAD=$3
+	THREAD=$3   
+	NUM=$4
+	BATCHSIZE=$5
+
 	let KEYCOUNT=$NUM/1000000
 
 	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
 	then 
-		RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		#RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$WORKLOAD/$THREAD
+		RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
 		mkdir -p $RESULTS
 		RESULTFILE=$RESULTS/$CONFIG".out"
 	else
@@ -117,6 +138,16 @@ GEN_RESULT_PATH_YOVLOV() {
         RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
 	mkdir -p $RESULTS
 	YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+}
+
+CLEAR_PROCESS()
+{
+        sudo killall $APP
+        sudo killall $APP
+        sudo killall $APP
+	sudo killall python
+	sleep 7
+	sudo killall python
 }
 
 
@@ -153,9 +184,18 @@ RUN() {
 						for WORKLOAD in "${workload_arr[@]}"
 						do
 
+							CLEAR_PROCESS
+							RESULTS=""
+							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
+							#echo $RESULTFILE
+							echo $YOVLOV_RESULTFILE
+							RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+							cd $DBHOME
+
+
 							RESULTS=""
 							READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
-							GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
+							GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM $BATCHSIZE
 
 							mkdir -p $RESULTS
 
@@ -173,11 +213,14 @@ RUN() {
 							echo ".......FINISHING $CONFIG......................"
 							#cat $RESULTFILE | grep "MB/s"
 							FlushDisk
+							CLEAR_PROCESS
 						done
+					done
 				done
 			done
 		done
 }
+
 
 GETMEMORYBUDGET() {
         sudo rm -rf  /mnt/ext4ramdisk/*
