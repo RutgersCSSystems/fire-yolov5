@@ -45,7 +45,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                 plt.xlabel("Batch Size")
                 plt.ylabel("MB/s")
                 plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
-                plt.xticks(x + width * (len(row[1:]) / 3) / 2, batchsize_arr)  # Center x-ticks
+                plt.xticks(x + width * (len(row[1:]) / 6), batchsize_arr)  # Center x-ticks
                 plt.legend(["Isolated", "Vanilla", "Managed"])  # Corrected legend
                 plt.tight_layout()
                 OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
