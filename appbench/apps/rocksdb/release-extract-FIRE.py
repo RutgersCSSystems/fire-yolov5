@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 thread_arr = ["32"]
 batchsize_arr = ["128", "256", "512"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
+workload_arr = ["multireadrandom"]
+
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
@@ -27,7 +29,7 @@ def extract_and_round_ops_per_sec(line):
 
 def plot_access_pattern(datafile, access_pattern, result_path):
     thread_arr = ["32"]
-    batchsize_arr = ["512", "256"]
+    batchsize_arr = ["512", "256", "128"]
     workload_arr = ["multireadrandom"]
     config_arr = ["isolated", "Vanilla", "CIPI_PERF"]
 
