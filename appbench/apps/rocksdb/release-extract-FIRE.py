@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["60", "80", "100", "120"]  # Adjust batch sizes as needed
+batchsize_arr = ["20", "40", "60", "80", "100", "120"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
