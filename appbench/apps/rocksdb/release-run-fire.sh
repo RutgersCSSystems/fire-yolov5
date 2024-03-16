@@ -56,7 +56,7 @@ declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
 declare -a batch_arr=("512" "256" "128" "1024")
-declare -a batch_arr=("50" "75" "100" "150")
+#declare -a batch_arr=("50" "75" "100" "150")
 declare -a config_arr=("isolated")
 #declare -a config_arr=("CIPI_PERF" "Vanilla")
 
