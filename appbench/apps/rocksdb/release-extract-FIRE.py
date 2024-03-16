@@ -52,6 +52,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                 plt.legend()
                 plt.tight_layout()
                 OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
+                print(OUTPUTGRAPH)
                 plt.savefig(OUTPUTGRAPH)
                 plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
 
