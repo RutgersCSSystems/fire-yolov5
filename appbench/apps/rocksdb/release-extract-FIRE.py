@@ -45,7 +45,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                             ops_sec_value = extract_and_round_ops_per_sec(line)
                             if config == "isolated":
                                 workload_data[0].append(ops_sec_value)
-                            elif config == "vanilla":
+                            elif config == "Vanilla":
                                 workload_data[1].append(ops_sec_value)
                             elif config == "CIPI_PERF":
                                 workload_data[2].append(ops_sec_value)
