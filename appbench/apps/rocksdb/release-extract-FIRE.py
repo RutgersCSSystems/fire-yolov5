@@ -68,7 +68,8 @@ def main():
     with open(output_file, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
         # Write the header row with column names
-        header_row = ["Workload"] + [f"{config}_{batchsize}" for config in config_out_arr for batchsize in batchsize_arr]
+        #header_row = ["Workload"] + [f"{config}_{batchsize}" for config in config_out_arr for batchsize in batchsize_arr]
+        header_row = ["Workload"] + [f"{config}_{batchsize}" for batchsize in batchsize_arr for config in config_out_arr]
         csv_writer.writerow(header_row)
 
         # Initialize data for plotting
