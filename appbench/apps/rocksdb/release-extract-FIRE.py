@@ -25,6 +25,10 @@ def extract_and_round_ops_per_sec(line):
     return round(ops_sec_value)
 
 
+import csv
+import numpy as np
+import matplotlib.pyplot as plt
+
 def plot_access_pattern(datafile, access_pattern, result_path):
     with open(datafile, mode='r') as file:
         csv_reader = csv.reader(file)
@@ -52,7 +56,6 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                 OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
                 plt.savefig(OUTPUTGRAPH)
                 plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
-
 
 
 # Main function to iterate through workloads, extract MB/s, and plot results
