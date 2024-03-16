@@ -57,7 +57,7 @@ declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
 declare -a batch_arr=("512" "256" "128" "1024")
 declare -a batch_arr=("50" "75" "100" "150")
-declare -a config_arr=("Vanilla")
+declare -a config_arr=("isolated")
 #declare -a config_arr=("CIPI_PERF" "Vanilla")
 
 
@@ -170,7 +170,6 @@ RUN() {
 			./compile.sh &>> out.txt
 
 			cd $DBHOME
-
 			for THREAD in "${thread_arr[@]}"
 			do
 				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
@@ -189,8 +188,10 @@ RUN() {
 							RESULTS=""
 							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
 							#echo $RESULTFILE
-							echo $YOVLOV_RESULTFILE
-							RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+							if [ "$CONFIG" != "isolated" ]; then
+								echo $YOVLOV_RESULTFILE
+								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+							fi
 							cd $DBHOME
 
 
