@@ -28,10 +28,6 @@ def extract_and_round_ops_per_sec(line):
 
 
 def plot_access_pattern(datafile, access_pattern, result_path):
-    thread_arr = ["32"]
-    batchsize_arr = ["512", "256", "128"]
-    workload_arr = ["multireadrandom"]
-    config_arr = ["isolated", "Vanilla", "CIPI_PERF"]
 
     workload_data = [[], [], []]
 
