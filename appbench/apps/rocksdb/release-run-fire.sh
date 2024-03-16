@@ -38,8 +38,8 @@ mkdir -p $RESULTS
 
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a num_arr=("20000000")
-NUM=20000000
+declare -a num_arr=("4000000")
+NUM=4000000
 
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
@@ -49,7 +49,7 @@ USEDB=1
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
-declare -a membudget=("6")
+declare -a membudget=("3")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
@@ -61,7 +61,11 @@ declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 declare -a batch_arr=("512" "256" "128" "1024")
 declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
-declare -a config_arr=("Vanilla" "isolated")
+declare -a config_arr=("OSonly" "isolated")
+
+declare -a batch_arr=("120" "60" "80" "100" "140")
+declare -a batch_arr=("20" "40")
+
 declare -a workload_arr=("multireadrandom")
 
 
@@ -211,7 +215,8 @@ RUN() {
 
 							echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
-							export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+							#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
+							export LD_PRELOAD=/usr/lib/lib_OSonly.so
 							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 							export LD_PRELOAD=""
 							sudo dmesg -c &>> $RESULTFILE
@@ -244,10 +249,10 @@ GETMEMORYBUDGET() {
 	let FRACTION=$1
 	let NUMANODE0=$(($NUMAFREE0/$FRACTION))
 	let NUMANODE1=$(($NUMAFREE1/$FRACTION))
+	let NUMANODE1=500
 
 	let DISKSZ0=$(($NUMAFREE0-$NUMANODE0))
 	let DISKSZ1=$(($NUMAFREE1-$NUMANODE1))
-
 
         numactl --membind=0 $SCRIPTS/mount/reducemem.sh $DISKSZ0 "NODE0"
         numactl --membind=1 $SCRIPTS/mount/reducemem.sh $DISKSZ1 "NODE1"
@@ -264,6 +269,7 @@ do
 		for MEM_REDUCE_FRAC in "${membudget[@]}"
 		do
 			GETMEMORYBUDGET $MEM_REDUCE_FRAC
+			exit
 			RUN
 			$SCRIPTS/mount/releasemem.sh "NODE0"
 			$SCRIPTS/mount/releasemem.sh "NODE1"

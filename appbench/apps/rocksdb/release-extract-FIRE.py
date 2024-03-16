@@ -5,16 +5,20 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["128", "256", "512", "768"]  # Adjust batch sizes as needed
+batchsize_arr = ["60", "80", "100", "120"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
+config_arr = ["isolated", "OSonly"]  # Updated order
+config_out_arr = ["isolated", "OSonly"]  # Updated order
+
+
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
-base_dir = os.path.join(output_dir, "ROCKSDB/20M-KEYS")
+base_dir = os.path.join(output_dir, "ROCKSDB/4M-KEYS")
 
 # Output CSV file
 output_file = "RESULT.csv"
@@ -43,7 +47,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                             ops_sec_value = extract_and_round_ops_per_sec(line)
                             if config == "isolated":
                                 workload_data[0].append(ops_sec_value)
-                            elif config == "Vanilla":
+                            elif config == "OSonly":
                                 workload_data[1].append(ops_sec_value)
                             elif config == "CIPI_PERF":
                                 workload_data[2].append(ops_sec_value)
@@ -58,14 +62,14 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     width = 0.2
 
     plt.bar(x - width, workload_data[0], width=width, label="Isolated")
-    plt.bar(x, workload_data[1], width=width, label="Vanilla")
-    plt.bar(x + width, workload_data[2], width=width, label="Managed")
+    plt.bar(x, workload_data[1], width=width, label="OSonly")
+    #plt.bar(x + width, workload_data[2], width=width, label="Managed")
 
     plt.xlabel("Batch Size")
     plt.ylabel("MB/s")
     plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["Isolated", "Vanilla", "Managed"], loc='upper right')
+    plt.legend(["Isolated", "Vanilla"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot.pdf")
