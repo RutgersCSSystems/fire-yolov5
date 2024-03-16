@@ -37,6 +37,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                 x = np.arange(len(batchsize_arr))  # x-axis positions
                 width = 0.1
 
+                print(row)
                 for i in range(1, len(row), 3):
                     config_name = row[i].split('_')[0]
                     config_values = [int(value) for value in row[i+1:i+4]]
