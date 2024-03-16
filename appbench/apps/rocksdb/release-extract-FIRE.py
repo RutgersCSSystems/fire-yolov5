@@ -24,6 +24,7 @@ def extract_and_round_ops_per_sec(line):
     ops_sec_value = float(parts[ops_index - 1])
     return round(ops_sec_value)
 
+
 def plot_access_pattern(datafile, access_pattern, result_path):
     with open(datafile, mode='r') as file:
         csv_reader = csv.reader(file)
@@ -34,21 +35,19 @@ def plot_access_pattern(datafile, access_pattern, result_path):
             if workload_name == access_pattern:
                 plt.figure(figsize=(10, 6))
                 x = np.arange(len(batchsize_arr))  # x-axis positions
-                width = 0.2
+                width =  0.2
 
                 for i in range(1, len(row), 3):
                     config_name = row[i].split('_')[0]
                     config_values = [int(value) for value in row[i+1:i+4]]
                     if len(batchsize_arr) == len(config_values):
-                        print(f"Config Name: {config_name}")
-                        print(f"Config Values: {config_values}")
                         plt.bar(x + (i - 1) * width, config_values, width=width, label=f"{config_name}")
 
                 plt.xlabel("Batch Size")
                 plt.ylabel("MB/s")
                 plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
                 plt.xticks(x + width * (len(row[1:]) / 6), batchsize_arr)  # Center x-ticks
-                plt.legend(["Isolated", "Vanilla", "Managed"], loc='upper right')  # Corrected legend
+                plt.legend(["Isolated", "Vanilla", "Managed"], loc='upper right')
                 plt.tight_layout()
                 OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
                 plt.savefig(OUTPUTGRAPH)
