@@ -25,37 +25,54 @@ def extract_and_round_ops_per_sec(line):
     return round(ops_sec_value)
 
 
-import csv
-import numpy as np
-import matplotlib.pyplot as plt
-
 def plot_access_pattern(datafile, access_pattern, result_path):
-    with open(datafile, mode='r') as file:
-        csv_reader = csv.reader(file)
-        next(csv_reader)  # Skip header row
+    thread_arr = ["32"]
+    batchsize_arr = ["512"]
+    workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
+    config_arr = ["isolated", "vanilla", "CIPI_PERF"]
 
-        for row in csv_reader:
-            workload_name = row[0]
-            if workload_name == access_pattern:
-                plt.figure(figsize=(10, 6))
-                x = np.arange(len(batchsize_arr))  # x-axis positions
-                width =  0.2
+    workload_data = [[], [], []]
 
-                for i in range(1, len(row), 3):
-                    config_name = row[i].split('_')[0]
-                    config_values = [int(value) for value in row[i+1:i+4]]
-                    if len(batchsize_arr) == len(config_values):
-                        plt.bar(x + (i - 1) * width, config_values, width=width, label=f"{config_name}")
+    for batchsize in batchsize_arr:
+        for config in config_arr:
+            file_path = os.path.join(base_dir, thread_arr[0], f"batchsize-{batchsize}", access_pattern, f"{config}.out")
+            if os.path.exists(file_path):
+                with open(file_path, 'r') as file:
+                    lines = file.readlines()
+                    ops_sec_found = False
+                    for line in lines:
+                        if "MB/s" in line:
+                            ops_sec_value = extract_and_round_ops_per_sec(line)
+                            if config == "isolated":
+                                workload_data[0].append(ops_sec_value)
+                            elif config == "vanilla":
+                                workload_data[1].append(ops_sec_value)
+                            elif config == "CIPI_PERF":
+                                workload_data[2].append(ops_sec_value)
+                            ops_sec_found = True
+                            break
+                    if not ops_sec_found:
+                        # Set ops_sec_value to 0 if not found
+                        workload_data[2].append(0)  # Managed configuration
 
-                plt.xlabel("Batch Size")
-                plt.ylabel("MB/s")
-                plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
-                plt.xticks(x + width * (len(row[1:]) / 6), batchsize_arr)  # Center x-ticks
-                plt.legend(["Isolated", "Vanilla", "Managed"], loc='upper right')
-                plt.tight_layout()
-                OUTPUTGRAPH = result_path + "/" + f"{access_pattern}_plot.pdf"
-                plt.savefig(OUTPUTGRAPH)
-                plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
+    plt.figure(figsize=(10, 6))
+    x = np.arange(len(batchsize_arr))  # x-axis positions
+    width = 0.2
+
+    plt.bar(x - width, workload_data[0], width=width, label="Isolated")
+    plt.bar(x, workload_data[1], width=width, label="Vanilla")
+    plt.bar(x + width, workload_data[2], width=width, label="Managed")
+
+    plt.xlabel("Batch Size")
+    plt.ylabel("MB/s")
+    plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
+    plt.xticks(x, batchsize_arr)
+    plt.legend(["Isolated", "Vanilla", "Managed"], loc='upper right')
+    plt.tight_layout()
+
+    OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot.pdf")
+    plt.savefig(OUTPUTGRAPH)
+    plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
 
 
 # Main function to iterate through workloads, extract MB/s, and plot results
