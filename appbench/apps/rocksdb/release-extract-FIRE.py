@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["20", "40", "60", "80", "100", "120"]  # Adjust batch sizes as needed
+batchsize_arr = ["20", "40", "60", "80", "100"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
@@ -18,7 +18,7 @@ config_out_arr = ["isolated", "OSonly"]  # Updated order
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
-base_dir = os.path.join(output_dir, "ROCKSDB/4M-KEYS")
+base_dir = os.path.join(output_dir, "ROCKSDB/20M-KEYS")
 
 # Output CSV file
 output_file = "RESULT.csv"
