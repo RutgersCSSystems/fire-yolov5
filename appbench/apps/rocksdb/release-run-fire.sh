@@ -38,8 +38,8 @@ mkdir -p $RESULTS
 
 
 #declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
-declare -a num_arr=("4000000")
-NUM=4000000
+declare -a num_arr=("20000000")
+NUM=20000000
 
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
@@ -63,8 +63,8 @@ declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 declare -a config_arr=("OSonly" "isolated")
 
-declare -a batch_arr=("120" "60" "80" "100" "140")
-declare -a batch_arr=("20" "40")
+declare -a batch_arr=("60" "80" "100" "20" "40")
+#declare -a batch_arr=("20" "40")
 
 declare -a workload_arr=("multireadrandom")
 
