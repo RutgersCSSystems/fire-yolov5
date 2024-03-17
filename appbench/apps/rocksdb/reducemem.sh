@@ -50,7 +50,7 @@ USEDB=1
 MEM_REDUCE_FRAC=1
 ENABLE_MEM_SENSITIVE=1
 
-declare -a membudget=("2")
+declare -a membudget=("3")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
