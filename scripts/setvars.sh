@@ -52,6 +52,7 @@ export SHARED_DATA=$NVMBASE/dataset
 #export SHARED_DATA=/mnt/pmemdir
 
 export APPPREFIX="/usr/bin/time -v"
+export APPPREFIX="nice -n -20"
 
 #export APPPREFIX="perf record -e instructions,mem-loads,mem-stores --vmlinux=/lib/modules/4.17.0/build/vmlinux -I 1000"
 #export APPPREFIX="perf stat -e dTLB-load-misses,iTLB-load-misses,instructions,L1-dcache-loads,L1-dcache-stores"
