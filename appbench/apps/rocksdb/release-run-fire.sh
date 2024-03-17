@@ -64,8 +64,8 @@ declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 declare -a batch_arr=("60" "80" "100" "20" "40")
-declare -a config_arr=("OSonly" "isolated")
-declare -a config_arr=("OSonly-prio")
+declare -a config_arr=("OSonly" "isolated" "OSonly-prio")
+#declare -a config_arr=("OSonly-prio")
 
 
 declare -a workload_arr=("multireadrandom")
