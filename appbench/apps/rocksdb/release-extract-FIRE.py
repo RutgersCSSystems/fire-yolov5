@@ -63,7 +63,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
 
     plt.bar(x - width, workload_data[0], width=width, label="Isolated")
     plt.bar(x, workload_data[1], width=width, label="OSonly")
-    #plt.bar(x + width, workload_data[2], width=width, label="Managed")
+    plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
 
     plt.xlabel("Batch Size")
     plt.ylabel("MB/s")
