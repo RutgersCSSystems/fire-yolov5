@@ -57,7 +57,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                         # Set ops_sec_value to 0 if not found
                         workload_data[2].append(0)  # Managed configuration
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(8, 5))
     x = np.arange(len(batchsize_arr))  # x-axis positions
     width = 0.2
 
