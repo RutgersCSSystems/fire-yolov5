@@ -12,13 +12,13 @@ workload_arr = ["multireadrandom"]
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
-config_arr = ["isolated", "Vanilla", "OSonly-prio"]  # Updated order
-config_out_arr = ["isolated", "Vanilla",  "OSonly-prio"]  # Updated order
+config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
+config_out_arr = ["isolated", "OSonly",  "OSonly-prio"]  # Updated order
 
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
-base_dir = os.path.join(output_dir, "ROCKSDB-SNAPPY/20M-KEYS")
+base_dir = os.path.join(output_dir, "ROCKSDB/20M-KEYS/")
 
 # Output CSV file
 output_file = "RESULT.csv"
@@ -47,7 +47,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                             ops_sec_value = extract_and_round_ops_per_sec(line)
                             if config == "isolated":
                                 workload_data[0].append(ops_sec_value)
-                            elif config == "Vanilla":
+                            elif config == "OSonly":
                                 workload_data[1].append(ops_sec_value)
                             elif config == "OSonly-prio":
                                 workload_data[2].append(ops_sec_value)
