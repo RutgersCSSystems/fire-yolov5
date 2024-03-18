@@ -6103,8 +6103,8 @@ class Benchmark {
 
     Duration duration(FLAGS_duration, reads_);
 
-    //while (!duration.Done(entries_per_batch_) && num_multireads < 4000000) {
-    while (!duration.Done(entries_per_batch_)) {
+    while (!duration.Done(entries_per_batch_) && num_multireads < 4000000) {
+    //while (!duration.Done(entries_per_batch_)) {
 
       // while (!duration.Done(entries_per_batch_)) {
 

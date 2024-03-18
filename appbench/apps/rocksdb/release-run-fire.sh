@@ -27,7 +27,6 @@ WORKLOAD="readrandom"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
 #APPPREFIX="/usr/bin/time -v"
-APPPREFIX="nice -n -20"
 
 APP=db_bench
 APPOUTPUTNAME="ROCKSDB"
@@ -59,16 +58,17 @@ declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
-declare -a batch_arr=("512" "256" "128" "1024")
 declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
-declare -a batch_arr=("60" "80" "100" "20" "40")
+
+declare -a batch_arr=("1" "2" "4" "6")
 declare -a config_arr=("OSonly" "isolated" "OSonly-prio")
-#declare -a config_arr=("OSonly-prio")
-
-
 declare -a workload_arr=("multireadrandom")
+
+export APPPREFIX="nice -n -20"
+export APPPREFIX=""
+
 
 
 G_TRIAL="TRIAL1"
@@ -105,8 +105,15 @@ RUN_FIRE_ML() {
 
 	BATCHSIZE=$2
 	cd ../yolov5-fire-detection
-	./train-run-med.sh $BATCHSIZE &> $1 &
-	sleep 15
+	cd datasets/fire/train
+
+	rm -rf images/* labels/*
+	cp images-orig/* images/
+	cp labels-orig/* labels/
+	python copyimage.py $BATCHSIZE
+	cd ../../../
+	./train-run-med.sh 40 &> $1 &
+	sleep 5
 }
 
 
@@ -218,7 +225,7 @@ RUN() {
 							echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
 							#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-							export LD_PRELOAD=/usr/lib/lib_OSonly.so
+							#export LD_PRELOAD=/usr/lib/lib_OSonly.so
 							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 							export LD_PRELOAD=""
 							sudo dmesg -c &>> $RESULTFILE

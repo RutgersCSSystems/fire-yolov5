@@ -88,7 +88,7 @@ COMPILE_AND_WRITE()
 	cd $DBHOME
 	cd yolov5
 	#python train.py --img 640 --batch $BATCH_SIZE --epochs 10 --data ../fire_config.yaml --weights yolov5s.pt --workers $INSTANCES
-	python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0
+	python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache
 }
 
 COMPILE_AND_WRITE
