@@ -57,7 +57,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                         # Set ops_sec_value to 0 if not found
                         workload_data[2].append(0)  # Managed configuration
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(7, 4.5))
     x = np.arange(len(batchsize_arr))  # x-axis positions
     width = 0.2
 
@@ -69,7 +69,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.ylabel("Througput in MB/s")
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["No Mem, Space Sharing", "Mem. Space Sharing", "Mem. Space Sharing + Priority"], loc='upper right')
+    plt.legend(["No Memory Space Sharing", "Mem. Space Sharing", "Mem. Space Sharing + Priority"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot_ROCKSDB_SNAPPY.pdf")
