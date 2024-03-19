@@ -13,7 +13,7 @@ config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
 config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
-config_out_arr = ["isolated", "OSonly",  "OSonly-prio"]  # Updated order
+config_out_arr = ["No Memory Sharing", "Memory-sharing",  "Memory sharing + priority"]  # Updated order
 
 
 # Base directory for output files
@@ -72,7 +72,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.legend(["Isolated", "Vanilla", "Vanilla-prio"], loc='upper right')
     plt.tight_layout()
 
-    OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot.pdf")
+    OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot_ROCKSDB_SNAPPY.pdf")
     plt.savefig(OUTPUTGRAPH)
     plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
 
