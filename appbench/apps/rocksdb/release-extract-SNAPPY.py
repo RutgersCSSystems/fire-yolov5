@@ -61,9 +61,9 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     x = np.arange(len(batchsize_arr))  # x-axis positions
     width = 0.2
 
-    plt.bar(x - width, workload_data[0], width=width, label="Isolated")
-    plt.bar(x, workload_data[1], width=width, label="OSonly")
-    plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
+    plt.bar(x - width, workload_data[0], width=width, label="No Mem, Space Sharing")
+    plt.bar(x, workload_data[1], width=width, label="Mem. Space Sharing")
+    plt.bar(x + width, workload_data[2], width=width, label="Mem. Space Sharing + Priority")
 
     plt.xlabel("Batch Size")
     plt.ylabel("Througput in MB/s")
