@@ -12,8 +12,8 @@ workload_arr = ["multireadrandom"]
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
-config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
-config_out_arr = ["No Memory Sharing", "Memory-sharing",  "Memory sharing + priority"]  # Updated order
+config_arr = ["OSonly", "OSonly-prio"]  # Updated order
+config_out_arr = ["Memory-sharing",  "Memory sharing + priority"]  # Updated order
 
 
 # Base directory for output files
@@ -37,7 +37,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
 
     for batchsize in batchsize_arr:
         for config in config_arr:
-            file_path = os.path.join(base_dir, thread_arr[0], f"SNAPPYTHREADS-{batchsize}", access_pattern, f"{config}.out")
+            file_path = os.path.join(base_dir, thread_arr[0], f"SNAPPYTHREADS-{batchsize}", access_pattern, "SNAPPYOUT-" + f"{config}.out")
             if os.path.exists(file_path):
                 with open(file_path, 'r') as file:
                     lines = file.readlines()
@@ -48,9 +48,9 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                             if config == "isolated":
                                 workload_data[0].append(ops_sec_value)
                             elif config == "OSonly":
-                                workload_data[1].append(ops_sec_value)
+                                workload_data[0].append(ops_sec_value)
                             elif config == "OSonly-prio":
-                                workload_data[2].append(ops_sec_value)
+                                workload_data[1].append(ops_sec_value)
                             ops_sec_found = True
                             break
                     if not ops_sec_found:
@@ -61,15 +61,15 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     x = np.arange(len(batchsize_arr))  # x-axis positions
     width = 0.2
 
-    plt.bar(x - width, workload_data[0], width=width, label="No Mem, Space Sharing")
-    plt.bar(x, workload_data[1], width=width, label="Mem. Space Sharing")
-    plt.bar(x + width, workload_data[2], width=width, label="Mem. Space Sharing + Priority")
+    #plt.bar(x - width, workload_data[0], width=width, label="No Mem, Space Sharing")
+    plt.bar(x, workload_data[0], width=width, label="Mem. Space Sharing")
+    plt.bar(x + width, workload_data[1], width=width, label="Mem. Space Sharing + Priority")
 
     plt.xlabel("Batch Size")
     plt.ylabel("Througput in MB/s")
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["No Memory Space Sharing", "Mem. Space Sharing", "Mem. Space Sharing + Priority"], loc='upper right')
+    plt.legend(["Mem. Space Sharing", "Mem. Space Sharing + Priority"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot_SNAPPY_SNAPPY.pdf")
