@@ -28,5 +28,5 @@ python copyimage.py 3 //Scale the factor by 3 times
 
 ### Running the training steps
 ```
-./train-run-med.sh
+./train-run-med.sh 20 //where 20 indicates the batch size
 ```
