@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["20", "40", "60", "80", "100"]  # Adjust batch sizes as needed
+batchsize_arr = ["2", "4", "6"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
@@ -63,7 +63,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
 
     plt.bar(x - width, workload_data[0], width=width, label="Isolated")
     #plt.bar(x, workload_data[1], width=width, label="OSonly")
-    plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
+    plt.bar(x + width, workload_data[1], width=width, label="OSonly-prio")
 
     plt.xlabel("Batch Size")
     plt.ylabel("Througput in MB/s")
