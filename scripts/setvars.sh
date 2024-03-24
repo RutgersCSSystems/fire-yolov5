@@ -10,6 +10,8 @@ export VER="5.14.0"
 export KERN_SRC=$NVMBASE/linux-$VER
 export SHELL=/bin/bash
 
+export YOLO=appbench/apps/yolov5-fire-detection
+
 #QEMU
 export QEMU_IMG=$NVMBASE
 #export QEMU_IMG_FILE=$QEMU_IMG/qemu-image.img
