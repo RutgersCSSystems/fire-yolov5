@@ -6,7 +6,7 @@
 cd ioopt
 source scripts/setvars.sh
 cd appbench/apps/yolov5-fire-detection
-./compile.sh
+./compile.sh #or use ./compile_conda.sh if in a conda environment
 ./install_cuda.sh #only if you have and are running on GPU and installing CUDA
 sudo reboot  #only if you have and are running on GPU and installing CUDA
 ```
