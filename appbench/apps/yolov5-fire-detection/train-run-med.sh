@@ -9,11 +9,6 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
-# Set a default batch size if not provided
-if [ -z "$1" ]; then
-        BATCH_SIZE=16
-fi
-
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
