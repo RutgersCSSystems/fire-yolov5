@@ -72,7 +72,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.legend(["RocksDB - No Mem. Space Sharing", "RocksDB - Mem. Space Sharing", "RocksDB - Mem. Space Sharing + high-priority"], loc='upper right')
     plt.tight_layout()
 
-    OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot.pdf")
+    OUTPUTGRAPH = os.path.join(result_path, f"RocksDB_YOLO_{access_pattern}_plot.pdf")
     plt.savefig(OUTPUTGRAPH)
     plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
 
