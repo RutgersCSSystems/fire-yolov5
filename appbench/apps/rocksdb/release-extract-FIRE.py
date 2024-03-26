@@ -12,8 +12,8 @@ workload_arr = ["multireadrandom"]
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
-config_arr = ["isolated", "OSonly-prio"]  # Updated order
-config_out_arr = ["isolated", "OSonly-prio"]  # Updated order
+config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
+config_out_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
 
 
 # Base directory for output files
@@ -47,10 +47,10 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                             ops_sec_value = extract_and_round_ops_per_sec(line)
                             if config == "isolated":
                                 workload_data[0].append(ops_sec_value)
-                            #elif config == "OSonly":
-                            #    workload_data[1].append(ops_sec_value)
-                            elif config == "OSonly-prio":
+                            elif config == "OSonly":
                                 workload_data[1].append(ops_sec_value)
+                            elif config == "OSonly-prio":
+                                workload_data[2].append(ops_sec_value)
                             ops_sec_found = True
                             break
                     if not ops_sec_found:
@@ -62,14 +62,14 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     width = 0.2
 
     plt.bar(x - width, workload_data[0], width=width, label="Isolated")
-    #plt.bar(x, workload_data[1], width=width, label="OSonly")
-    plt.bar(x + width, workload_data[1], width=width, label="OSonly-prio")
+    plt.bar(x, workload_data[1], width=width, label="OSonly")
+    plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
 
     plt.xlabel("Batch Size")
     plt.ylabel("Througput in MB/s")
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["RocksDB - No Mem. Space Sharing", "RocksDB - Mem. Space Sharing + high-priority"], loc='upper right')
+    plt.legend(["RocksDB - No Mem. Space Sharing", "RocksDB - Mem. Space Sharing", "RocksDB - Mem. Space Sharing + high-priority"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"{access_pattern}_plot.pdf")
