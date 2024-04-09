@@ -9,7 +9,6 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
-
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
@@ -86,9 +85,14 @@ COMPILE_AND_WRITE()
 	$PREDICT_LIB_DIR/compile.sh &> compile.out
 	cd $DBHOME
 	cp copyimage.py datasets/fire/train/
+        # Copy the changes to the yolov5 code (Honestly better to do like a diff and patch but this is fine for now)
+        cp yolov5-changes/train.py yolov5/train.py
+        cp yolov5-changes/utils/dataloaders.py yolov5/utils/dataloaders.py
 	cd yolov5
 	#python train.py --img 640 --batch $BATCH_SIZE --epochs 10 --data ../fire_config.yaml --weights yolov5s.pt --workers $INSTANCES
-	python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache
+	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache
+	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-size 1.0 --cache-control-pipe ./cc_pipe
+	python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-control-pipe ./cc_pipe
 }
 
 COMPILE_AND_WRITE
