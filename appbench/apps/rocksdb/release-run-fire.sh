@@ -62,7 +62,10 @@ declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 
-declare -a batch_arr=("1" "2" "4" "6")
+
+
+
+declare -a batch_arr=( "6" "8")
 declare -a config_arr=("OSonly" "isolated" "OSonly-prio")
 declare -a workload_arr=("multireadrandom")
 
@@ -159,6 +162,7 @@ GEN_RESULT_PATH_YOVLOV() {
 
 CLEAR_PROCESS()
 {
+	sleep 500
         sudo killall $APP
         sudo killall $APP
         sudo killall $APP
@@ -200,7 +204,7 @@ RUN() {
 						for WORKLOAD in "${workload_arr[@]}"
 						do
 
-							CLEAR_PROCESS
+							#CLEAR_PROCESS
 							RESULTS=""
 							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
 							#echo $RESULTFILE

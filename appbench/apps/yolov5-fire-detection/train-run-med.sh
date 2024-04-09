@@ -31,10 +31,10 @@ declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" 
 declare -a membudget=("6" "4" "2" "8")
 declare -a membudget=("6")
 USEDB=1
-MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
 #Enable sensitivity to vary prefetch size and prefetch thread count
-ENABLE_SENSITIVITY=1
+ENABLE_SENSITIVITY=0
 
 
 declare -a membudget=("6")
