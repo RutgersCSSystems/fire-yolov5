@@ -38,9 +38,11 @@ mkdir -p $RESULTS
 declare -a num_arr=("25000000")
 NUM=25000000
 
+declare -a num_arr=("5000000")
+NUM=5000000
+
+
 declare -a thread_arr=("32" "16"  "8"  "4" "1")
-
-
 declare -a workload_arr=("readseq" "readrandom" "readwhilescanning" "readreverse" "multireadrandom")
 declare -a workload_arr=("multireadrandom" "readrandom" "readreverse" "readseq" "readwhilescanning")
 #declare -a workload_arr=("readrandom" "readreverse" "readseq" "readwhilescanning")

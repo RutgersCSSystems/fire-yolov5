@@ -6,6 +6,8 @@ thread_arr = ["16"]
 workload_arr=["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 #workload_arr=["multireadrandom"]
 config_arr = ["Vanilla", "OSonly", "CII", "CIPI_PERF", "CPBI_PERF"]
+config_arr = ["Vanilla", "OSonly"]
+
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")

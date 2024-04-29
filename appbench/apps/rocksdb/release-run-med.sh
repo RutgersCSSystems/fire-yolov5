@@ -152,6 +152,7 @@ RUN() {
 
 						for WORKLOAD in "${workload_arr[@]}"
 						do
+							#PERFORM_FSCK
 
 							RESULTS=""
 							READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"

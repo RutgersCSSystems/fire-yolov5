@@ -46,6 +46,7 @@ declare -a trials=("TRIAL1")
 declare -a workload_arr=("readseq" "multireadrandom" "readwhilescanning" "readreverse")
 declare -a thread_arr=("16")
 declare -a config_arr=("Vanilla" "OSonly" "CIPI_PERF" "CII" "CPBI_PERF")
+declare -a config_arr=("CIPI_PERF" "CII" "CPBI_PERF")
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -100,7 +101,12 @@ GEN_RESULT_PATH() {
 	echo $RESULTFILE
 }
 
-
+PERFORM_FSCK() {
+	sudo umount /dev/nvme1n1
+	sudo fsck.ext4 -fy /dev/nvme1n1
+	sudo mount /dev/nvme1n1 /mnt/remote
+	sudo chown -R kannan11 /mnt/remote
+}
 
 RUN() {
 
@@ -127,6 +133,7 @@ RUN() {
 				do
 					for CONFIG in "${config_arr[@]}"
 					do
+						PERFORM_FSCK
 						RESULTS=""
 						READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
 						GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM
