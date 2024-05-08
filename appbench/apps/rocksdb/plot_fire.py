@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # Read data from CSV file
 data = {}
-with open('energy_data.csv', newline='') as csvfile:
+with open('RESULT-ENERGY.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         config = row['Configuration']
