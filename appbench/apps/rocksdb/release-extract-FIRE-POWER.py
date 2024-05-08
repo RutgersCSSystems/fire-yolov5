@@ -12,8 +12,8 @@ workload_arr = ["multireadrandom"]
 config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
 config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
-config_arr = ["isolated", "OSonly"]  # Updated order
-config_out_arr = ["isolated", "sharing"]  # Updated order
+config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
+config_out_arr = ["isolated", "sharing", "sharing-prio"]  # Updated order
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
