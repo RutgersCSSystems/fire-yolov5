@@ -56,7 +56,7 @@ def extract_energy(filename):
         elif 'Domain DRAM' in line:
             read_next_line = True
             current_domain = 'DRAM'
-        elif read_next_line and 'Energy consumed' in line:
+        elif read_next_line and 'Power consumed' in line:
             energy = float(line.split(':')[1].split()[0])
             energy_data[current_socket][current_domain] = energy
             total_energy[current_domain] += energy
@@ -77,7 +77,7 @@ def main():
         csv_writer.writerow(header_row_throughput)
         
         # Write the header row with column names for energy
-        header_row_energy = ["Configuration", "Batch Size", "CPU Energy (J)", "DRAM Energy (J)"]
+        header_row_energy = ["Configuration", "Batch Size", "CPU  (Watts)", "DRAM Energy (Watts)"]
         csv_energy_writer.writerow(header_row_energy)
 
         for workload in workload_arr:
@@ -104,8 +104,8 @@ def main():
                                      #   csv_writer.writerow([workload, ops_sec_value])
                                       #  ops_sec_found = True
                                     #break
-                                if "Energy" in line:  # Extract energy data if line contains "Energy"
-                                    #print("Extract energy data if line contains Energy")
+                                if "" in line:  # Extract energy data if line contains "Energy"
+                                    #print("Extract energy data if line contains ")
                                     energy_data, total_energy = extract_energy(file_path)
                                     cpu_energy = total_energy['CPU']  # Extract CPU energy
                                     break

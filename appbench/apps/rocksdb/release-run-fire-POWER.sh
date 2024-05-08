@@ -65,16 +65,16 @@ declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 
 
-#declare -a batch_arr=( "10" "20" "40")
-#declare -a config_arr=("OSonly" "isolated")
+declare -a batch_arr=( "10" "20" "40")
+declare -a config_arr=("OSonly" "isolated")
 
-declare -a batch_arr=("10" "20" "40")
+declare -a batch_arr=("10")
 declare -a config_arr=("OSonly-prio")
 
 declare -a workload_arr=("multireadrandom")
 
-export APPPREFIX="likwid-powermeter sudo nice -n -20 sudo -u $USER"
-#export APPPREFIX="likwid-powermeter"
+#export APPPREFIX="likwid-powermeter sudo nice -n 1 sudo -u $USER"
+export APPPREFIX="likwid-powermeter"
 
 
 
