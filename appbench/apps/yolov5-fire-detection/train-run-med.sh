@@ -18,6 +18,8 @@ fi
 
 WORKLOAD="yolov5-fire-detection"
 APPPREFIX="/usr/bin/time -v"
+export APPPREFIX="likwid-powermeter"
+
 
 APP=python
 APPOUTPUTNAME="yolov5-fire-detection"
@@ -92,7 +94,7 @@ COMPILE_AND_WRITE()
 	#python train.py --img 640 --batch $BATCH_SIZE --epochs 10 --data ../fire_config.yaml --weights yolov5s.pt --workers $INSTANCES
 	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache
 	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-size 1.0 --cache-control-pipe ./cc_pipe
-	python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-control-pipe ./cc_pipe
+	$APPPREFIX python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-control-pipe ./cc_pipe
 }
 
 COMPILE_AND_WRITE
