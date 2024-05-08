@@ -1,42 +1,37 @@
+import csv
 import matplotlib.pyplot as plt
 
-# Data
-data = [
-    {"Configuration": "isolated", "Batch Size": 10, "CPU Energy (J)": 18025.5, "DRAM Energy (J)": 3142.1},
-    {"Configuration": "OSonly", "Batch Size": 10, "CPU Energy (J)": 25319.1, "DRAM Energy (J)": 4449.59},
-    {"Configuration": "isolated", "Batch Size": 20, "CPU Energy (J)": 18061.1, "DRAM Energy (J)": 3151.4},
-    {"Configuration": "OSonly", "Batch Size": 20, "CPU Energy (J)": 48598.8, "DRAM Energy (J)": 8833.47},
-    {"Configuration": "isolated", "Batch Size": 40, "CPU Energy (J)": 18011.4, "DRAM Energy (J)": 3146.9},
-    {"Configuration": "OSonly", "Batch Size": 40, "CPU Energy (J)": 24968.2, "DRAM Energy (J)": 4406.38}
-]
+# Read data from CSV file
+data = {}
+with open('RESULT-ENERGY.csv', newline='') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        config = row['Configuration']
+        batch_size = row['Batch Size']
+        cpu_energy = float(row['CPU Energy (J)'])
+        dram_energy = float(row['DRAM Energy (J)'])
+        if config not in data:
+            data[config] = {}
+        data[config][batch_size] = {'CPU': cpu_energy, 'DRAM': dram_energy}
 
-# Extracting data
-configurations = sorted(set(d["Configuration"] for d in data))
-batch_sizes = sorted(set(d["Batch Size"] for d in data))
-cpu_energy = {config: [d["CPU Energy (J)"] for d in data if d["Configuration"] == config] for config in configurations}
-dram_energy = {config: [d["DRAM Energy (J)"] for d in data if d["Configuration"] == config] for config in configurations}
+# Extracting data for plotting
+configs = list(data.keys())
+batch_sizes = list(data[configs[0]].keys())
+cpu_energy = {config: [data[config][batch]['CPU'] for batch in batch_sizes] for config in configs}
+dram_energy = {config: [data[config][batch]['DRAM'] for batch in batch_sizes] for config in configs}
 
 # Plotting
-fig, ax = plt.subplots(figsize=(10, 6))
-
+x = range(len(batch_sizes))
 bar_width = 0.35
-index = range(len(batch_sizes))
 
-for i, config in enumerate(configurations):
-    ax.bar([x + i * bar_width for x in index], cpu_energy[config], bar_width, label=f'{config} - CPU')
-    ax.bar([x + i * bar_width for x in index], dram_energy[config], bar_width, bottom=cpu_energy[config], label=f'{config} - DRAM')
+for i, config in enumerate(configs):
+    plt.bar([p + i * bar_width for p in x], cpu_energy[config], width=bar_width, label=f'{config} - CPU Energy', align='center')
+    plt.bar([p + i * bar_width for p in x], dram_energy[config], width=bar_width, label=f'{config} - DRAM Energy', align='edge')
 
-ax.set_xlabel('Batch Size')
-ax.set_ylabel('Energy (J)')
-ax.set_title('CPU and DRAM Energy Consumption by Configuration and Batch Size')
-ax.set_xticks([x + bar_width / 2 for x in index])
-ax.set_xticklabels(batch_sizes)
-ax.legend()
-
-plt.tight_layout()
-
-# Save the plot to a PDF file
+plt.xlabel('Batch Size')
+plt.ylabel('Energy (J)')
+plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
+plt.xticks([p + bar_width / 2 for p in x], batch_sizes)
+plt.legend()
+#plt.show()
 plt.savefig('energy_consumption.pdf')
-
-plt.show()
-
