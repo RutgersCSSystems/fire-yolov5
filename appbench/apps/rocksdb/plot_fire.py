@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # Read data from CSV file
 data = {}
-with open('RESULT-ENERGY.csv', newline='') as csvfile:
+with open('energy_data.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         config = row['Configuration']
@@ -24,14 +24,19 @@ dram_energy = {config: [data[config][batch]['DRAM'] for batch in batch_sizes] fo
 x = range(len(batch_sizes))
 bar_width = 0.35
 
+# Plot CPU energy
 for i, config in enumerate(configs):
     plt.bar([p + i * bar_width for p in x], cpu_energy[config], width=bar_width, label=f'{config} - CPU Energy', align='center')
-    plt.bar([p + i * bar_width for p in x], dram_energy[config], width=bar_width, label=f'{config} - DRAM Energy', align='edge')
+
+# Plot DRAM energy stacked on top of CPU energy
+for i, config in enumerate(configs):
+    plt.bar([p + i * bar_width for p in x], dram_energy[config], width=bar_width, bottom=cpu_energy[config], label=f'{config} - DRAM Energy', align='edge')
 
 plt.xlabel('Batch Size')
 plt.ylabel('Energy (J)')
 plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
 plt.xticks([p + bar_width / 2 for p in x], batch_sizes)
 plt.legend()
-#plt.show()
-plt.savefig('energy_consumption.pdf')
+plt.tight_layout()
+plt.savefig('energy_consumption_stacked.pdf')
+plt.show()
