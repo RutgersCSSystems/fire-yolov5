@@ -49,7 +49,7 @@ USEDB=1
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
-declare -a membudget=("2")
+declare -a membudget=("2" "3" "4")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
@@ -65,22 +65,23 @@ declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 
 
-declare -a batch_arr=( "10" "20" "40")
-declare -a config_arr=("OSonly" "isolated")
+#declare -a batch_arr=( "10" "20" "40")
+#declare -a config_arr=("OSonly" "isolated")
 
-declare -a batch_arr=("20")
-declare -a config_arr=("OSonly")
+declare -a batch_arr=("10" "20" "40")
+declare -a config_arr=("OSonly-prio")
 
 declare -a workload_arr=("multireadrandom")
 
-#export APPPREFIX="nice -n -20"
-export APPPREFIX="likwid-powermeter"
+export APPPREFIX="likwid-powermeter sudo nice -n -20 sudo -u $USER"
+#export APPPREFIX="likwid-powermeter"
 
 
 
 G_TRIAL="TRIAL1"
 #Require for large database
 ulimit -n 1000000 
+sudo ulimit -n 1000000
 
 workload_arr_in=$1
 config_arr_in=$2
@@ -286,7 +287,6 @@ do
 		for MEM_REDUCE_FRAC in "${membudget[@]}"
 		do
 			GETMEMORYBUDGET $MEM_REDUCE_FRAC
-			exit
 			RUN
 			$SCRIPTS/mount/releasemem.sh "NODE0"
 			$SCRIPTS/mount/releasemem.sh "NODE1"

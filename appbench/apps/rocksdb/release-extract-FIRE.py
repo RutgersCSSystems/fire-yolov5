@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-batchsize_arr = ["2", "4", "6"]  # Adjust batch sizes as needed
+batchsize_arr = ["10", "20", "40"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
-config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
-config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
+#config_arr = ["isolated", "Vanilla", "CIPI_PERF"]  # Updated order
+#config_out_arr = ["isolated", "Vanilla", "Managed"]  # Updated order
 
 config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
 config_out_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
@@ -69,7 +69,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.ylabel("Througput in MB/s")
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["RocksDB - No Mem. Space Sharing", "RocksDB - Mem. Space Sharing", "RocksDB - Mem. Space Sharing + high-priority"], loc='upper right')
+    plt.legend(["RocksDB - Isolated", "RocksDB - Sharing", "RocksDB - Sharing + high-priority"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"RocksDB_YOLO_{access_pattern}_plot.pdf")
