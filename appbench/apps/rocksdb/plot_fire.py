@@ -8,8 +8,8 @@ with open('RESULT-ENERGY.csv', newline='') as csvfile:
     for row in reader:
         config = row['Configuration']
         batch_size = row['Batch Size']
-        cpu_energy = float(row['CPU Energy (J)'])
-        dram_energy = float(row['DRAM Energy (J)'])
+        cpu_energy = float(row['CPU-POWER'])
+        dram_energy = float(row['DRAM-POWER'])
         if config not in data:
             data[config] = {}
         data[config][batch_size] = {'CPU': cpu_energy, 'DRAM': dram_energy}
@@ -30,7 +30,7 @@ for i, config in enumerate(configs):
     plt.bar([p + i * bar_width for p in x], dram_energy[config], width=bar_width, bottom=cpu_energy[config], label=f'{config} - DRAM Energy', align='center')
 
 plt.xlabel('Batch Size')
-plt.ylabel('Energy (J)')
+plt.ylabel('Power (Watts)')
 plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
 plt.xticks([p + bar_width / 2 for p in x], batch_sizes)
 plt.legend()

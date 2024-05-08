@@ -77,7 +77,7 @@ def main():
         csv_writer.writerow(header_row_throughput)
         
         # Write the header row with column names for energy
-        header_row_energy = ["Configuration", "Batch Size", "CPU  (Watts)", "DRAM Energy (Watts)"]
+        header_row_energy = ["Configuration", "Batch Size", "CPU-POWER", "DRAM-POWER"]
         csv_energy_writer.writerow(header_row_energy)
 
         for workload in workload_arr:
@@ -104,7 +104,7 @@ def main():
                                      #   csv_writer.writerow([workload, ops_sec_value])
                                       #  ops_sec_found = True
                                     #break
-                                if "" in line:  # Extract energy data if line contains "Energy"
+                                if "" in line:  # Extract energy data if line contains "Power"
                                     #print("Extract energy data if line contains ")
                                     energy_data, total_energy = extract_energy(file_path)
                                     cpu_energy = total_energy['CPU']  # Extract CPU energy
