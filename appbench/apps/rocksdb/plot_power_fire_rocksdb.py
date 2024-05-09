@@ -7,7 +7,7 @@ with open('RESULT-ENERGY.csv', newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         config = row['Configuration']
-        batch_size = row['Batch Size']
+        batch_size = row['MEMFRAC']
         cpu_energy = float(row['CPU-POWER'])
         dram_energy = float(row['DRAM-POWER'])
         if config not in data:
@@ -29,7 +29,7 @@ for i, config in enumerate(configs):
     plt.bar([p + i * bar_width for p in x], cpu_energy[config], width=bar_width, label=f'{config} - CPU Energy', align='center')
     plt.bar([p + i * bar_width for p in x], dram_energy[config], width=bar_width, bottom=cpu_energy[config], label=f'{config} - DRAM Energy', align='center')
 
-plt.xlabel('Batch Size')
+plt.xlabel('Memory Fraction')
 plt.ylabel('Power (Watts)')
 #plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
 plt.xticks([p + bar_width / 2 for p in x], batch_sizes)
