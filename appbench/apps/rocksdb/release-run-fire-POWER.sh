@@ -46,10 +46,10 @@ NUM=20000000
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 USEDB=1
-MEM_REDUCE_FRAC=0
-ENABLE_MEM_SENSITIVE=0
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 
-declare -a membudget=("2" "3" "4")
+declare -a membudget=("2" "3" "4" "1")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
@@ -66,10 +66,12 @@ declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 
 declare -a batch_arr=( "10" "20" "40")
-declare -a config_arr=("OSonly" "isolated")
+declare -a config_arr=("isolated" "OSonly-prio")
+#declare -a config_arr=("OSonly")
 
-declare -a batch_arr=("10")
-declare -a config_arr=("OSonly-prio")
+
+#declare -a batch_arr=("10")
+#declare -a config_arr=("OSonly-prio")
 
 declare -a workload_arr=("multireadrandom")
 
@@ -168,6 +170,7 @@ GEN_RESULT_PATH_YOVLOV() {
 CLEAR_PROCESS()
 {
 	#sleep 500
+	sudo killall pt_main_thread
         sudo killall $APP
         sudo killall $APP
         sudo killall $APP
@@ -189,6 +192,7 @@ RUN() {
 	echo "..................................................."
 	FlushDisk
 	sudo dmesg -c
+	CLEAR_PROCESS
 
 	for NUM in "${num_arr[@]}"
 	do
@@ -201,6 +205,7 @@ RUN() {
 				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for CONFIG in "${config_arr[@]}"
 				do
+					CLEAR_PROCESS
 
 					for BATCHSIZE in "${batch_arr[@]}"
 					do
