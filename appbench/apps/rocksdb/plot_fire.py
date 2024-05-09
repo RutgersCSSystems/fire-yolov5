@@ -31,7 +31,7 @@ for i, config in enumerate(configs):
 
 plt.xlabel('Batch Size')
 plt.ylabel('Power (Watts)')
-plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
+#plt.title('CPU and DRAM Energy Consumption for Different Configurations and Batch Sizes')
 plt.xticks([p + bar_width / 2 for p in x], batch_sizes)
 plt.legend()
 plt.tight_layout()
