@@ -9,7 +9,6 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
-
 BATCHSIZE=128
 YOVLOV_RESULTFILE=""
 
@@ -20,9 +19,6 @@ if [ -z "$APPS" ]; then
         exit 1
 fi
 
-
-#WORKLOAD="readseq"
-#WORKLOAD="readreverse"
 WORKLOAD="readrandom"
 WRITEARGS="--benchmarks=fillseq --use_existing_db=0 --threads=1"
 READARGS="--benchmarks=$WORKLOAD --use_existing_db=1 --mmap_read=0 --threads=$THREAD"
@@ -41,49 +37,44 @@ mkdir -p $RESULTS
 declare -a num_arr=("20000000")
 NUM=20000000
 
-#declare -a thread_arr=("32" "16"  "8"  "4" "1")
-#declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 USEDB=1
-MEM_REDUCE_FRAC=1
-ENABLE_MEM_SENSITIVE=1
+MEM_REDUCE_FRAC=0
+ENABLE_MEM_SENSITIVE=0
+#declare -a membudget=("2" "3" "4" "1")
+declare -a membudget=("2")
 
-declare -a membudget=("2" "3" "4" "1")
+
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
-
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
-
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
 declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
-
-
-
-
 declare -a batch_arr=( "10" "20" "40")
-declare -a config_arr=("isolated" "OSonly-prio")
-#declare -a config_arr=("OSonly")
-
-
-#declare -a batch_arr=("10")
-#declare -a config_arr=("OSonly-prio")
+declare -a config_arr=("isolated" "OSonly-prio" "OSonly")
+declare -a config_arr=("isolated")
 
 declare -a workload_arr=("multireadrandom")
-
 #export APPPREFIX="likwid-powermeter sudo nice -n 1 sudo -u $USER"
 export APPPREFIX="likwid-powermeter"
 
+export ISOLATEDAPP="YOLO"
+echo "**********************************************"
+echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
+echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
+echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
+echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
+echo "**********************************************"
 
 
 G_TRIAL="TRIAL1"
 #Require for large database
 ulimit -n 1000000 
-sudo ulimit -n 1000000
 
 workload_arr_in=$1
 config_arr_in=$2
@@ -167,9 +158,21 @@ GEN_RESULT_PATH_YOVLOV() {
 	YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
 }
 
+CLEAR_PROCESS_DELAY()
+{
+	sleep 260
+	sudo killall pt_main_thread
+        sudo killall $APP
+        sudo killall $APP
+        sudo killall $APP
+	sudo killall python
+	sleep 7
+	sudo killall python
+}
+
+
 CLEAR_PROCESS()
 {
-	#sleep 500
 	sudo killall pt_main_thread
         sudo killall $APP
         sudo killall $APP
@@ -192,7 +195,6 @@ RUN() {
 	echo "..................................................."
 	FlushDisk
 	sudo dmesg -c
-	CLEAR_PROCESS
 
 	for NUM in "${num_arr[@]}"
 	do
@@ -218,10 +220,20 @@ RUN() {
 							RESULTS=""
 							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
 							#echo $RESULTFILE
-							if [ "$CONFIG" != "isolated" ]; then
+
+
+							if [ "$ISOLATEDAPP" == "YOLO" ]; then
+								echo $YOVLOV_RESULTFILE
+								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+								CLEAR_PROCESS_DELAY
+								continue
+							elif [ "$CONFIG" != "isolated" ]; then
 								echo $YOVLOV_RESULTFILE
 								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
 							fi
+
+
+
 							cd $DBHOME
 
 
@@ -292,6 +304,7 @@ do
 		for MEM_REDUCE_FRAC in "${membudget[@]}"
 		do
 			GETMEMORYBUDGET $MEM_REDUCE_FRAC
+			exit
 			RUN
 			$SCRIPTS/mount/releasemem.sh "NODE0"
 			$SCRIPTS/mount/releasemem.sh "NODE1"

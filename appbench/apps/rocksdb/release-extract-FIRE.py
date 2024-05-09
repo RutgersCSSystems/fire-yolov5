@@ -69,7 +69,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.ylabel("Througput in MB/s")
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, batchsize_arr)
-    plt.legend(["RocksDB - Isolated", "RocksDB - Sharing", "RocksDB - Sharing + high-priority"], loc='upper right')
+    plt.legend(["Isolated", "Sharing", "Sharing + high-priority"], loc='upper right')
     plt.tight_layout()
 
     OUTPUTGRAPH = os.path.join(result_path, f"RocksDB_YOLO_{access_pattern}_plot.pdf")
