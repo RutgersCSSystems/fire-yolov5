@@ -17,8 +17,8 @@ fi
 
 
 WORKLOAD="yolov5-fire-detection"
-APPPREFIX="/usr/bin/time -v"
-export APPPREFIX="likwid-powermeter"
+export APPPREFIX="/usr/bin/time -v"
+#export APPPREFIX="likwid-powermeter"
 
 
 APP=python
