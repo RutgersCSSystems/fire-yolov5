@@ -4,9 +4,9 @@
 #  1.APPS
 sudo apt update
 sudo apt upgrade 
-sudo apt install ubuntu-drivers-common
+sudo apt install -y ubuntu-drivers-common
 sudo ubuntu-drivers devices
-sudo apt install nvidia-driver-535
-sudo apt install nvidia-cuda-toolkit
+sudo apt install -y nvidia-driver-535
+sudo apt install -y nvidia-cuda-toolkit
 #sudo reboot now
 
