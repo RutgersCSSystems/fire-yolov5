@@ -1217,7 +1217,7 @@ void inline record_open(struct file_desc desc){
 		struct read_ra_req ra;
 		ra.data = NULL;
 		readahead_info(fd, 0, 0, &ra);
-		debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
+		//debug_printf("%s: DONE first READAHEAD: %ld in %lf microsec new\n", __func__, ptd.mytid, get_micro_sec(&start, &end));
 #endif
 
 #endif //defined(MODIFIED_RA) &&  defined(READAHEAD_INFO_PC_STATE)
@@ -1721,7 +1721,7 @@ void mmap_predictor_prefetch(int file_fd, off_t file_offset, size_t length) {
         fp = fd_to_file_pred.at(arg->fd);
     }
     catch(const std::out_of_range &orr){
-        debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
+        //debug_printf("ERR:%s fp Out of Range, fd:%d, tid:%ld\n", __func__, a->fd, gettid());
         return;
     }
 #endif
@@ -1785,7 +1785,7 @@ ssize_t pwrite(int fd, const void *data, size_t size, off_t offset){
 
 	ssize_t amount_write;
 
-	// printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
+	printf("%s: fd=%d, offset=%ld, size=%ld\n", __func__, fd, offset, size);
 
 #ifdef INTERVAL_BITMAP
 	read_predictor(NULL, size, fd, offset);

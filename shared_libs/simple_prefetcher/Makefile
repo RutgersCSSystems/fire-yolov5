@@ -22,7 +22,7 @@ SOURCES = frontend.cpp predictor.cpp uinode.cpp mpiio.cpp utils/thpool.c utils/b
 SOURCESBASIC = libOSonly.cpp
 
 
-#DEBUG=-DDEBUG
+DEBUG=-DDEBUG
 #ENABLE_LIB_STATS=-DENABLE_LIB_STATS #-DENABLE_PRED_STATS ##Comment if dont need lib stats
 #ENABLE_OS_STATS=-DENABLE_OS_STATS ##comment if dont need OS STATS
 #ENABLE_MPI=-DENABLE_MPI

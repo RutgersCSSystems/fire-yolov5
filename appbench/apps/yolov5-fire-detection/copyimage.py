@@ -4,10 +4,20 @@ import random
 import sys
 import subprocess
 
-source_image_directory = "/users/kannan11/ssd/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/images-orig"
-source_label_directory = "/users/kannan11/ssd/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/labels-orig"
-destination_image_directory = "/users/kannan11/ssd/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/images"
-destination_label_directory = "/users/kannan11/ssd/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/labels"
+# Get the value of the YOLO environment variable
+yolo_path = os.environ.get('YOLO')
+
+# If YOLO environment variable is not set, we'll use an empty string
+if yolo_path is None:
+    print("Warning: $YOLO environment variable is not set.")
+    yolo_path = ""
+
+# Update the directory paths
+source_image_directory = os.path.join(yolo_path, "datasets/fire/train/images-orig")
+source_label_directory = os.path.join(yolo_path, "datasets/fire/train/labels-orig")
+destination_image_directory = os.path.join(yolo_path, "datasets/fire/train/images")
+destination_label_directory = os.path.join(yolo_path, "datasets/fire/train/labels")
+
 
 
 def make_directory(directory_path):
@@ -21,7 +31,7 @@ def make_directory(directory_path):
 def copy_directory_contents(source_dir, destination_dir):
     try:
         # Construct the shell command to copy directory contents
-        command = f"cp -r {source_dir}/* {destination_dir}"
+        command = f"cp {source_dir}/* {destination_dir}"
 
         # Execute the shell command
         subprocess.run(command, shell=True, check=True)

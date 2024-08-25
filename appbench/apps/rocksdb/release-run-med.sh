@@ -41,7 +41,7 @@ NUM=4000000
 #declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
-USEDB=1
+USEDB=0
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
@@ -52,7 +52,8 @@ declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
-
+declare -a workload_arr=("fillrandom")
+declare -a config_arr=("Vanilla")
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -141,13 +142,13 @@ RUN() {
 
 			for THREAD in "${thread_arr[@]}"
 			do
-				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=8 --num=$NUM --seed=100000000"
+				PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --seed=100 --num_levels=6 --target_file_size_base=33554432 -max_background_compactions=16 --num=$NUM --seed=100000000"
 				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for CONFIG in "${config_arr[@]}"
 				do
 
-					for BATCHSIZE in "${batch_arr[@]}"
-					do
+					#for BATCHSIZE in "${batch_arr[@]}"
+					#do
 						cd $DBHOME
 
 						for WORKLOAD in "${workload_arr[@]}"
@@ -168,16 +169,17 @@ RUN() {
 							echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
 							export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+							$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
 							export LD_PRELOAD=""
 							sudo dmesg -c &>> $RESULTFILE
 							echo ".......FINISHING $CONFIG......................"
 							#cat $RESULTFILE | grep "MB/s"
 							FlushDisk
 						done
-				done
+				#done
 			done
 		done
+	done
 }
 
 GETMEMORYBUDGET() {

@@ -1126,7 +1126,7 @@ DEFINE_int32(secondary_update_interval, 5,
 
 #endif  // ROCKSDB_LITE
 
-DEFINE_bool(report_bg_io_stats, false,
+DEFINE_bool(report_bg_io_stats, true,
             "Measure times spents on I/Os while in compactions. ");
 
 DEFINE_bool(use_stderr_info_logger, false,
