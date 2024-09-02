@@ -22,11 +22,12 @@ unzip -d ZIPFILENAME //You will see train and val folder
 cd $BASE
 source scripts/setvars.sh
 cd $YOLO  //Navigate to the yolov5-fire-detection folder
-mkdir datasets/fire/train/images-orig
-mkdir datasets/fire/train/labels-orig
-cp -r datasets/fire/train/images datasets/fire/train/images-orig
-cp -r datasets/fire/train/labels datasets/fire/train/labels-orig
-python copyimage.py 20 //Scale the factor by 20 times
+./gendata.sh 20 //Scale the factor by 20 times
+#mkdir datasets/fire/train/images-orig
+#mkdir datasets/fire/train/labels-orig
+#cp -r datasets/fire/train/images datasets/fire/train/images-orig
+#cp -r datasets/fire/train/labels datasets/fire/train/labels-orig
+#python copyimage.py 20 //Scale the factor by 20 times
 ```
 
 
