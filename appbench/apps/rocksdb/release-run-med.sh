@@ -41,7 +41,7 @@ NUM=4000000
 #declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
-USEDB=0
+USEDB=1
 MEM_REDUCE_FRAC=0
 ENABLE_MEM_SENSITIVE=0
 
@@ -52,7 +52,7 @@ declare -a thread_arr=("32")
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
-declare -a workload_arr=("fillrandom")
+declare -a workload_arr=("multireadrandom")
 declare -a config_arr=("Vanilla")
 
 G_TRIAL="TRIAL1"
@@ -169,7 +169,7 @@ RUN() {
 							echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
 
 							export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
-							$APPPREFIX "./"$APP $PARAMS $READARGS #&> $RESULTFILE
+							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
 							export LD_PRELOAD=""
 							sudo dmesg -c &>> $RESULTFILE
 							echo ".......FINISHING $CONFIG......................"

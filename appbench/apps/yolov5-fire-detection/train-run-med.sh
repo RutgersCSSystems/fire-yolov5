@@ -92,9 +92,10 @@ COMPILE_AND_WRITE()
         cp yolov5-changes/utils/dataloaders.py yolov5/utils/dataloaders.py
 	cd yolov5
 	#python train.py --img 640 --batch $BATCH_SIZE --epochs 10 --data ../fire_config.yaml --weights yolov5s.pt --workers $INSTANCES
-	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache
 	#python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-size 1.0 --cache-control-pipe ./cc_pipe
 	$APPPREFIX python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-control-pipe ./cc_pipe
+	#$APPPREFIX python train.py --img 600 --batch $BATCH_SIZE --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0
+
 }
 
 COMPILE_AND_WRITE

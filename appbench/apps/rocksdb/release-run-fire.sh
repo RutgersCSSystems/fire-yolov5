@@ -37,19 +37,21 @@ RESULTFILE=""
 mkdir -p $RESULTS
 
 
-#declare -a config_arr=("Vanilla" "Cross_Naive" "CPBI" "CNI" "CPBV" "CPNV" "CPNI")
 declare -a num_arr=("20000000")
 NUM=20000000
+#declare -a num_arr=("1000000")
+#NUM=1000000
+
 
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
 #declare -a trials=("TRIAL1" "TRIAL2" "TRIAL3")
 USEDB=1
-MEM_REDUCE_FRAC=0
-ENABLE_MEM_SENSITIVE=0
+MEM_REDUCE_FRAC=1
+ENABLE_MEM_SENSITIVE=1
 
-declare -a membudget=("3")
+declare -a membudget=("1")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
@@ -65,8 +67,9 @@ declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
 
 
 
-declare -a batch_arr=( "6" "8")
+declare -a batch_arr=( "40")
 declare -a config_arr=("OSonly" "isolated" "OSonly-prio")
+declare -a config_arr=("OSonly")
 declare -a workload_arr=("multireadrandom")
 
 export APPPREFIX="nice -n -20"
@@ -108,14 +111,14 @@ RUN_FIRE_ML() {
 
 	BATCHSIZE=$2
 	cd ../yolov5-fire-detection
-	cd datasets/fire/train
-
-	rm -rf images/* labels/*
-	cp images-orig/* images/
-	cp labels-orig/* labels/
-	python copyimage.py $BATCHSIZE
-	cd ../../../
-	./train-run-med.sh 40 &> $1 &
+	#cd datasets/fire/train
+	#rm -rf images/* labels/*
+	#cp images-orig/* images/
+	#cp labels-orig/* labels/
+	#python copyimage.py $BATCHSIZE
+	#`./gendata.sh 10
+	#cd ../../../
+	./train-run-med.sh $BATCHSIZE &> $1 
 	sleep 5
 }
 
@@ -140,7 +143,7 @@ GEN_RESULT_PATH() {
 		mkdir -p $RESULTS
 		RESULTFILE=$RESULTS/$CONFIG".out"
 	else
-        	RESULTS=$OUTPUTDIR"-"$G_TRIAL/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/$THREAD/
+        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/
 		mkdir -p $RESULTS
 		RESULTFILE=$RESULTS/$CONFIG".out"
 	fi
@@ -155,20 +158,32 @@ GEN_RESULT_PATH_YOVLOV() {
 	NUM=$4
 	let KEYCOUNT=$NUM/1000000
 	RESULTFILE=""
-        RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
-	mkdir -p $RESULTS
-	YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+
+	if [ "$ENABLE_MEM_SENSITIVE" -eq "0" ]
+	then 
+        	RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/$WORKLOAD/
+		mkdir -p $RESULTS
+		#YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+		YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+	else
+		 RESULTS=$OUTPUTDIR/$APPOUTPUTNAME/$KEYCOUNT"M-KEYS"/$THREAD/"batchsize-"$BATCHSIZE/"MEMFRAC"$MEM_REDUCE_FRAC/$WORKLOAD/
+		 mkdir -p $RESULTS
+		 YOVLOV_RESULTFILE=$RESULTS/"YOVLOVOUT-"$CONFIG.out
+	fi
+	echo $RESULTFILE
+
 }
 
 CLEAR_PROCESS()
 {
-	sleep 500
-        sudo killall $APP
-        sudo killall $APP
-        sudo killall $APP
+	sleep 5
+        #sudo killall $APP
+        #sudo killall $APP
+        #sudo killall $APP
 	sudo killall python
-	sleep 7
 	sudo killall python
+	sudo killall pt_main_thread
+	sleep 5
 }
 
 
@@ -203,17 +218,8 @@ RUN() {
 
 						for WORKLOAD in "${workload_arr[@]}"
 						do
-
 							#CLEAR_PROCESS
-							RESULTS=""
-							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM
-							#echo $RESULTFILE
-							if [ "$CONFIG" != "isolated" ]; then
-								echo $YOVLOV_RESULTFILE
-								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
-							fi
 							cd $DBHOME
-
 
 							RESULTS=""
 							READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
@@ -230,8 +236,19 @@ RUN() {
 
 							#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 							#export LD_PRELOAD=/usr/lib/lib_OSonly.so
-							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE
+							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE &
 							export LD_PRELOAD=""
+
+
+							RESULTS=""
+							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM $BATCHSIZE
+							#echo $RESULTFILE
+							if [ "$CONFIG" != "isolated" ]; then
+								echo $YOVLOV_RESULTFILE
+								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
+							fi
+
+
 							sudo dmesg -c &>> $RESULTFILE
 							echo ".......FINISHING $CONFIG......................"
 							#cat $RESULTFILE | grep "MB/s"
@@ -282,7 +299,6 @@ do
 		for MEM_REDUCE_FRAC in "${membudget[@]}"
 		do
 			GETMEMORYBUDGET $MEM_REDUCE_FRAC
-			exit
 			RUN
 			$SCRIPTS/mount/releasemem.sh "NODE0"
 			$SCRIPTS/mount/releasemem.sh "NODE1"

@@ -1,5 +1,7 @@
 #!/bin/bash
 set -x 
+SIZE=$1
+
 cd $BASE
 source scripts/setvars.sh
 cd $YOLO  
@@ -13,4 +15,4 @@ rm -rf $YOLO/datasets/fire/train/images
 cp $YOLO/datasets/fire/train/labels/* $YOLO/datasets/fire/train/labels-orig
 rm -rf $YOLO/datasets/fire/train/labels
 cd $YOLO
-python copyimage.py 20 
+python copyimage.py $SIZE

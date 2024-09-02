@@ -32,63 +32,55 @@ output_file = "RESULT-YOLO.csv"
 #    ops_sec_value = float(parts[ops_index - 1])
 #    return round(ops_sec_value)
 
-def extract_and_round_ops_per_sec(line):
-    match = re.search(r"(\d+\.\d+)s/it", line)  # Search for the pattern of the number followed by "s/it"
-    if match:
-        ops_sec_value = float(match.group(1))  # Extract the matched number
-        return round(ops_sec_value)
-    else:
-        return None  # Return None if the pattern is not found
 
+def extract_ops_per_sec_values(file_content):
+    values = []
+    for line in file_content.split('\n'):
+        match = re.search(r"(\d+\.\d+)s/it", line)
+        if match:
+            values.append(float(match.group(1)))
+    return values
+
+def calculate_average_ops_per_sec(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            content = file.read()
+            values = extract_ops_per_sec_values(content)
+            if values:
+                return round(np.mean(values), 2)
+    return None
 
 def plot_access_pattern(datafile, access_pattern, result_path):
-
     workload_data = [[], [], []]
-
     for memfrac in memfrac_arr:
         for config in config_arr:
-            file_path = os.path.join(base_dir, f"MEMFRAC{memfrac}", thread_arr[0],  "batchsize-40", access_pattern,  "YOVLOVOUT-" + f"{config}.out")
-            #file_path = os.path.join(base_dir, thread_arr[0], f"batchsize-{batchsize}", access_pattern, f"{config}.out")
-            if os.path.exists(file_path):
-                with open(file_path, 'r') as file:
-                    lines = file.readlines()
-                    ops_sec_found = False
-                    for line in lines:
-                        if "s/it" in line:
-                            ops_sec_value = extract_and_round_ops_per_sec(line)
-                            if config == "isolated":
-                                workload_data[0].append(ops_sec_value)
-                            elif config == "OSonly":
-                                workload_data[1].append(ops_sec_value)
-                            #elif config == "OSonly-prio":
-                             #   workload_data[2].append(ops_sec_value)
-                            ops_sec_found = True
-                            break
-                    #if not ops_sec_found:
-                        # Set ops_sec_value to 0 if not found
-                     #   workload_data[2].append(0)  # Managed configuration
+            file_path = os.path.join(base_dir, thread_arr[0], "batchsize-40", f"MEMFRAC{memfrac}", access_pattern, "YOVLOVOUT-" + f"{config}.out")
+            avg_value = calculate_average_ops_per_sec(file_path)
+            if avg_value is not None:
+                if config == "isolated":
+                    workload_data[0].append(avg_value)
+                elif config == "OSonly":
+                    workload_data[1].append(avg_value)
+                # Uncomment the following if you want to include OSonly-prio
+                # elif config == "OSonly-prio":
+                #     workload_data[2].append(avg_value)
 
     plt.figure(figsize=(6, 4))
-    x = np.arange(len(memfrac_arr))  # x-axis positions
+    x = np.arange(len(memfrac_arr))
     width = 0.2
-
     plt.bar(x - width, workload_data[0], width=width, label="Isolated")
     plt.bar(x, workload_data[1], width=width, label="OSonly")
-    #plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
-
+    # plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
     plt.xlabel("Memory Size (GB)", fontsize=16)
-    plt.ylabel("Latency (seconds/iteration)", fontsize=16)
-    #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
+    plt.ylabel("Average Latency (seconds/iteration)", fontsize=16)
     plt.xticks(x, memfrac_arr_proxy, fontsize=16)
     plt.yticks(fontsize=16)
     plt.legend(["Isolated", "Sharing"], loc='upper right', fontsize=16)
     plt.tight_layout()
-
     OUTPUTGRAPH = os.path.join(result_path, f"YOLO_ROCKSDB_{access_pattern}_plot.pdf")
     print(OUTPUTGRAPH)
     plt.savefig(OUTPUTGRAPH)
-    plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
-
+    plt.close()
 
 # Main function to iterate through workloads, extract MB/s, and plot results
 def plot(output_file, result_path):
@@ -97,51 +89,38 @@ def plot(output_file, result_path):
 
 
 
-# Main function to iterate through workloads, extract MB/s, and plot results
 def main():
     with open(output_file, mode='w', newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
+        
         # Write the header row with column names
-        #header_row = ["Workload"] + [f"{config}_{batchsize}" for config in config_out_arr for batchsize in memfrac_arr]
         header_row = ["Workload"] + [f"{config}_{memfrac}" for memfrac in memfrac_arr for config in config_out_arr]
         csv_writer.writerow(header_row)
-
+        
         # Initialize data for plotting
         data = [[] for _ in config_out_arr]
-
+        
         for workload in workload_arr:
             workload_data = [workload]
             for memfrac in memfrac_arr:
                 for i, config in enumerate(config_arr):
                     result_path = os.path.join(base_dir, thread_arr[0])
-                    #file_path = os.path.join(base_dir, thread_arr[0], f"batchsize-{batchsize}", workload, f"{config}.out")
-                    file_path = os.path.join(base_dir, f"MEMFRAC{memfrac}", thread_arr[0],  "batchsize-40", workload,  "YOVLOVOUT-" + f"{config}.out")
+                    file_path = os.path.join(base_dir, thread_arr[0], "batchsize-40", f"MEMFRAC{memfrac}", workload, "YOVLOVOUT-" + f"{config}.out")
                     print(file_path)
-                    if os.path.exists(file_path):
-                        with open(file_path, 'r') as file:
-                            lines = file.readlines()
-                            ops_sec_found = False
-                            for line in lines:
-                                if "s/it" in line:
-                                    ops_sec_value = None
-                                    try:
-                                        ops_sec_value = extract_and_round_ops_per_sec(line)
-                                    except ValueError:
-                                        pass  # If value cannot be converted to float, leave ops_sec_value as None
-                                    workload_data.append(ops_sec_value)
-                                    data[i].append(ops_sec_value)
-                                    ops_sec_found = True
-                                    break
-                            if not ops_sec_found:
-                                # Handle the case where "MB/s" is not found in the file
-                                workload_data.append(0)  # Default value if "MB/s" not found
+                    
+                    avg_value = calculate_average_ops_per_sec(file_path)
+                    
+                    if avg_value is not None:
+                        workload_data.append(avg_value)
+                        data[i].append(avg_value)
                     else:
-                        # Handle the case where file for configuration is not present
-                        workload_data.append(0)  # Default value if file not found
+                        # Handle the case where file is not present or no valid data found
+                        workload_data.append(0)
+                        data[i].append(0)
+            
             csv_writer.writerow(workload_data)
-
-    plot(output_file, result_path)
+    
+    plot_access_pattern(output_file, workload_arr[-1], result_path)
 
 if __name__ == "__main__":
     main()
-

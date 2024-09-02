@@ -53,7 +53,7 @@ declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
 declare -a batch_arr=("768" "512" "256" "128")
-declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
+declare -a config_arr=("Vanilla" "isolated")
 
 declare -a batch_arr=( "10" "20" "40")
 declare -a config_arr=("isolated" "OSonly-prio" "OSonly")
@@ -64,6 +64,8 @@ declare -a workload_arr=("multireadrandom")
 export APPPREFIX="likwid-powermeter"
 
 export ISOLATEDAPP="YOLO"
+export ISOLATEDAPP="rocksdb"
+
 echo "**********************************************"
 echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
 echo "WARNING-------SETTING ISOLATEDAPP $ISOLATEDAPP"
