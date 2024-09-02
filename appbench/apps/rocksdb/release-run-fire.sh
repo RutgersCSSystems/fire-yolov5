@@ -9,17 +9,14 @@ WRITE_BUFF_SIZE=67108864
 DBDIR=$DBHOME/DATA
 #DBDIR=/mnt/remote/DATA
 
-
 BATCHSIZE=128
 YOVLOV_RESULTFILE=""
-
 
 if [ -z "$APPS" ]; then
         echo "APPS environment variable is undefined."
         echo "Did you setvars? goto Base directory and $ source ./scripts/setvars.sh"
         exit 1
 fi
-
 
 #WORKLOAD="readseq"
 #WORKLOAD="readreverse"
@@ -36,13 +33,8 @@ RESULTFILE=""
 
 mkdir -p $RESULTS
 
-
 declare -a num_arr=("20000000")
 NUM=20000000
-#declare -a num_arr=("1000000")
-#NUM=1000000
-
-
 #declare -a thread_arr=("32" "16"  "8"  "4" "1")
 #declare -a membudget=("6" "4" "2" "8")
 #echo "CAUTION, CAUTION, USE EXITING DB is set to 0 for write workload testing!!!"
@@ -55,17 +47,11 @@ declare -a membudget=("1")
 declare -a trials=("TRIAL1")
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
 declare -a thread_arr=("32")
-
 declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF")
-
 
 #declare -a config_arr=("CIPI_PERF"  "CPBI_PERF")
 declare -a batch_arr=("768" "512" "256" "128")
 declare -a config_arr=("CIPI_PERF" "Vanilla" "isolated")
-
-
-
-
 
 declare -a batch_arr=( "40")
 declare -a config_arr=("OSonly" "isolated" "OSonly-prio")
@@ -74,8 +60,6 @@ declare -a workload_arr=("multireadrandom")
 
 export APPPREFIX="nice -n -20"
 export APPPREFIX=""
-
-
 
 G_TRIAL="TRIAL1"
 #Require for large database
@@ -111,20 +95,11 @@ RUN_FIRE_ML() {
 
 	BATCHSIZE=$2
 	cd ../yolov5-fire-detection
-	#cd datasets/fire/train
-	#rm -rf images/* labels/*
-	#cp images-orig/* images/
-	#cp labels-orig/* labels/
-	#python copyimage.py $BATCHSIZE
 	#`./gendata.sh 10
 	#cd ../../../
 	./train-run-med.sh $BATCHSIZE &> $1 
 	sleep 5
 }
-
-
-
-
 
 GEN_RESULT_PATH() {
 
@@ -187,9 +162,7 @@ CLEAR_PROCESS()
 }
 
 
-
 RUN() {
-
         #CLEAR_DATA
 	echo "BEGINNING TO WARM UP ......."
 	cd $PREDICT_LIB_DIR
@@ -203,7 +176,6 @@ RUN() {
 	for NUM in "${num_arr[@]}"
 	do
 			./compile.sh &>> out.txt
-
 			cd $DBHOME
 			for THREAD in "${thread_arr[@]}"
 			do
@@ -211,34 +183,26 @@ RUN() {
 				#PARAMS="--db=$DBDIR --value_size=$VALUE_SIZE --wal_dir=$DBDIR/WAL_LOG --sync=$SYNC --key_size=$KEYSIZE --write_buffer_size=$WRITE_BUFF_SIZE --num=$NUM"
 				for CONFIG in "${config_arr[@]}"
 				do
-
 					for BATCHSIZE in "${batch_arr[@]}"
 					do
 						cd $DBHOME
-
 						for WORKLOAD in "${workload_arr[@]}"
 						do
 							#CLEAR_PROCESS
 							cd $DBHOME
-
 							RESULTS=""
 							READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
 							GEN_RESULT_PATH $WORKLOAD $CONFIG $THREAD $NUM $BATCHSIZE
 
 							mkdir -p $RESULTS
-
 							echo "RUNNING $CONFIG and writing results to $RESULTFILE"
 							echo "..................................................."
-
 							rm -rf $DBDIR/LOCK
-
 							echo "$APPPREFIX "./"$APP $PARAMS $READARGS"
-
 							#export LD_PRELOAD=/usr/lib/lib_$CONFIG.so
 							#export LD_PRELOAD=/usr/lib/lib_OSonly.so
 							$APPPREFIX "./"$APP $PARAMS $READARGS &> $RESULTFILE &
 							export LD_PRELOAD=""
-
 
 							RESULTS=""
 							GEN_RESULT_PATH_YOVLOV $WORKLOAD $CONFIG $THREAD $NUM $BATCHSIZE
@@ -247,7 +211,6 @@ RUN() {
 								echo $YOVLOV_RESULTFILE
 								RUN_FIRE_ML $YOVLOV_RESULTFILE $BATCHSIZE
 							fi
-
 
 							sudo dmesg -c &>> $RESULTFILE
 							echo ".......FINISHING $CONFIG......................"
