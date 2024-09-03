@@ -1,6 +1,19 @@
+
+
+
 ### Compilation for changes made by Sudarsun for HazardMon project.
 ```
 cd ioopt //source folder
+```
+
+### Change where you would need data to be generated
+First open, scripts/setvars.sh and change this variable to some name you can identify.
+```
+export MACHINE_NAME="HOTINFRA-MEMFRAC-GPU"
+```
+
+### Set the environmental variable
+```
 source scripts/setvars.sh
 cd appbench/apps/yolov5-fire-detection
 ./install_cuda.sh #only if you have and are running on GPU and installing CUDA
@@ -23,11 +36,6 @@ cd $BASE
 source scripts/setvars.sh
 cd $YOLO  //Navigate to the yolov5-fire-detection folder
 ./gendata.sh 20 //Scale the factor by 20 times
-#mkdir datasets/fire/train/images-orig
-#mkdir datasets/fire/train/labels-orig
-#cp -r datasets/fire/train/images datasets/fire/train/images-orig
-#cp -r datasets/fire/train/labels datasets/fire/train/labels-orig
-#python copyimage.py 20 //Scale the factor by 20 times
 ```
 
 
@@ -35,3 +43,21 @@ cd $YOLO  //Navigate to the yolov5-fire-detection folder
 ```
 ./train-run-med.sh 20 //where 20 indicates the batch size
 ```
+
+### Now Navigate to RocksDB 
+```
+cd $BASE/appbench/apps/rocksdb
+./compile.sh
+./gendata-run-med.sh
+./release-run-fire-clean.sh
+```
+
+
+
+#### OLD instructions; SKIP THIS
+#mkdir datasets/fire/train/images-orig
+#mkdir datasets/fire/train/labels-orig
+#cp -r datasets/fire/train/images datasets/fire/train/images-orig
+#cp -r datasets/fire/train/labels datasets/fire/train/labels-orig
+#python copyimage.py 20 //Scale the factor by 20 times
+
