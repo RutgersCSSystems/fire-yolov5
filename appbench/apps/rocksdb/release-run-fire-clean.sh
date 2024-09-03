@@ -3,7 +3,7 @@
 set -x
 
 # Set up logging
-LOGFILE="benchmark_script_$(date +%Y%m%d_%H%M%S).log"
+LOGFILE="rocksdb_yolo_script_$(date +%Y%m%d_%H%M%S).log"
 exec > >(tee -a "$LOGFILE") 2>&1
 
 echo "Script started at $(date)"
@@ -46,13 +46,23 @@ ENABLE_MEM_SENSITIVE=1
 
 # Arrays
 declare -a num_arr=("20000000")
+
 declare -a membudget=("10" "20" "40" "60" "50" "30")
+declare -a membudget=("40" "50" "30" "20")
+declare -a membudget=("10")
+
 declare -a trials=("TRIAL1")
+
 declare -a workload_arr=("multireadrandom" "readseq" "readwhilescanning" "readreverse")
+declare -a workload_arr=("multireadrandom")
+
 declare -a thread_arr=("32")
 #declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF" "isolated-yolo" "isolated-rocksdb")
 declare -a config_arr=("OSonly" "isolated-yolo" "isolated-rocksdb")
+
 declare -a batch_arr=("20" "40" "60" "80")
+declare -a batch_arr=("40")
+
 
 # APPPREFIX options
 APPPREFIX="nice -n -20"
@@ -185,22 +195,34 @@ GETMEMORYBUDGET() {
     sudo rm -rf /mnt/ext4ramdisk /mnt/ext4ramdisk/*
     "$SCRIPTS/mount/releasemem.sh" "NODE0"
     "$SCRIPTS/mount/releasemem.sh" "NODE1"
+
+    FlushDisk    
     
     let NUMAFREE0=$(numactl --hardware | grep "node 0 free:" | awk '{print $4}')
     let NUMAFREE1=$(numactl --hardware | grep "node 1 free:" | awk '{print $4}')
     
-    local REDUCTION_FACTOR=$(awk "BEGIN {printf \"%.2f\", $PERCENTAGE/100}")
+    #local REDUCTION_FACTOR=$(awk "BEGIN {printf \"%.2f\", $PERCENTAGE/100}")
+    local REDUCTION_FACTOR=$(awk "BEGIN {printf \"%.2f\", (100 - $PERCENTAGE)/100}")
     local NUMANODE0=$(awk "BEGIN {printf \"%.0f\", $NUMAFREE0 * $REDUCTION_FACTOR}")
-    local NUMANODE1=$(awk "BEGIN {printf \"%.0f\", $NUMAFREE0 * $REDUCTION_FACTOR}")
+    #local NUMANODE1=$(awk "BEGIN {printf \"%.0f\", $NUMAFREE0 * $REDUCTION_FACTOR}")
+    #We reduce the memory node 1 to 500MB
+    local NUMANODE1=500
     
     local DISKSZ0=$((NUMAFREE0 - NUMANODE0))
     local DISKSZ1=$((NUMAFREE1 - NUMANODE1))
     
     echo "MEMORY $PERCENTAGE%"
-    echo "***NODE 0: $DISKSZ0 ****NODE 1: $DISKSZ1"
+    echo "REDUCING NODE 0: $DISKSZ0 ****NODE 1: $DISKSZ1"
     
     numactl --membind=0 "$SCRIPTS/mount/reducemem.sh" $DISKSZ0 "NODE0"
     numactl --membind=1 "$SCRIPTS/mount/reducemem.sh" $DISKSZ1 "NODE1"
+
+    let NUMAFREE0=$(numactl --hardware | grep "node 0 free:" | awk '{print $4}')
+    let NUMAFREE1=$(numactl --hardware | grep "node 1 free:" | awk '{print $4}')
+
+    echo "AFTER REDUCING MEMORY NODE 0: $NUMAFREE0 ****NODE 1: $NUMAFREE1"
+
+
 }
 
 
