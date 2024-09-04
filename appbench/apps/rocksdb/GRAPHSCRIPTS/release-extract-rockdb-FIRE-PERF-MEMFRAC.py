@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # Define the arrays
 thread_arr = ["32"]
 memfrac_arr = ["10", "20", "30", "40", "50"]  # Adjust batch sizes as needed
-memfrac_arr_proxy = ["48GB", "24GB", "12GB", "6GB"]  # Adjust batch sizes as needed
+memfrac_arr_proxy = ["90GB", "80GB", "70GB", "60GB", "50GB"]  # Adjust batch sizes as needed
 
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
@@ -48,7 +48,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
                     for line in lines:
                         if "MB/s" in line:
                             ops_sec_value = extract_and_round_ops_per_sec(line)
-                            if config == "isolated":
+                            if config == "isolated-rocksdb":
                                 workload_data[0].append(ops_sec_value)
                             elif config == "OSonly":
                                 workload_data[1].append(ops_sec_value)
