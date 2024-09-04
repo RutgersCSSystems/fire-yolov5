@@ -82,7 +82,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.yticks(fontsize=16)
     plt.legend(["Isolated", "Sharing"], loc='upper right', fontsize=16)
     plt.tight_layout()
-    OUTPUTGRAPH = os.path.join(result_path, f"YOLO_ROCKSDB_{access_pattern}_plot.pdf")
+    OUTPUTGRAPH = os.path.join(result_path, f"YOLO_ROCKSDB_{access_pattern}_batchsize_{batchsize}_plot.pdf")
     print(OUTPUTGRAPH)
     plt.savefig(OUTPUTGRAPH)
     plt.close()

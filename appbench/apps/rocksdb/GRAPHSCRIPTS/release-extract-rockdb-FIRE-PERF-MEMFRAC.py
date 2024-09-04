@@ -79,7 +79,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.legend(["Isolated", "Sharing"], loc='upper right', fontsize=16)
     plt.tight_layout()
 
-    OUTPUTGRAPH = os.path.join(result_path, f"RocksDB_YOLO_{access_pattern}_plot.pdf")
+    OUTPUTGRAPH = os.path.join(result_path, f"RocksDB_YOLO_{access_pattern}_{batchsize}_plot.pdf")
     print(OUTPUTGRAPH)
     plt.savefig(OUTPUTGRAPH)
     plt.close()  # Close the plot to avoid overlapping when multiple plots are generated
