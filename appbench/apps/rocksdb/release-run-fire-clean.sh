@@ -48,8 +48,8 @@ ENABLE_MEM_SENSITIVE=1
 declare -a num_arr=("20000000")
 
 declare -a membudget=("10" "20" "40" "60" "50" "30")
-declare -a membudget=("40" "50" "30" "20")
-declare -a membudget=("10")
+declare -a membudget=("40" "50" "30" "20" "10")
+#declare -a membudget=("10")
 
 declare -a trials=("TRIAL1")
 
@@ -61,7 +61,7 @@ declare -a thread_arr=("32")
 declare -a config_arr=("OSonly" "isolated-yolo" "isolated-rocksdb")
 
 declare -a batch_arr=("20" "40" "60" "80")
-declare -a batch_arr=("40")
+declare -a batch_arr=("60" "20" "80")
 
 
 # APPPREFIX options

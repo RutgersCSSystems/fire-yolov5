@@ -6,16 +6,18 @@ import re
 
 # Define the arrays
 thread_arr = ["32"]
-memfrac_arr = ["1", "2", "3", "4"]  # Adjust batch sizes as needed
-memfrac_arr_proxy = ["48GB", "24GB", "12GB", "6GB"]  # Adjust batch sizes as needed
+memfrac_arr = ["10", "20", "30", "40", "50"]  # Adjust batch sizes as needed
+memfrac_arr_proxy = ["90GB", "80GB", "70GB", "60GB", "50GB"]  # Adjust batch sizes as needed
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
 config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
 config_out_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
 
-config_arr = ["isolated", "OSonly"]  # Updated order
-config_out_arr = ["isolated", "OSonly"]  # Updated order
+#config_arr = ["isolated", "OSonly"]  # Updated order
+#config_out_arr = ["isolated", "OSonly"]  # Updated order
+config_arr = ["isolated-yolo", "OSonly"]  # Updated order
+config_out_arr = ["isolated-yolo", "OSonly"]  # Updated order
 
 
 # Base directory for output files
@@ -57,10 +59,11 @@ def plot_access_pattern(datafile, access_pattern, result_path):
             file_path = os.path.join(base_dir, thread_arr[0], "batchsize-40", f"MEMFRAC{memfrac}", access_pattern, "YOVLOVOUT-" + f"{config}.out")
             avg_value = calculate_average_ops_per_sec(file_path)
             if avg_value is not None:
-                if config == "isolated":
+                if config == "isolated-yolo":
                     workload_data[0].append(avg_value)
                 elif config == "OSonly":
                     workload_data[1].append(avg_value)
+                print(workload_data[0])
                 # Uncomment the following if you want to include OSonly-prio
                 # elif config == "OSonly-prio":
                 #     workload_data[2].append(avg_value)
@@ -68,8 +71,8 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.figure(figsize=(6, 4))
     x = np.arange(len(memfrac_arr))
     width = 0.2
-    plt.bar(x - width, workload_data[0], width=width, label="Isolated")
-    plt.bar(x, workload_data[1], width=width, label="OSonly")
+    plt.bar(x - width, workload_data[0], width=width, label="isolated-yolo")
+    #plt.bar(x, workload_data[1], width=width, label="OSonly")
     # plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
     plt.xlabel("Memory Size (GB)", fontsize=16)
     plt.ylabel("Average Latency (seconds/iteration)", fontsize=16)

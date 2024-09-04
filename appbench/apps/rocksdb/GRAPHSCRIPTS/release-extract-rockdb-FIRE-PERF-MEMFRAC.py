@@ -5,17 +5,17 @@ import matplotlib.pyplot as plt
 
 # Define the arrays
 thread_arr = ["32"]
-memfrac_arr = ["1", "2", "3", "4"]  # Adjust batch sizes as needed
+memfrac_arr = ["10", "20", "30", "40", "50"]  # Adjust batch sizes as needed
 memfrac_arr_proxy = ["48GB", "24GB", "12GB", "6GB"]  # Adjust batch sizes as needed
 
 workload_arr = ["multireadrandom", "readreverse", "readseq", "readwhilescanning"]
 workload_arr = ["multireadrandom"]
 
-config_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
-config_out_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
+config_arr = ["isolated-rocksdb", "OSonly"]  # Updated order
+config_out_arr = ["isolated-rocksdb", "OSonly"]  # Updated order
 
-config_arr = ["isolated", "OSonly"]  # Updated order
-config_out_arr = ["isolated", "OSonly"]  # Updated order
+#config_arr = ["isolated", "OSonly"]  # Updated order
+#config_out_arr = ["isolated", "OSonly"]  # Updated order
 
 
 # Base directory for output files
