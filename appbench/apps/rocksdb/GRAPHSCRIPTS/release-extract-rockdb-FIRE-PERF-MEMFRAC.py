@@ -17,6 +17,9 @@ config_out_arr = ["isolated-rocksdb", "OSonly"]  # Updated order
 #config_arr = ["isolated", "OSonly"]  # Updated order
 #config_out_arr = ["isolated", "OSonly"]  # Updated order
 
+#Batch size
+batchsize = 40
+
 
 # Base directory for output files
 output_dir = os.environ.get("OUTPUTDIR", "")
@@ -39,7 +42,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
 
     for memfrac in memfrac_arr:
         for config in config_arr:
-            file_path = os.path.join(base_dir, thread_arr[0],  "batchsize-40", f"MEMFRAC{memfrac}", access_pattern,  f"{config}.out")
+            file_path = os.path.join(base_dir, thread_arr[0],  "batchsize-" + str(batchsize), f"MEMFRAC{memfrac}", access_pattern,  f"{config}.out")
             #file_path = os.path.join(base_dir, thread_arr[0], f"batchsize-{batchsize}", access_pattern, f"{config}.out")
             if os.path.exists(file_path):
                 with open(file_path, 'r') as file:
@@ -108,7 +111,7 @@ def main():
                 for i, config in enumerate(config_arr):
                     result_path = os.path.join(base_dir, thread_arr[0])
                     #file_path = os.path.join(base_dir, thread_arr[0], f"batchsize-{batchsize}", workload, f"{config}.out")
-                    file_path = os.path.join(base_dir, thread_arr[0],  "batchsize-40", f"MEMFRAC{memfrac}", workload,  f"{config}.out")
+                    file_path = os.path.join(base_dir, thread_arr[0],  "batchsize-"+ str(batchsize), f"MEMFRAC{memfrac}", workload,  f"{config}.out")
                     print(file_path)
                     if os.path.exists(file_path):
                         with open(file_path, 'r') as file:
