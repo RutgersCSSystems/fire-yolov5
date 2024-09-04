@@ -18,7 +18,7 @@ config_out_arr = ["isolated-rocksdb", "OSonly"]  # Updated order
 #config_out_arr = ["isolated", "OSonly"]  # Updated order
 
 #Batch size
-batchsize = 40
+batchsize = 20
 
 
 # Base directory for output files
