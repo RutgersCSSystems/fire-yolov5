@@ -48,8 +48,7 @@ ENABLE_MEM_SENSITIVE=1
 declare -a num_arr=("20000000")
 
 declare -a membudget=("10" "20" "40" "60" "50" "30")
-declare -a membudget=("40" "50" "30" "20" "10")
-#declare -a membudget=("10")
+declare -a membudget=("30")
 
 declare -a trials=("TRIAL1")
 
@@ -61,7 +60,7 @@ declare -a thread_arr=("32")
 declare -a config_arr=("OSonly" "isolated-yolo" "isolated-rocksdb")
 
 declare -a batch_arr=("20" "40" "60" "80")
-declare -a batch_arr=("60" "20" "80")
+declare -a batch_arr=("40")
 
 
 # APPPREFIX options
@@ -157,15 +156,19 @@ RUN() {
                                 $APPPREFIX "./$APP" $PARAMS $READARGS &> "$RESULTFILE"
                                 ;;
                             *)
+                                
+                                echo "$YOVLOV_RESULTFILE"
+                                RUN_FIRE_ML "$YOVLOV_RESULTFILE" "$BATCHSIZE" &
+                                YOLO_PID=$!
+
+				sleep 20
+
                                 READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
                                 rm -rf "$DBDIR/LOCK"
                                 echo "$APPPREFIX ./$APP $PARAMS $READARGS"
                                 $APPPREFIX "./$APP" $PARAMS $READARGS &> "$RESULTFILE" &
                                 ROCKSDB_PID=$!
-                                
-                                echo "$YOVLOV_RESULTFILE"
-                                RUN_FIRE_ML "$YOVLOV_RESULTFILE" "$BATCHSIZE" &
-                                YOLO_PID=$!
+
                                 
                                 echo "Waiting for RocksDB (PID: $ROCKSDB_PID) and YOLO (PID: $YOLO_PID) to complete..."
                                 wait $ROCKSDB_PID

@@ -19,7 +19,7 @@ config_out_arr = ["isolated", "OSonly", "OSonly-prio"]  # Updated order
 config_arr = ["isolated-yolo", "OSonly"]  # Updated order
 config_out_arr = ["isolated-yolo", "OSonly"]  # Updated order
 
-batchsize = 60
+batchsize = 40
 
 
 # Base directory for output files
