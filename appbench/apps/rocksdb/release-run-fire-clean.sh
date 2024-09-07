@@ -48,7 +48,7 @@ ENABLE_MEM_SENSITIVE=1
 declare -a num_arr=("20000000")
 
 declare -a membudget=("10" "20" "40" "60" "50" "30")
-declare -a membudget=("30")
+declare -a membudget=("10")
 
 declare -a trials=("TRIAL1")
 
