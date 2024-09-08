@@ -1,6 +1,6 @@
 #!/bin/bash
 #set -euo pipefail
-set -x
+#set -x
 
 # Set up logging
 LOGFILE="rocksdb_yolo_script_$(date +%Y%m%d_%H%M%S).log"
@@ -48,7 +48,7 @@ ENABLE_MEM_SENSITIVE=1
 declare -a num_arr=("20000000")
 
 declare -a membudget=("10" "20" "40" "60" "50" "30")
-declare -a membudget=("10")
+declare -a membudget=("40" "30" "0")
 
 declare -a trials=("TRIAL1")
 
@@ -58,6 +58,7 @@ declare -a workload_arr=("multireadrandom")
 declare -a thread_arr=("32")
 #declare -a config_arr=("Vanilla" "OSonly" "CII" "CIPI_PERF" "CPBI_PERF" "isolated-yolo" "isolated-rocksdb")
 declare -a config_arr=("OSonly" "isolated-yolo" "isolated-rocksdb")
+declare -a config_arr=("OSonly")
 
 declare -a batch_arr=("20" "40" "60" "80")
 declare -a batch_arr=("40")
@@ -157,18 +158,15 @@ RUN() {
                                 ;;
                             *)
                                 
-                                echo "$YOVLOV_RESULTFILE"
-                                RUN_FIRE_ML "$YOVLOV_RESULTFILE" "$BATCHSIZE" &
-                                YOLO_PID=$!
-
-				sleep 20
-
                                 READARGS="--benchmarks=$WORKLOAD --use_existing_db=$USEDB --mmap_read=0 --threads=$THREAD"
                                 rm -rf "$DBDIR/LOCK"
                                 echo "$APPPREFIX ./$APP $PARAMS $READARGS"
                                 $APPPREFIX "./$APP" $PARAMS $READARGS &> "$RESULTFILE" &
                                 ROCKSDB_PID=$!
 
+                                echo "$YOVLOV_RESULTFILE"
+                                RUN_FIRE_ML "$YOVLOV_RESULTFILE" "$BATCHSIZE" 
+                                YOLO_PID=$!
                                 
                                 echo "Waiting for RocksDB (PID: $ROCKSDB_PID) and YOLO (PID: $YOLO_PID) to complete..."
                                 wait $ROCKSDB_PID
@@ -191,15 +189,17 @@ RUN() {
 
 GETMEMORYBUDGET() {
     local PERCENTAGE=$1
+
+    echo "***********************************************"
     echo "Getting memory budget for percentage $PERCENTAGE%"
     
     sudo rm -rf /mnt/ext4ramdisk/*
-    "$SCRIPTS/mount/umount_ext4ramdisk.sh"
+    "$SCRIPTS/mount/umount_ext4ramdisk.sh" &> TEMP.OUT
     sudo rm -rf /mnt/ext4ramdisk /mnt/ext4ramdisk/*
-    "$SCRIPTS/mount/releasemem.sh" "NODE0"
-    "$SCRIPTS/mount/releasemem.sh" "NODE1"
+    "$SCRIPTS/mount/releasemem.sh" "NODE0" &> TEMP.OUT
+    "$SCRIPTS/mount/releasemem.sh" "NODE1" &> TEMP.OUT
 
-    FlushDisk    
+    FlushDisk &> TEMP.OUT   
     
     let NUMAFREE0=$(numactl --hardware | grep "node 0 free:" | awk '{print $4}')
     let NUMAFREE1=$(numactl --hardware | grep "node 1 free:" | awk '{print $4}')
@@ -214,16 +214,16 @@ GETMEMORYBUDGET() {
     local DISKSZ0=$((NUMAFREE0 - NUMANODE0))
     local DISKSZ1=$((NUMAFREE1 - NUMANODE1))
     
-    echo "MEMORY $PERCENTAGE%"
-    echo "REDUCING NODE 0: $DISKSZ0 ****NODE 1: $DISKSZ1"
+    #echo "MEMORY $PERCENTAGE%"
+    echo "MEMORY $PERCENTAGE% BEFORE REDUCING NODE 0: $DISKSZ0 ****NODE 1: $DISKSZ1"
     
-    numactl --membind=0 "$SCRIPTS/mount/reducemem.sh" $DISKSZ0 "NODE0"
-    numactl --membind=1 "$SCRIPTS/mount/reducemem.sh" $DISKSZ1 "NODE1"
+    numactl --membind=0 "$SCRIPTS/mount/reducemem.sh" $DISKSZ0 "NODE0"   &> TEMP.OUT
+    numactl --membind=1 "$SCRIPTS/mount/reducemem.sh" $DISKSZ1 "NODE1"   &> TEMP.OUT
 
     let NUMAFREE0=$(numactl --hardware | grep "node 0 free:" | awk '{print $4}')
     let NUMAFREE1=$(numactl --hardware | grep "node 1 free:" | awk '{print $4}')
 
-    echo "AFTER REDUCING MEMORY NODE 0: $NUMAFREE0 ****NODE 1: $NUMAFREE1"
+    echo "MEMORY $PERCENTAGE% AFTER REDUCING MEMORY NODE 0: $NUMAFREE0 ****NODE 1: $NUMAFREE1"
 
 
 }
