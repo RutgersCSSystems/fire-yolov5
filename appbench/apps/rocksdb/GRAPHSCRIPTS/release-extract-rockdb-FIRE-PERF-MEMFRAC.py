@@ -73,7 +73,7 @@ def plot_access_pattern(datafile, access_pattern, result_path):
     plt.bar(x, workload_data[1], width=width, label="OSonly")
     #plt.bar(x + width, workload_data[2], width=width, label="OSonly-prio")
 
-    plt.xlabel("Memory Size (GB)", fontsize=16)
+    plt.xlabel("System Memory Size (GB)", fontsize=16)
     plt.ylabel("Throughput (ops/sec * 100)", fontsize=16)
     #plt.title(f"MB/s by Configuration and Batch Size - Access Pattern: {access_pattern}")
     plt.xticks(x, memfrac_arr_proxy, fontsize=16)
