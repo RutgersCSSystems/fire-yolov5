@@ -1,0 +1,122 @@
+rm -rf *.so
+[34m[1mtrain: [0mweights=yolov5s.pt, cfg=, data=../fire_config.yaml, hyp=data/hyps/hyp.scratch-low.yaml, epochs=1, batch_size=40, imgsz=600, rect=False, resume=False, nosave=False, noval=False, noautoanchor=False, noplots=False, evolve=None, evolve_population=data/hyps, resume_evolve=None, bucket=, cache=ram, image_weights=False, device=, multi_scale=False, single_cls=False, optimizer=SGD, sync_bn=False, workers=0, project=runs/train, name=exp, exist_ok=False, quad=False, cos_lr=False, label_smoothing=0.0, patience=100, freeze=[0], save_period=-1, seed=0, local_rank=-1, entity=None, upload_dataset=False, bbox_interval=-1, artifact_alias=latest, ndjson_console=False, ndjson_file=False, cache_size=None, cache_control_pipe=./cc_pipe
+[34m[1mgithub: [0m⚠️ YOLOv5 is out of date by 2 commits. Use 'git pull' or 'git clone https://github.com/ultralytics/yolov5' to update.
+YOLOv5 🚀 v7.0-366-gf7322921 Python-3.10.12 torch-2.4.1+cu121 CUDA:0 (Tesla P100-PCIE-12GB, 12194MiB)
+
+[34m[1mhyperparameters: [0mlr0=0.01, lrf=0.01, momentum=0.937, weight_decay=0.0005, warmup_epochs=3.0, warmup_momentum=0.8, warmup_bias_lr=0.1, box=0.05, cls=0.5, cls_pw=1.0, obj=1.0, obj_pw=1.0, iou_t=0.2, anchor_t=4.0, fl_gamma=0.0, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, degrees=0.0, translate=0.1, scale=0.5, shear=0.0, perspective=0.0, flipud=0.0, fliplr=0.5, mosaic=1.0, mixup=0.0, copy_paste=0.0
+[34m[1mComet: [0mrun 'pip install comet_ml' to automatically track and visualize YOLOv5 🚀 runs in Comet
+[34m[1mTensorBoard: [0mStart with 'tensorboard --logdir runs/train', view at http://localhost:6006/
+Overriding model.yaml nc=80 with nc=1
+
+                 from  n    params  module                                  arguments                     
+  0                -1  1      3520  models.common.Conv                      [3, 32, 6, 2, 2]              
+  1                -1  1     18560  models.common.Conv                      [32, 64, 3, 2]                
+  2                -1  1     18816  models.common.C3                        [64, 64, 1]                   
+  3                -1  1     73984  models.common.Conv                      [64, 128, 3, 2]               
+  4                -1  2    115712  models.common.C3                        [128, 128, 2]                 
+  5                -1  1    295424  models.common.Conv                      [128, 256, 3, 2]              
+  6                -1  3    625152  models.common.C3                        [256, 256, 3]                 
+  7                -1  1   1180672  models.common.Conv                      [256, 512, 3, 2]              
+  8                -1  1   1182720  models.common.C3                        [512, 512, 1]                 
+  9                -1  1    656896  models.common.SPPF                      [512, 512, 5]                 
+ 10                -1  1    131584  models.common.Conv                      [512, 256, 1, 1]              
+ 11                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']          
+ 12           [-1, 6]  1         0  models.common.Concat                    [1]                           
+ 13                -1  1    361984  models.common.C3                        [512, 256, 1, False]          
+ 14                -1  1     33024  models.common.Conv                      [256, 128, 1, 1]              
+ 15                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']          
+ 16           [-1, 4]  1         0  models.common.Concat                    [1]                           
+ 17                -1  1     90880  models.common.C3                        [256, 128, 1, False]          
+ 18                -1  1    147712  models.common.Conv                      [128, 128, 3, 2]              
+ 19          [-1, 14]  1         0  models.common.Concat                    [1]                           
+ 20                -1  1    296448  models.common.C3                        [256, 256, 1, False]          
+ 21                -1  1    590336  models.common.Conv                      [256, 256, 3, 2]              
+ 22          [-1, 10]  1         0  models.common.Concat                    [1]                           
+ 23                -1  1   1182720  models.common.C3                        [512, 512, 1, False]          
+ 24      [17, 20, 23]  1     16182  models.yolo.Detect                      [1, [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]], [128, 256, 512]]
+Model summary: 214 layers, 7022326 parameters, 7022326 gradients, 15.9 GFLOPs
+
+Transferred 343/349 items from yolov5s.pt
+/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/models/common.py:892: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(autocast):
+/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/models/common.py:892: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with amp.autocast(autocast):
+[34m[1mAMP: [0mchecks passed ✅
+WARNING ⚠️ --img-size 600 must be multiple of max stride 32, updating to 608
+[34m[1moptimizer:[0m SGD(lr=0.01) with parameter groups 57 weight(decay=0.0), 60 weight(decay=0.000625), 60 bias
+Pipe control thread started
+[34m[1mtrain: [0mScanning /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/labels.cache... 3522 images, 70348 backgrounds, 3 corrupt: 100%|██████████| 73870/73870 [00:00<?, ?it/s][34m[1mtrain: [0mScanning /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/labels.cache... 3522 images, 70348 backgrounds, 3 corrupt: 100%|██████████| 73870/73870 [00:00<?, ?it/s]
+[34m[1mtrain: [0mWARNING ⚠️ /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/images/new_fire_fire.108.png: ignoring corrupt image/label: non-normalized or out of bounds coordinates [     1.0026]
+[34m[1mtrain: [0mWARNING ⚠️ /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/images/new_fire_fire.420.png: ignoring corrupt image/label: non-normalized or out of bounds coordinates [     1.0048]
+[34m[1mtrain: [0mWARNING ⚠️ /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/train/images/new_fire_fire.512.png: ignoring corrupt image/label: non-normalized or out of bounds coordinates [     1.0005]
+[34m[1mtrain: [0m45.1GB RAM required for cache, 21.2/187.6GB available, not caching images ⚠️
+[34m[1mval: [0mScanning /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/val/labels.cache... 150 images, 0 backgrounds, 0 corrupt: 100%|██████████| 150/150 [00:00<?, ?it/s][34m[1mval: [0mScanning /mnt/ioopt/appbench/apps/yolov5-fire-detection/datasets/fire/val/labels.cache... 150 images, 0 backgrounds, 0 corrupt: 100%|██████████| 150/150 [00:00<?, ?it/s]
+  0%|          | 0/150 [00:00<?, ?it/s][34m[1mval: [0mCaching images (0.0GB ram):  21%|██        | 31/150 [00:00<00:00, 169.40it/s][34m[1mval: [0mCaching images (0.0GB ram):  32%|███▏      | 48/150 [00:00<00:01, 55.71it/s] [34m[1mval: [0mCaching images (0.1GB ram): 100%|██████████| 150/150 [00:00<00:00, 199.45it/s]
+
+[34m[1mAutoAnchor: [0m4.26 anchors/target, 0.997 Best Possible Recall (BPR). Current anchors are a good fit to dataset ✅
+Plotting labels to runs/train/exp38/labels.jpg... 
+/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/train.py:329: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=amp)
+Image sizes 608 train, 608 val
+Using 0 dataloader workers
+Logging results to [1mruns/train/exp38[0m
+Starting training for 1 epochs...
+
+      Epoch    GPU_mem   box_loss   obj_loss   cls_loss  Instances       Size
+  0%|          | 0/1847 [00:00<?, ?it/s]/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/train.py:386: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(amp):
+  0%|          | 0/1847 [00:02<?, ?it/s]
+Traceback (most recent call last):
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/train.py", line 858, in <module>
+    main(opt)
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/train.py", line 632, in main
+    train(opt.hyp, opt, device, callbacks)
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/train.py", line 387, in train
+    pred = model(imgs)  # forward
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/models/yolo.py", line 270, in forward
+    return self._forward_once(x, profile, visualize)  # single-scale inference, train
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/models/yolo.py", line 169, in _forward_once
+    x = m(x)  # run
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/mnt/ioopt/appbench/apps/yolov5-fire-detection/yolov5/models/common.py", line 87, in forward
+    return self.act(self.bn(self.conv(x)))
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/modules/activation.py", line 405, in forward
+    return F.silu(input, inplace=self.inplace)
+  File "/users/lht21/.local/lib/python3.10/site-packages/torch/nn/functional.py", line 2104, in silu
+    return torch._C._nn.silu_(input)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 30.00 MiB. GPU 0 has a total capacity of 11.91 GiB of which 31.62 MiB is free. Process 369069 has 8.33 GiB memory in use. Including non-PyTorch memory, this process has 3.55 GiB memory in use. Of the allocated memory 3.17 GiB is allocated by PyTorch, and 96.90 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Command exited with non-zero status 1
+	Command being timed: "python train.py --img 600 --batch 40 --epochs 1 --data ../fire_config.yaml --weights yolov5s.pt --workers 0 --cache --cache-control-pipe ./cc_pipe"
+	User time (seconds): 60.57
+	System time (seconds): 7.55
+	Percent of CPU this job got: 137%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:49.46
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1868948
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1465
+	Minor (reclaiming a frame) page faults: 878405
+	Voluntary context switches: 10489
+	Involuntary context switches: 38506
+	Swaps: 0
+	File system inputs: 649456
+	File system outputs: 1184
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

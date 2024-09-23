@@ -11,6 +11,7 @@ export KERN_SRC=$NVMBASE/linux-$VER
 export SHELL=/bin/bash
 
 export YOLO=$BASE/appbench/apps/yolov5-fire-detection
+export ROCKSDB=$BASE/appbench/apps/rocksdb
 
 #QEMU
 export QEMU_IMG=$NVMBASE
